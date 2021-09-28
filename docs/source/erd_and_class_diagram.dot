@@ -74,7 +74,7 @@ digraph erd_and_classes {
         //SUSHI_Platform (another parameter?)
 
         // Methods
-        // Since harvesting is done for a particular FY, its method is part of the annual tracking class
+        // Since harvesting is usually done for a particular FY, its method is part of the annual tracking class--should a special harvest which allows setting a date range and which has an option to start by removing all usage from that source for the given time period be included here?
     }
 
 
@@ -102,9 +102,25 @@ digraph erd_and_classes {
 
         // Attributes
         Fiscal_Year_ID [shape="note"]
-        year
+        Year
+        _Start_Date // The FY start as date data type to go in SQL queries
+        _End_Date // The FY end as date data type to go in SQL queries
+        // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
+        ACRL_60b // Initial Circulation: Digital/Electronic
+        ACRL_63 // E-Serials Usage: Digital/Electronic
+        ARL_18 // Number of successful full-text article requests (journals)
+        ARL_19 // Number of regular searches (databases)
+        ARL_20 // Number of federated searches (databases)
+        // Should the date when the numbers were collected be saved?
+        Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
 
         // Methods
+        // Should each number have its own method, or should all of them be calculated at the same time?
+        Calculate_ACRL_60b
+        Calculate_ACRL_63
+        Calculate_ARL_18
+        Calculate_ARL_19
+        Calculate_ARL_20
     }
 
 
@@ -169,7 +185,6 @@ digraph erd_and_classes {
         aggregator
         initial database data
         unique resource list
-        platform and_or vendor issued correction notices (possibly a subset of notes)
     */
 
     //Verbs: Methods
@@ -186,7 +201,6 @@ digraph erd_and_classes {
 
     /* Do these need to be kept?
         send
-        automatically sum
         add
         know
         organize
@@ -211,8 +225,6 @@ digraph erd_and_classes {
     subgraph cluster_Annual_Collection_Terms{
         // Nouns: Classes or Attributes
         "historical usage data"
-        ARL
-        ACRL_IPEDS
         "data for a given reporting year"
         // Verbs: Methods
     }
