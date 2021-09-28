@@ -1,0 +1,85 @@
+digraph erd_and_classes {
+    // Nouns: Classes or Attributes
+    eresources library associate
+    usage stats
+    custom cross platform reports
+    spreadsheets
+    R5 SUSHI
+    COUNTER reports
+    notes
+    interface
+    year
+    thoughts
+    reference
+    R4 reports
+    historical usage data
+    location
+    emails
+    vendors
+    COUNTER stats
+    non_COUNTER usage stats
+    file format
+    files
+    eresources usage numbers
+    ARL
+    ACRL_slash_IPEDS
+    workbooks
+    numbers
+    resources
+    SUSHI reports
+    database
+    normalized list of resources
+    order numbers
+    current ILS
+    legacy ILS
+    platforms
+    resources
+    price data
+    eresources librarian
+    Databases A to Z
+    Databases A to Z items
+    user interfaces
+    provider
+    list
+    names a databases goes and has gone by
+    databases 
+    invoices
+    publisher platform
+    aggregator
+    database developer
+    initial database data
+    unique resource list
+    assessment librarian
+    data for a given reporting year
+    platform and_or vendor issued correction notices
+    report
+
+    //Verbs: Methods
+    create
+    store
+    copy
+    paste
+    collect
+    download
+    add notes
+    record
+    generate emails
+    send
+    upload
+    automatically sum
+    dedupe
+    match
+    add
+    know
+    organize
+    has gone by
+    connect
+    use
+    find
+    change
+    start
+    harvest
+    pulled
+    submitted
+    look
+}
