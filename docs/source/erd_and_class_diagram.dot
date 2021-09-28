@@ -19,26 +19,38 @@ digraph erd_and_classes {
 
     subgraph cluster_Resource_Titles {
         label="Resource_Titles"
+
+        // Attributes
         Resource_Title_ID [shape="note"]
         Resource_Title
         Resource_ID_in_Resource_Titles [
             label="Resource_ID"
             shape="folder"
         ]
+
+        // Methods
     }
+
 
     subgraph cluster_Resources {
         label="Resources"
+
+        // Attributes
         Resource_ID [shape="note"]
         DOI
         ISBN
         Print_ISSN
         Online_ISSN
         Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
+
+        // Methods
     }
+
 
     subgraph cluster_Provided_Resources {
         label="Provided_Resources"
+
+        // Attributes
         Provided_Resource_ID [shape="note"]
         Publisher_aka_Provider
         Platform_aka_Interface
@@ -48,7 +60,10 @@ digraph erd_and_classes {
             label="Resource_ID"
             shape="folder"
         ]
+
+        // Methods
     }
+
 
     // RELATIONSHIPS
     /*
@@ -67,6 +82,7 @@ digraph erd_and_classes {
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
+
 
     /* *** OBJECTS TO BE ORGANIZED *** */
 
