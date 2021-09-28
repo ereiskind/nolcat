@@ -107,7 +107,8 @@ digraph erd_and_classes {
         __SUSHI_Customer_ID
         __SUSHI_API_Key
         __SUSHI_Interface_URL
-        //SUSHI_Platform (another parameter?)
+        //__SUSHI_Platform (another parameter?)
+        // Add info needed to get SUSHI creds through Alma API here
 
         // Methods
         // Since harvesting is usually done for a particular FY, its method is part of the annual tracking class--should a special harvest which allows setting a date range and which has an option to start by removing all usage from that source for the given time period be included here?
