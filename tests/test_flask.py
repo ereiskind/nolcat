@@ -14,3 +14,8 @@ def flask_client():
     app.testing = True  # Lets exceptions come through to test client
     with app.test_client() as client:
         yield client
+
+
+def test_flask_client_creation(flask_client):
+    """Tests that the flask_client fixture works by invoking it in a test wth an assert statement set to `True`."""
+    assert True
