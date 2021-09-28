@@ -1,10 +1,11 @@
+from flask import render_template
 from . import bp
 
 
 @bp.route('/initialize-database')
 def start_R4_data_load():
     """Returns the page where the CSVs with R4 data are selected."""
-    return "a file selection field that supports selecting multiple files that goes to determine_if_resources_match when submitted"
+    return render_template('select-R4-CSVs.html')
 
 
 @bp.route('/matching')
