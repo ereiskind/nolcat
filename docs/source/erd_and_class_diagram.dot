@@ -9,6 +9,8 @@ digraph erd_and_classes {
         crowodot = 0..N (optional, not unique)
         teetee = 1..1 (exactly one)
         crowtee = 1..N (neither optional nor unique)
+
+        Starting with two underscores means not from user stories
     */
 
     /* *** ESTABLISHED RELATIONS/CLASSES *** */
@@ -70,10 +72,6 @@ digraph erd_and_classes {
 
     // Nouns: Classes or Attributes
     resources
-    usage_stats [
-        shape="record"
-        label="usage stats|e-resources usage numbers"
-    ]
     non_COUNTER usage stats
     notes [
         shape="record"
@@ -82,10 +80,6 @@ digraph erd_and_classes {
     librarians [
         shape="record"
         label="e-resources library associate|e-resources librarian|database developer|assessment librarian"
-    ]
-    platforms [
-        shape="record"
-        label="platforms|user interfaces"
     ]
     "Databases A to Z"
     "Databases A to Z items"
@@ -133,6 +127,10 @@ digraph erd_and_classes {
         "COUNTER stats"
         "SUSHI reports"
         report
+        "__SUSHI requestor ID"
+        "__SUSHI customer ID"
+        "__SUSHI API key"
+        "__SUSHI platform aka base URL"
         // Verbs: Methods
         harvest
     }
@@ -144,6 +142,10 @@ digraph erd_and_classes {
         ARL
         ACRL_IPEDS
         "data for a given reporting year"
+        "__is COUNTER compliant"
+        "__is SUSHI compliant"
+        "__manual collection completed"
+        "__has usage portal"
         // Verbs: Methods
     }
 
@@ -173,6 +175,39 @@ digraph erd_and_classes {
         "legacy ILS"
         "price data"
         invoices
+        // Verbs: Methods
+    }
+
+    subgraph cluster_COUNTER_Report_Data {
+        // Nouns: Classes or Attributes
+        __resource_title [
+            shape="record"
+            label="title (R4)|database (DR)|title (TR)|item (IR)"
+        ]
+        __resource publisher
+        "__publisher ID (R5)"
+        platforms [
+            shape="record"
+            label="platforms|user interfaces"
+        ]
+        __DOI
+        "__proprietary ID"
+        __ISBN
+        "__print ISSN"
+        "__online ISSN"
+        "__URI (R5 TR, IR)"
+        "__data type"
+        "__section type (R5 IR)"
+        "__metric type"
+        "__usage date"
+        usage_statistics_count [
+            shape="record"
+            label="usage stats|e-resources usage numbers"
+        ]
+        "__report creation date (for harvested R5)"
+        "__YoP (R5 TR, IR)"
+        "__access type (R5 TR, IR)"
+        "__access method (R5)"
         // Verbs: Methods
     }
 }
