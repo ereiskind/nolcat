@@ -6,10 +6,6 @@ digraph erd_and_classes {
         folder = FK
         component = FK that makes up a composite PK
         Mrecord = methods
-        teeodot = 0..1 (unique but optional)
-        crowodot = 0..N (optional, not unique)
-        teetee = 1..1 (exactly one)
-        crowtee = 1..N (neither optional nor unique)
 
         Starting with two underscores means not from user stories
     */
@@ -97,6 +93,7 @@ digraph erd_and_classes {
 
         // Methods
         harvest
+        __create // Meaning create all the records for tracking the collection of a particular FY's usage after the FY finishes
     }
 
 
@@ -117,15 +114,34 @@ digraph erd_and_classes {
         table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
         arrowhead = how PK table can connect to FK table
         arrowtail = how FK table can connect to PK table
+
+        teeodot = 0..1 (unique but optional)
+        crowodot = 0..N (optional, not unique)
+        teetee = 1..1 (exactly one)
+        crowtee = 1..N (neither optional nor unique)
     */
+    
     Resource_ID -> Resource_ID_in_Resource_Titles [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
+    
     Resource_ID -> Resource_ID_in_Provided_Resources [
         dir="both"
         arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+    
+    Statistics_Source_ID -> Annual_Usage_Collection_Tracking_Source [
+        dir="both"
+        arrowhead="crowodot" // Since sorces don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowtail="teetee"
+    ]
+    
+    Fiscal_Year_ID -> Annual_Usage_Collection_Tracking_Year [
+        dir="both"
+        arrowhead="crowodot" // This allows for the possibility that a FY instance cna be created before the collection tracking records that connect to it will; whether or not this will be necessary remains to be seen
         arrowtail="teetee"
     ]
 
