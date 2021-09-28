@@ -17,4 +17,4 @@ def determine_if_resources_match():
 @bp.route('/database-creation-complete')
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
-    return "a page displaying the records added to the Resources, Provided_Resources, and COUNTER_Usage_Data relations"
+    return render_template('show-loaded-data.html')
