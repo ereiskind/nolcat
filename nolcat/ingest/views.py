@@ -8,7 +8,7 @@ def start_R4_data_load():
     return render_template('select-R4-CSVs.html')
 
 
-@bp.route('/matching')
+@bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
     return render_template('select-matches.html')
