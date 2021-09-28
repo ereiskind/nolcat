@@ -1,0 +1,306 @@
+digraph erd_and_classes {
+    graph [rankdir = "LR"]
+    /*
+        ellipse = field/attribute
+        note = PK
+        folder = FK
+        component = FK that makes up a composite PK
+        Mrecord = methods
+
+        Starting with two underscores means not from user stories
+    */
+
+    /* *** ESTABLISHED RELATIONS/CLASSES *** */
+
+    // RELATIONS/CLASSES
+
+    subgraph cluster_Resource_Titles {
+        label="Resource_Titles"
+
+        // Attributes
+        Resource_Title_ID [shape="note"]
+        Resource_Title [
+            shape="record"
+            label="\N|title (R4)|database (DR)|title (TR)|item (IR)"
+        ]
+        Resource_ID_in_Resource_Titles [
+            label="Resource_ID"
+            shape="folder"
+        ]
+
+        // Methods
+        find // aka search titles
+    }
+
+
+    subgraph cluster_Resources {
+        label="Resources"
+
+        // Attributes
+        Resource_ID [shape="note"]
+        DOI
+        ISBN
+        Print_ISSN
+        Online_ISSN
+        Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
+        __Section_Type // This is in R5 IR only-how to add it? Does it go here?
+
+        // Methods
+    }
+
+
+    subgraph cluster_Provided_Resources {
+        label="Provided_Resources"
+
+        // Attributes
+        Provided_Resource_ID [shape="note"]
+        Publisher // From the COUNTER report
+        Publisher_ID // This is found in R5 only—how to add it?
+        Platform [
+            shape="record"
+            label="\N|user interfaces"
+        ]
+        Proprietary_ID
+        __URI // This is found in R5 TR, IR only—how to add it?
+        Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
+        Resource_ID_in_Provided_Resources [
+            label="Resource_ID"
+            shape="folder"
+        ]
+
+        // Methods
+    }
+
+
+    subgraph cluster_COUNTER_Usage_Data {
+        label="COUNTER_Usage_Data"
+
+        // Nouns: Classes or Attributes
+        __Metric_Type
+        __Usage_Date
+        Usage_Count [
+            shape="record"
+            label="\N|usage stats|e-resources usage numbers"
+        ]
+        __YOP // This is found in R5 TR, IR only—how to add it?
+        __Access_Type // This is found in R5 TR, IR only—how to add it?
+        __Access_Method // This is found in R5 only—how to add it?
+        Provided_Resource_ID_in_COUNTER_Usage_Data [
+            label="Provided_Resource_ID"
+            shape="folder"
+        ]
+        __Report_Creation_Date // For harvested R5 reports
+
+        // Verbs: Methods
+        create // create report
+        look // aka view reports
+        __download_reports
+    }
+
+
+    subgraph cluster_Statistics_Sources {
+        label="Statistics_Sources"
+
+        // Attributes
+        Statistics_Source_ID [shape="note"]
+        __SUSHI_Requestor_ID
+        __SUSHI_Customer_ID
+        __SUSHI_API_Key
+        __SUSHI_Interface_URL
+        //__SUSHI_Platform (another parameter?)
+        // Add info needed to get SUSHI creds through Alma API here
+
+        // Methods
+        // Since harvesting is usually done for a particular FY, its method is part of the annual tracking class--should a special harvest which allows setting a date range and which has an option to start by removing all usage from that source for the given time period be included here?
+    }
+
+
+    subgraph cluster_Annual_Usage_Collection_Tracking {
+        label="Annual_Usage_Collection_Tracking"
+
+        // Attributes
+        Annual_Usage_Collection_Tracking_Year [shape="component"]
+        Annual_Usage_Collection_Tracking_Source [shape="component"]
+        __Is_COUNTER_Compliant // Because this can change from year to year
+        __Is_R5_SUSHI_Compliant // Because this can change from year to year
+        __Collection_Completed // Not a Boolean--need an "in process" option
+        __Requires_Manual_Collection
+        __Has_Usage_Portal
+        __Notes__Annual_Usage_Collection_Tracking
+
+        // Methods
+        harvest
+        __create // Meaning create all the records for tracking the collection of a particular FY's usage after the FY finishes
+        note // In user stories as "add notes" and "record"
+    }
+
+
+    subgraph cluster_Fiscal_Year {
+        label="Fiscal_Year"
+
+        // Attributes
+        Fiscal_Year_ID [shape="note"]
+        Year
+        _Start_Date // The FY start as date data type to go in SQL queries
+        _End_Date // The FY end as date data type to go in SQL queries
+        // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
+        ACRL_60b // Initial Circulation: Digital/Electronic
+        ACRL_63 // E-Serials Usage: Digital/Electronic
+        ARL_18 // Number of successful full-text article requests (journals)
+        ARL_19 // Number of regular searches (databases)
+        ARL_20 // Number of federated searches (databases)
+        // Should the date when the numbers were collected be saved?
+        Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
+
+        // Methods
+        // Should each number have its own method, or should all of them be calculated at the same time?
+        Calculate_ACRL_60b
+        Calculate_ACRL_63
+        Calculate_ARL_18
+        Calculate_ARL_19
+        Calculate_ARL_20
+    }
+
+
+    // RELATIONSHIPS
+    /*
+        Establish relationships from the PK (tail) to the FK (head)
+        table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
+        arrowhead = how PK table can connect to FK table
+        arrowtail = how FK table can connect to PK table
+
+        teeodot = 0..1 (unique but optional)
+        crowodot = 0..N (optional, not unique)
+        teetee = 1..1 (exactly one)
+        crowtee = 1..N (neither optional nor unique)
+    */
+    
+    Resource_ID -> Resource_ID_in_Resource_Titles [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+    
+    Resource_ID -> Resource_ID_in_Provided_Resources [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+    
+    Statistics_Source_ID -> Annual_Usage_Collection_Tracking_Source [
+        dir="both"
+        arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowtail="teetee"
+    ]
+    
+    Fiscal_Year_ID -> Annual_Usage_Collection_Tracking_Year [
+        dir="both"
+        arrowhead="crowodot" // This allows for the possibility that a FY instance cna be created before the collection tracking records that connect to it will; whether or not this will be necessary remains to be seen
+        arrowtail="teetee"
+    ]
+
+    Statistics_Source_ID -> Interface [
+        dir="both"
+        arrowhead="crowodot" // Sources without resources need to exist because 1. A source record is a prerequisite for usage collection 2. Not all sources will have COUNTER resources
+        arrowtail="teetee"
+    ]
+
+    Provided_Resource_ID -> Provided_Resource_ID_in_COUNTER_Usage_Data [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+
+    /* *** OBJECTS TO BE ORGANIZED *** */
+
+    // Nouns: Classes or Attributes
+    resources
+    non_COUNTER usage stats
+    notes [
+        shape="record"
+        label="notes|thoughts"
+    ]
+    librarians [
+        shape="record"
+        label="e-resources library associate|e-resources librarian|database developer|assessment librarian"
+    ]
+    "Databases A to Z"
+    "Databases A to Z items"
+    "names a databases goes and has gone by"
+    /* Do these need to be kept?
+        reference
+        location
+        databases
+        aggregator
+        initial database data
+        unique resource list
+    */
+
+    //Verbs: Methods
+    store
+    collect
+    match
+    connect
+    change
+
+    /* Do these need to be kept?
+        send
+        add
+        know
+        organize
+        has gone by
+        use
+        start
+        pulled
+        submitted
+        retained
+    */
+
+    subgraph cluster_COUNTER_Terms {
+        // Nouns: Classes or Attributes
+        "COUNTER reports"
+        "R4 reports"
+        "R5 SUSHI"
+        "COUNTER stats"
+        "SUSHI reports"
+        report
+        // Verbs: Methods
+    }
+
+    subgraph cluster_Annual_Collection_Terms{
+        // Nouns: Classes or Attributes
+        "historical usage data"
+        "data for a given reporting year"
+        // Verbs: Methods
+    }
+
+    subgraph cluster_Technical_Terms {
+        // Nouns: Classes or Attributes
+        spreadsheets
+        emails
+        files
+        "file format"
+        workbooks
+        database
+        "normalized list of resources"
+        // Verbs: Methods
+        download
+        "generate emails"
+        upload
+        dedupe
+        copy
+        paste
+    }
+
+    subgraph cluster_Acquisitions_Terms {
+        // Nouns: Classes or Attributes
+        vendors
+        "order numbers"
+        "current ILS"
+        "legacy ILS"
+        "price data"
+        invoices
+        // Verbs: Methods
+    }
+}
