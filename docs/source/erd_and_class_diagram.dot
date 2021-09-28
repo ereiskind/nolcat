@@ -87,9 +87,9 @@ digraph erd_and_classes {
         shape="record"
         label="platforms|user interfaces"
     ]
-    Databases A to Z
-    Databases A to Z items
-    names a databases goes and has gone by
+    "Databases A to Z"
+    "Databases A to Z items"
+    "names a databases goes and has gone by"
     /* Do these need to be kept?
         reference
         location
@@ -127,11 +127,11 @@ digraph erd_and_classes {
 
     subgraph cluster_COUNTER_Terms {
         // Nouns: Classes or Attributes
-        COUNTER reports
-        R4 reports
-        R5 SUSHI
-        COUNTER stats
-        SUSHI reports
+        "COUNTER reports"
+        "R4 reports"
+        "R5 SUSHI"
+        "COUNTER stats"
+        "SUSHI reports"
         report
         // Verbs: Methods
         harvest
@@ -140,10 +140,10 @@ digraph erd_and_classes {
     subgraph cluster_Annual_Collection_Terms{
         // Nouns: Classes or Attributes
         year
-        historical usage data
+        "historical usage data"
         ARL
         ACRL_IPEDS
-        data for a given reporting year
+        "data for a given reporting year"
         // Verbs: Methods
     }
 
@@ -152,13 +152,13 @@ digraph erd_and_classes {
         spreadsheets
         emails
         files
-        file format
+        "file format"
         workbooks
         database
-        normalized list of resources
+        "normalized list of resources"
         // Verbs: Methods
         download
-        generate emails
+        "generate emails"
         upload
         dedupe
         copy
@@ -168,10 +168,10 @@ digraph erd_and_classes {
     subgraph cluster_Acquisitions_Terms {
         // Nouns: Classes or Attributes
         vendors
-        order numbers
-        current ILS
-        legacy ILS
-        price data
+        "order numbers"
+        "current ILS"
+        "legacy ILS"
+        "price data"
         invoices
         // Verbs: Methods
     }
