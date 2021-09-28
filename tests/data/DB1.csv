@@ -1,0 +1,49 @@
+Interface,Resource_Name,Publisher,Platform,DOI,Proprietary_ID,ISBN,Print_ISSN,Online_ISSN,Data_Type,Metric_Type,R4_Month,R4_Count
+,Early European Books->Collection 1,ProQuest,ProQuest,,,,,,Database,Regular Searches,4/1/2021,4316
+,Early European Books->Collection 1,ProQuest,ProQuest,,,,,,Database,Regular Searches,11/1/2021,4791
+,Early European Books->Collection 1,ProQuest,ProQuest,,,,,,Database,Regular Searches,3/1/2021,5169
+,Early European Books->Collection 1,ProQuest,ProQuest,,,,,,Database,Regular Searches,10/1/2021,7262
+,Early European Books->Collection 10,ProQuest,ProQuest,,,,,,Database,Regular Searches,5/1/2021,2103
+,Early European Books->Collection 10,ProQuest,ProQuest,,,,,,Database,Regular Searches,6/1/2021,3790
+,Early European Books->Collection 10,ProQuest,ProQuest,,,,,,Database,Result Clicks,5/1/2021,6527
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,5/1/2021,114
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,7/1/2021,241
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,4/1/2021,312
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,6/1/2021,360
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Regular Searches,7/1/2021,555
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Searches-federated and automated,6/1/2021,980
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,1/1/2021,1025
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,12/1/2021,1057
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,9/1/2021,1720
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,11/1/2021,2091
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,2/1/2021,2344
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,4/1/2021,2565
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,3/1/2021,3487
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,10/1/2021,3270
+18,ERIC,EBSCO,EBSCOhost,,,,,,Database,Record Views,8/1/2021,40637
+,Performing Arts Periodicals Database,ProQuest,ProQuest,,,,,,Database,Record Views,1/1/2021,1268
+,Performing Arts Periodicals Database,ProQuest,ProQuest,,,,,,Database,Record Views,12/1/2021,1115
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,,,,,,Database,Record Views,2/1/2021,89
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,,,,,,Database,Regular Searches,8/1/2021,2723
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,,,,,,Database,Regular Searches,7/1/2021,3574
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,,,,,,Database,Regular Searches,9/1/2021,3979
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,,,,,,Database,Regular Searches,12/1/2021,2510
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,,,,,,Database,Regular Searches,1/1/2021,3239
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,,,,,,Database,Regular Searches,10/1/2021,6209
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,,,,,,Database,Regular Searches,11/1/2021,6000
+,Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,,,,,,Database,Regular Searches,2/1/2021,289
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Searches-federated and automated,9/1/2021,26
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,2/1/2021,57
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,1/1/2021,1381
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,8/1/2021,2802
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,10/1/2021,3342
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,7/1/2021,3463
+45,ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,9/1/2021,7074
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,4/1/2021,843
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,12/1/2021,933
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,3/1/2021,1033
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,2/1/2021,1881
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,3/1/2021,2063
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,2/1/2021,2073
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Result Clicks,1/1/2021,4772
+45,Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,,,,,,Database,Record Views,3/1/2021,2976
