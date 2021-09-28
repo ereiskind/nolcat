@@ -19,7 +19,7 @@ This is a temporary file meant to ensure all the necessary files are added to th
         * [x] templates
             * [x] *Pages in "ingest" blueprint*
         * [x] `__init__.py` containg the blueprint constructor
-        * [ ] `forms.py` containing the WTForms form classes
+        * [x] `forms.py` containing the WTForms form classes
         * [x] `views.py` containg the Flask routes
     * [ ] review
         * [ ] static
