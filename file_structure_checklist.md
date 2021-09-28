@@ -10,7 +10,7 @@ This is a temporary file meant to ensure all the necessary files are added to th
 * [x] nolcat
     * [ ] static
         * [ ] `styles.css` containing CSS to be applied to the entire project
-    * [ ] templates
+    * [x] templates
         * [ ] `layout.html` containing the repeating elements present on each page (header, footer, top-level navigation, ect.)
         * [ ] `404.html` containing the page to display in response to 404 errors
     * [ ] ingest
