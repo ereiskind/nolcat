@@ -1,5 +1,12 @@
+import logging
 from flask import render_template
+from flask import redirect
+from flask import url_for
+from flask import request
 from . import bp
+from ingest.forms import *
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
 @bp.route('/initialize-database')
@@ -11,7 +18,16 @@ def start_R4_data_load():
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
-    return render_template('select-matches.html')
+    form = TestForm()
+    logging.info(f"\nerrors before if-else: {form.errors}\n")
+    if form.validate_on_submit():  # This is when the form has been submitted
+        logging.info(f"\nerrors in validate_on_submit: {form.errors}\n")
+        return redirect(url_for('data_load_complete'))
+    elif request.method == 'POST':  # This is when the function is receiving the data to render the form
+        logging.info(f"\nerrors in method==POST: {form.errors}\n")
+        return render_template('select-matches.html')
+    else:
+        return "404 page"
 
 
 @bp.route('/database-creation-complete')
