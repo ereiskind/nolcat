@@ -4,6 +4,7 @@ digraph erd_and_classes {
         ellipse = field/attribute
         note = PK
         folder = FK
+        component = FK that makes up a composite PK
         Mrecord = methods
         teeodot = 0..1 (unique but optional)
         crowodot = 0..N (optional, not unique)
@@ -60,6 +61,51 @@ digraph erd_and_classes {
             label="Resource_ID"
             shape="folder"
         ]
+
+        // Methods
+    }
+
+
+    subgraph cluster_Statistics_Sources {
+        label="Statistics_Sources"
+
+        // Attributes
+        Statistics_Source_ID [shape="note"]
+        __SUSHI_Requestor_ID
+        __SUSHI_Customer_ID
+        __SUSHI_API_Key
+        __SUSHI_Interface_URL
+        //SUSHI_Platform (another parameter?)
+
+        // Methods
+        // Since harvesting is done for a particular FY, its method is part of the annual tracking class
+    }
+
+
+    subgraph cluster_Annual_Usage_Collection_Tracking {
+        label="Annual_Usage_Collection_Tracking"
+
+        // Attributes
+        Annual_Usage_Collection_Tracking_Year [shape="component"]
+        Annual_Usage_Collection_Tracking_Source [shape="component"]
+        __Is_COUNTER_Compliant // Because this can change from year to year
+        __Is_R5_SUSHI_Compliant // Because this can change from year to year
+        __Collection_Completed // Not a Boolean--need an "in process" option
+        __Requires_Manual_Collection
+        __Has_Usage_Portal
+        __Notes__Annual_Usage_Collection_Tracking
+
+        // Methods
+        harvest
+    }
+
+
+    subgraph cluster_Fiscal_Year {
+        label="Fiscal_Year"
+
+        // Attributes
+        Fiscal_Year_ID [shape="note"]
+        year
 
         // Methods
     }
@@ -143,25 +189,15 @@ digraph erd_and_classes {
         "COUNTER stats"
         "SUSHI reports"
         report
-        "__SUSHI requestor ID"
-        "__SUSHI customer ID"
-        "__SUSHI API key"
-        "__SUSHI platform aka base URL"
         // Verbs: Methods
-        harvest
     }
 
     subgraph cluster_Annual_Collection_Terms{
         // Nouns: Classes or Attributes
-        year
         "historical usage data"
         ARL
         ACRL_IPEDS
         "data for a given reporting year"
-        "__is COUNTER compliant"
-        "__is SUSHI compliant"
-        "__manual collection completed"
-        "__has usage portal"
         // Verbs: Methods
     }
 
