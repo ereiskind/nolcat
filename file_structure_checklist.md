@@ -34,8 +34,8 @@ This is a temporary file meant to ensure all the necessary files are added to th
 * [x] tests
     * [ ] *pytest files*
     * [x] `test_flask.py` for testing the Flask web app
-    * [ ] data
-        * [ ] `BR1.csv` contains a reformatted R4 with real resources and fake numbers
+    * [x] data
+        * [x] `BR1.csv` contains a reformatted R4 with real resources and fake numbers
         * [ ] `DB1.csv` contains a reformatted R4 with real resources and fake numbers
         * [ ] `JR1.csv` contains a reformatted R4 with real resources and fake numbers
 * [x] `.gitignore`
