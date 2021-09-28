@@ -1,5 +1,5 @@
 digraph erd_and_classes {
-    //graph [rankdir = "LR"]
+    graph [rankdir = "LR"]
     /*
         ellipse = field/attribute
         note = PK
@@ -69,84 +69,110 @@ digraph erd_and_classes {
     /* *** OBJECTS TO BE ORGANIZED *** */
 
     // Nouns: Classes or Attributes
-    eresources library associate
-    usage stats
-    custom cross platform reports
-    spreadsheets
-    R5 SUSHI
-    COUNTER reports
-    notes
-    interface
-    year
-    thoughts
-    reference
-    R4 reports
-    historical usage data
-    location
-    emails
-    vendors
-    COUNTER stats
+    resources
+    usage_stats [
+        shape="record"
+        label="usage stats|e-resources usage numbers"
+    ]
     non_COUNTER usage stats
-    file format
-    files
-    eresources usage numbers
-    ARL
-    ACRL_slash_IPEDS
-    workbooks
-    numbers
-    resources
-    SUSHI reports
-    database
-    normalized list of resources
-    order numbers
-    current ILS
-    legacy ILS
-    platforms
-    resources
-    price data
-    eresources librarian
+    notes [
+        shape="record"
+        label="notes|thoughts"
+    ]
+    librarians [
+        shape="record"
+        label="e-resources library associate|e-resources librarian|database developer|assessment librarian"
+    ]
+    platforms [
+        shape="record"
+        label="platforms|user interfaces"
+    ]
     Databases A to Z
     Databases A to Z items
-    user interfaces
-    list
     names a databases goes and has gone by
-    databases 
-    invoices
-    aggregator
-    database developer
-    initial database data
-    unique resource list
-    assessment librarian
-    data for a given reporting year
-    platform and_or vendor issued correction notices
-    report
+    /* Do these need to be kept?
+        reference
+        location
+        databases
+        aggregator
+        initial database data
+        unique resource list
+        platform and_or vendor issued correction notices (possibly a subset of notes)
+    */
 
     //Verbs: Methods
     create
     store
-    copy
-    paste
     collect
-    download
     add notes
     record
-    generate emails
-    send
-    upload
-    automatically sum
-    dedupe
     match
-    add
-    know
-    organize
-    has gone by
     connect
-    use
     find
     change
-    start
-    harvest
-    pulled
-    submitted
     look
+
+    /* Do these need to be kept?
+        send
+        automatically sum
+        add
+        know
+        organize
+        has gone by
+        use
+        start
+        pulled
+        submitted
+    */
+
+    subgraph cluster_COUNTER_Terms {
+        // Nouns: Classes or Attributes
+        COUNTER reports
+        R4 reports
+        R5 SUSHI
+        COUNTER stats
+        SUSHI reports
+        report
+        // Verbs: Methods
+        harvest
+    }
+
+    subgraph cluster_Annual_Collection_Terms{
+        // Nouns: Classes or Attributes
+        year
+        historical usage data
+        ARL
+        ACRL_IPEDS
+        data for a given reporting year
+        // Verbs: Methods
+    }
+
+    subgraph cluster_Technical_Terms {
+        // Nouns: Classes or Attributes
+        spreadsheets
+        emails
+        files
+        file format
+        workbooks
+        database
+        normalized list of resources
+        // Verbs: Methods
+        download
+        generate emails
+        upload
+        dedupe
+        copy
+        paste
+    }
+
+    subgraph cluster_Acquisitions_Terms {
+        // Nouns: Classes or Attributes
+        vendors
+        order numbers
+        current ILS
+        legacy ILS
+        price data
+        invoices
+        // Verbs: Methods
+    }
 }
