@@ -11,7 +11,7 @@ def start_R4_data_load():
 @bp.route('/matching')
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
-    return "a form containing the metadata for each potential resource match pair with a checkbox for indicating if it is a pair and radio buttons to indicate which set of metadata to save to the Resources relation"
+    return render_template('select-matches.html')
 
 
 @bp.route('/database-creation-complete')
