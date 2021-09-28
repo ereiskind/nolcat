@@ -2,6 +2,8 @@
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
 
+from pathlib import Path
+import os
 import pytest
 
 from nolcat.app import create_app
@@ -19,3 +21,13 @@ def flask_client():
 def test_flask_client_creation(flask_client):
     """Tests that the flask_client fixture works by invoking it in a test wth an assert statement set to `True`."""
     assert True
+
+
+def test_flask_activation(flask_client):
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    homepage = flask_client.get('/')
+    HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
+    HTML_markup = HTML_file.read().replace(b"\r", b"")  # This removes the carriage return so the HTML file written on Windows matches the line feed-only Flask response
+    HTML_file.close()
+    #ToDo: Determine if this still works if Jinja is used in the HTML file
+    assert homepage.status == "200 OK" and homepage.data == HTML_markup

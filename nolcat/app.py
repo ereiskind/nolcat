@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import render_template
 
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
@@ -6,6 +7,6 @@ def create_app():
 
     @app.route('/')
     def homepage():
-        return "This is the homepage"
+        return render_template('index.html')
 
     return app
