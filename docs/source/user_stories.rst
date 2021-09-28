@@ -11,7 +11,7 @@ Collecting and Storing Usage Statistics
 * As an **e-resources library associate**, I want the system to *store* all **usage stats** so that I can *create* custom **cross-platform reports** without *copying* and *pasting* from multiple **spreadsheets**.
 * As an **e-resources library associate** responsible for *collecting* **usage stats**, I want the system to use **R5 SUSHI** to *collect* **COUNTER reports** so that I don't need to manually *download* the **reports**.
 * As an **e-resources library associate** responsible for *collecting* **usage stats**, I want the option to *add* **notes** about an **interface** for a given **year** to *record* any **thoughts** for future **reference**.
-* As an **e-resources library associate**, I want the system to store all **R4 reports** so that **historical usage data** is retained in a single **location**.
+* As an **e-resources library associate**, I want the system to *store** all **R4 reports** so that **historical usage data** is *retained** in a single **location**.
 * As an **e-resources library associate** responsible for *collecting* **usage stats**, I want the system to *generate* **emails** to the **vendors** that don't provide **COUNTER stats** so that I don't need to *send* each **email** individually.
 * As an **e-resources library associate**, I want to *upload* **non-COUNTER usage stats** in whatever **file format** they come in so that those **files** are in the same **location** as the **COUNTER reports**.
 * As an **e-resources library associate** responsible for *collecting* **usage stats**, I want to *dedupe* the **resources** in incoming **SUSHI reports** against **resources** already in the **database** so I can have a **normalized list of resources** for database normalization.

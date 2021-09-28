@@ -29,6 +29,7 @@ digraph erd_and_classes {
         ]
 
         // Methods
+        find // aka search titles
     }
 
 
@@ -91,6 +92,9 @@ digraph erd_and_classes {
         __Report_Creation_Date // For harvested R5 reports
 
         // Verbs: Methods
+        create // create report
+        look // aka view reports
+        __download_reports
     }
 
 
@@ -126,6 +130,7 @@ digraph erd_and_classes {
         // Methods
         harvest
         __create // Meaning create all the records for tracking the collection of a particular FY's usage after the FY finishes
+        note // In user stories as "add notes" and "record"
     }
 
 
@@ -232,16 +237,11 @@ digraph erd_and_classes {
     */
 
     //Verbs: Methods
-    create
     store
     collect
-    add notes
-    record
     match
     connect
-    find
     change
-    look
 
     /* Do these need to be kept?
         send
@@ -253,6 +253,7 @@ digraph erd_and_classes {
         start
         pulled
         submitted
+        retained
     */
 
     subgraph cluster_COUNTER_Terms {
