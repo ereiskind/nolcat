@@ -25,7 +25,7 @@ def determine_if_resources_match():
         return redirect(url_for('data_load_complete'))
     elif request.method == 'POST':  # This is when the function is receiving the data to render the form
         logging.info(f"\nerrors in method==POST: {form.errors}\n")
-        return render_template('select-matches.html')
+        return render_template('select-matches.html', form=form)
     else:
         return "404 page"
 

@@ -8,6 +8,10 @@
     <title>Select Resource Matches</title>
 </head>
 <body>
+    <form action="{{ url_for('ingest.data_load_complete') }}" method="POST">
+        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+    </form>
     <p>a form containing the metadata for each potential resource match pair with a checkbox for indicating if it is a pair and radio buttons to indicate which set of metadata to save to the Resources relation</p>
 </body>
 </html>
