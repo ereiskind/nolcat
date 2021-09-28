@@ -19,7 +19,10 @@ digraph erd_and_classes {
 
         // Attributes
         Resource_Title_ID [shape="note"]
-        Resource_Title
+        Resource_Title [
+            shape="record"
+            label="\N|title (R4)|database (DR)|title (TR)|item (IR)"
+        ]
         Resource_ID_in_Resource_Titles [
             label="Resource_ID"
             shape="folder"
@@ -39,6 +42,7 @@ digraph erd_and_classes {
         Print_ISSN
         Online_ISSN
         Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
+        __Section_Type // This is in R5 IR only-how to add it? Does it go here?
 
         // Methods
     }
@@ -49,16 +53,44 @@ digraph erd_and_classes {
 
         // Attributes
         Provided_Resource_ID [shape="note"]
-        Publisher_aka_Provider
-        Platform_aka_Interface
-        Proprietary_ID
+        Publisher // From the COUNTER report
         Publisher_ID // This is found in R5 only—how to add it?
+        Platform [
+            shape="record"
+            label="\N|user interfaces"
+        ]
+        Proprietary_ID
+        __URI // This is found in R5 TR, IR only—how to add it?
+        Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
         Resource_ID_in_Provided_Resources [
             label="Resource_ID"
             shape="folder"
         ]
 
         // Methods
+    }
+
+
+    subgraph cluster_COUNTER_Usage_Data {
+        label="COUNTER_Usage_Data"
+
+        // Nouns: Classes or Attributes
+        __Metric_Type
+        __Usage_Date
+        Usage_Count [
+            shape="record"
+            label="\N|usage stats|e-resources usage numbers"
+        ]
+        __YOP // This is found in R5 TR, IR only—how to add it?
+        __Access_Type // This is found in R5 TR, IR only—how to add it?
+        __Access_Method // This is found in R5 only—how to add it?
+        Provided_Resource_ID_in_COUNTER_Usage_Data [
+            label="Provided_Resource_ID"
+            shape="folder"
+        ]
+        __Report_Creation_Date // For harvested R5 reports
+
+        // Verbs: Methods
     }
 
 
@@ -151,13 +183,25 @@ digraph erd_and_classes {
     
     Statistics_Source_ID -> Annual_Usage_Collection_Tracking_Source [
         dir="both"
-        arrowhead="crowodot" // Since sorces don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
         arrowtail="teetee"
     ]
     
     Fiscal_Year_ID -> Annual_Usage_Collection_Tracking_Year [
         dir="both"
         arrowhead="crowodot" // This allows for the possibility that a FY instance cna be created before the collection tracking records that connect to it will; whether or not this will be necessary remains to be seen
+        arrowtail="teetee"
+    ]
+
+    Statistics_Source_ID -> Interface [
+        dir="both"
+        arrowhead="crowodot" // Sources without resources need to exist because 1. A source record is a prerequisite for usage collection 2. Not all sources will have COUNTER resources
+        arrowtail="teetee"
+    ]
+
+    Provided_Resource_ID -> Provided_Resource_ID_in_COUNTER_Usage_Data [
+        dir="both"
+        arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
@@ -255,39 +299,6 @@ digraph erd_and_classes {
         "legacy ILS"
         "price data"
         invoices
-        // Verbs: Methods
-    }
-
-    subgraph cluster_COUNTER_Report_Data {
-        // Nouns: Classes or Attributes
-        __resource_title [
-            shape="record"
-            label="title (R4)|database (DR)|title (TR)|item (IR)"
-        ]
-        __resource publisher
-        "__publisher ID (R5)"
-        platforms [
-            shape="record"
-            label="platforms|user interfaces"
-        ]
-        __DOI
-        "__proprietary ID"
-        __ISBN
-        "__print ISSN"
-        "__online ISSN"
-        "__URI (R5 TR, IR)"
-        "__data type"
-        "__section type (R5 IR)"
-        "__metric type"
-        "__usage date"
-        usage_statistics_count [
-            shape="record"
-            label="usage stats|e-resources usage numbers"
-        ]
-        "__report creation date (for harvested R5)"
-        "__YoP (R5 TR, IR)"
-        "__access type (R5 TR, IR)"
-        "__access method (R5)"
         // Verbs: Methods
     }
 }
