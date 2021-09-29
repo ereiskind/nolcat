@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import pytest
 import pandas as pd
+from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 
 @pytest.fixture
