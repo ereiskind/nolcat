@@ -43,8 +43,10 @@ def sample_R4_dataframe():
 
 
 def test_perform_deduplication_matching(sample_R4_dataframe):
-    #ToDo: Write a docstring when the format of the return value is set
-    pass
+    """Uses the `sample_R4_dataframe` as a single dataframe argument to test the `perform_deduplication_matching` function."""  #ToDo: Write a better docstring when the format of the return value is set
+    R4_test_data = RawCOUNTERReport(sample_R4_dataframe)
+    R4_test_data.perform_deduplication_matching()  #ToDo: Assert this to its return value when that's known
+    assert True
 
 
 def test_harvest_SUSHI_report(sample_R4_dataframe):
