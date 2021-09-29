@@ -1,4 +1,6 @@
 import logging
+import pandas as pd
+import recordlinkage
 
 logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
@@ -45,7 +47,24 @@ class RawCOUNTERReport:
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
+        
 
+        #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
+        resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type']], index=self.report_dataframe.index)
+
+
+        #Section: Set Up Recordlinkage Matching
+        #Subsection: Create Set to Hold All Tuples Representing Matches
+        matched_records = set()  # Contains all the tuples of matched records--a set is used because any matches with the DOI will be found again without the DOI, and using a set keeps those tuples from being added twice
+
+        #Subsection: Create MultiIndex Object
+        indexing = recordlinkage.Index()
+        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time,but the alternative commits to matching on a certain field
+        if normalized_resource_data:
+            candidate_matches = indexing.index(resource_data, normalized_resource_data)  #Alert: Not tested
+            #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
+        else:
+            candidate_matches = indexing.index(resource_data)
     
 
     def harvest_SUSHI_report():
