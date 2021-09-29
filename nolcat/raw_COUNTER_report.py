@@ -56,6 +56,15 @@ class RawCOUNTERReport:
         #Section: Set Up Recordlinkage Matching
         #Subsection: Create Set to Hold All Tuples Representing Matches
         matched_records = set()  # Contains all the tuples of matched records--a set is used because any matches with the DOI will be found again without the DOI, and using a set keeps those tuples from being added twice
+
+        #Subsection: Create MultiIndex Object
+        indexing = recordlinkage.Index()
+        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time,but the alternative commits to matching on a certain field
+        if normalized_resource_data:
+            candidate_matches = indexing.index(resource_data, normalized_resource_data)  #Alert: Not tested
+            #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
+        else:
+            candidate_matches = indexing.index(resource_data)
     
 
     def harvest_SUSHI_report():
