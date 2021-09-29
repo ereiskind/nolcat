@@ -22,6 +22,7 @@ class RawCOUNTERReport:
     """
     # Constructor Method
     def __init__(self, df):
+        #ToDo: Will a more complex constructor for handling reformatted R4 CSVs and R5 SUSHI input be needed?
         self.report_dataframe = df
 
 
@@ -30,18 +31,21 @@ class RawCOUNTERReport:
         return repr(self.report_dataframe.head())
     
 
-    def perform_deduplication_matching(self, normalized_resource_list=None):
+    def perform_deduplication_matching(self, normalized_resource_data=None):
         """Matches the line items in a COUNTER report for the same resource.
 
         This function looks at all the records in the parameter dataframe(s) and creates pairs with the record index values if the records are deemed to be for the same resource based on a variety of criteria. Those pairs referring to matches needing manual confirmation are grouped together and set aside so they can be added to the list of matches or not depending on user response captured via Flask.
 
         Args:
-            normalized_resource_list (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
+            normalized_resource_data (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
         
         Returns:
             [type]: [description]
         """
-        pass
+        logging.info(f"The new COUNTER report:\n{self}")
+        if normalized_resource_data:
+            logging.info(f"The normalized resource list:\n{normalized_resource_data}")
+
     
 
     def harvest_SUSHI_report():
