@@ -1,9 +1,14 @@
 from flask import Flask
 from flask import render_template
 
+def page_not_found(error):
+    return render_template('404.html'), 404
+
+
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
     app = Flask(__name__)
+    app.register_error_handler(404, page_not_found)
 
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
