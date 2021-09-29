@@ -121,6 +121,20 @@ class RawCOUNTERReport:
             logging.info("No matches on DOI and ISSNs")
 
         #Subsection: Create Comparison Based on ISBN
+        logging.info("**Comparing based on ISBN**")
+        comparing_ISBN = recordlinkage.Compare()
+        comparing_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        comparing_ISBN.exact('DOI', 'DOI', missing_value=1, label='DOI')
+        comparing_ISBN.exact('ISBN', 'ISBN', label='ISBN')
+        comparing_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
+        comparing_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
+        comparing_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        if normalized_resource_data:
+            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data)
+        logging.debug(f"ISBN comparison results:\n{comparing_ISBN_table}")
 
         #Subsection: Add Matches Based on ISBN
 
