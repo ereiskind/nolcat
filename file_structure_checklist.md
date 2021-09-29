@@ -30,10 +30,12 @@ This is a temporary file meant to ensure all the necessary files are added to th
         * [ ] `forms.py` containing the WTForms form classes
         * [ ] `views.py` containg the Flask routes
     * [x] `app.py` containing the `create_app()` function
+    * [x] `raw_COUNTER_report.py` containing the RawCOUNTERReport class, which extends the dataframe class with methods for retrieving and loading COUNTER reports
     * [ ] *Classes used in creating functionality*
 * [x] tests
     * [ ] *pytest files*
     * [x] `test_flask.py` for testing the Flask web app
+    * [x] `test_RawCOUNTERReport.py` for testing RawCOUNTERReport methods
     * [x] data
         * [x] `BR1.csv` contains a reformatted R4 with real resources and fake numbers
         * [x] `DB1.csv` contains a reformatted R4 with real resources and fake numbers

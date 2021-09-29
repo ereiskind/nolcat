@@ -162,6 +162,19 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_RawCOUNTERReport {
+        label="CLASS: RawCOUNTERReport"
+
+        // Attributes
+        report_dataframe
+
+        // Methods
+        perform_deduplication_matching [shape="Mrecord"]
+        harvest_SUSHI_report [shape="Mrecord"]
+        load_data_into_database [shape="Mrecord"]
+    }
+
+
     // RELATIONSHIPS
     /*
         Establish relationships from the PK (tail) to the FK (head)
@@ -209,6 +222,13 @@ digraph erd_and_classes {
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
+    ]
+
+    // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
+
+    harvest -> harvest_SUSHI_report [
+        dir="none"
+        style="dotted"
     ]
 
 
