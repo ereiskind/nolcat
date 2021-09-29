@@ -1,4 +1,5 @@
 import logging
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
@@ -45,7 +46,10 @@ class RawCOUNTERReport:
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
+        
 
+        #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
+        resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type']], index=self.report_dataframe.index)
     
 
     def harvest_SUSHI_report():
