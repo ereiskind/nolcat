@@ -12,7 +12,7 @@ This is a temporary file meant to ensure all the necessary files are added to th
         * [ ] `styles.css` containing CSS to be applied to the entire project
     * [x] templates
         * [ ] `layout.html` containing the repeating elements present on each page (header, footer, top-level navigation, ect.)
-        * [ ] `404.html` containing the page to display in response to 404 errors
+        * [x] `404.html` containing the page to display in response to 404 errors
     * [x] ingest
         * [ ] static
             * [ ] *Static attributes used only in "ingest" blueprint*
