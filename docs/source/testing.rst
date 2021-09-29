@@ -5,7 +5,7 @@ Running Tests
 *************
 Tests are designed to run in the root folder with the command ``python -m pytest``.
 
-* Code contains logging statements; to view in the pytest output, add ``--log-cli-level="info"`` (or whatever logging level is appropriate) to the command.
+* Code contains logging statements; to view in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
 
 Test Data
 *********
