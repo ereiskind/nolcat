@@ -42,7 +42,10 @@ class RawCOUNTERReport:
         Returns:
             [type]: [description]
         """
-        pass
+        logging.info(f"The new COUNTER report:\n{self}")
+        if normalized_resource_data:
+            logging.info(f"The normalized resource list:\n{normalized_resource_data}")
+
     
 
     def harvest_SUSHI_report():
