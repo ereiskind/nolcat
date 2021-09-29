@@ -137,6 +137,14 @@ class RawCOUNTERReport:
         logging.debug(f"ISBN comparison results:\n{comparing_ISBN_table}")
 
         #Subsection: Add Matches Based on ISBN
+        ISBN_matches = comparing_ISBN_table[comparing_ISBN_table.sum(axis='columns') == 6].index.tolist()
+        logging.info(f"ISBN matching record pairs: {ISBN_matches}")
+        if ISBN_matches:
+            for match in ISBN_matches:
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on ISBN")
+        else:
+            logging.info("No matches on ISBN")
 
         #Subsection: Create Comparison Based on ISSNs
 
