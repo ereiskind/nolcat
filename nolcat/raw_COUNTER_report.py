@@ -70,6 +70,20 @@ class RawCOUNTERReport:
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
         # recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, so matching on all fields doesn't produce much in the way of results because of the rarity of resources which have both ISSN and ISBN values
         #Subsection: Create Comparison on DOI and ISBN
+        logging.info("**Comparing based on DOI and ISBN**")
+        comparing_DOI_and_ISBN = recordlinkage.Compare()
+        comparing_DOI_and_ISBN.exact('DOI', 'DOI',label='DOI')
+        comparing_DOI_and_ISBN.exact('ISBN', 'ISBN', label='ISBN')
+        comparing_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
+        comparing_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
+        comparing_DOI_and_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
+        if normalized_resource_data:
+            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data)
+        logging.debug(f"DOI and ISBN comparison results:\n{comparing_DOI_and_ISBN_table}")
 
         #Subsection: Add Matches Based on DOI and ISBN
 
