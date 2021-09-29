@@ -15,10 +15,14 @@ def start_R4_data_load():
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
     if request.method == "POST":
-        R4_dataframe = [pd.read_csv(
-            CSV,
-        ) for CSV in request.files.getlist('R4_files')]
-        #ToDo: Consolidate the data into a single dataframe
+        R4_dataframe = pd.concat(
+            [
+                pd.read_csv(
+                    CSV,
+                ) for CSV in request.files.getlist('R4_files')
+            ],
+            ignore_index=True
+        )
         #ToDo: Return data for presenting resource matches that need to be manually confirmed
         return render_template('select-matches.html')
     else:
