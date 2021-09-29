@@ -147,6 +147,20 @@ class RawCOUNTERReport:
             logging.info("No matches on ISBN")
 
         #Subsection: Create Comparison Based on ISSNs
+        logging.info("**Comparing based on ISSNs**")
+        comparing_ISSNs = recordlinkage.Compare()
+        comparing_ISSNs.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        comparing_ISSNs.exact('DOI', 'DOI', missing_value=1, label='DOI')
+        comparing_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
+        comparing_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
+        comparing_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        comparing_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        if normalized_resource_data:
+            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data)
+        logging.debug(f"ISSNs comparison results:\n{comparing_ISSNs_table}")
 
         #Subsection: Add Matches Based on ISSNs
 
