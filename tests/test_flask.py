@@ -31,3 +31,8 @@ def test_flask_activation(flask_client):
     HTML_file.close()
     #ToDo: Determine if this still works if Jinja is used in the HTML file
     assert homepage.status == "200 OK" and homepage.data == HTML_markup
+
+
+def test_404_page(flask_client):
+    """Tests that the unassigned route '/404' goes to the 404 page."""
+    pass
