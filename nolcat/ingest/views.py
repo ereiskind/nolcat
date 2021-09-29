@@ -35,6 +35,8 @@ def determine_if_resources_match():
                         # R4_Count is fine as default int64
                     },
                     parse_dates=['R4_Month'],  # For this to work, the dates need to be ISO-formatted strings (with CSVs, all the values are strings)
+                    encoding='unicode_escape',  # This allows for CSVs with non-ASCII characters
+                    infer_datetime_format=True  # Speeds up the parsing process if the format can be inferred; since all dates will be in the same format, this should be easy to do
                 ) for CSV in request.files.getlist('R4_files')
             ],
             ignore_index=True
