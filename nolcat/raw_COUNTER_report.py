@@ -199,6 +199,20 @@ class RawCOUNTERReport:
             logging.info("No matches on print ISSN")
 
         #Subsection: Create Comparison Based on Online ISSN
+        logging.info("**Comparing based on online ISSN**")
+        comparing_online_ISSN = recordlinkage.Compare()
+        comparing_online_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        comparing_online_ISSN.exact('DOI', 'DOI', missing_value=1, label='DOI')
+        comparing_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
+        comparing_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
+        comparing_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        comparing_online_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        if normalized_resource_data:
+            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data)
+        logging.debug(f"Online ISSN comparison results:\n{comparing_online_ISSN_table}")
 
         #Subsection: Add Matches Based on Online ISSN
     
