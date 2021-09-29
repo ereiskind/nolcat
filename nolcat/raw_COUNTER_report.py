@@ -111,6 +111,14 @@ class RawCOUNTERReport:
         logging.debug(f"DOI and ISSNs comparison results:\n{comparing_DOI_and_ISSNs_table}")
 
         #Subsection: Add Matches Based on DOI and ISSNs
+        DOI_and_ISSNs_matches = comparing_DOI_and_ISSNs_table[comparing_DOI_and_ISSNs_table.sum(axis='columns') == 5].index.tolist()
+        logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
+        if DOI_and_ISSNs_matches:
+            for match in DOI_and_ISSNs_matches:
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on DOI and ISSNs")
+        else:
+            logging.info("No matches on DOI and ISSNs")
 
         #Subsection: Create Comparison Based on ISBN
 
