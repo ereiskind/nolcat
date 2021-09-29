@@ -50,6 +50,11 @@ class RawCOUNTERReport:
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
         resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type']], index=self.report_dataframe.index)
+
+
+        #Section: Set Up Recordlinkage Matching
+        #Subsection: Create Set to Hold All Tuples Representing Matches
+        matched_records = set()  # Contains all the tuples of matched records--a set is used because any matches with the DOI will be found again without the DOI, and using a set keeps those tuples from being added twice
     
 
     def harvest_SUSHI_report():
