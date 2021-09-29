@@ -20,4 +20,10 @@ class RawCOUNTERReport:
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
     """
-    pass
+    # Constructor Method
+    def __init__(self, df):
+        self.report_dataframe = df
+
+    # Representation method--using `{self}` in an f-string results in the below
+    def __repr__(self):
+        return repr(self.report_dataframe.head())
