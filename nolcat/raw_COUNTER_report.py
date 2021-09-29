@@ -54,8 +54,22 @@ class RawCOUNTERReport:
 
 
         #Section: Set Up Recordlinkage Matching
-        #Subsection: Create Set to Hold All Tuples Representing Matches
-        matched_records = set()  # Contains all the tuples of matched records--a set is used because any matches with the DOI will be found again without the DOI, and using a set keeps those tuples from being added twice
+        #Subsection: Create Collections for Holding Matches
+        # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata and computer matching algorithms, however, means a simple list of the record index pairs won't work.
+        matched_records = set()
+            # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
+        matches_to_manually_confirm = dict()
+            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in resource_data and the potential index pairs are created through a Caretesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
+        # {
+        #     (first resource metadata, second resource metadata): [
+        #         (record index pair),
+        #         (record index pair)
+        #     ],
+        #     (first resource metadata, second resource metadata): [
+        #         (record index pair),
+        #         (record index pair)
+        #     ]
+        # }
 
         #Subsection: Create MultiIndex Object
         indexing = recordlinkage.Index()
