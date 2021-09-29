@@ -19,6 +19,22 @@ def determine_if_resources_match():
             [
                 pd.read_csv(
                     CSV,
+                    dtype={
+                        # 'Interface' is fine as default float64
+                        'Resource_Name': 'string',
+                        'Publisher': 'string',
+                        'Platform': 'string',
+                        'DOI': 'string',
+                        'Proprietary_ID': 'string',
+                        'ISBN': 'string',
+                        'Print_ISSN': 'string',
+                        'Online_ISSN': 'string',
+                        'Data_Type': 'string',
+                        'Metric_Type': 'string',
+                        # R4_Month uses parse_dates
+                        # R4_Count is fine as default int64
+                    },
+                    parse_dates=['R4_Month'],  # For this to work, the dates need to be ISO-formatted strings (with CSVs, all the values are strings)
                 ) for CSV in request.files.getlist('R4_files')
             ],
             ignore_index=True
