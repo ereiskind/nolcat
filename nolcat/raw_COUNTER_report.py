@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+import recordlinkage
 
 logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
