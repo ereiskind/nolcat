@@ -8,6 +8,7 @@ def page_not_found(error):
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
     app = Flask(__name__)
+    app.register_error_handler(404, page_not_found)
 
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
