@@ -215,6 +215,14 @@ class RawCOUNTERReport:
         logging.debug(f"Online ISSN comparison results:\n{comparing_online_ISSN_table}")
 
         #Subsection: Add Matches Based on Online ISSN
+        online_ISSN_matches = comparing_online_ISSN_table[comparing_online_ISSN_table.sum(axis='columns') == 6].index.tolist()
+        logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
+        if online_ISSN_matches:
+            for match in online_ISSN_matches:
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on online ISSN")
+        else:
+            logging.info("No matches on online ISSN")
     
 
     def harvest_SUSHI_report():
