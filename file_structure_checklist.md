@@ -41,4 +41,4 @@ This is a temporary file meant to ensure all the necessary files are added to th
 * [x] `.gitignore`
 * [x] `README.rst`
 * [x] `requirements.txt`
-* [ ] `setup.cfg`
+* [x] `setup.cfg`
