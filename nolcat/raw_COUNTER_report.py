@@ -65,6 +65,33 @@ class RawCOUNTERReport:
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
         else:
             candidate_matches = indexing.index(resource_data)
+        
+
+        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
+        # recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, so matching on all fields doesn't produce much in the way of results because of the rarity of resources which have both ISSN and ISBN values
+        #Subsection: Create Comparison on DOI and ISBN
+
+        #Subsection: Add Matches Based on DOI and ISBN
+
+        #Subsection: Create Comparison on DOI and ISSNs
+
+        #Subsection: Add Matches Based on DOI and ISSNs
+
+        #Subsection: Create Comparison Based on ISBN
+
+        #Subsection: Add Matches Based on ISBN
+
+        #Subsection: Create Comparison Based on ISSNs
+
+        #Subsection: Add Matches Based on ISSNs
+
+        #Subsection: Create Comparison Based on Print ISSN
+
+        #Subsection: Add Matches Based on Print ISSN
+
+        #Subsection: Create Comparison Based on Online ISSN
+
+        #Subsection: Add Matches Based on Online ISSN
     
 
     def harvest_SUSHI_report():
