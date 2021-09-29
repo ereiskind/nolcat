@@ -163,6 +163,14 @@ class RawCOUNTERReport:
         logging.debug(f"ISSNs comparison results:\n{comparing_ISSNs_table}")
 
         #Subsection: Add Matches Based on ISSNs
+        ISSNs_matches = comparing_ISSNs_table[comparing_ISSNs_table.sum(axis='columns') == 6].index.tolist()
+        logging.info(f"ISSNs matching record pairs: {ISSNs_matches}")
+        if ISSNs_matches:
+            for match in ISSNs_matches:
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on ISSNs")
+        else:
+            logging.info("No matches on ISSNs")
 
         #Subsection: Create Comparison Based on Print ISSN
 
