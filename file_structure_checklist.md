@@ -30,6 +30,7 @@ This is a temporary file meant to ensure all the necessary files are added to th
         * [ ] `forms.py` containing the WTForms form classes
         * [ ] `views.py` containg the Flask routes
     * [x] `app.py` containing the `create_app()` function
+    * [x] `raw_COUNTER_report.py` containing the RawCOUNTERReport class, which extends the dataframe class with methods for retrieving and loading COUNTER reports
     * [ ] *Classes used in creating functionality*
 * [x] tests
     * [ ] *pytest files*
