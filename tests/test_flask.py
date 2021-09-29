@@ -29,10 +29,14 @@ def test_flask_activation(flask_client):
     HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
     HTML_markup = HTML_file.read().replace(b"\r", b"")  # This removes the carriage return so the HTML file written on Windows matches the line feed-only Flask response
     HTML_file.close()
-    #ToDo: Determine if this still works if Jinja is used in the HTML file
+    #ToDo: HTML_markup shows the Jinja, data attribute shows what's rendered by Jinja--if necessary, find way to resolve
     assert homepage.status == "200 OK" and homepage.data == HTML_markup
 
 
 def test_404_page(flask_client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    pass
+    nonexistant_page = flask_client.get('/404')
+    HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'rb')
+    HTML_markup = HTML_file.read().replace(b"\r", b"")
+    HTML_file.close()
+    assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup
