@@ -1,4 +1,6 @@
 from flask import render_template
+from flask import request
+from flask import abort
 import pandas as pd
 from . import bp
 
@@ -12,7 +14,12 @@ def start_R4_data_load():
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
-    return render_template('select-matches.html')
+    if request.method == "POST":
+        #ToDo: Consolidate the data in request.files.getlist('R4_files') into a single dataframe
+        #ToDo: Return data for presenting resource matches that need to be manually confirmed
+        return render_template('select-matches.html')
+    else:
+        return abort(404)
 
 
 @bp.route('/database-creation-complete')
