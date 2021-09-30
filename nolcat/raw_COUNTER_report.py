@@ -54,8 +54,22 @@ class RawCOUNTERReport:
 
 
         #Section: Set Up Recordlinkage Matching
-        #Subsection: Create Set to Hold All Tuples Representing Matches
-        matched_records = set()  # Contains all the tuples of matched records--a set is used because any matches with the DOI will be found again without the DOI, and using a set keeps those tuples from being added twice
+        #Subsection: Create Collections for Holding Matches
+        # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata and computer matching algorithms, however, means a simple list of the record index pairs won't work.
+        matched_records = set()
+            # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
+        matches_to_manually_confirm = dict()
+            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in resource_data and the potential index pairs are created through a Caretesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
+        # {
+        #     (first resource metadata, second resource metadata): [
+        #         (record index pair),
+        #         (record index pair)
+        #     ],
+        #     (first resource metadata, second resource metadata): [
+        #         (record index pair),
+        #         (record index pair)
+        #     ]
+        # }
 
         #Subsection: Create MultiIndex Object
         indexing = recordlinkage.Index()
@@ -85,7 +99,7 @@ class RawCOUNTERReport:
             comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data)
         logging.debug(f"DOI and ISBN comparison results:\n{comparing_DOI_and_ISBN_table}")
 
-        #Subsection: Add Matches Based on DOI and ISBN
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISBN
         DOI_and_ISBN_matches = comparing_DOI_and_ISBN_table[comparing_DOI_and_ISBN_table.sum(axis='columns') == 5].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
         logging.info(f"DOI and ISBN matching record pairs: {DOI_and_ISBN_matches}")
         if DOI_and_ISBN_matches:
@@ -110,7 +124,7 @@ class RawCOUNTERReport:
             comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data)
         logging.debug(f"DOI and ISSNs comparison results:\n{comparing_DOI_and_ISSNs_table}")
 
-        #Subsection: Add Matches Based on DOI and ISSNs
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISSNs
         DOI_and_ISSNs_matches = comparing_DOI_and_ISSNs_table[comparing_DOI_and_ISSNs_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
         if DOI_and_ISSNs_matches:
@@ -136,7 +150,7 @@ class RawCOUNTERReport:
             comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data)
         logging.debug(f"ISBN comparison results:\n{comparing_ISBN_table}")
 
-        #Subsection: Add Matches Based on ISBN
+        #Subsection: Add Matches to `matched_records` Based on ISBN
         ISBN_matches = comparing_ISBN_table[comparing_ISBN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"ISBN matching record pairs: {ISBN_matches}")
         if ISBN_matches:
@@ -162,7 +176,7 @@ class RawCOUNTERReport:
             comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data)
         logging.debug(f"ISSNs comparison results:\n{comparing_ISSNs_table}")
 
-        #Subsection: Add Matches Based on ISSNs
+        #Subsection: Add Matches to `matched_records` Based on ISSNs
         ISSNs_matches = comparing_ISSNs_table[comparing_ISSNs_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"ISSNs matching record pairs: {ISSNs_matches}")
         if ISSNs_matches:
@@ -188,7 +202,7 @@ class RawCOUNTERReport:
             comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data)
         logging.debug(f"Print ISSN comparison results:\n{comparing_print_ISSN_table}")
 
-        #Subsection: Add Matches Based on Print ISSN
+        #Subsection: Add Matches to `matched_records` Based on Print ISSN
         print_ISSN_matches = comparing_print_ISSN_table[comparing_print_ISSN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"Print ISSN matching record pairs: {print_ISSN_matches}")
         if print_ISSN_matches:
@@ -214,7 +228,7 @@ class RawCOUNTERReport:
             comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data)
         logging.debug(f"Online ISSN comparison results:\n{comparing_online_ISSN_table}")
 
-        #Subsection: Add Matches Based on Online ISSN
+        #Subsection: Add Matches to `matched_records` Based on Online ISSN
         online_ISSN_matches = comparing_online_ISSN_table[comparing_online_ISSN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
         if online_ISSN_matches:
@@ -223,6 +237,50 @@ class RawCOUNTERReport:
                 logging.debug(f"{match} added as a match on online ISSN")
         else:
             logging.info("No matches on online ISSN")
+        
+
+        #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
+        logging.info("**Comparing databases with high name matching threshold**")
+        #Subsection: Create Comparison Based on High String Matching Threshold
+        comparing_database_names = recordlinkage.Compare()
+        comparing_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
+        comparing_database_names.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        if normalized_resource_data:
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data)
+        logging.debug(f"Database names high matching threshold comparison results:\n{comparing_database_names_table}")
+
+        #Subsection: Filter the Comparison Results
+        comparing_database_names_table['index_zero_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Data_Type'])
+        comparing_database_names_table['index_one_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Data_Type'])
+        database_names_matches_table = comparing_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
+            (comparing_database_names_table['Resource_Name'] == 1) &
+            (comparing_database_names_table['Data_Type'] == 1) &
+            (comparing_database_names_table['index_zero_data_type'] == "Database") &
+            (comparing_database_names_table['index_one_data_type'] == "Database")
+        ]
+
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
+        database_names_matches = database_names_matches_table.index.tolist()
+        logging.info(f"Database names high matching threshold record pairs: {database_names_matches}")
+        database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
+        database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+        logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
+
+        for match in database_names_matches:
+            # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
+            if database_names_matches_table.loc[match]['index_zero_name'] != database_names_matches_table.loc[match]['index_one_name']:
+                if len(database_names_matches_table.loc[match]['index_zero_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_name']) >= 35:
+                    matches_to_manually_confirm_key = (database_names_matches_table.loc[match]['index_zero_name'], database_names_matches_table.loc[match]['index_one_name'])
+                    try:
+                        matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                        matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    continue
+            matched_records.add(match)
+            logging.debug(f"{match} added as a match on database names with a high matching threshold")
     
 
     def harvest_SUSHI_report():
