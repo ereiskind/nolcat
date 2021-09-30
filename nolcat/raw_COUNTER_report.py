@@ -43,7 +43,11 @@ class RawCOUNTERReport:
             normalized_resource_data (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
         
         Returns:
-            [type]: [description]
+            tuple: the variables matched_records and matches_to_manually_confirm, described in the note, in a tuple for unpacking through multiple assignment
+        
+        Note:
+            matched_records: a set of tuples containing the record index values of matched records
+            matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
@@ -402,6 +406,13 @@ class RawCOUNTERReport:
             resources_to_manually_confirm_key = (tuple(paired_resource_metadata[:6]), tuple(paired_resource_metadata[6:]))
             matches_to_manually_confirm[resources_to_manually_confirm_key] = record_pair['resource_PK_pairs'].tolist()
             logging.debug(f"{resources_to_manually_confirm_key}: {record_pair['resource_PK_pairs'].tolist()} added to matches_to_manually_confirm")
+        
+
+        #Section: Return Record Index Pair Lists
+        return (
+            matched_records,
+            matches_to_manually_confirm,
+        )
     
 
     def harvest_SUSHI_report():

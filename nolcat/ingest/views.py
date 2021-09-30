@@ -42,8 +42,9 @@ def determine_if_resources_match():
             ],
             ignore_index=True
         )
-        #ToDo: Return data for presenting resource matches that need to be manually confirmed
-        return render_template('select-matches.html')
+        R4_reports = RawCOUNTERReport(R4_dataframe)
+        confirmed_matches, matches_needing_confirmation = R4_reports.perform_deduplication_matching()
+        return render_template('select-matches.html')  #ToDo: Add variables to pass to Jinja, next route function
     else:
         return abort(404)
 
