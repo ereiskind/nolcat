@@ -331,6 +331,13 @@ class RawCOUNTERReport:
             (comparing_names_and_partials_table['token_set_ratio'] >= 80)
         ]
 
+        #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
+        fuzzy_match_record_pairs = []
+        for potential_match in comparing_names_and_partials_matches_table.index.tolist():
+            if potential_match not in matched_records:
+                if potential_match not in list(matches_to_manually_confirm.keys()):
+                    fuzzy_match_record_pairs.append(potential_match)
+
         #Subsection: Collect the Metadata for Matches to be Added to `matches_to_manually_confirm`
 
         #Subsection: Add Matches to `matches_to_manually_confirm` Based on Fuzzy Matching
