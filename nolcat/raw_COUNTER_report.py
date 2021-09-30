@@ -268,6 +268,19 @@ class RawCOUNTERReport:
         database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
         database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
         logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
+
+        for match in database_names_matches:
+            # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
+            if database_names_matches_table.loc[match]['index_zero_name'] != database_names_matches_table.loc[match]['index_one_name']:
+                if len(database_names_matches_table.loc[match]['index_zero_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_name']) >= 35:
+                    matches_to_manually_confirm_key = (database_names_matches_table.loc[match]['index_zero_name'], database_names_matches_table.loc[match]['index_one_name'])
+                    try:
+                        matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                        matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    continue
+            matched_records.add(match)
+            logging.debug(f"{match} added as a match on database names with a high matching threshold")
     
 
     def harvest_SUSHI_report():
