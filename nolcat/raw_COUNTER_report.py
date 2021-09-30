@@ -286,6 +286,24 @@ class RawCOUNTERReport:
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
         logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
         #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers
+        comparing_names_and_partials = recordlinkage.Compare()
+        
+        comparing_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
+        comparing_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
+        comparing_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
+        comparing_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
+        comparing_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
+
+        comparing_names_and_partials.exact('DOI', 'DOI', label='DOI')
+        comparing_names_and_partials.exact('ISBN', 'ISBN', label='ISBN')
+        comparing_names_and_partials.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
+        comparing_names_and_partials.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+
+        if normalized_resource_data:
+            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, resource_data)
+        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
 
