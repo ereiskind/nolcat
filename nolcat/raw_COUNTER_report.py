@@ -253,6 +253,14 @@ class RawCOUNTERReport:
         logging.debug(f"Database names high matching threshold comparison results:\n{comparing_database_names_table}")
 
         #Subsection: Filter the Comparison Results
+        comparing_database_names_table['index_zero_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Data_Type'])
+        comparing_database_names_table['index_one_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Data_Type'])
+        database_names_matches_table = comparing_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
+            (comparing_database_names_table['Resource_Name'] == 1) &
+            (comparing_database_names_table['Data_Type'] == 1) &
+            (comparing_database_names_table['index_zero_data_type'] == "Database") &
+            (comparing_database_names_table['index_one_data_type'] == "Database")
+        ]
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
     
