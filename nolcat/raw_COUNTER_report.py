@@ -402,6 +402,13 @@ class RawCOUNTERReport:
             resources_to_manually_confirm_key = (tuple(paired_resource_metadata[:6]), tuple(paired_resource_metadata[6:]))
             matches_to_manually_confirm[resources_to_manually_confirm_key] = record_pair['resource_PK_pairs'].tolist()
             logging.debug(f"{resources_to_manually_confirm_key}: {record_pair['resource_PK_pairs'].tolist()} added to matches_to_manually_confirm")
+        
+
+        #Section: Return Record Index Pair Lists
+        return (
+            matched_records,
+            matches_to_manually_confirm,
+        )
     
 
     def harvest_SUSHI_report():
