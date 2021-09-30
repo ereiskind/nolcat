@@ -242,6 +242,15 @@ class RawCOUNTERReport:
         #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
         logging.info("**Comparing databases with high name matching threshold**")
         #Subsection: Create Comparison Based on High String Matching Threshold
+        comparing_database_names = recordlinkage.Compare()
+        comparing_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
+        comparing_database_names.exact('Data_Type', 'Data_Type', label='Data_Type')
+
+        if normalized_resource_data:
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+        else:
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data)
+        logging.debug(f"Database names high matching threshold comparison results:\n{comparing_database_names_table}")
 
         #Subsection: Filter the Comparison Results
 
