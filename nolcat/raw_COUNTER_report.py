@@ -263,6 +263,11 @@ class RawCOUNTERReport:
         ]
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
+        database_names_matches = database_names_matches_table.index.tolist()
+        logging.info(f"Database names high matching threshold record pairs: {database_names_matches}")
+        database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
+        database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+        logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
     
 
     def harvest_SUSHI_report():
