@@ -237,6 +237,15 @@ class RawCOUNTERReport:
                 logging.debug(f"{match} added as a match on online ISSN")
         else:
             logging.info("No matches on online ISSN")
+        
+
+        #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
+        logging.info("**Comparing databases with high name matching threshold**")
+        #Subsection: Create Comparison Based on High String Matching Threshold
+
+        #Subsection: Filter the Comparison Results
+
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
     
 
     def harvest_SUSHI_report():
