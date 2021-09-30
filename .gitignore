@@ -131,3 +131,7 @@ dmypy.json
 # VSCode settings
 .vscode/
 .vscode/*
+
+# Scratch work folder
+.scratch/
+.scratch/*
