@@ -339,6 +339,45 @@ class RawCOUNTERReport:
                     fuzzy_match_record_pairs.append(potential_match)
 
         #Subsection: Collect the Metadata for Matches to be Added to `matches_to_manually_confirm`
+        # The metadata is collected in a dataframe so a groupby operation can serve as the Add Matches subsection loop
+        fuzzy_match_fields = [
+            "resource_PK_pairs",
+            "resource_zero_title",
+            "resource_one_title",
+            "resource_zero_DOI",
+            "resource_one_DOI",
+            "resource_zero_ISBN",
+            "resource_one_ISBN",
+            "resource_zero_print_ISSN",
+            "resource_one_print_ISSN",
+            "resource_zero_online_ISSN",
+            "resource_one_online_ISSN",
+            "resource_zero_data_type",
+            "resource_one_data_type",
+        ]
+
+        fuzzy_match_records = []
+        for match in fuzzy_match_record_pairs:
+            fuzzy_match_records.append(list((  # The list constructor takes an iterable, so the values going into the list must be wrapped in a tuple
+                match,
+                resource_data.loc[match[0]]['Resource_Name'],
+                resource_data.loc[match[1]]['Resource_Name'],
+                resource_data.loc[match[0]]['DOI'],
+                resource_data.loc[match[1]]['DOI'],
+                resource_data.loc[match[0]]['ISBN'],
+                resource_data.loc[match[1]]['ISBN'],
+                resource_data.loc[match[0]]['Print_ISSN'],
+                resource_data.loc[match[1]]['Print_ISSN'],
+                resource_data.loc[match[0]]['Online_ISSN'],
+                resource_data.loc[match[1]]['Online_ISSN'],
+                resource_data.loc[match[0]]['Data_Type'],
+                resource_data.loc[match[1]]['Data_Type'],
+            )))
+        fuzzy_match_table = pd.DataFrame(
+            fuzzy_match_records,
+            columns=fuzzy_match_fields,
+        )
+        logging.info(f"The record pairs and metadata for fuzzy matching:\n{fuzzy_match_table}")
 
         #Subsection: Add Matches to `matches_to_manually_confirm` Based on Fuzzy Matching
     
