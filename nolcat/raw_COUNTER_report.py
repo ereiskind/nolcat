@@ -316,6 +316,20 @@ class RawCOUNTERReport:
         logging.debug(f"Fuzzy matching comparison results:\n{comparing_names_and_partials_table}")
 
         #Subsection: Filter the Comparison Results
+        comparing_names_and_partials_matches_table = comparing_names_and_partials_table[
+            (comparing_names_and_partials_table['levenshtein'] > 0) |
+            (comparing_names_and_partials_table['jaro'] > 0) |
+            (comparing_names_and_partials_table['jarowinkler'] > 0) |
+            (comparing_names_and_partials_table['lcs'] > 0) |
+            (comparing_names_and_partials_table['smith_waterman'] > 0) |
+            (comparing_names_and_partials_table['DOI'] == 1) |
+            (comparing_names_and_partials_table['ISBN'] == 1) |
+            (comparing_names_and_partials_table['Print_ISSN'] == 1) |
+            (comparing_names_and_partials_table['Online_ISSN'] == 1) |
+            (comparing_names_and_partials_table['partial_ratio'] >= 75) |
+            (comparing_names_and_partials_table['token_sort_ratio'] >= 70) |
+            (comparing_names_and_partials_table['token_set_ratio'] >= 80)
+        ]
 
         #Subsection: Collect the Metadata for Matches to be Added to `matches_to_manually_confirm`
 
