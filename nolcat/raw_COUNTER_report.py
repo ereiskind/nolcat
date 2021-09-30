@@ -281,6 +281,19 @@ class RawCOUNTERReport:
                     continue
             matched_records.add(match)
             logging.debug(f"{match} added as a match on database names with a high matching threshold")
+        
+
+        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
+        logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
+        #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers
+
+        #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
+
+        #Subsection: Filter the Comparison Results
+
+        #Subsection: Collect the Metadata for Matches to be Added to `matches_to_manually_confirm`
+
+        #Subsection: Add Matches to `matches_to_manually_confirm` Based on Fuzzy Matching
     
 
     def harvest_SUSHI_report():
