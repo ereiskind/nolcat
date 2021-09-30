@@ -307,6 +307,13 @@ class RawCOUNTERReport:
         logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
+        comparing_names_and_partials_table['index_zero_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
+        comparing_names_and_partials_table['index_one_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+
+        comparing_names_and_partials_table['partial_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        comparing_names_and_partials_table['token_sort_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        comparing_names_and_partials_table['token_set_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        logging.debug(f"Fuzzy matching comparison results:\n{comparing_names_and_partials_table}")
 
         #Subsection: Filter the Comparison Results
 
