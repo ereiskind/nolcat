@@ -99,7 +99,7 @@ class RawCOUNTERReport:
             comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data)
         logging.debug(f"DOI and ISBN comparison results:\n{comparing_DOI_and_ISBN_table}")
 
-        #Subsection: Add Matches Based on DOI and ISBN
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISBN
         DOI_and_ISBN_matches = comparing_DOI_and_ISBN_table[comparing_DOI_and_ISBN_table.sum(axis='columns') == 5].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
         logging.info(f"DOI and ISBN matching record pairs: {DOI_and_ISBN_matches}")
         if DOI_and_ISBN_matches:
@@ -124,7 +124,7 @@ class RawCOUNTERReport:
             comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data)
         logging.debug(f"DOI and ISSNs comparison results:\n{comparing_DOI_and_ISSNs_table}")
 
-        #Subsection: Add Matches Based on DOI and ISSNs
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISSNs
         DOI_and_ISSNs_matches = comparing_DOI_and_ISSNs_table[comparing_DOI_and_ISSNs_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
         if DOI_and_ISSNs_matches:
@@ -150,7 +150,7 @@ class RawCOUNTERReport:
             comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data)
         logging.debug(f"ISBN comparison results:\n{comparing_ISBN_table}")
 
-        #Subsection: Add Matches Based on ISBN
+        #Subsection: Add Matches to `matched_records` Based on ISBN
         ISBN_matches = comparing_ISBN_table[comparing_ISBN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"ISBN matching record pairs: {ISBN_matches}")
         if ISBN_matches:
@@ -176,7 +176,7 @@ class RawCOUNTERReport:
             comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data)
         logging.debug(f"ISSNs comparison results:\n{comparing_ISSNs_table}")
 
-        #Subsection: Add Matches Based on ISSNs
+        #Subsection: Add Matches to `matched_records` Based on ISSNs
         ISSNs_matches = comparing_ISSNs_table[comparing_ISSNs_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"ISSNs matching record pairs: {ISSNs_matches}")
         if ISSNs_matches:
@@ -202,7 +202,7 @@ class RawCOUNTERReport:
             comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data)
         logging.debug(f"Print ISSN comparison results:\n{comparing_print_ISSN_table}")
 
-        #Subsection: Add Matches Based on Print ISSN
+        #Subsection: Add Matches to `matched_records` Based on Print ISSN
         print_ISSN_matches = comparing_print_ISSN_table[comparing_print_ISSN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"Print ISSN matching record pairs: {print_ISSN_matches}")
         if print_ISSN_matches:
@@ -228,7 +228,7 @@ class RawCOUNTERReport:
             comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data)
         logging.debug(f"Online ISSN comparison results:\n{comparing_online_ISSN_table}")
 
-        #Subsection: Add Matches Based on Online ISSN
+        #Subsection: Add Matches to `matched_records` Based on Online ISSN
         online_ISSN_matches = comparing_online_ISSN_table[comparing_online_ISSN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
         if online_ISSN_matches:
