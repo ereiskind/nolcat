@@ -380,6 +380,28 @@ class RawCOUNTERReport:
         logging.info(f"The record pairs and metadata for fuzzy matching:\n{fuzzy_match_table}")
 
         #Subsection: Add Matches to `matches_to_manually_confirm` Based on Fuzzy Matching
+        # Since null values aren't equal in tuple equality comparisons, a dataframe groupby operation is used to group records with the same metadata
+        for paired_resource_metadata, record_pair in fuzzy_match_table.groupby([
+            "resource_zero_title",
+            "resource_zero_DOI",
+            "resource_zero_ISBN",
+            "resource_zero_print_ISSN",
+            "resource_zero_online_ISSN",
+            "resource_zero_data_type",
+            "resource_one_title",
+            "resource_one_DOI",
+            "resource_one_ISBN",
+            "resource_one_print_ISSN",
+            "resource_one_online_ISSN",
+            "resource_one_data_type",
+        ], dropna=False):
+            paired_resource_metadata = list(paired_resource_metadata)
+            for i, metadata in enumerate(paired_resource_metadata):  # Changing an index referenced item in `paired_resource_metadata` makes the change independent of the loop 
+                if pd.isnull(metadata):
+                    paired_resource_metadata[i] = None  # This changes null values with numeric data types to None
+            resources_to_manually_confirm_key = (tuple(paired_resource_metadata[:6]), tuple(paired_resource_metadata[6:]))
+            matches_to_manually_confirm[resources_to_manually_confirm_key] = record_pair['resource_PK_pairs'].tolist()
+            logging.debug(f"{resources_to_manually_confirm_key}: {record_pair['resource_PK_pairs'].tolist()} added to matches_to_manually_confirm")
     
 
     def harvest_SUSHI_report():
