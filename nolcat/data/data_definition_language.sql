@@ -5,3 +5,6 @@
 
     The ERD corresponding to this schema can be found in the documentation; those relations with naming conventions not aligned with the above are from the initial planning stage.
 */
+
+CREATE SCHEMA `nolcat`;
+USE `nolcat`;
