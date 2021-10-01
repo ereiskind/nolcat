@@ -17,6 +17,8 @@ The database is designed to be loaded with certain data immediately after instan
 2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)
 3. Upload the CSV
 
+.. At this point, not enough is known about how the invoicing/pricing/PO lines can be pulled from the ILS (Alma) to say if vendor records are needed to group interfaces, and if so, what other data would need to be included
+
 Naming Conventions in the Database and Source Code
 **************************************************
 For clarity, relations and fields have the same names in the database and the source code. To distinguish between the relations and fields of MySQL and the classes and attributes of SQLAlchemy, different stylistic conventions are used.
