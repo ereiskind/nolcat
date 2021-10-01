@@ -17,7 +17,12 @@ The database is designed to be loaded with certain data immediately after instan
 2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)
 3. Upload the CSV
 
-.. At this point, not enough is known about how the invoicing/pricing/PO lines can be pulled from the ILS (Alma) to say if vendor records are needed to group interfaces, and if so, what other data would need to be included
+2. Initialize the `vendors` Relation
+====================================
+1. Create a copy of "initialize_vendors.csv"
+2. In the `Vendor_Name` field, list all the sources which provide resources--publishers, aggregators, free sources, ect.
+3. For all of the above values that have vendor codes in Alma, add those codes to the `Vendor_Code` field
+4. Upload the CSV
 
 Naming Conventions in the Database and Source Code
 **************************************************
