@@ -12,6 +12,12 @@ def initialize_fiscalYears():
     pass
 
 
+#ToDo: Come to this route after uploading CSV to initialize_fiscalYears
+def initialize_vendors():
+    #ToDo: Display `the_database.rst` step two instructions with the ability to download `initialize_vendors.csv` and a form for uploading that CSV per the instructions, at which point the CSV is loaded directly into the database and the user is moved on to the next page
+    pass
+
+
 @bp.route('/initialize-database')
 def start_R4_data_load():
     """Returns the page where the CSVs with R4 data are selected."""

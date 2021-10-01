@@ -21,7 +21,7 @@ The database is designed to be loaded with certain data immediately after instan
 ====================================
 1. Create a copy of "initialize_vendors.csv"
 2. In the `Vendor_Name` field, list all the sources which provide resources--publishers, aggregators, free sources, ect.
-3. For all of the above values that have vendor codes in Alma, add those codes to the `Vendor_Code` field
+3. For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field
 4. Upload the CSV
 
 Naming Conventions in the Database and Source Code
