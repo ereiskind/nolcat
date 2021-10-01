@@ -48,3 +48,44 @@ class FiscalYears(Base):
 
     def calculate_ARL_20():
         pass
+
+
+class Vendors(Base):
+    """A relation representing resource providers."""
+    __tablename__ = 'vendors'
+    __table_args__ = {'schema': 'nolcat'}
+
+    vendor_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    vendor_name = Column()  #ToDo: VARCHAR(80) NOT NULL
+    alma_vendor_code = Column()  #ToDo: VARCHAR(10)
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    def get_SUSHI_credentials_from_Alma():
+        pass
+
+
+    def get_SUSHI_credentials_from_JSON():
+        pass
+
+
+class VendorNotes(Base):
+    """A relation containing notes about vendors."""
+    #
+
+    vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    note = Column()  #ToDo: TEXT
+    written_by = Column()  #ToDo: VARCHAR(100)
+    date_written = Column()  #ToDo: TIMESTAMP
+    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT
+
+    vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
