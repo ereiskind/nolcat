@@ -6,7 +6,7 @@
     The ERD corresponding to this schema can be found in the documentation; those relations with naming conventions not aligned with the above are from the initial planning stage.
 */
 
-CREATE SCHEMA `nolcat`;
+CREATE SCHEMA `nolcat`; -- If this changes, change in all "models.py" files
 USE `nolcat`;
 
 
