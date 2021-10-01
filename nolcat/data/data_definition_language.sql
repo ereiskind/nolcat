@@ -22,3 +22,23 @@ CREATE TABLE fiscalYears (
     ARL_20 SMALLINT,
     Notes_on_Corrections_After_Submission TEXT
 );
+
+
+CREATE TABLE vendors (
+    Vendor_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Vendor_Name VARCHAR(80) NOT NULL,
+    Alma_Vendor_Code VARCHAR(10)
+);
+
+CREATE TABLE vendorNotes (
+    Vendor_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Note TEXT,
+    Written_By VARCHAR(100),
+    Date_Written TIMESTAMP,
+    Vendor_ID INT,
+    INDEX vendor_INDX (vendor),
+    CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendor_INDX (vendor)
+        REFERENCES vendors(VendorID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);

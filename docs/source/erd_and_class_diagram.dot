@@ -162,6 +162,37 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_vendors {
+        label="vendors"
+
+        //Attributes
+        Vendor_ID
+        Vendor_Name
+        Alma_Vendor_Code
+
+        //Methods
+        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
+        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_vendorNotes {
+        label="vendorNotes"
+
+        //Attributes
+        Vendor_Notes_ID
+        Note
+        Written_By
+        Date_Written
+        Vendor_ID_in_vendorNotes [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
     subgraph cluster_RawCOUNTERReport {
         label="CLASS: RawCOUNTERReport"
 
@@ -221,6 +252,12 @@ digraph erd_and_classes {
     Provided_Resource_ID -> Provided_Resource_ID_in_COUNTER_Usage_Data [
         dir="both"
         arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_vendorNotes [
+        dir="both"
+        arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
@@ -315,7 +352,6 @@ digraph erd_and_classes {
 
     subgraph cluster_Acquisitions_Terms {
         // Nouns: Classes or Attributes
-        vendors
         "order numbers"
         "current ILS"
         "legacy ILS"
