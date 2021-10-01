@@ -1,0 +1,1 @@
+"""These classes represent all the relations used only in the `ingest` blueprint."""

@@ -1,0 +1,1 @@
+"""These classes represent the relations used in multiple blueprints."""
