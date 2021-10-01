@@ -135,8 +135,8 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Fiscal_Year {
-        label="Fiscal_Year"
+    subgraph cluster_fiscalYears {
+        label="fiscalYears"
 
         // Attributes
         Fiscal_Year_ID [shape="note"]
@@ -154,11 +154,11 @@ digraph erd_and_classes {
 
         // Methods
         // Should each number have its own method, or should all of them be calculated at the same time?
-        Calculate_ACRL_60b
-        Calculate_ACRL_63
-        Calculate_ARL_18
-        Calculate_ARL_19
-        Calculate_ARL_20
+        Calculate_ACRL_60b [shape="Mrecord"]
+        Calculate_ACRL_63 [shape="Mrecord"]
+        Calculate_ARL_18 [shape="Mrecord"]
+        Calculate_ARL_19 [shape="Mrecord"]
+        Calculate_ARL_20 [shape="Mrecord"]
     }
 
 
