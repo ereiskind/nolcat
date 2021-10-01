@@ -11,6 +11,12 @@ Creating the Database
 
 The database is designed to be loaded with certain data immediately after instantiation.
 
+1. Initialize the Fiscal_Year Relation with Historical Years
+============================================================
+1. Create a copy of "initialize_fiscalYear.csv"
+2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)
+3. Upload the CSV
+
 Naming Conventions in the Database and Source Code
 **************************************************
 For clarity, relations and fields have the same names in the database and the source code. To distinguish between the relations and fields of MySQL and the classes and attributes of SQLAlchemy, different stylistic conventions are used.
