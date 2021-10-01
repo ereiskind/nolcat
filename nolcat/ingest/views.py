@@ -6,6 +6,12 @@ from . import bp
 from nolcat.raw_COUNTER_report import *
 
 
+#ToDo: After creating the first account with ingest permissions, go to whatever route goes here
+def initialize_fiscalYears():
+    #ToDo: Display `the_database.rst` step one instructions with the ability to download `initialize_fiscalYears.csv` and a form for uploading that CSV per the instructions, at which point the CSV is loaded directly into the database and the user is moved on to the next page
+    pass
+
+
 @bp.route('/initialize-database')
 def start_R4_data_load():
     """Returns the page where the CSVs with R4 data are selected."""
