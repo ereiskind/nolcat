@@ -49,6 +49,7 @@ CREATE TABLE statisticsSources (
     Statiatics_Source_Name VARCHAR(100) NOT NULL,
     Statistics_Source_Retrieval_Code VARCHAR(30),
     Current_Access BOOLEAN NOT NULL,
+    Access_Stop_Date TIMESTAMP,
     Vendor_ID INT NOT NULL,
     INDEX vendor_INDX (vendor),
     CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendor_INDX (vendor)

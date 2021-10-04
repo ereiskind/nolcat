@@ -101,6 +101,7 @@ class StatisticsSources(Base):
     statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
     statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
     current_access = Column()  #ToDo: BOOLEAN NOT NULL
+    access_stop_date = Column()  #ToDo: TIMESTAMP
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
@@ -119,4 +120,14 @@ class StatisticsSources(Base):
     def harvest_R5_SUSHI():
         #ToDo: For given start date and end date, harvests all available reports at greatest level of detail
         #ToDo: Should there be an option to start by removing all usage from that source for the given time period
+        pass
+
+
+    def add_access_stop_date():
+        #ToDo: Put value in access_stop_date when current_access goes from True to False
+        pass
+
+
+    def remove_access_stop_date():
+        #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass

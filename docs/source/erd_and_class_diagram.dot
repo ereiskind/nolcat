@@ -106,6 +106,7 @@ digraph erd_and_classes {
         Statiatics_Source_Name
         Statistics_Source_Retrieval_Code
         Current_Access
+        Access_Stop_Date
         Vendor_ID_in_statisticsSources [
             label="Vendor_ID"
             shape="folder"
@@ -114,6 +115,8 @@ digraph erd_and_classes {
         // Methods
         show_SUSHI_credentials [shape="Mrecord"]
         harvest_R5_SUSHI [shape="Mrecord"]
+        add_access_stop_date [shape="Mrecord"]
+        remove_access_stop_date [shape="Mrecord"]
     }
 
 
