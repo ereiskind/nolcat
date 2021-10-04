@@ -90,3 +90,33 @@ class VendorNotes(Base):
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+class StatisticsSources(Base):
+    """A relation containing information about sources of usage statistics."""
+    __tablename__ = 'statisticsSources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    statistics_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
+    statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
+    current_access = Column()  #ToDo: BOOLEAN NOT NULL
+    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+
+    vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    def show_SUSHI_credentials():
+        #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
+        pass
+
+
+    def harvest_R5_SUSHI():
+        #ToDo: For given start date and end date, harvests all available reports at greatest level of detail
+        #ToDo: Should there be an option to start by removing all usage from that source for the given time period
+        pass
