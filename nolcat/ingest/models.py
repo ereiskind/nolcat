@@ -82,7 +82,7 @@ class VendorNotes(Base):
     note = Column()  #ToDo: TEXT
     written_by = Column()  #ToDo: VARCHAR(100)
     date_written = Column()  #ToDo: TIMESTAMP
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT
+    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 

@@ -35,7 +35,7 @@ CREATE TABLE vendorNotes (
     Note TEXT,
     Written_By VARCHAR(100),
     Date_Written TIMESTAMP,
-    Vendor_ID INT,
+    Vendor_ID INT NOT NULL,
     INDEX vendor_INDX (vendor),
     CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendor_INDX (vendor)
         REFERENCES vendors(VendorID)
