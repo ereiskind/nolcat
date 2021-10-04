@@ -11,18 +11,28 @@ Creating the Database
 
 The database is designed to be loaded with certain data immediately after instantiation.
 
-1. Initialize the `fiscalYears` Relation with Historical Years
-==============================================================
+1. Create the `fiscalYears` Relation with Historical Years
+==========================================================
 1. Create a copy of "initialize_fiscalYear.csv"
 2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)
-3. Upload the CSV
+3. Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Fiscal_Year_ID` field
 
-2. Initialize the `vendors` Relation
-====================================
+2. Create the `vendors` Relation
+================================
 1. Create a copy of "initialize_vendors.csv"
 2. In the `Vendor_Name` field, list all the sources which provide resources--publishers, aggregators, free sources, ect.
 3. For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field
-4. Upload the CSV
+4. Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Vendor_ID` field
+
+?. Initialize the Relations via CSV Upload
+==========================================
+1. <perform vlookups to get foreign keys>
+2. <save FK vlookup results as values>
+3. Delete the following columns:
+
+   * <columns with the data referenced to create FK/represented by FK in RBDMS>
+
+4. Upload <CSVs with relation data>
 
 Naming Conventions in the Database and Source Code
 **************************************************
