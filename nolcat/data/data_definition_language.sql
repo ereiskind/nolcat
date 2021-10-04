@@ -42,3 +42,17 @@ CREATE TABLE vendorNotes (
         ON UPDATE restrict
         ON DELETE restrict
 );
+
+
+CREATE TABLE statisticsSources (
+    Statistics_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Statiatics_Source_Name VARCHAR(100) NOT NULL,
+    Statistics_Source_Retrieval_Code VARCHAR(30),
+    Current_Access BOOLEAN NOT NULL,
+    Vendor_ID INT NOT NULL,
+    INDEX vendor_INDX (vendor),
+    CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendor_INDX (vendor)
+        REFERENCES vendors(VendorID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);

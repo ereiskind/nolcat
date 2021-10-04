@@ -98,20 +98,22 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Statistics_Sources {
-        label="Statistics_Sources"
+    subgraph cluster_statisticsSources {
+        label="statisticsSources"
 
         // Attributes
         Statistics_Source_ID [shape="note"]
-        __SUSHI_Requestor_ID
-        __SUSHI_Customer_ID
-        __SUSHI_API_Key
-        __SUSHI_Interface_URL
-        //__SUSHI_Platform (another parameter?)
-        // Add info needed to get SUSHI creds through Alma API here
+        Statiatics_Source_Name
+        Statistics_Source_Retrieval_Code
+        Current_Access
+        Vendor_ID_in_statisticsSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
 
         // Methods
-        // Since harvesting is usually done for a particular FY, its method is part of the annual tracking class--should a special harvest which allows setting a date range and which has an option to start by removing all usage from that source for the given time period be included here?
+        show_SUSHI_credentials [shape="Mrecord"]
+        harvest_R5_SUSHI [shape="Mrecord"]
     }
 
 
@@ -258,6 +260,12 @@ digraph erd_and_classes {
     Vendor_ID -> Vendor_ID_in_vendorNotes [
         dir="both"
         arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_statisticsSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
         arrowtail="teetee"
     ]
 
