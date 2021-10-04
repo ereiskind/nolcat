@@ -75,7 +75,8 @@ class Vendors(Base):
 
 class VendorNotes(Base):
     """A relation containing notes about vendors."""
-    #
+    __tablename__ = 'vendorNotes'
+    __table_args__ = {'schema': 'nolcat'}
 
     vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     note = Column()  #ToDo: TEXT
