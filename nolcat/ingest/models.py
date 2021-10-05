@@ -50,6 +50,11 @@ class FiscalYears(Base):
         pass
 
 
+    def create_usage_tracking_records_for_fiscal_year():
+        #ToDo: For every stats source that doesn't have deactivation date earlier than FY start date, create a record in annual usage collection tracking relation with this FY and the stats source as the composite key
+        pass
+
+
 class Vendors(Base):
     """A relation representing resource providers."""
     __tablename__ = 'vendors'
