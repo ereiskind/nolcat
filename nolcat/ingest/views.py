@@ -18,7 +18,7 @@ def save_historical_collection_tracking_info():
     #ToDo: Load "initialize_vendors.csv" into titular relation
     #ToDo: Load "initialize_statisticsSources.csv" into titular relation
     #ToDo: SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears; (this is an intentional cartesian product)
-    #ToDo: Create downloadable CSV with results of above as first four columns and the following field names in the rest of the first row
+    #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
         # Usage_Is_Being_Collected
         # Manual_Collection_Required
         # Collection_Via_Email
@@ -26,9 +26,8 @@ def save_historical_collection_tracking_info():
         # Collection_Status
         # Usage_File_Path
         # Notes
-    #ToDo: Provide "initialize_annualUsageCollectionTracking.csv" for download; the records are a cartesian product of the records in statisticsSources and fiscalYears and the first four fields are statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year
-    #ToDo: Include form that accepts the above form when filled out as an upload and redirects to page for uploading non-COUNTER files
-    pass
+    render_template('historical-collection-tracking.html')
+
 
 @bp.route('/historical-non-COUNTER-data')
 def upload_historical_non_COUNTER_usage():
