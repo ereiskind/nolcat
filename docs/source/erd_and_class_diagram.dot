@@ -186,11 +186,28 @@ digraph erd_and_classes {
 
         //Attributes
         Vendor_Notes_ID
-        Note
-        Written_By
-        Date_Written
+        Note_in_vendorNotes [label="Note"]
+        Written_By_in_vendorNotes [label="Written_By"]
+        Date_Written_in_vendorNotes [label="Date_Written"]
         Vendor_ID_in_vendorNotes [
             label="Vendor_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_statisticsSourceNotes {
+        label="statisticsSourceNotes"
+
+        //Attributes
+        Statistics_Source_Notes_ID
+        Note_in_statisticsSourceNotes [label="Note"]
+        Written_By_in_statisticsSourceNotes [label="Written_By"]
+        Date_Written_in_statisticsSourceNotes [label="Date_Written"]
+        Statistics_Source_ID_in_statisticsSourceNotes [
+            label="Statistics_Source_ID"
             shape="folder"
         ]
 
@@ -269,6 +286,12 @@ digraph erd_and_classes {
     Vendor_ID -> Vendor_ID_in_statisticsSources [
         dir="both"
         arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
+        dir="both"
+        arrowhead="crowodot"
         arrowtail="teetee"
     ]
 

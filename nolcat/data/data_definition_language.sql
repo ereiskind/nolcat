@@ -57,3 +57,16 @@ CREATE TABLE statisticsSources (
         ON UPDATE restrict
         ON DELETE restrict
 );
+
+CREATE TABLE statisticsSourceNotes (
+    Statistics_Source_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Note TEXT,
+    Written_By VARCHAR(100),
+    Date_Written TIMESTAMP,
+    Statistics_Source_ID INT NOT NULL,
+    INDEX statisticsSource_INDX (statisticsSource),
+    CONSTRAINT statisticsSource_FK_statisticsSourceNotes FOREIGN KEY statisticsSource_INDX (statisticsSource)
+        REFERENCES statisticsSource(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
