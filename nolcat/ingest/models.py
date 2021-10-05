@@ -131,3 +131,47 @@ class StatisticsSources(Base):
     def remove_access_stop_date():
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
+
+
+class AnnualUsageCollectionTracking():
+    """A relation for tracking the usage statistics collection process. """
+    __tablename__ = 'annualUsageCollectionTracking'
+    __table_args__ = {'schema': 'nolcat'}
+
+    auct_statistics_source = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    auct_fiscal_year = Column(ForeignKey('nolcat.FiscalYears.fiscal_year_id'))  #ToDo: INT NOT NULL
+    usage_is_being_collected = Column()  #ToDo: BOOLEAN NOT NULL
+    manual_collection_required = Column()  #ToDo: BOOLEAN
+    collection_via_email = Column()  #ToDo: BOOLEAN
+    is_counter_compliant = Column()  #ToDo: BOOLEAN
+    collection_status = Column()  #ToDo: ENUM(
+        #'N/A: Paid by Law',
+        #'N/A: Paid by Med',
+        #'N/A: Paid by Music',
+        #'N/A: Open access',
+        #'N/A: Other (see notes)',
+        #'Collection not started',
+        #'Collection in process (see notes)',
+        #'Collection issues requiring resolution',
+        #'Collection complete',
+        #'Usage not provided',
+        #'No usage to report'
+    usage_file_path = Column()  #ToDo: VARCHAR(150)
+    notes = Column()  #ToDo: TEXT
+
+    statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
+    fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    def collect_usage_via_SUSHI():
+        #ToDo: Run StatisticsSources.harvest_R5_SUSHI() for the source using the FY start and end dates for the request timeframe
+        pass
+
+
+    def upload_nonstandard_usage_file():
+        pass
