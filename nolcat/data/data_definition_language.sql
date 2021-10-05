@@ -38,7 +38,7 @@ CREATE TABLE vendorNotes (
     Vendor_ID INT NOT NULL,
     INDEX vendor_INDX (vendor),
     CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendor_INDX (vendor)
-        REFERENCES vendors(VendorID)
+        REFERENCES vendors(Vendor_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );
@@ -53,7 +53,7 @@ CREATE TABLE statisticsSources (
     Vendor_ID INT NOT NULL,
     INDEX vendor_INDX (vendor),
     CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendor_INDX (vendor)
-        REFERENCES vendors(VendorID)
+        REFERENCES vendors(Vendor_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );
