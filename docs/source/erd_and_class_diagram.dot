@@ -120,23 +120,23 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Annual_Usage_Collection_Tracking {
-        label="Annual_Usage_Collection_Tracking"
+    subgraph cluster_annualUsageCollectionTracking {
+        label="annualUsageCollectionTracking"
 
         // Attributes
-        Annual_Usage_Collection_Tracking_Year [shape="component"]
-        Annual_Usage_Collection_Tracking_Source [shape="component"]
-        __Is_COUNTER_Compliant // Because this can change from year to year
-        __Is_R5_SUSHI_Compliant // Because this can change from year to year
-        __Collection_Completed // Not a Boolean--need an "in process" option
-        __Requires_Manual_Collection
-        __Has_Usage_Portal
-        __Notes__Annual_Usage_Collection_Tracking
+        AUCT_Fiscal_Year [shape="component"]
+        AUCT_Statistics_Source [shape="component"]
+        Usage_Is_Being_Collected
+        __Manual_Collection_Required
+        __Collection_Via_Email
+        __Is_COUNTER_Compliant
+        __Collection_Status
+        __Usage_File_Path
+        Notes
 
         // Methods
-        harvest
-        __create // Meaning create all the records for tracking the collection of a particular FY's usage after the FY finishes
-        note // In user stories as "add notes" and "record"
+        collect_usage_via_SUSHI [shape="Mrecord"]
+        upload_nonstandard_usage_file [shape="Mrecord"]
     }
 
 
@@ -253,15 +253,15 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
     
-    Statistics_Source_ID -> Annual_Usage_Collection_Tracking_Source [
+    Statistics_Source_ID -> AUCT_Statistics_Source [
         dir="both"
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
         arrowtail="teetee"
     ]
     
-    Fiscal_Year_ID -> Annual_Usage_Collection_Tracking_Year [
+    Fiscal_Year_ID -> AUCT_Fiscal_Year [
         dir="both"
-        arrowhead="crowodot" // This allows for the possibility that a FY instance cna be created before the collection tracking records that connect to it will; whether or not this will be necessary remains to be seen
+        arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
@@ -297,7 +297,7 @@ digraph erd_and_classes {
 
     // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
 
-    harvest -> harvest_SUSHI_report [
+    collect_usage_via_SUSHI -> harvest_SUSHI_report [
         dir="none"
         style="dotted"
     ]
