@@ -36,8 +36,8 @@ CREATE TABLE vendorNotes (
     Written_By VARCHAR(100),
     Date_Written TIMESTAMP,
     Vendor_ID INT NOT NULL,
-    INDEX vendor_INDX (vendor),
-    CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendor_INDX (vendor)
+    INDEX vendors_FK_INDX (Vendor_ID),
+    CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendors_FK_INDX (Vendor_ID)
         REFERENCES vendors(Vendor_ID)
         ON UPDATE restrict
         ON DELETE restrict
@@ -51,8 +51,8 @@ CREATE TABLE statisticsSources (
     Current_Access BOOLEAN NOT NULL,
     Access_Stop_Date TIMESTAMP,
     Vendor_ID INT NOT NULL,
-    INDEX vendor_INDX (vendor),
-    CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendor_INDX (vendor)
+    INDEX vendors_FK_INDX (Vendor_ID),
+    CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
         REFERENCES vendors(Vendor_ID)
         ON UPDATE restrict
         ON DELETE restrict
@@ -64,9 +64,9 @@ CREATE TABLE statisticsSourceNotes (
     Written_By VARCHAR(100),
     Date_Written TIMESTAMP,
     Statistics_Source_ID INT NOT NULL,
-    INDEX statisticsSource_INDX (statisticsSource),
-    CONSTRAINT statisticsSource_FK_statisticsSourceNotes FOREIGN KEY statisticsSource_INDX (statisticsSource)
-        REFERENCES statisticsSource(Statistics_Source_ID)
+    INDEX statisticsSources_FK_INDX (Statistics_Source_ID),
+    CONSTRAINT statisticsSources_FK_statisticsSourceNotes FOREIGN KEY statisticsSources_FK_INDX (Statistics_Source_ID)
+        REFERENCES statisticsSources(Statistics_Source_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );
