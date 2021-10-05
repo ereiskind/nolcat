@@ -308,7 +308,7 @@ digraph erd_and_classes {
 
     // Nouns: Classes or Attributes
     resources
-    non_COUNTER usage stats
+    "non_COUNTER usage stats"
     notes [
         shape="record"
         label="notes|thoughts"
