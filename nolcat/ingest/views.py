@@ -8,9 +8,21 @@ from nolcat.raw_COUNTER_report import *
 
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
-def database_data_load_instructions():
-    #ToDo: Goes to page displaying instructions from `the_database.rst` along with the ability to download the referenced CSVs
-    #ToDo: At the bottom of the page, provides a place to upload all the CSVs
+def initialize_initial_relations():
+    #ToDo: Goes to page displaying instructions from `the_database.rst` from step one to step four, substep one (aka uploading the CSVs)
+    #ToDo: Template rendered includes a form that accepts three CSVs and moves the user to save_historical_collection_tracking_info
+    pass
+
+
+@bp.route('/initialize-collection-tracking')
+def save_historical_collection_tracking_info():
+    #ToDo: Provide "initialize_annualUsageCollectionTracking.csv" for download; the records are a cartesian product of the records in statisticsSources and fiscalYears and the first four fields are statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year
+    #ToDo: Include form that accepts the above form when filled out as an upload and redirects to page for uploading non-COUNTER files
+    pass
+
+@bp.route('/historical-non-COUNTER-data')
+def upload_historical_non_COUNTER_usage():
+    #ToDo: For all annual usage collection tracking records containing a record that the uploaded CSV said had a data file with the usage, supply a way to save that file
     pass
 
 
