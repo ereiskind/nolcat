@@ -174,7 +174,7 @@ class AnnualUsageCollectionTracking():
 
 
     def collect_usage_via_SUSHI():
-        #ToDo: Run StatisticsSources.harvest_R5_SUSHI() for the source using the FY start and end dates for the request timeframe
+        #ToDo: Run StatisticsSources.harvest_R5_SUSHI() for the source using the FY start and end dates for the request timeframe; if successful, should change `collection_status` to "Collection complete"
         pass
 
 
