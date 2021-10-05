@@ -9,9 +9,7 @@ from nolcat.raw_COUNTER_report import *
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
-    #ToDo: Goes to page displaying instructions from `the_database.rst` from step one to step four, substep one (aka uploading the CSVs)
-    #ToDo: Template rendered includes a form that accepts three CSVs and moves the user to save_historical_collection_tracking_info
-    pass
+    render_template('start-database-initialization.html')
 
 
 @bp.route('/initialize-collection-tracking')
