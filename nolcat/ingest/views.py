@@ -17,7 +17,7 @@ def save_historical_collection_tracking_info():
     #ToDo: Load "initialize_fiscalYears.csv" into titular relation
     #ToDo: Load "initialize_vendors.csv" into titular relation
     #ToDo: Load "initialize_statisticsSources.csv" into titular relation
-    #ToDo: SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears; (this is an intentional cartesian product)
+    #ToDo: `SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;` (this is an intentional cartesian product)
     #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
         # Usage_Is_Being_Collected
         # Manual_Collection_Required
