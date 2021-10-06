@@ -45,13 +45,18 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
    * For statistics sources/interfaces not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`
    * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`
-   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then use the supplied JSONs in OpenRefine to transform the R4 reports for uploading and save the results as CSVs
+   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then use the supplied JSONs in OpenRefine to transform the R4 reports for uploading and save the results as CSVs after adding the `Statistics_Source` foreign key value
    * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
 
 4. Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields
 5. Upload the CSV
 6. On the next web app page, for all pages where a file with usage is being saved, upload the file/add the path to the file
+
+5. Upload and Dedupe Historical R4 Usage
+========================================
+1. In the file selector on the next web app page, select all the transformed R4 CSVs
+2. On the next web app page, <this is the page for confirming matches--write instructions from this point on when pages and forms are established>
 
 Naming Conventions in the Database and Source Code
 **************************************************
