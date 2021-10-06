@@ -35,7 +35,11 @@ def upload_historical_non_COUNTER_usage():
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
     #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
     #ToDo: Create an iterable to pass all the records returned by the above to a form
-    #ToDo: For all annual usage collection tracking records containing a record that the uploaded CSV said had a data file with the usage, supply a way to save that file
+    render_template('upload-historical-non-COUNTER-data.html')
+
+
+@bp.route('/historical-COUNTER-data')
+def upload_historical_COUNTER_usage():
     pass
 
 
