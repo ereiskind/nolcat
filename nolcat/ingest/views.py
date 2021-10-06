@@ -9,20 +9,37 @@ from nolcat.raw_COUNTER_report import *
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
-    #ToDo: Goes to page displaying instructions from `the_database.rst` from step one to step four, substep one (aka uploading the CSVs)
-    #ToDo: Template rendered includes a form that accepts three CSVs and moves the user to save_historical_collection_tracking_info
-    pass
+    render_template('start-database-initialization.html')
 
 
 @bp.route('/initialize-collection-tracking')
 def save_historical_collection_tracking_info():
-    #ToDo: Provide "initialize_annualUsageCollectionTracking.csv" for download; the records are a cartesian product of the records in statisticsSources and fiscalYears and the first four fields are statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year
-    #ToDo: Include form that accepts the above form when filled out as an upload and redirects to page for uploading non-COUNTER files
-    pass
+    #ToDo: Load "initialize_fiscalYears.csv" into titular relation
+    #ToDo: Load "initialize_vendors.csv" into titular relation
+    #ToDo: Load "initialize_statisticsSources.csv" into titular relation
+    #ToDo: `SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;` (this is an intentional cartesian product)
+    #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
+        # Usage_Is_Being_Collected
+        # Manual_Collection_Required
+        # Collection_Via_Email
+        # Is_COUNTER_Compliant
+        # Collection_Status
+        # Usage_File_Path
+        # Notes
+    render_template('historical-collection-tracking.html')
+
 
 @bp.route('/historical-non-COUNTER-data')
 def upload_historical_non_COUNTER_usage():
-    #ToDo: For all annual usage collection tracking records containing a record that the uploaded CSV said had a data file with the usage, supply a way to save that file
+    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
+    #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
+    #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
+    #ToDo: Create an iterable to pass all the records returned by the above to a form
+    render_template('upload-historical-non-COUNTER-data.html')
+
+
+@bp.route('/historical-COUNTER-data')
+def upload_historical_COUNTER_usage():
     pass
 
 
