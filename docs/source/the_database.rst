@@ -71,3 +71,25 @@ For clarity, relations and fields have the same names in the database and the so
 * MySQL field names are written in Titlecase_with_Underscores; SQLAlchemy attribute names are written in lowercase_with_underscores.
 
 The above styling is used in both the code and the documentation.
+
+Metric Types in R4 and R5
+*************************
+COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generations of the standard shouldn't be directly compared; all COUNTER data, however, is stored in the same relation. Usage from the two generations is separated by the  different metric types used.
+
+R4 Metric Types
+===============
+
+R5 Metric Types
+===============
+* Searches_Regular
+* Searches_Automated
+* Searches_Federated
+* Searches_Platform
+* Total_Item_investigations
+* Unique_Item_Investigations
+* Unique_Title_Investigations
+* Total_Item_Requests
+* Unique_Item_Requests
+* Unique_Title_Requests
+* No_License
+* Limit_Exceeded
