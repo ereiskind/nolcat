@@ -15,3 +15,4 @@ For the purposes of the OpenRefine exports, the Statistics_Source_ID values as a
 * EBSCO = 1
 * ProQuest = 2
 * Gale = 3
+* iG Publishing/BEP = 4 (BR5 only)
