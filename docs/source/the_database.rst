@@ -83,6 +83,8 @@ R4 Metric Types
 ===============
 * Successful Title Requests (BR1)
 * Successful Section Requests (BR2)
+* Access denied: concurrent/simultaneous user license limit exceeded (BR3)
+* Access denied: content item not licensed (BR3)
 
 R5 Metric Types
 ===============
