@@ -10,3 +10,8 @@ Tests are designed to run in the root folder with the command ``python -m pytest
 Test Data
 *********
 All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual R4 COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+For the purposes of the OpenRefine exports, the Statistics_Source_ID values as as follows
+* EBSCO = 1
+* ProQuest = 2
+* Gale = 3
