@@ -85,6 +85,10 @@ R4 Metric Types
 * Successful Section Requests (BR2)
 * Access denied: concurrent/simultaneous user license limit exceeded (BR3)
 * Access denied: content item not licensed (BR3)
+* Regular Searches (DB1)
+* Searches-federated and automated (DB1)
+* Result Clicks (DB1)
+* Record Views (DB1)
 
 R5 Metric Types
 ===============
