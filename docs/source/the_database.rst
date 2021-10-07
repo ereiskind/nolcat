@@ -50,6 +50,7 @@ The most important data related to a statistics source--the SUSHI credentials--n
      1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>`
 
         * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
+        * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
 
      2. Apply the JSON appropriate for the report type
      3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
