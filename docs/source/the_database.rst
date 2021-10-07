@@ -89,6 +89,7 @@ R4 Metric Types
 * Searches-federated and automated (DB1)
 * Result Clicks (DB1)
 * Record Views (DB1)
+* Successful Full-text Article Requests (JR1)
 
 R5 Metric Types
 ===============
