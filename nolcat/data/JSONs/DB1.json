@@ -130,11 +130,11 @@
             "mode": "row-based"
         },
         "columnName": "Resource_Name",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Resource_Name``"
+        "description": "Change null and whitespace values to `NULL` in column ``Resource_Name``"
     },
     {
         "op": "core/text-transform",
@@ -143,11 +143,11 @@
             "mode": "row-based"
         },
         "columnName": "Publisher",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Publisher``"
+        "description": "Change null and whitespace values to `NULL` in column ``Publisher``"
     },
     {
         "op": "core/text-transform",

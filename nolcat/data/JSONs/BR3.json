@@ -182,11 +182,11 @@
             "mode": "row-based"
         },
         "columnName": "Resource_Name",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Resource_Name``"
+        "description": "Change null and whitespace values to `NULL` in column ``Resource_Name``"
     },
     {
         "op": "core/text-transform",
@@ -195,11 +195,11 @@
             "mode": "row-based"
         },
         "columnName": "Publisher",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Publisher``"
+        "description": "Change null and whitespace values to `NULL` in column ``Publisher``"
     },
     {
         "op": "core/text-transform",
@@ -208,11 +208,11 @@
             "mode": "row-based"
         },
         "columnName": "DOI",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``DOI``"
+        "description": "Change null and whitespace values to `NULL` in column ``DOI``"
     },
     {
         "op": "core/text-transform",
@@ -221,11 +221,11 @@
             "mode": "row-based"
         },
         "columnName": "Proprietary_ID",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Proprietary_ID``"
+        "description": "Change null and whitespace values to `NULL` in column ``Proprietary_ID``"
     },
     {
         "op": "core/text-transform",
@@ -234,11 +234,11 @@
             "mode": "row-based"
         },
         "columnName": "ISBN",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``ISBN``"
+        "description": "Change null and whitespace values to `NULL` in column ``ISBN``"
     },
     {
         "op": "core/text-transform",
@@ -247,11 +247,11 @@
             "mode": "row-based"
         },
         "columnName": "Online_ISSN",
-        "expression": "grel:if(isBlank(value),\"NULL\",value)",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change null values to `NULL` in column ``Online_ISSN``"
+        "description": "Change null and whitespace values to `NULL` in column ``Online_ISSN``"
     },
     {
         "op": "core/text-transform",
