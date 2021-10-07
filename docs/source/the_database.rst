@@ -48,6 +48,9 @@ The most important data related to a statistics source--the SUSHI credentials--n
    * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then, if applicable, prepare the R4 reports:
 
      1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>`
+
+        * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
+
      2. Apply the JSON appropriate for the report type
      3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
 
