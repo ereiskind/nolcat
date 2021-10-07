@@ -78,6 +78,7 @@ COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generati
 
 R4 Metric Types
 ===============
+* Successful Title Requests (BR1)
 
 R5 Metric Types
 ===============
