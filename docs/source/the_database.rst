@@ -45,7 +45,12 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
    * For statistics sources/interfaces not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`
    * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`
-   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then use the supplied JSONs in OpenRefine to transform the R4 reports for uploading and save the results as CSVs after adding the `Statistics_Source` foreign key value
+   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then, if applicable, prepare the R4 reports:
+
+     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>`
+     2. Apply the JSON appropriate for the report type
+     3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
+
    * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
 
