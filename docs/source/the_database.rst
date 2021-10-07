@@ -45,7 +45,16 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
    * For statistics sources/interfaces not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`
    * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`
-   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then use the supplied JSONs in OpenRefine to transform the R4 reports for uploading and save the results as CSVs after adding the `Statistics_Source` foreign key value
+   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
+
+     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>`
+
+        * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
+        * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
+
+     2. Apply the JSON appropriate for the report type
+     3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
+
    * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
 
@@ -66,3 +75,35 @@ For clarity, relations and fields have the same names in the database and the so
 * MySQL field names are written in Titlecase_with_Underscores; SQLAlchemy attribute names are written in lowercase_with_underscores.
 
 The above styling is used in both the code and the documentation.
+
+Metric Types in R4 and R5
+*************************
+COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generations of the standard shouldn't be directly compared; all COUNTER data, however, is stored in the same relation. Usage from the two generations is separated by the  different metric types used.
+
+R4 Metric Types
+===============
+* Successful Title Requests (BR1)
+* Successful Section Requests (BR2)
+* Access denied: concurrent/simultaneous user license limit exceeded (BR3, DB2, JR2)
+* Access denied: content item not licensed (BR3, DB2, JR2)
+* Regular Searches (BR5, DB1, PR1)
+* Searches-federated and automated (BR5, DB1, PR1)
+* Result Clicks (DB1, PR1)
+* Record Views (DB1, PR1)
+* Successful Full-text Article Requests (JR1)
+* Successful Content Unit Requests (MR1)
+
+R5 Metric Types
+===============
+* Searches_Regular
+* Searches_Automated
+* Searches_Federated
+* Searches_Platform
+* Total_Item_investigations
+* Unique_Item_Investigations
+* Unique_Title_Investigations
+* Total_Item_Requests
+* Unique_Item_Requests
+* Unique_Title_Requests
+* No_License
+* Limit_Exceeded
