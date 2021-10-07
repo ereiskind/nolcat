@@ -260,7 +260,7 @@
             "mode": "row-based"
         },
         "columnName": "Resource_Name",
-        "expression": "grel:value.reinterpret(\"utf-8\")",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
@@ -273,7 +273,7 @@
             "mode": "row-based"
         },
         "columnName": "Publisher",
-        "expression": "grel:value.reinterpret(\"utf-8\")",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
@@ -286,7 +286,7 @@
             "mode": "row-based"
         },
         "columnName": "Platform",
-        "expression": "grel:value.reinterpret(\"utf-8\")",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
