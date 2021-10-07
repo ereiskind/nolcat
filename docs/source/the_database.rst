@@ -90,6 +90,7 @@ R4 Metric Types
 * Result Clicks (DB1)
 * Record Views (DB1)
 * Successful Full-text Article Requests (JR1)
+* Successful Content Unit Requests (MR1)
 
 R5 Metric Types
 ===============
