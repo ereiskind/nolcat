@@ -29,7 +29,7 @@ class RawCOUNTERReport:
 
         Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
-        #ToDo: if type(df) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>": (meaning reformatted R4 reports)
+        #ToDo: if type(df) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>" or MultiDict: (meaning reformatted R4 reports)
             #ToDo: for file in df.getlist('R4_files'):
                 #ToDo: try file.filename fits convention via regex:
                     #ToDo: Split name at underscores, saving [0] part

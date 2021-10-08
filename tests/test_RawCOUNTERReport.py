@@ -3,44 +3,31 @@ import os
 from pathlib import Path
 import pytest
 import pandas as pd
+from werkzeug.datastructures import *
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 
 @pytest.fixture
 def sample_R4_RawCOUNTERReport():
     """Uses the RawCOUNTERReport constructor to create a RawCOUNTERReport object from reformatted R4 COUNTER reports."""
-    #ToDo: Create structure of FileStorage objects (https://werkzeug.palletsprojects.com/en/2.0.x/datastructures/#werkzeug.datastructures.FileStorage) in an ImmutableMultiDict (https://werkzeug.palletsprojects.com/en/2.0.x/datastructures/#werkzeug.datastructures.ImmutableMultiDict)
-    R4_reports = []
-    for file in os.listdir(Path('.', 'tests', 'data')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
-        R4_reports.append(Path('.', 'tests', 'data', file))
-    
-    R4_dataframe = pd.concat(
-        [
-            pd.read_csv(
-                CSV,
-                dtype={
-                    # 'Interface' is fine as default float64
-                    'Resource_Name': 'string',
-                    'Publisher': 'string',
-                    'Platform': 'string',
-                    'DOI': 'string',
-                    'Proprietary_ID': 'string',
-                    'ISBN': 'string',
-                    'Print_ISSN': 'string',
-                    'Online_ISSN': 'string',
-                    'Data_Type': 'string',
-                    'Metric_Type': 'string',
-                    # R4_Month uses parse_dates
-                    # R4_Count is fine as default int64
-                },
-                parse_dates=['R4_Month'],  # For this to work, the dates need to be ISO-formatted strings (with CSVs, all the values are strings)
-                encoding='unicode_escape',  # This allows for CSVs with non-ASCII characters
-                infer_datetime_format=True  # Speeds up the parsing process if the format can be inferred; since all dates will be in the same format, this should be easy to do
-            ) for CSV in R4_reports
-        ],
-        ignore_index=True
-    )
-    yield R4_dataframe
+    R4_reports = MultiDict()
+    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        R4_reports.add(
+            'R4_files',
+            FileStorage(
+                stream=open(
+                    Path('.', 'tests', 'bin', 'OpenRefine_exports', file),
+                    encoding='unicode_escape',
+                ),
+                name='R4_files',
+                headers={
+                    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Encoding': 'utf-8',
+                    'mode': 'b',
+                }
+            )
+        )
+    yield R4_reports
 
 
 def test_RawCOUNTERReport_fixture_creation(sample_R4_RawCOUNTERReport):
