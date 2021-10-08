@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 import pandas as pd
 import recordlinkage
 from fuzzywuzzy import fuzz
@@ -29,12 +30,16 @@ class RawCOUNTERReport:
 
         Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
-        #ToDo: if type(df) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>" or MultiDict: (meaning reformatted R4 reports)
-            #ToDo: for file in df.getlist('R4_files'):
-                #ToDo: try file.filename fits convention via regex:
+        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>" or repr(type(df)) == "<class 'werkzeug.datastructures.MultiDict'>":
+            # For R4 reports; the (mutable) MultiDict is for testing
+            for file in df.getlist('R4_files'):
+                try:
+                    filename = Path(file.filename).parts[-1]
+                    #ToDo: try file.filename fits convention via regex:
                     #ToDo: Split name at underscores, saving [0] part
-                #ToDo: except:
-                    #ToDo: Return an error message and quit the constructor
+                    logging.info(f"Adding statisticsSources PK to {Path(file.filename).parts[-1]}")
+                except:
+                    pass  #ToDo: Return an error message and quit the constructor
                 #ToDo: Create new column in file's Excel file
                 #ToDo: Add `Statistics_Source_ID` in row 1 or new column
                 #ToDo: Add value from first line in block to line 2 through last line where other columns have data in new coumn
@@ -43,8 +48,8 @@ class RawCOUNTERReport:
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
             #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
-        #ToDo: else:
-            #ToDo: Return an error message and quit the constructor
+        else:
+            pass  #ToDo: Return an error message and quit the constructor
         self.report_dataframe = df
 
 
