@@ -50,7 +50,7 @@ def upload_historical_COUNTER_usage():
 
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
-    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
+    """Takes in multiple reformatted R4 reports binary files, makes them into a single RawCOUNTERReport object, runs the perform_deduplication_matching method, and returns a page asking for confirmation of manual matches."""
     if request.method == "POST":
         R4_dataframe = pd.concat(
             [

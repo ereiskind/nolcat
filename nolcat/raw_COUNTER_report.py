@@ -25,7 +25,26 @@ class RawCOUNTERReport:
     """
     # Constructor Method
     def __init__(self, df):
-        #ToDo: Will a more complex constructor for handling reformatted R4 CSVs and R5 SUSHI input be needed?
+        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
+
+        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
+        """
+        #ToDo: if type(df) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>": (meaning reformatted R4 reports)
+            #ToDo: for file in df.getlist('R4_files'):
+                #ToDo: try file.filename fits convention via regex:
+                    #ToDo: Split name at underscores, saving [0] part
+                #ToDo: except:
+                    #ToDo: Return an error message and quit the constructor
+                #ToDo: Create new column in file's Excel file
+                #ToDo: Add `Statistics_Source_ID` in row 1 or new column
+                #ToDo: Add value from first line in block to line 2 through last line where other columns have data in new coumn
+                #ToDo: Figure out saving changes so the modified files are grabbed for next step
+            #ToDo: self.report_dataframe = pd.concat(read_excel of all the above files after modification) in a list comprehension (see determine_if_resources_match) (will the original iterator pull the changed files here?)
+        #ToDo: elif df is an API response object: (R5 SUSHI call response)
+            #ToDo: self.report_dataframe = the data from the response object
+            #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
+        #ToDo: else:
+            #ToDo: Return an error message and quit the constructor
         self.report_dataframe = df
 
 
