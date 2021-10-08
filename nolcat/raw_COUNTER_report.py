@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import re
 import pandas as pd
 import recordlinkage
 from fuzzywuzzy import fuzz
@@ -34,12 +35,11 @@ class RawCOUNTERReport:
             # For R4 reports; the (mutable) MultiDict is for testing
             for file in df.getlist('R4_files'):
                 try:
-                    filename = Path(file.filename).parts[-1]
-                    #ToDo: try file.filename fits convention via regex:
-                    #ToDo: Split name at underscores, saving [0] part
-                    logging.info(f"Adding statisticsSources PK to {Path(file.filename).parts[-1]}")
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=Path(file.filename).parts[-1])[0]
+                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
-                    pass  #ToDo: Return an error message and quit the constructor
+                    logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
+                    #ToDo: Return an error with a message like the above that exits the constructor method
                 #ToDo: Create new column in file's Excel file
                 #ToDo: Add `Statistics_Source_ID` in row 1 or new column
                 #ToDo: Add value from first line in block to line 2 through last line where other columns have data in new coumn
