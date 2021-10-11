@@ -33,6 +33,7 @@ class RawCOUNTERReport:
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>" or repr(type(df)) == "<class 'werkzeug.datastructures.MultiDict'>":
             # For R4 reports; the (mutable) MultiDict is for testing
+            #ToDo: dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):
                 try:
                     statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=Path(file.filename).parts[-1])[0]
@@ -40,11 +41,10 @@ class RawCOUNTERReport:
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
                     #ToDo: Return an error with a message like the above that exits the constructor method
-                #ToDo: Create new column in file's Excel file
-                #ToDo: Add `Statistics_Source_ID` in row 1 or new column
-                #ToDo: Add value from first line in block to line 2 through last line where other columns have data in new coumn
-                #ToDo: Figure out saving changes so the modified files are grabbed for next step
-            #ToDo: self.report_dataframe = pd.concat(read_excel of all the above files after modification) in a list comprehension (see determine_if_resources_match) (will the original iterator pull the changed files here?)
+                #ToDo: pd.read_excel(file) (see determine_if_resources_match)
+                #ToDo: Add field series `Statistics_Source_ID` where all records have statistics_source_ID as the value
+                #ToDo: dataframes_to_concatenate.append()
+            #ToDo: self.report_dataframe = pd.concat(dataframes_to_concatenate)
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
             #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
