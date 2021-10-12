@@ -25,10 +25,10 @@ def sample_R4_form_result(driver):
     """Uses Selenium to pass reformatted R4 COUNTER reports into the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
     driver, domain = driver
     driver.get(domain + '/historical-COUNTER-data')  # https://stackoverflow.com/questions/46646603/generate-urls-for-flask-test-client-with-url-for-function has possible ways to use url_for, but the app_content() and pytest-flask methods aren't working
-    R4_files_input_field = driver.find_elements_by_name('R4_files')
-    #ToDo: for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
-        #ToDo: Add Path('.', 'tests', 'bin', 'OpenRefine_exports', file) to the list of files selected in field 'R4_files'
-    #ToDo: Select type="submit" button
+    R4_files_input_field = driver.find_element_by_name('R4_files')
+    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        R4_files_input_field.send_keys(os.path.abspath(f'tests\\bin\\OpenRefine_exports\\{file}'))
+    driver.find_element_by_tag_name('button').click()  # The tag name locator works because button elements are rarely employed outside of form submission buttons
     #ToDo: R4_reports = value retruend from the form (`request.files` in flask routes)
     yield R4_reports
 
