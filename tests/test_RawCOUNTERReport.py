@@ -11,6 +11,8 @@ from nolcat.app import Chrome_browser_driver
 
 @pytest.fixture
 def driver():
+    """Creates a Selenium driver with the Flask app domain for testing."""
+    #ToDo: Using this fixture requires the Flask server be running; adding instantiation of create_app() doesn't work as a solution because the Flask client and Selenium driver both have HTTP verb methods and only one class can be used
     driver = Chrome_browser_driver()
     domain = 'http://localhost:5000'  #ToDo: Change this as needed to match the domain of the Flask app
     yield driver, domain
