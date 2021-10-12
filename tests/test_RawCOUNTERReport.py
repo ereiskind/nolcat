@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import pytest
 import pandas as pd
+from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
@@ -20,11 +21,11 @@ def driver():
 
 
 @pytest.fixture
-def sample_R4_form_result():
+def sample_R4_form_result(driver):
     """Uses Selenium to pass reformatted R4 COUNTER reports into the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
-    driver = Chrome_browser_driver()
-    #ToDo: Go to url_for('upload_historical_COUNTER_usage')
-    #ToDo: Find form element with name 'R4_files'
+    driver, domain = driver
+    driver.get(domain + '/historical-COUNTER-data')  # https://stackoverflow.com/questions/46646603/generate-urls-for-flask-test-client-with-url-for-function has possible ways to use url_for, but the app_content() and pytest-flask methods aren't working
+    R4_files_input_field = driver.find_elements_by_name('R4_files')
     #ToDo: for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
         #ToDo: Add Path('.', 'tests', 'bin', 'OpenRefine_exports', file) to the list of files selected in field 'R4_files'
     #ToDo: Select type="submit" button
