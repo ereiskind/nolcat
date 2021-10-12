@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import pytest
 import pandas as pd
+from selenium.webdriver.common.keys import Keys
 from werkzeug.datastructures import *
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
 

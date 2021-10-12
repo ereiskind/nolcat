@@ -17,4 +17,8 @@ For the purposes of the OpenRefine exports, the Statistics_Source_ID values as a
 * Gale = 3
 * iG Publishing/BEP = 4 (BR5 only)
 
+Using Selenium
+**************
+Some of the tests use Selenium, which allows for interfacing with web browsers. for more information on Selenium and setting it up, see :ref:`"Using Selenium" on the page about COUNTER and SUSHI <using-selenium>`.
+
 The fixture `sample_R4_RawCOUNTERReport` creates a MultiDict of FileStorage objects, all with the key `'R4_files'`, which matches the ImmutableMultiDict of FileStorage objects created when multiple files are passed to a route in the Flask app through the HTML-derived file selector in the web app. There are a few small differences between the FileStorage objects from the two sources: in the fixture, the `filename` attribute contains the file path starting from (but not including) `nolcat` and the `stream` attribute is a TextIOWrapper; when coming from Flask, `filename` is just the name of the file and `stream` is a `tempfile.SpooledTemporaryFile` object.
