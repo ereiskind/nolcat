@@ -10,6 +10,14 @@ from nolcat.app import Chrome_browser_driver
 
 
 @pytest.fixture
+def driver():
+    driver = Chrome_browser_driver()
+    domain = 'http://localhost:5000'  #ToDo: Change this as needed to match the domain of the Flask app
+    yield driver, domain
+    driver.quit()
+
+
+@pytest.fixture
 def sample_R4_form_result():
     """Uses Selenium to pass reformatted R4 COUNTER reports into the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
     driver = Chrome_browser_driver()
