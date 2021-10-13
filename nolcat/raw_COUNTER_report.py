@@ -40,7 +40,26 @@ class RawCOUNTERReport:
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
                     #ToDo: Return an error with a message like the above that exits the constructor method
-                #ToDo: pd.read_excel(file) (see determine_if_resources_match)
+                # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
+                dataframe = pd.read_excel(
+                    file,
+                    engine='openpyxl',
+                    dtype={
+                        'Resource_Name': 'string',
+                        'Publisher': 'string',
+                        'Platform': 'string',
+                        'DOI': 'string',
+                        'Proprietary_ID': 'string',
+                        'ISBN': 'string',
+                        'Print_ISSN': 'string',
+                        'Online_ISSN': 'string',
+                        'Data_Type': 'string',
+                        'Metric_Type': 'string',
+                        # R4_Month is fine as default datetime64[ns]
+                        'R4_Count': 'int',  # Python default used because this is a non-null field
+                    },
+                )
+                logging.debug(f"Dataframe:\n{dataframe.tail()}\n")
                 #ToDo: Add field series `Statistics_Source_ID` where all records have statistics_source_ID as the value
                 #ToDo: dataframes_to_concatenate.append()
             #ToDo: self.report_dataframe = pd.concat(dataframes_to_concatenate)
