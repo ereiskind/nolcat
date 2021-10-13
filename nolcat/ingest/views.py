@@ -54,9 +54,6 @@ def determine_if_resources_match():
     if request.method == "POST":
         R4_dataframe = pd.concat(
             [
-                pd.read_csv(
-                    CSV,
-                ) for CSV in request.files.getlist('R4_files')
             ],
             ignore_index=True
         )

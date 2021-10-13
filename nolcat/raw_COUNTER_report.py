@@ -32,7 +32,7 @@ class RawCOUNTERReport:
         Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
-            #ToDo: dataframes_to_concatenate = []
+            dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):
                 try:
                     statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=Path(file.filename).parts[-1])[0]
@@ -60,8 +60,9 @@ class RawCOUNTERReport:
                     },
                 )
                 logging.debug(f"Dataframe:\n{dataframe.tail()}\n")
-                #ToDo: Add field series `Statistics_Source_ID` where all records have statistics_source_ID as the value
-                #ToDo: dataframes_to_concatenate.append()
+                dataframe['Statistics_Source_ID'] = statistics_source_ID
+                logging.info(f"Dataframe:\n{dataframe.tail()}\n")
+                dataframes_to_concatenate.append(dataframe)
             #ToDo: self.report_dataframe = pd.concat(dataframes_to_concatenate)
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
