@@ -144,11 +144,11 @@
             "mode": "row-based"
         },
         "columnName": "R4_Month",
-        "expression": "grel:if(value.contains(/E[D|S]T/),value.replace(\"EDT\",\"EST\").toDate(),if(isNotNull(value.match(/(\\w{3})\\-(\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\w*)\\-\\d{4}/)[0].length()>3,(value.match(/(\\w{3}).*/)[0]+\"-01\"+value.match(/\\w*(\\-\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\")))",
+        "expression": "grel:if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\w{3})\\-(\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\w*)\\-\\d{4}/)[0].length()>3,(value.match(/(\\w{3}).*/)[0]+\"-01\"+value.match(/\\w*(\\-\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\")))",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change the values in column ``R4_Month`` to date data type"
+        "description": "Change the values in column ``R4_Month`` to date data type with null time value"
     },
     {
         "op": "core/column-addition",
