@@ -334,6 +334,7 @@ class RawCOUNTERReport:
             logging.debug(f"{match} added as a match on database names with a high matching threshold")
         
 
+        #ToDo: PLATFORMS HAVE NULL Resource_Name VALUES: platforms need to be removed from this comparison because they have null Resource_Name values that interfer with the matching and, since they aren't resources, can't be part of resource deduping 
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
         logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
         #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers
