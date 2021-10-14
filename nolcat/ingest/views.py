@@ -52,7 +52,7 @@ def upload_historical_COUNTER_usage():
 def determine_if_resources_match():
     """Takes in multiple reformatted R4 reports binary files, makes them into a single RawCOUNTERReport object, runs the perform_deduplication_matching method, and returns a page asking for confirmation of manual matches."""
     if request.method == "POST":
-        R4_reports = RawCOUNTERReport(R4_dataframe)
+        R4_reports = RawCOUNTERReport(request.files)
         confirmed_matches, matches_needing_confirmation = R4_reports.perform_deduplication_matching()
         return render_template('select-matches.html')  #ToDo: Add variables to pass to Jinja, next route function
     else:
