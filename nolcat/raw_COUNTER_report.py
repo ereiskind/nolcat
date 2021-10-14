@@ -63,13 +63,16 @@ class RawCOUNTERReport:
                 dataframe['Statistics_Source_ID'] = statistics_source_ID
                 logging.debug(f"Dataframe:\n{dataframe}\n")
                 dataframes_to_concatenate.append(dataframe)
-            #ToDo: self.report_dataframe = pd.concat(dataframes_to_concatenate)
+            self.report_dataframe = pd.concat(
+                dataframes_to_concatenate,
+                ignore_index=True
+            )
+            logging.info(f"Final dataframe:\n{self.report_dataframe}")
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
             #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
         else:
             pass  #ToDo: Return an error message and quit the constructor
-        self.report_dataframe = df
 
 
     # Representation method--using `{self}` in an f-string results in the below
