@@ -59,9 +59,9 @@ class RawCOUNTERReport:
                         'R4_Count': 'int',  # Python default used because this is a non-null field
                     },
                 )
-                logging.debug(f"Dataframe:\n{dataframe.tail()}\n")
+                logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
                 dataframe['Statistics_Source_ID'] = statistics_source_ID
-                logging.info(f"Dataframe:\n{dataframe.tail()}\n")
+                logging.debug(f"Dataframe:\n{dataframe}\n")
                 dataframes_to_concatenate.append(dataframe)
             #ToDo: self.report_dataframe = pd.concat(dataframes_to_concatenate)
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
