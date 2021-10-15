@@ -20,7 +20,7 @@ class RawCOUNTERReport:
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
         harvest_SUSHI_report: Use the SUSHI API to collect all the master R5 reports from a given source for a set time period.
         #ToDo: Repeatedly running harvest_SUSHI_report with a list of credentials applying multithreading will be its own function/class
-        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Provided_Resources, and COUNTER_Usage_Data relations.
+        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations.
     
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
@@ -476,6 +476,6 @@ class RawCOUNTERReport:
     
 
     def load_data_into_database():
-        """Add the COUNTER report to the database by adding records to the Resource, Provided_Resources, and COUNTER_Usage_Data relations."""
+        """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
         #ToDo: Write a more detailed docstring
         pass

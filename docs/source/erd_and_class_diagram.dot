@@ -49,11 +49,11 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Provided_Resources {
-        label="Provided_Resources"
+    subgraph cluster_Resource_Platforms {
+        label="Resource_Platforms"
 
         // Attributes
-        Provided_Resource_ID [shape="note"]
+        Resource_Platform_ID [shape="note"]
         Publisher // From the COUNTER report
         Publisher_ID // This is found in R5 only—how to add it?
         Platform [
@@ -63,7 +63,7 @@ digraph erd_and_classes {
         Proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
         Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
-        Resource_ID_in_Provided_Resources [
+        Resource_ID_in_Resource_Platforms [
             label="Resource_ID"
             shape="folder"
         ]
@@ -85,8 +85,8 @@ digraph erd_and_classes {
         __YOP // This is found in R5 TR, IR only—how to add it?
         __Access_Type // This is found in R5 TR, IR only—how to add it?
         __Access_Method // This is found in R5 only—how to add it?
-        Provided_Resource_ID_in_COUNTER_Usage_Data [
-            label="Provided_Resource_ID"
+        Resource_Platform_ID_in_COUNTER_Usage_Data [
+            label="Resource_Platform_ID"
             shape="folder"
         ]
         __Report_Creation_Date // For harvested R5 reports
@@ -248,7 +248,7 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
     
-    Resource_ID -> Resource_ID_in_Provided_Resources [
+    Resource_ID -> Resource_ID_in_Resource_Platforms [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
@@ -272,7 +272,7 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
 
-    Provided_Resource_ID -> Provided_Resource_ID_in_COUNTER_Usage_Data [
+    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
