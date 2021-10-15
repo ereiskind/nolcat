@@ -250,7 +250,7 @@ digraph erd_and_classes {
     
     Resource_ID -> Resource_ID_in_Resource_Platforms [
         dir="both"
-        arrowhead="crowtee"
+        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
         arrowtail="teetee"
     ]
     
