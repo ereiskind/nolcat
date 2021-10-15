@@ -50,35 +50,9 @@ def upload_historical_COUNTER_usage():
 
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
-    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
+    """Takes in multiple reformatted R4 reports binary files, makes them into a single RawCOUNTERReport object, runs the perform_deduplication_matching method, and returns a page asking for confirmation of manual matches."""
     if request.method == "POST":
-        R4_dataframe = pd.concat(
-            [
-                pd.read_csv(
-                    CSV,
-                    dtype={
-                        # 'Interface' is fine as default float64
-                        'Resource_Name': 'string',
-                        'Publisher': 'string',
-                        'Platform': 'string',
-                        'DOI': 'string',
-                        'Proprietary_ID': 'string',
-                        'ISBN': 'string',
-                        'Print_ISSN': 'string',
-                        'Online_ISSN': 'string',
-                        'Data_Type': 'string',
-                        'Metric_Type': 'string',
-                        # R4_Month uses parse_dates
-                        # R4_Count is fine as default int64
-                    },
-                    parse_dates=['R4_Month'],  # For this to work, the dates need to be ISO-formatted strings (with CSVs, all the values are strings)
-                    encoding='unicode_escape',  # This allows for CSVs with non-ASCII characters
-                    infer_datetime_format=True  # Speeds up the parsing process if the format can be inferred; since all dates will be in the same format, this should be easy to do
-                ) for CSV in request.files.getlist('R4_files')
-            ],
-            ignore_index=True
-        )
-        R4_reports = RawCOUNTERReport(R4_dataframe)
+        R4_reports = RawCOUNTERReport(request.files)
         confirmed_matches, matches_needing_confirmation = R4_reports.perform_deduplication_matching()
         return render_template('select-matches.html')  #ToDo: Add variables to pass to Jinja, next route function
     else:

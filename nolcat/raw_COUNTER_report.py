@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+import re
 import pandas as pd
 import recordlinkage
 from fuzzywuzzy import fuzz
@@ -25,13 +27,64 @@ class RawCOUNTERReport:
     """
     # Constructor Method
     def __init__(self, df):
-        #ToDo: Will a more complex constructor for handling reformatted R4 CSVs and R5 SUSHI input be needed?
-        self.report_dataframe = df
+        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
+
+        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
+        """
+        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
+            dataframes_to_concatenate = []
+            for file in df.getlist('R4_files'):
+                try:
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=Path(file.filename).parts[-1])[0]
+                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
+                except:
+                    logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
+                    #ToDo: Return an error with a message like the above that exits the constructor method
+                # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
+                dataframe = pd.read_excel(
+                    file,
+                    engine='openpyxl',
+                    dtype={
+                        'Resource_Name': 'string',
+                        'Publisher': 'string',
+                        'Platform': 'string',
+                        'DOI': 'string',
+                        'Proprietary_ID': 'string',
+                        'ISBN': 'string',
+                        'Print_ISSN': 'string',
+                        'Online_ISSN': 'string',
+                        'Data_Type': 'string',
+                        'Metric_Type': 'string',
+                        # R4_Month is fine as default datetime64[ns]
+                        'R4_Count': 'int',  # Python default used because this is a non-null field
+                    },
+                )
+                logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
+                dataframe['Statistics_Source_ID'] = statistics_source_ID
+                logging.debug(f"Dataframe:\n{dataframe}\n")
+                dataframes_to_concatenate.append(dataframe)
+            self.report_dataframe = pd.concat(
+                dataframes_to_concatenate,
+                ignore_index=True
+            )
+            logging.info(f"Final dataframe:\n{self.report_dataframe}")
+        #ToDo: elif df is an API response object: (R5 SUSHI call response)
+            #ToDo: self.report_dataframe = the data from the response object
+            #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
+        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # This is used to instantiate RawCOUNTERReport_fixture_from_R4_spreadsheets
+            self.report_dataframe = df
+        else:
+            pass  #ToDo: Return an error message and quit the constructor
 
 
     # Representation method--using `{self}` in an f-string results in the below
     def __repr__(self):
         return repr(self.report_dataframe.head())
+    
+
+    def equals(self, other):
+        """Recreates the pandas `equals` method with RawCOUNTERReport objects."""
+        return self.report_dataframe.equals(other.report_dataframe)
     
 
     def perform_deduplication_matching(self, normalized_resource_data=None):
@@ -288,6 +341,7 @@ class RawCOUNTERReport:
             logging.debug(f"{match} added as a match on database names with a high matching threshold")
         
 
+        #ToDo: PLATFORMS HAVE NULL Resource_Name VALUES: platforms need to be removed from this comparison because they have null Resource_Name values that interfer with the matching and, since they aren't resources, can't be part of resource deduping 
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
         logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
         #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers

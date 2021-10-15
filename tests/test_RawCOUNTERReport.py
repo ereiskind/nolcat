@@ -1,147 +1,289 @@
 """Test methods in RawCOUNTERReport."""
 import os
 from pathlib import Path
+import re
 import pytest
 import pandas as pd
+
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 
 @pytest.fixture
-def sample_R4_dataframe():
-    """Reads the sample CSVs of reformatted R4 data into a single dataframe using the same expression as in the `determine_if_resources_match` function."""
-    R4_reports = []
-    for file in os.listdir(Path('.', 'tests', 'data')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
-        R4_reports.append(Path('.', 'tests', 'data', file))
+def sample_R4_form_result():
+    """Creates an object highly similar to that returned by the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
+    #ToDo: This fixture needs to be created so the RawCOUNTERReport constructor can be tested independently of the form input functionality, but multiple days of work have failed to find a solution with the current configuration. Using WTForms to create the form taking in multiple Excel files may open up other options, but at the moment, the options are limited. Below are the methods attempted along with links and samples of code.
+
+    #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects
+    '''R4_reports = MultiDict()
+    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        R4_reports.add(
+            'R4_files',
+            FileStorage(
+                stream=open(
+                    Path('.', 'tests', 'bin', 'OpenRefine_exports', file),
+                    encoding='unicode_escape',
+                ),
+                name='R4_files',
+                headers={
+                    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Encoding': 'utf-8',
+                    'mode': 'b',
+                }
+            )
+        )
+    yield R4_reports'''
+    # https://stackoverflow.com/questions/18249949/python-file-object-to-flasks-filestorage
+    # https://stackoverflow.com/questions/39437909/flask-filestorage-object-to-file-object
+    # https://stackoverflow.com/questions/20015550/read-file-data-without-saving-it-in-flask
+    # https://stackoverflow.com/questions/52514442/reading-xlsx-file-from-a-bytestring
+    # https://stackoverflow.com/questions/20635778/using-openpyxl-to-read-file-from-memory
+
+    #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects where the files in question are tempfile.SpooledTemporaryFile objects
+    # https://docs.pytest.org/en/6.2.x/tmpdir.html
+    '''file_in_bytes = open(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename), 'rb')
+        logging.info(f"file_in_bytes type: {type(file_in_bytes)}")
+        logging.info(f"file_in_bytes.read() type: {type(file_in_bytes.read())}")
+        logging.info(f"file_in_bytes.read(): {file_in_bytes.read()}")
+        tempfile_constructor.write(file_in_bytes.read())  #ToDo: Figure out how to get SpooledTemporaryFile objects into FileStorage objects
+        logging.info(f"tempfile_constructor type: {type(tempfile_constructor)}")
+        tempfile_constructor.seek(0)
+        logging.info(f"tempfile_constructor.read(): {tempfile_constructor.read()}")
+        FileStorage_object = FileStorage(
+            stream=tempfile_constructor,
+            filename=filename,
+            name='R4_files',
+            headers={
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Encoding': 'utf-8',
+                'mode': 'b',
+            }
+        )
+        logging.info(f"FileStorage_object type: {type(FileStorage_object)}")
+        R4_reports.add(
+            'R4_files',
+            FileStorage_object
+        )
+        file_in_bytes.close()
+    yield R4_reports
+    tempfile_constructor.close()'''
+    '''with tempfile.SpooledTemporaryFile() as temp:
+            workbook_data.save(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename))
+            logging.info(f"workbook_data.save(filename) type: {type(workbook_data.save(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename)))}")
+            temp.seek(0)
+            logging.info(f"temp.read(): {temp.read()}")
+            logging.info(f"temp.read() type: {type(temp.read())}")'''
+    '''R4_reports = MultiDict()
+    for filename in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        workbook_data = load_workbook(io.BytesIO(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename).read_bytes()))
+        with tempfile.SpooledTemporaryFile() as temp:
+            logging.info(f"workbook_data.active: {workbook_data.active}")
+            for row in workbook_data.active.values:
+                for value in row:
+                    print(value)
+                    print(type(value))
+            logging.info(f"workbook_data.active type: {type(workbook_data.active)}")
+            temp.write(workbook_data.active)
+            logging.info(f"temp.write(workbook_data.active): {temp.write(workbook_data.active)}")
+            logging.info(f"temp.write(workbook_data.active) type: {type(temp.write(workbook_data.active))}")'''
+    # https://python.plainenglish.io/leveraging-the-power-of-tempfile-library-in-python-672786cd9ebf
+    # https://stackoverflow.com/questions/47160211/why-doesnt-tempfile-spooledtemporaryfile-implement-readable-writable-seekable
+    # https://stackoverflow.com/questions/36070031/creating-a-temporary-directory-in-pytest
+    # https://stackoverflow.com/questions/62335029/how-do-i-use-tmpdir-with-my-pytest-fixture
+    # https://stackoverflow.com/questions/25525202/py-test-temporary-folder-for-the-session-scope
+
+    #Section: Creating a Flask/WSGI test client fixture and a test that uses its post method then captures the form return value
+    # https://werkzeug.palletsprojects.com/en/2.0.x/test/
+    # https://flask.palletsprojects.com/en/2.0.x/testing/
+    # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
+    # https://python.plainenglish.io/how-to-test-sending-files-with-flask-795d4545262e
+    # https://stackoverflow.com/questions/35684436/testing-file-uploads-in-flask | https://stackoverflow.com/questions/35684436/testing-file-uploads-in-flask/35707921
+    # https://stackoverflow.com/questions/20080123/testing-file-upload-with-flask-and-python-3
+    # https://stackoverflow.com/questions/47216204/how-do-i-upload-multiple-files-using-the-flask-test-client
+    # https://stackoverflow.com/questions/53336768/spin-up-a-local-flask-server-for-testing-with-pytest
+    # https://stackoverflow.com/questions/7428124/how-can-i-fake-request-post-and-get-params-for-unit-testing-in-flask
+
+    #Section: Creating a Selenium driver and a test using it to submit Excel workbooks into the form then captures the form return value
+    # https://selenium-python.readthedocs.io/
+    '''@pytest.fixture
+    def driver():
+        """Creates a Selenium driver with the Flask app domain for testing."""
+        #ToDo: Using this fixture requires the Flask server be running; adding instantiation of create_app() doesn't work as a solution because the Flask client and Selenium driver both have HTTP verb methods and only one class can be used
+        driver = Chrome_browser_driver()
+        domain = 'http://localhost:5000'  #ToDo: Change this as needed to match the domain of the Flask app
+        app = create_app()
+        client = app.test_client()
+        yield driver, domain, client
+        driver.quit()'''
+    '''driver, domain = driver
+    driver.get(domain + '/historical-COUNTER-data')  # https://stackoverflow.com/questions/46646603/generate-urls-for-flask-test-client-with-url-for-function has possible ways to use url_for, but the app_content() and pytest-flask methods aren't working
+    R4_files_input_field = driver.find_element_by_name('R4_files')
+    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        R4_files_input_field.send_keys(os.path.abspath(f'tests\\bin\\OpenRefine_exports\\{file}'))
+    driver.find_element_by_tag_name('button').click()  # The tag name locator works because button elements are rarely employed outside of form submission buttons
+    #ToDo: R4_reports = value retruend from the form (`request.files` in flask routes)
+    yield R4_reports'''
+    '''driver.get(domain + '/historical-COUNTER-data')  # https://stackoverflow.com/questions/46646603/generate-urls-for-flask-test-client-with-url-for-function has possible ways to use url_for, but the app_content() and pytest-flask methods aren't working
+    R4_files_input_field = driver.find_element_by_name('R4_files')
+    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
+        R4_files_input_field.send_keys(os.path.abspath(f'tests\\bin\\OpenRefine_exports\\{file}'))
+    driver.find_element_by_tag_name('button').click()  # The tag name locator works because button elements are rarely employed outside of form submission buttons
+    for request in driver.requests:
+        if request.response:
+            logging.info(f"request.url: {request.url}")
+            logging.info(f"request.method: {request.method}")
+            logging.info(f"request.path: {request.path}")
+            logging.info(f"request.params: {request.params}")
+            logging.info(f"request.headers: {request.headers}")
+            logging.info(f"request.response.status_code: {request.response.status_code}")
+            logging.info(f"request.response.body: {request.response.body}")
+            logging.info(f"request.response.headers: {request.response.headers}")'''
+    # https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
+    # https://stackoverflow.com/questions/64129208/flask-web-app-input-for-selenium-browser-automation
+    # https://stackoverflow.com/questions/11089560/is-it-possible-to-capture-post-data-in-selenium
     
-    R4_dataframe = pd.concat(
-        [
-            pd.read_csv(
-                CSV,
-                dtype={
-                    # 'Interface' is fine as default float64
-                    'Resource_Name': 'string',
-                    'Publisher': 'string',
-                    'Platform': 'string',
-                    'DOI': 'string',
-                    'Proprietary_ID': 'string',
-                    'ISBN': 'string',
-                    'Print_ISSN': 'string',
-                    'Online_ISSN': 'string',
-                    'Data_Type': 'string',
-                    'Metric_Type': 'string',
-                    # R4_Month uses parse_dates
-                    # R4_Count is fine as default int64
-                },
-                parse_dates=['R4_Month'],  # For this to work, the dates need to be ISO-formatted strings (with CSVs, all the values are strings)
-                encoding='unicode_escape',  # This allows for CSVs with non-ASCII characters
-                infer_datetime_format=True  # Speeds up the parsing process if the format can be inferred; since all dates will be in the same format, this should be easy to do
-            ) for CSV in R4_reports
-        ],
-        ignore_index=True
-    )
-    yield R4_dataframe
-
-
-def test_perform_deduplication_matching(sample_R4_dataframe):
-    """Uses the `sample_R4_dataframe` as a single dataframe argument to test that the `perform_deduplication_matching` function returns the data representing resource matches both confirmed and needing confirmation."""
-    R4_test_data = RawCOUNTERReport(sample_R4_dataframe)
-    assert R4_test_data.perform_deduplication_matching() == (
-        {
-            (139, 133), (137, 133), (135, 133), (144, 136), (76, 75), (111, 110), (97, 94), (95, 94), (132, 129), (130, 129), (42, 40), (98, 85), (96, 85), (116, 113), (57, 55), (141, 132), (92, 90), (139, 132), (142, 140), (127, 125), (136, 128), (134, 128), (132, 128), (102, 101), (96, 89), (143, 131), (94, 89), (141, 131), (92, 89), (123, 120), (121, 120), (108, 105), (137, 136), (144, 139), (142, 139), (83, 81), (24, 23), (138, 127), (136, 127), (134, 127), (12, 11), (89, 85), (98, 88), (96, 88), (143, 130), (94, 88), (123, 119), (139, 135), (137, 135), (144, 138), (78, 77), (24, 22), (140, 126), (138, 126), (136, 126), (97, 96), (132, 131), (93, 84), (91, 84), (89, 84), (98, 87), (94, 92), (141, 134), (139, 134), (142, 125), (115, 111), (140, 125), (113, 111), (23, 22), (54, 53), (38, 37), (136, 130), (134, 130), (132, 130), (96, 91), (143, 133), (94, 91), (141, 133), (92, 91), (123, 122), (108, 107), (115, 110), (113, 110), (144, 141), (142, 141), (54, 52), (129, 126), (138, 129), (127, 126), (136, 129), (134, 129), (104, 102), (14, 13), (91, 87), (89, 87), (98, 90), (96, 90), (143, 132), (94, 90), (123, 121), (33, 32), (108, 106), (139, 137), (144, 140), (83, 82), (133, 125), (131, 125), (140, 128), (129, 125), (138, 128), (104, 101), (134, 133), (93, 86), (91, 86), (122, 117), (89, 86), (98, 89), (120, 117), (118, 117), (61, 59), (143, 136), (141, 136), (139, 136), (80, 78), (144, 127), (142, 127), (115, 113), (140, 127), (136, 132), (134, 132), (95, 85), (93, 85), (91, 85), (96, 93), (143, 135), (94, 93), (141, 135), (80, 77), (144, 126), (142, 126), (115, 112), (113, 112), (144, 143), (131, 128), (129, 128), (138, 131), (136, 131), (134, 131), (97, 84), (95, 84), (16, 15), (91, 89), (98, 92), (96, 92), (143, 134), (66, 65), (144, 125), (144, 142), (87, 84), (85, 84), (133, 127), (131, 127), (140, 130), (129, 127), (138, 130), (104, 103), (47, 45), (93, 88), (91, 88), (122, 119), (89, 88), (98, 91), (120, 119), (143, 138), (141, 138), (139, 138), (86, 84), (144, 129), (135, 126), (133, 126), (131, 126), (140, 129), (142, 129), (136, 134), (46, 45), (95, 87), (93, 87), (124, 118), (122, 118), (120, 118), (61, 60), (96, 95), (143, 137), (141, 137), (80, 79), (137, 125), (135, 125), (144, 128), (142, 128), (115, 114), (131, 130), (138, 133), (136, 133), (97, 86), (95, 86), (124, 117), (98, 94), (96, 94), (112, 110), (56, 55), (87, 86), (133, 129), (142, 132), (131, 129), (140, 132), (138, 132), (97, 85), (106, 105), (93, 90), (91, 90), (122, 121), (98, 93), (126, 125), (143, 140), (141, 140), (87, 85), (28, 27), (135, 128), (133, 128), (142, 131), (144, 131), (140, 131), (103, 101), (107, 105), (47, 46), (95, 89), (93, 89), (124, 120), (122, 120), (143, 139), (141, 139), (82, 81), (139, 127), (90, 85), (137, 127), (88, 85), (135, 127), (144, 130), (86, 85), (142, 130), (138, 135), (136, 135), (97, 88), (79, 77), (95, 88), (124, 119), (98, 96), (92, 84), (141, 126), (139, 126), (90, 84), (137, 126), (88, 84), (133, 131), (142, 134), (140, 134), (138, 134), (97, 87), (93, 92), (98, 95), (143, 125), (141, 125), (114, 111), (139, 125), (143, 142), (112, 111), (135, 130), (144, 133), (133, 130), (142, 133), (140, 133), (97, 91), (95, 91), (93, 91), (124, 122), (130, 126), (128, 126), (11, 9), (116, 110), (114, 110), (143, 141), (53, 52), (90, 87), (139, 129), (137, 129), (88, 87), (135, 129), (144, 132), (103, 102), (140, 137), (107, 106), (138, 137), (97, 90), (95, 90), (124, 121), (132, 125), (130, 125), (128, 125), (10, 9), (141, 128), (92, 86), (139, 128), (90, 86), (137, 128), (88, 86), (119, 117), (121, 117), (60, 59), (142, 136), (140, 136), (138, 136), (97, 89), (79, 78), (98, 97), (143, 127), (94, 85), (141, 127), (92, 85), (114, 113), (137, 132), (135, 132), (144, 135), (133, 132), (142, 135), (140, 135), (97, 93), (95, 93), (130, 128), (98, 84), (96, 84), (143, 126), (94, 84), (114, 112), (116, 112), (139, 131), (90, 89), (137, 131), (135, 131), (144, 134), (140, 139), (97, 92), (95, 92), (124, 123), (132, 127), (130, 127), (128, 127), (11, 10), (116, 111), (141, 130), (92, 88), (139, 130), (90, 88), (137, 130), (121, 119), (31, 30), (142, 138), (140, 138), (50, 49), (134, 126), (132, 126), (100, 99), (12, 10), (96, 87), (143, 129), (94, 87), (141, 129), (92, 87), (116, 115), (121, 118), (123, 118), (119, 118), (137, 134), (135, 134), (144, 137), (142, 137), (138, 125), (136, 125), (134, 125), (97, 95), (12, 9), (98, 86), (96, 86), (94, 86), (143, 128), (116, 114), (123, 117), (57, 56)
-        },
-        {
-            ('Early European Books->Collection 10', 'Early European Books->Collection 1'): [(81, 77), (81, 78), (81, 79), (81, 80), (82, 77), (82, 78), (82, 79), (82, 80), (83, 77), (83, 78), (83, 79), (83, 80)],
-            ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2', 'Periodicals Archive Online->Periodicals Archive Online Foundation Collection'): [(105, 101), (105, 102), (105, 103), (105, 104), (106, 101), (106, 102), (106, 103), (106, 104), (107, 101), (107, 102), (107, 103), (107, 104), (108, 101), (108, 102), (108, 103), (108, 104)],
-            ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3', 'Periodicals Archive Online->Periodicals Archive Online Foundation Collection'): [(109, 101), (109, 102), (109, 103), (109, 104)], ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3', 'Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2'): [(109, 105), (109, 106), (109, 107), (109, 108)],
-            (('Artificial Intelligence Research and Development: Proceedings of the 15th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in Artificial Intelligence and Appl', None, '978-1-61499-139-7', None, None, 'Book'), ('Artificial Intelligence Research and Development: Proceedings of the 13th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in artificial intelligence and appl', None, '978-1-60750-643-0', None, None, 'Book')): [(3, 2)],
-            (('Artificial Intelligence Research and Development: Proceedings of the 19th International Conference of the Catalan Association for Artificial Intelligence, Barcelona, Catalonia, Spain, October 19-21, 2', None, '978-1-61499-696-5', None, None, 'Book'), ('Artificial Intelligence Research and Development: Proceedings of the 13th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in artificial intelligence and appl', None, '978-1-60750-643-0', None, None, 'Book')): [(4, 2)],
-            (('Artificial Intelligence Research and Development: Proceedings of the 19th International Conference of the Catalan Association for Artificial Intelligence, Barcelona, Catalonia, Spain, October 19-21, 2', None, '978-1-61499-696-5', None, None, 'Book'), ('Artificial Intelligence Research and Development: Proceedings of the 15th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in Artificial Intelligence and Appl', None, '978-1-61499-139-7', None, None, 'Book')): [(4, 3)],
-            (('Beauty', None, None, None, None, 'Book'), ('Beauty', None, None, None, None, 'Book')): [(6, 5), (7, 5), (7, 6), (8, 5), (8, 6), (8, 7)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for Providers of Victim and Support Services', None, '978-0-309-30492-4', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States', None, '978-0-309-28658-9', None, None, 'Book')): [(13, 9), (13, 10), (13, 11), (13, 12), (14, 9), (14, 10), (14, 11), (14, 12)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Health Care Sector', None, '978-0-309-31046-8', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States', None, '978-0-309-28658-9', None, None, 'Book')): [(15, 9), (15, 10), (15, 11), (15, 12), (16, 9), (16, 10), (16, 11), (16, 12)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Health Care Sector', None, '978-0-309-31046-8', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for Providers of Victim and Support Services', None, '978-0-309-30492-4', None, None, 'Book')): [(15, 13), (15, 14), (16, 13), (16, 14)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Legal Sector', None, '978-0-309-31343-8', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States', None, '978-0-309-28658-9', None, None, 'Book')): [(17, 9), (17, 10), (17, 11), (17, 12)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Legal Sector', None, '978-0-309-31343-8', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for Providers of Victim and Support Services', None, '978-0-309-30492-4', None, None, 'Book')): [(17, 13), (17, 14)],
-            (('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Legal Sector', None, '978-0-309-31343-8', None, None, 'Book'), ('Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for the Health Care Sector', None, '978-0-309-31046-8', None, None, 'Book')): [(17, 15), (17, 16)],
-            (('Early European Books->Collection 10', None, None, None, None, 'Database'), ('Early European Books->Collection 1', None, None, None, None, 'Database')): [(81, 77), (81, 78), (81, 79), (81, 80), (82, 77), (82, 78), (82, 79), (82, 80), (83, 77), (83, 78), (83, 79), (83, 80)],
-            (('Historical Linguistics 1999: Selected Papers from the 14th International Conference on Historical Linguistics, Vancouver, 9-13 August 1999 (Amsterdam studies in the theory and history of linguistic sc', None, None, None, None, 'Book'), ('Artificial Intelligence Research and Development: Proceedings of the 13th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in artificial intelligence and appl', None, '978-1-60750-643-0', None, None, 'Book')): [(20, 2)],
-            (('Historical Linguistics 1999: Selected Papers from the 14th International Conference on Historical Linguistics, Vancouver, 9-13 August 1999 (Amsterdam studies in the theory and history of linguistic sc', None, None, None, None, 'Book'), ('Artificial Intelligence Research and Development: Proceedings of the 15th International Conference of the Catalan Association for Artificial Intelligence (Frontiers in Artificial Intelligence and Appl', None, '978-1-61499-139-7', None, None, 'Book')): [(20, 3)],
-            (('Historical Linguistics 1999: Selected Papers from the 14th International Conference on Historical Linguistics, Vancouver, 9-13 August 1999 (Amsterdam studies in the theory and history of linguistic sc', None, None, None, None, 'Book'), ('Historical Linguistics 1993: Selected Papers From the 11th International Conference on Historical Linguistics, Los Angeles, 16-20 August 1993 (Amsterdam Studies in the Theory and History of Linguistic', None, None, None, None, 'Book')): [(20, 19)],
-            (('Historical Linguistics, 1987: Papers From the 8th International Conference on Historical Linguistics (8. ICHL): Lille, 31 August-4 September 1987 (Amsterdam Studies in the Theory and History of Lingui', None, None, None, None, 'Book'), ('Historical Linguistics 1993: Selected Papers From the 11th International Conference on Historical Linguistics, Los Angeles, 16-20 August 1993 (Amsterdam Studies in the Theory and History of Linguistic', None, None, None, None, 'Book')): [(21, 19)],
-            (('Historical Linguistics, 1987: Papers From the 8th International Conference on Historical Linguistics (8. ICHL): Lille, 31 August-4 September 1987 (Amsterdam Studies in the Theory and History of Lingui', None, None, None, None, 'Book'), ('Historical Linguistics 1999: Selected Papers from the 14th International Conference on Historical Linguistics, Vancouver, 9-13 August 1999 (Amsterdam studies in the theory and history of linguistic sc', None, None, None, None, 'Book')): [(21, 20)],
-            (('Learning Bodies', None, '978-87-7684-266-6', None, None, 'Book'), ('Learning & Behavior', None, None, None, '1543-4494', 'Book')): [(27, 26), (28, 26)],
-            (('Learning Bootstrap', None, '978-1-78216-185-1', None, None, 'Book'), ('Learning & Behavior', None, None, None, '1543-4494', 'Book')): [(29, 26)],
-            (('Learning Bootstrap', None, '978-1-78216-185-1', None, None, 'Book'), ('Learning Bodies', None, '978-87-7684-266-6', None, None, 'Book')): [(29, 27), (29, 28)],
-            (('Learning Python', None, '978-1-56592-893-0', None, None, 'Book'), ('Learning & Behavior', None, None, None, '1543-4494', 'Book')): [(30, 26), (31, 26)],
-            (('Learning Python', None, '978-1-56592-893-0', None, None, 'Book'), ('Learning Bodies', None, '978-87-7684-266-6', None, None, 'Book')): [(30, 27), (30, 28), (31, 27), (31, 28)],
-            (('Learning Python', None, '978-1-56592-893-0', None, None, 'Book'), ('Learning Bootstrap', None, '978-1-78216-185-1', None, None, 'Book')): [(30, 29), (31, 29)],
-            (('Learning Theories: A to Z', None, '978-1-280-92804-8', None, None, 'Book'), ('Learning & Behavior', None, None, None, '1543-4494', 'Book')): [(32, 26), (33, 26)],
-            (('Learning Theories: A to Z', None, '978-1-280-92804-8', None, None, 'Book'), ('Learning Bodies', None, '978-87-7684-266-6', None, None, 'Book')): [(32, 27), (32, 28), (33, 27), (33, 28)],
-            (('Learning Theories: A to Z', None, '978-1-280-92804-8', None, None, 'Book'), ('Learning Bootstrap', None, '978-1-78216-185-1', None, None, 'Book')): [(32, 29), (33, 29)],
-            (('Learning Theories: A to Z', None, '978-1-280-92804-8', None, None, 'Book'), ('Learning Python', None, '978-1-56592-893-0', None, None, 'Book')): [(32, 30), (32, 31), (33, 30), (33, 31)],
-            (('New Stoicism', None, '978-1-4008-1096-3', None, None, 'Book'), ('New Scientist', None, None, None, '0262-4079', 'Book')): [(37, 36), (38, 36)],
-            (('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2', None, None, None, None, 'Database'), ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection', None, None, None, None, 'Database')): [(105, 101), (105, 102), (105, 103), (105, 104), (106, 101), (106, 102), (106, 103), (106, 104), (107, 101), (107, 102), (107, 103), (107, 104), (108, 101), (108, 102), (108, 103), (108, 104)],
-            (('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3', None, None, None, None, 'Database'), ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection', None, None, None, None, 'Database')): [(109, 101), (109, 102), (109, 103), (109, 104)],
-            (('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3', None, None, None, None, 'Database'), ('Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2', None, None, None, None, 'Database')): [(109, 105), (109, 106), (109, 107), (109, 108)],
-            (('ProQuest Social Sciences Premium Collection->ERIC', None, None, None, None, 'Database'), ('ERIC', None, None, None, None, 'Database')): [(110, 84), (110, 85), (110, 86), (110, 87), (110, 88), (110, 89), (110, 90), (110, 91), (110, 92), (110, 93), (110, 94), (110, 95), (110, 96), (110, 97), (110, 98), (111, 84), (111, 85), (111, 86), (111, 87), (111, 88), (111, 89), (111, 90), (111, 91), (111, 92), (111, 93), (111, 94), (111, 95), (111, 96), (111, 97), (111, 98), (112, 84), (112, 85), (112, 86), (112, 87), (112, 88), (112, 89), (112, 90), (112, 91), (112, 92), (112, 93), (112, 94), (112, 95), (112, 96), (112, 97), (112, 98), (113, 84), (113, 85), (113, 86), (113, 87), (113, 88), (113, 89), (113, 90), (113, 91), (113, 92), (113, 93), (113, 94), (113, 95), (113, 96), (113, 97), (113, 98), (114, 84), (114, 85), (114, 86), (114, 87), (114, 88), (114, 89), (114, 90), (114, 91), (114, 92), (114, 93), (114, 94), (114, 95), (114, 96), (114, 97), (114, 98), (115, 84), (115, 85), (115, 86), (115, 87), (115, 88), (115, 89), (115, 90), (115, 91), (115, 92), (115, 93), (115, 94), (115, 95), (115, 96), (115, 97), (115, 98), (116, 84), (116, 85), (116, 86), (116, 87), (116, 88), (116, 89), (116, 90), (116, 91), (116, 92), (116, 93), (116, 94), (116, 95), (116, 96), (116, 97), (116, 98)],
-            (('Social Science Premium Collection->Education Collection->ERIC', None, None, None, None, 'Database'), ('ERIC', None, None, None, None, 'Database')): [(117, 84), (117, 85), (117, 86), (117, 87), (117, 88), (117, 89), (117, 90), (117, 91), (117, 92), (117, 93), (117, 94), (117, 95), (117, 96), (117, 97), (117, 98), (118, 84), (118, 85), (118, 86), (118, 87), (118, 88), (118, 89), (118, 90), (118, 91), (118, 92), (118, 93), (118, 94), (118, 95), (118, 96), (118, 97), (118, 98), (119, 84), (119, 85), (119, 86), (119, 87), (119, 88), (119, 89), (119, 90), (119, 91), (119, 92), (119, 93), (119, 94), (119, 95), (119, 96), (119, 97), (119, 98), (120, 84), (120, 85), (120, 86), (120, 87), (120, 88), (120, 89), (120, 90), (120, 91), (120, 92), (120, 93), (120, 94), (120, 95), (120, 96), (120, 97), (120, 98), (121, 84), (121, 85), (121, 86), (121, 87), (121, 88), (121, 89), (121, 90), (121, 91), (121, 92), (121, 93), (121, 94), (121, 95), (121, 96), (121, 97), (121, 98), (122, 84), (122, 85), (122, 86), (122, 87), (122, 88), (122, 89), (122, 90), (122, 91), (122, 92), (122, 93), (122, 94), (122, 95), (122, 96), (122, 97), (122, 98), (123, 84), (123, 85), (123, 86), (123, 87), (123, 88), (123, 89), (123, 90), (123, 91), (123, 92), (123, 93), (123, 94), (123, 95), (123, 96), (123, 97), (123, 98), (124, 84), (124, 85), (124, 86), (124, 87), (124, 88), (124, 89), (124, 90), (124, 91), (124, 92), (124, 93), (124, 94), (124, 95), (124, 96), (124, 97), (124, 98)],
-            (('Social Science Premium Collection->Education Collection->ERIC', None, None, None, None, 'Database'), ('ProQuest Social Sciences Premium Collection->ERIC', None, None, None, None, 'Database')): [(117, 110), (117, 111), (117, 112), (117, 113), (117, 114), (117, 115), (117, 116), (118, 110), (118, 111), (118, 112), (118, 113), (118, 114), (118, 115), (118, 116), (119, 110), (119, 111), (119, 112), (119, 113), (119, 114), (119, 115), (119, 116), (120, 110), (120, 111), (120, 112), (120, 113), (120, 114), (120, 115), (120, 116), (121, 110), (121, 111), (121, 112), (121, 113), (121, 114), (121, 115), (121, 116), (122, 110), (122, 111), (122, 112), (122, 113), (122, 114), (122, 115), (122, 116), (123, 110), (123, 111), (123, 112), (123, 113), (123, 114), (123, 115), (123, 116), (124, 110), (124, 111), (124, 112), (124, 113), (124, 114), (124, 115), (124, 116)],
-            (('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, '978-1-59947-552-3', None, None, 'Book'), ('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, None, None, None, 'Book')): [(42, 41)],
-            (('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, '978-1-59947-552-X', None, None, 'Book'), ('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, '978-1-59947-552-3', None, None, 'Book')): [(43, 40), (43, 42)],
-            (('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, '978-1-59947-552-X', None, None, 'Book'), ('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, None, None, None, 'Book')): [(43, 41)],
-            (('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, None, None, None, 'Book'), ('Superhero Ethics: 10 Comic Book Heroes; 10 Ways to Save the World; Which One Do We Need Most Now?', None, '978-1-59947-552-3', None, None, 'Book')): [(41, 40)],
-            (('The History Of Torture', None, '978-1-306-11564-3', None, None, 'Book'), ('A History of Ukraine', None, '978-1-4426-7037-2', None, None, 'Book')): [(49, 1), (50, 1)],
-            (('The Scientific Revolution', None, '978-1-281-43040-3', None, None, 'Book'), ('New Scientist', None, None, None, '0262-4079', 'Book')): [(52, 36), (53, 36), (54, 36)],
-            (('The yellow wallpaper', None, '978-0-585-15016-1', None, None, 'Book'), ('The Yale Swallow Protocol', None, '978-3-319-05113-0', None, None, 'Book')): [(62, 59), (62, 60), (62, 61)],
-            (('Women and Language Debate: A Sourcebook', None, '978-0-585-03362-4', None, None, 'Book'), ('Women and Language', None, None, '8755-4550', None, 'Serial')): [(145, 125), (145, 126), (145, 127), (145, 128), (145, 129), (145, 130), (145, 131), (145, 132), (145, 133), (145, 134), (145, 135), (145, 136), (145, 137), (145, 138), (145, 139), (145, 140), (145, 141), (145, 142), (145, 143), (145, 144)],
-            (('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(65, 64), (66, 64)],
-            (('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(67, 64)],
-            (('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(67, 65), (67, 66)],
-            (('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(68, 64)],
-            (('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(68, 65), (68, 66)],
-            (('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(68, 67)],
-            (('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(69, 64)],
-            (('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(69, 65), (69, 66)],
-            (('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(69, 67)],
-            (('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book'), ('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book')): [(69, 68)],
-            (('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(70, 64)],
-            (('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(70, 65), (70, 66)],
-            (('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(70, 67)],
-            (('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book'), ('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book')): [(70, 68)],
-            (('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book'), ('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book')): [(70, 69)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(71, 64)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(71, 65), (71, 66)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(71, 67)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book')): [(71, 68)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book')): [(71, 69)],
-            (('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book'), ('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book')): [(71, 70)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(72, 64)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(72, 65), (72, 66)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(72, 67)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book')): [(72, 68)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book')): [(72, 69)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book')): [(72, 70)],
-            (('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book'), ('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book')): [(72, 71)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations : Buenos Aires', None, '978-1-78320-340-6', None, None, 'Book')): [(73, 64)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations : Mumbai', None, '978-1-84150-679-1', None, None, 'Book')): [(73, 65), (73, 66)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations:  Melbourne', None, '978-1-84150-678-4', None, None, 'Book')): [(73, 67)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations: Barcelona', None, '978-1-78320-107-5', None, None, 'Book')): [(73, 68)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations: Beijing', None, '978-1-84150-677-7', None, None, 'Book')): [(73, 69)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations: Berlin', None, '978-1-84150-680-7', None, None, 'Book')): [(73, 70)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations: Dublin', None, '978-1-84150-592-3', None, None, 'Book')): [(73, 71)],
-            (('World Film Locations: Vienna', None, '978-1-84150-736-1', None, None, 'Book'), ('World Film Locations: Marseilles', None, '978-1-78320-172-3', None, None, 'Book')): [(73, 72)],
-            (('Yale Law Journal', None, None, None, '0044-0094', 'Book'), ('Library Journal', None, None, None, '0363-0277', 'Book')): [(74, 35)],
-            (('Yale Law Journal', None, None, None, '0044-0094', 'Book'), ('Whole Dog Journal', None, None, None, '1097-5322', 'Book')): [(74, 63)],
-            (('Yellow Wallpaper', None, '978-1-77651-048-1', None, None, 'Book'), ('The yellow wallpaper', None, '978-0-585-15016-1', None, None, 'Book')): [(75, 62), (76, 62)]
+    #Section: Creating a Selenium Wire driver and a test using it to submit Excel workbooks into the form then captures the form return value
+    # https://github.com/wkeeling/selenium-wire
+    # https://docs.python-requests.org/en/latest/user/quickstart/#post-a-multipart-encoded-file
+    # https://docs.python-requests.org/en/latest/user/advanced/#post-multiple-multipart-encoded-files
+    '''@pytest.fixture
+    def driver():
+        """Creates a Selenium driver with the Flask app domain for testing."""
+        #ToDo: Using this fixture requires the Flask server be running; adding instantiation of create_app() doesn't work as a solution because the Flask client and Selenium driver both have HTTP verb methods and only one class can be used
+        driver = Chrome_browser_driver()
+        domain = 'http://localhost:5000'  #ToDo: Change this as needed to match the domain of the Flask app
+        app = create_app()
+        client = app.test_client()
+        yield driver, domain, client
+        driver.quit()'''
+    '''p=Chrome()
+    the_files = [
+        ('R4_files', ('1_BR1_16-17.xlsx', open(Path('.', 'tests', 'bin', 'OpenRefine_exports', '1_BR1_16-17.xlsx'), 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')),
+        ('R4_files', ('4_BR5_18-19.xlsx', open(Path('.', 'tests', 'bin', 'OpenRefine_exports', '4_BR5_18-19.xlsx'), 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+    ]
+    t = p.request(
+        'POST',
+        domain + '/historical-COUNTER-data',
+        files=the_files
+    )'''
+    '''p=Chrome()
+    t=p.request(
+        'POST',
+        domain + '/historical-COUNTER-data',
+        files={
+            'R4_files': ('the filename', open(Path('.', 'tests', 'bin', 'OpenRefine_exports', '1_BR1_16-17.xlsx'), 'rb'))
         }
     )
+    logging.info(f"Type of t: {type(t)}") # should be response
+    logging.info(f"t.content: {t.content}") # HTML that comes back when request is sent
+    logging.info(f"t.headers: {t.headers}") # headers sent back with response
+    logging.info(f"t.text: {t.text}") # unicode content of response
+    logging.info(f"t.status_code: {t.status_code}") # status code content of response
+    logging.info(f"t.url: {t.url}") # URL location of response
+    logging.info(f"t.path: {t.path}")
+    logging.info(f"t.params: {t.params}")
+    logging.info(f"t.headers: {t.headers}")'''
+    # https://stackoverflow.com/questions/12385179/how-to-send-a-multipart-form-data-with-requests-in-python
+    # https://stackoverflow.com/a/38271059 but has single file | https://stackoverflow.com/questions/59322526/python-request-multipart-data
+    # https://stackoverflow.com/questions/38270151/requests-post-multipart-form-data/38271059#38271059
+    # https://www.dilatoit.com/2020/12/17/how-to-capture-http-requests-using-selenium.html
+
+    #Section: Creating a Selenium driver and a test using a Requests method via Selenium Requests to submit Excel workbooks into the form then captures the form return value
+    # https://pypi.org/project/selenium-requests/
+    '''@pytest.fixture
+    def driver():
+        """Creates a Selenium driver with the Flask app domain for testing."""
+        #ToDo: Using this fixture requires the Flask server be running; adding instantiation of create_app() doesn't work as a solution because the Flask client and Selenium driver both have HTTP verb methods and only one class can be used
+        driver = Chrome_browser_driver()
+        domain = 'http://localhost:5000'  #ToDo: Change this as needed to match the domain of the Flask app
+        app = create_app()
+        client = app.test_client()
+        yield driver, domain, client
+        driver.quit()'''
+    '''driver, domain, client = driver
+    data = dict()
+    data['file'] = (
+        open(Path('.', 'tests', 'bin', 'OpenRefine_exports', '1_BR1_16-17.xlsx'), 'rb'),
+        str(Path('.', 'tests', 'bin', 'OpenRefine_exports', '1_BR1_16-17.xlsx')),
+        '1_BR1_16-17.xlsx',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    logging.info(f"data: {data}")
+    logging.info(f"data type: {type(data)}")
+    logging.info(f"data['file']: {data['file']}")
+    logging.info(f"data['file'] type: {type(data['file'])}")
+    response = client.post(
+        domain + '/historical-COUNTER-data',
+        data=data,
+        follow_redirects=True,
+        content_type='multipart/form-data'
+    )
+    logging.info(f"response: {response}") # `<WrapperTestResponse streamed [200 OK]>`
+    logging.info(f"response type: {type(response)}") # `<class 'werkzeug.test.WrapperTestResponse'>`
+    logging.info(f"response.response: {response.response}") # `<werkzeug.wsgi.ClosingIterator object at 0x10929370>`
+    logging.info(f"response.status: {response.status}") # `200 OK`
+    logging.info(f"response.headers: {response.headers}") # `Content-Type: text/html; charset=utf-8\nContent-Length: 1790`
+    logging.info(f"response.history: {response.history}") # `()`
+    logging.info(f"response.content_encoding: {response.content_encoding}") # `None`
+    logging.info(f"response.content_type: {response.content_type}") # `text/html; charset=utf-8`
+    logging.info(f"response.data: {response.data}") # `b'<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">\n    <title>Initialize Database</title>\n</head>\n<body>\n    <h1>Initialize the Database with R4 Data</h1>\n    <p>The relational database is created containing the historical R4 data. In creating the database with all the R4 data, you cna be sure that the historical COUNTER data is in the new system and that R5 reports collected via SUSHI will have a solid foundation for deduplication.</p>\n\n    <h2>1. Reformat the R4 Reports with OpenRefine</h2>\n    <p>The crosstab format of R4 reports doesn\'t work well in relational databases; they need to be unpacked. JSONs <!--available where?--> contain the OpenRefine procedure for unpacking standard tabular R4 reports for use in this relational database. OpenRefine, an open source data cleanup tool, can be <a href="https://openrefine.org/download.html">downloaded here</a>. To make uploading the files easier, the OpenRefine results should be saved as CSVs to a single folder that contains no other files and has no subfolders.</p>\n\n    <h2>2. Upload the Reformatted R4 Reports</h2>\n    <form action="/matching" method="POST" enctype="multipart/form-data">\n        <label>\n            Select the reformatted R4 reports. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.\n            <input name="R4_files" type="file" multiple>\n        </label>\n        <button type="submit">Submit</button>\n    </form>\n</body>\n</html>'`
+    logging.info(f"response.mimetype: {response.mimetype}") # `text/html`
+    logging.info(f"response.mimetype_params: {response.mimetype_params}") # `<CallbackDict {'charset': 'utf-8'}>`
+    logging.info(f"response.stream: {response.stream}") # `<werkzeug.wrappers.response.ResponseStream object at 0x10B89910>`'''
+    # https://stackoverflow.com/questions/34964423/selenium-post-method/34964580
+    # https://stackoverflow.com/questions/33404833/python-requests-post-multipart-form-data
+    # https://stackoverflow.com/questions/43042805/how-to-send-a-multipart-form-data-with-requests-in-python
 
 
-def test_harvest_SUSHI_report(sample_R4_dataframe):
+@pytest.fixture
+def RawCOUNTERReport_fixture_from_R4_spreadsheets():
+    """A RawCOUNTERReport object created by passing all the sample R4 spreadsheets into a dataframe, then wrapping the dataframe in the RawCOUNTERReport class."""
+    dataframes_to_concatenate = []
+    for spreadsheet in os.listdir(Path('tests', 'bin', 'OpenRefine_exports')):
+        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=spreadsheet)[0]
+        dataframe = pd.read_excel(
+            Path('tests', 'bin', 'OpenRefine_exports', spreadsheet),
+            engine='openpyxl',
+            dtype={
+                'Resource_Name': 'string',
+                'Publisher': 'string',
+                'Platform': 'string',
+                'DOI': 'string',
+                'Proprietary_ID': 'string',
+                'ISBN': 'string',
+                'Print_ISSN': 'string',
+                'Online_ISSN': 'string',
+                'Data_Type': 'string',
+                'Metric_Type': 'string',
+                # R4_Month is fine as default datetime64[ns]
+                'R4_Count': 'int',
+            },
+        )
+        dataframe['Statistics_Source_ID'] = statistics_source_ID
+        dataframes_to_concatenate.append(dataframe)
+    RawCOUNTERReport_fixture = pd.concat(
+        dataframes_to_concatenate,
+        ignore_index=True
+    )
+    yield RawCOUNTERReport(RawCOUNTERReport_fixture)
+    
+    
+def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
+    """Confirms that constructor for RawCOUNTERReport that takes in reformatted R4 reports is working correctly."""
+    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
+    assert sample_R4_reports.equals(RawCOUNTERReport_fixture_from_R4_spreadsheets)
+
+
+def test_perform_deduplication_matching(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
+    """Tests that the `perform_deduplication_matching` method returns the data representing resource matches both confirmed and needing confirmation when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
+    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
+    assert sample_R4_reports.perform_deduplication_matching() == RawCOUNTERReport_fixture_from_R4_spreadsheets.perform_deduplication_matching()
+
+
+def test_harvest_SUSHI_report(sample_R4_form_result):
     #ToDo: Write a docstring when the format of the return value is set
     pass
     
 
-def test_load_data_into_database(sample_R4_dataframe):
+def test_load_data_into_database(sample_R4_form_result):
     #ToDo: Write a docstring when the format of the return value is set
     pass

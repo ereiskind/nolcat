@@ -1,5 +1,8 @@
+from pathlib import Path
 from flask import Flask
 from flask import render_template
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 def page_not_found(error):
     return render_template('404.html'), 404
@@ -18,3 +21,23 @@ def create_app():
         return render_template('index.html')
 
     return app
+
+
+def Chrome_browser_driver():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--verbose')
+    chrome_options.add_experimental_option("prefs", {
+            "download.default_directory": "Downloads",
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing_for_trusted_sources_enabled": False,
+            "safebrowsing.enabled": False
+    })
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-software-rasterizer')
+
+    return webdriver.Chrome(options=chrome_options)
