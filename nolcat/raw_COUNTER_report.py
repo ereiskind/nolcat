@@ -82,6 +82,11 @@ class RawCOUNTERReport:
         return repr(self.report_dataframe.head())
     
 
+    def equals(self, other):
+        """Recreates the pandas `equals` method with RawCOUNTERReport objects."""
+        return self.report_dataframe.equals(other.report_dataframe)
+    
+
     def perform_deduplication_matching(self, normalized_resource_data=None):
         """Matches the line items in a COUNTER report for the same resource.
 
