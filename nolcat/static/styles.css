@@ -9,6 +9,8 @@ body {
 }
 p {
     margin: 0 0 14px;
+    font-size: 1.333rem;
+    font-weight: normal;
 }
 
 ul, ol {
@@ -17,6 +19,10 @@ ul, ol {
 }
 ul ul, ol ul, ul ol, ol ol {
     margin-bottom: 0;
+}
+li {
+    -webkit-transition: all 0.10s ease-in-out;
+    transition: all 0.15s ease-in-out;
 }
 dl {
     margin-top: 0;
@@ -137,10 +143,12 @@ a {
     color: #782f40;
     text-decoration: none;
     font-weight: 800;
+    -webkit-transition: all 0.10s ease-in-out;
+    transition: all 0.15s ease-in-out;
 }
 
 a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, p a, li a, dt a, a:hover, a:focus {
-    background-image: linear-gradient(to right, rgba(120, 47, 64, 1.0) 40%, rgba(206, 184, 136, 1.0) 60%);
+    background-image: linear-gradient(to right, rgba(120, 47, 64, 1.0) 40%, rgba(206, 184, 136, 1.0) 60%); /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0.15) 40%, rgba(255, 255, 255, 0.15) 60%); */
     background-position: 50% calc(100% - 1px);
     background-position: 50% 100%;
     background-repeat: repeat-x;
@@ -163,22 +171,47 @@ a:hover, a:focus {
     
 }  
 a:focus {
-    outline: 5px auto -webkit-focus-ring-color;
+    outline: 5px auto -webkit-focus-ring-color; /* outline: 3px auto -webkit-focus-ring-color */
     outline-offset: -2px;
 }
 
 
 /*** NAVIGATION ***/
+nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    border:none;
+}
+nav > li {
+    position: relative;
+    display: block;
+}
+nav > li > a {
+    position: relative;
+    display: block;
+    padding: 0.5em 1em;
+}
+nav > li > a:hover, nav > li > a:focus {
+    text-decoration: none;
+    background-color: #f4f4f4;
+}
+
 nav ul {
     list-style: none;
     padding-left: 0
+}
+nav a {
+    font-weight: 400;
 }
 nav li a {
     display: block;
     background-image: none;
     font-weight: 400;
     line-height: 1.777;
-    padding: 1em
+    padding: 1em;
+    font-size:.8em;
+    cursor:pointer;
 }
 
 
@@ -197,17 +230,41 @@ label {
 button {
     font-weight: 500;
     font-family: acumin-pro-condensed, "Arial", sans-serif;
+    line-height: 1.1;
+    white-space: normal;
+    border-style: solid;
+    margin: 2px 0;
+    border-radius: .25em;
+    border-width: 1px;
+    -webkit-transition: all 0.10s ease-in-out;
+    transition: all 0.15s ease-in-out;
 }
 
 input[type="radio"], input[type="checkbox"] {
     margin: 4px 0 0;
-    margin-top: 1px \9;
+    margin-top: 1px \9; /* margin-top: 10px; */
+    margin-bottom: 10px;
     line-height: normal;
+    position: relative;
+    display: block;
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
 }
 input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focus {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
 }
+
+input[type="radio"] label, input[type="checkbox"] label {
+    min-height: 28px;
+    padding-left: 20px;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+  
 
 
 /*** TABLES ***/
@@ -215,9 +272,14 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     background-color: transparent;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 28px;
 }
 td, th {
     padding: 0;
+    background-color: #fff;
+    border: 1px solid #ddd; /* for a bordered style */
 }
 th {
     text-align: left;
@@ -225,6 +287,16 @@ th {
 table > thead tr {
     background-color:#782f40;
     color:#ffffff
+}
+table > thead > tr > th, table > tbody > tr > th, table > tfoot > tr > th, table > thead > tr > td, table > tbody > tr > td, table > tfoot > tr > td {
+    padding: 0.4em;
+    line-height: 1.777;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+.table > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dddddd;
 }
 
 table td[class*="col-"], table th[class*="col-"] {
