@@ -71,6 +71,8 @@ class RawCOUNTERReport:
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
             #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
+        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # This is used to instantiate RawCOUNTERReport_fixture_from_R4_spreadsheets
+            self.report_dataframe = df
         else:
             pass  #ToDo: Return an error message and quit the constructor
 
