@@ -267,17 +267,17 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
     yield RawCOUNTERReport(RawCOUNTERReport_fixture)
     
     
-def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result):
+def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
     """Confirms that constructor for RawCOUNTERReport that takes in reformatted R4 reports is working correctly."""
-    #ToDo: assert RawCOUNTERReport(sample_R4_form_result) == value of all tests\bin\OpenRefine_exports files in a RawCOUNTERReport object
-    pass
+    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
+    assert sample_R4_reports.equals(RawCOUNTERReport_fixture_from_R4_spreadsheets)
 
 
-def test_perform_deduplication_matching(sample_R4_form_result):
-    """Tests that the `perform_deduplication_matching` method returns the data representing resource matches both confirmed and needing confirmation with the object instantiated from `sample_R4_form_result` as the sole argument."""
-    #ToDo: sample_R4_reports = RawCOUNTERReport(sample_R4_form_result)
-    #ToDo: assert sample_R4_reports.perform_deduplication_matching() == constant of what is returned by the files in tests\bin\OpenRefine_exports
-    pass
+def test_perform_deduplication_matching(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
+    """Tests that the `perform_deduplication_matching` method returns the data representing resource matches both confirmed and needing confirmation when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
+    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
+    assert sample_R4_reports.perform_deduplication_matching() == RawCOUNTERReport_fixture_from_R4_spreadsheets.perform_deduplication_matching()
+
 
 def test_harvest_SUSHI_report(sample_R4_form_result):
     #ToDo: Write a docstring when the format of the return value is set
