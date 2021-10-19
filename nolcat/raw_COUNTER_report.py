@@ -368,10 +368,12 @@ class RawCOUNTERReport:
         comparing_names_and_partials_table['index_zero_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
         comparing_names_and_partials_table['index_one_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
         # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
-        #ToDo: comparing_names_and_partials_table = comparing_names_and_partials_table[
-            #ToDo: comparing_names_and_partials_table['index_zero_name'] is not null &
-            #ToDo: comparing_names_and_partials_table['index_one_name'] is not null
-        #ToDo: ]
+        comparing_names_and_partials_table.dropna(
+            axis='index',
+            subset=['index_zero_name', 'index_one_name'],
+            inplace=True,
+        )
+        logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         comparing_names_and_partials_table['partial_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
         comparing_names_and_partials_table['token_sort_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
