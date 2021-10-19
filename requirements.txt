@@ -3,6 +3,7 @@ fuzzywuzzy==0.18.0
 graphviz==0.17
 pandas==1.3.2
 pytest==6.2.5
+python-Levenshtein==0.12.2
 recordlinkage==0.14
 selenium==3.141.0
 Sphinx==4.1.1
