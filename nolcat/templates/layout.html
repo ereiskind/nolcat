@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles.css">
-    <title><!--Metadata title--></title>
+    <title>{% block metadata_title %}{% endblock %}</title>
 </head>
 <body>
     <header>
@@ -19,7 +19,7 @@
     </header>
 
     <main>
-        <!--Page content-->
+        {% block main_content %}{% endblock %}
     </main>
 
     <footer>
