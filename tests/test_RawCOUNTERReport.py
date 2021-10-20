@@ -275,6 +275,7 @@ def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result, RawCOUNTERReport
 
 def test_perform_deduplication_matching(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
     """Tests that the `perform_deduplication_matching` method returns the data representing resource matches both confirmed and needing confirmation when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
+    #ALERT: On a workstation with 8GB RAM, this test fails with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the test successfully
     sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
     assert sample_R4_reports.perform_deduplication_matching() == RawCOUNTERReport_fixture_from_R4_spreadsheets.perform_deduplication_matching()
 

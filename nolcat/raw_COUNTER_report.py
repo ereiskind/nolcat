@@ -20,7 +20,7 @@ class RawCOUNTERReport:
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
         harvest_SUSHI_report: Use the SUSHI API to collect all the master R5 reports from a given source for a set time period.
         #ToDo: Repeatedly running harvest_SUSHI_report with a list of credentials applying multithreading will be its own function/class
-        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Provided_Resources, and COUNTER_Usage_Data relations.
+        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations.
     
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
@@ -341,7 +341,6 @@ class RawCOUNTERReport:
             logging.debug(f"{match} added as a match on database names with a high matching threshold")
         
 
-        #ToDo: PLATFORMS HAVE NULL Resource_Name VALUES: platforms need to be removed from this comparison because they have null Resource_Name values that interfer with the matching and, since they aren't resources, can't be part of resource deduping 
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
         logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
         #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers
@@ -365,8 +364,16 @@ class RawCOUNTERReport:
         logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
+        #ALERT: See note in tests.test_RawCOUNTERReport about memory
         comparing_names_and_partials_table['index_zero_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
         comparing_names_and_partials_table['index_one_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+        # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
+        comparing_names_and_partials_table.dropna(
+            axis='index',
+            subset=['index_zero_name', 'index_one_name'],
+            inplace=True,
+        )
+        logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         comparing_names_and_partials_table['partial_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
         comparing_names_and_partials_table['token_sort_ratio'] = comparing_names_and_partials_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
@@ -476,6 +483,6 @@ class RawCOUNTERReport:
     
 
     def load_data_into_database():
-        """Add the COUNTER report to the database by adding records to the Resource, Provided_Resources, and COUNTER_Usage_Data relations."""
+        """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
         #ToDo: Write a more detailed docstring
         pass
