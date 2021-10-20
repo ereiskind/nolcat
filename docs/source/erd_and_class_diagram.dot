@@ -224,7 +224,6 @@ digraph erd_and_classes {
 
         // Methods
         perform_deduplication_matching [shape="Mrecord"]
-        harvest_SUSHI_report [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }
 
@@ -297,11 +296,6 @@ digraph erd_and_classes {
     ]
 
     // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
-
-    collect_usage_via_SUSHI -> harvest_SUSHI_report [
-        dir="none"
-        style="dotted"
-    ]
 
 
     /* *** OBJECTS TO BE ORGANIZED *** */
