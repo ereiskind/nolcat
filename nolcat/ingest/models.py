@@ -125,6 +125,33 @@ class StatisticsSources(Base):
     def harvest_R5_SUSHI():
         #ToDo: For given start date and end date, harvests all available reports at greatest level of detail
         #ToDo: Should there be an option to start by removing all usage from that source for the given time period
+
+        #Section: Helper Methods for the Method
+        #ToDo: Handle_Status_Check_Problem(Source, Message, Error = None, Type = "alert"): Handles results of SUSHI API call for status that countain an error or alert by presenting the message and asking if the interface's stats should be collected.
+        #ToDo: Handle_Exception_Master_Report(Source, Report, Exception_List, Load_Report_Items = False): Handles results of a SUSHI API call for a master report that is or contains exceptions. | The function parses the list of exceptions, remaking each exception into a string. Then, if the response contained a Report_Items section, it asks if the usage should be loaded into the database. Finally, if the usage isn't to be loaded into the database, the report is added to Error_Log and the corresponding log statement is output to the terminal. Note that because there are two different possible parmeters for including parent details, "include_parent_details" and "include_component_details", which an item report might use, most item reports will require handling through this function.
+        #ToDo: API_Download_Not_Empty(): Prints a message indicating that the "API_Download" folder isn't empty and that it needs to be for the program to work properly, then exits the program.
+
+        #Section: Other Inputs and Questions Related to Loop Removal
+        #ToDo: Is the CSV DictWriter error log needed?
+
+        #Section: Start the Method
+        #ToDo: Confirm an empty location for JSON files that download when API call is made
+        #ToDo: Create a dict with the SUSHI API URL, stats source name, stats source ID, and customer ID, as well as the requestor ID, API key, and/or platform if available/needed
+        #ToDo: Get the start and end dates from the user via PyInputPlus
+        #ToDo: Create a dict with just the available of customer ID, requestor ID, API key, and platform for API call parameters
+        #ToDo: API call for status {Single_Element_API_Call("status", SUSHI_Call_Data["URL"], Credentials_String)}
+        #ToDo: Check if returned JSON has any error codes in it
+        #ToDo: API call for reports offered {Single_Element_API_Call("reports", SUSHI_Call_Data["URL"], Credentials_String)}
+        #ToDo: Get master reports and standard reports for which the master report isn't offered
+        #ToDo: Add dates to API call parameters
+        #ToDo: For each master report:
+            #ToDo: Check if the data was already harvested for the given date range and ask if it should be removed or if the report should be skipped
+            #ToDo: Add attributes_to_show with appropriate values to API parameters
+            #ToDo: for IR, add include_parent_details and include_component_details
+            #ToDo: API call for master report {Master_Report_API_Call(Master_Report_Type, SUSHI_Call_Data["URL"], Credentials_String)}
+            #ToDo: Check if returned JSON has any error codes in it
+            #ToDo: Handle empty JSONs (JSON is returned, but there's no usage data)
+            #ToDo: Pass to RawCOUNTERReport class for deduplication, normalization, and loading into database
         pass
 
 
