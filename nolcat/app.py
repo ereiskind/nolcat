@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 def page_not_found(error):
+    """Returns the 404 page when a HTTP 404 error is raised."""
     return render_template('404.html'), 404
 
 
@@ -22,12 +23,14 @@ def create_app():
 
     @app.route('/')
     def homepage():
+        """Returns the homepage in response to web app root requests."""
         return render_template('index.html')
 
     return app
 
 
 def Chrome_browser_driver():
+    """Creates a Selenium webdriver for a headless Chrome browser."""
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920x1080")
