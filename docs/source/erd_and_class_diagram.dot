@@ -115,6 +115,7 @@ digraph erd_and_classes {
         // Methods
         show_SUSHI_credentials [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
+        collect_usage_statistics [shape="Mrecord"]
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
     }

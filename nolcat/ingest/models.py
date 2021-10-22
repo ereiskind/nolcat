@@ -166,6 +166,23 @@ class StatisticsSources(Base):
         pass
 
 
+    def collect_usage_statistics(self, usage_start_date, usage_end_date):
+        """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+
+        Args:
+            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+        
+        Returns:
+            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given date range
+        """
+        #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        #ToDo: return RawCOUNTERReport(above dataframe)
+        pass
+
+
     def add_access_stop_date():
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
