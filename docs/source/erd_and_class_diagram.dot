@@ -114,7 +114,8 @@ digraph erd_and_classes {
 
         // Methods
         show_SUSHI_credentials [shape="Mrecord"]
-        harvest_R5_SUSHI [shape="Mrecord"]
+        _harvest_R5_SUSHI [shape="Mrecord"]
+        collect_usage_statistics [shape="Mrecord"]
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
     }
@@ -135,7 +136,7 @@ digraph erd_and_classes {
         Notes
 
         // Methods
-        collect_usage_via_SUSHI [shape="Mrecord"]
+        collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
     }
 
@@ -165,6 +166,7 @@ digraph erd_and_classes {
         calculate_ARL_19 [shape="Mrecord"]
         calculate_ARL_20 [shape="Mrecord"]
         __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
+        collect_fiscal_year_usage_statistics [shape="Mrecord"]
     }
 
 
@@ -224,8 +226,20 @@ digraph erd_and_classes {
 
         // Methods
         perform_deduplication_matching [shape="Mrecord"]
-        harvest_SUSHI_report [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_SUSHICallAndResponse {
+        label="CLASS: SUSHICallAndResponse"
+
+        // Attributes
+        call_URL
+        call_path
+        parameter_string
+
+        // Methods
+        
     }
 
 
@@ -297,11 +311,6 @@ digraph erd_and_classes {
     ]
 
     // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
-
-    collect_usage_via_SUSHI -> harvest_SUSHI_report [
-        dir="none"
-        style="dotted"
-    ]
 
 
     /* *** OBJECTS TO BE ORGANIZED *** */
