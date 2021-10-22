@@ -234,6 +234,9 @@ digraph erd_and_classes {
         label="CLASS: SUSHICallAndResponse"
 
         // Attributes
+        call_URL
+        call_path
+        parameter_string
 
         // Methods
         
