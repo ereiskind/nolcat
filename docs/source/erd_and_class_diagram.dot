@@ -230,6 +230,16 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_SUSHICallAndResponse {
+        label="CLASS: SUSHICallAndResponse"
+
+        // Attributes
+
+        // Methods
+        
+    }
+
+
     // RELATIONSHIPS
     /*
         Establish relationships from the PK (tail) to the FK (head)
