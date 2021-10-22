@@ -23,7 +23,7 @@ RUN git clone https://github.com/ereiskind/nolcat.git -b {branch_name} ./nolcat/
 RUN pip install --no-cache-dir -r nolcat/requirements.txt
 
 WORKDIR ./nolcat/
-CMD python -m pytest -s --log-cli-level="{log_level}"{test_script_name}
+CMD python -m pytest -s --log-cli-level="{log_level}" --log-file="tests.log"{test_script_name}
 """
 with open('Dockerfile', 'w') as dockerfile:
     dockerfile.write(dockerfile_text)
