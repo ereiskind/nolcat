@@ -13,3 +13,8 @@ def test_harvest_R5_SUSHI():
 def test_collect_usage_statistics():
     #ToDo: Write test for StatisticsSources.collect_usage_statistics()
     pass
+
+
+def test_collect_annual_usage_statistics():
+    #ToDo: Write test for AnnualUsageCollectionTracking.collect_annual_usage_statistics()
+    pass

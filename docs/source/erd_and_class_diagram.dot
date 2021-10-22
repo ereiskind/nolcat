@@ -136,7 +136,7 @@ digraph erd_and_classes {
         Notes
 
         // Methods
-        collect_usage_via_SUSHI [shape="Mrecord"]
+        collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
     }
 

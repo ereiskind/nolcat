@@ -228,8 +228,20 @@ class AnnualUsageCollectionTracking():
         pass
 
 
-    def collect_usage_via_SUSHI():
-        #ToDo: Run StatisticsSources.harvest_R5_SUSHI() for the source using the FY start and end dates for the request timeframe; if successful, should change `collection_status` to "Collection complete"
+    def collect_annual_usage_statistics(self):
+        """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+
+        Returns:
+            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given fiscal year
+        """
+        #ToDo: start_date = start date for FY
+        #ToDo: end_date = end date for FY
+        #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
+        #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        #ToDo: Change `collection_status` to "Collection complete"
+        #ToDo: return RawCOUNTERReport(df)
         pass
 
 
