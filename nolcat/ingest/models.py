@@ -122,7 +122,18 @@ class StatisticsSources(Base):
         pass
 
 
-    def harvest_R5_SUSHI():
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
+        """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+
+        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a RawCOUNTERReport object for loading into the database. This is a private method meant to be called by other methods which will provide additional context at the method call and wrap the result in the RawCOUNTERReport class.
+
+        Args:
+            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+        
+        Returns:
+            dataframe: a dataframe containing all of the R5 COUNTER data
+        """
         #ToDo: For given start date and end date, harvests all available reports at greatest level of detail
         #ToDo: Should there be an option to start by removing all usage from that source for the given time period
 
