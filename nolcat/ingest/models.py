@@ -152,35 +152,87 @@ class StatisticsSources(Base):
         Returns:
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
-        #ToDo: For given start date and end date, harvests all available reports at greatest level of detail
-        #ToDo: Should there be an option to start by removing all usage from that source for the given time period
+        #Section: Get API Call URL and Parameters
+        #ToDo: Determine if info for API calls is coming from the Alma API or a file saved in a secure location
+        #ToDo: Using self.statistics_source_retrieval_code, create dict SUSHI_info with the following key-value pairs:
+            #ToDo: URL=the URL for the API call
+            #ToDo: customer_ID=the customer ID
+            #ToDo: requestor_ID=the requestor ID, if an API call parameter
+            #ToDo: API_key=the API key, if an API call parameter
+            #ToDo: SUSHI_platform=the platform parameter value, if part of the API call
+        #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
 
-        #Section: Helper Methods for the Method
-        #ToDo: Handle_Status_Check_Problem(Source, Message, Error = None, Type = "alert"): Handles results of SUSHI API call for status that countain an error or alert by presenting the message and asking if the interface's stats should be collected.
-        #ToDo: Handle_Exception_Master_Report(Source, Report, Exception_List, Load_Report_Items = False): Handles results of a SUSHI API call for a master report that is or contains exceptions. | The function parses the list of exceptions, remaking each exception into a string. Then, if the response contained a Report_Items section, it asks if the usage should be loaded into the database. Finally, if the usage isn't to be loaded into the database, the report is added to Error_Log and the corresponding log statement is output to the terminal. Note that because there are two different possible parmeters for including parent details, "include_parent_details" and "include_component_details", which an item report might use, most item reports will require handling through this function.
-        #ToDo: API_Download_Not_Empty(): Prints a message indicating that the "API_Download" folder isn't empty and that it needs to be for the program to work properly, then exits the program.
 
-        #Section: Other Inputs and Questions Related to Loop Removal
-        #ToDo: Is the CSV DictWriter error log needed?
+        #Section: Confirm SUSHI API Functionality
+        #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "status", SUSHI_parameters)
+        #ToDo: Figure out methods and return values for above class
 
-        #Section: Start the Method
-        #ToDo: Confirm an empty location for JSON files that download when API call is made
-        #ToDo: Create a dict with the SUSHI API URL, stats source name, stats source ID, and customer ID, as well as the requestor ID, API key, and/or platform if available/needed
-        #ToDo: Get the start and end dates from the user via PyInputPlus
-        #ToDo: Create a dict with just the available of customer ID, requestor ID, API key, and platform for API call parameters
-        #ToDo: API call for status {Single_Element_API_Call("status", SUSHI_Call_Data["URL"], Credentials_String)}
-        #ToDo: Check if returned JSON has any error codes in it
-        #ToDo: API call for reports offered {Single_Element_API_Call("reports", SUSHI_Call_Data["URL"], Credentials_String)}
-        #ToDo: Get master reports and standard reports for which the master report isn't offered
-        #ToDo: Add dates to API call parameters
-        #ToDo: For each master report:
-            #ToDo: Check if the data was already harvested for the given date range and ask if it should be removed or if the report should be skipped
-            #ToDo: Add attributes_to_show with appropriate values to API parameters
-            #ToDo: for IR, add include_parent_details and include_component_details
-            #ToDo: API call for master report {Master_Report_API_Call(Master_Report_Type, SUSHI_Call_Data["URL"], Credentials_String)}
-            #ToDo: Check if returned JSON has any error codes in it
-            #ToDo: Handle empty JSONs (JSON is returned, but there's no usage data)
-            #ToDo: Pass to RawCOUNTERReport class for deduplication, normalization, and loading into database
+
+        #Section: Get List of Resources
+        #Subsection: Make API Call
+        #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "reports", SUSHI_parameters)
+        #ToDo: Figure out methods and return values for above class so the ultimate result is all_available_reports = a list of all available reports
+
+        #Subsection: Get List of Master Reports
+        #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
+        #ToDo: available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+
+        #Subsection: Add Any Standard Reports Not Corresponding to a Master Report
+        #ToDo: represented_by_master_report = set()
+        #ToDo: for master_report in available_master_reports:
+            #ToDo: for report in available_reports:
+                #ToDo: if report[0:2] == master_report:
+                    #ToDo: Add report to represented_by_master_report
+        #ToDo: not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        #ToDo: Figure out inspecting to see if pulling usage from reports in not_represented_by_master_report is appropriate
+
+
+        #Section: Make Master Report SUSHI Calls
+        #Subsection: Add Date Parameters
+        #ToDo: SUSHI_parameters['begin_date'] = usage_start_date
+        #toDo: SUSHI_parameters['end_date'] = usage_end_date
+
+        #Subsection: Set Up Loop Through Master Reports
+        #ToDo: master_report_dataframes = []
+        #ToDo: for master_report in available_master_reports:
+            #ToDo: master_report_name = master_report short name in uppercase letters
+
+            #Subsection: Check if Usage Is Already in Database
+            #ToDo: for month in <the range of months the usage time span represents>
+                #ToDo: Get number of records in usage data relation with self.statistics_source_id, the month, and master_report
+                #ToDo: If the above returns data
+                    #ToDo: Ask if data should be loaded
+            #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
+
+            #Subsection: Add Parameters for Master Report Type
+            #ToDo: if master_report_name == "PR":
+                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                #ToDo: try:
+                    #ToDo: del SUSHI_parameters["include_parent_details"]
+                    #ToDo: del SUSHI_parameters["include_component_details"]
+            #ToDo: if master_report_name == "DR":
+                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                    #ToDo: try:
+                        #ToDo: del SUSHI_parameters["include_parent_details"]
+                        #ToDo: del SUSHI_parameters["include_component_details"]
+            #ToDo: if master_report_name == "TR":
+                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+                #ToDo: try:
+                    #ToDo: del SUSHI_parameters["include_parent_details"]
+                    #ToDo: del SUSHI_parameters["include_component_details"]
+            #ToDo: if master_report_name == "IR":
+                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
+                #ToDo: SUSHI_parameters["include_parent_details"] = "True"
+                #ToDo: SUSHI_parameters["include_component_details"] = "True"
+            
+            #Subsection: Make Master Report API Call
+            #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters)
+            #ToDo: Figure out methods and return values for above class
+            #ToDo: Ultimately need a dataframe for master_report_dataframes.append()
+        
+
+        #Section: Return a Single Dataframe
+        #ToDo: return pd.concat(master_report_dataframes)
         pass
 
 
