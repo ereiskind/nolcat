@@ -55,6 +55,24 @@ class FiscalYears(Base):
         pass
 
 
+    def collect_fiscal_year_usage_statistics(self):
+        """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+
+        Returns:
+            RawCOUNTERReport: a RawCOUNTERReport object for all the usage for the given fiscal year
+        """
+        #ToDo: dfs = []
+        #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
+            #ToDo: statistics_source = Get the matching StatisticsSources object
+            #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            #ToDo: dfs.append(df)
+        #ToDo: df = pd.concat(dfs)
+        #ToDo: return RawCOUNTERReport(df)
+        pass
+
+
 class Vendors(Base):
     """A relation representing resource providers."""
     __tablename__ = 'vendors'

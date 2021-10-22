@@ -166,6 +166,7 @@ digraph erd_and_classes {
         calculate_ARL_19 [shape="Mrecord"]
         calculate_ARL_20 [shape="Mrecord"]
         __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
+        collect_fiscal_year_usage_statistics [shape="Mrecord"]
     }
 
 

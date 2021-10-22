@@ -18,3 +18,8 @@ def test_collect_usage_statistics():
 def test_collect_annual_usage_statistics():
     #ToDo: Write test for AnnualUsageCollectionTracking.collect_annual_usage_statistics()
     pass
+
+
+def collect_fiscal_year_usage_statistics():
+    #ToDo: Write test for FiscalYears.collect_fiscal_year_usage_statistics()
+    pass
