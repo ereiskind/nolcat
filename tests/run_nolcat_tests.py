@@ -1,6 +1,7 @@
 """Recreate a Dockerfile and its image"""
 
 import subprocess
+import os
 
 #Section: Dockerfile inputs
 branch_name = input("What's the name of the branch being tested? ")
@@ -35,5 +36,6 @@ subprocess.call("docker build -t nolcat-image --no-cache .")
 subprocess.call("docker run -it --rm nolcat-image")
 
 
-#Section: Remove Image
+#Section: Remove Image and Dockerfile
 subprocess.call("docker image rm nolcat-image")
+os.remove('Dockerfile')
