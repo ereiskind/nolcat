@@ -11,11 +11,7 @@ if test_script_name != "":
     test_script_name = f" tests/{test_script_name}"
 
 
-#Section: Remove Existing Image
-subprocess.call("docker image rm nolcat-image")
-
-
-#Section: Create New Image
+#Section: Create Image
 #Subsection: Create New Dockerfile
 dockerfile_text = f"""
 FROM python:3.8
@@ -35,5 +31,9 @@ with open('Dockerfile', 'w') as dockerfile:
 subprocess.call("docker build -t nolcat-image --no-cache .")
 
 
-#Section: Instantiate Container with Tests
+#Section: Create Container with Tests
 subprocess.call("docker run -it --rm nolcat-image")
+
+
+#Section: Remove Image
+subprocess.call("docker image rm nolcat-image")
