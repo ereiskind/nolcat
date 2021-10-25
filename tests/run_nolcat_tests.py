@@ -31,11 +31,11 @@ with open('Dockerfile', 'w') as dockerfile:
     dockerfile.write(dockerfile_text)
 
 #Subsection: Build New Image
-subprocess.call("docker build -t -i -d nolcat-image --no-cache .")
+subprocess.call("docker build -t nolcat-image --no-cache .")
 
 
 #Section: Create Container, Running Tests and Generating Logs
-subprocess.call("docker run -it --name nolcat-container nolcat-image")
+subprocess.call("docker run -itd --name nolcat-container nolcat-image")
 #subprocess.call(f"docker cp nolcat-container:logfile_{logfile_timestamp}.txt ./tests/logs/logfile_{logfile_timestamp}.txt")
 
 
