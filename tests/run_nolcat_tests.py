@@ -1,12 +1,13 @@
 """Recreate a Dockerfile and its image"""
 
+import sys
 import subprocess
 import os
 
 #Section: Dockerfile inputs
-branch_name = input("What's the name of the branch being tested? ")
-test_script_name = input("If only one test script is being run, put the full name of the test script here; to run all scripts, press enter without entering any text. ")
-log_level = input("Enter `debug` or `info` for the log level. ")
+branch_name = sys.argv[1]
+log_level = sys.argv[2]
+test_script_name = sys.argv[3]
 
 if test_script_name != "":
     test_script_name = f" tests/{test_script_name}"
