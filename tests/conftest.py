@@ -1,1 +1,0 @@
-pytest_plugins = 'pytest_session2file'
