@@ -1,6 +1,6 @@
 """Recreate a Dockerfile and its image"""
 
-import datetime
+from datetime import datetime
 import subprocess
 import os
 
