@@ -24,7 +24,8 @@ RUN git clone https://github.com/ereiskind/nolcat.git -b {branch_name} ./nolcat/
 
 RUN pip install --no-cache-dir -r nolcat/requirements.txt
 
-
+WORKDIR ./nolcat/
+CMD python -m pytest -s --log-cli-level="{log_level}" -p pytest_session2file --session2file=logfile_{logfile_timestamp}.txt{test_script_name}
 """
 with open('Dockerfile', 'w') as dockerfile:
     dockerfile.write(dockerfile_text)
@@ -35,10 +36,10 @@ subprocess.call("docker build -t nolcat-image --no-cache .")
 
 #Section: Create Container, Running Tests and Generating Logs
 subprocess.call("docker run -itd --name nolcat-container nolcat-image")
-#subprocess.call(f"docker cp nolcat-container:logfile_{logfile_timestamp}.txt ./tests/logs/logfile_{logfile_timestamp}.txt")
+subprocess.call(f"docker cp nolcat-container:nolcat/logfile_{logfile_timestamp}.txt ./tests/logs/logfile_{logfile_timestamp}.txt")
 
 
 #Section: Remove Docker Objects
-#subprocess.call("docker rm -f nolcat-container")
-#subprocess.call("docker image rm nolcat-image")
+subprocess.call("docker rm -f nolcat-container")
+subprocess.call("docker image rm nolcat-image")
 os.remove('Dockerfile')
