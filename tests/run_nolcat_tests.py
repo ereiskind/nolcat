@@ -31,7 +31,7 @@ with open('Dockerfile', 'w') as dockerfile:
     dockerfile.write(dockerfile_text)
 
 #Subsection: Build New Image
-subprocess.call("docker build -t nolcat-image --no-cache .")
+subprocess.call("docker build -tid nolcat-image --no-cache .")
 
 
 #Section: Create Container, Running Tests and Generating Logs
