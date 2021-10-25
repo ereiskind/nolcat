@@ -36,7 +36,7 @@ subprocess.call("docker build -t nolcat-image --no-cache .")
 
 #Section: Create Container, Running Tests and Generating Logs
 subprocess.call("docker run -it --name nolcat-container nolcat-image")
-subprocess.call(f"docker cp nolcat-container:/logfile_{logfile_timestamp}.txt ./tests/logs/logfile_{logfile_timestamp}.txt")
+subprocess.call(f"docker cp nolcat-container:logfile_{logfile_timestamp}.txt ./tests/logs/logfile_{logfile_timestamp}.txt")
 
 
 #Section: Remove Docker Objects
