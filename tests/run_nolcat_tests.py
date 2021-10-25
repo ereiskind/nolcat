@@ -38,7 +38,7 @@ subprocess.call("docker run -it --name nolcat-container nolcat-image")
 subprocess.call(f"docker cp nolcat-container:logfile_{datetime.now().isoformat()}.txt /tests/logs/logfile_{datetime.now().isoformat()}.txt")
 
 
-#Section: Remove Temporary Attributes
-#ToDo: Remove container
+#Section: Remove Docker Objects
+subprocess.call("docker rm -f nolcat-container")
 subprocess.call("docker image rm nolcat-image")
 os.remove('Dockerfile')
