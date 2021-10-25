@@ -34,8 +34,8 @@ subprocess.call("docker build -t nolcat-image --no-cache .")
 
 
 #Section: Create Container, Running Tests and Generating Logs
-subprocess.call("docker run -it nolcat-image")
-#ToDo: Copy logfile into repo
+subprocess.call("docker run -it --name nolcat-container nolcat-image")
+subprocess.call(f"docker cp nolcat-container:logfile_{datetime.now().isoformat()}.txt /tests/logs/logfile_{datetime.now().isoformat()}.txt")
 
 
 #Section: Remove Temporary Attributes
