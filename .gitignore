@@ -137,4 +137,4 @@ dmypy.json
 .scratch/*
 
 # Log file
-.tests/logs/*
+tests/logs/*
