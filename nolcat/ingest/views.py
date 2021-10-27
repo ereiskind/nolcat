@@ -63,3 +63,12 @@ def determine_if_resources_match():
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
     return render_template('show-loaded-data.html')
+
+
+@bp.route('/harvest')
+def harvest_SUSHI_statistics():
+    """A page for initiating R5 SUSHI usage statistics harvesting.
+    
+    This page provides inputs for all the parameters needed for an R5 SUSHI call, then executes the StatisticsSources.collect_usage_statistics() method. This is designed to allow for the development of the method without having either the database connection the StatisticsSources class, as a SQLAlchemy table class, traditionally needs or knowing if the SUSHI credentials for the different StatisticsSources objects will be sourced from the Alma API or from a file of undertermined format and location within the container but outside this repository. 
+    """
+    pass
