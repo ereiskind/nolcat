@@ -3,13 +3,20 @@ Testing
 
 Running Tests
 *************
-Tests are designed to run in the root folder with the command ``python -m pytest``.
+There are two ways to run the test suite:
 
-* Code contains logging statements; to view in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+Running Tests From the CLI
+==========================
+Test modules are designed to be run from the root folder with the command ``python -m pytest``.
 
-Testing Container for Python 3.8
-================================
-At present, there's an issue with installing numpy, a pandas dependency, in Python versions above 3.8 (see https://github.com/numpy/numpy/issues/17569), but the binary installer (aka wizard) for 3.8 is no longer available. To enable testing on machines that don't have Python 3.7 or 3.8 installed (version 3.6 or below can't be used because of f-strings), the script "run_nolcat_tests" was developed. It creates an image with the NoLCAT repo using a branch specified by the user, then creates an ephemeral container which runs one test script specified by the user or all the test scripts if none are specified. 
+* To view logging statements in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
+
+Using the Test Container
+========================
+The script "run_nolcat_tests.py" clones a given branch and runs either a given test script or all test scripts at a specified level of detail. The command, which should be run in the root folder, is ``python tests/run_nolcat_tests.py branch log_level test_script`` where ``branch`` is the name of the Git branch to be cloned, ``log_level`` is the descriptor for the level of logging detail that should be used (generally "info" or "debug" when details are needed), and ``test_script`` is optionally the test script that should run; if left off, all the test scripts will run.
+
+The container was created because NoLCAT can only be used with Python versions 3.7 or 3.8; versions below that don't support f-strings and versions above that have a problem with installing numpy, a pandas dependency (see https://github.com/numpy/numpy/issues/17569). To accommodate this narrow range of comparable versions, neither of which is available with the binary installer (aka wizard), this script creates an image with Python 3.8 for testing.
 
 Test Data
 *********

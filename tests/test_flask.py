@@ -21,6 +21,7 @@ def flask_client():
 
 def test_flask_client_creation(flask_client):
     """Tests that the flask_client fixture works by invoking it in a test wth an assert statement set to `True`."""
+    print("test statement for start of test")
     assert True
 
 
