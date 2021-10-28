@@ -1,6 +1,8 @@
-from flask import Flask
+from flask import Flask,render_template, redirect
 from flask_wtf.csrf import CSRFProtect
-from flask import render_template
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
 
 csrf = CSRFProtect()
 
@@ -14,8 +16,19 @@ def create_app():
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
 
+    class AForm(FlaskForm):
+        name = StringField('name')
+
     @app.route('/')
     def homepage():
+        form = AForm()
+        return render_template('index.html', form=form)
+
+    @app.route('/check', methods=["GET","POST"])
+    def submit_check():
+        form = AForm()
+        if form.validate_on_submit():
+            return render_template('ok.html', val=form.name.data)
         return render_template('index.html')
 
     return app
