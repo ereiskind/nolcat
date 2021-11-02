@@ -1,8 +1,5 @@
 from flask import Flask,render_template, redirect
 from flask_wtf.csrf import CSRFProtect
-from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import DataRequired
 
 csrf = CSRFProtect()
 
