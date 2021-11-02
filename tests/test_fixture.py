@@ -1,3 +1,9 @@
+import os
+from pathlib import Path
+import re
+import pandas as pd
+from nolcat.raw_COUNTER_report import RawCOUNTERReport
+
 def test_fixture():
     dataframes_to_concatenate = []
     for spreadsheet in os.listdir(Path('tests', 'bin', 'OpenRefine_exports')):
