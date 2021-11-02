@@ -8,10 +8,10 @@ import os
 #Section: Dockerfile inputs
 branch_name = sys.argv[1]
 log_level = sys.argv[2]
-test_script_name = sys.argv[3]
-
-if test_script_name != "":
-    test_script_name = f" tests/{test_script_name}"
+try:
+    test_script_name = f" tests/{sys.argv[3]}"
+except:
+    test_script_name = ""
 
 
 #Section: Create Image
