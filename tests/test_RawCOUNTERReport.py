@@ -270,6 +270,7 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
 def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
     """Confirms that constructor for RawCOUNTERReport that takes in reformatted R4 reports is working correctly."""
     sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
+    print(f"in test_RawCOUNTERReport_R4_constructor: {sample_R4_reports}")
     assert sample_R4_reports.equals(RawCOUNTERReport_fixture_from_R4_spreadsheets)
 
 
