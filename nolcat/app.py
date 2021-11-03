@@ -1,5 +1,8 @@
-from flask import Flask,render_template, redirect
+from flask import Flask
+from flask import render_template
 from flask_wtf.csrf import CSRFProtect
+
+from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
 
 csrf = CSRFProtect()
 
@@ -13,8 +16,6 @@ def create_app():
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
 
-    class AForm(FlaskForm):
-        name = StringField('name')
 
     @app.route('/')
     def homepage():
