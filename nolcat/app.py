@@ -19,14 +19,21 @@ def create_app():
 
     @app.route('/')
     def homepage():
-        form = AForm()
-        return render_template('index.html', form=form)
+        return render_template('index.html')
+    
+
+    #Section: Routes Involving Forms
+    #ToDo: Figure out how to manage CSRF tokens with a nested source code folder
+    @app.route('/enter-data')
+    def enter_data():
+        form = forms.TestForm()
+        return render_template('enter-data.html', form=form)
 
     @app.route('/check', methods=["GET","POST"])
     def submit_check():
-        form = AForm()
+        form = forms.TestForm()
         if form.validate_on_submit():
-            return render_template('ok.html', val=form.name.data)
+            return render_template('ok.html', val=form.string.data)
         return render_template('index.html')
 
     return app
