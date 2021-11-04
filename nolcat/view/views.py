@@ -18,3 +18,8 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route to and page for viewing records in `fiscalYears` with the fields/attributes
+
+
+#ToDo: Create route to and page for query construction which executes query and downloads results as tabular file (later, move to page with data viz and option to download tabular data)
+    #ToDo: Construct queries
+    #ToDo: Determine how a name from the resource name relation will be selected
