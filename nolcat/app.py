@@ -31,6 +31,8 @@ def create_app():
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
+        #ToDo: Add login for `ingest` blueprint
+        #ToDo: Add login for `view` blueprint
         return render_template('index.html')
     
 
