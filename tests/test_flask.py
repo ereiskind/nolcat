@@ -1,6 +1,7 @@
 """This module contains the tests for the Flask web app."""
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
+# https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
 
 from pathlib import Path
 import os
@@ -20,6 +21,7 @@ def flask_client():
 
 def test_flask_client_creation(flask_client):
     """Tests that the flask_client fixture works by invoking it in a test wth an assert statement set to `True`."""
+    print("test statement for start of test")
     assert True
 
 
@@ -29,5 +31,15 @@ def test_flask_activation(flask_client):
     HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
     HTML_markup = HTML_file.read().replace(b"\r", b"")  # This removes the carriage return so the HTML file written on Windows matches the line feed-only Flask response
     HTML_file.close()
-    #ToDo: Determine if this still works if Jinja is used in the HTML file
+    #ToDo: HTML_markup shows the Jinja, data attribute shows what's rendered by Jinja--if necessary, find way to resolve
     assert homepage.status == "200 OK" and homepage.data == HTML_markup
+
+
+def test_404_page(flask_client):
+    """Tests that the unassigned route '/404' goes to the 404 page."""
+    nonexistant_page = flask_client.get('/404')
+    HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'rb')
+    HTML_markup = HTML_file.read().replace(b"\r", b"")
+    HTML_file.close()
+    HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")  # This replaces the Jinja with what it renders to--this replacement is safe because it replaces the homepage function with the homepage/root route
+    assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup

@@ -49,11 +49,11 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Provided_Resources {
-        label="Provided_Resources"
+    subgraph cluster_Resource_Platforms {
+        label="Resource_Platforms"
 
         // Attributes
-        Provided_Resource_ID [shape="note"]
+        Resource_Platform_ID [shape="note"]
         Publisher // From the COUNTER report
         Publisher_ID // This is found in R5 only—how to add it?
         Platform [
@@ -63,7 +63,7 @@ digraph erd_and_classes {
         Proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
         Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
-        Resource_ID_in_Provided_Resources [
+        Resource_ID_in_Resource_Platforms [
             label="Resource_ID"
             shape="folder"
         ]
@@ -85,8 +85,8 @@ digraph erd_and_classes {
         __YOP // This is found in R5 TR, IR only—how to add it?
         __Access_Type // This is found in R5 TR, IR only—how to add it?
         __Access_Method // This is found in R5 only—how to add it?
-        Provided_Resource_ID_in_COUNTER_Usage_Data [
-            label="Provided_Resource_ID"
+        Resource_Platform_ID_in_COUNTER_Usage_Data [
+            label="Resource_Platform_ID"
             shape="folder"
         ]
         __Report_Creation_Date // For harvested R5 reports
@@ -98,45 +98,51 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Statistics_Sources {
-        label="Statistics_Sources"
+    subgraph cluster_statisticsSources {
+        label="statisticsSources"
 
         // Attributes
         Statistics_Source_ID [shape="note"]
-        __SUSHI_Requestor_ID
-        __SUSHI_Customer_ID
-        __SUSHI_API_Key
-        __SUSHI_Interface_URL
-        //__SUSHI_Platform (another parameter?)
-        // Add info needed to get SUSHI creds through Alma API here
+        Statiatics_Source_Name
+        Statistics_Source_Retrieval_Code
+        Current_Access
+        Access_Stop_Date
+        Vendor_ID_in_statisticsSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
 
         // Methods
-        // Since harvesting is usually done for a particular FY, its method is part of the annual tracking class--should a special harvest which allows setting a date range and which has an option to start by removing all usage from that source for the given time period be included here?
+        show_SUSHI_credentials [shape="Mrecord"]
+        _harvest_R5_SUSHI [shape="Mrecord"]
+        collect_usage_statistics [shape="Mrecord"]
+        add_access_stop_date [shape="Mrecord"]
+        remove_access_stop_date [shape="Mrecord"]
     }
 
 
-    subgraph cluster_Annual_Usage_Collection_Tracking {
-        label="Annual_Usage_Collection_Tracking"
+    subgraph cluster_annualUsageCollectionTracking {
+        label="annualUsageCollectionTracking"
 
         // Attributes
-        Annual_Usage_Collection_Tracking_Year [shape="component"]
-        Annual_Usage_Collection_Tracking_Source [shape="component"]
-        __Is_COUNTER_Compliant // Because this can change from year to year
-        __Is_R5_SUSHI_Compliant // Because this can change from year to year
-        __Collection_Completed // Not a Boolean--need an "in process" option
-        __Requires_Manual_Collection
-        __Has_Usage_Portal
-        __Notes__Annual_Usage_Collection_Tracking
+        AUCT_Fiscal_Year [shape="component"]
+        AUCT_Statistics_Source [shape="component"]
+        Usage_Is_Being_Collected
+        __Manual_Collection_Required
+        __Collection_Via_Email
+        __Is_COUNTER_Compliant
+        __Collection_Status
+        __Usage_File_Path
+        Notes
 
         // Methods
-        harvest
-        __create // Meaning create all the records for tracking the collection of a particular FY's usage after the FY finishes
-        note // In user stories as "add notes" and "record"
+        collect_annual_usage_statistics [shape="Mrecord"]
+        upload_nonstandard_usage_file [shape="Mrecord"]
     }
 
 
-    subgraph cluster_Fiscal_Year {
-        label="Fiscal_Year"
+    subgraph cluster_fiscalYears {
+        label="fiscalYears"
 
         // Attributes
         Fiscal_Year_ID [shape="note"]
@@ -154,11 +160,86 @@ digraph erd_and_classes {
 
         // Methods
         // Should each number have its own method, or should all of them be calculated at the same time?
-        Calculate_ACRL_60b
-        Calculate_ACRL_63
-        Calculate_ARL_18
-        Calculate_ARL_19
-        Calculate_ARL_20
+        calculate_ACRL_60b [shape="Mrecord"]
+        calculate_ACRL_63 [shape="Mrecord"]
+        calculate_ARL_18 [shape="Mrecord"]
+        calculate_ARL_19 [shape="Mrecord"]
+        calculate_ARL_20 [shape="Mrecord"]
+        __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
+        collect_fiscal_year_usage_statistics [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_vendors {
+        label="vendors"
+
+        //Attributes
+        Vendor_ID
+        Vendor_Name
+        Alma_Vendor_Code
+
+        //Methods
+        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
+        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_vendorNotes {
+        label="vendorNotes"
+
+        //Attributes
+        Vendor_Notes_ID
+        Note_in_vendorNotes [label="Note"]
+        Written_By_in_vendorNotes [label="Written_By"]
+        Date_Written_in_vendorNotes [label="Date_Written"]
+        Vendor_ID_in_vendorNotes [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_statisticsSourceNotes {
+        label="statisticsSourceNotes"
+
+        //Attributes
+        Statistics_Source_Notes_ID
+        Note_in_statisticsSourceNotes [label="Note"]
+        Written_By_in_statisticsSourceNotes [label="Written_By"]
+        Date_Written_in_statisticsSourceNotes [label="Date_Written"]
+        Statistics_Source_ID_in_statisticsSourceNotes [
+            label="Statistics_Source_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_RawCOUNTERReport {
+        label="CLASS: RawCOUNTERReport"
+
+        // Attributes
+        report_dataframe
+
+        // Methods
+        perform_deduplication_matching [shape="Mrecord"]
+        load_data_into_database [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_SUSHICallAndResponse {
+        label="CLASS: SUSHICallAndResponse"
+
+        // Attributes
+        call_URL
+        call_path
+        parameter_string
+
+        // Methods
+        
     }
 
 
@@ -181,21 +262,21 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
     
-    Resource_ID -> Resource_ID_in_Provided_Resources [
+    Resource_ID -> Resource_ID_in_Resource_Platforms [
         dir="both"
-        arrowhead="crowtee"
+        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
         arrowtail="teetee"
     ]
     
-    Statistics_Source_ID -> Annual_Usage_Collection_Tracking_Source [
+    Statistics_Source_ID -> AUCT_Statistics_Source [
         dir="both"
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
         arrowtail="teetee"
     ]
     
-    Fiscal_Year_ID -> Annual_Usage_Collection_Tracking_Year [
+    Fiscal_Year_ID -> AUCT_Fiscal_Year [
         dir="both"
-        arrowhead="crowodot" // This allows for the possibility that a FY instance cna be created before the collection tracking records that connect to it will; whether or not this will be necessary remains to be seen
+        arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
@@ -205,18 +286,38 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
 
-    Provided_Resource_ID -> Provided_Resource_ID_in_COUNTER_Usage_Data [
+    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
+
+    Vendor_ID -> Vendor_ID_in_vendorNotes [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_statisticsSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+    // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
 
 
     /* *** OBJECTS TO BE ORGANIZED *** */
 
     // Nouns: Classes or Attributes
     resources
-    non_COUNTER usage stats
+    "non_COUNTER usage stats"
     notes [
         shape="record"
         label="notes|thoughts"
@@ -295,7 +396,6 @@ digraph erd_and_classes {
 
     subgraph cluster_Acquisitions_Terms {
         // Nouns: Classes or Attributes
-        vendors
         "order numbers"
         "current ILS"
         "legacy ILS"
