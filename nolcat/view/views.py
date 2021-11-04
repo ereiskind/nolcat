@@ -15,3 +15,6 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route to and page for viewing a record in `statisticsSources` with its accompanying data and associated `statisticsSourceNotes` records and creating a new `statisticsSourceNotes` record
+
+
+#ToDo: Create route to and page for viewing records in `fiscalYears` with the fields/attributes
