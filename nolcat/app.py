@@ -1,8 +1,13 @@
 from pathlib import Path
 from flask import Flask
 from flask import render_template
+from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
+from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
+
+csrf = CSRFProtect()
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""
@@ -13,6 +18,9 @@ def create_app():
     """A factory pattern for instantiating Flask web apps."""
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
+    csrf.init_app(app)
+    #ToDo: Replace regerating secret key with reference to container environment variable
+    app.config['SECRET_KEY'] = "ReplaceMeLater"
 
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
@@ -24,6 +32,21 @@ def create_app():
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
+        return render_template('index.html')
+    
+
+    #Section: Routes Involving Forms
+    #ToDo: Figure out how to manage CSRF tokens with a nested source code folder
+    @app.route('/enter-data')
+    def enter_data():
+        form = forms.TestForm()
+        return render_template('enter-data.html', form=form)
+
+    @app.route('/check', methods=["GET","POST"])
+    def submit_check():
+        form = forms.TestForm()
+        if form.validate_on_submit():
+            return render_template('ok.html', val=form.string.data)
         return render_template('index.html')
 
     return app

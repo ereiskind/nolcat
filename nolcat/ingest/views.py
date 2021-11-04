@@ -1,15 +1,23 @@
+import logging
 from flask import render_template
+from flask import redirect
+from flask import url_for
 from flask import request
 from flask import abort
 import pandas as pd
 from . import bp
+from ingest.forms import *
 from nolcat.raw_COUNTER_report import *
+
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
-    render_template('start-database-initialization.html')
+    """Returns the page where the CSVs with R4 data are selected."""
+    return render_template('start-database-initialization.html')
 
 
 @bp.route('/initialize-collection-tracking')
@@ -26,7 +34,7 @@ def save_historical_collection_tracking_info():
         # Collection_Status
         # Usage_File_Path
         # Notes
-    render_template('historical-collection-tracking.html')
+    return render_template('historical-collection-tracking.html')
 
 
 @bp.route('/historical-non-COUNTER-data')
@@ -50,11 +58,15 @@ def upload_historical_COUNTER_usage():
 
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
-    """Takes in multiple reformatted R4 reports binary files, makes them into a single RawCOUNTERReport object, runs the perform_deduplication_matching method, and returns a page asking for confirmation of manual matches."""
-    if request.method == "POST":
-        R4_reports = RawCOUNTERReport(request.files)
-        confirmed_matches, matches_needing_confirmation = R4_reports.perform_deduplication_matching()
-        return render_template('select-matches.html')  #ToDo: Add variables to pass to Jinja, next route function
+    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
+    form = TestForm()
+    logging.info(f"\nerrors before if-else: {form.errors}\n")
+    if form.validate_on_submit():  # This is when the form has been submitted
+        logging.info(f"\nerrors in validate_on_submit: {form.errors}\n")
+        return redirect(url_for('data_load_complete'))
+    elif request.method == 'POST':  # This is when the function is receiving the data to render the form
+        logging.info(f"\nerrors in method==POST: {form.errors}\n")
+        return render_template('select-matches.html', form=form)
     else:
         return abort(404)
 
