@@ -25,13 +25,14 @@ def create_app():
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
 
-    #ToDo: from nolcat import view
-    #ToDo: app.register_blueprint(view.bp)
-    #ToDo: Create `view` blueprint
+    from nolcat import view
+    app.register_blueprint(view.bp)
 
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
+        #ToDo: Add login for `ingest` blueprint
+        #ToDo: Add login for `view` blueprint
         return render_template('index.html')
     
 
