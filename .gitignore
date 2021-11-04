@@ -135,3 +135,6 @@ dmypy.json
 # Scratch work folder
 .scratch/
 .scratch/*
+
+# Log file
+tests/logs/*

@@ -68,7 +68,7 @@ def determine_if_resources_match():
         logging.info(f"\nerrors in method==POST: {form.errors}\n")
         return render_template('select-matches.html', form=form)
     else:
-        return "404 page"
+        return abort(404)
 
 
 @bp.route('/database-creation-complete')
