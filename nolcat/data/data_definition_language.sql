@@ -46,7 +46,7 @@ CREATE TABLE vendorNotes (
 
 CREATE TABLE statisticsSources (
     Statistics_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Statiatics_Source_Name VARCHAR(100) NOT NULL,
+    Statistics_Source_Name VARCHAR(100) NOT NULL,
     Statistics_Source_Retrieval_Code VARCHAR(30),
     Current_Access BOOLEAN NOT NULL,
     Access_Stop_Date TIMESTAMP,
