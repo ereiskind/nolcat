@@ -138,6 +138,3 @@ dmypy.json
 
 # Log file
 tests/logs/*
-
-# Institutional data files
-data/database_initialization/*
