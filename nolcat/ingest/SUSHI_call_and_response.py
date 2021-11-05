@@ -31,6 +31,14 @@ class SUSHICallAndResponse:
         self.call_URL = call_URL
         self.call_path = call_path
         self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
+
+        #Section: Make API Call
+
+
+        #Section: Convert Response to Python Data Types
+
+
+        #Section: Check for SUSHI Error Codes
         
 
     # Representation method--using `{self}` in an f-string results in the below
