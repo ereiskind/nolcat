@@ -1,4 +1,7 @@
 import logging
+import requests
+from requests import HTTPError
+from requests import Timeout
 
 logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
