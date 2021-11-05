@@ -1,4 +1,5 @@
 import logging
+import time
 import requests
 from requests import HTTPError
 from requests import Timeout
@@ -36,6 +37,53 @@ class SUSHICallAndResponse:
         self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
 
         #Section: Make API Call
+        Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'} # Using this in the header makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
+        API_call_URL = self.call_URL = self.call_path
+        time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
+        try:
+            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=Chrome_user_agent)
+            API_response.raise_for_status()
+            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
+        
+        except Timeout as error:
+            try:  # Timeout errors seem to be random, so going to try get request again with more time
+                time.sleep(1)
+                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=Chrome_user_agent)
+                API_response.raise_for_status()
+            
+            except Timeout as error_plus_timeout:
+                logging.warning(f"Call to {API_call_URL} raised timeout errors {format(error)} and {format(error_plus_timeout)}")
+                #ToDo: Return something that indicates the API call failed
+            
+            except HTTPError as error_plus_timeout:
+                if format(error_plus_timeout.response) == "<Response [403]>":
+                    API_response = self.retrieve_downloaded_JSON()
+                    if API_response == []:
+                        logging.warning(f"Call to {API_call_URL} raised errors {format(error)} and {format(error_plus_timeout)}")
+                        #ToDo: Return something that indicates the API call failed
+                else:
+                    logging.warning(f"Call to {API_call_URL} raised errors {format(error)} and {format(error_plus_timeout)}")
+                    #ToDo: Return something that indicates the API call failed
+            
+            except Exception as error_plus_timeout:
+                logging.warning(f"Call to {API_call_URL} raised errors {format(error)} and {format(error_plus_timeout)}")
+                #ToDo: Return something that indicates the API call failed
+        
+        except HTTPError as error:
+            if format(error.response) == "<Response [403]>":
+                API_response = self.retrieve_downloaded_JSON()
+                if API_response == []:
+                    logging.warning(f"Call to {API_call_URL} raised error {format(error)}")
+                    #ToDo: Return something that indicates the API call failed
+            else:
+                logging.warning(f"Call to {API_call_URL} raised error {format(error)}")
+                #ToDo: Return something that indicates the API call failed
+        
+        except Exception as error:
+            # Old note: ToDo: Be able to view error information and confirm or deny if site is safe
+            # Old note: Attempt to isolate Allen Press by SSLError message and redo request without checking certificate led to ConnectionError
+            logging.warning(f"Call to {API_call_URL} raised error {format(error)}")
+            #ToDo: Return something that indicates the API call failed
 
 
         #Section: Convert Response to Python Data Types
