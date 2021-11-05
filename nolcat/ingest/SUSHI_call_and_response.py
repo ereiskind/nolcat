@@ -4,10 +4,9 @@ logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asct
 
 
 class SUSHICallAndResponse:
-    """[summary]
-    #ToDo: Create class that makes SUSHI API calls with error checking for both the API calls and the SUSHI content
+    """A class that makes SUSHI API calls.
 
-    [extended_summary]
+    This class is functionally a Python dictionary--the constructor method makes a SUSHI API call and returns the call's results with Python data types. Objects of this class can and should be used as dictionaries.
 
     Attributes:
         self.call_URL (str): the root URL for the SUSHI API call
@@ -15,16 +14,14 @@ class SUSHICallAndResponse:
         self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
     
     Methods:
-        #ToDo: Perform API call, checking that there weren't any problems
-        #ToDo: Handle API calls that trigger a JSON file download instead of putting the data in a HTML body
+        retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
         #ToDo: Check the response for possible COUNTER error codes and determine if there's a problem in the data itself
     """
     # Constructor Method
     def __init__(self, call_URL, call_path, parameters):
-        """[summary]
-        #ToDo: This version of the constructor just turns the initial arguments into class attributes, but the class could also be designed to take in the same arguments and perform the API call as part of the constructor
+        """Makes a SUSHI API call, returning a JSON-like dictionary that uses Python data types.
 
-        [extended_summary]
+        This API call method handles all the possible calls in the SUSHI standard. It then converts the responses to native Python data types and handles any error codes the response may have had.
 
         Args:
             call_URL (str): the root URL for the SUSHI API call
@@ -38,4 +35,12 @@ class SUSHICallAndResponse:
 
     # Representation method--using `{self}` in an f-string results in the below
     def __repr__(self):
-        return 
+        return
+
+
+    def retrieve_downloaded_JSON(self):
+        """Retrieves a downloaded response to a SUSHI API call. 
+
+        For API calls that generate a JSON file download in response, this method captures and reads the contents of the downloaded file, then removes the file.
+        """
+        pass
