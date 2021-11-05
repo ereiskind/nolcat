@@ -87,6 +87,29 @@ class SUSHICallAndResponse:
 
 
         #Section: Convert Response to Python Data Types
+        try:
+            if API_response.text == "":
+                logging.warning(f"Call to {API_call_URL} returned an empty string")
+                #ToDo: Return something that indicates the API call failed
+        except:
+            pass  # In the case that API_response isn't a Requests response object, nothing needs to happen here
+
+        if str(type(API_response)) == "<class 'requests.models.Response'>":
+            try:
+                API_response = API_response.json()
+                #ToDo: Figure out how to get titles with Unicode replacement character to encode properly
+                    # json.loads(JSON.text.encode('utf8')) still has replacement character
+                    # json.loads(JSON.text.decode('utf8')) still has replacement character
+                    # json.loads(JSON.text) still has replacement character
+                    # json.loads(JSON.content.decode('utf8')) creates a JSON from the first item in Report_Items rather than the complete content, so ability to handle replacement characters unknown
+            except:
+                logging.warning(f"Call to {API_call_URL} returned a JSON that couldn't be converted into a dictionary")
+                #ToDo: Return something that indicates the API call failed
+        
+        if str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
+            API_response = API_response[0]
+        
+        #ToDo: Does there need to be a check that API_response is a Python dictionary at this point?
 
 
         #Section: Check for SUSHI Error Codes
