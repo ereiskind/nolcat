@@ -117,7 +117,48 @@ class SUSHICallAndResponse:
 
 
         #Section: Check for SUSHI Error Codes
-        
+        # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
+        try:  # status check response is JSON-like dictionary with Report_Header and information about the error
+            test = API_response["Exception"]["Severity"]
+            print(test)
+            # if Handle_Status_Check_Problem(SUSHI_Call_Data["JSON_Name"], Status_Check["Exception"]["Message"], Status_Check_Error, Status_Check["Exception"]["Code"]): continue
+        except:
+            pass
+
+        try:  # status check response is JSON-like dictionary with nothing but information about the error
+            test = API_response["Severity"]
+            print(test)
+            # if Handle_Status_Check_Problem(SUSHI_Call_Data["JSON_Name"], Status_Check["Message"], Status_Check_Error, Status_Check["Code"]): continue
+        except:
+            pass
+
+        try:  # status check response has COUNTER Alerts
+            test = API_response["Alerts"]
+            print(test)
+            # Handle_Status_Check_Problem(SUSHI_Call_Data["JSON_Name"], Status_Check_Alert): continue
+        except:
+            pass
+
+        try:  # master report response is JSON-like dictionary with top-level key of "Report_Header" that includes the key "Exceptions"
+            test = API_response["Report_Header"]["Exceptions"]
+            print(test)
+            # if "Report_Items" in Master_Report_Response:
+                # if Handle_Exception_Master_Report(SUSHI_Call_Data["JSON_Name"], Master_Report_Type, Master_Report_Exceptions, True): continue
+            # else:
+                # if Handle_Exception_Master_Report(SUSHI_Call_Data["JSON_Name"], Master_Report_Type, Master_Report_Exceptions): continue
+        except:
+            pass
+
+        try:  # master report response is JSON-like dictionary containing only the content of a single Exception
+            if "Code" in API_response or "code" in API_response:
+                test = [API_response]  # Using a list constructor creates a list of the keys; what's needed is a list with one item that's a dictionary
+            print(test)
+            # if Handle_Exception_Master_Report(SUSHI_Call_Data["JSON_Name"], Master_Report_Type, Master_Report_Response): continue
+        except:
+            pass
+
+        #ToDo: There was an issue with some master report errors not being caught by the standard error handling; a try block for a log statement with the len() of the dict's ['Report_Items'] attribute caught the remainder
+
 
     # Representation method--using `{self}` in an f-string results in the below
     def __repr__(self):
