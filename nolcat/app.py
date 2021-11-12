@@ -71,4 +71,8 @@ def Chrome_browser_driver():
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--disable-software-rasterizer')
 
+    ''' From the first program
+    Path_to_ChromeDriver = Path('..', 'usr', 'local', 'bin', 'chromedriver.exe') # On Windows, "chromedriver" must include the ".exe" extension; on Linux, when the file extension is included, there's a WebDriverException with the message "'chromedriver.exe' executable needs to be in PATH."
+    return webdriver.Chrome(options=chrome_options, executable_path=Path_to_ChromeDriver)
+    '''
     return webdriver.Chrome(options=chrome_options)
