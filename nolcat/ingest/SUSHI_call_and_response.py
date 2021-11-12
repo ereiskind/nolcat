@@ -109,7 +109,11 @@ class SUSHICallAndResponse:
         if str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
             API_response = API_response[0]
         
-        #ToDo: Does there need to be a check that API_response is a Python dictionary at this point?
+        if str(type(API_response)) == "<class 'dict'>":
+            pass
+        else:
+            logging.warning(f"Call to {API_call_URL} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing.")
+                #ToDo: Return something that indicates the API call failed
 
 
         #Section: Check for SUSHI Error Codes
