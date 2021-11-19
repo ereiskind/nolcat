@@ -60,7 +60,6 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
 4. Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields
 5. Upload the CSV
-6. On the next web app page, for all pages where a file with usage is being saved, upload the file/add the path to the file
 
 5. Upload and Dedupe Historical R4 Usage
 ========================================

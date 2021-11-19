@@ -40,18 +40,10 @@ def save_historical_collection_tracking_info():
     return render_template('historical-collection-tracking.html')
 
 
-@bp.route('/historical-non-COUNTER-data')
-def upload_historical_non_COUNTER_usage():
-    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
-    #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
-    #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
-    #ToDo: Create an iterable to pass all the records returned by the above to a form
-    render_template('upload-historical-non-COUNTER-data.html')
-
-
 @bp.route('/historical-COUNTER-data')
 def upload_historical_COUNTER_usage():
     """Saves non-COUNTER compliant usage data files and their locations, then returns the page for uploading reformatted COUNTER R4 CSVs."""
+    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
     #ToDo: For each file uploaded in the form
         #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
@@ -78,6 +70,12 @@ def determine_if_resources_match():
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
     return render_template('show-loaded-data.html')
+
+
+#ToDo: Create route to and page for adding non-COUNTER compliant usage
+#ToDo: How should non-COUNTER usage be stored? As BLOB in MySQL, as files in the container, as a Docker volume, in some other manner?
+#ToDo: Find all resources to which this applies with `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
+# render_template('upload-historical-non-COUNTER-data.html')
 
 
 #ToDo: Create route to and page for creating new records in `vendors`
