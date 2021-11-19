@@ -4,6 +4,8 @@ from flask import redirect
 from flask import url_for
 from flask import request
 from flask import abort
+from flask import current_app
+from flask import send_from_directory
 import pandas as pd
 from . import bp
 from ..ingest import forms
@@ -14,6 +16,9 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #Section: Uploads and Downloads
+@bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
+def download_file(filename):
+    return send_from_directory(directory=current_app.config['UPLOAD_FOLDER'], path='.', filename=filename, as_attachment=True)
 
 
 #Section: Database Initialization Wizard

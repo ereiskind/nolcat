@@ -21,6 +21,7 @@ def create_app():
     csrf.init_app(app)
     #ToDo: Replace regerating secret key with reference to container environment variable
     app.config['SECRET_KEY'] = "ReplaceMeLater"
+    app.config['UPLOAD_FOLDER'] = './data'
 
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
