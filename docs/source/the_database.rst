@@ -63,7 +63,9 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
 5. Upload and Dedupe Historical R4 Usage
 ========================================
-1. In the file selector on the next web app page, select all the transformed R4 CSVs
+Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.
+
+1. In the file selector on the next web app page, select all the transformed R4 CSVs; if all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder
 2. On the next web app page, <this is the page for confirming matches--write instructions from this point on when pages and forms are established>
 
 Naming Conventions in the Database and Source Code

@@ -42,12 +42,8 @@ def save_historical_collection_tracking_info():
 
 @bp.route('/historical-COUNTER-data')
 def upload_historical_COUNTER_usage():
-    """Saves non-COUNTER compliant usage data files and their locations, then returns the page for uploading reformatted COUNTER R4 CSVs."""
+    """Returns the page for uploading reformatted COUNTER R4 CSVs."""
     #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
-    #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
-    #ToDo: For each file uploaded in the form
-        #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
-        #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
     return render_template('select-R4-CSVs.html')
 
 
