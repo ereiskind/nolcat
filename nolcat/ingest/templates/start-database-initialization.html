@@ -9,9 +9,38 @@
 </head>
 <body>
     <h1>Initialize the Database</h1>
+    <p>These pages will walk you through the process of initializing the database with your historical usage statistics and other data required for the relational structure of the underlying database.</p>
 
-    <!--Add instructions from `the_database.rst` step one through step four, substep one; includes ability to download "initialize_fiscalYears.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv"-->
+    <h2>1. Create the `fiscalYears` Relation with Historical Years</h2>
+    <ol>
+        <li>Download "initialize_fiscalYear.csv" and move it to a given folder</li><!--ToDo: download file-->
+        <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)</li>
+        <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Fiscal_Year_ID` field</li>
+    </ol>
 
-    <!--Upload the above three CSVs once filled out and pass them via form to save_historical_collection_tracking_info-->
+    <h2>Create the `vendors` Relation</h2>
+    <ol>
+        <li>Download "initialize_vendors.csv" and move it to the same folder as "initialize_fiscalYear.csv"</li><!--ToDo: download file-->
+        <li>In the `Vendor_Name` field, list all the sources which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
+        <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field</li>
+        <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Vendor_ID` field</li>
+    </ol>
+
+    <h2>3. Create the `statisticsSources` Relation</h2>
+    <ol>
+        <li>Download "initialize_statisticsSources.csv" and move it to the same folder as "initialize_fiscalYear.csv" and "initialize_vendors.csv"</li><!--ToDo: download file-->
+        <li>For each set of securely stored R5 SUSHI credentials, list the resource the the credentials are for in the `Statistics_Source_Name` field, the name of the vendor supplying the resource exactly how it appears in the `vendors` relation in the `REFERENCE Vendor_ID` field, and either the Alma interface name or the secure JSON file ID for the credentials in the `Statistics_Source_Retrieval_Code` field</li>
+        <li>For all sites with administrator portals that don't provide R5 SUSHI credentials, add their names to the `Statistics_Source_Name` field and the name of the vendor supplying the resource exactly how it appears in the `vendors` relation in the `REFERENCE Vendor_ID` field</li>
+        <li>For all records in `vendors` not already in the CSV, add those values exactly how they appear in the `vendors` relation in the `REFERENCE Vendor_ID` field in one or more records for the domain or grouping under which usage statistics are collected if known or all existing domains if not known with the names going in the `Statistics_Source_Name` field</li>
+        <li>For all records, add a Boolean value to the `Current_Access` field indicating if we currently utilize the given source for resources</li>
+        <li>Copy `=VLOOKUP(B2,initialize_vendors.csv!$A:$C,3,0)` into cell F2, use autofill to copy the formula in all records, then save the results in place as values</li>
+        <li>Delete column B with the field `REFERENCE Vendor_ID`</li>
+        <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Statistics_Source_ID` field</li>
+    </ol>
+
+    <h2>4. Create the `annualUsageCollectionTracking` Relation</h2>
+    <ol>
+        <li>Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv" from their given folder</li><!--ToDo: upload files-->
+    </ol>
 </body>
 </html>

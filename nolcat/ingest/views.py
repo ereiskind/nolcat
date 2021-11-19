@@ -16,7 +16,8 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
-    """Returns the page where the CSVs with R4 data are selected."""
+    """Returns the page with for downloading the CSV templates for the `fiscalYears`, `vendors`, and `statisticsSources` relations and uploading the initial data for those relations."""
+    #ToDo: Download "initialize_fiscalYears.csv", "initialize_vendors.csv", "initialize_statisticsSources.csv"
     return render_template('start-database-initialization.html')
 
 
