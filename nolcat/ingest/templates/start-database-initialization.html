@@ -13,14 +13,14 @@
 
     <h2>1. Create the `fiscalYears` Relation with Historical Years</h2>
     <ol>
-        <li>Download "initialize_fiscalYear.csv" and move it to a given folder</li><!--ToDo: download file-->
+        <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYear.csv"</a> and move it to a given folder</li>
         <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)</li>
         <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Fiscal_Year_ID` field</li>
     </ol>
 
     <h2>Create the `vendors` Relation</h2>
     <ol>
-        <li>Download "initialize_vendors.csv" and move it to the same folder as "initialize_fiscalYear.csv"</li><!--ToDo: download file-->
+        <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_vendors.csv') }}">"initialize_vendors.csv"</a> and move it to the same folder as "initialize_fiscalYear.csv"</li>
         <li>In the `Vendor_Name` field, list all the sources which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
         <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field</li>
         <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Vendor_ID` field</li>
@@ -28,7 +28,7 @@
 
     <h2>3. Create the `statisticsSources` Relation</h2>
     <ol>
-        <li>Download "initialize_statisticsSources.csv" and move it to the same folder as "initialize_fiscalYear.csv" and "initialize_vendors.csv"</li><!--ToDo: download file-->
+        <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_statisticsSources.csv') }}">"initialize_statisticsSources.csv"</a> and move it to the same folder as "initialize_fiscalYear.csv" and "initialize_vendors.csv"</li>
         <li>For each set of securely stored R5 SUSHI credentials, list the resource the the credentials are for in the `Statistics_Source_Name` field, the name of the vendor supplying the resource exactly how it appears in the `vendors` relation in the `REFERENCE Vendor_ID` field, and either the Alma interface name or the secure JSON file ID for the credentials in the `Statistics_Source_Retrieval_Code` field</li>
         <li>For all sites with administrator portals that don't provide R5 SUSHI credentials, add their names to the `Statistics_Source_Name` field and the name of the vendor supplying the resource exactly how it appears in the `vendors` relation in the `REFERENCE Vendor_ID` field</li>
         <li>For all records in `vendors` not already in the CSV, add those values exactly how they appear in the `vendors` relation in the `REFERENCE Vendor_ID` field in one or more records for the domain or grouping under which usage statistics are collected if known or all existing domains if not known with the names going in the `Statistics_Source_Name` field</li>
