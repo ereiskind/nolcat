@@ -13,6 +13,10 @@ from nolcat.raw_COUNTER_report import *
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
+#Section: Uploads and Downloads
+
+
+#Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
@@ -71,6 +75,8 @@ def data_load_complete():
     return render_template('show-loaded-data.html')
 
 
+#Section: Updating Information
+#Subsection: Adding Data
 #ToDo: Create route to and page for adding non-COUNTER compliant usage
 #ToDo: How should non-COUNTER usage be stored? As BLOB in MySQL, as files in the container, as a Docker volume, in some other manner?
 #ToDo: Find all resources to which this applies with `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
@@ -83,6 +89,7 @@ def data_load_complete():
 #ToDo: Create route to and page for creating new records in `statisticsSources`
 
 
+#Subsection: Updating and Displaying Data
 #ToDo: Create route to and page for using methods StatisticsSources.add_access_start_date and StatisticsSources.remove_access_start_date
 
 
