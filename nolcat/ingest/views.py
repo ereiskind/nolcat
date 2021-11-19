@@ -50,6 +50,9 @@ def upload_historical_COUNTER_usage():
 @bp.route('/matching', methods=['GET', 'POST'])
 def determine_if_resources_match():
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
+    #ToDo: historical_data = RawCOUNTERReport(uploaded files)
+    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
+    #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
     form = TestForm()
     logging.info(f"\nerrors before if-else: {form.errors}\n")
     if form.validate_on_submit():  # This is when the form has been submitted
