@@ -23,6 +23,7 @@ def initialize_initial_relations():
 
 @bp.route('/initialize-collection-tracking')
 def save_historical_collection_tracking_info():
+    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
     #ToDo: Load "initialize_fiscalYears.csv" into titular relation
     #ToDo: Load "initialize_vendors.csv" into titular relation
     #ToDo: Load "initialize_statisticsSources.csv" into titular relation
@@ -35,6 +36,7 @@ def save_historical_collection_tracking_info():
         # Collection_Status
         # Usage_File_Path
         # Notes
+    #ToDo: Download all R4 OpenRefine JSONs
     return render_template('historical-collection-tracking.html')
 
 
