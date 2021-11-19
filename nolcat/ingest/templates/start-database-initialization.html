@@ -40,7 +40,26 @@
 
     <h2>4. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
-        <li>Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv" from their given folder</li><!--ToDo: upload files-->
+        <li>Upload "initialize_fiscalYear.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv"</li>
     </ol>
+    <form method="POST" action="/initialize-collection-tracking" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <label>
+            {{ form.fiscalYears_CSV.label }}
+            {{ form.fiscalYears_CSV }}
+        </label>
+        <br>
+        <label>
+            {{ form.vendors_CSV.label }}
+            {{ form.vendors_CSV }}
+        </label>
+        <br>
+        <label>
+            {{ form.statisticsSources_CSV.label }}
+            {{ form.statisticsSources_CSV }}
+        </label>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

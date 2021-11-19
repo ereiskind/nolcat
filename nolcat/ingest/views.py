@@ -26,8 +26,8 @@ def download_file(filename):
 @bp.route('/initialize-database')
 def initialize_initial_relations():
     """Returns the page with for downloading the CSV templates for the `fiscalYears`, `vendors`, and `statisticsSources` relations and uploading the initial data for those relations."""
-    #ToDo: Download "initialize_fiscalYears.csv", "initialize_vendors.csv", "initialize_statisticsSources.csv"
-    return render_template('start-database-initialization.html')
+    form_being_filled_out = forms.InitialRelationDataForm()
+    return render_template('start-database-initialization.html', form=form_being_filled_out)
 
 
 @bp.route('/initialize-collection-tracking')
