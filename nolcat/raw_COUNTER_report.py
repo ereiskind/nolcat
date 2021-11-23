@@ -33,7 +33,7 @@ class RawCOUNTERReport:
             dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=Path(file.filename).parts[-1])[0]
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
@@ -65,6 +65,7 @@ class RawCOUNTERReport:
                 dataframes_to_concatenate,
                 ignore_index=True
             )
+            #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
             logging.info(f"Final dataframe:\n{self.report_dataframe}")
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
