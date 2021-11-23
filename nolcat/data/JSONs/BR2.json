@@ -88,7 +88,7 @@
                 {
                     "type": "list",
                     "name": "R4_Month",
-                    "expression": "value",
+                    "expression": "grel:value.find(/[Rr]eporting\\s[Pp]eriod/).length()>0",
                     "columnName": "R4_Month",
                     "invert": false,
                     "omitBlank": false,
@@ -96,8 +96,8 @@
                     "selection": [
                         {
                             "v": {
-                                "v": "Reporting Period Total",
-                                "l": "Reporting Period Total"
+                                "v": true,
+                                "l": "true"
                             }
                         }
                     ],
@@ -107,7 +107,7 @@
             ],
             "mode": "row-based"
         },
-        "description": "Remove rows with a ``R4_Month`` value of `Reporting Period Total`"
+        "description": "Remove rows with total values"
     },
     {
         "op": "core/row-removal",
