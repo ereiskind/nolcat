@@ -6,10 +6,14 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from sqlalchemy import create_engine
 
-#ToDo: Import Database_Credentials.py from root folder
+#ToDo: Import Database_Credentials.py from root folder--attempts to do so raise error messages
 from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
 
 csrf = CSRFProtect()
+DB_USERNAME = Database_Credentials.Username
+DB_PASSWORD = Database_Credentials.Password
+DB_HOST = Database_Credentials.Host
+DB_PORT = Database_Credentials.Post
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""
@@ -79,5 +83,5 @@ def Chrome_browser_driver():
 
 def engine():
     """Returns a SQLAlchemy engine object."""
-    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat')
+    engine = create_engine(f'mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/nolcat')
     return engine
