@@ -4,7 +4,9 @@ from flask import render_template
 from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from sqlalchemy import create_engine
 
+#ToDo: Import Database_Credentials.py from root folder
 from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
 
 csrf = CSRFProtect()
@@ -73,3 +75,9 @@ def Chrome_browser_driver():
     chrome_options.add_argument('--disable-software-rasterizer')
 
     return webdriver.Chrome(options=chrome_options)
+
+
+def engine():
+    """Returns a SQLAlchemy engine object."""
+    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat')
+    return engine
