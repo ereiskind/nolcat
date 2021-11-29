@@ -9,8 +9,10 @@ from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import xlrd
 import pandas as pd
+
 from . import bp
 from ..ingest import forms
+from nolcat.app import engine
 from nolcat.raw_COUNTER_report import *
 
 
@@ -37,9 +39,30 @@ def save_historical_collection_tracking_info():
     """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
     form_being_submitted = forms.InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
-        #ToDo: Load FileStorage objects `form_being_submitted.fiscalYears_CSV.data`, `form_being_submitted.vendors_CSV.data`, and `form_being_submitted.statisticsSources_CSV.data` into titular relations
-        # https://stackoverflow.com/questions/20015550/read-file-data-without-saving-it-in-flask/20017830#20017830
-        # https://werkzeug.palletsprojects.com/en/1.0.x/datastructures/#werkzeug.datastructures.FileStorage
+        fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
+        vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
+        statisticsSources_dataframe = pd.read_csv(form_being_submitted.statisticsSources_CSV.data)
+
+        db_connection = engine.connect()
+        fiscalYears_dataframe.to_sql(
+            'fiscalYears',
+            con=db_connection,
+            if_exists='replace',
+        )
+        vendors_dataframe.to_sql(
+            'vendors',
+            con=db_connection,
+            if_exists='replace',
+        )
+        statisticsSources_dataframe.to_sql(
+            'statisticsSources',
+            con=db_connection,
+            if_exists='replace',
+        )
+        db_connection.close()
+        
+        
+
         #ToDo: `SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;` (this is an intentional cartesian product)
         #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
             # Usage_Is_Being_Collected
@@ -50,7 +73,7 @@ def save_historical_collection_tracking_info():
             # Usage_File_Path
             # Notes
         #ToDo: Download all R4 OpenRefine JSONs
-        return render_template('historical-collection-tracking.html', test=f)
+        return render_template('historical-collection-tracking.html')
     return redirect(url_for('initialize_initial_relations'))  #ToDo: Add message flashing about upload not working
 
 
