@@ -239,7 +239,7 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
     """A RawCOUNTERReport object created by passing all the sample R4 spreadsheets into a dataframe, then wrapping the dataframe in the RawCOUNTERReport class."""
     dataframes_to_concatenate = []
     for spreadsheet in os.listdir(Path('tests', 'bin', 'OpenRefine_exports')):
-        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{2}\-\d{2}\.xlsx', string=spreadsheet)[0]
+        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}\.xlsx', string=spreadsheet)[0]
         dataframe = pd.read_excel(
             Path('tests', 'bin', 'OpenRefine_exports', spreadsheet),
             engine='openpyxl',
