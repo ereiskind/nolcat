@@ -33,8 +33,8 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Resources {
-        label="Resources"
+    subgraph cluster_resources {
+        label="resources"
 
         // Attributes
         Resource_ID [shape="note"]

@@ -318,3 +318,21 @@ class AnnualUsageCollectionTracking():
 
     def upload_nonstandard_usage_file():
         pass
+
+
+class Resources():
+    """A relation for listing resources regardless of source."""
+    __tablename__ = 'resources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    doi = Column()  #ToDo: VARCHAR(75)
+    isbn = Column()  #ToDo: CHAR(17)
+    print_issn = Column()  #ToDo: CHAR(9)
+    online_issn = Column()  #ToDo: CHAR(9)
+    data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
+    section_type = Column()  #ToDo: VARCHAR(10)
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass

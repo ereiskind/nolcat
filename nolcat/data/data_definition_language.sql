@@ -151,3 +151,14 @@ CREATE TABLE annualUsageCollectionTracking (
         ON UPDATE restrict
         ON DELETE restrict
 );
+
+
+CREATE TABLE resources (
+    Resource_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    DOI VARCHAR(75),
+    ISBN CHAR(17),
+    Print_ISSN CHAR(9),
+    Online_ISSN CHAR(9),
+    Data_Type VARCHAR(25) NOT NULL,
+    Section_Type VARCHAR(10),
+); 
