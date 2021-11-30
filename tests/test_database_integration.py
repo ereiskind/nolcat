@@ -4,6 +4,11 @@ import pytest
 
 from nolcat.app import engine
 
+@pytest.fixture
+def engine():
+    """Recreates the SQLAlchemy engine for the web app as a fixture."""
+    yield engine
+
 
 def test_engine_creation():
     """Test that a SQLAlchemy engine can be created."""
