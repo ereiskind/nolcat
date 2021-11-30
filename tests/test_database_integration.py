@@ -1,4 +1,4 @@
-"""This module contains the tests for SQLAlchemy."""
+"""This module contains the tests for database integration and SQLAlchemy."""
 
 import pytest
 
