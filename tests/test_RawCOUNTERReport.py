@@ -258,7 +258,7 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
                 'R4_Count': 'int',
             },
         )
-        dataframe['Statistics_Source_ID'] = statistics_source_ID
+        dataframe['Statistics_Source_ID'] = statistics_source_ID  # This adds the field `Statistics_Source_ID` where all records have the value of the given variable
         dataframes_to_concatenate.append(dataframe)
     RawCOUNTERReport_fixture = pd.concat(
         dataframes_to_concatenate,
