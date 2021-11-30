@@ -373,7 +373,7 @@ class UsageData():
     usage_count = Column()  #ToDo: MEDIUMINT UNSIGNED NOT NULL
     yop = Column()  #ToDo: SMALLINT
     access_type = Column()  #ToDo: VARCHAR(20)
-    access_method = Column()  #ToDo: VARCHAR(10) NOT NULL
+    access_method = Column()  #ToDo: VARCHAR(10)
     report_creation_date = Column()  #ToDo: DATE
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')

@@ -197,7 +197,7 @@ CREATE TABLE usageData (
     Usage_Count MEDIUMINT UNSIGNED NOT NULL,
     YOP SMALLINT,
     Access_Type VARCHAR(20),
-    Access_Method VARCHAR(10) NOT NULL,
+    Access_Method VARCHAR(10),
     Report_Creation_Date DATE,
     INDEX resourcePlatforms_FK_INDX (Resource_Platform_ID),
     CONSTRAINT resourcePlatforms_FK_usageData FOREIGN KEY resourcePlatforms_FK_INDX (Resource_Platform_ID)
