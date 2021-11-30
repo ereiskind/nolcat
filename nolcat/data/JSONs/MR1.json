@@ -70,7 +70,7 @@
                 {
                     "type": "list",
                     "name": "R4_Month",
-                    "expression": "value",
+                    "expression": "grel:value.find(/[Rr]eporting\\s[Pp]eriod/).length()>0",
                     "columnName": "R4_Month",
                     "invert": false,
                     "omitBlank": false,
@@ -78,8 +78,8 @@
                     "selection": [
                         {
                             "v": {
-                                "v": "Reporting Period Total",
-                                "l": "Reporting Period Total"
+                                "v": true,
+                                "l": "true"
                             }
                         }
                     ],
@@ -89,7 +89,7 @@
             ],
             "mode": "row-based"
         },
-        "description": "Remove rows with a title total"
+        "description": "Remove rows with total values"
     },
     {
         "op": "core/row-removal",
@@ -126,7 +126,7 @@
             "mode": "row-based"
         },
         "columnName": "R4_Month",
-        "expression": "grel:if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\w{3})\\-(\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\w*)\\-\\d{4}/)[0].length()>3,(value.match(/(\\w{3}).*/)[0]+\"-01\"+value.match(/\\w*(\\-\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\")))",
+        "expression": "grel:if(isError(value.toDate()),if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\\\w{3})\\\\-(\\\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\\\w*)\\\\-\\\\d{4}/)[0].length()>3,(value.match(/(\\\\w{3}).*/)[0]+\"-01\"+value.match(/\\\\w*(\\\\-\\\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\"))),value.find(/\\d{4}\\-\\d{2}\\-\\d{2}/)[0].toDate())",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,

@@ -1,15 +1,15 @@
 [
     {
         "op": "core/column-rename",
-        "oldColumnName": "Journal",
+        "oldColumnName": "Title",
         "newColumnName": "Resource_Name",
-        "description": "Rename column ``Journal`` to ``Resource_Name``"
+        "description": "Rename column ``Title`` to ``Resource_Name``"
     },
     {
         "op": "core/column-rename",
-        "oldColumnName": "Journal DOI",
+        "oldColumnName": "Title DOI",
         "newColumnName": "DOI",
-        "description": "Rename column ``Journal DOI`` to ``DOI``"
+        "description": "Rename column ``Title DOI`` to ``DOI``"
     },
     {
         "op": "core/column-rename",
@@ -18,16 +18,71 @@
         "description": "Rename column ``Proprietary Identifier`` to ``Proprietary_ID``"
     },
     {
-        "op": "core/column-rename",
-        "oldColumnName": "Print ISSN",
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Print ID",
+        "expression": "grel:value.match(/(\\d{4}\\-\\d{3}[\\dxX])/)[0]",
+        "onError": "set-to-blank",
         "newColumnName": "Print_ISSN",
-        "description": "Rename column ``Print ISSN`` to ``Print_ISSN``"
+        "columnInsertIndex": 6,
+        "description": "Create column ``Print_ISSN`` by taking the ISSNs from column ``Print ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Online ID",
+        "expression": "grel:value.match(/(\\d{4}\\-\\d{3}[\\dxX])/)[0]",
+        "onError": "set-to-blank",
+        "newColumnName": "Online_ISSN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``Online_ISSN`` by taking the ISSNs from column ``Online ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Print ID",
+        "expression": "grel:if(and(isBlank(cells.Print_ISSN.value), isBlank(cells.Online_ISSN.value)), if(isBlank(value), if(isBlank(cells[\"Online ID\"].value),null,cells[\"Online ID\"].value),value),null)",
+        "onError": "set-to-blank",
+        "newColumnName": "ISBN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``ISBN`` with the values from ``Print ID`` and ``Online ID`` not in an ISSN column"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "Print ID",
+        "description": "Remove column ``Print ID``"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "Online ID",
+        "description": "Remove column ``Online ID``"
     },
     {
         "op": "core/column-rename",
-        "oldColumnName": "Online ISSN",
-        "newColumnName": "Online_ISSN",
-        "description": "Rename column ``Online ISSN`` to ``Online_ISSN``"
+        "oldColumnName": "Data type",
+        "newColumnName": "Data_Type",
+        "description": "Rename column ``Data type`` to ``Data_Type``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Access Denied Category",
+        "newColumnName": "Metric_Type",
+        "description": "Rename column ``Access Denied Category`` to ``Metric_Type``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Access denied category",
+        "newColumnName": "Metric_Type",
+        "description": "Rename column ``Access denied category`` to ``Metric_Type``"
     },
     {
         "op": "core/row-removal",
@@ -36,7 +91,7 @@
                 {
                     "type": "list",
                     "name": "Resource_Name",
-                    "expression": "grel:value.toLowercase().startsWith(\"total for all journals\")",
+                    "expression": "grel:value.toLowercase().startsWith(\"total for all titles\")",
                     "columnName": "Resource_Name",
                     "invert": false,
                     "omitBlank": false,
@@ -151,32 +206,6 @@
         "description": "Change the values in column ``R4_Month`` to date data type with null time value"
     },
     {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "baseColumnName": "Resource_Name",
-        "expression": "grel:\"Successful Full-text Article Requests\"",
-        "onError": "set-to-blank",
-        "newColumnName": "Metric_Type",
-        "columnInsertIndex": 7,
-        "description": "Create column ``Metric_Type`` containing value `Successful Full-text Article Requests`"
-    },
-    {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "baseColumnName": "Metric_Type",
-        "expression": "grel:\"Serial\"",
-        "onError": "set-to-blank",
-        "newColumnName": "Data_Type",
-        "columnInsertIndex": 8,
-        "description": "Create column ``Data_Type`` containing value `Serial`"
-    },
-    {
         "op": "core/text-transform",
         "engineConfig": {
             "facets": [],
@@ -253,6 +282,19 @@
         "repeat": false,
         "repeatCount": 10,
         "description": "Change null and whitespace values to `NULL` in column ``Online_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "ISBN",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``ISBN``"
     },
     {
         "op": "core/text-transform",
