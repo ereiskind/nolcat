@@ -62,6 +62,9 @@ digraph erd_and_classes {
         ]
         Proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
+        // Parent_Data_Type?
+        // Parent_DOI?
+        // Parent_Proprietary_ID?
         Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
         Resource_ID_in_Resource_Platforms [
             label="Resource_ID"
