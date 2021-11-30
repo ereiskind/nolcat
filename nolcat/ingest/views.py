@@ -9,6 +9,7 @@ from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import xlrd
 import pandas as pd
+from sqlalchemy.sql import text
 
 from . import bp
 from ..ingest import forms
@@ -61,9 +62,12 @@ def save_historical_collection_tracking_info():
         )
         db_connection.close()
         
-        
+        #ALERT: Due to database unavailability, code from this point forward is untested
+        db_connection = engine.connect()
+        SQL_statement = text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;")
+        what_data_type_is_this = db_connection.execute(SQL_statement).fetchall()
+        db_connection.close()
 
-        #ToDo: `SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;` (this is an intentional cartesian product)
         #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
             # Usage_Is_Being_Collected
             # Manual_Collection_Required
