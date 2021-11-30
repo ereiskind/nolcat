@@ -140,7 +140,7 @@ CREATE TABLE annualUsageCollectionTracking (
             )
         )
     )
-    INDEX statisticsSources_FK_INDX (AUCT_Statistics_Source,
+    INDEX statisticsSources_FK_INDX (AUCT_Statistics_Source),
     CONSTRAINT statisticsSources_FK_annualUsageCollectionTracking FOREIGN KEY statisticsSources_FK_INDX (AUCT_Statistics_Source)
         REFERENCES statisticsSources(Statistics_Source_ID)
         ON UPDATE restrict
