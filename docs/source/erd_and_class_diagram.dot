@@ -72,10 +72,11 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_COUNTER_Usage_Data {
-        label="COUNTER_Usage_Data"
+    subgraph cluster_usageData {
+        label="usageData"
 
         // Nouns: Classes or Attributes
+        Usage_Data_ID [shape="note"]
         __Metric_Type
         __Usage_Date
         Usage_Count [
@@ -92,9 +93,9 @@ digraph erd_and_classes {
         __Report_Creation_Date // For harvested R5 reports
 
         // Verbs: Methods
-        create // create report
-        look // aka view reports
-        __download_reports
+        create // create report--move to route function in view blueprint?
+        look // aka view reports--move to route function in view blueprint?
+        __download_reports // move to route function in view blueprint?
     }
 
 

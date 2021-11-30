@@ -184,3 +184,21 @@ CREATE TABLE resourcePlatforms (
         ON UPDATE restrict
         ON DELETE restrict
 );
+
+
+CREATE TABLE usageData (
+    Usage_Data_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Resource_Platform_ID INT NOT NULL,
+    Metric_Type VARCHAR(75) NOT NULL,
+    Usage_Date DATE NOT NULL,
+    Usage_Count MEDIUMINT UNSIGNED NOT NULL,
+    YOP SMALLINT,
+    Access_Type VARCHAR(20),
+    Access_Method VARCHAR(10) NOT NULL,
+    Report_Creation_Date DATE,
+    INDEX resourcePlatforms_FK_INDX (Resource_Platform_ID),
+    CONSTRAINT resourcePlatforms_FK_usageData FOREIGN KEY resourcePlatforms_FK_INDX (Resource_Platform_ID)
+        REFERENCES resourcePlatforms(Resource_Platform_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);

@@ -359,3 +359,26 @@ class ResourcePlatforms():
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+class UsageData():
+    """A relation containing usage metrics."""
+    __tablename__ = 'usageData'
+    __table_args__ = {'schema': 'nolcat'}
+
+    usage_data_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_platform_id = Column(ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))  #ToDo: INT NOT NULL
+    metric_type = Column()  #ToDo: VARCHAR(75) NOT NULL
+    usage_date = Column()  #ToDo: DATE NOT NULL
+    usage_count = Column()  #ToDo: MEDIUMINT UNSIGNED NOT NULL
+    yop = Column()  #ToDo: SMALLINT
+    access_type = Column()  #ToDo: VARCHAR(20)
+    access_method = Column()  #ToDo: VARCHAR(10) NOT NULL
+    report_creation_date = Column()  #ToDo: DATE
+
+    resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
