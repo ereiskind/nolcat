@@ -161,4 +161,26 @@ CREATE TABLE resources (
     Online_ISSN CHAR(9),
     Data_Type VARCHAR(25) NOT NULL,
     Section_Type VARCHAR(10),
-); 
+);
+
+
+CREATE TABLE resourcePlatforms (
+    Resource_Platform_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Publisher VARCHAR(225),
+    Publisher_ID VARCHAR(50),
+    Platform VARCHAR(75) NOT NULL,
+    Proprietary_ID VARCHAR(100),
+    URI VARCHAR(200),
+    Interface INT NOT NULL,
+    Resource_ID INT NOT NULL,
+    INDEX resources_FK_INDX (Resource_ID),
+    INDEX statisticsSources_FK_INDX (Interface)
+    CONSTRAINT resources_FK_resourcePlatforms FOREIGN KEY resources_FK_INDX (Resource_ID)
+        REFERENCES resources(Resource_ID)
+        ON UPDATE restrict
+        ON DELETE restrict,
+    CONSTRAINT statisticsSources_FK_resourcePlatforms FOREIGN KEY statisticsSources_FK_INDX (Interface)
+        REFERENCES statisticsSources(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);

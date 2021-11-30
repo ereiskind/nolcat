@@ -321,7 +321,7 @@ class AnnualUsageCollectionTracking():
 
 
 class Resources():
-    """A relation for listing resources regardless of source."""
+    """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
 
@@ -332,6 +332,29 @@ class Resources():
     online_issn = Column()  #ToDo: CHAR(9)
     data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
     section_type = Column()  #ToDo: VARCHAR(10)
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class ResourcePlatforms():
+    """A relation for the platform-specific resource metadata."""
+    __tablename__ = 'resourcePlatforms'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_platform_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    publisher = Column()  #ToDo: VARCHAR(225)
+    publisher_id = Column()  #ToDo: VARCHAR(50)
+    platform = Column()  #ToDo: VARCHAR(75) NOT NULL
+    proprietary_id = Column()  #ToDo: VARCHAR(100)
+    uri = Column()  #ToDo: VARCHAR(200)
+    interface = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+
+    resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
+    statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
+
 
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record

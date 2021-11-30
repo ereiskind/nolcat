@@ -49,8 +49,8 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_Resource_Platforms {
-        label="Resource_Platforms"
+    subgraph cluster_resourcePlatforms {
+        label="resourcePlatforms"
 
         // Attributes
         Resource_Platform_ID [shape="note"]
