@@ -4,10 +4,19 @@ from flask import render_template
 from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from sqlalchemy import create_engine
 
+import Database_Credentials
 from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
 
 csrf = CSRFProtect()
+
+DATABASE_SCHEMA_NAME = "nolcat"
+DATABASE_USERNAME = Database_Credentials.Username
+DATABASE_PASSWORD = Database_Credentials.Password
+DATABASE_HOST = Database_Credentials.Host
+DATABASE_PORT = Database_Credentials.Post
+
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""
@@ -21,6 +30,7 @@ def create_app():
     csrf.init_app(app)
     #ToDo: Replace regerating secret key with reference to container environment variable
     app.config['SECRET_KEY'] = "ReplaceMeLater"
+    app.config['UPLOAD_FOLDER'] = './data'
 
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
@@ -72,3 +82,9 @@ def Chrome_browser_driver():
     chrome_options.add_argument('--disable-software-rasterizer')
 
     return webdriver.Chrome(options=chrome_options)
+
+
+def engine():
+    """Returns a SQLAlchemy engine object."""
+    engine = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+    return engine

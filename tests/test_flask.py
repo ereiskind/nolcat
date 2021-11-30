@@ -43,3 +43,13 @@ def test_404_page(flask_client):
     HTML_file.close()
     HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")  # This replaces the Jinja with what it renders to--this replacement is safe because it replaces the homepage function with the homepage/root route
     assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup
+
+
+def test_submitting_database_initialization_CSVs(flask_client):
+    """Tests that the three CSVs that are uploaded in the `initialize_initial_relations` route can be uploaded successfully."""
+    #ToDo: Create sample CSV files to use for this test
+    #ToDo: Write this test
+    pass
+
+
+#ToDo: Does moving to the second page of the wizard need to be a separate test from the above, or is it the same as the above test?

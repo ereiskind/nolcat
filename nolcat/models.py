@@ -318,3 +318,67 @@ class AnnualUsageCollectionTracking():
 
     def upload_nonstandard_usage_file():
         pass
+
+
+class Resources():
+    """A relation for resource metadata that's consistant across all platforms."""
+    __tablename__ = 'resources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    doi = Column()  #ToDo: VARCHAR(75)
+    isbn = Column()  #ToDo: CHAR(17)
+    print_issn = Column()  #ToDo: CHAR(9)
+    online_issn = Column()  #ToDo: CHAR(9)
+    data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
+    section_type = Column()  #ToDo: VARCHAR(10)
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class ResourcePlatforms():
+    """A relation for the platform-specific resource metadata."""
+    __tablename__ = 'resourcePlatforms'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_platform_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    publisher = Column()  #ToDo: VARCHAR(225)
+    publisher_id = Column()  #ToDo: VARCHAR(50)
+    platform = Column()  #ToDo: VARCHAR(75) NOT NULL
+    proprietary_id = Column()  #ToDo: VARCHAR(100)
+    uri = Column()  #ToDo: VARCHAR(200)
+    interface = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+
+    resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
+    statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class UsageData():
+    """A relation containing usage metrics."""
+    __tablename__ = 'usageData'
+    __table_args__ = {'schema': 'nolcat'}
+
+    usage_data_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_platform_id = Column(ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))  #ToDo: INT NOT NULL
+    metric_type = Column()  #ToDo: VARCHAR(75) NOT NULL
+    usage_date = Column()  #ToDo: DATE NOT NULL
+    usage_count = Column()  #ToDo: MEDIUMINT UNSIGNED NOT NULL
+    yop = Column()  #ToDo: SMALLINT
+    access_type = Column()  #ToDo: VARCHAR(20)
+    access_method = Column()  #ToDo: VARCHAR(10)
+    report_creation_date = Column()  #ToDo: DATE
+
+    resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass

@@ -5,16 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
-    <title>Initialize Database</title>
+    <title>Database Initialization Wizard 3</title>
 </head>
 <body>
-    <h1>Initialize the Database with R4 Data</h1>
-    <p>The relational database is created containing the historical R4 data. In creating the database with all the R4 data, you cna be sure that the historical COUNTER data is in the new system and that R5 reports collected via SUSHI will have a solid foundation for deduplication.</p>
+    <h1>Database Initialization Wizard: Page 3</h1>
 
-    <h2>1. Reformat the R4 Reports with OpenRefine</h2>
-    <p>The crosstab format of R4 reports doesn't work well in relational databases; they need to be unpacked. JSONs <!--available where?--> contain the OpenRefine procedure for unpacking standard tabular R4 reports for use in this relational database. OpenRefine, an open source data cleanup tool, can be <a href="https://openrefine.org/download.html">downloaded here</a>. To make uploading the files easier, the OpenRefine results should be saved as CSVs to a single folder that contains no other files and has no subfolders.</p>
-
-    <h2>2. Upload the Reformatted R4 Reports</h2>
+    <h2>5. Upload and Dedupe Historical R4 Usage</h2>
     <form action="{{ url_for('ingest.determine_if_resources_match') }}" method="POST" enctype="multipart/form-data">
         <label>
             Select the reformatted R4 reports. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.

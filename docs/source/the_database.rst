@@ -47,7 +47,7 @@ The most important data related to a statistics source--the SUSHI credentials--n
    * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`
    * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
 
-     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<ending year of fiscal year>`
+     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<ending year of fiscal year in "yyyy" format>`
 
         * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
         * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
@@ -60,11 +60,12 @@ The most important data related to a statistics source--the SUSHI credentials--n
 
 4. Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields
 5. Upload the CSV
-6. On the next web app page, for all pages where a file with usage is being saved, upload the file/add the path to the file
 
 5. Upload and Dedupe Historical R4 Usage
 ========================================
-1. In the file selector on the next web app page, select all the transformed R4 CSVs
+Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.
+
+1. In the file selector on the next web app page, select all the transformed R4 CSVs; if all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder
 2. On the next web app page, <this is the page for confirming matches--write instructions from this point on when pages and forms are established>
 
 Naming Conventions in the Database and Source Code

@@ -140,7 +140,7 @@ CREATE TABLE annualUsageCollectionTracking (
             )
         )
     )
-    INDEX statisticsSources_FK_INDX (AUCT_Statistics_Source,
+    INDEX statisticsSources_FK_INDX (AUCT_Statistics_Source),
     CONSTRAINT statisticsSources_FK_annualUsageCollectionTracking FOREIGN KEY statisticsSources_FK_INDX (AUCT_Statistics_Source)
         REFERENCES statisticsSources(Statistics_Source_ID)
         ON UPDATE restrict
@@ -148,6 +148,60 @@ CREATE TABLE annualUsageCollectionTracking (
     INDEX fiscalYears_FK_INDX (AUCT_Fiscal_Year),
     CONSTRAINT fiscalYears_FK_annualUsageCollectionTracking FOREIGN KEY fiscalYears_FK_INDX (AUCT_Fiscal_Year)
         REFERENCES fiscalYears(Fiscal_Year_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
+
+
+CREATE TABLE resources (
+    Resource_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    DOI VARCHAR(75),
+    ISBN CHAR(17),
+    Print_ISSN CHAR(9),
+    Online_ISSN CHAR(9),
+    Data_Type VARCHAR(25) NOT NULL,
+    Section_Type VARCHAR(10),
+);
+
+
+CREATE TABLE resourcePlatforms (
+    Resource_Platform_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Publisher VARCHAR(225),
+    Publisher_ID VARCHAR(50),
+    Platform VARCHAR(75) NOT NULL,
+    Proprietary_ID VARCHAR(100),
+    URI VARCHAR(200),
+    -- Parent_Data_Type VARCHAR(25),
+    -- Parent_DOI VARCHAR(50),
+    -- Parent_Proprietary_ID VARCHAR(100),
+    Interface INT NOT NULL,
+    Resource_ID INT NOT NULL,
+    INDEX resources_FK_INDX (Resource_ID),
+    INDEX statisticsSources_FK_INDX (Interface)
+    CONSTRAINT resources_FK_resourcePlatforms FOREIGN KEY resources_FK_INDX (Resource_ID)
+        REFERENCES resources(Resource_ID)
+        ON UPDATE restrict
+        ON DELETE restrict,
+    CONSTRAINT statisticsSources_FK_resourcePlatforms FOREIGN KEY statisticsSources_FK_INDX (Interface)
+        REFERENCES statisticsSources(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
+
+
+CREATE TABLE usageData (
+    Usage_Data_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Resource_Platform_ID INT NOT NULL,
+    Metric_Type VARCHAR(75) NOT NULL,
+    Usage_Date DATE NOT NULL,
+    Usage_Count MEDIUMINT UNSIGNED NOT NULL,
+    YOP SMALLINT,
+    Access_Type VARCHAR(20),
+    Access_Method VARCHAR(10),
+    Report_Creation_Date DATE,
+    INDEX resourcePlatforms_FK_INDX (Resource_Platform_ID),
+    CONSTRAINT resourcePlatforms_FK_usageData FOREIGN KEY resourcePlatforms_FK_INDX (Resource_Platform_ID)
+        REFERENCES resourcePlatforms(Resource_Platform_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );
