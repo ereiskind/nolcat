@@ -34,8 +34,11 @@ def test_engine_creation():
 
 def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
+    print(repr(type(engine)))
     connection = engine.connect()
+    print(repr(type(connection)))
     transaction = connection.begin()
+    print(repr(type(connection)))
     resources_relation.to_sql(
         name='resources',
         con=engine,
