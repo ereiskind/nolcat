@@ -1,0 +1,1 @@
+"""This script holds the SQLAlchemy engine creation function because when the function is in `app.py`, an ImportError due to circular imports occurs."""
