@@ -77,8 +77,7 @@ def save_historical_collection_tracking_info():
             # Usage_File_Path
             # Notes
         #ToDo: Download all R4 OpenRefine JSONs
-        return render_template('historical-collection-tracking.html')
-    return redirect(url_for('initialize_initial_relations'))  #ToDo: Add message flashing about upload not working
+    return render_template('historical-collection-tracking.html')
 
 
 @bp.route('/historical-COUNTER-data')
