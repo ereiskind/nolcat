@@ -30,10 +30,8 @@ def resources_relation():
 
 
 def test_engine_creation(engine):
-    """Test that a SQLAlchemy engine can be created."""
-    #ToDo: Is this needed as a separate test, and if so, how should it be done?
-    print(f"Type of engine from fixture: {repr(type(engine))}")
-    assert engine
+    """Test that a SQLAlchemy engine is created."""
+    assert repr(type(engine)) == "<class 'sqlalchemy.engine.base.Engine'>"
 
 
 def test_loading_into_relation(engine, resources_relation):
