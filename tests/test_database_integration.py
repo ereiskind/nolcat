@@ -6,6 +6,14 @@ from pandas._testing import assert_frame_equal
 
 from nolcat.SQLAlchemy_engine import engine
 
+from sqlalchemy import create_engine
+from nolcat.SQLAlchemy_engine import DATABASE_SCHEMA_NAME
+from nolcat.SQLAlchemy_engine import DATABASE_USERNAME
+from nolcat.SQLAlchemy_engine import DATABASE_PASSWORD
+from nolcat.SQLAlchemy_engine import DATABASE_HOST
+from nolcat.SQLAlchemy_engine import DATABASE_PORT
+
+
 @pytest.fixture
 def engine():
     """Recreates the SQLAlchemy engine for the web app as a fixture."""
@@ -26,10 +34,13 @@ def resources_relation():
     yield df
 
 
-def test_engine_creation():
+def test_engine_creation(engine):
     """Test that a SQLAlchemy engine can be created."""
     #ToDo: Is this needed as a separate test, and if so, how should it be done?
-    pass
+    e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+    print(repr(type(e)))
+    print(repr(type(engine)))
+    yield e == engine
 
 
 def test_loading_into_relation(engine, resources_relation):
