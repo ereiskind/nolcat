@@ -37,11 +37,11 @@ def resources_relation():
 def test_engine_creation(engine):
     """Test that a SQLAlchemy engine can be created."""
     #ToDo: Is this needed as a separate test, and if so, how should it be done?
+    print(f"Type of connection from SQLAlchemy_engine.engine: {repr(type(engine))}")
     e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
     print(f"Type of create_engine in test function: {repr(type(e))}")
     c = e.connect()
     print(f"Type of connection from create_engine in test function: {repr(type(c))}")
-    print(f"Type of connection from SQLAlchemy_engine.engine: {repr(type(engine))}")
     assert e == engine
 
 
