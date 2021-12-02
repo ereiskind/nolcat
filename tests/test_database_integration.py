@@ -26,6 +26,7 @@ def resources_relation():
         index=[1, 2],
         columns=["DOI", "ISBN", "Print_ISSN", "Online_ISSN", "Data_Type", "Section_Type"]
     )
+    df.index.name = "Resource_ID"
     yield df
 
 
