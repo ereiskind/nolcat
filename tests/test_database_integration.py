@@ -52,8 +52,8 @@ def test_loading_into_relation(engine, resources_relation):
         con=engine
     )
 
-    print(resources_relation.head())
-    print(retrieved_data.head())
+    print(f"\nInput:\n{resources_relation.head()}")
+    print(f"\nOutput:\n{retrieved_data.head()}")
 
     assert_frame_equal(resources_relation, retrieved_data)
     transaction.rollback()
