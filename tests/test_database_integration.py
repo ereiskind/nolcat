@@ -40,7 +40,7 @@ def test_engine_creation(engine):
     e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
     print(repr(type(e)))
     print(repr(type(engine)))
-    yield e == engine
+    assert e == engine
 
 
 def test_loading_into_relation(engine, resources_relation):
