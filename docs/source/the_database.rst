@@ -55,7 +55,7 @@ The most important data related to a statistics source--the SUSHI credentials--n
      2. Apply the JSON appropriate for the report type
      3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
 
-   * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"
+   * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` to true, `Manual_Collection_Required` to false, and `Collection_Status` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
 
 4. Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields
@@ -67,6 +67,10 @@ Initializing the database with the historical R4 data not only ensures that all 
 
 1. In the file selector on the next web app page, select all the transformed R4 CSVs; if all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder
 2. On the next web app page, <this is the page for confirming matches--write instructions from this point on when pages and forms are established>
+
+6. Upload Historical R5 Usage
+=============================
+1. Run `FiscalYears.collect_fiscal_year_usage` for all the fiscal years including and after calendar year 2019
 
 Naming Conventions in the Database and Source Code
 **************************************************

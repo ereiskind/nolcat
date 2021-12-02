@@ -344,7 +344,6 @@ digraph erd_and_classes {
 
     //Verbs: Methods
     store
-    collect
     match
     connect
     change
@@ -376,7 +375,6 @@ digraph erd_and_classes {
     subgraph cluster_Annual_Collection_Terms{
         // Nouns: Classes or Attributes
         "historical usage data"
-        "data for a given reporting year"
         // Verbs: Methods
     }
 
