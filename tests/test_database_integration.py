@@ -1,14 +1,17 @@
 """This module contains the tests for database integration and SQLAlchemy."""
 
 import pytest
+from sqlalchemy import create_engine
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from nolcat.app import engine
+from nolcat import Database_Credentials
+
 
 @pytest.fixture
 def engine():
-    """Recreates the SQLAlchemy engine for the web app as a fixture."""
+    """Creates a SQLAlchemy engine as a pytest fixture."""
+    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat_db_dev')
     yield engine
 
 
@@ -23,13 +26,13 @@ def resources_relation():
         index=[1, 2],
         columns=["DOI", "ISBN", "Print_ISSN", "Online_ISSN", "Data_Type", "Section_Type"]
     )
+    df.index.name = "Resource_ID"
     yield df
 
 
-def test_engine_creation():
-    """Test that a SQLAlchemy engine can be created."""
-    #ToDo: Is this needed as a separate test, and if so, how should it be done?
-    pass
+def test_engine_creation(engine):
+    """Test that a SQLAlchemy engine is created."""
+    assert repr(type(engine)) == "<class 'sqlalchemy.engine.base.Engine'>"
 
 
 def test_loading_into_relation(engine, resources_relation):
@@ -47,8 +50,12 @@ def test_loading_into_relation(engine, resources_relation):
 
     retrieved_data = pd.read_sql(
         sql="SELECT * FROM resources;",
-        con=engine
+        con=engine,
+        index_col='Resource_ID',
     )
+
+    print(f"\nInput:\n{resources_relation.head()}")
+    print(f"\nOutput:\n{retrieved_data.head()}")
 
     assert_frame_equal(resources_relation, retrieved_data)
     transaction.rollback()

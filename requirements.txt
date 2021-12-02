@@ -3,7 +3,6 @@ Flask-WTF==0.15.1
 fuzzywuzzy==0.18.0
 graphviz==0.17
 mysql==0.0.3
-mysql-connector-python==8.0.21
 openpyxl==3.0.3
 pandas==1.3.2
 PyMySQL==0.10.1
