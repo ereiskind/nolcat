@@ -52,7 +52,10 @@ def test_loading_into_relation(engine, resources_relation):
         con=engine
     )
 
-    assert_frame_equal(resources_relation, retrieved_data[["DOI", "ISBN", "Print_ISSN", "Online_ISSN", "Data_Type", "Section_Type"]])
+    print(resources_relation.head())
+    print(retrieved_data.head())
+
+    assert_frame_equal(resources_relation, retrieved_data)
     transaction.rollback()
 
 
