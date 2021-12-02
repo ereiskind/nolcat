@@ -11,7 +11,7 @@ from nolcat import Database_Credentials
 @pytest.fixture
 def engine():
     """Creates a SQLAlchemy engine as a pytest fixture."""
-    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat')
+    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat_db_dev')
     yield engine
 
 
