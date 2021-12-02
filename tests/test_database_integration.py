@@ -38,17 +38,17 @@ def test_engine_creation(engine):
     """Test that a SQLAlchemy engine can be created."""
     #ToDo: Is this needed as a separate test, and if so, how should it be done?
     e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
-    print(repr(type(e)))
+    print(f"Type of create_engine in test function: {repr(type(e))}")
     c = e.connect()
-    print(repr(type(c)))
-    print(repr(type(engine)))
+    print(f"Type of connection from create_engine in test function: {repr(type(c))}")
+    print(f"Type of connection from SQLAlchemy_engine.engine: {repr(type(engine))}")
     assert e == engine
 
 
 def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
     transaction = engine.begin()
-    print(repr(type(transaction)))
+    print(f"Type of transaction from connection from SQLAlchemy_engine.engine: {repr(type(transaction))}")
     resources_relation.to_sql(
         name='resources',
         con=engine,
