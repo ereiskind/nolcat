@@ -49,7 +49,8 @@ def test_loading_into_relation(engine, resources_relation):
 
     retrieved_data = pd.read_sql(
         sql="SELECT * FROM resources;",
-        con=engine
+        con=engine,
+        index_col='Resource_ID',
     )
 
     print(f"\nInput:\n{resources_relation.head()}")
