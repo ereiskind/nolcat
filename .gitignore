@@ -139,5 +139,5 @@ dmypy.json
 # Log file
 tests/logs/*
 
-# Mock Database_Credentials
+# Database_Credentials
 nolcat/Database_Credentials.py
