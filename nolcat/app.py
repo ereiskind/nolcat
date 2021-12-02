@@ -4,6 +4,7 @@ from flask import render_template
 from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from sqlalchemy import create_engine
 
 import nolcat.Database_Credentials as Database_Credentials  # The "nolcat/Database_Credentials.py" file is added to the repo as part of the container build; there is a placeholder for it in the repo at present
 from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
@@ -81,3 +82,10 @@ def Chrome_browser_driver():
     chrome_options.add_argument('--disable-software-rasterizer')
 
     return webdriver.Chrome(options=chrome_options)
+
+
+def engine():
+    """Returns a SQLAlchemy engine object."""
+    # https://docs.sqlalchemy.org/en/14/dialects/mysql.html#dialect-mysql for all possible MySQL DBAPI options
+    engine = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+    return engine
