@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from nolcat.app import engine
+from nolcat.SQLAlchemy_engine import engine
 
 @pytest.fixture
 def engine():

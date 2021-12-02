@@ -13,7 +13,7 @@ from sqlalchemy.sql import text
 
 from . import bp
 from ..ingest import forms
-from nolcat.app import engine
+from nolcat.SQLAlchemy_engine import engine
 from nolcat.raw_COUNTER_report import *
 
 
