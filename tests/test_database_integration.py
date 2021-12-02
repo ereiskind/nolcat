@@ -1,22 +1,17 @@
 """This module contains the tests for database integration and SQLAlchemy."""
 
 import pytest
+from sqlalchemy import create_engine
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from nolcat.SQLAlchemy_engine import engine
-
-from sqlalchemy import create_engine
-from nolcat.SQLAlchemy_engine import DATABASE_SCHEMA_NAME
-from nolcat.SQLAlchemy_engine import DATABASE_USERNAME
-from nolcat.SQLAlchemy_engine import DATABASE_PASSWORD
-from nolcat.SQLAlchemy_engine import DATABASE_HOST
-from nolcat.SQLAlchemy_engine import DATABASE_PORT
+from nolcat import Database_Credentials
 
 
 @pytest.fixture
 def engine():
-    """Recreates the SQLAlchemy engine for the web app as a fixture."""
+    """Creates a SQLAlchemy engine as a pytest fixture."""
+    engine = create_engine(f'mysql+pymysql://{Database_Credentials.Username}:{Database_Credentials.Password}@{Database_Credentials.Host}:{Database_Credentials.Post}/nolcat')
     yield engine
 
 
@@ -37,17 +32,14 @@ def resources_relation():
 def test_engine_creation(engine):
     """Test that a SQLAlchemy engine can be created."""
     #ToDo: Is this needed as a separate test, and if so, how should it be done?
-    print(f"Type of connection from SQLAlchemy_engine.engine: {repr(type(engine))}")
-    e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
-    print(f"Type of create_engine in test function: {repr(type(e))}")
-    c = e.connect()
-    print(f"Type of connection from create_engine in test function: {repr(type(c))}")
-    assert e == engine
+    print(f"Type of engine from fixture: {repr(type(engine))}")
+    assert engine
 
 
 def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
-    transaction = engine.begin()
+    connection = engine.connect()
+    transaction = connection.begin()
     print(f"Type of transaction from connection from SQLAlchemy_engine.engine: {repr(type(transaction))}")
     resources_relation.to_sql(
         name='resources',
