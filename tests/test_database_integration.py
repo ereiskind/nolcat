@@ -38,7 +38,6 @@ def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
     connection = engine.connect()
     transaction = connection.begin()
-    print(f"Type of transaction from connection from SQLAlchemy_engine.engine: {repr(type(transaction))}")
     resources_relation.to_sql(
         name='resources',
         con=engine,
@@ -53,7 +52,7 @@ def test_loading_into_relation(engine, resources_relation):
         con=engine
     )
 
-    assert_frame_equal(resources_relation, retrieved_data)
+    assert_frame_equal(resources_relation, retrieved_data[["DOI", "ISBN", "Print_ISSN", "Online_ISSN", "Data_Type", "Section_Type"]])
     transaction.rollback()
 
 
