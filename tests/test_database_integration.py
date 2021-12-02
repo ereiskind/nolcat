@@ -39,17 +39,16 @@ def test_engine_creation(engine):
     #ToDo: Is this needed as a separate test, and if so, how should it be done?
     e = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
     print(repr(type(e)))
+    c = e.connect()
+    print(repr(type(c)))
     print(repr(type(engine)))
     assert e == engine
 
 
 def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
-    print(repr(type(engine)))
-    connection = engine.connect()
-    print(repr(type(connection)))
-    transaction = connection.begin()
-    print(repr(type(connection)))
+    transaction = engine.begin()
+    print(repr(type(transaction)))
     resources_relation.to_sql(
         name='resources',
         con=engine,
