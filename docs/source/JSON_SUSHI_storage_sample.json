@@ -3,7 +3,7 @@
     "name": "vendors.Vendor_Name",
     "interface": [
         {
-            "interface_id": "statisticsSources.Statistics_Source_ID",
+            "interface_id": "statisticsSources.Statistics_Source_Retrieval_Code",
             "name": "statisticsSources.Statistics_Source_Name",
             "statistics": {
                 "user_id": "SUSHI Customer ID",
