@@ -47,7 +47,13 @@ CREATE TABLE vendorNotes (
 CREATE TABLE statisticsSources (
     Statistics_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Statistics_Source_Name VARCHAR(100) NOT NULL,
-    Statistics_Source_Retrieval_Code VARCHAR(30)
+    Statistics_Source_Retrieval_Code VARCHAR(30),
+    Vendor_ID INT NOT NULL,
+    INDEX vendors_FK_INDX (Vendor_ID),
+    CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
+        REFERENCES vendors(Vendor_ID)
+        ON UPDATE restrict
+        ON DELETE restrict,
 );
 
 CREATE TABLE statisticsSourceNotes (

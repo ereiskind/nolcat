@@ -109,6 +109,10 @@ digraph erd_and_classes {
         Statistics_Source_ID [shape="note"]
         Statiatics_Source_Name
         Statistics_Source_Retrieval_Code
+        Vendor_ID_in_statisticsSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
         
 
         // Methods
@@ -313,6 +317,13 @@ digraph erd_and_classes {
     ]
 
     Vendor_ID -> Vendor_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+
+    ]
+
+    Vendor_ID -> Vendor_ID_in_statisticsSources [
         dir="both"
         arrowhead="crowodot" // Want the option to have a vendor without a statistics source
         arrowtail="teetee"
