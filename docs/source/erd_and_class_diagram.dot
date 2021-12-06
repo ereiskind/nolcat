@@ -109,19 +109,52 @@ digraph erd_and_classes {
         Statistics_Source_ID [shape="note"]
         Statiatics_Source_Name
         Statistics_Source_Retrieval_Code
-        Current_Access
-        Access_Stop_Date
-        Vendor_ID_in_statisticsSources [
-            label="Vendor_ID"
-            shape="folder"
-        ]
+        
 
         // Methods
         show_SUSHI_credentials [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
         collect_usage_statistics [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_resourceSources {
+        label="resourceSources"
+
+        // Attributes
+        Resource_Source_ID [shape="note"]
+        Resource_Source_Name
+        Current_Access
+        Access_Stop_Date
+        Statistics_Source_ID_in_resourceSources [
+            label="Statistics_Source_ID"
+            shape="folder"
+        ]
+        Vendor_ID_in_resourceSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+
+        // Methods
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_resourceSourceNotes {
+        label="resourceSourceNotes"
+
+        //Attributes
+        Resource_Source_Notes_ID
+        Note_in_resourceSourceNotes [label="Note"]
+        Written_By_in_resourceSourceNotes [label="Written_By"]
+        Date_Written_in_resourceSourceNotes [label="Date_Written"]
+        Resource_Source_ID_in_resourceSourceNotes [
+            label="Resource_Source_ID"
+            shape="folder"
+        ]
+
+        //Methods
     }
 
 
@@ -271,7 +304,21 @@ digraph erd_and_classes {
         arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
         arrowtail="teetee"
     ]
-    
+
+    Statistics_Source_ID -> Statistics_Source_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // The statistics source that's not connected to a resourceSource is one no longer in use
+        arrowtail="teetee"
+
+    ]
+
+    Vendor_ID -> Vendor_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+
+    ]
+
     Statistics_Source_ID -> AUCT_Statistics_Source [
         dir="both"
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
@@ -302,13 +349,13 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
 
-    Vendor_ID -> Vendor_ID_in_statisticsSources [
+    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
         dir="both"
-        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
-    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
+    Resource_Source_ID -> Resource_Source_ID_in_resourceSourceNotes [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"

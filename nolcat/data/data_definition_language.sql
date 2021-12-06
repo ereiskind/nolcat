@@ -47,15 +47,7 @@ CREATE TABLE vendorNotes (
 CREATE TABLE statisticsSources (
     Statistics_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Statistics_Source_Name VARCHAR(100) NOT NULL,
-    Statistics_Source_Retrieval_Code VARCHAR(30),
-    Current_Access BOOLEAN NOT NULL,
-    Access_Stop_Date TIMESTAMP,
-    Vendor_ID INT NOT NULL,
-    INDEX vendors_FK_INDX (Vendor_ID),
-    CONSTRAINT vendors_FK_statisticsSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
-        REFERENCES vendors(Vendor_ID)
-        ON UPDATE restrict
-        ON DELETE restrict
+    Statistics_Source_Retrieval_Code VARCHAR(30)
 );
 
 CREATE TABLE statisticsSourceNotes (
@@ -67,6 +59,39 @@ CREATE TABLE statisticsSourceNotes (
     INDEX statisticsSources_FK_INDX (Statistics_Source_ID),
     CONSTRAINT statisticsSources_FK_statisticsSourceNotes FOREIGN KEY statisticsSources_FK_INDX (Statistics_Source_ID)
         REFERENCES statisticsSources(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
+
+
+CREATE TABLE resourceSources (
+    Resource_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Resource_Source_Name VARCHAR(100) NOT NULL,
+    Current_Access BOOLEAN NOT NULL,
+    Access_Stop_Date TIMESTAMP,
+    Vendor_ID INT NOT NULL,
+    Statistics_Source_ID INT NOT NULL,
+    INDEX vendors_FK_INDX (Vendor_ID),
+    CONSTRAINT vendors_FK_resourceSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
+        REFERENCES vendors(Vendor_ID)
+        ON UPDATE restrict
+        ON DELETE restrict,
+    INDEX statisticsSources_FK_INDX (Statistics_Source_ID),
+    CONSTRAINT statisticsSources_FK_resourceSources FOREIGN KEY statisticsSources_FK_INDX (Statistics_Source_ID)
+        REFERENCES statisticsSources(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
+
+CREATE TABLE resourceSourceNotes (
+    Resource_Source_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Note TEXT,
+    Written_By VARCHAR(100),
+    Date_Written TIMESTAMP,
+    Resource_Source_ID INT NOT NULL,
+    INDEX resourceSources_FK_INDX (Resource_Source_ID),
+    CONSTRAINT resourceSources_FK_resourceSourceNotes FOREIGN KEY resourceSources_FK_INDX (Resource_Source_ID)
+        REFERENCES resourceSources(Resource_Source_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );
