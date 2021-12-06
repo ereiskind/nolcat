@@ -116,6 +116,13 @@ class VendorNotes(Base):
         pass
 
 
+class resourceSources(Base):
+    """A relation containing information about the sources of resources, roughly equivalent to a platform.
+    
+    Because a given vendor can have multiple SUSHI credentials (e.g. Oxford) and a set of SUSHI credentials can provide the usage for multiple vendors (e.g. HighWire), the vendors, the sources of resources, and the sources of usage statistics must all be different relations, with the sources of resources relation serving a junction table-like function in connecting the other two relations.
+    """
+
+
 class StatisticsSources(Base):
     """A relation containing information about sources of usage statistics."""
     __tablename__ = 'statisticsSources'
