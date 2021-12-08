@@ -312,8 +312,7 @@ digraph erd_and_classes {
     Statistics_Source_ID -> Statistics_Source_ID_in_resourceSources [
         dir="both"
         arrowhead="crowodot" // The statistics source that's not connected to a resourceSource is one no longer in use
-        arrowtail="teetee"
-
+        arrowtail="teetee" // All resource sources must have a statisticsSource indicating how usage would be collected; the Current_Access field indicates if usage no longer needs to be collected because the resource is no longer accessible
     ]
 
     Vendor_ID -> Vendor_ID_in_resourceSources [

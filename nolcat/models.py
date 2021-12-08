@@ -52,7 +52,9 @@ class FiscalYears(Base):
 
 
     def create_usage_tracking_records_for_fiscal_year():
-        #ToDo: For every stats source that doesn't have deactivation date earlier than FY start date, create a record in annual usage collection tracking relation with this FY and the stats source as the composite key
+        #ToDo: For every record in statisticsSources
+            #ToDo: Get resourceSources.Current_Access value for all connected records
+            #ToDo: If any of the above are `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_id of the instance this method is being run on
         pass
 
 
