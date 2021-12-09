@@ -287,6 +287,16 @@ class StatisticsSources(Base):
         pass
 
 
+    def upload_R4_report(self):
+        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
+        pass
+
+
+    def upload_R5_report(self):
+        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
+        pass
+
+
 class AnnualUsageCollectionTracking():
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'

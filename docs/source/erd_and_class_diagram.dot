@@ -119,6 +119,8 @@ digraph erd_and_classes {
         show_SUSHI_credentials [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
         collect_usage_statistics [shape="Mrecord"]
+        upload_R4_report [shape="Mrecord"]
+        upload_R5_report [shape="Mrecord"]
     }
 
 
