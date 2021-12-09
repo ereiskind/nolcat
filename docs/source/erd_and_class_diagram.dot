@@ -12,7 +12,180 @@ digraph erd_and_classes {
 
     /* *** ESTABLISHED RELATIONS/CLASSES *** */
 
-    // RELATIONS/CLASSES
+    subgraph cluster_fiscalYears {
+        label="fiscalYears"
+
+        // Attributes
+        Fiscal_Year_ID [shape="note"]
+        Year
+        _Start_Date // The FY start as date data type to go in SQL queries
+        _End_Date // The FY end as date data type to go in SQL queries
+        // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
+        ACRL_60b // Initial Circulation: Digital/Electronic
+        ACRL_63 // E-Serials Usage: Digital/Electronic
+        ARL_18 // Number of successful full-text article requests (journals)
+        ARL_19 // Number of regular searches (databases)
+        ARL_20 // Number of federated searches (databases)
+        // Should the date when the numbers were collected be saved?
+        Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
+
+        // Methods
+        // Should each number have its own method, or should all of them be calculated at the same time?
+        calculate_ACRL_60b [shape="Mrecord"]
+        calculate_ACRL_63 [shape="Mrecord"]
+        calculate_ARL_18 [shape="Mrecord"]
+        calculate_ARL_19 [shape="Mrecord"]
+        calculate_ARL_20 [shape="Mrecord"]
+        __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
+        collect_fiscal_year_usage_statistics [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_vendors {
+        label="vendors"
+
+        //Attributes
+        Vendor_ID [shape="note"]
+        Vendor_Name
+        Alma_Vendor_Code
+
+        //Methods
+        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
+        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_vendorNotes {
+        label="vendorNotes"
+
+        //Attributes
+        Vendor_Notes_ID [shape="note"]
+        Note_in_vendorNotes [label="Note"]
+        Written_By_in_vendorNotes [label="Written_By"]
+        Date_Written_in_vendorNotes [label="Date_Written"]
+        Vendor_ID_in_vendorNotes [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_statisticsSources {
+        label="statisticsSources"
+
+        // Attributes
+        Statistics_Source_ID [shape="note"]
+        Statiatics_Source_Name
+        Statistics_Source_Retrieval_Code
+        Vendor_ID_in_statisticsSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+        
+
+        // Methods
+        show_SUSHI_credentials [shape="Mrecord"]
+        _harvest_R5_SUSHI [shape="Mrecord"]
+        collect_usage_statistics [shape="Mrecord"]
+        upload_R4_report [shape="Mrecord"]
+        upload_R5_report [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_statisticsSourceNotes {
+        label="statisticsSourceNotes"
+
+        //Attributes
+        Statistics_Source_Notes_ID [shape="note"]
+        Note_in_statisticsSourceNotes [label="Note"]
+        Written_By_in_statisticsSourceNotes [label="Written_By"]
+        Date_Written_in_statisticsSourceNotes [label="Date_Written"]
+        Statistics_Source_ID_in_statisticsSourceNotes [
+            label="Statistics_Source_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_resourceSources {
+        label="resourceSources"
+
+        // Attributes
+        Resource_Source_ID [shape="note"]
+        Resource_Source_Name
+        Current_Access
+        Access_Stop_Date
+        Statistics_Source_ID_in_resourceSources [
+            label="Statistics_Source_ID"
+            shape="folder"
+        ]
+        Vendor_ID_in_resourceSources [
+            label="Vendor_ID"
+            shape="folder"
+        ]
+
+        // Methods
+        add_access_stop_date [shape="Mrecord"]
+        remove_access_stop_date [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_resourceSourceNotes {
+        label="resourceSourceNotes"
+
+        //Attributes
+        Resource_Source_Notes_ID [shape="note"]
+        Note_in_resourceSourceNotes [label="Note"]
+        Written_By_in_resourceSourceNotes [label="Written_By"]
+        Date_Written_in_resourceSourceNotes [label="Date_Written"]
+        Resource_Source_ID_in_resourceSourceNotes [
+            label="Resource_Source_ID"
+            shape="folder"
+        ]
+
+        //Methods
+    }
+
+
+    subgraph cluster_annualUsageCollectionTracking {
+        label="annualUsageCollectionTracking"
+
+        // Attributes
+        AUCT_Fiscal_Year [shape="component"]
+        AUCT_Statistics_Source [shape="component"]
+        Usage_Is_Being_Collected
+        __Manual_Collection_Required
+        __Collection_Via_Email
+        __Is_COUNTER_Compliant
+        __Collection_Status
+        __Usage_File_Path
+        Notes
+
+        // Methods
+        collect_annual_usage_statistics [shape="Mrecord"]
+        upload_nonstandard_usage_file [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_resources {
+        label="resources"
+
+        // Attributes
+        Resource_ID [shape="note"]
+        DOI
+        ISBN
+        Print_ISSN
+        Online_ISSN
+        Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
+        __Section_Type // This is in R5 IR only-how to add it? Does it go here?
+
+        // Methods
+    }
+
 
     subgraph cluster_Resource_Titles {
         label="Resource_Titles"
@@ -30,22 +203,6 @@ digraph erd_and_classes {
 
         // Methods
         find // aka search titles
-    }
-
-
-    subgraph cluster_resources {
-        label="resources"
-
-        // Attributes
-        Resource_ID [shape="note"]
-        DOI
-        ISBN
-        Print_ISSN
-        Online_ISSN
-        Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
-        __Section_Type // This is in R5 IR only-how to add it? Does it go here?
-
-        // Methods
     }
 
 
@@ -102,165 +259,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_statisticsSources {
-        label="statisticsSources"
-
-        // Attributes
-        Statistics_Source_ID [shape="note"]
-        Statiatics_Source_Name
-        Statistics_Source_Retrieval_Code
-        Vendor_ID_in_statisticsSources [
-            label="Vendor_ID"
-            shape="folder"
-        ]
-        
-
-        // Methods
-        show_SUSHI_credentials [shape="Mrecord"]
-        _harvest_R5_SUSHI [shape="Mrecord"]
-        collect_usage_statistics [shape="Mrecord"]
-        upload_R4_report [shape="Mrecord"]
-        upload_R5_report [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_resourceSources {
-        label="resourceSources"
-
-        // Attributes
-        Resource_Source_ID [shape="note"]
-        Resource_Source_Name
-        Current_Access
-        Access_Stop_Date
-        Statistics_Source_ID_in_resourceSources [
-            label="Statistics_Source_ID"
-            shape="folder"
-        ]
-        Vendor_ID_in_resourceSources [
-            label="Vendor_ID"
-            shape="folder"
-        ]
-
-        // Methods
-        add_access_stop_date [shape="Mrecord"]
-        remove_access_stop_date [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_resourceSourceNotes {
-        label="resourceSourceNotes"
-
-        //Attributes
-        Resource_Source_Notes_ID
-        Note_in_resourceSourceNotes [label="Note"]
-        Written_By_in_resourceSourceNotes [label="Written_By"]
-        Date_Written_in_resourceSourceNotes [label="Date_Written"]
-        Resource_Source_ID_in_resourceSourceNotes [
-            label="Resource_Source_ID"
-            shape="folder"
-        ]
-
-        //Methods
-    }
-
-
-    subgraph cluster_annualUsageCollectionTracking {
-        label="annualUsageCollectionTracking"
-
-        // Attributes
-        AUCT_Fiscal_Year [shape="component"]
-        AUCT_Statistics_Source [shape="component"]
-        Usage_Is_Being_Collected
-        __Manual_Collection_Required
-        __Collection_Via_Email
-        __Is_COUNTER_Compliant
-        __Collection_Status
-        __Usage_File_Path
-        Notes
-
-        // Methods
-        collect_annual_usage_statistics [shape="Mrecord"]
-        upload_nonstandard_usage_file [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_fiscalYears {
-        label="fiscalYears"
-
-        // Attributes
-        Fiscal_Year_ID [shape="note"]
-        Year
-        _Start_Date // The FY start as date data type to go in SQL queries
-        _End_Date // The FY end as date data type to go in SQL queries
-        // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
-        ACRL_60b // Initial Circulation: Digital/Electronic
-        ACRL_63 // E-Serials Usage: Digital/Electronic
-        ARL_18 // Number of successful full-text article requests (journals)
-        ARL_19 // Number of regular searches (databases)
-        ARL_20 // Number of federated searches (databases)
-        // Should the date when the numbers were collected be saved?
-        Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
-
-        // Methods
-        // Should each number have its own method, or should all of them be calculated at the same time?
-        calculate_ACRL_60b [shape="Mrecord"]
-        calculate_ACRL_63 [shape="Mrecord"]
-        calculate_ARL_18 [shape="Mrecord"]
-        calculate_ARL_19 [shape="Mrecord"]
-        calculate_ARL_20 [shape="Mrecord"]
-        __create_usage_tracking_records_for_fiscal_year [shape="Mrecord"]
-        collect_fiscal_year_usage_statistics [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_vendors {
-        label="vendors"
-
-        //Attributes
-        Vendor_ID
-        Vendor_Name
-        Alma_Vendor_Code
-
-        //Methods
-        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
-        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
-    }
-
-
-    subgraph cluster_vendorNotes {
-        label="vendorNotes"
-
-        //Attributes
-        Vendor_Notes_ID
-        Note_in_vendorNotes [label="Note"]
-        Written_By_in_vendorNotes [label="Written_By"]
-        Date_Written_in_vendorNotes [label="Date_Written"]
-        Vendor_ID_in_vendorNotes [
-            label="Vendor_ID"
-            shape="folder"
-        ]
-
-        //Methods
-    }
-
-
-    subgraph cluster_statisticsSourceNotes {
-        label="statisticsSourceNotes"
-
-        //Attributes
-        Statistics_Source_Notes_ID
-        Note_in_statisticsSourceNotes [label="Note"]
-        Written_By_in_statisticsSourceNotes [label="Written_By"]
-        Date_Written_in_statisticsSourceNotes [label="Date_Written"]
-        Statistics_Source_ID_in_statisticsSourceNotes [
-            label="Statistics_Source_ID"
-            shape="folder"
-        ]
-
-        //Methods
-    }
-
-
     subgraph cluster_RawCOUNTERReport {
         label="CLASS: RawCOUNTERReport"
 
@@ -286,7 +284,7 @@ digraph erd_and_classes {
     }
 
 
-    // RELATIONSHIPS
+    // RELATIONSHIPS (ordered by PK, then FK)
     /*
         Establish relationships from the PK (tail) to the FK (head)
         table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
@@ -298,62 +296,13 @@ digraph erd_and_classes {
         teetee = 1..1 (exactly one)
         crowtee = 1..N (neither optional nor unique)
     */
-    
-    Resource_ID -> Resource_ID_in_Resource_Titles [
-        dir="both"
-        arrowhead="crowtee"
-        arrowtail="teetee"
-    ]
-    
-    Resource_ID -> Resource_ID_in_Resource_Platforms [
-        dir="both"
-        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
-        arrowtail="teetee"
-    ]
 
-    Statistics_Source_ID -> Statistics_Source_ID_in_resourceSources [
-        dir="both"
-        arrowhead="crowodot" // The statistics source that's not connected to a resourceSource is one no longer in use
-        arrowtail="teetee" // All resource sources must have a statisticsSource indicating how usage would be collected; the Current_Access field indicates if usage no longer needs to be collected because the resource is no longer accessible
-    ]
-
-    Vendor_ID -> Vendor_ID_in_resourceSources [
-        dir="both"
-        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
-        arrowtail="teetee"
-
-    ]
-
-    Vendor_ID -> Vendor_ID_in_statisticsSources [
-        dir="both"
-        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
-        arrowtail="teetee"
-
-    ]
-
-    Statistics_Source_ID -> AUCT_Statistics_Source [
-        dir="both"
-        arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
-        arrowtail="teetee"
-    ]
-    
     Fiscal_Year_ID -> AUCT_Fiscal_Year [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
-    Statistics_Source_ID -> Interface [
-        dir="both"
-        arrowhead="crowodot" // Sources without resources need to exist because 1. A source record is a prerequisite for usage collection 2. Not all sources will have COUNTER resources
-        arrowtail="teetee"
-    ]
-
-    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
-        dir="both"
-        arrowhead="crowtee"
-        arrowtail="teetee"
-    ]
 
     Vendor_ID -> Vendor_ID_in_vendorNotes [
         dir="both"
@@ -361,11 +310,39 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
 
+    Vendor_ID -> Vendor_ID_in_statisticsSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+
     Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
+
+
+    Statistics_Source_ID -> Statistics_Source_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowtee" // Since all statistics sources will come into use with a resource source, and since the resource source isn't destroyed when it's no longer used, the 
+        arrowtail="teetee" // All resource sources must have a statisticsSource indicating how usage would be collected; the Current_Access field indicates if usage no longer needs to be collected because the resource is no longer accessible
+    ]
+
+
+    Statistics_Source_ID -> AUCT_Statistics_Source [
+        dir="both"
+        arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowtail="teetee"
+    ]
+
 
     Resource_Source_ID -> Resource_Source_ID_in_resourceSourceNotes [
         dir="both"
@@ -373,7 +350,27 @@ digraph erd_and_classes {
         arrowtail="teetee"
     ]
 
-    // The relationships below connect potential methods in ERD relations methods in existing classes; they are connected by a dotted line with no arrow
+
+    Resource_ID -> Resource_ID_in_Resource_Titles [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+
+    Resource_ID -> Resource_ID_in_Resource_Platforms [
+        dir="both"
+        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
+        arrowtail="teetee"
+    ]
+
+
+    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
 
 
     /* *** OBJECTS TO BE ORGANIZED *** */

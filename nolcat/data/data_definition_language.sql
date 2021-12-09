@@ -184,6 +184,7 @@ CREATE TABLE annualUsageCollectionTracking (
 );
 
 
+-- Usage Data Relations
 CREATE TABLE resources (
     Resource_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     DOI VARCHAR(75),
@@ -193,6 +194,9 @@ CREATE TABLE resources (
     Data_Type VARCHAR(25) NOT NULL,
     Section_Type VARCHAR(10),
 );
+
+
+--ToDo: Create table `resourceTitles`
 
 
 CREATE TABLE resourcePlatforms (
