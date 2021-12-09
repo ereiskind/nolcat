@@ -118,11 +118,37 @@ class VendorNotes(Base):
         pass
 
 
-class resourceSources(Base):
+class ResourceSources(Base):
     """A relation containing information about the sources of resources, roughly equivalent to a platform.
     
     Because a given vendor can have multiple SUSHI credentials (e.g. Oxford) and a set of SUSHI credentials can provide the usage for multiple vendors (e.g. HighWire), the vendors, the sources of resources, and the sources of usage statistics must all be different relations, with the sources of resources relation serving a junction table-like function in connecting the other two relations.
     """
+    __tablename__ = 'resourceSources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
+    current_access = Column()  #ToDo: BOOLEAN NOT NULL
+    access_stop_date = Column()  #ToDo: TIMESTAMP
+    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+
+    vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
+    statisticsSources_FK_resourceSources = relationship('StatisticsSources', backref='statistics_source_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+    def add_access_stop_date():
+        #ToDo: Put value in access_stop_date when current_access goes from True to False
+        pass
+
+
+    def remove_access_stop_date():
+        #ToDo: Null value in access_stop_date when current_access goes from False to True
+        pass
 
 
 class StatisticsSources(Base):
@@ -133,8 +159,6 @@ class StatisticsSources(Base):
     statistics_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
     statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
-    current_access = Column()  #ToDo: BOOLEAN NOT NULL
-    access_stop_date = Column()  #ToDo: TIMESTAMP
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
@@ -260,16 +284,6 @@ class StatisticsSources(Base):
         """
         #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         #ToDo: return RawCOUNTERReport(above dataframe)
-        pass
-
-
-    def add_access_stop_date():
-        #ToDo: Put value in access_stop_date when current_access goes from True to False
-        pass
-
-
-    def remove_access_stop_date():
-        #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
 
 
