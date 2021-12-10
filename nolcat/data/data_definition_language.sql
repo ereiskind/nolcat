@@ -70,21 +70,33 @@ CREATE TABLE statisticsSourceNotes (
 );
 
 
+CREATE TABLE statisticsResourceSources (
+    SRS_Statistics_Source INT NOT NULL,
+    SRS_Resource_Source INT NOT NULL,
+    Current_Statistics_Source BOOLEAN NOT NULL,
+    PRIMARY KEY (SRS_Statistics_Source, SRS_Resource_Source),
+    INDEX statisticsSources_FK_INDX (SRS_Statistics_Source),
+    CONSTRAINT statisticsSources_FK_statisticsResourceSources FOREIGN KEY statisticsSources_FK_INDX (SRS_Statistics_Source)
+        REFERENCES statisticsSources(Statistics_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict,
+    INDEX resourceSources_FK_INDX (SRS_Resource_Source),
+    CONSTRAINT resourceSources_FK_statisticsResourceSources FOREIGN KEY resourceSources_FK_INDX (SRS_Resource_Source)
+        REFERENCES resourceSources(Resource_Source_ID)
+        ON UPDATE restrict
+        ON DELETE restrict
+);
+        
+
 CREATE TABLE resourceSources (
     Resource_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Resource_Source_Name VARCHAR(100) NOT NULL,
-    Current_Access BOOLEAN NOT NULL,
-    Access_Stop_Date TIMESTAMP,
+    Source_in_Use BOOLEAN NOT NULL,
+    Use_Stop_Date TIMESTAMP,
     Vendor_ID INT NOT NULL,
-    Statistics_Source_ID INT NOT NULL,
     INDEX vendors_FK_INDX (Vendor_ID),
     CONSTRAINT vendors_FK_resourceSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
         REFERENCES vendors(Vendor_ID)
-        ON UPDATE restrict
-        ON DELETE restrict,
-    INDEX statisticsSources_FK_INDX (Statistics_Source_ID),
-    CONSTRAINT statisticsSources_FK_resourceSources FOREIGN KEY statisticsSources_FK_INDX (Statistics_Source_ID)
-        REFERENCES statisticsSources(Statistics_Source_ID)
         ON UPDATE restrict
         ON DELETE restrict
 );

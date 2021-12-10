@@ -111,18 +111,26 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_statisticsResourceSources {
+        label="statisticsResourceSources"
+
+        // Attributes
+        SRS_Statistics_Source [shape="component"]
+        SRS_Resource_Source [shape="component"]
+        Current_Statistics_Source
+
+        // Methods
+    }
+
+
     subgraph cluster_resourceSources {
         label="resourceSources"
 
         // Attributes
         Resource_Source_ID [shape="note"]
         Resource_Source_Name
-        Current_Access
-        Access_Stop_Date
-        Statistics_Source_ID_in_resourceSources [
-            label="Statistics_Source_ID"
-            shape="folder"
-        ]
+        Source_in_Use
+        Use_Stop_Date
         Vendor_ID_in_resourceSources [
             label="Vendor_ID"
             shape="folder"
@@ -330,16 +338,23 @@ digraph erd_and_classes {
     ]
 
 
-    Statistics_Source_ID -> Statistics_Source_ID_in_resourceSources [
+    Statistics_Source_ID -> SRS_Statistics_Source [
         dir="both"
-        arrowhead="crowtee" // Since all statistics sources will come into use with a resource source, and since the resource source isn't destroyed when it's no longer used, the 
-        arrowtail="teetee" // All resource sources must have a statisticsSource indicating how usage would be collected; the Current_Access field indicates if usage no longer needs to be collected because the resource is no longer accessible
+        arrowhead="crowtee"
+        arrowtail="teetee"
     ]
 
 
     Statistics_Source_ID -> AUCT_Statistics_Source [
         dir="both"
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowtail="teetee"
+    ]
+
+
+    Resource_Source_ID -> SRS_Resource_Source [
+        dir="both"
+        arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
