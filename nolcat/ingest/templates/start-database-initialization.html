@@ -71,7 +71,7 @@
 
         <li><h2>Create the `annualUsageCollectionTracking` Relation</h2>
             <ol>
-                <li>Upload "initialize_fiscalYear.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv"</li>
+                <li>Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", "initialize_vendorNotes.csv", "initialize_statisticsSources.csv", "initialize_statisticsSourceNotes.csv", "initialize_statisticsResourceSources.csv", "initialize_resourceSources.csv", and "initialize_resourceSourceNotes.csv".</li>
             </ol>
             <form method="POST" action="/initialize-collection-tracking" enctype="multipart/form-data">
                 {{ form.csrf_token }}
@@ -86,8 +86,33 @@
                 </label>
                 <br>
                 <label>
+                    {{ form.vendorNotes_CSV.label }}
+                    {{ form.vendorNotes_CSV }}
+                </label>
+                <br>
+                <label>
                     {{ form.statisticsSources_CSV.label }}
                     {{ form.statisticsSources_CSV }}
+                </label>
+                <br>
+                <label>
+                    {{ form.statisticsSourceNotes_CSV.label }}
+                    {{ form.statisticsSourceNotes_CSV }}
+                </label>
+                <br>
+                <label>
+                    {{ form.statisticsResourceSources_CSV.label }}
+                    {{ form.statisticsResourceSources_CSV }}
+                </label>
+                <br>
+                <label>
+                    {{ form.resourceSources_CSV.label }}
+                    {{ form.resourceSources_CSV }}
+                </label>
+                <br>
+                <label>
+                    {{ form.resourceSourceNotes_CSV.label }}
+                    {{ form.resourceSourceNotes_CSV }}
                 </label>
                 <br>
                 <input type="submit" value="Submit">

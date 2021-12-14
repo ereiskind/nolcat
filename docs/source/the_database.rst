@@ -62,7 +62,7 @@ To handle this complexity, three relations in a junction table-like relationship
 
 4. Create the `annualUsageCollectionTracking` Relation
 ========================================================
-1. Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", and "initialize_statisticsSources.csv" from their given folder
+1. Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", "initialize_vendorNotes.csv", "initialize_statisticsSources.csv", "initialize_statisticsSourceNotes.csv", "initialize_statisticsResourceSources.csv", "initialize_resourceSources.csv", and "initialize_resourceSourceNotes.csv".
 2. Download "initialize_annualUsageCollectionTracking.csv" from the next page in the web app
 3. Save a copy of the CSV and fill it out from existing documentation
 
