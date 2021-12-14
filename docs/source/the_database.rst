@@ -13,21 +13,21 @@ The database is designed to be loaded with certain data immediately after instan
 
 1. Create the ``fiscalYears`` Relation with Historical Years
 ============================================================
-1. Create a copy of "initialize_fiscalYear.csv"
-2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the ``Year``, ``Start_Date``, and ``End_Date`` fields are required)
-3. Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Fiscal_Year_ID`` field
+1. Create a copy of "initialize_fiscalYear.csv".
+2. For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the ``Year``, ``Start_Date``, and ``End_Date`` fields are required).
+3. Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Fiscal_Year_ID`` field.
 
 2. Create the ``vendors`` and ``vendorNotes`` Relations
 =======================================================
-1. Create a copy of "initialize_vendors.csv"
+1. Create a copy of "initialize_vendors.csv".
 2. In the ``Vendor_Name`` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.
-3. For all of the above values that have vendor codes in Alma, add those codes to the ``Alma_Vendor_Code`` field
-4. Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Vendor_ID`` field
-5. Create a copy of "initialize_vendorNotes.csv"
-6. For every note on a vendor that needs to be added, in the ``REFERENCE Vendor_ID`` field, put the name of the vendor exactly how it appears in the ``vendors`` relation
-7. For all records, fill out the ``Note``, ``Written_By``, and ``Date_Written`` fields
-8. Copy ``=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)`` into cell E2, use autofill to copy the formula in all records, then save the results in place as values
-9. Delete column A with the field ``REFERENCE Vendor_ID``
+3. For all of the above values that have vendor codes in Alma, add those codes to the ``Alma_Vendor_Code`` field.
+4. Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Vendor_ID`` field.
+5. Create a copy of "initialize_vendorNotes.csv".
+6. For every note on a vendor that needs to be added, in the ``REFERENCE Vendor_ID`` field, put the name of the vendor exactly how it appears in the ``vendors`` relation.
+7. For all records, fill out the ``Note``, ``Written_By``, and ``Date_Written`` fields.
+8. Copy ``=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)`` into cell E2, use autofill to copy the formula in all records, then save the results in place as values.
+9. Delete column A with the field ``REFERENCE Vendor_ID``.
 
 3. Create the ``statisticsSources``, ``statisticsSourceNotes``, ``resourceSources``, ``resourceSourceNotes``, and ``statisticsResourceSources`` Relations
 =========================================================================================================================================================
