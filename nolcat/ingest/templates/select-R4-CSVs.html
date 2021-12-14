@@ -10,13 +10,16 @@
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
-    <h2>5. Upload and Dedupe Historical R4 Usage</h2>
-    <form action="{{ url_for('ingest.determine_if_resources_match') }}" method="POST" enctype="multipart/form-data">
-        <label>
-            Select the reformatted R4 reports. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.
-            <input name="R4_files" type="file" multiple>
-        </label>
-        <button type="submit">Submit</button>
-    </form>
+    <ol>
+        <li><h2>Upload and Dedupe Historical R4 Usage</h2>
+            <form action="{{ url_for('ingest.determine_if_resources_match') }}" method="POST" enctype="multipart/form-data">
+                <label>
+                    Select the reformatted R4 reports. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.
+                    <input name="R4_files" type="file" multiple>
+                </label>
+                <button type="submit">Submit</button>
+            </form>
+        </li>
+    </ol>
 </body>
 </html>

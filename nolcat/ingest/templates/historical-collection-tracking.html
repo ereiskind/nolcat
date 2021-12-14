@@ -10,30 +10,33 @@
 <body>
     <h1>Database Initialization Wizard: Page 2</h1>
 
-    <h2>4. Create the `annualUsageCollectionTracking` Relation <small>(cont'd)</small></h2>
     <ol>
-        <li>Download "initialize_annualUsageCollectionTracking.csv"</li><!--ToDo: download file-->
-        <li>Fill out the CSV from existing documentation:
-            <ul>
-                <li>For statistics sources not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`</li>
-                <li>For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
-                    <ol>
-                        <li>Load each R4 report into OpenRefine (<a href="https://openrefine.org/download.html">download it here</a>), ignoring the first seven (7) lines at the beginning of the file and naming the project according to the convention `[Statistics_Source_ID]_[report type]_[fiscal year in "yyyy" format]`</li>
-                        <li>Apply the JSON appropriate for the report type
-                            <ul>
-                                <li></li><!--ToDo: download file-->
-                            </ul>
+        <li><h2>Create the `annualUsageCollectionTracking` Relation <small>(cont'd)</small></h2> <!--Using the nested lists means heading numbering restarts on each page, is this OK?-->
+            <ol>
+                <li>Download "initialize_annualUsageCollectionTracking.csv"</li><!--ToDo: download file-->
+                <li>Fill out the CSV from existing documentation:
+                    <ul>
+                        <li>For statistics sources not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`</li>
+                        <li>For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
+                            <ol>
+                                <li>Load each R4 report into OpenRefine (<a href="https://openrefine.org/download.html">download it here</a>), ignoring the first seven (7) lines at the beginning of the file and naming the project according to the convention `[Statistics_Source_ID]_[report type]_[fiscal year in "yyyy" format]`</li>
+                                <li>Apply the JSON appropriate for the report type
+                                    <ul>
+                                        <li></li><!--ToDo: download file-->
+                                    </ul>
+                                </li>
+                                <li>Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files</li>
+                            </ol>
                         </li>
-                        <li>Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files</li>
-                    </ol>
+                        <li>For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`</li>
+                        <li>For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"</li>
+                        <li>For statistics sources not falling into any of the above categories, make selections as appropriate</li>
+                    </ul>
                 </li>
-                <li>For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`</li>
-                <li>For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"</li>
-                <li>For statistics sources not falling into any of the above categories, make selections as appropriate</li>
-            </ul>
+                <li>Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields</li>
+                <li>Upload the CSV</li><!--ToDo: upload file-->
+            </ol>
         </li>
-        <li>Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields</li>
-        <li>Upload the CSV</li><!--ToDo: upload file-->
     </ol>
 </body>
 </html>

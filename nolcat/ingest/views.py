@@ -30,7 +30,7 @@ def download_file(filename):
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/initialize-database')
 def initialize_initial_relations():
-    """Returns the page with for downloading the CSV templates for the `fiscalYears`, `vendors`, and `statisticsSources` relations and uploading the initial data for those relations."""
+    """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
     form_being_filled_out = forms.InitialRelationDataForm()
     return render_template('start-database-initialization.html', form=form_being_filled_out)
 
@@ -42,7 +42,12 @@ def save_historical_collection_tracking_info():
     if form_being_submitted.validate_on_submit():
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
         vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
+        vendorNotes_dataframe = pd.read_csv(form_being_submitted.vendorNotes_CSV.data)
         statisticsSources_dataframe = pd.read_csv(form_being_submitted.statisticsSources_CSV.data)
+        statisticsSourceNotes_dataframe = pd.read_csv(form_being_submitted.statisticsSourceNotes_CSV.data)
+        statisticsResourceSources_dataframe = pd.read_csv(form_being_submitted.statisticsResourceSources_CSV.data)
+        resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
+        resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
 
         db_connection = engine.connect()
         fiscalYears_dataframe.to_sql(
@@ -55,8 +60,33 @@ def save_historical_collection_tracking_info():
             con=db_connection,
             if_exists='replace',
         )
+        vendorNotes_dataframe.to_sql(
+            'vendorNotes',
+            con=db_connection,
+            if_exists='replace',
+        )
         statisticsSources_dataframe.to_sql(
             'statisticsSources',
+            con=db_connection,
+            if_exists='replace',
+        )
+        statisticsSourceNotes_dataframe.to_sql(
+            'statisticsSourceNotes',
+            con=db_connection,
+            if_exists='replace',
+        )
+        statisticsResourceSources_dataframe.to_sql(
+            'statisticsResourceSources',
+            con=db_connection,
+            if_exists='replace',
+        )
+        resourceSources_dataframe.to_sql(
+            'resourceSources',
+            con=db_connection,
+            if_exists='replace',
+        )
+        resourceSourceNotes_dataframe.to_sql(
+            'resourceSourceNotes',
             con=db_connection,
             if_exists='replace',
         )

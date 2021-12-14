@@ -52,7 +52,9 @@ class FiscalYears(Base):
 
 
     def create_usage_tracking_records_for_fiscal_year():
-        #ToDo: For every stats source that doesn't have deactivation date earlier than FY start date, create a record in annual usage collection tracking relation with this FY and the stats source as the composite key
+        #ToDo: For every record in statisticsSources
+            #ToDo: For all of its statisticsResourceSources records
+                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_id of the instance this method is being run on
         pass
 
 
@@ -124,8 +126,6 @@ class StatisticsSources(Base):
     statistics_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
     statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
-    current_access = Column()  #ToDo: BOOLEAN NOT NULL
-    access_stop_date = Column()  #ToDo: TIMESTAMP
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
@@ -254,6 +254,64 @@ class StatisticsSources(Base):
         pass
 
 
+    def upload_R4_report(self):
+        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
+        pass
+
+
+    def upload_R5_report(self):
+        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
+        pass
+
+
+class StatisticsSourceNotes(Base):
+    """A relation containing notes about statisticsSources records."""
+    #ToDo: Create class
+    pass
+
+
+class StatisticsResourceSources(Base):
+    """A relation connecting sources of usage statistics and sources of resources.
+    
+    The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
+    """
+    __tablename__ = 'statisticsResourceSources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    srs_statistics_sources = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    srs_resource_sources = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
+    current_statistics_source = Column()  #ToDo: BOOLEAN NOT NULL
+
+    statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
+    resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resource_source_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class ResourceSources(Base):
+    """A relation containing information about the sources of resources.
+    
+    This relation lists where users go to get resources. Often called platforms, they are frequently a HTTP domain. Alma calls them interfaces.
+    """
+    __tablename__ = 'resourceSources'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
+    source_in_use = Column()  #ToDo: BOOLEAN NOT NULL
+    use_stop_date = Column()  #ToDo: TIMESTAMP
+    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+
+    vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
+
+
+    def __repr__(self):
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
     def add_access_stop_date():
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
@@ -262,6 +320,12 @@ class StatisticsSources(Base):
     def remove_access_stop_date():
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
+
+
+class ResourceSourceNotes(Base):
+    """A relation containing notes about resourceSources records."""
+    #ToDo: Create class
+    pass
 
 
 class AnnualUsageCollectionTracking():
@@ -336,6 +400,12 @@ class Resources():
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+class ResourceTitles(Base):
+    """A relation containing all the title strings found in COUNTER reports for a given resources record."""
+    #ToDo: Create class
+    pass
 
 
 class ResourcePlatforms():
