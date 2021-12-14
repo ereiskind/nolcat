@@ -12,25 +12,25 @@
     <p>These pages will walk you through the process of initializing the database with your historical usage statistics and other data required for the relational structure of the underlying database.</p>
 
     <ol>
-        <li><h2>Create the `fiscalYears` Relation with Historical Years</h2>
+        <li><h2>Create the ``fiscalYears`` Relation with Historical Years</h2>
             <ol>
                 <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYear.csv"</a></li>
-                <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required)</li>
-                <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Fiscal_Year_ID` field</li>
+                <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the ``Year``, ``Start_Date``, and ``End_Date`` fields are required)</li>
+                <li>Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Fiscal_Year_ID`` field</li>
             </ol>
         </li>
         
-        <li><h2>Create the `vendors` and `vendorNotes` Relations</h2>
+        <li><h2>Create the ``vendors`` and ``vendorNotes`` Relations</h2>
             <ol>
                 <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_vendors.csv') }}">"initialize_vendors.csv"</a></li>
-                <li>In the `Vendor_Name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
-                <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field</li>
-                <li>Add sequential integer numbering starting at `1` and incrementing by one to all records in the `Vendor_ID` field</li>
+                <li>In the ``Vendor_Name`` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
+                <li>For all of the above values that have vendor codes in Alma, add those codes to the ``Alma_Vendor_Code`` field</li>
+                <li>Add sequential integer numbering starting at ``1`` and incrementing by one to all records in the ``Vendor_ID`` field</li>
                 <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_vendorNotes.csv') }}">"initialize_vendorNotes.csv"</a></li>
-                <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation</li>
-                <li>For all records, fill out the `Note`, `Written_By`, and `Date_Written` fields</li>
-                <li>Copy `=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)` into cell E2, use autofill to copy the formula in all records, then save the results in place as values</li>
-                <li>Delete column A with the field `REFERENCE Vendor_ID`</li>
+                <li>For every note on a vendor that needs to be added, in the ``REFERENCE Vendor_ID`` field, put the name of the vendor exactly how it appears in the ``vendors`` relation</li>
+                <li>For all records, fill out the ``Note``, ``Written_By``, and ``Date_Written`` fields</li>
+                <li>Copy ``=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)`` into cell E2, use autofill to copy the formula in all records, then save the results in place as values</li>
+                <li>Delete column A with the field ``REFERENCE Vendor_ID``</li>
             </ol>
         </li>
         
