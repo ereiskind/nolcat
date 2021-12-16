@@ -117,7 +117,7 @@ digraph erd_and_classes {
         // Attributes
         SRS_Statistics_Source [shape="component"]
         SRS_Resource_Source [shape="component"]
-        Current_Statistics_Source
+        Current_Statistics_Source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
 
         // Methods
     }
