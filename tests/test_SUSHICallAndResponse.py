@@ -3,13 +3,18 @@ import pytest
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 @pytest.fixture(scope = 'function')
-def take_input(request):
+def take_input1(request):
     val = input(request.param)
     return val
 
-@pytest.mark.parametrize('prompt', ('Enter value here:'), indirect = True)
-def test_input(take_input):
-    print(f"The value of take_input is {take_input}")
+@pytest.mark.parametrize('take_input1', ('Enter value 1 here:'), indirect = True)
+def test_input1(take_input1):
+    print(f"The value of take_input1 is {take_input1}")
+    assert True
+
+@pytest.mark.parametrize('take_input2', ('Enter value 2 here:'), indirect = True)
+def test_input2(take_input2):
+    print(f"The value of take_input2 is {take_input2}")
     assert True
 
 '''@pytest.fixture
