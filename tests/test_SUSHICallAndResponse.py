@@ -2,7 +2,12 @@ import pytest
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
-@pytest.fixture
+@pytest.mark.parametrize('prompt', ('Enter value here:'), indirect = True)
+def test_input(take_input):
+    print(f"The value of take_input is {take_input}")
+    assert True
+
+'''@pytest.fixture
 def SUSHI_credentials_fixture():
     """A fixture to collect and store the data for making SUSHI calls."""
     URL = input("Enter the SUSHI base URL, including the final backslash: ")
@@ -22,4 +27,4 @@ def SUSHI_credentials_fixture():
     print(URL)
     print(SUSHI_credentials)
 
-    yield (URL, SUSHI_credentials)
+    yield (URL, SUSHI_credentials)'''
