@@ -1,6 +1,6 @@
 import pytest
 
-from nolcat.ingest.SUSHI_call_and_response import SUSHICallAndResponse
+from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 @pytest.fixture
 def SUSHI_credentials_fixture():
