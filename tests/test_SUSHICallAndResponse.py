@@ -13,13 +13,13 @@ PROMPT_ONE = 'one'  # When the string is in the arguments list of the parameteri
 PROMPT_TWO = 'two'
 
 
-@pytest.fixture(scope = 'function')
+@pytest.fixture
 def take_input1(request):
     # Every test where the parameterize decorator has `take_input1` as the first argument comes here
-    print(f"The value of request is {request}")
-    print(f"The value of repr(request) is {repr(request)}")
     val = input(request.param)  # This sends one character at a time of a string to stdout and saves stdin response
     print(f"The value of val is {val}")
+    t = input("Enter the value of t: ")
+    print(f"The value of t is {t}")
     val = val + " and something added in the fixture"
     return val
 
@@ -30,6 +30,14 @@ def test_input1(take_input1):
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
     print(f"The value of PROMPT_ONE is {PROMPT_ONE}")
     print(f"The value of take_input1 is {take_input1}")
+    assert True
+
+
+@pytest.mark.parametrize('take_input1', indirect = True)
+def test_input1_without_prompt_parameter(take_input1):
+    # The test starts by going to the fixture `take_input1`
+    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
+    print(f"The value of take_input1 in test without prompt parameter is {take_input1}")
     assert True
 
 
