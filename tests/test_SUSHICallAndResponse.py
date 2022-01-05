@@ -32,7 +32,7 @@ def test_input1(take_input1):
     assert True
 
 
-@pytest.mark.parametrize('take_input1', 'y', indirect = True)
+#@pytest.mark.parametrize('take_input1', 'y', indirect = True)
 def test_input1_again(take_input1):
     # The test starts by going to the fixture `take_input1`
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
