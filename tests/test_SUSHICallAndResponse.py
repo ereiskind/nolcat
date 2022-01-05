@@ -3,14 +3,11 @@ import pytest
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 """
-Pytest has a concept called parameterization which involves running a test multiple times with different inputs; the related concept of indirect parameterization has a fixture receive the parameterization values and pass them to the test. This method is used to allow the user to input a valid SUSHI URL and set of credentials to be used to test the API. This non-automated testing methodology has been chosen for multiple reasons:
+For testing the SUSHI API, a fixture that prompts the user for the SUSHI API information in stdout is applied to all the tests requiring data to make API calls. This semi-automated method, which collects a valid SUSHI URL and set of credentials from the user and applies them to all tests, is used because:
     1. There is no set of testing credentials; even using the SwaggerHub testing service requires SUSHI credentials from a vendor.
     2. SUSHI credentials are unique to each institution and should be secret, so using the API would require another secure file or a mechanism to randomly select a set of SUSHI credentials from whereever they're being stored.
     3. The JSON formatting used for the API responses contains some inconsistencies among vendors, so the ability to control which vendor is being used for testing is valuable.
 """
-
-PROMPT_ONE = 'one'  # When the string is in the arguments list of the parameterize decorator, it's interpreted as a list of characters
-PROMPT_TWO = 'two'
 
 
 @pytest.fixture(scope='session')
@@ -24,7 +21,6 @@ def take_input1():
     return val
 
 
-#@pytest.mark.parametrize('take_input1', 'x', indirect = True)
 def test_input1(take_input1):
     # The test starts by going to the fixture `take_input1`
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
@@ -32,7 +28,6 @@ def test_input1(take_input1):
     assert True
 
 
-#@pytest.mark.parametrize('take_input1', 'y', indirect = True)
 def test_input1_again(take_input1):
     # The test starts by going to the fixture `take_input1`
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
