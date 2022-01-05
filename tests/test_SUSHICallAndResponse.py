@@ -33,12 +33,12 @@ def test_input1(take_input1):
     assert True
 
 
-@pytest.mark.parametrize('take_input1', indirect = True)
+'''@pytest.mark.parametrize('take_input1', indirect = True)
 def test_input1_without_prompt_parameter(take_input1):
     # The test starts by going to the fixture `take_input1`
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
     print(f"The value of take_input1 in test without prompt parameter is {take_input1}")
-    assert True
+    assert True'''
 
 
 @pytest.mark.parametrize('take_input2', tuple(PROMPT_TWO), indirect = True)
