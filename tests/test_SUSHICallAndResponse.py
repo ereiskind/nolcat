@@ -33,15 +33,15 @@ def SUSHI_credentials_fixture():
     return (URL, SUSHI_credentials)
 
 
-def test_input1(take_input1):
-    # The test starts by going to the fixture `take_input1`
-    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
-    print(f"The value of take_input1 is {take_input1}")
+def test_input1(SUSHI_credentials_fixture):
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    print(f"first test url {URL}")
+    print(f"first test creds {SUSHI_credentials}")
     assert True
 
 
-def test_input1_again(take_input1):
-    # The test starts by going to the fixture `take_input1`
-    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
-    print(f"The value of take_input1 in second test is {take_input1}")
+def test_input1_again(SUSHI_credentials_fixture):
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    print(f"second test url {URL}")
+    print(f"second test creds {SUSHI_credentials}")
     assert True
