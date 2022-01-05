@@ -3,7 +3,7 @@ import pytest
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 # When the parameterize input values are strings, each character is interpreted as a prompt for input; to use the string as a prompt, it must be in a variable
-PROMPT_ONE = list(tuple('one'))
+PROMPT_ONE = 'one'
 PROMPT_TWO = list(tuple('two'))
 
 @pytest.fixture(scope = 'function')
@@ -11,15 +11,16 @@ def take_input1(request):
     print(f"The value of request is {request}")
     val = input(request.param)
     print(f"The value of val is {val}")
+    val = val + " and something added in the fixture"
     return val
 
-@pytest.mark.parametrize('take_input1', PROMPT_ONE, indirect = True)
+@pytest.mark.parametrize('take_input1', tuple(PROMPT_ONE), indirect = True)
 def test_input1(take_input1):
     print(f"The value of PROMPT_ONE is {PROMPT_ONE}")
     print(f"The value of take_input1 is {take_input1}")
     assert True
 
-@pytest.mark.parametrize('take_input2', PROMPT_TWO, indirect = True)
+@pytest.mark.parametrize('take_input2', tuple(PROMPT_TWO), indirect = True)
 def test_input2(take_input2):
     print(f"The value of PROMPT_TWO is {PROMPT_TWO}")
     print(f"The value of take_input2 is {take_input2}")
