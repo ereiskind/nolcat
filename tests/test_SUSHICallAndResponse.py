@@ -27,9 +27,6 @@ def SUSHI_credentials_fixture():
     if platform != "":
         SUSHI_credentials['platform'] = platform
 
-    print(URL)
-    print(SUSHI_credentials)
-
     return (URL, SUSHI_credentials)
 
 
