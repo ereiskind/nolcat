@@ -14,9 +14,9 @@ PROMPT_TWO = 'two'
 
 
 @pytest.fixture(scope='module')
-def take_input1(request):
+def take_input1():
     # Every test where the parameterize decorator has `take_input1` as the first argument comes here
-    val = input(request.param)  # This sends one character at a time of a string to stdout and saves stdin response
+    val = input("value")
     print(f"The value of val is {val}")
     t = input("Enter the value of t: ")
     print(f"The value of t is {t}")
