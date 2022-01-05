@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asct
 class SUSHICallAndResponse:
     """A class that makes SUSHI API calls.
 
-    This class is functionally a Python dictionary--the constructor method makes a SUSHI API call and returns the call's results with Python data types. Objects of this class can and should be used as dictionaries.
+    This class is functionally a Python dictionary--the constructor method makes a SUSHI API call and returns the call's results with Python data types. Objects of this class can and should be used as dictionaries. The constructor method is called exclusively within the StatisticsSources._harvest_R5_SUSHI method.
 
     Attributes:
         self.call_URL (str): the root URL for the SUSHI API call

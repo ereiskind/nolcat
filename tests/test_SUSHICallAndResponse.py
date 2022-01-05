@@ -30,15 +30,91 @@ def SUSHI_credentials_fixture():
     return (URL, SUSHI_credentials)
 
 
-def test_input1(SUSHI_credentials_fixture):
-    URL, SUSHI_credentials = SUSHI_credentials_fixture
-    print(f"first test url {URL}")
-    print(f"first test creds {SUSHI_credentials}")
-    assert True
+def test_status_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `status` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "status", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns JSON-like dictionary, assert response['ServiceActive'] = True
+    pass
 
 
-def test_input1_again(SUSHI_credentials_fixture):
-    URL, SUSHI_credentials = SUSHI_credentials_fixture
-    print(f"second test url {URL}")
-    print(f"second test creds {SUSHI_credentials}")
-    assert True
+def test_reports_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `reports` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns list of JSON-like dictionaries, checking_reports = 0
+    #ToDo: for report in response:
+        #ToDo: if report['Release'] == 5: should having keys "Report_Name", "Report_ID", "Release", "Report_Description", "Path" also be tested?
+            #ToDo: checking_reports += 1
+    #ToDo: assert len(response) == checking_reports
+    pass
+
+
+def test_PR_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `reports/pr` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns list of JSON-like dictionaries, has_PR = False
+    #ToDo: for report in check_for_report:
+        #ToDo: if report['Path'] == "/reports/pr":
+            #ToDo: has_PR = True
+    #ToDo: if has_PR == False:
+        #ToDo: assert True  # There can't be a problem with something that doesn't exist
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
+    pass
+
+
+def test_DR_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `reports/dr` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns list of JSON-like dictionaries, has_DR = False
+    #ToDo: for report in check_for_report:
+        #ToDo: if report['Path'] == "/reports/dr":
+            #ToDo: has_DR = True
+    #ToDo: if has_DR == False:
+        #ToDo: assert True  # There can't be a problem with something that doesn't exist
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
+    pass
+
+
+def test_TR_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `reports/tr` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns list of JSON-like dictionaries, has_TR = False
+    #ToDo: for report in check_for_report:
+        #ToDo: if report['Path'] == "/reports/tr":
+            #ToDo: has_TR = True
+    #ToDo: if has_TR == False:
+        #ToDo: assert True  # There can't be a problem with something that doesn't exist
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
+    pass
+
+
+def test_IR_call(SUSHI_credentials_fixture):
+    """Tests a SUSHI API call to the `reports/ir` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: If constructor returns list of JSON-like dictionaries, has_IR = False
+    #ToDo: for report in check_for_report:
+        #ToDo: if report['Path'] == "/reports/ir":
+            #ToDo: has_IR = True
+    #ToDo: if has_IR == False:
+        #ToDo: assert True  # There can't be a problem with something that doesn't exist
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials)
+    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
+    pass
