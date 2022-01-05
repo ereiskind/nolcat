@@ -13,7 +13,7 @@ PROMPT_ONE = 'one'  # When the string is in the arguments list of the parameteri
 PROMPT_TWO = 'two'
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def take_input1(request):
     # Every test where the parameterize decorator has `take_input1` as the first argument comes here
     val = input(request.param)  # This sends one character at a time of a string to stdout and saves stdin response
