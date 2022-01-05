@@ -24,12 +24,19 @@ def take_input1(request):
     return val
 
 
-@pytest.mark.parametrize('take_input1', tuple(PROMPT_ONE), indirect = True)
+@pytest.mark.parametrize('take_input1', 'x', indirect = True)
 def test_input1(take_input1):
     # The test starts by going to the fixture `take_input1`
     # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
-    print(f"The value of PROMPT_ONE is {PROMPT_ONE}")
     print(f"The value of take_input1 is {take_input1}")
+    assert True
+
+
+@pytest.mark.parametrize('take_input1', 'y', indirect = True)
+def test_input1_again(take_input1):
+    # The test starts by going to the fixture `take_input1`
+    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
+    print(f"The value of take_input1 in second test is {take_input1}")
     assert True
 
 
