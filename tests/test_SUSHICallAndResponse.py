@@ -8,6 +8,7 @@ For testing the SUSHI API, a fixture that prompts the user for the SUSHI API inf
     2. SUSHI credentials are unique to each institution and should be secret, so using the API would require another secure file or a mechanism to randomly select a set of SUSHI credentials from whereever they're being stored.
     3. The JSON formatting used for the API responses contains some inconsistencies among vendors, so the ability to control which vendor is being used for testing is valuable.
 """
+#ToDo: Test for longer periods of time and more granular reports will be done by testing the StatisticsSources._harvest_R5_SUSHI method
 
 
 @pytest.fixture(scope='session')  # Without the scope, the data prompts appear in stdout for each test
@@ -26,13 +27,16 @@ def SUSHI_credentials_fixture():
         SUSHI_credentials['api_key'] = api_key
     if platform != "":
         SUSHI_credentials['platform'] = platform
+    
+    #ToDo: month = input(a prompt for a year and month)
 
     return (URL, SUSHI_credentials)
+    #ToDo: return (URL, SUSHI_credentials, month)
 
 
 def test_status_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `status` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: response = SUSHICallAndResponse(URL, "status", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: If constructor returns JSON-like dictionary, assert response['ServiceActive'] = True
@@ -41,7 +45,7 @@ def test_status_call(SUSHI_credentials_fixture):
 
 def test_reports_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: response = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: If constructor returns list of JSON-like dictionaries, checking_reports = 0
@@ -54,9 +58,11 @@ def test_reports_call(SUSHI_credentials_fixture):
 
 def test_PR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/pr` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
+    #ToDo: SUSHI_credentials['begin_date'] = month
+    #ToDo: SUSHI_credentials['end_date'] = month
     #ToDo: If constructor returns list of JSON-like dictionaries, has_PR = False
     #ToDo: for report in check_for_report:
         #ToDo: if report['Path'] == "/reports/pr":
@@ -71,9 +77,11 @@ def test_PR_call(SUSHI_credentials_fixture):
 
 def test_DR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/dr` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
+    #ToDo: SUSHI_credentials['begin_date'] = month
+    #ToDo: SUSHI_credentials['end_date'] = month
     #ToDo: If constructor returns list of JSON-like dictionaries, has_DR = False
     #ToDo: for report in check_for_report:
         #ToDo: if report['Path'] == "/reports/dr":
@@ -88,9 +96,11 @@ def test_DR_call(SUSHI_credentials_fixture):
 
 def test_TR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/tr` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
+    #ToDo: SUSHI_credentials['begin_date'] = month
+    #ToDo: SUSHI_credentials['end_date'] = month
     #ToDo: If constructor returns list of JSON-like dictionaries, has_TR = False
     #ToDo: for report in check_for_report:
         #ToDo: if report['Path'] == "/reports/tr":
@@ -105,9 +115,11 @@ def test_TR_call(SUSHI_credentials_fixture):
 
 def test_IR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/ir` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
     #ToDo: If constructor returns error messages, the test fails
+    #ToDo: SUSHI_credentials['begin_date'] = month
+    #ToDo: SUSHI_credentials['end_date'] = month
     #ToDo: If constructor returns list of JSON-like dictionaries, has_IR = False
     #ToDo: for report in check_for_report:
         #ToDo: if report['Path'] == "/reports/ir":
