@@ -2,24 +2,36 @@ import pytest
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
-# When the parameterize input values are strings, each character is interpreted as a prompt for input; to use the string as a prompt, it must be in a variable
-PROMPT_ONE = 'one'
+"""
+Pytest has a concept called parameterization which involves running a test multiple times with different inputs; the related concept of indirect parameterization has a fixture receive the parameterization values and pass them to the test. This method is used to allow the user to input a valid SUSHI URL and set of credentials to be used to test the API. This non-automated testing methodology has been chosen for multiple reasons:
+    1. There is no set of testing credentials; even using the SwaggerHub testing service requires SUSHI credentials from a vendor.
+    2. SUSHI credentials are unique to each institution and should be secret, so using the API would require another secure file or a mechanism to randomly select a set of SUSHI credentials from whereever they're being stored.
+    3. The JSON formatting used for the API responses contains some inconsistencies among vendors, so the ability to control which vendor is being used for testing is valuable.
+"""
+
+PROMPT_ONE = 'one'  # When the string is in the arguments list of the parameterize decorator, it's interpreted as a list of characters
 PROMPT_TWO = 'two'
+
 
 @pytest.fixture(scope = 'function')
 def take_input1(request):
+    # Every test where the parameterize decorator has `take_input1` as the first argument comes here
     print(f"The value of request is {request}")
     print(f"The value of repr(request) is {repr(request)}")
-    val = input(request.param)
+    val = input(request.param)  # This sends one character at a time of a string to stdout and saves stdin response
     print(f"The value of val is {val}")
     val = val + " and something added in the fixture"
     return val
 
+
 @pytest.mark.parametrize('take_input1', tuple(PROMPT_ONE), indirect = True)
 def test_input1(take_input1):
+    # The test starts by going to the fixture `take_input1`
+    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
     print(f"The value of PROMPT_ONE is {PROMPT_ONE}")
     print(f"The value of take_input1 is {take_input1}")
     assert True
+
 
 @pytest.mark.parametrize('take_input2', tuple(PROMPT_TWO), indirect = True)
 def test_input2(take_input2):
