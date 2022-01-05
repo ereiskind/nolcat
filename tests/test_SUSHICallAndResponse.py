@@ -3,8 +3,8 @@ import pytest
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 # When the parameterize input values are strings, each character is interpreted as a prompt for input; to use the string as a prompt, it must be in a variable
-PROMPT_ONE = tuple('Enter value 1 here:')
-PROMPT_TWO = tuple('Enter value 2 here:')
+PROMPT_ONE = list(tuple('Enter value 1 here:'))
+PROMPT_TWO = list(tuple('Enter value 2 here:'))
 
 @pytest.fixture(scope = 'function')
 def take_input1(request):
