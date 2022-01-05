@@ -4,11 +4,12 @@ from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 # When the parameterize input values are strings, each character is interpreted as a prompt for input; to use the string as a prompt, it must be in a variable
 PROMPT_ONE = 'one'
-PROMPT_TWO = list(tuple('two'))
+PROMPT_TWO = 'two'
 
 @pytest.fixture(scope = 'function')
 def take_input1(request):
     print(f"The value of request is {request}")
+    print(f"The value of repr(request) is {repr(request)}")
     val = input(request.param)
     print(f"The value of val is {val}")
     val = val + " and something added in the fixture"
