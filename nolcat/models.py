@@ -166,13 +166,14 @@ class StatisticsSources(Base):
 
         #Section: Confirm SUSHI API Functionality
         #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "status", SUSHI_parameters)
-        #ToDo: Figure out methods and return values for above class
+        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
 
 
         #Section: Get List of Resources
         #Subsection: Make API Call
         #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "reports", SUSHI_parameters)
-        #ToDo: Figure out methods and return values for above class so the ultimate result is all_available_reports = a list of all available reports
+        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+        #ToDo: If a list/dict containing a list is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
 
         #Subsection: Get List of Master Reports
         #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
@@ -228,8 +229,9 @@ class StatisticsSources(Base):
             
             #Subsection: Make Master Report API Call
             #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters)
-            #ToDo: Figure out methods and return values for above class
-            #ToDo: Ultimately need a dataframe for master_report_dataframes.append()
+            #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
+            #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
         #Section: Return a Single Dataframe
