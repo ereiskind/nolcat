@@ -10,32 +10,7 @@ For testing the SUSHI API, a fixture that prompts the user for the SUSHI API inf
 """
 
 
-@pytest.fixture(scope='session')
-def take_input1():
-    # Every test where the parameterize decorator has `take_input1` as the first argument comes here
-    val = input("value")
-    print(f"The value of val is {val}")
-    t = input("Enter the value of t: ")
-    print(f"The value of t is {t}")
-    val = val + " and something added in the fixture"
-    return val
-
-
-def test_input1(take_input1):
-    # The test starts by going to the fixture `take_input1`
-    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
-    print(f"The value of take_input1 is {take_input1}")
-    assert True
-
-
-def test_input1_again(take_input1):
-    # The test starts by going to the fixture `take_input1`
-    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
-    print(f"The value of take_input1 in second test is {take_input1}")
-    assert True
-
-
-'''@pytest.fixture
+@pytest.fixture(scope='session')  # Without the scope, the data prompts appear in stdout for each test
 def SUSHI_credentials_fixture():
     """A fixture to collect and store the data for making SUSHI calls."""
     URL = input("Enter the SUSHI base URL, including the final backslash: ")
@@ -51,8 +26,22 @@ def SUSHI_credentials_fixture():
         SUSHI_credentials['api_key'] = api_key
     if platform != "":
         SUSHI_credentials['platform'] = platform
-    
+
     print(URL)
     print(SUSHI_credentials)
 
-    yield (URL, SUSHI_credentials)'''
+    return (URL, SUSHI_credentials)
+
+
+def test_input1(take_input1):
+    # The test starts by going to the fixture `take_input1`
+    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
+    print(f"The value of take_input1 is {take_input1}")
+    assert True
+
+
+def test_input1_again(take_input1):
+    # The test starts by going to the fixture `take_input1`
+    # Whatever is entered into stdin is returned to the test as the value of the parameter variable `take_input1`
+    print(f"The value of take_input1 in second test is {take_input1}")
+    assert True
