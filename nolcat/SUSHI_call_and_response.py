@@ -38,7 +38,7 @@ class SUSHICallAndResponse:
 
         #Section: Make API Call
         Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'} # Using this in the header makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
-        API_call_URL = self.call_URL = self.call_path
+        API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:
             API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=Chrome_user_agent)
