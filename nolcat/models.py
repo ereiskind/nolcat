@@ -23,6 +23,7 @@ class FiscalYears(Base):
     arl_18 = Column()  #ToDo: SMALLINT
     arl_19 = Column()  #ToDo: SMALLINT
     arl_20 = Column()  #ToDo: SMALLINT
+    notes_on_statisticsSources_used = Column()  #ToDo: TEXT
     notes_on_corrections_after_submission = Column()  #ToDo: TEXT
 
 

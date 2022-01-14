@@ -27,6 +27,7 @@ digraph erd_and_classes {
         ARL_19 // Number of regular searches (databases)
         ARL_20 // Number of federated searches (databases)
         // Should the date when the numbers were collected be saved?
+        Notes_on_statisticsSources_Used
         Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
 
         // Methods

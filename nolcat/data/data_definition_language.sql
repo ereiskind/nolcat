@@ -20,6 +20,7 @@ CREATE TABLE fiscalYears (
     ARL_18 SMALLINT,
     ARL_19 SMALLINT,
     ARL_20 SMALLINT,
+    Notes_on_statisticsSources_Used TEXT,
     Notes_on_Corrections_After_Submission TEXT
 );
 
