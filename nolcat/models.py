@@ -42,6 +42,7 @@ class FiscalYears(Base):
 
 
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -107,6 +108,7 @@ class Vendors(Base):
 
 
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -143,6 +145,7 @@ class VendorNotes(Base):
 
 
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -173,6 +176,7 @@ class StatisticsSources(Base):
 
 
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -351,6 +355,7 @@ class AnnualUsageCollectionTracking():
 
 
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
