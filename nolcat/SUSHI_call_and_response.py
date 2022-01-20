@@ -21,7 +21,7 @@ class SUSHICallAndResponse:
     
     Methods:
         retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
-        #ToDo: Check the response for possible COUNTER error codes and determine if there's a problem in the data itself
+        handle_SUSHI_exceptions: The function presents the user with the error in the SUSHI response and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
     """
     # Constructor Method
     def __init__(self, calling_to, call_URL, call_path, parameters):
@@ -175,3 +175,57 @@ class SUSHICallAndResponse:
         For API calls that generate a JSON file download in response, this method captures and reads the contents of the downloaded file, then removes the file.
         """
         pass
+
+
+    def handle_SUSHI_exceptions(self, message, severity, code, data, report_type, statistics_source):
+        """The function presents the user with the error in the SUSHI response and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+
+        This function presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
+        
+        Args:
+            message (str): the SUSHI error message
+            severity (str): the SUSHI error severity
+            code (str): the SUSHI error code
+            data (str): the SUSHI error data
+            report_type (str): the type of report being requested, determined by the value of `call_path`
+            statistics_source (str): the name of the statistics source that returned the SUSHI call in question
+        
+        Returns
+            bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
+        """
+        #Section: Confirm a Valid Error
+        if len(message) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
+            return True
+        
+        # Combined, below confirms `code` is a series of digits, meaning that it's an error code
+        if str(type(code)) == "<class 'int'>":
+            str_code = str(code)
+        elif code.isnumeric():
+            str_code = code
+        #ToDo: Is an `else` for handling if something's gone very wrong needed here?
+
+        #Section: Ask User About Continuing
+        #Subsection: Create Dialog Box Text
+        dialog_box_text = f"The API call returned a {message} error"
+
+        if code is not None:
+            dialog_box_text = dialog_box_text + f" (code {str_code})"
+        if severity is not None:
+            dialog_box_text = dialog_box_text + f" with {severity} severity"
+        if data is not None:
+            dialog_box_text = dialog_box_text + f" for an error about {data}"
+        
+        if report_type == "status":
+            dialog_box_text = dialog_box_text + f". Should usage statistics be collected from {statistics_source}?"
+        elif report_type == "reports":
+            dialog_box_text = dialog_box_text + f" when getting the list of reports. Should usage statistics be collected from {statistics_source}?"
+        else:
+            dialog_box_text = dialog_box_text + f". Should this usage data be loaded into the database?"
+
+        #Subsection: Generate Dialog Box
+        #ToDo: Make into a Flask dialog box with Boolean answer options (currently goes to stdout)
+        stdout_response = pyinputplus.inputBool(f"{dialog_box_text} Type \"True\" or \"False\" to answer. ")
+        if stdout_response:
+            return True
+        else:
+            return False
