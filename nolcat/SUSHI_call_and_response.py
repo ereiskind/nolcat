@@ -13,6 +13,7 @@ class SUSHICallAndResponse:
     This class is functionally a Python dictionary--the constructor method makes a SUSHI API call and returns the call's results with Python data types. Objects of this class can and should be used as dictionaries. In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
 
     Attributes:
+        self.calling_to (str): the statistics source the SUSHI API call is going to
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
@@ -22,16 +23,18 @@ class SUSHICallAndResponse:
         #ToDo: Check the response for possible COUNTER error codes and determine if there's a problem in the data itself
     """
     # Constructor Method
-    def __init__(self, call_URL, call_path, parameters):
+    def __init__(self, calling_to, call_URL, call_path, parameters):
         """Makes a SUSHI API call, returning a JSON-like dictionary that uses Python data types.
 
         This API call method handles all the possible calls in the SUSHI standard. It then converts the responses to native Python data types and handles any error codes the response may have had.
 
         Args:
+            calling_to (str): the statistics source the SUSHI API call is going to
             call_URL (str): the root URL for the SUSHI API call
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
             parameters (dict): the parameter values as key-value pairs
         """
+        self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
         self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
