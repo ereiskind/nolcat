@@ -160,8 +160,8 @@ class SUSHICallAndResponse:
         #ToDo: There was an issue with some master report errors not being caught by the standard error handling; a try block for a log statement with the len() of the dict's ['Report_Items'] attribute caught the remainder
 
 
-    # Representation method--using `{self}` in an f-string results in the below
     def __repr__(self):
+        """The printable representation of the class, determining what appears when `{self}` is used in an f-string."""
         return
 
 
