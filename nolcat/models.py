@@ -27,6 +27,20 @@ class FiscalYears(Base):
     notes_on_corrections_after_submission = Column()  #ToDo: TEXT
 
 
+    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_corrections_after_submission):
+        """A constructor setting the field values as class attributes."""
+        self.fiscal_year_id = fiscal_year_id
+        self.fiscal_year = fiscal_year
+        self.start_date = start_date
+        self.end_date = end_date
+        self.acrl_60b = acrl_60b
+        self.acrl_63 = acrl_63
+        self.arl_18 = arl_18
+        self.arl_19 = arl_19
+        self.arl_20 = arl_20
+        self.notes_on_corrections_after_submission = notes_on_corrections_after_submission
+
+
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
@@ -85,6 +99,13 @@ class Vendors(Base):
     alma_vendor_code = Column()  #ToDo: VARCHAR(10)
 
 
+    def __init__(self, vendor_id, vendor_name, alma_vendor_code):
+        """A constructor setting the field values as class attributes."""
+        self.vendor_id = vendor_id
+        self.vendor_name = vendor_name
+        self.alma_vendor_code = alma_vendor_code
+
+
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
@@ -112,6 +133,15 @@ class VendorNotes(Base):
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 
 
+    def __init__(self, vendor_notes_id, note, written_by, date_written, vendor_id):
+        """A constructor setting the field values as class attributes."""
+        self.vendor_notes_id = vendor_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.vendor_id = vendor_id
+
+
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
@@ -130,6 +160,16 @@ class StatisticsSources(Base):
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
+
+
+    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, current_access, access_stop_date, vendor_id):
+        """A constructor setting the field values as class attributes."""
+        self.statistics_source_id = statistics_source_id
+        self.statistics_source_name = statistics_source_name
+        self.statistics_source_retrieval_code = statistics_source_retrieval_code
+        self.current_access = current_access
+        self.access_stop_date = access_stop_date
+        self.vendor_id = vendor_id
 
 
     def __repr__(self):
@@ -295,6 +335,19 @@ class AnnualUsageCollectionTracking():
 
     statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
     fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
+
+
+    def __init__(self, auct_statistics_source, auct_fiscal_year, usage_is_being_collected, manual_collection_required, collection_via_email, is_counter_compliant, collection_status, usage_file_path, notes):
+        """A constructor setting the field values as class attributes."""
+        self.auct_statistics_source = auct_statistics_source
+        self.auct_fiscal_year = auct_fiscal_year
+        self.usage_is_being_collected = usage_is_being_collected
+        self.manual_collection_required = manual_collection_required
+        self.collection_via_email = collection_via_email
+        self.is_counter_compliant = is_counter_compliant
+        self.collection_status = collection_status
+        self.usage_file_path = usage_file_path
+        self.notes = notes
 
 
     def __repr__(self):
