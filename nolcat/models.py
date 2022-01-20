@@ -47,31 +47,38 @@ class FiscalYears(Base):
         pass
 
 
+    @hybrid_method
     def calculate_ACRL_60b():
         pass
 
 
+    @hybrid_method
     def calculate_ACRL_63():
         pass
 
 
+    @hybrid_method
     def calculate_ARL_18():
         pass
 
     
+    @hybrid_method
     def calculate_ARL_19():
         pass
 
 
+    @hybrid_method
     def calculate_ARL_20():
         pass
 
 
+    @hybrid_method
     def create_usage_tracking_records_for_fiscal_year():
         #ToDo: For every stats source that doesn't have deactivation date earlier than FY start date, create a record in annual usage collection tracking relation with this FY and the stats source as the composite key
         pass
 
 
+    @hybrid_method
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
 
@@ -113,10 +120,12 @@ class Vendors(Base):
         pass
 
 
+    @hybrid_method
     def get_SUSHI_credentials_from_Alma():
         pass
 
 
+    @hybrid_method
     def get_SUSHI_credentials_from_JSON():
         pass
 
@@ -181,11 +190,13 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
     def show_SUSHI_credentials():
         #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
         pass
 
 
+    @hybrid_method
     def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
         """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
 
@@ -284,6 +295,7 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
         """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
 
@@ -301,11 +313,13 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
     def add_access_stop_date():
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
 
 
+    @hybrid_method
     def remove_access_stop_date():
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
@@ -360,6 +374,7 @@ class AnnualUsageCollectionTracking():
         pass
 
 
+    @hybrid_method
     def collect_annual_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
 
@@ -377,5 +392,6 @@ class AnnualUsageCollectionTracking():
         pass
 
 
+    @hybrid_method
     def upload_nonstandard_usage_file():
         pass
