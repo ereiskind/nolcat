@@ -5,6 +5,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_method
 
 Base = declarative_base()
 
