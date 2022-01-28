@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asct
 class SUSHICallAndResponse:
     """A class that makes SUSHI API calls in the StatisticsSources._harvest_R5_SUSHI method.
 
-    This class is functionally a Python dictionary--the constructor method makes a SUSHI API call and returns the call's results with Python data types. Objects of this class can and should be used as dictionaries. In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+    Object of this class are designed to function as Python dictionaries distinguised by the data they contain--the results of a SUSHI API call. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call` method, which actually performs the steps of the API call. This structure, which requires all instance creations to be immediately followed by a call to the `make_SUSHI_call` method, allows a different value--a single item dictionary with the key `ERROR` and a value with a message about the problem--to be returned to the the StatisticsSources._harvest_R5_SUSHI method in the event of a problem with the API call or the returned SUSHI value, something __init__ doesn't allow.
 
     Attributes:
         self.calling_to (str): the statistics source the SUSHI API call is going to
@@ -21,15 +21,15 @@ class SUSHICallAndResponse:
         self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
     
     Methods:
+        make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
         retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
         handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
         create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
-    # Constructor Method
     def __init__(self, calling_to, call_URL, call_path, parameters):
-        """Makes a SUSHI API call, returning a JSON-like dictionary that uses Python data types.
+        """The constructor method for SUSHICallAndResponse, which sets the attribute values for each instance.
 
-        This API call method handles all the possible calls in the SUSHI standard. It then converts the responses to native Python data types and handles any error codes the response may have had.
+        This constructor is not meant to be used alone; all class instantiations should feature a `make_SUSHI_call` method call.
 
         Args:
             calling_to (str): the statistics source the SUSHI API call is going to
@@ -41,7 +41,16 @@ class SUSHICallAndResponse:
         self.call_URL = call_URL
         self.call_path = call_path
         self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
+    
 
+    def make_SUSHI_call(self):
+        """Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
+
+        This API call method handles all the possible calls in the SUSHI standard, converting their JSON responses into native Python data types. Errors in both the API call process and the SUSHI response are handled here, and in those instances where there is an error, a single-item dictionary with the key `ERROR` and a value describing the error is returned instead of SUSHI data.
+
+        Returns:
+            dict: the API call response or an error message
+        """
         #Section: Make API Call
         Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'} # Using this in the header makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
         API_call_URL = self.call_URL + self.call_path

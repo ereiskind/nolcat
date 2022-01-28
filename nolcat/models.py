@@ -221,13 +221,13 @@ class StatisticsSources(Base):
 
 
         #Section: Confirm SUSHI API Functionality
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters)
+        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
 
 
         #Section: Get List of Resources
         #Subsection: Make API Call
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters)
+        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
         #ToDo: If a list/dict containing a list is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
 
@@ -284,7 +284,7 @@ class StatisticsSources(Base):
                 #ToDo: SUSHI_parameters["include_component_details"] = "True"
             
             #Subsection: Make Master Report API Call
-            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters)
+            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
