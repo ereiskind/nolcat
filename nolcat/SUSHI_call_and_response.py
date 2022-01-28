@@ -22,6 +22,7 @@ class SUSHICallAndResponse:
     Methods:
         retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
         handle_SUSHI_exceptions: The function presents the user with the error in the SUSHI response and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+        create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
     # Constructor Method
     def __init__(self, calling_to, call_URL, call_path, parameters):
@@ -175,19 +176,47 @@ class SUSHICallAndResponse:
         Returns
             bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
         """
-        #Section: Confirm a Valid Error
-        if len(message) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
-            return True
-        
-        # Combined, below confirms `code` is a series of digits, meaning that it's an error code
-        if str(type(code)) == "<class 'int'>":
-            str_code = str(code)
-        elif code.isnumeric():
-            str_code = code
-        #ToDo: Is an `else` for handling if something's gone very wrong needed here?
+    
 
-        #Section: Ask User About Continuing
-        #Subsection: Create Dialog Box Text
+    def create_error_query_text(self, error_contents):
+        """This method creates the text for the `handle_SUSHI_exceptions` dialog box.
+
+        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single doalog box.
+
+        Args:
+            error_contents (dict): the contents of the error message
+        
+        Returns:
+            str: a line of `handle_SUSHI_exceptions` dialog box text describing a single error
+        """
+        #Section: Confirm a Valid Error
+        if str(type(error_contents['Code'])) == "<class 'int'>":
+            str_code = str(error_contents['Code'])
+        elif error_contents['Code'].isnumeric():
+            str_code = error_contents['Code']
+        #ToDo: What if anything should be done if the error code isn't valid?
+        
+        
+        #Section: Separate Elements of Error into Variables
+        message = error_contents['Message']
+        
+        try:
+            severity = error_contents['Severity']
+        except:
+            severity = None
+        
+        try:
+            code = error_contents['Code']
+        except:
+            code = None
+        
+        try:
+            data = error_contents['Data']
+        except:
+            data = None
+        
+
+        #Section: Create Dialog Box Text
         dialog_box_text = f"The API call returned a {message} error"
 
         if code is not None:
@@ -197,17 +226,4 @@ class SUSHICallAndResponse:
         if data is not None:
             dialog_box_text = dialog_box_text + f" for an error about {data}"
         
-        if report_type == "status":
-            dialog_box_text = dialog_box_text + f". Should usage statistics be collected from {statistics_source}?"
-        elif report_type == "reports":
-            dialog_box_text = dialog_box_text + f" when getting the list of reports. Should usage statistics be collected from {statistics_source}?"
-        else:
-            dialog_box_text = dialog_box_text + f". Should this usage data be loaded into the database?"
-
-        #Subsection: Generate Dialog Box
-        #ToDo: Make into a Flask dialog box with Boolean answer options (currently goes to stdout)
-        stdout_response = pyinputplus.inputBool(f"{dialog_box_text} Type \"True\" or \"False\" to answer. ")
-        if stdout_response:
-            return True
-        else:
-            return False
+        return dialog_box_text + "."
