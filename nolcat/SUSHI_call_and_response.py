@@ -199,11 +199,11 @@ class SUSHICallAndResponse:
         if str(type(error_contents)) == "<class 'dict'>":
             if len(error_contents['Message']) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
                 return True
-            dialog_box_text = create_error_query_text(error_contents)
+            dialog_box_text = self.create_error_query_text(error_contents)
         elif str(type(error_contents)) == "<class 'list'>":
             dialog_box_text = []
             for error in error_contents:
-                dialog_box_text.append(create_error_query_text(error))
+                dialog_box_text.append(self.create_error_query_text(error))
             dialog_box_text = "\n".join(dialog_box_text)
         else:
             return False  # Since error_contents was of an invalid data type, something went wrong, so the method should be terminated.
