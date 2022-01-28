@@ -1,10 +1,14 @@
 import logging
 import time
 import re
+import os
+from pathlib import Path
+import json
 import requests
 from requests import HTTPError
 from requests import Timeout
 import pyinputplus
+from app import Chrome_browser_driver
 
 logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
@@ -190,9 +194,34 @@ class SUSHICallAndResponse:
     def retrieve_downloaded_JSON(self):
         """Retrieves a downloaded response to a SUSHI API call. 
 
-        For API calls that generate a JSON file download in response, this method captures and reads the contents of the downloaded file, then removes the file.
+        Some vendors, most notably Silverchair, respond to SUSHI API call responses by downloading a JSON file with the requested data. This method captures and reads the contents of the downloaded file, then removes the file. Functionality related to downloading the file taken from https://medium.com/@moungpeter/how-to-automate-downloading-files-using-python-selenium-and-headless-chrome-9014f0cdd196.
+
+        Returns:
+            dict: the SUSHI data in the downloaded JSON file
         """
-        pass
+        webdriver = Chrome_browser_driver()
+        URL = self.call_URL + self.call_path + "?" + self.parameter_string
+        #ToDo: Create folder in current folder called `temp`
+        temp_folder = r"./temp"
+        
+        # From source: "function to handle setting up headless download"
+        webdriver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': temp_folder}}
+        webdriver.execute("send_command", params)
+        webdriver.get(URL) # From source: "get request to target the site selenium is active on"
+
+        time.sleep(0.1) # This delay allows the downloaded JSON to be in the folder for long enough that the walk method can detect it
+        for folder, subfolder, files in os.walk(temp_folder):
+            if files == []: # This means the 403 error was the result of something other than the data being downloaded as a JSON file
+                #ToDo: Delete folder `temp`
+                return files
+            for file in files: # There is actually only one file, but the iterator is needed to extract it from the list data structure
+                download_file_path = str(Path('.', 'temp', file))
+                with open(download_file_path, 'rb') as JSONfile: #Alert: Not yet tested with bytes
+                    file_data = json.load(JSONfile)
+        
+        #ToDo: Delete folder `temp` and its contents
+        return file_data
 
 
     def handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
