@@ -68,44 +68,44 @@ class SUSHICallAndResponse:
             
             except Timeout as error_plus_timeout:
                 logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}"}
             
             except HTTPError as error_plus_timeout:
                 if format(error_plus_timeout.response) == "<Response [403]>":
                     API_response = self.retrieve_downloaded_JSON()
                     if API_response == []:
                         logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                        #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                        return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
                 else:
                     logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                    return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
             
             except Exception as error_plus_timeout:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
         
         except HTTPError as error:
             if format(error.response) == "<Response [403]>":
                 API_response = self.retrieve_downloaded_JSON()
                 if API_response == []:
                     logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                    return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
             else:
                 logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
         
         except Exception as error:
             # Old note: ToDo: Be able to view error information and confirm or deny if site is safe
             # Old note: Attempt to isolate Allen Press by SSLError message and redo request without checking certificate led to ConnectionError
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-            #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+            return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
 
         #Section: Convert Response to Python Data Types
         try:
             if API_response.text == "":
                 logging.warning(f"Call to {self.calling_to} returned an empty string")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
         except:
             pass  # In the case that API_response isn't a Requests response object, nothing needs to happen here
 
@@ -119,7 +119,7 @@ class SUSHICallAndResponse:
                     # json.loads(JSON.content.decode('utf8')) creates a JSON from the first item in Report_Items rather than the complete content, so ability to handle replacement characters unknown
             except:
                 logging.warning(f"Call to {self.calling_to} returned a JSON that couldn't be converted into a dictionary")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} returned a JSON that couldn't be converted into a dictionary"}
         
         if str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
             API_response = API_response[0]
@@ -128,7 +128,7 @@ class SUSHICallAndResponse:
             pass
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing.")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+            return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing."}
 
 
         #Section: Check for SUSHI Error Codes
@@ -136,7 +136,7 @@ class SUSHICallAndResponse:
         try:  # The report has a `Report_Header` with an `Exceptions` key containing a single exception or a list of exceptions
             if not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exceptions']}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exceptions']}"}
         except:
             pass
         
@@ -144,7 +144,7 @@ class SUSHICallAndResponse:
             if "Message" in API_response.keys():
                 if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
-                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                    return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
@@ -152,17 +152,17 @@ class SUSHICallAndResponse:
            if "Message" in API_response[0].keys():
                if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
-                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                    return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
         try:  # The report has an `Exceptions` or `Alerts` key containing a single exception or a list of exceptions (the key is on the same level as `Report_Header`)
             if not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}"}
             elif not self.handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}"}
         except:
             pass
 
@@ -174,7 +174,9 @@ class SUSHICallAndResponse:
                 logging.debug(f"Returning {len(API_response['Report_Items'])} lines of data.")  # This `try` block needed to include `API_response['Report_Items']` in some way, and since this is the end of the constructor, a logging statement was appropriate
             except TypeError:
                 logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
-                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+                return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
+        
+        return API_response
 
 
     def __repr__(self):
