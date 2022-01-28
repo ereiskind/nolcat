@@ -1,5 +1,6 @@
 import logging
 import time
+import re
 import requests
 from requests import HTTPError
 from requests import Timeout
@@ -123,28 +124,48 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
-        #ToDo: The report has a `Report_Header` with an `Exceptions` key containing a single exception
-        #ToDo: The report has a `Report_Header` with an `Exceptions` key containing a list of exceptions
-        #ToDo: The dict or list is API_response['Report_Header']['Exceptions']
+        try:  # The report has a `Report_Header` with an `Exceptions` key containing a single exception or a list of exceptions
+            if not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exceptions']}")
+                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+        except:
+            pass
+        
+        try:  # The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block
+            if "Message" in API_response.keys():
+                if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                    logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
+                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+        except:
+            pass
 
-        #ToDo: The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block
-        #ToDo: Check for key "Message"
-        #ToDo: The dict is API_response
+        try:  # The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block
+           if "Message" in API_response[0].keys():
+               if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                    logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
+                    #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+        except:
+            pass
 
-        #ToDo: The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block
-        #ToDo: Check for key "Message" in first item
-        #ToDo: The list is API_response
-
-        #ToDo: The report has an `Exceptions` or `Alerts` key containing a single exception (the key is on the same level as `Report_Header`)
-        #ToDo: The report has an `Exceptions` or `Alerts` key containing a list of exceptions (the key is on the same level as `Report_Header`)
-        #ToDo: The dict or list is API_response['Exception'] or API_response['Alerts']
+        try:  # The report has an `Exceptions` or `Alerts` key containing a single exception or a list of exceptions (the key is on the same level as `Report_Header`)
+            if not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}")
+                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+            elif not self.handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}")
+                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
+        except:
+            pass
 
         #Subsection: Check Master Reports for Data
         # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
-        #ToDo: For master reports, try:
-            #ToDo: Something with `API_response['Report_Items']`
-        #ToDo: except TypeError:
-            #ToDo: logging.warning(f"Call to {self.calling_to} for {self.call_path} contained no data.")
+        master_report_regex = re.compile(r'reports/..')
+        if master_report_regex.search(self.call_path):
+            try:
+                logging.debug(f"Returning {len(API_response['Report_Items'])} lines of data.")  # This `try` block needed to include `API_response['Report_Items']` in some way, and since this is the end of the constructor, a logging statement was appropriate
+            except TypeError:
+                logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
+                #ToDo: Return something that indicates the API call failed: In the case of an error, a single item dictionary with the key `ERROR` and a value with a message about the problem is returned.
 
 
     def __repr__(self):
