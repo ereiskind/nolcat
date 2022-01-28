@@ -37,7 +37,7 @@ def SUSHI_credentials_fixture():
 def test_status_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `status` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "status", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "status", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: If constructor returns JSON-like dictionary, assert response['ServiceActive'] = True
     pass
@@ -46,7 +46,7 @@ def test_status_call(SUSHI_credentials_fixture):
 def test_reports_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: If constructor returns list of JSON-like dictionaries, checking_reports = 0
     #ToDo: for report in response:
@@ -59,7 +59,7 @@ def test_reports_call(SUSHI_credentials_fixture):
 def test_PR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/pr` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: SUSHI_credentials['begin_date'] = month
     #ToDo: SUSHI_credentials['end_date'] = month
@@ -69,7 +69,7 @@ def test_PR_call(SUSHI_credentials_fixture):
             #ToDo: has_PR = True
     #ToDo: if has_PR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
     pass
@@ -78,7 +78,7 @@ def test_PR_call(SUSHI_credentials_fixture):
 def test_DR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/dr` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: SUSHI_credentials['begin_date'] = month
     #ToDo: SUSHI_credentials['end_date'] = month
@@ -88,7 +88,7 @@ def test_DR_call(SUSHI_credentials_fixture):
             #ToDo: has_DR = True
     #ToDo: if has_DR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
     pass
@@ -97,7 +97,7 @@ def test_DR_call(SUSHI_credentials_fixture):
 def test_TR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/tr` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: SUSHI_credentials['begin_date'] = month
     #ToDo: SUSHI_credentials['end_date'] = month
@@ -107,7 +107,7 @@ def test_TR_call(SUSHI_credentials_fixture):
             #ToDo: has_TR = True
     #ToDo: if has_TR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
     pass
@@ -116,7 +116,7 @@ def test_TR_call(SUSHI_credentials_fixture):
 def test_IR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/ir` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials)
+    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: SUSHI_credentials['begin_date'] = month
     #ToDo: SUSHI_credentials['end_date'] = month
@@ -126,7 +126,7 @@ def test_IR_call(SUSHI_credentials_fixture):
             #ToDo: has_IR = True
     #ToDo: if has_IR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials)
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     #ToDo: If constructor returns error messages, the test fails
     #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
     pass
