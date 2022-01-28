@@ -15,6 +15,7 @@ class SUSHICallAndResponse:
     Object of this class are designed to function as Python dictionaries distinguised by the data they contain--the results of a SUSHI API call. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call` method, which actually performs the steps of the API call. This structure, which requires all instance creations to be immediately followed by a call to the `make_SUSHI_call` method, allows a different value--a single item dictionary with the key `ERROR` and a value with a message about the problem--to be returned to the the StatisticsSources._harvest_R5_SUSHI method in the event of a problem with the API call or the returned SUSHI value, something __init__ doesn't allow.
 
     Attributes:
+        self.Chrome_user_agent (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
         self.calling_to (str): the statistics source the SUSHI API call is going to
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
@@ -26,6 +27,9 @@ class SUSHICallAndResponse:
         handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
         create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
+    Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+
+
     def __init__(self, calling_to, call_URL, call_path, parameters):
         """The constructor method for SUSHICallAndResponse, which sets the attribute values for each instance.
 
@@ -52,18 +56,17 @@ class SUSHICallAndResponse:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'} # Using this in the header makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
         API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:
-            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=Chrome_user_agent)
+            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
             API_response.raise_for_status()
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
         
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 time.sleep(1)
-                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=Chrome_user_agent)
+                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.Chrome_user_agent)
                 API_response.raise_for_status()
             
             except Timeout as error_plus_timeout:
