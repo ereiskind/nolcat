@@ -21,7 +21,7 @@ class SUSHICallAndResponse:
     
     Methods:
         retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
-        handle_SUSHI_exceptions: The function presents the user with the error in the SUSHI response and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+        handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
         create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
     # Constructor Method
@@ -160,22 +160,47 @@ class SUSHICallAndResponse:
         pass
 
 
-    def handle_SUSHI_exceptions(self, message, severity, code, data, report_type, statistics_source):
-        """The function presents the user with the error in the SUSHI response and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+    def handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
+        """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
 
-        This function presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
+        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
         
         Args:
-            message (str): the SUSHI error message
-            severity (str): the SUSHI error severity
-            code (str): the SUSHI error code
-            data (str): the SUSHI error data
+            error_contents (dict or list): the contents of the error message(s)
             report_type (str): the type of report being requested, determined by the value of `call_path`
             statistics_source (str): the name of the statistics source that returned the SUSHI call in question
         
-        Returns
+        Returns:
             bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
         """
+        #Section: Create Error Message(s)
+        #Subsection: Detail Each SUSHI Error
+        if str(type(error_contents)) == "<class 'dict'>":
+            if len(error_contents['Message']) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
+                return True
+            dialog_box_text = create_error_query_text(error_contents)
+        elif str(type(error_contents)) == "<class 'list'>":
+            dialog_box_text = []
+            for error in error_contents:
+                dialog_box_text.append(create_error_query_text(error))
+            dialog_box_text = "\n".join(dialog_box_text)
+        else:
+            return False  # Since error_contents was of an invalid data type, something went wrong, so the method should be terminated.
+        
+        #Subsection: Ask the User What To Do
+        if report_type == "status" or report_type == "reports":
+            dialog_box_text = dialog_box_text + f"\nShould usage statistics be collected from {statistics_source}?"
+        else:
+            dialog_box_text = dialog_box_text + f"\nShould this usage data be loaded into the database?"
+        
+
+        #Section: Generate Dialog Box
+        #ToDo: Make into a Flask dialog box with Boolean answer options (currently goes to stdout)
+        stdout_response = pyinputplus.inputBool(f"{dialog_box_text} Type \"True\" or \"False\" to answer. ")
+        if stdout_response:
+            return True
+        else:
+            return False
     
 
     def create_error_query_text(self, error_contents):
