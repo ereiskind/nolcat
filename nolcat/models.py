@@ -5,6 +5,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_method
 
 Base = declarative_base()
 
@@ -27,31 +28,52 @@ class FiscalYears(Base):
     notes_on_corrections_after_submission = Column()  #ToDo: TEXT
 
 
+    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_corrections_after_submission):
+        """A constructor setting the field values as class attributes."""
+        self.fiscal_year_id = fiscal_year_id
+        self.fiscal_year = fiscal_year
+        self.start_date = start_date
+        self.end_date = end_date
+        self.acrl_60b = acrl_60b
+        self.acrl_63 = acrl_63
+        self.arl_18 = arl_18
+        self.arl_19 = arl_19
+        self.arl_20 = arl_20
+        self.notes_on_corrections_after_submission = notes_on_corrections_after_submission
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
+    @hybrid_method
     def calculate_ACRL_60b():
         pass
 
 
+    @hybrid_method
     def calculate_ACRL_63():
         pass
 
 
+    @hybrid_method
     def calculate_ARL_18():
         pass
 
     
+    @hybrid_method
     def calculate_ARL_19():
         pass
 
 
+    @hybrid_method
     def calculate_ARL_20():
         pass
 
 
+    @hybrid_method
     def create_usage_tracking_records_for_fiscal_year():
         #ToDo: For every record in statisticsSources
             #ToDo: For all of its statisticsResourceSources records
@@ -59,6 +81,7 @@ class FiscalYears(Base):
         pass
 
 
+    @hybrid_method
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
 
@@ -87,15 +110,25 @@ class Vendors(Base):
     alma_vendor_code = Column()  #ToDo: VARCHAR(10)
 
 
+    def __init__(self, vendor_id, vendor_name, alma_vendor_code):
+        """A constructor setting the field values as class attributes."""
+        self.vendor_id = vendor_id
+        self.vendor_name = vendor_name
+        self.alma_vendor_code = alma_vendor_code
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
+    @hybrid_method
     def get_SUSHI_credentials_from_Alma():
         pass
 
 
+    @hybrid_method
     def get_SUSHI_credentials_from_JSON():
         pass
 
@@ -114,7 +147,17 @@ class VendorNotes(Base):
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 
 
+    def __init__(self, vendor_notes_id, note, written_by, date_written, vendor_id):
+        """A constructor setting the field values as class attributes."""
+        self.vendor_notes_id = vendor_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.vendor_id = vendor_id
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -132,16 +175,29 @@ class StatisticsSources(Base):
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
 
+    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, current_access, access_stop_date, vendor_id):
+        """A constructor setting the field values as class attributes."""
+        self.statistics_source_id = statistics_source_id
+        self.statistics_source_name = statistics_source_name
+        self.statistics_source_retrieval_code = statistics_source_retrieval_code
+        self.current_access = current_access
+        self.access_stop_date = access_stop_date
+        self.vendor_id = vendor_id
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
+    @hybrid_method
     def show_SUSHI_credentials():
         #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
         pass
 
 
+    @hybrid_method
     def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
         """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
 
@@ -166,14 +222,15 @@ class StatisticsSources(Base):
 
 
         #Section: Confirm SUSHI API Functionality
-        #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "status", SUSHI_parameters)
-        #ToDo: Figure out methods and return values for above class
+        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
 
 
         #Section: Get List of Resources
         #Subsection: Make API Call
-        #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], "reports", SUSHI_parameters)
-        #ToDo: Figure out methods and return values for above class so the ultimate result is all_available_reports = a list of all available reports
+        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+        #ToDo: If a list/dict containing a list is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
 
         #Subsection: Get List of Master Reports
         #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
@@ -228,9 +285,10 @@ class StatisticsSources(Base):
                 #ToDo: SUSHI_parameters["include_component_details"] = "True"
             
             #Subsection: Make Master Report API Call
-            #ToDo: SUSHICallAndResponse(SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters)
-            #ToDo: Figure out methods and return values for above class
-            #ToDo: Ultimately need a dataframe for master_report_dataframes.append()
+            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
+            #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
+            #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
         #Section: Return a Single Dataframe
@@ -238,6 +296,7 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
         """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
 
@@ -255,11 +314,13 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
     def upload_R4_report(self):
         #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
         pass
 
 
+    @hybrid_method
     def upload_R5_report(self):
         #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
         pass
@@ -313,11 +374,14 @@ class ResourceSources(Base):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
-    def add_access_stop_date():
+
+  @hybrid_method
+  def add_access_stop_date():
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
 
 
+    @hybrid_method
     def remove_access_stop_date():
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
@@ -359,11 +423,26 @@ class AnnualUsageCollectionTracking():
     fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
 
 
+    def __init__(self, auct_statistics_source, auct_fiscal_year, usage_is_being_collected, manual_collection_required, collection_via_email, is_counter_compliant, collection_status, usage_file_path, notes):
+        """A constructor setting the field values as class attributes."""
+        self.auct_statistics_source = auct_statistics_source
+        self.auct_fiscal_year = auct_fiscal_year
+        self.usage_is_being_collected = usage_is_being_collected
+        self.manual_collection_required = manual_collection_required
+        self.collection_via_email = collection_via_email
+        self.is_counter_compliant = is_counter_compliant
+        self.collection_status = collection_status
+        self.usage_file_path = usage_file_path
+        self.notes = notes
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
+    @hybrid_method
     def collect_annual_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
 
@@ -381,6 +460,7 @@ class AnnualUsageCollectionTracking():
         pass
 
 
+    @hybrid_method
     def upload_nonstandard_usage_file():
         pass
 

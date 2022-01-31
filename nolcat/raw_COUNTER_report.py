@@ -76,8 +76,8 @@ class RawCOUNTERReport:
             pass  #ToDo: Return an error message and quit the constructor
 
 
-    # Representation method--using `{self}` in an f-string results in the below
     def __repr__(self):
+        """The printable representation of the class, determining what appears when `{self}` is used in an f-string."""
         return repr(self.report_dataframe.head())
     
 
