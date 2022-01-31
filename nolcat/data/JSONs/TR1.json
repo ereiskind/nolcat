@@ -1,0 +1,339 @@
+[
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Title",
+        "newColumnName": "Resource_Name",
+        "description": "Rename column ``Title`` to ``Resource_Name``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Title DOI",
+        "newColumnName": "DOI",
+        "description": "Rename column ``Title DOI`` to ``DOI``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Proprietary Identifier",
+        "newColumnName": "Proprietary_ID",
+        "description": "Rename column ``Proprietary Identifier`` to ``Proprietary_ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Print ID",
+        "expression": "grel:value.match(/(\\d{4}\\-\\d{3}[\\dxX])/)[0]",
+        "onError": "set-to-blank",
+        "newColumnName": "Print_ISSN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``Print_ISSN`` by taking the ISSNs from column ``Print ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Online ID",
+        "expression": "grel:value.match(/(\\d{4}\\-\\d{3}[\\dxX])/)[0]",
+        "onError": "set-to-blank",
+        "newColumnName": "Online_ISSN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``Online_ISSN`` by taking the ISSNs from column ``Online ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Print ID",
+        "expression": "grel:if(and(isBlank(cells.Print_ISSN.value), isBlank(cells.Online_ISSN.value)), if(isBlank(value), if(isBlank(cells[\"Online ID\"].value),null,cells[\"Online ID\"].value),value),null)",
+        "onError": "set-to-blank",
+        "newColumnName": "ISBN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``ISBN`` with the values from ``Print ID`` and ``Online ID`` not in an ISSN column"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "Print ID",
+        "description": "Remove column ``Print ID``"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "Online ID",
+        "description": "Remove column ``Online ID``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Data type",
+        "newColumnName": "Data_Type",
+        "description": "Rename column ``Data type`` to ``Data_Type``"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Resource_Name",
+                    "expression": "grel:value.toLowercase().startsWith(\"total for all titles\")",
+                    "columnName": "Resource_Name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove total rows"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:value.replace(/\\n/,\"\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Remove errant newlines from ``Resource_Name`` values"
+    },
+    {
+        "op": "core/transpose-columns-into-rows",
+        "startColumnName": "Reporting Period Total",
+        "columnCount": -1,
+        "ignoreBlankCells": false,
+        "fillDown": true,
+        "separator": null,
+        "keyColumnName": "R4_Month",
+        "valueColumnName": "R4_Count",
+        "description": "Pivot all columns with counts into two columns, one named ``R4_Month`` with the column name/date and the other named ``R4_Count`` with the data value/count"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "R4_Month",
+                    "expression": "grel:value.find(/[Rr]eporting\\s[Pp]eriod/).length()>0",
+                    "columnName": "R4_Month",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with total values"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "R4_Count",
+                    "expression": "grel:or(isBlank(value),value==0)",
+                    "columnName": "R4_Count",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no usage"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "R4_Month",
+        "expression": "grel:if(isError(value.toDate()),if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\\\w{3})\\\\-(\\\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\\\w*)\\\\-\\\\d{4}/)[0].length()>3,(value.match(/(\\\\w{3}).*/)[0]+\"-01\"+value.match(/\\\\w*(\\\\-\\\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\"))),value.find(/\\d{4}\\-\\d{2}\\-\\d{2}/)[0].toDate())",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change the values in column ``R4_Month`` to date data type with null time value"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Resource_Name",
+        "expression": "grel:\"Successful Title Requests\"",
+        "onError": "set-to-blank",
+        "newColumnName": "Metric_Type",
+        "columnInsertIndex": 7,
+        "description": "Create column ``Metric_Type`` containing value `Successful Title Requests`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``Resource_Name``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publisher",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``Publisher``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "DOI",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``DOI``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Proprietary_ID",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``Proprietary_ID``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "ISBN",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``ISBN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Print_ISSN",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``Print_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Online_ISSN",
+        "expression": "grel:if(or(isBlank(value),isNonBlank(value.match(/\\s*/))),\"NULL\",value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change null and whitespace values to `NULL` in column ``Online_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Resource_Name`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publisher",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Publisher`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Platform",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Platform`` are encoded with UTF-8"
+    }
+]
