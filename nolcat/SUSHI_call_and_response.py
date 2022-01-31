@@ -1,4 +1,5 @@
 import logging
+import shutil
 import time
 import re
 import os
@@ -201,8 +202,9 @@ class SUSHICallAndResponse:
         """
         webdriver = Chrome_browser_driver()
         URL = self.call_URL + self.call_path + "?" + self.parameter_string
-        #ToDo: Create folder in current folder called `temp`
-        temp_folder = r"./temp"
+        temp_folder = str(Path.cwd()) + r"/temp"
+        Path(temp_folder).mkdir()
+        logging.info(f"Folder at {temp_folder} created.")
         
         # From source: "function to handle setting up headless download"
         webdriver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
@@ -213,14 +215,17 @@ class SUSHICallAndResponse:
         time.sleep(0.1) # This delay allows the downloaded JSON to be in the folder for long enough that the walk method can detect it
         for folder, subfolder, files in os.walk(temp_folder):
             if files == []: # This means the 403 error was the result of something other than the data being downloaded as a JSON file
-                #ToDo: Delete folder `temp`
+                os.rmdir(temp_folder)
+                logging.info("No JSON found, temp folder deleted.")
                 return files
             for file in files: # There is actually only one file, but the iterator is needed to extract it from the list data structure
-                download_file_path = str(Path('.', 'temp', file))
+                download_file_path = Path(temp_folder, file)
                 with open(download_file_path, 'rb') as JSONfile: #Alert: Not yet tested with bytes
                     file_data = json.load(JSONfile)
+                    logging.info(f"Data from JSON {file} saved to memory.")
         
-        #ToDo: Delete folder `temp` and its contents
+        shutil.rmtree(temp_folder)
+        logging.info(f"Folder at {temp_folder} deleted.")
         return file_data
 
 
