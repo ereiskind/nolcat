@@ -1,4 +1,6 @@
+from datetime import date
 import pytest
+import pyinputplus
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
@@ -28,10 +30,30 @@ def SUSHI_credentials_fixture():
     if platform != "":
         SUSHI_credentials['platform'] = platform
     
-    #ToDo: month = input(a prompt for a year and month)
+    SUSHI_credentials['begin_date'] = pyinputplus.inputDate(
+        "Please enter the year and month for the first month of stats collection. The month must be two digits and the year must be four digits. ",
+        formats=[
+            '%Y%m', # yyyymm
+            '%m-%Y', # mm-yyyy
+            '%m/%Y', # mm/yyyy
+            '%Y-%m', # yyyy-mm
+            '%Y/%m', # yyyy/mm
+        ]
+    )
+    SUSHI_credentials['end_date'] = date.min # This ensures that the while loop runs at least once
+    while SUSHI_credentials['end_date'] < SUSHI_credentials['begin_date']:
+        SUSHI_credentials['end_date'] = pyinputplus.inputDate(
+            f"Please enter the year and month for the last month of stats collection; this must be the same as or after {SUSHI_credentials['begin_date'].strftime('%Y-%m')}. The month must be two digits and the year must be four digits. ",
+            formats=[
+                '%Y%m', # yyyymm
+                '%m-%Y', # mm-yyyy
+                '%m/%Y', # mm/yyyy
+                '%Y-%m', # yyyy-mm
+                '%Y/%m', # yyyy/mm
+            ]
+        )
 
     return (URL, SUSHI_credentials)
-    #ToDo: return (URL, SUSHI_credentials, month)
 
 
 def test_status_call(SUSHI_credentials_fixture):
