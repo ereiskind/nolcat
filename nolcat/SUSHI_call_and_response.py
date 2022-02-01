@@ -141,8 +141,11 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
-        try:  # The report has a `Report_Header` with an `Exceptions` key containing a single exception or a list of exceptions
-            if not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to):
+        try:  # The report has a `Report_Header` with an `Exception(s)` key containing a single exception or a list of exceptions
+            if not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exception'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exception']}")
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exception']}"}
+            elif not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exceptions']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Report_Header']['Exceptions']}"}
         except:
@@ -164,10 +167,16 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        try:  # The report has an `Exceptions` or `Alerts` key containing a single exception or a list of exceptions (the key is on the same level as `Report_Header`)
-            if not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
+        try:  # The report has an `Exception(s)` or `Alert(s)` key containing a single exception or a list of exceptions (the key is on the same level as `Report_Header`)
+            if not self.handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}")
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}"}
+            elif not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}"}
+            elif not self.handle_SUSHI_exceptions(API_response['Alert'], self.call_path, self.calling_to):
+                logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alert']}")
+                return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alert']}"}
             elif not self.handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}"}
