@@ -10,6 +10,7 @@ Running Tests From the CLI
 Test modules are designed to be run from the root folder with the command ``python -m pytest``.
 
 * To view logging statements in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
+* To save the pytest output to stdout, add ``-p pytest_session2file --session2file=logfile_name`` to the command, where ``logfile_name`` is the name of the logfile, including the file extension and the relative path from the root folder (the folder in which the command is being run) for the desired location.
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
 Using the Test Container
