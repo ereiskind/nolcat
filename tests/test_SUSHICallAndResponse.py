@@ -4,6 +4,7 @@ import pyinputplus
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
+# This module tests the functionality of SUSHICallAndResponse--the API call and its subsequent handling; as a result, a test passes if it is handled as expected, even if there are errors in the API call or the SUSHI data.
 """
 For testing the SUSHI API, a fixture that prompts the user for the SUSHI API information in stdout is applied to all the tests requiring data to make API calls. This semi-automated method, which collects a valid SUSHI URL and set of credentials from the user and applies them to all tests, is used because:
     1. There is no set of testing credentials; even using the SwaggerHub testing service requires SUSHI credentials from a vendor.
@@ -57,12 +58,10 @@ def SUSHI_credentials_fixture():
 
 
 def test_status_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `status` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "status", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: If constructor returns JSON-like dictionary, assert response['ServiceActive'] = True
-    pass
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``status`` endpoint."""
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
+    assert str(type(response)) == "<class 'dict'>"
 
 
 def test_reports_call(SUSHI_credentials_fixture):
