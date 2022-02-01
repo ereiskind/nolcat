@@ -9,7 +9,7 @@ import requests
 from requests import HTTPError
 from requests import Timeout
 import pyinputplus
-from app import Chrome_browser_driver
+from .app import Chrome_browser_driver
 
 logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
