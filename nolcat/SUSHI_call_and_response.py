@@ -21,7 +21,7 @@ class SUSHICallAndResponse:
 
     Attributes:
         self.Chrome_user_agent (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
-        self.calling_to (str): the statistics source the SUSHI API call is going to
+        self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
@@ -41,7 +41,7 @@ class SUSHICallAndResponse:
         This constructor is not meant to be used alone; all class instantiations should feature a `make_SUSHI_call` method call.
 
         Args:
-            calling_to (str): the statistics source the SUSHI API call is going to
+            calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
             call_URL (str): the root URL for the SUSHI API call
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
             parameters (dict): the parameter values as key-value pairs
