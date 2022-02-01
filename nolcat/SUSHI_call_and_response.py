@@ -258,13 +258,16 @@ class SUSHICallAndResponse:
         if str(type(error_contents)) == "<class 'dict'>":
             if len(error_contents['Message']) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
                 return True
+            logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self.create_error_query_text(error_contents)
         elif str(type(error_contents)) == "<class 'list'>":
             dialog_box_text = []
+            logging.info(f"Handling a SUSHI error for a {report_type} in list format.")
             for error in error_contents:
                 dialog_box_text.append(self.create_error_query_text(error))
             dialog_box_text = "\n".join(dialog_box_text)
         else:
+            logging.info(f"SUSHI error handling method for a {report_type} accepted data of an invalid type.")
             return False  # Since error_contents was of an invalid data type, something went wrong, so the method should be terminated.
         
         #Subsection: Ask the User What To Do
@@ -280,6 +283,10 @@ class SUSHICallAndResponse:
         if stdout_response:
             return True
         else:
+            if report_type == "status" or report_type == "reports":
+                logging.info(f"The user opted not to continue collecting data from {statistics_source}.")
+            else:
+                logging.info(f"The user opted not to load the {report_type} data from {statistics_source}.")
             return False
     
 
