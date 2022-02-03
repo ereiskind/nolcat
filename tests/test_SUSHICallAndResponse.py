@@ -65,16 +65,10 @@ def test_status_call(SUSHI_credentials_fixture):
 
 
 def test_reports_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `reports` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: If constructor returns list of JSON-like dictionaries, checking_reports = 0
-    #ToDo: for report in response:
-        #ToDo: if report['Release'] == 5: should having keys "Report_Name", "Report_ID", "Release", "Report_Description", "Path" also be tested?
-            #ToDo: checking_reports += 1
-    #ToDo: assert len(response) == checking_reports
-    pass
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports`` endpoint."""
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    assert str(type(response)) == "<class 'dict'>"
 
 
 def test_PR_call(SUSHI_credentials_fixture):
