@@ -230,7 +230,7 @@ class StatisticsSources(Base):
         #Subsection: Make API Call
         #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a list/dict containing a list is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
+        #ToDo: If a single-item dict with the key "reports" is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
 
         #Subsection: Get List of Master Reports
         #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]

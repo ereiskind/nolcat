@@ -133,6 +133,8 @@ class SUSHICallAndResponse:
         
         if str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
             API_response = API_response[0]
+        elif str(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
+            API_response = dict(reports = API_response)  # The "reports" endpoint should return a list; if there's a SUSHI error, a dictionary is returned.
         
         if str(type(API_response)) == "<class 'dict'>":
             pass
