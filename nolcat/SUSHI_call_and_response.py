@@ -197,6 +197,7 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
                 return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
         
+        logging.debug(f"The SUSHI API response:\n{API_response}")
         return API_response
 
 
