@@ -71,7 +71,7 @@ def test_status_call_validity(SUSHI_credentials_fixture):
     if list(response.keys()) == ["ERROR"]:
         assert False
     if "ServiceActive" in list(response.keys()):  # This handles when the field name is not the standard `Service_Active`
-        assert  response['ServiceActive'] == True or response['ServiceActive'] == "True" or response['ServiceActive'] == "true"
+        assert response['ServiceActive'] == True or response['ServiceActive'] == "True" or response['ServiceActive'] == "true"
     assert response['Service_Active'] == True or response['Service_Active'] == "True" or response['Service_Active'] == "true"
 
 
