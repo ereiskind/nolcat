@@ -98,7 +98,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
 def test_PR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/pr`` endpoint."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: has_PR = False
     #ToDo: for reports_list in check_for_report.values():
         #ToDo: for report_description in reports_list:
@@ -106,7 +106,7 @@ def test_PR_call(SUSHI_credentials_fixture):
                 #ToDo: has_PR = True
     #ToDo: if has_PR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert str(type(response)) == "<class 'dict'>"
 
 
@@ -114,7 +114,7 @@ def test_PR_call(SUSHI_credentials_fixture):
 def test_PR_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
 
 
@@ -122,7 +122,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
 def test_DR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/dr`` endpoint."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: has_DR = False
     #ToDo: for reports_list in check_for_report.values():
         #ToDo: for report_description in reports_list:
@@ -130,7 +130,7 @@ def test_DR_call(SUSHI_credentials_fixture):
                 #ToDo: has_DR = True
     #ToDo: if has_DR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert str(type(response)) == "<class 'dict'>"
 
 
@@ -138,7 +138,7 @@ def test_DR_call(SUSHI_credentials_fixture):
 def test_DR_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
 
 
@@ -146,7 +146,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
 def test_TR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/tr`` endpoint."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: has_TR = False
     #ToDo: for reports_list in check_for_report.values():
         #ToDo: for report_description in reports_list:
@@ -154,7 +154,7 @@ def test_TR_call(SUSHI_credentials_fixture):
                 #ToDo: has_TR = True
     #ToDo: if has_TR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert str(type(response)) == "<class 'dict'>"
 
 
@@ -162,7 +162,7 @@ def test_TR_call(SUSHI_credentials_fixture):
 def test_TR_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
 
 
@@ -170,7 +170,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
 def test_IR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/ir`` endpoint."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     #ToDo: has_IR = False
     #ToDo: for reports_list in check_for_report.values():
         #ToDo: for report_description in reports_list:
@@ -178,7 +178,7 @@ def test_IR_call(SUSHI_credentials_fixture):
                 #ToDo: has_IR = True
     #ToDo: if has_IR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert str(type(response)) == "<class 'dict'>"
 
 
@@ -186,5 +186,5 @@ def test_IR_call(SUSHI_credentials_fixture):
 def test_IR_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
     #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
+    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
