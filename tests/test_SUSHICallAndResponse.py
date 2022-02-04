@@ -71,7 +71,7 @@ def test_status_call_validity(SUSHI_credentials_fixture):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
     if list(response.keys()) == ["ERROR"]:
         assert False
-    assert response['Service_Active'] == True or response['Service_Active'] == "True"
+    assert response['Service_Active'] == True or response['Service_Active'] == "True" or response['Service_Active'] == "true"
 
 
 def test_reports_call(SUSHI_credentials_fixture):
