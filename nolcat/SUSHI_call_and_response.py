@@ -192,7 +192,10 @@ class SUSHICallAndResponse:
         master_report_regex = re.compile(r'reports/..')
         if master_report_regex.search(self.call_path):
             try:
-                logging.debug(f"Returning {len(API_response['Report_Items'])} lines of data.")  # This `try` block needed to include `API_response['Report_Items']` in some way, and since this is the end of the constructor, a logging statement was appropriate
+                lines_of_data = len(API_response['Report_Items'])
+                if lines_of_data == 0:
+                    logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
+                    return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
             except TypeError:
                 logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
                 return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
