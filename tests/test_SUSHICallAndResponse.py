@@ -97,17 +97,17 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
 @pytest.mark.skipif('not test_reports_call')
 def test_PR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/pr`` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: has_PR = False
-    #ToDo: for reports_list in check_for_report.values():
-        #ToDo: for report_description in reports_list:
-            #ToDo: if report_description['Report_ID'] == "PR":
-                #ToDo: has_PR = True
-    #ToDo: if has_PR == False:
-        #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: assert str(type(response)) == "<class 'dict'>"
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    has_PR = False
+    for reports_list in check_for_report.values():
+        for report_description in reports_list:
+            if report_description['Report_ID'] == "PR":
+                has_PR = True
+    if has_PR == False:
+        assert True  # There can't be a problem with something that doesn't exist
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    assert str(type(response)) == "<class 'dict'>"
 
 
 @pytest.mark.skipif('not test_reports_call or not test_PR_call')
@@ -121,17 +121,17 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
 @pytest.mark.skipif('not test_reports_call')
 def test_DR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/dr`` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: has_DR = False
-    #ToDo: for reports_list in check_for_report.values():
-        #ToDo: for report_description in reports_list:
-            #ToDo: if report_description['Report_ID'] == "DR":
-                #ToDo: has_DR = True
-    #ToDo: if has_DR == False:
-        #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: assert str(type(response)) == "<class 'dict'>"
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    has_DR = False
+    for reports_list in check_for_report.values():
+        for report_description in reports_list:
+            if report_description['Report_ID'] == "DR":
+                has_DR = True
+    if has_DR == False:
+        assert True  # There can't be a problem with something that doesn't exist
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
+    assert str(type(response)) == "<class 'dict'>"
 
 
 @pytest.mark.skipif('not test_reports_call or not test_DR_call')
@@ -145,17 +145,17 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
 @pytest.mark.skipif('not test_reports_call')
 def test_TR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/tr`` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: has_TR = False
-    #ToDo: for reports_list in check_for_report.values():
-        #ToDo: for report_description in reports_list:
-            #ToDo: if report_description['Report_ID'] == "TR":
-                #ToDo: has_TR = True
-    #ToDo: if has_TR == False:
-        #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: assert str(type(response)) == "<class 'dict'>"
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    has_TR = False
+    for reports_list in check_for_report.values():
+        for report_description in reports_list:
+            if report_description['Report_ID'] == "TR":
+                has_TR = True
+    if has_TR == False:
+        assert True  # There can't be a problem with something that doesn't exist
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
+    assert str(type(response)) == "<class 'dict'>"
 
 
 @pytest.mark.skipif('not test_reports_call or not test_TR_call')
@@ -169,17 +169,17 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
 @pytest.mark.skipif('not test_reports_call')
 def test_IR_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/ir`` endpoint."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: has_IR = False
-    #ToDo: for reports_list in check_for_report.values():
-        #ToDo: for report_description in reports_list:
-            #ToDo: if report_description['Report_ID'] == "IR":
-                #ToDo: has_IR = True
-    #ToDo: if has_IR == False:
-        #ToDo: assert True  # There can't be a problem with something that doesn't exist
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: assert str(type(response)) == "<class 'dict'>"
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    has_IR = False
+    for reports_list in check_for_report.values():
+        for report_description in reports_list:
+            if report_description['Report_ID'] == "IR":
+                has_IR = True
+    if has_IR == False:
+        assert True  # There can't be a problem with something that doesn't exist
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
+    assert str(type(response)) == "<class 'dict'>"
 
 
 @pytest.mark.skipif('not test_reports_call or not test_IR_call')
