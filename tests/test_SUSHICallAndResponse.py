@@ -64,6 +64,16 @@ def test_status_call(SUSHI_credentials_fixture):
     assert str(type(response)) == "<class 'dict'>"
 
 
+@pytest.mark.skipif(not test_status_call)  # If the status call test fails, this test is skipped
+def test_status_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``status`` endpoint return a valid SUSHI response."""
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
+    if list(response.keys()) == ["ERROR"]:
+        assert False
+    assert response['Service_Active'] == True or response['Service_Active'] == "True"
+
+
 def test_reports_call(SUSHI_credentials_fixture):
     """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports`` endpoint."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
