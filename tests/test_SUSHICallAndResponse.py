@@ -81,6 +81,20 @@ def test_reports_call(SUSHI_credentials_fixture):
     assert str(type(response)) == "<class 'dict'>"
 
 
+@pytest.mark.skipif('not test_status_call')  # If the status call test fails, this test is skipped
+def test_reports_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports`` endpoint return a valid SUSHI response."""
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    for reports_list in response.values():
+        reports_list_length = len(reports_list)  # Because this loop only executes once, this assignment is viable
+        counting_Report_ID = 0
+        for report_description in reports_list:
+            if "Report_ID" in list(report_description.keys()):
+                counting_Report_ID += 1
+    assert reports_list_length == counting_Report_ID
+
+
 def test_PR_call(SUSHI_credentials_fixture):
     """Tests a SUSHI API call to the `reports/pr` endpoint."""
     #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
