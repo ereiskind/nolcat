@@ -4,7 +4,6 @@ import pyinputplus
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
-# This module tests the functionality of SUSHICallAndResponse--the API call and its subsequent handling; as a result, a test passes if it is handled as expected, even if there are errors in the API call or the SUSHI data.
 """
 For testing the SUSHI API, a fixture that prompts the user for the SUSHI API information in stdout is applied to all the tests requiring data to make API calls. This semi-automated method, which collects a valid SUSHI URL and set of credentials from the user and applies them to all tests, is used because:
     1. There is no set of testing credentials; even using the SwaggerHub testing service requires SUSHI credentials from a vendor.
@@ -95,77 +94,97 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
     assert reports_list_length == counting_Report_ID
 
 
+@pytest.mark.skipif('not test_reports_call')
 def test_PR_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `reports/pr` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/pr`` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: SUSHI_credentials['begin_date'] = month
-    #ToDo: SUSHI_credentials['end_date'] = month
-    #ToDo: If constructor returns list of JSON-like dictionaries, has_PR = False
-    #ToDo: for report in check_for_report:
-        #ToDo: if report['Path'] == "/reports/pr":
-            #ToDo: has_PR = True
+    #ToDo: has_PR = False
+    #ToDo: for reports_list in check_for_report.values():
+        #ToDo: for report_description in reports_list:
+            #ToDo: if report_description['Report_ID'] == "PR":
+                #ToDo: has_PR = True
     #ToDo: if has_PR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
     #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert str(type(response)) == "<class 'dict'>"
+
+
+@pytest.mark.skipif('not test_reports_call or not test_PR_call')
+def test_PR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
-    pass
 
 
+@pytest.mark.skipif('not test_reports_call')
 def test_DR_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `reports/dr` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/dr`` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: SUSHI_credentials['begin_date'] = month
-    #ToDo: SUSHI_credentials['end_date'] = month
-    #ToDo: If constructor returns list of JSON-like dictionaries, has_DR = False
-    #ToDo: for report in check_for_report:
-        #ToDo: if report['Path'] == "/reports/dr":
-            #ToDo: has_DR = True
+    #ToDo: has_DR = False
+    #ToDo: for reports_list in check_for_report.values():
+        #ToDo: for report_description in reports_list:
+            #ToDo: if report_description['Report_ID'] == "DR":
+                #ToDo: has_DR = True
     #ToDo: if has_DR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
     #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert str(type(response)) == "<class 'dict'>"
+
+
+@pytest.mark.skipif('not test_reports_call or not test_DR_call')
+def test_DR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
-    pass
 
 
+@pytest.mark.skipif('not test_reports_call')
 def test_TR_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `reports/tr` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/tr`` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: SUSHI_credentials['begin_date'] = month
-    #ToDo: SUSHI_credentials['end_date'] = month
-    #ToDo: If constructor returns list of JSON-like dictionaries, has_TR = False
-    #ToDo: for report in check_for_report:
-        #ToDo: if report['Path'] == "/reports/tr":
-            #ToDo: has_TR = True
+    #ToDo: has_TR = False
+    #ToDo: for reports_list in check_for_report.values():
+        #ToDo: for report_description in reports_list:
+            #ToDo: if report_description['Report_ID'] == "TR":
+                #ToDo: has_TR = True
     #ToDo: if has_TR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
     #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert str(type(response)) == "<class 'dict'>"
+
+
+@pytest.mark.skipif('not test_reports_call or not test_TR_call')
+def test_TR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
-    pass
 
 
+@pytest.mark.skipif('not test_reports_call')
 def test_IR_call(SUSHI_credentials_fixture):
-    """Tests a SUSHI API call to the `reports/ir` endpoint."""
-    #ToDo: URL, SUSHI_credentials, month = SUSHI_credentials_fixture
+    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/ir`` endpoint."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
     #ToDo: check_for_report = SUSHICallAndResponse(URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
-    #ToDo: SUSHI_credentials['begin_date'] = month
-    #ToDo: SUSHI_credentials['end_date'] = month
-    #ToDo: If constructor returns list of JSON-like dictionaries, has_IR = False
-    #ToDo: for report in check_for_report:
-        #ToDo: if report['Path'] == "/reports/ir":
-            #ToDo: has_IR = True
+    #ToDo: has_IR = False
+    #ToDo: for reports_list in check_for_report.values():
+        #ToDo: for report_description in reports_list:
+            #ToDo: if report_description['Report_ID'] == "IR":
+                #ToDo: has_IR = True
     #ToDo: if has_IR == False:
         #ToDo: assert True  # There can't be a problem with something that doesn't exist
     #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: If constructor returns error messages, the test fails
+    #ToDo: assert str(type(response)) == "<class 'dict'>"
+
+
+@pytest.mark.skipif('not test_reports_call or not test_IR_call')
+def test_IR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
+    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
+    #ToDo: response = SUSHICallAndResponse(URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
-    pass
