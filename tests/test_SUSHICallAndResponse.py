@@ -64,7 +64,7 @@ def test_status_call(SUSHI_credentials_fixture):
     assert str(type(response)) == "<class 'dict'>"
 
 
-@pytest.mark.skipif(not test_status_call)  # If the status call test fails, this test is skipped
+@pytest.mark.skipif('not test_status_call')  # If the status call test fails, this test is skipped
 def test_status_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``status`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
