@@ -34,3 +34,17 @@ Using Selenium
 Some of the tests use Selenium, which allows for interfacing with web browsers. for more information on Selenium and setting it up, see :ref:`"Using Selenium" on the page about COUNTER and SUSHI <using-selenium>`.
 
 The fixture `sample_R4_RawCOUNTERReport` creates a MultiDict of FileStorage objects, all with the key `'R4_files'`, which matches the ImmutableMultiDict of FileStorage objects created when multiple files are passed to a route in the Flask app through the HTML-derived file selector in the web app. There are a few small differences between the FileStorage objects from the two sources: in the fixture, the `filename` attribute contains the file path starting from (but not including) `nolcat` and the `stream` attribute is a TextIOWrapper; when coming from Flask, `filename` is just the name of the file and `stream` is a `tempfile.SpooledTemporaryFile` object.
+
+SUSHI Variations
+****************
+Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, common issues and some vendors that display them are listed here so that the edge cases they represent can be covered while testing the ``SUSHICallAndResponse`` class.
+* Requiring a requestor ID and an API key: Columbia International Affairs Online (CIAO), Company of Biologists, Portland Press, University of California Press, Rockefeller University Press, Films on Demand, ABC-CLIO Databases
+* Requiring only a customer ID: Japan Science & Technology Agency (JST)
+* Downloading a JSON file: 
+* Variants on the ``Service_Active`` field in ``status`` call
+  * Using a lowercase string in the field: OECD iLibrary
+  * Naming the field ``ServiceActive``: Adam Matthew
+* No PR report offered:
+* No DR report offered:
+* No TR report offered:
+* No IR report offered:
