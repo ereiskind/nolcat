@@ -262,7 +262,8 @@ class SUSHICallAndResponse:
         #Section: Create Error Message(s)
         #Subsection: Detail Each SUSHI Error
         if str(type(error_contents)) == "<class 'dict'>":
-            if len(error_contents['Message']) == 0:  # Some interfaces always include the "Exceptions" key in the status check return value; this keeps the popups about continuing from triggering in those instances
+            if len(error_contents['Message']) == 0:
+                logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
             logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self.create_error_query_text(error_contents)
