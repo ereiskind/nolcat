@@ -110,7 +110,7 @@ def test_PR_call(SUSHI_credentials_fixture):
             if report_description['Report_ID'] == "PR":
                 has_PR = True
     if has_PR == False:
-        assert True  # There can't be a problem with something that doesn't exist
+        pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
 
@@ -134,7 +134,7 @@ def test_DR_call(SUSHI_credentials_fixture):
             if report_description['Report_ID'] == "DR":
                 has_DR = True
     if has_DR == False:
-        assert True  # There can't be a problem with something that doesn't exist
+        pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
 
@@ -158,7 +158,7 @@ def test_TR_call(SUSHI_credentials_fixture):
             if report_description['Report_ID'] == "TR":
                 has_TR = True
     if has_TR == False:
-        assert True  # There can't be a problem with something that doesn't exist
+        pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
 
@@ -182,7 +182,7 @@ def test_IR_call(SUSHI_credentials_fixture):
             if report_description['Report_ID'] == "IR":
                 has_IR = True
     if has_IR == False:
-        assert True  # There can't be a problem with something that doesn't exist
+        pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
 
