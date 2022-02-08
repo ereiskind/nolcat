@@ -66,6 +66,7 @@ class SUSHICallAndResponse:
         API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:
+            logging.debug(f"Calling {self.calling_to} for {self.call_path}.")
             API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
             API_response.raise_for_status()
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
@@ -73,6 +74,7 @@ class SUSHICallAndResponse:
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 time.sleep(1)
+                logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
                 API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.Chrome_user_agent)
                 API_response.raise_for_status()
             
@@ -141,6 +143,8 @@ class SUSHICallAndResponse:
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing.")
             return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing."}
+        
+        logging.debug(f"SUSHI data converted to Python dictionary:\n{API_response}")
 
 
         #Section: Check for SUSHI Error Codes
@@ -203,7 +207,7 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
                 return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
         
-        logging.debug(f"The SUSHI API response:\n{API_response}")
+        logging.info(f"The SUSHI API response:\n{API_response}")
         return API_response
 
 
@@ -230,6 +234,7 @@ class SUSHICallAndResponse:
         webdriver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
         params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': temp_folder}}
         webdriver.execute("send_command", params)
+        logging.debug(f"Calling {self.calling_to} for {self.call_path} as JSON download.")
         webdriver.get(URL) # From source: "get request to target the site selenium is active on"
 
         time.sleep(0.1) # This delay allows the downloaded JSON to be in the folder for long enough that the walk method can detect it
@@ -264,6 +269,7 @@ class SUSHICallAndResponse:
         """
         #Section: Create Error Message(s)
         #Subsection: Detail Each SUSHI Error
+        logging.debug(f"The function handle_SUSHI_exceptions was triggered on the following: {error_contents}")
         if str(type(error_contents)) == "<class 'dict'>":
             if len(error_contents['Message']) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
