@@ -268,6 +268,9 @@ class SUSHICallAndResponse:
             logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self.create_error_query_text(error_contents)
         elif str(type(error_contents)) == "<class 'list'>":
+            if len(error_contents) == 0:
+                logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
+                return True
             dialog_box_text = []
             logging.info(f"Handling a SUSHI error for a {report_type} in list format.")
             for error in error_contents:
