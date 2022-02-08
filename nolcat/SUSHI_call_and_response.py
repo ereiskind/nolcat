@@ -155,23 +155,26 @@ class SUSHICallAndResponse:
         except:
             pass
         
-        try:  # The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block
+        try:
             if "Message" in API_response.keys():
+                logging.debug("The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block.")
                 if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
                     return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
-        try:  # The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block
-           if "Message" in API_response[0].keys():
-               if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+        try:
+            if "Message" in API_response[0].keys():
+                logging.debug("The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block.")
+                if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
                     return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
         try:  # The report has an `Exception(s)` or `Alert(s)` key containing a single exception or a list of exceptions (the key is on the same level as `Report_Header`)
+            #ToDo: A `status` response with the key-value pair `'Alerts': []` didn't trigger any of the method calls below, but the exact same status call with the exact same response 11 minutes later did--investigate the issue
             if not self.handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}"}
