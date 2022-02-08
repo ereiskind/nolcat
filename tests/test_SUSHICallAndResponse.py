@@ -70,9 +70,12 @@ def test_status_call_validity(SUSHI_credentials_fixture):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
     if list(response.keys()) == ["ERROR"]:
         assert False
-    if "ServiceActive" in list(response.keys()):  # This handles when the field name is not the standard `Service_Active`
-        assert response['ServiceActive'] == True or response['ServiceActive'] == "True" or response['ServiceActive'] == "true"
-    assert response['Service_Active'] == True or response['Service_Active'] == "True" or response['Service_Active'] == "true"
+    # When the assert statement is a series of expressions featuring named index references to `response` seperated by `or`, the test fails if the first expression features a dictionary key/field name not in `response`, even if one of the later expressions is true. Tests don't finish with a passing result at assert statements that evaluate to true, so if blocks and try/except statements aren't viable; an intermediary variable is the only viable solution.
+    if "Service_Active" in list(response.keys()):
+        service_active_value = response['Service_Active']
+    elif "ServiceActive" in list(response.keys()):
+        service_active_value = response['ServiceActive']
+    assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
 
 
 def test_reports_call(SUSHI_credentials_fixture):
