@@ -375,8 +375,8 @@ class ResourceSources(Base):
         pass
 
 
-  @hybrid_method
-  def add_access_stop_date():
+    @hybrid_method
+    def add_access_stop_date():
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
 
