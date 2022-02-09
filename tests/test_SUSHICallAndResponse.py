@@ -94,6 +94,8 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call to the ``reports`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    if list(response.keys()) == ["ERROR"]:
+        assert False
     for reports_list in response.values():
         reports_list_length = len(reports_list)  # Because this loop only executes once, this assignment is viable
         counting_Report_ID = 0
