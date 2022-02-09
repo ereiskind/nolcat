@@ -1,3 +1,4 @@
+import calendar
 from datetime import date
 import pytest
 import pyinputplus
@@ -54,6 +55,11 @@ def SUSHI_credentials_fixture():
                 '%Y/%m', # yyyy/mm
             ]
         )
+    SUSHI_credentials['end_date'] = date(  # This changes the date from the first to the last day of the month to avoid the SUSHI `Invalid Date Arguments` error
+        SUSHI_credentials['end_date'].year,
+        SUSHI_credentials['end_date'].month,
+        calendar.monthrange(SUSHI_credentials['end_date'].year, SUSHI_credentials['end_date'].month)[1]
+    )
 
     return (URL, SUSHI_credentials)
 
