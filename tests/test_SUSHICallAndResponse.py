@@ -114,8 +114,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
     if has_PR == False:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    print(f"The PR validity response is {response}")
-    #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
+    assert response['Report_Header']['Report_ID'] == "PR"
 
 
 @pytest.mark.skipif('not test_reports_call')
@@ -131,8 +130,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
     if has_DR == False:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    print(f"The DR validity response is {response}")
-    #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
+    assert response['Report_Header']['Report_ID'] == "DR"
 
 
 @pytest.mark.skipif('not test_reports_call')
@@ -148,8 +146,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    print(f"The TR validity response is {response}")
-    #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
+    assert response['Report_Header']['Report_ID'] == "TR"
 
 
 @pytest.mark.skipif('not test_reports_call')
@@ -165,5 +162,4 @@ def test_IR_call_validity(SUSHI_credentials_fixture):
     if has_IR == False:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    print(f"The IR validity response is {response}")
-    #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
+    assert response['Report_Header']['Report_ID'] == "IR"
