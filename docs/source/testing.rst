@@ -45,7 +45,19 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Variants on the ``Service_Active`` field in ``status`` call
   * Using a lowercase string in the field: OECD iLibrary
   * Naming the field ``ServiceActive``: Adam Matthew
+* ``status`` call always has a key for SUSHI errors, which has an empty value if there aren't any errors
+  * ``Alerts`` key at top level with list value: Adam Matthew
+* Times out: Alexander Street Press
+* Has no ``status`` endpoint: MathSciNet
+* ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch: AMS (American Meteorological Society) Journals Online
+* Requires a ``platform`` parameter: de Gruyter, Sciendo, Loeb Classical Library
+* Has Unicode charaacters
 * No PR report offered:
-* No DR report offered:
-* No TR report offered:
-* No IR report offered:
+* No DR report offered: Akademiai Kiado, Brill Books and Journals
+* No TR report offered: Adam Matthew, Loeb Classical Library
+* No IR report offered: Akademiai Kiado, Brill Books and Journals, Loeb Classical Library
+
+Internally Inconsistent
+=======================
+These vendors show internal inconsistencies in testing:
+* Adam Matthew: ``status`` call always has a top-level ``Alerts`` key, but ``handle_SUSHI_exceptions`` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call
