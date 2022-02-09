@@ -4,7 +4,9 @@ import pyinputplus
 
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
-"""
+""" About this test module:
+There are two ways in which the result of an API call made via the `SUSHICallAndResponse` class can be considered to be an error: there can be a Python run-time error which causes the program to crash, or there can be an invalid response to the API call resulting from either a run-time error handled in the program or a SUSHI error. This test module contains tests for both conditions: `test_status_call` and `test_reports_call` test that API calls to the `status` and `reports` endpoints can be made without run-time errors, while the `test_status_call_validity`, `test_reports_call_validity`, `test_PR_call_validity`, `test_DR_call_validity`, and `test_IR_call_validity` tests check that the API call returns a valid SUSHI response that the rest of the program can use. The master report calls aren't checked for run-time errors because 1) the chance of a run-time error for a master report call when the status and reports calls were file is low and 2) the conditional expression that would trigger a `skipif` decorator if another test was skipped couldn't be found.
+
 For testing the SUSHI API, a fixture that prompts the user for the SUSHI API information in stdout is applied to all the tests requiring data to make API calls. This semi-automated method, which collects a valid SUSHI URL and set of credentials from the user and applies them to all tests, is used because:
     1. There is no set of testing credentials; even using the SwaggerHub testing service requires SUSHI credentials from a vendor.
     2. SUSHI credentials are unique to each institution and should be secret, so using the API would require another secure file or a mechanism to randomly select a set of SUSHI credentials from whereever they're being stored.
@@ -100,8 +102,8 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.skipif('not test_reports_call')
-def test_PR_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/pr`` endpoint."""
+def test_PR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
@@ -112,20 +114,13 @@ def test_PR_call(SUSHI_credentials_fixture):
     if has_PR == False:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    assert str(type(response)) == "<class 'dict'>"
-
-
-@pytest.mark.skipif('not test_reports_call or not test_PR_call')
-def test_PR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    print(f"The PR validity response is {response}")
     #ToDo: assert report['Report_Header']['Report_ID'] == "PR"
 
 
 @pytest.mark.skipif('not test_reports_call')
-def test_DR_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/dr`` endpoint."""
+def test_DR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
@@ -136,20 +131,13 @@ def test_DR_call(SUSHI_credentials_fixture):
     if has_DR == False:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    assert str(type(response)) == "<class 'dict'>"
-
-
-@pytest.mark.skipif('not test_reports_call or not test_DR_call')
-def test_DR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
+    print(f"The DR validity response is {response}")
     #ToDo: assert report['Report_Header']['Report_ID'] == "DR"
 
 
 @pytest.mark.skipif('not test_reports_call')
-def test_TR_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/tr`` endpoint."""
+def test_TR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
@@ -160,20 +148,13 @@ def test_TR_call(SUSHI_credentials_fixture):
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    assert str(type(response)) == "<class 'dict'>"
-
-
-@pytest.mark.skipif('not test_reports_call or not test_TR_call')
-def test_TR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
+    print(f"The TR validity response is {response}")
     #ToDo: assert report['Report_Header']['Report_ID'] == "TR"
 
 
 @pytest.mark.skipif('not test_reports_call')
-def test_IR_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports/ir`` endpoint."""
+def test_IR_call_validity(SUSHI_credentials_fixture):
+    """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False
@@ -184,12 +165,5 @@ def test_IR_call(SUSHI_credentials_fixture):
     if has_IR == False:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    assert str(type(response)) == "<class 'dict'>"
-
-
-@pytest.mark.skipif('not test_reports_call or not test_IR_call')
-def test_IR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
-    #ToDo: URL, SUSHI_credentials = SUSHI_credentials_fixture
-    #ToDo: response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
+    print(f"The IR validity response is {response}")
     #ToDo: assert report['Report_Header']['Report_ID'] == "IR"
