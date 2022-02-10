@@ -536,7 +536,19 @@ class Resources(Base):
     section_type = Column()  #ToDo: VARCHAR(10)
 
 
+    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
+        """A constructor setting the field values as class attributes."""
+        self.resource_id = resource_id
+        self.doi = doi
+        self.isbn = isbn
+        self.print_issn = print_issn
+        self.online_issn = online_issn
+        self.data_type = data_type
+        self.section_type = section_type
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
