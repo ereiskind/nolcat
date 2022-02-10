@@ -522,7 +522,7 @@ class AnnualUsageCollectionTracking(Base):
         pass
 
 
-class Resources():
+class Resources(Base):
     """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
@@ -547,7 +547,7 @@ class ResourceTitles(Base):
     pass
 
 
-class ResourcePlatforms():
+class ResourcePlatforms(Base):
     """A relation for the platform-specific resource metadata."""
     __tablename__ = 'resourcePlatforms'
     __table_args__ = {'schema': 'nolcat'}
@@ -570,7 +570,7 @@ class ResourcePlatforms():
         pass
 
 
-class UsageData():
+class UsageData(Base):
     """A relation containing usage metrics."""
     __tablename__ = 'usageData'
     __table_args__ = {'schema': 'nolcat'}
