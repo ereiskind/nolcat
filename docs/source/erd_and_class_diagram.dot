@@ -78,7 +78,7 @@ digraph erd_and_classes {
 
         // Attributes
         Statistics_Source_ID [shape="note"]
-        Statiatics_Source_Name
+        Statistics_Source_Name
         Statistics_Source_Retrieval_Code
         Vendor_ID_in_statisticsSources [
             label="Vendor_ID"
@@ -109,6 +109,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        write_note_in_statisticsSourceNotes [
+            label="write_note"
+            shape="Mrecord"
+        ]
     }
 
 
@@ -157,6 +161,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        write_note_in_resourceSourceNotes [
+            label="write_note"
+            shape="Mrecord"
+        ]
     }
 
 
@@ -246,6 +254,10 @@ digraph erd_and_classes {
 
         // Nouns: Classes or Attributes
         Usage_Data_ID [shape="note"]
+        Resource_Platform_ID_in_COUNTER_Usage_Data [
+            label="Resource_Platform_ID"
+            shape="folder"
+        ]
         __Metric_Type
         __Usage_Date
         Usage_Count [
@@ -255,10 +267,7 @@ digraph erd_and_classes {
         __YOP // This is found in R5 TR, IR only—how to add it?
         __Access_Type // This is found in R5 TR, IR only—how to add it?
         __Access_Method // This is found in R5 only—how to add it?
-        Resource_Platform_ID_in_COUNTER_Usage_Data [
-            label="Resource_Platform_ID"
-            shape="folder"
-        ]
+        
         __Report_Creation_Date // For harvested R5 reports
 
         // Verbs: Methods

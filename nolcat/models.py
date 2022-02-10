@@ -5,7 +5,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 
 Base = declarative_base()
 
@@ -28,7 +28,7 @@ class FiscalYears(Base):
     notes_on_corrections_after_submission = Column()  #ToDo: TEXT
 
 
-    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_corrections_after_submission):
+    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
         """A constructor setting the field values as class attributes."""
         self.fiscal_year_id = fiscal_year_id
         self.fiscal_year = fiscal_year
@@ -39,6 +39,7 @@ class FiscalYears(Base):
         self.arl_18 = arl_18
         self.arl_19 = arl_19
         self.arl_20 = arl_20
+        self.notes_on_statisticsSources_used = notes_on_statisticsSources_used
         self.notes_on_corrections_after_submission = notes_on_corrections_after_submission
 
 
@@ -141,7 +142,7 @@ class VendorNotes(Base):
     vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     note = Column()  #ToDo: TEXT
     written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: TIMESTAMP
+    date_written = Column()  #ToDo: DATE
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
@@ -175,13 +176,11 @@ class StatisticsSources(Base):
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
 
-    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, current_access, access_stop_date, vendor_id):
+    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, vendor_id):
         """A constructor setting the field values as class attributes."""
         self.statistics_source_id = statistics_source_id
         self.statistics_source_name = statistics_source_name
         self.statistics_source_retrieval_code = statistics_source_retrieval_code
-        self.current_access = current_access
-        self.access_stop_date = access_stop_date
         self.vendor_id = vendor_id
 
 
@@ -327,9 +326,38 @@ class StatisticsSources(Base):
 
 
 class StatisticsSourceNotes(Base):
-    """A relation containing notes about statisticsSources records."""
-    #ToDo: Create class
-    pass
+    """A relation containing notes about statistics sources."""
+    __tablename__ = 'statisticsSourceNotes'
+    __table_args__ = {'schema': 'nolcat'}
+
+    statistics_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    note = Column()  #ToDo: TEXT
+    written_by = Column()  #ToDo: VARCHAR(100)
+    date_written = Column()  #ToDo: DATE
+    statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+
+    statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
+
+
+    def __init__(self, statistics_source_notes_id, note, written_by, date_written, statistics_source_id):
+        """A constructor setting the field values as class attributes."""
+        self.statistics_source_notes_id = statistics_source_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.statistics_source_id = statistics_source_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    def write_note(self):
+        #ToDo: Create a method for adding notes
+        pass
 
 
 class StatisticsResourceSources(Base):
@@ -364,7 +392,7 @@ class ResourceSources(Base):
     resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
     source_in_use = Column()  #ToDo: BOOLEAN NOT NULL
-    use_stop_date = Column()  #ToDo: TIMESTAMP
+    use_stop_date = Column()  #ToDo: DATE
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
@@ -388,12 +416,41 @@ class ResourceSources(Base):
 
 
 class ResourceSourceNotes(Base):
-    """A relation containing notes about resourceSources records."""
-    #ToDo: Create class
-    pass
+    """A relation containing notes about resource sources."""
+    __tablename__ = 'resourceSourceNotes'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    note = Column()  #ToDo: TEXT
+    written_by = Column()  #ToDo: VARCHAR(100)
+    date_written = Column()  #ToDo: DATE
+    resource_source_id = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
+
+    resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
 
 
-class AnnualUsageCollectionTracking():
+    def __init__(self, resource_source_notes_id, note, written_by, date_written, resource_source_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_source_notes_id = resource_source_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.resource_source_id = resource_source_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    def write_note(self):
+        #ToDo: Create a method for adding notes
+        pass
+
+
+class AnnualUsageCollectionTracking(Base):
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'
     __table_args__ = {'schema': 'nolcat'}
@@ -465,7 +522,7 @@ class AnnualUsageCollectionTracking():
         pass
 
 
-class Resources():
+class Resources(Base):
     """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
@@ -478,18 +535,51 @@ class Resources():
     data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
     section_type = Column()  #ToDo: VARCHAR(10)
 
+
+    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
+        """A constructor setting the field values as class attributes."""
+        self.resource_id = resource_id
+        self.doi = doi
+        self.isbn = isbn
+        self.print_issn = print_issn
+        self.online_issn = online_issn
+        self.data_type = data_type
+        self.section_type = section_type
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
 class ResourceTitles(Base):
-    """A relation containing all the title strings found in COUNTER reports for a given resources record."""
-    #ToDo: Create class
-    pass
+    """A relation containing all the title strings found in COUNTER reports for resources, compiled to preserve all of a resource's names."""
+    #ToDo: Figure out handling having the `Database`, `Title`, and `Item` fields from the DR, TR, IR come into this single table; should the granularity/report of origin be recorded?
+    __tablename__ = 'resourceTitles'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_title_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_title = Column()  #ToDo: VARCHAR(2000)
+    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+
+    resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
 
 
-class ResourcePlatforms():
+    def __init__(self, resource_title_id, resource_title, resource_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_title_id = resource_title_id
+        self.resource_title = resource_title
+        self.resource_id = resource_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class ResourcePlatforms(Base):
     """A relation for the platform-specific resource metadata."""
     __tablename__ = 'resourcePlatforms'
     __table_args__ = {'schema': 'nolcat'}
@@ -507,12 +597,25 @@ class ResourcePlatforms():
     statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
 
 
+    def __init__(self, resource_platform_id, publisher, publisher_id, platform, proprietary_id, uri, interface, resource_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_platform_id = resource_platform_id
+        self.publisher = publisher
+        self.publisher_id = publisher_id
+        self.platform = platform
+        self.proprietary_id = proprietary_id
+        self.uri = uri
+        self.interface = interface
+        self.resource_id = resource_id
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
 
-class UsageData():
+class UsageData(Base):
     """A relation containing usage metrics."""
     __tablename__ = 'usageData'
     __table_args__ = {'schema': 'nolcat'}
@@ -525,11 +628,25 @@ class UsageData():
     yop = Column()  #ToDo: SMALLINT
     access_type = Column()  #ToDo: VARCHAR(20)
     access_method = Column()  #ToDo: VARCHAR(10)
-    report_creation_date = Column()  #ToDo: DATE
+    report_creation_date = Column()  #ToDo: DATETIME
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 
 
+    def __init__(self, usage_data_id, resource_platform_id, metric_type, usage_date, usage_count, yop, access_type, access_method, report_creation_date):
+        """A constructor setting the field values as class attributes."""
+        self.usage_data_id = usage_data_id
+        self.resource_platform_id = resource_platform_id
+        self.metric_type = metric_type
+        self.usage_date = usage_date
+        self.usage_count = usage_count
+        self.yop = yop
+        self.access_type = access_type
+        self.access_method = access_method
+        self.report_creation_date = report_creation_date
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
