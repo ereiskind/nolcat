@@ -161,6 +161,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        write_note_in_resourceSourceNotes [
+            label="write_note"
+            shape="Mrecord"
+        ]
     }
 
 

@@ -416,9 +416,38 @@ class ResourceSources(Base):
 
 
 class ResourceSourceNotes(Base):
-    """A relation containing notes about resourceSources records."""
-    #ToDo: Create class
-    pass
+    """A relation containing notes about resource sources."""
+    __tablename__ = 'resourceSourceNotes'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    note = Column()  #ToDo: TEXT
+    written_by = Column()  #ToDo: VARCHAR(100)
+    date_written = Column()  #ToDo: TIMESTAMP
+    resource_source_id = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
+
+    resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
+
+
+    def __init__(self, resource_source_notes_id, note, written_by, date_written, resource_source_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_source_notes_id = resource_source_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.resource_source_id = resource_source_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    def write_note(self):
+        #ToDo: Create a method for adding notes
+        pass
 
 
 class AnnualUsageCollectionTracking():
