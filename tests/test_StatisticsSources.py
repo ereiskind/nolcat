@@ -29,3 +29,53 @@ def StatisticsSources_fixture():
         # 1,  # StatisticsSources.vendor_id
     # )
     #ToDo: return fixture_value
+
+
+def test_fetch_SUSHI_credentials_for_API(StatisticsSources_fixture):
+    """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning a value suitable for use in a API call."""
+    #ToDo: stats_source = StatisticsSources_fixture
+    #ToDo: credentials = stats.source.fetch_SUSHI_credentials()
+    #ToDo: assert credentials == dict and credentials['URL'] matches regex /https?:\/\/.*\//
+    pass
+
+
+def test_fetch_SUSHI_credentials_for_display(StatisticsSources_fixture):
+    """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning the credentials for user display."""
+    #ToDo: stats_source = StatisticsSources_fixture
+    #ToDo: credentials = stats.source.fetch_SUSHI_credentials(False)
+    #ToDo: assert `credentials` is displaying credentials to the user
+    pass
+
+
+def test_harvest_R5_SUSHI(StatisticsSources_fixture):
+    """Tests collecting all available R5 reports for a StatisticsSources.statistics_source_retrieval_code value and combining them into a single dataframe."""
+    #ToDo: PROBLEM: Included in the method is a check to see if the provided statistics source has already been loaded for each month in the provided timeframe; this is a very good idea for the method itself, as it prevents data loading duplications, but will block testing, as the method won't make the API calls for the master reports of a vendor and month combination already in the database. How can testing be done?
+    #ToDo: Set up functionality for rolling back transaction so loads for this test don't go in the database
+    #ToDo: stats_source = StatisticsSources_fixture
+    #ToDo: Ask for dates
+    #ToDo: usage = stats_source._harvest_R5_SUSHI(dates)
+    #ToDo: Check `usage` in some ways to confirm the method call was a success
+    pass
+
+
+def test_collect_usage_statistics(StatisticsSources_fixture):
+    """Tests the method making the StatisticsSources._harvest_R5_SUSHI result a RawCOUNTERReport object."""
+    #ToDo: PROBLEM: Included in the method is a check to see if the provided statistics source has already been loaded for each month in the provided timeframe; this is a very good idea for the method itself, as it prevents data loading duplications, but will block testing, as the method won't make the API calls for the master reports of a vendor and month combination already in the database. How can testing be done?
+    #ToDo: Set up functionality for rolling back transaction so loads for this test don't go in the database
+    #ToDo: stats_source = StatisticsSources_fixture
+    #ToDo: Ask for dates
+    #ToDo: usage = stats_source._harvest_R5_SUSHI(dates)
+    #ToDo: assert usage is RawCOUNTERReport object
+    pass
+
+
+def test_upload_R4_report(StatisticsSources_fixture):
+    """Tests the uploading and ingesting of a transformed R4 report."""
+    #ToDo: Develop this test alongside the method its testing
+    pass
+
+
+def test_upload_R5_report(StatisticsSources_fixture):
+    """Tests the uploading and ingesting of a R5 report."""
+    #ToDo: Develop this test alongside the method its testing
+    pass
