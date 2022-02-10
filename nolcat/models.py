@@ -142,7 +142,7 @@ class VendorNotes(Base):
     vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     note = Column()  #ToDo: TEXT
     written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: TIMESTAMP
+    date_written = Column()  #ToDo: DATE
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
@@ -333,7 +333,7 @@ class StatisticsSourceNotes(Base):
     statistics_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     note = Column()  #ToDo: TEXT
     written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: TIMESTAMP
+    date_written = Column()  #ToDo: DATE
     statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
 
     statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
@@ -392,7 +392,7 @@ class ResourceSources(Base):
     resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
     source_in_use = Column()  #ToDo: BOOLEAN NOT NULL
-    use_stop_date = Column()  #ToDo: TIMESTAMP
+    use_stop_date = Column()  #ToDo: DATE
     vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
 
     vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
@@ -423,7 +423,7 @@ class ResourceSourceNotes(Base):
     resource_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
     note = Column()  #ToDo: TEXT
     written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: TIMESTAMP
+    date_written = Column()  #ToDo: DATE
     resource_source_id = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
 
     resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
@@ -628,7 +628,7 @@ class UsageData(Base):
     yop = Column()  #ToDo: SMALLINT
     access_type = Column()  #ToDo: VARCHAR(20)
     access_method = Column()  #ToDo: VARCHAR(10)
-    report_creation_date = Column()  #ToDo: DATE
+    report_creation_date = Column()  #ToDo: DATETIME
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 

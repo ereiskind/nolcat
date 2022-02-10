@@ -35,7 +35,7 @@ CREATE TABLE vendorNotes (
     Vendor_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Note TEXT,
     Written_By VARCHAR(100),
-    Date_Written TIMESTAMP,
+    Date_Written DATE,
     Vendor_ID INT NOT NULL,
     INDEX vendors_FK_INDX (Vendor_ID),
     CONSTRAINT vendors_FK_vendorNotes FOREIGN KEY vendors_FK_INDX (Vendor_ID)
@@ -61,7 +61,7 @@ CREATE TABLE statisticsSourceNotes (
     Statistics_Source_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Note TEXT,
     Written_By VARCHAR(100),
-    Date_Written TIMESTAMP,
+    Date_Written DATE,
     Statistics_Source_ID INT NOT NULL,
     INDEX statisticsSources_FK_INDX (Statistics_Source_ID),
     CONSTRAINT statisticsSources_FK_statisticsSourceNotes FOREIGN KEY statisticsSources_FK_INDX (Statistics_Source_ID)
@@ -93,7 +93,7 @@ CREATE TABLE resourceSources (
     Resource_Source_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Resource_Source_Name VARCHAR(100) NOT NULL,
     Source_in_Use BOOLEAN NOT NULL,
-    Use_Stop_Date TIMESTAMP,
+    Use_Stop_Date DATE,
     Vendor_ID INT NOT NULL,
     INDEX vendors_FK_INDX (Vendor_ID),
     CONSTRAINT vendors_FK_resourceSources FOREIGN KEY vendors_FK_INDX (Vendor_ID)
@@ -106,7 +106,7 @@ CREATE TABLE resourceSourceNotes (
     Resource_Source_Notes_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Note TEXT,
     Written_By VARCHAR(100),
-    Date_Written TIMESTAMP,
+    Date_Written DATE,
     Resource_Source_ID INT NOT NULL,
     INDEX resourceSources_FK_INDX (Resource_Source_ID),
     CONSTRAINT resourceSources_FK_resourceSourceNotes FOREIGN KEY resourceSources_FK_INDX (Resource_Source_ID)
@@ -255,7 +255,7 @@ CREATE TABLE usageData (
     YOP SMALLINT,
     Access_Type VARCHAR(20),
     Access_Method VARCHAR(10),
-    Report_Creation_Date DATE,
+    Report_Creation_Date DATETIME,
     INDEX resourcePlatforms_FK_INDX (Resource_Platform_ID),
     CONSTRAINT resourcePlatforms_FK_usageData FOREIGN KEY resourcePlatforms_FK_INDX (Resource_Platform_ID)
         REFERENCES resourcePlatforms(Resource_Platform_ID)
