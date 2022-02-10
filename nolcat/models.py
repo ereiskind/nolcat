@@ -191,9 +191,44 @@ class StatisticsSources(Base):
 
 
     @hybrid_method
-    def show_SUSHI_credentials():
-        #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
-        pass
+    def fetch_SUSHI_credentials(for_API_call=True):
+        """A method for fetching the information form making a SUSHI API call for the statistics source.
+
+        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+
+        Args:
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+        
+        Returns:
+            dict: a dictionary with the SUSHI API call parameters and values and the API call root
+            TBD: a user display format in Flask
+        """
+        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
+        #Section: Retrieve Data
+        #Subsection: Retrieve Data from JSON
+        #ToDo: path_to_credentials_file = str(Path(the parts of the path to the file))  #ALERT: At this time, the final location of the SUSHI credentials JSON in the container has yet to be determined; when it is set, the path will need to change accordingly
+        #ToDo: with open(path_to_credentials_file) as JSON_file:
+            #ToDo: SUSHI_data_file = json.load(JSON_File)
+            #ToDo: for vendor in SUSHI_data_file:
+                #ToDo: for stats_source in vendor:
+                    #ToDo: if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        #ToDo: credentials = dict(
+                            #ToDo: URL = stats_source['online_location'],
+                            #ToDo: customer_id = stats_source['user_id']
+                        #ToDo: )
+                        #ToDo: try: credentials['requestor_id'] = stats_source['user_password']
+                        #ToDo: try: credentials['api_key'] = stats_source['user_pass_note']
+                        #ToDo: try: credentials['platform'] = stats_source['delivery_address']
+
+        #Subsection: Retrieve Data from Alma
+        #ToDo: When credentials are in Alma, create this functionality
+
+
+        #Section: Return Data in Requested Format
+        #ToDo: if for_API_call:
+            #ToDo: return credentials
+        #ToDo: else:
+            #ToDo: Insert `credentials` values into a Flask page or popup and display it to the user
 
 
     @hybrid_method
