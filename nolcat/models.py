@@ -535,6 +535,7 @@ class Resources():
     data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
     section_type = Column()  #ToDo: VARCHAR(10)
 
+
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
