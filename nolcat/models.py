@@ -9,6 +9,9 @@ from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://py
 
 Base = declarative_base()
 
+#ALERT: A global constant is used for the path to the JSON with the R5 SUSHI credentials for general ease of use. At this time, the final location of the JSON in the container's file system has yet to be determined, so this file path will need to be adjusted as that is finalized. Currently, the absolute file path references a file in a shared network drive that everyone in FSU Libraries working on NoLCAT should be able to access.
+PATH_TO_CREDENTIALS_FILE = str(Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_Credentials.json'))
+
 
 class FiscalYears(Base):
     """A relation representing the fiscal years for which data has been collected."""
@@ -206,7 +209,6 @@ class StatisticsSources(Base):
         #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
-        #ToDo: path_to_credentials_file = str(Path(the parts of the path to the file))  #ALERT: At this time, the final location of the SUSHI credentials JSON in the container has yet to be determined; when it is set, the path will need to change accordingly
         #ToDo: with open(path_to_credentials_file) as JSON_file:
             #ToDo: SUSHI_data_file = json.load(JSON_File)
             #ToDo: for vendor in SUSHI_data_file:
