@@ -176,13 +176,11 @@ class StatisticsSources(Base):
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
 
-    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, current_access, access_stop_date, vendor_id):
+    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, vendor_id):
         """A constructor setting the field values as class attributes."""
         self.statistics_source_id = statistics_source_id
         self.statistics_source_name = statistics_source_name
         self.statistics_source_retrieval_code = statistics_source_retrieval_code
-        self.current_access = current_access
-        self.access_stop_date = access_stop_date
         self.vendor_id = vendor_id
 
 
