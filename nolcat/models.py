@@ -554,9 +554,29 @@ class Resources(Base):
 
 
 class ResourceTitles(Base):
-    """A relation containing all the title strings found in COUNTER reports for a given resources record."""
-    #ToDo: Create class
-    pass
+    """A relation containing all the title strings found in COUNTER reports for resources, compiled to preserve all of a resource's names."""
+    #ToDo: Figure out handling having the `Database`, `Title`, and `Item` fields from the DR, TR, IR come into this single table; should the granularity/report of origin be recorded?
+    __tablename__ = 'resourceTitles'
+    __table_args__ = {'schema': 'nolcat'}
+
+    resource_title_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    resource_title = Column()  #ToDo: VARCHAR(2000)
+    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+
+    resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
+
+
+    def __init__(self, resource_title_id, resource_title, resource_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_title_id = resource_title_id
+        self.resource_title = resource_title
+        self.resource_id = resource_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
 
 
 class ResourcePlatforms(Base):
