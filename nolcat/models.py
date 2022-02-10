@@ -597,7 +597,20 @@ class ResourcePlatforms(Base):
     statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
 
 
+    def __init__(self, resource_platform_id, publisher, publisher_id, platform, proprietary_id, uri, interface, resource_id):
+        """A constructor setting the field values as class attributes."""
+        self.resource_platform_id = resource_platform_id
+        self.publisher = publisher
+        self.publisher_id = publisher_id
+        self.platform = platform
+        self.proprietary_id = proprietary_id
+        self.uri = uri
+        self.interface = interface
+        self.resource_id = resource_id
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
