@@ -633,6 +633,20 @@ class UsageData(Base):
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 
 
+    def __init__(self, usage_data_id, resource_platform_id, metric_type, usage_date, usage_count, yop, access_type, access_method, report_creation_date):
+        """A constructor setting the field values as class attributes."""
+        self.usage_data_id = usage_data_id
+        self.resource_platform_id = resource_platform_id
+        self.metric_type = metric_type
+        self.usage_date = usage_date
+        self.usage_count = usage_count
+        self.yop = yop
+        self.access_type = access_type
+        self.access_method = access_method
+        self.report_creation_date = report_creation_date
+
+
     def __repr__(self):
+        """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
