@@ -450,7 +450,7 @@ class ResourceSourceNotes(Base):
         pass
 
 
-class AnnualUsageCollectionTracking():
+class AnnualUsageCollectionTracking(Base):
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'
     __table_args__ = {'schema': 'nolcat'}
