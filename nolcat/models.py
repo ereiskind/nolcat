@@ -28,7 +28,7 @@ class FiscalYears(Base):
     notes_on_corrections_after_submission = Column()  #ToDo: TEXT
 
 
-    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_corrections_after_submission):
+    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
         """A constructor setting the field values as class attributes."""
         self.fiscal_year_id = fiscal_year_id
         self.fiscal_year = fiscal_year
@@ -39,6 +39,7 @@ class FiscalYears(Base):
         self.arl_18 = arl_18
         self.arl_19 = arl_19
         self.arl_20 = arl_20
+        self.notes_on_statisticsSources_used = notes_on_statisticsSources_used
         self.notes_on_corrections_after_submission = notes_on_corrections_after_submission
 
 
