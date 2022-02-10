@@ -78,7 +78,7 @@ digraph erd_and_classes {
 
         // Attributes
         Statistics_Source_ID [shape="note"]
-        Statiatics_Source_Name
+        Statistics_Source_Name
         Statistics_Source_Retrieval_Code
         Vendor_ID_in_statisticsSources [
             label="Vendor_ID"
