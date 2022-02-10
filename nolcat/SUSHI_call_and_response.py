@@ -30,9 +30,9 @@ class SUSHICallAndResponse:
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
-        retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
-        handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
-        create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
+        _retrieve_downloaded_JSON: Retrieves a downloaded response to a SUSHI API call.
+        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
     Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -238,7 +238,7 @@ class SUSHICallAndResponse:
         return
 
 
-    def retrieve_downloaded_JSON(self):
+    def _retrieve_downloaded_JSON(self):
         """Retrieves a downloaded response to a SUSHI API call. 
 
         Some vendors, most notably Silverchair, respond to SUSHI API call responses by downloading a JSON file with the requested data. This method captures and reads the contents of the downloaded file, then removes the file. Functionality related to downloading the file taken from https://medium.com/@moungpeter/how-to-automate-downloading-files-using-python-selenium-and-headless-chrome-9014f0cdd196.
@@ -276,7 +276,7 @@ class SUSHICallAndResponse:
         return file_data
 
 
-    def handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
+    def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
 
         This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
@@ -330,7 +330,7 @@ class SUSHICallAndResponse:
             return False
     
 
-    def create_error_query_text(self, error_contents):
+    def _create_error_query_text(self, error_contents):
         """This method creates the text for the `handle_SUSHI_exceptions` dialog box.
 
         The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single doalog box.
