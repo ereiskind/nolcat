@@ -326,9 +326,38 @@ class StatisticsSources(Base):
 
 
 class StatisticsSourceNotes(Base):
-    """A relation containing notes about statisticsSources records."""
-    #ToDo: Create class
-    pass
+    """A relation containing notes about statistics sources."""
+    __tablename__ = 'statisticsSourceNotes'
+    __table_args__ = {'schema': 'nolcat'}
+
+    statistics_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
+    note = Column()  #ToDo: TEXT
+    written_by = Column()  #ToDo: VARCHAR(100)
+    date_written = Column()  #ToDo: TIMESTAMP
+    statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+
+    statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
+
+
+    def __init__(self, statistics_source_notes_id, note, written_by, date_written, statistics_source_id):
+        """A constructor setting the field values as class attributes."""
+        self.statistics_source_notes_id = statistics_source_notes_id
+        self.note = note
+        self.written_by = written_by
+        self.date_written = date_written
+        self.statistics_source_id = statistics_source_id
+    
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+    @hybrid_method
+    def write_note(self):
+        #ToDo: Create a method for adding notes
+        pass
 
 
 class StatisticsResourceSources(Base):

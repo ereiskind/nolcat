@@ -109,6 +109,10 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        write_note_in_statisticsSourceNotes [
+            label="write_note"
+            shape="Mrecord"
+        ]
     }
 
 
