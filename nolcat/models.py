@@ -1,5 +1,6 @@
 """These classes represent the relations in the database."""
 
+from pathlib import Path
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy import ForeignKey
