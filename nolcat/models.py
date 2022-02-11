@@ -241,10 +241,10 @@ class StatisticsSources(Base):
 
 
         #Section: Return Data in Requested Format
-        #ToDo: if for_API_call:
-            #ToDo: return credentials
-        #ToDo: else:
-            #ToDo: Insert `credentials` values into a Flask page or popup and display it to the user
+        if for_API_call:
+            return credentials
+        else:
+            return None  #ToDo: Change to a way to display the `credentials` values to the user via Flask
 
 
     @hybrid_method
