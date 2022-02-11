@@ -112,9 +112,9 @@ class Vendors(Base):
     __tablename__ = 'vendors'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    vendor_name = Column()  #ToDo: VARCHAR(80) NOT NULL
-    alma_vendor_code = Column()  #ToDo: VARCHAR(10)
+    vendor_id = Column(Integer, primary_key=True)
+    vendor_name = Column(String(80))
+    alma_vendor_code = Column(String(10))
 
 
     def __init__(self, vendor_id, vendor_name, alma_vendor_code):
