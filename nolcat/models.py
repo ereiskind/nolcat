@@ -475,11 +475,11 @@ class ResourceSourceNotes(Base):
     __tablename__ = 'resourceSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    resource_source_id = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
+    resource_source_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    resource_source_id = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
 
     resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
 
