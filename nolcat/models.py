@@ -21,17 +21,17 @@ class FiscalYears(Base):
     __tablename__ = 'fiscalYears'
     __table_args__ = {'schema': 'nolcat'}
 
-    fiscal_year_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    fiscal_year = Column()  #ToDo: CHAR(4) NOT NULL
-    start_date = Column()  #ToDo: DATE NOT NULL
-    end_date = Column()  #ToDo: DATE NOT NULL
-    acrl_60b = Column()  #ToDo: SMALLINT
-    acrl_63 = Column()  #ToDo: SMALLINT
-    arl_18 = Column()  #ToDo: SMALLINT
-    arl_19 = Column()  #ToDo: SMALLINT
-    arl_20 = Column()  #ToDo: SMALLINT
-    notes_on_statisticsSources_used = Column()  #ToDo: TEXT
-    notes_on_corrections_after_submission = Column()  #ToDo: TEXT
+    fiscal_year_id = Column(Integer, primary_key=True)
+    fiscal_year = Column(String(4))
+    start_date = Column(Date)
+    end_date = Column(Date)
+    acrl_60b = Column(SmallInteger)
+    acrl_63 = Column(SmallInteger)
+    arl_18 = Column(SmallInteger)
+    arl_19 = Column(SmallInteger)
+    arl_20 = Column(SmallInteger)
+    notes_on_statisticsSources_used = Column(Text)
+    notes_on_corrections_after_submission = Column(Text)
 
 
     def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
