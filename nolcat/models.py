@@ -615,9 +615,9 @@ class ResourceTitles(Base):
     __tablename__ = 'resourceTitles'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_title_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_title = Column()  #ToDo: VARCHAR(2000)
-    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+    resource_title_id = Column(Integer, primary_key=True)
+    resource_title = Column(String(2000))
+    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
 
