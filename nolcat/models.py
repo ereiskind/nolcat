@@ -192,8 +192,8 @@ class StatisticsSources(Base):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
+        return f"<'statistics_source_id': '{self.statistics_source_id}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_id': '{self.vendor_id}'>"
 
 
     @hybrid_method
