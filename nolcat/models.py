@@ -510,26 +510,27 @@ class AnnualUsageCollectionTracking(Base):
     __tablename__ = 'annualUsageCollectionTracking'
     __table_args__ = {'schema': 'nolcat'}
 
-    auct_statistics_source = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
-    auct_fiscal_year = Column(ForeignKey('nolcat.FiscalYears.fiscal_year_id'))  #ToDo: INT NOT NULL
-    usage_is_being_collected = Column()  #ToDo: BOOLEAN NOT NULL
-    manual_collection_required = Column()  #ToDo: BOOLEAN
-    collection_via_email = Column()  #ToDo: BOOLEAN
-    is_counter_compliant = Column()  #ToDo: BOOLEAN
-    collection_status = Column()  #ToDo: ENUM(
-        #'N/A: Paid by Law',
-        #'N/A: Paid by Med',
-        #'N/A: Paid by Music',
-        #'N/A: Open access',
-        #'N/A: Other (see notes)',
-        #'Collection not started',
-        #'Collection in process (see notes)',
-        #'Collection issues requiring resolution',
-        #'Collection complete',
-        #'Usage not provided',
-        #'No usage to report'
-    usage_file_path = Column()  #ToDo: VARCHAR(150)
-    notes = Column()  #ToDo: TEXT
+    auct_statistics_source = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    auct_fiscal_year = Column(Integer, ForeignKey('nolcat.FiscalYears.fiscal_year_id'), primary_key=True)
+    usage_is_being_collected = Column(Boolean)
+    manual_collection_required = Column(Boolean)
+    collection_via_email = Column(Boolean)
+    is_counter_compliant = Column(Boolean)
+    collection_status = Column('COLLECTION_STATUS', Enum(  # The first argument seems to be meant as a name, but what's being named is unclear; the argument value is named to represent the constant that is the values in the enumeration
+        'N/A: Paid by Law',
+        'N/A: Paid by Med',
+        'N/A: Paid by Music',
+        'N/A: Open access',
+        'N/A: Other (see notes)',
+        'Collection not started',
+        'Collection in process (see notes)',
+        'Collection issues requiring resolution',
+        'Collection complete',
+        'Usage not provided',
+        'No usage to report'
+    ))
+    usage_file_path = Column(String(150))
+    notes = Column(Text)
 
     statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
     fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
