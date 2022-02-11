@@ -583,13 +583,13 @@ class Resources(Base):
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    doi = Column()  #ToDo: VARCHAR(75)
-    isbn = Column()  #ToDo: CHAR(17)
-    print_issn = Column()  #ToDo: CHAR(9)
-    online_issn = Column()  #ToDo: CHAR(9)
-    data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
-    section_type = Column()  #ToDo: VARCHAR(10)
+    resource_id = Column(Integer, primary_key=True)
+    doi = Column(String(75))
+    isbn = Column(String(17))
+    print_issn = Column(String(9))
+    online_issn = Column(String(9))
+    data_type = Column(String(25))
+    section_type = Column(String(10))
 
 
     def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
