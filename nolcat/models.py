@@ -1,6 +1,7 @@
 """These classes represent the relations in the database."""
 
 from pathlib import Path
+import json
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy import ForeignKey
@@ -210,18 +211,30 @@ class StatisticsSources(Base):
         #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
-        #ToDo: with open(path_to_credentials_file) as JSON_file:
-            #ToDo: SUSHI_data_file = json.load(JSON_File)
-            #ToDo: for vendor in SUSHI_data_file:
-                #ToDo: for stats_source in vendor:
-                    #ToDo: if stats_source['interface_id'] == self.statistics_source_retrieval_code:
-                        #ToDo: credentials = dict(
-                            #ToDo: URL = stats_source['online_location'],
-                            #ToDo: customer_id = stats_source['user_id']
-                        #ToDo: )
-                        #ToDo: try: credentials['requestor_id'] = stats_source['user_password']
-                        #ToDo: try: credentials['api_key'] = stats_source['user_pass_note']
-                        #ToDo: try: credentials['platform'] = stats_source['delivery_address']
+        with open(PATH_TO_CREDENTIALS_FILE) as JSON_file:
+            SUSHI_data_file = json.load(JSON_file)
+            for vendor in SUSHI_data_file:
+                for stats_source in vendor:
+                    if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        credentials = dict(
+                            URL = stats_source['online_location'],
+                            customer_id = stats_source['user_id']
+                        )
+
+                        try:
+                            credentials['requestor_id'] = stats_source['user_password']
+                        except:
+                            pass
+
+                        try:
+                            credentials['api_key'] = stats_source['user_pass_note']
+                        except:
+                            pass
+
+                        try:
+                            credentials['platform'] = stats_source['delivery_address']
+                        except:
+                            pass
 
         #Subsection: Retrieve Data from Alma
         #ToDo: When credentials are in Alma, create this functionality
