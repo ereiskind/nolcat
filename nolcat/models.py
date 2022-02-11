@@ -640,14 +640,14 @@ class ResourcePlatforms(Base):
     __tablename__ = 'resourcePlatforms'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_platform_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    publisher = Column()  #ToDo: VARCHAR(225)
-    publisher_id = Column()  #ToDo: VARCHAR(50)
-    platform = Column()  #ToDo: VARCHAR(75) NOT NULL
-    proprietary_id = Column()  #ToDo: VARCHAR(100)
-    uri = Column()  #ToDo: VARCHAR(200)
-    interface = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
-    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+    resource_platform_id = Column(Integer, primary_key=True)
+    publisher = Column(String(225))
+    publisher_id = Column(String(50))
+    platform = Column(String(75))
+    proprietary_id = Column(String(100))
+    uri = Column(String(200))
+    interface = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
+    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
     statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
