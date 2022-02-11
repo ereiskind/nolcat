@@ -1,6 +1,7 @@
 """These classes represent the relations in the database."""
 
 from pathlib import Path
+import logging
 import json
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
@@ -196,7 +197,7 @@ class StatisticsSources(Base):
 
 
     @hybrid_method
-    def fetch_SUSHI_credentials(for_API_call=True):
+    def fetch_SUSHI_credentials(self, for_API_call=True):
         """A method for fetching the information form making a SUSHI API call for the statistics source.
 
         This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
@@ -213,9 +214,11 @@ class StatisticsSources(Base):
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
+            logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:
                 for stats_source in vendor:
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
                             URL = stats_source['online_location'],
                             customer_id = stats_source['user_id']
@@ -242,6 +245,7 @@ class StatisticsSources(Base):
 
         #Section: Return Data in Requested Format
         if for_API_call:
+            logging.debug(f"Returning the credentials {credentials} for a SUSHI API call.")
             return credentials
         else:
             return None  #ToDo: Change to a way to display the `credentials` values to the user via Flask
