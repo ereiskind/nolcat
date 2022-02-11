@@ -4,7 +4,7 @@ from pathlib import Path
 import logging
 import json
 from sqlalchemy import Column
-from sqlalchemy import Integer, String
+from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
