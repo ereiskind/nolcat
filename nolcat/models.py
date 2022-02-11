@@ -423,8 +423,8 @@ class StatisticsResourceSources(Base):
     __tablename__ = 'statisticsResourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    srs_statistics_sources = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
-    srs_resource_sources = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
+    srs_statistics_sources = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    srs_resource_sources = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = Column(Boolean)
 
     statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
