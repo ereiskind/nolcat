@@ -1,0 +1,111 @@
+python -m pytest -s --log-cli-level="debug" tests/test_StatisticsSources.py
+
+
+class NameOfOneClass(Base):
+    __tablename__ = 'name_of_one_table'
+    id = Column(Integer, primary_key=True)
+    y = relationship("NameOfManyTable", back_populates="x")
+
+class NameOfManyTable(Base):
+    __tablename__ = 'child'
+    id = Column(Integer, primary_key=True)
+    name_of_one_table_id = Column(Integer, ForeignKey('name_of_one_table.id'))
+    x = relationship("NameOfOneClass", back_populates="y")
+
+
+
+
+arrowhead = how PK table can connect to FK table
+arrowtail = how FK table can connect to PK table
+
+teeodot = 0..1 (unique but optional)
+crowodot = 0..N (optional, not unique)
+teetee = 1..1 (exactly one)
+crowtee = 1..N (neither optional nor unique)
+
+"name of table with single element" -> "name of table with multiple elements"
+
+Fiscal_Year_ID -> AUCT_Fiscal_Year [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+    In AUCT: has_exactly_one_FiscalYears = relationship("FiscalYears", back_populates=)
+    in FY: has_zero_to_many_AnnualUsageCollectionTracking = 
+
+
+
+    Vendor_ID -> Vendor_ID_in_vendorNotes [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_statisticsSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+    Vendor_ID -> Vendor_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+
+    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+
+    Statistics_Source_ID -> SRS_Statistics_Source [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+
+    Statistics_Source_ID -> AUCT_Statistics_Source [
+        dir="both"
+        arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
+        arrowtail="teetee"
+    ]
+
+
+    Resource_Source_ID -> SRS_Resource_Source [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+
+    Resource_Source_ID -> Resource_Source_ID_in_resourceSourceNotes [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
+
+
+    Resource_ID -> Resource_ID_in_Resource_Titles [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
+
+
+    Resource_ID -> Resource_ID_in_Resource_Platforms [
+        dir="both"
+        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
+        arrowtail="teetee"
+    ]
+
+
+    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
+        dir="both"
+        arrowhead="crowtee"
+        arrowtail="teetee"
+    ]
