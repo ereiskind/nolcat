@@ -151,7 +151,7 @@ class VendorNotes(Base):
     date_written = Column(Date)
     vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
-    vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
+    vendors_FK_vendorNotes = relationship('Vendors', backref='vendors')
 
 
     def __init__(self, vendor_notes_id, note, written_by, date_written, vendor_id):
@@ -179,7 +179,7 @@ class StatisticsSources(Base):
     statistics_source_retrieval_code = Column(String(30))
     vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
-    vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
+    vendors_FK_statisticsSources = relationship('Vendors', backref='vendors')
 
 
     def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, vendor_id):
@@ -391,7 +391,7 @@ class StatisticsSourceNotes(Base):
     date_written = Column(Date)
     statistics_source_id = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
 
-    statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
+    statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statisticsSources')
 
 
     def __init__(self, statistics_source_notes_id, note, written_by, date_written, statistics_source_id):
@@ -427,8 +427,8 @@ class StatisticsResourceSources(Base):
     srs_resource_sources = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = Column(Boolean)
 
-    statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
-    resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resource_source_id')
+    statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statisticsSources')
+    resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resourceSources')
 
 
     def __repr__(self):
@@ -450,7 +450,7 @@ class ResourceSources(Base):
     use_stop_date = Column(Date)
     vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
-    vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
+    vendors_FK_resourceSources = relationship('Vendors', backref='vendors')
 
 
     def __repr__(self):
@@ -481,7 +481,7 @@ class ResourceSourceNotes(Base):
     date_written = Column(Date)
     resource_source_id = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
 
-    resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
+    resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resourceSources')
 
 
     def __init__(self, resource_source_notes_id, note, written_by, date_written, resource_source_id):
@@ -532,8 +532,8 @@ class AnnualUsageCollectionTracking(Base):
     usage_file_path = Column(String(150))
     notes = Column(Text)
 
-    statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
-    fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
+    statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statisticsSources')
+    fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscalYears')
 
 
     def __init__(self, auct_statistics_source, auct_fiscal_year, usage_is_being_collected, manual_collection_required, collection_via_email, is_counter_compliant, collection_status, usage_file_path, notes):
@@ -619,7 +619,7 @@ class ResourceTitles(Base):
     resource_title = Column(String(2000))
     resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
-    resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
+    resources_FK_resourceTitles = relationship('Resources', backref='resources')
 
 
     def __init__(self, resource_title_id, resource_title, resource_id):
@@ -649,8 +649,8 @@ class ResourcePlatforms(Base):
     interface = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
     resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
-    resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
-    statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
+    resources_FK_resourcePlatforms = relationship('Resources', backref='resources')
+    statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='statisticsSources')
 
 
     def __init__(self, resource_platform_id, publisher, publisher_id, platform, proprietary_id, uri, interface, resource_id):
@@ -686,7 +686,7 @@ class UsageData(Base):
     access_method = Column(String(10))
     report_creation_date = Column(DateTime)
 
-    resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
+    resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resourcePlatforms')
 
 
     def __init__(self, usage_data_id, resource_platform_id, metric_type, usage_date, usage_count, yop, access_type, access_method, report_creation_date):
