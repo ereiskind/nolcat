@@ -18,7 +18,7 @@ For testing the SUSHI API, a fixture that prompts the user for the SUSHI API inf
 #ToDo: Test for longer periods of time and more granular reports will be done by testing the StatisticsSources._harvest_R5_SUSHI method
 
 
-@pytest.fixture(scope='session')  # Without the scope, the data prompts appear in stdout for each test
+@pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
 def SUSHI_credentials_fixture():
     """A fixture to collect and store the data for making SUSHI calls."""
     URL = input("Enter the SUSHI base URL, including the final backslash: ")
