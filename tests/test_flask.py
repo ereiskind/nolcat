@@ -1,4 +1,4 @@
-"""This module contains the tests for the Flask web app."""
+"""This module contains the tests for setting up the Flask web app."""
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
 # https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
@@ -20,9 +20,8 @@ def flask_client():
 
 
 def test_flask_client_creation(flask_client):
-    """Tests that the flask_client fixture works by invoking it in a test wth an assert statement set to `True`."""
-    print("test statement for start of test")
-    assert True
+    """Tests that the flask_client fixture creates a FlaskClient object for `nolcat.app`."""
+    assert repr(flask_client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
 def test_flask_activation(flask_client):
