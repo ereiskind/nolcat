@@ -1,0 +1,1 @@
+"""This module contains the tests for the route functions in the `view` blueprint."""

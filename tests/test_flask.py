@@ -1,4 +1,4 @@
-"""This module contains the tests for setting up the Flask web app."""
+"""This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
 # https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
@@ -24,7 +24,7 @@ def test_flask_client_creation(flask_client):
     assert repr(flask_client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_flask_activation(flask_client):
+def test_homepage(flask_client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     homepage = flask_client.get('/')
     HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
@@ -44,11 +44,4 @@ def test_404_page(flask_client):
     assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup
 
 
-def test_submitting_database_initialization_CSVs(flask_client):
-    """Tests that the three CSVs that are uploaded in the `initialize_initial_relations` route can be uploaded successfully."""
-    #ToDo: Create sample CSV files to use for this test
-    #ToDo: Write this test
-    pass
-
-
-#ToDo: Does moving to the second page of the wizard need to be a separate test from the above, or is it the same as the above test?
+#ToDo: Do the  `enter_data()` and `submit_check()` subfunctions need their own tests?
