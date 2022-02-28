@@ -74,7 +74,36 @@ def statisticsSources_relation():
 #ToDo: Create fixture for statisticsResourceSources
 
 
-#ToDo: Create fixture for resourceSources
+@pytest.fixture
+def resourceSources_relation():
+    """Creates a dataframe that can be loaded into the `resourceSources` relation."""
+    df = pd.DataFrame(
+        [
+            ["ProQuest Congressional", True, None, 1],
+            ["ProQuest Databases", True, None, 1],
+            ["ProQuest History Vault", True, None, 1],
+            ["ProQuest Statistical Insight", True, None, 1],
+            ["ProQuest U.K. Parliamentary Papers", True, None, 1],
+            ["Statistical Abstract of the US", True, None, 1],
+            ["Ulrichsweb", True, None, 1],
+            ["Peterson's Career Prep", True, None, 3],
+            ["Peterson's Test Prep", True, None, 3],
+            ["Pivot", True, None, 1],
+            ["DemographicsNow", True, None, 3],
+            ["Ebook Central", True, None, 1],
+            ["Ebook Library", False, "2019-06-30", 5],
+            ["Ebrary", False, "2017-12-31", 6],
+            ["EBSCOhost", True, None, 2],
+            ["Gale Cengage Learning", True, None, 3],
+            ["iG Library/Business Expert Press (BEP)", True, None, 4],
+            ["MyiLibrary", False, "2019-06-30", 7],
+            
+        ],
+        index=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+        columns=["Resource_Source_Name", "Source_in_Use", "Use_Stop_Date", "Vendor_ID"]
+    )
+    df.index.name = "Resource_Source_ID"
+    yield df
 
 
 #ToDo: Create fixture for resourceSourceNotes
