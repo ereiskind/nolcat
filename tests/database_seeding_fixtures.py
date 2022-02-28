@@ -30,8 +30,11 @@ def vendors_relation():
             ["EBSCO", None],
             ["Gale", None],
             ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
         ],
-        index=[1, 2, 3, 4],
+        index=[1, 2, 3, 4, 5, 6, 7],
         columns=["Vendor_Name", "Alma_Vendor_Code"]
     )
     df.index.name = "Vendor_ID"
@@ -41,7 +44,28 @@ def vendors_relation():
 #ToDo: Create fixture for vendorNotes
 
 
-#ToDo: Create fixture for statisticsSources
+@pytest.fixture
+def statisticsSources_relation():
+    """Creates a dataframe that can be loaded into the `statisticsSources` relation."""
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None, 1],
+            ["EBSCOhost", None, 2],
+            ["Gale Cengage Learning", None, 3],
+            ["iG Library/Business Expert Press (BEP)", None, 4],
+            ["DemographicsNow", None, 3],
+            ["Ebook Central", None, 1],
+            ["Peterson's Career Prep", None, 3],
+            ["Peterson's Test Prep", None, 3],
+            ["Peterson's Prep", None, 3],
+            ["Pivot", None, 1],
+            ["Ulrichsweb", None, 1],
+        ],
+        index=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        columns=["Statistics_Source_Name", "Statistics_Source_Retrieval_Code", "Vendor_ID"]
+    )
+    df.index.name = "Statistics_Source_ID"
+    yield df
 
 
 #toDo: Create fixture for statisticsSourceNotes
