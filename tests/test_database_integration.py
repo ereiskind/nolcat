@@ -29,7 +29,7 @@ def test_loading_into_relation(engine, resources_relation):
     resources_relation.to_sql(
         name='resources',
         con=engine,
-        if_exists='replace',
+        if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
         chunksize=1000,
         index=True,
         index_label='Resource_ID',

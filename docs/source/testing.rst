@@ -22,13 +22,7 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual R4 COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
-
-For the purposes of the OpenRefine exports, the Statistics_Source_ID values as as follows
-* EBSCO = 1
-* ProQuest = 2
-* Gale = 3
-* iG Publishing/BEP = 4 (BR5 only)
+The data used for testing in the fixtures in "database_seeding_fixtures.py" and "\\tests\\bin" is meant as an example of the data that will be present in the database once loaded. The COUNTER R4 reports in "\\tests\\bin" are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
 
 Using Selenium
 **************
