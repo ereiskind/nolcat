@@ -21,7 +21,21 @@ def fiscalYears_relation():
     yield df
 
 
-#ToDo: Create fixture for vendors
+@pytest.fixture
+def vendors_relation():
+    """Creates a dataframe that can be loaded into the `vendors` relation."""
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", None],
+            ["iG Publishing/BEP", None],
+        ],
+        index=[1, 2, 3, 4],
+        columns=["Vendor_Name", "Alma_Vendor_Code"]
+    )
+    df.index.name = "Vendor_ID"
+    yield df
 
 
 #ToDo: Create fixture for vendorNotes
