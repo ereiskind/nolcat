@@ -71,7 +71,65 @@ def statisticsSources_relation():
 #toDo: Create fixture for statisticsSourceNotes
 
 
-#ToDo: Create fixture for statisticsResourceSources
+@pytest.fixture
+def statisticsResourceSources_relation():
+    """Creates a dataframe that can be loaded into the `statisticsResourceSources` relation.
+    
+    Because this relation has only three fields, two of which are a composite primary key, this is a pandas series object with a multiindex rather than a dataframe.
+    """
+    multiindex = pd.DataFrame(
+        [
+            [1, 1],
+            [1, 2],
+            [1, 3],
+            [1, 4],
+            [1, 5],
+            [1, 6],
+            [11, 7],
+            [7, 8],
+            [9, 8],
+            [8, 9],
+            [9, 9],
+            [10, 10],
+            [5, 11],
+            [6, 12],
+            [6, 13],
+            [6, 14],
+            [2, 15],
+            [3, 16],
+            [4, 17],
+            [6, 18],
+        ],
+        columns=["SRS_Statistics_Source", "SRS_Resource_Source"]
+    )
+    multiindex = pd.MultiIndex.from_frame(multiindex)
+    series = pd.Series(
+        data=[
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            True,
+            False,
+            True,
+            False,
+            True,
+            True,
+            True,
+            True,
+            False,
+            False,
+            True,
+            True,
+            True,
+            False,
+        ],
+        index=multiindex,
+        name="Current_Statistics_Source"
+    )
+    yield series
 
 
 @pytest.fixture
