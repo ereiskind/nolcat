@@ -254,6 +254,7 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
                 'Online_ISSN': 'string',
                 'Data_Type': 'string',
                 'Metric_Type': 'string',
+                'Section_Type': 'string',
                 # R4_Month is fine as default datetime64[ns]
                 'R4_Count': 'int',
             },
