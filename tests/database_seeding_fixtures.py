@@ -167,7 +167,123 @@ def resourceSources_relation():
 #ToDo: Create fixture for resourceSourceNotes
 
 
-#ToDo: Create fixture for annualUsageCollectionTracking
+@pytest.fixture
+def annualUsageCollectionTracking_relation():
+    """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation."""
+    #ToDo: Add FY 2019-2020, 2020-2021 to the relation
+    multiindex = pd.DataFrame(
+        [
+            [1, 1],
+            [3, 1],
+            [2, 1],
+            [4, 1],
+            [5, 1],
+            [6, 1],
+            [7, 1],
+            [8, 1],
+            [10, 1],
+            [11, 1],
+            [1, 2],
+            [2, 2],
+            [3, 2],
+            [4, 2],
+            [5, 2],
+            [6, 2],
+            [7, 2],
+            [8, 2],
+            [10, 2],
+            [11, 2],
+            [1, 3],
+            [2, 3],
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [8, 3],
+            [10, 3],
+            [11, 3],
+            # [1, 4],
+            # [2, 4],
+            # [3, 4],
+            # [4, 4],
+            # [5, 4],
+            # [6, 4],
+            # [9, 4],
+            # [10, 4],
+            # [11, 4],
+            # [1, 5],
+            # [2, 5],
+            # [3, 5],
+            # [4, 5],
+            # [5, 5],
+            # [6, 5],
+            # [9, 5],
+            # [10, 5],
+            # [11, 5],
+        ],
+        columns=["AUCT_Statistics_Source", "AUCT_Fiscal_Year"]
+    )
+    multiindex = pd.MultiIndex.from_frame(multiindex)
+    df = pd.DataFrame(
+        [
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+            [True, True, True, False, "Collection complete", None, "Simulating a resource with usage requested by sending an email"],
+            [True, True, False, True, "Collection complete", None, "Simulating a resource that becomes OA at the start of a calendar year"],
+            [True, True, True, False, "Collection not started", None, None],
+            [True, True, True, False, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, True, False, "Usage not provided", None, "Simulating a resource that starts offering usage statistics"],
+
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, "Simulating a resource that's become COUNTER compliant"],
+            [True, True, True, False, "Collection in process (see notes)", None, "When sending the email, note the date sent and who it was sent to"],
+            [True, True, False, True, "Collection complete", None, "Resource became OA at start of calendar year 2018"],
+            [True, True, True, False, "Collection complete", None, None],
+            [True, True, True, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, True, False, "Usage not provided", None, None],
+
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "No usage to report", None, None],
+            [True, True, True, False, "Collection in process (see notes)", None, "Having the note about sending the email lets you know if you're in the response window, if you need to follow up, or if too much time has passed for a response to be expected"],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, True, False, "Collection complete", None, None],
+            [True, True, True, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection not started", None, "This is the first FY with usage statistics"],
+
+            # ProQuest FY 2019-2020
+            # EBSCOhost FY 2019-2020
+            # Gale Cengage Learning FY 2019-2020
+            # iG Library/Business Expert Press (BEP) FY 2019-2020
+            # DemographicsNow FY 2019-2020
+            # Ebook Central FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
+            # Peterson's Prep FY 2019-2020  [True, True, False, False, "Collection complete", None, None],
+            # Pivot FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
+            # Ulrichsweb FY 2019-2020
+
+            # ProQuest FY 2020-2021
+            # EBSCOhost FY 2020-2021
+            # Gale Cengage Learning FY 2020-2021
+            # iG Library/Business Expert Press (BEP) FY 2020-2021
+            # DemographicsNow FY 2020-2021
+            # Ebook Central FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
+            # Peterson's Prep FY 2020-2021  [True, True, False, False, "Collection complete", None, None],
+            # Pivot FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
+            # Ulrichsweb FY 2020-2021
+        ],
+        index=multiindex,
+        columns=["Usage_Is_Being_Collected", "Manual_Collection_Required", "Collection_Via_Email", "Is_COUNTER_Compliant", "Collection_Status", "Usage_File_Path", "Notes"]
+    )
+    yield df
 
 
 @pytest.fixture
