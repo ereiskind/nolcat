@@ -3,13 +3,48 @@ digraph nolcat_sitemap {
 
     /* *** Homepage and Authentication *** */
     // The web app homepage and pages for authentication
+    homepage
+    homepage -> login_page
+    homepage -> collection_homepage
+    homepage -> review_homepage
+    homepage -> Sphinx_homepage
+    
+
+    login_page
+    // And any other pages needed for authentication
+
 
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
+    collection_homepage
+    
+    /*
+        - initialization wizard
+        - upload R4 reports
+        - upload R5 reports
+        - run sushi harvester
+        - AUCT
+        - viewing and editing some notes
+    */
+
 
     /* *** Reviewing Usage Statistics *** */
     // Pages for reviewing usage data
+    review_homepage
+
+    /*
+        - generate query via dropdown
+        - write sql
+        - data viz
+        - view notes
+        - edit notes
+    */
+
 
     /* *** Program Documentation *** */
     // The Sphinx documentation for the web app
+    Sphinx_homepage
+    Sphinx_homepage -> Sphinx_other_pages
+
+    Sphinx_other_pages // Use Sphinx itself for site organization
 }
