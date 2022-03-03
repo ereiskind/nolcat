@@ -192,6 +192,7 @@ class RawCOUNTERReport:
             logging.info("No matches on DOI and ISSNs")
 
         #Subsection: Create Comparison Based on ISBN
+        #ToDo: Add filter that rejects match if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
         logging.info("**Comparing based on ISBN**")
         comparing_ISBN = recordlinkage.Compare()
         comparing_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
