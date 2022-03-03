@@ -1,3 +1,15 @@
 digraph nolcat_sitemap {
-    /* *** NoLCAT Sitemap *** */
+    /* *** NoLCAT SITEMAP *** */
+
+    /* *** Homepage and Authentication *** */
+    // The web app homepage and pages for authentication
+
+    /* *** Collecting Usage Statistics *** */
+    // Pages for collecting usage statistics
+
+    /* *** Reviewing Usage Statistics *** */
+    // Pages for reviewing usage data
+
+    /* *** Program Documentation *** */
+    // The Sphinx documentation for the web app
 }
