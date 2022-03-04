@@ -204,7 +204,7 @@ CREATE TABLE resources (
     ISBN CHAR(17),
     Print_ISSN CHAR(9),
     Online_ISSN CHAR(9),
-    Data_Type VARCHAR(25) NOT NULL,
+    Data_Type VARCHAR(25) NOT NULL, -- While different statistics sources may assign the same resource different Data_Type values, R5, in dividing reports by level of granularity and allowing for a wide variety of data types, seems to have cut down on these issues; additionally, without a record with the `Platform` Data_Type, that aspect of data would be lost while resourcePlatforms.Resource_ID would need to allow nulls.
     Section_Type VARCHAR(10),
 );
 
