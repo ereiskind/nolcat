@@ -360,6 +360,13 @@ digraph erd_and_classes {
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
         arrowtail="teetee"
     ]
+    
+    
+    Statistics_Source_ID -> Interface [
+        dir="both"
+        arrowhead="crowodot"
+        arrowtail="teetee"
+    ]
 
 
     Resource_Source_ID -> SRS_Resource_Source [
