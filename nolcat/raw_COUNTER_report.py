@@ -52,6 +52,7 @@ class RawCOUNTERReport:
                         'Print_ISSN': 'string',
                         'Online_ISSN': 'string',
                         'Data_Type': 'string',
+                        'Section_Type': 'string',
                         'Metric_Type': 'string',
                         # R4_Month is fine as default datetime64[ns]
                         'R4_Count': 'int',  # Python default used because this is a non-null field
