@@ -479,4 +479,5 @@ class RawCOUNTERReport:
     def load_data_into_database():
         """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
         #ToDo: Write a more detailed docstring
+        #ToDo: Filter out non-standard metrics
         pass
