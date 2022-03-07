@@ -55,8 +55,8 @@ class RawCOUNTERReport:
                         'Data_Type': 'string',
                         'Section_Type': 'string',
                         'Metric_Type': 'string',
-                        # R4_Month is fine as default datetime64[ns]
-                        'R4_Count': 'int',  # Python default used because this is a non-null field
+                        # Usage_Date is fine as default datetime64[ns]
+                        'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
                 )
                 logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line

@@ -256,8 +256,8 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
                 'Data_Type': 'string',
                 'Metric_Type': 'string',
                 'Section_Type': 'string',
-                # R4_Month is fine as default datetime64[ns]
-                'R4_Count': 'int',
+                # Usage_Date is fine as default datetime64[ns]
+                'Usage_Count': 'int',
             },
         )
         dataframe['Statistics_Source_ID'] = statistics_source_ID  # This adds the field `Statistics_Source_ID` where all records have the value of the given variable
