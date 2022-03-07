@@ -139,11 +139,11 @@ class VendorNotes(Base):
     __tablename__ = 'vendorNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    vendor_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 
