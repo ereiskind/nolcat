@@ -206,7 +206,32 @@ class StatisticsSources(Base):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
             TBD: a data type that can be passed into Flask for display to the user
         """
-        pass
+        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
+        #Section: Retrieve Data
+        #Subsection: Retrieve Data from JSON
+        #ToDo: path_to_credentials_file = function providing path to credentials depending on if program is being run on AWS or a local machine
+        #ToDo: with open(path_to_credentials_file) as JSON_file:
+            #ToDo: SUSHI_data_file = json.load(JSON_File)
+            #ToDo: for vendor in SUSHI_data_file:
+                #ToDo: for stats_source in vendor:
+                    #ToDo: if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        #ToDo: credentials = dict(
+                            #ToDo: URL = stats_source['online_location'],
+                            #ToDo: customer_id = stats_source['user_id']
+                        #ToDo: )
+                        #ToDo: try: credentials['requestor_id'] = stats_source['user_password']
+                        #ToDo: try: credentials['api_key'] = stats_source['user_pass_note']
+                        #ToDo: try: credentials['platform'] = stats_source['delivery_address']
+
+        #Subsection: Retrieve Data from Alma
+        #ToDo: When credentials are in Alma, create this functionality
+
+
+        #Section: Return Data in Requested Format
+        #ToDo: if for_API_call:
+            #ToDo: return credentials
+        #ToDo: else:
+            #ToDo: Insert `credentials` values into a Flask page or popup and display it to the user
 
 
     @hybrid_method
