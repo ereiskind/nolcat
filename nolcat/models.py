@@ -1,11 +1,40 @@
 """These classes represent the relations in the database."""
 
+import logging
+from pathlib import Path
+import os
+import sys
 from sqlalchemy import Column
 from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
+
+logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
+
+
+def PATH_TO_CREDENTIALS_FILE():
+    """Contains the constant for the path to the SUSHI credentials file.
+    
+    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows.
+    
+    Returns:
+        str: the absolute path to the R5 SUSHI credentials file
+    """
+    AWS_path = Path(os.path.abspath(os.path.dirname(__file__))) / Path('R5_SUSHI_credentials.json')
+    if AWS_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file is in AWS at `{AWS_path}`.")
+        return str(AWS_path)
+
+    library_network_path = Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_credentials.json')
+    if library_network_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file is in the FSU Libraries networked drive at `{library_network_path}`.")
+        return str(library_network_path)
+
+    logging.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
+    sys.exit()
+
 
 Base = declarative_base()
 
@@ -191,9 +220,44 @@ class StatisticsSources(Base):
 
 
     @hybrid_method
-    def show_SUSHI_credentials():
-        #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
-        pass
+    def fetch_SUSHI_information(for_API_call=True):
+        """A method for fetching the information required to make a SUSHI API call for the statistics source.
+
+        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+
+        Args:
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+        
+        Returns:
+            dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
+            TBD: a data type that can be passed into Flask for display to the user
+        """
+        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
+        #Section: Retrieve Data
+        #Subsection: Retrieve Data from JSON
+        #ToDo: path_to_credentials_file = function providing path to credentials depending on if program is being run on AWS or a local machine
+        #ToDo: with open(path_to_credentials_file) as JSON_file:
+            #ToDo: SUSHI_data_file = json.load(JSON_File)
+            #ToDo: for vendor in SUSHI_data_file:
+                #ToDo: for stats_source in vendor:
+                    #ToDo: if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        #ToDo: credentials = dict(
+                            #ToDo: URL = stats_source['online_location'],
+                            #ToDo: customer_id = stats_source['user_id']
+                        #ToDo: )
+                        #ToDo: try: credentials['requestor_id'] = stats_source['user_password']
+                        #ToDo: try: credentials['api_key'] = stats_source['user_pass_note']
+                        #ToDo: try: credentials['platform'] = stats_source['delivery_address']
+
+        #Subsection: Retrieve Data from Alma
+        #ToDo: When credentials are in Alma, create this functionality
+
+
+        #Section: Return Data in Requested Format
+        #ToDo: if for_API_call:
+            #ToDo: return credentials
+        #ToDo: else:
+            #ToDo: Insert `credentials` values into a Flask page or popup and display it to the user
 
 
     @hybrid_method
@@ -210,13 +274,7 @@ class StatisticsSources(Base):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        #ToDo: Determine if info for API calls is coming from the Alma API or a file saved in a secure location
-        #ToDo: Using self.statistics_source_retrieval_code, create dict SUSHI_info with the following key-value pairs:
-            #ToDo: URL=the URL for the API call
-            #ToDo: customer_ID=the customer ID
-            #ToDo: requestor_ID=the requestor ID, if an API call parameter
-            #ToDo: API_key=the API key, if an API call parameter
-            #ToDo: SUSHI_platform=the platform parameter value, if part of the API call
+        #ToDo: SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
         #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
 
 
