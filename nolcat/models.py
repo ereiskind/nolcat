@@ -168,10 +168,10 @@ class StatisticsSources(Base):
     __tablename__ = 'statisticsSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
-    statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    statistics_source_id = Column(Integer, primary_key=True)
+    statistics_source_name = Column(String(100))
+    statistics_source_retrieval_code = Column(String(30))
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
