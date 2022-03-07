@@ -274,13 +274,7 @@ class StatisticsSources(Base):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        #ToDo: Determine if info for API calls is coming from the Alma API or a file saved in a secure location
-        #ToDo: Using self.statistics_source_retrieval_code, create dict SUSHI_info with the following key-value pairs:
-            #ToDo: URL=the URL for the API call
-            #ToDo: customer_ID=the customer ID
-            #ToDo: requestor_ID=the requestor ID, if an API call parameter
-            #ToDo: API_key=the API key, if an API call parameter
-            #ToDo: SUSHI_platform=the platform parameter value, if part of the API call
+        #ToDo: SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
         #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
 
 
