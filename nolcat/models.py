@@ -389,11 +389,11 @@ class ResourceSources(Base):
     __tablename__ = 'resourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
-    source_in_use = Column()  #ToDo: BOOLEAN NOT NULL
-    use_stop_date = Column()  #ToDo: DATE
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    resource_source_id = Column(Integer, primary_key=True)
+    resource_source_name = Column(String(100))
+    source_in_use = Column(Boolean)
+    use_stop_date = Column(Date)
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
 
