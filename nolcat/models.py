@@ -191,8 +191,18 @@ class StatisticsSources(Base):
 
 
     @hybrid_method
-    def show_SUSHI_credentials():
-        #ToDo: Need a way to display SUSHI base URL and parameters (requestor ID, customer ID, API key, platform)--is a method for the record class the best way to do it?
+    def fetch_SUSHI_information(for_API_call=True):
+        """A method for fetching the information required to make a SUSHI API call for the statistics source.
+
+        This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
+
+        Args:
+            for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
+        
+        Returns:
+            dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
+            TBD: a data type that can be passed into Flask for display to the user
+        """
         pass
 
 
