@@ -1,6 +1,9 @@
 """These classes represent the relations in the database."""
 
 import logging
+from pathlib import Path
+import os
+import sys
 from sqlalchemy import Column
 from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
 from sqlalchemy import ForeignKey
@@ -9,6 +12,29 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
+
+
+def PATH_TO_CREDENTIALS_FILE():
+    """Contains the constant for the path to the SUSHI credentials file.
+    
+    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows.
+    
+    Returns:
+        str: the absolute path to the R5 SUSHI credentials file
+    """
+    AWS_path = Path(os.path.abspath(os.path.dirname(__file__))) / Path('R5_SUSHI_credentials.json')
+    if AWS_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file is in AWS at `{AWS_path}`.")
+        return str(AWS_path)
+
+    library_network_path = Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_credentials.json')
+    if library_network_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file is in the FSU Libraries networked drive at `{library_network_path}`.")
+        return str(library_network_path)
+
+    logging.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
+    sys.exit()
+
 
 Base = declarative_base()
 
