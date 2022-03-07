@@ -6,6 +6,7 @@ import pandas as pd
 from pandas._testing import assert_frame_equal
 
 from nolcat import Database_Credentials
+from database_seeding_fixtures import resources_relation
 
 
 @pytest.fixture
@@ -15,26 +16,12 @@ def engine():
     yield engine
 
 
-@pytest.fixture
-def resources_relation():
-    """Creates a dataframe that can be loaded into the `resources` relation."""
-    df = pd.DataFrame(
-        [
-            [None, None, "8755-4550", None, "Serial", None],
-            [None, "978-0-585-03362-4", None, None, "Book", None],
-        ],
-        index=[1, 2],
-        columns=["DOI", "ISBN", "Print_ISSN", "Online_ISSN", "Data_Type", "Section_Type"]
-    )
-    df.index.name = "Resource_ID"
-    yield df
-
-
 def test_engine_creation(engine):
     """Test that a SQLAlchemy engine is created."""
     assert repr(type(engine)) == "<class 'sqlalchemy.engine.base.Engine'>"
 
 
+@pytest.mark.usefixtures('resources_relation')
 def test_loading_into_relation(engine, resources_relation):
     """Tests loading a single dataframe into a relation."""
     connection = engine.connect()
@@ -42,7 +29,7 @@ def test_loading_into_relation(engine, resources_relation):
     resources_relation.to_sql(
         name='resources',
         con=engine,
-        if_exists='replace',
+        if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
         chunksize=1000,
         index=True,
         index_label='Resource_ID',

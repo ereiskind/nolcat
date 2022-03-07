@@ -85,6 +85,19 @@
         "description": "Rename column ``Access denied category`` to ``Metric_Type``"
     },
     {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:value.replace(\"licence\",\"license\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Have `license` always use American English spelling"
+    },
+    {
         "op": "core/row-removal",
         "engineConfig": {
             "facets": [
@@ -113,6 +126,19 @@
         "description": "Remove total rows"
     },
     {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Data_Type",
+        "expression": "grel:if(value==\"Journal\",\"Article\",if(value==\"Book\",\"Chapter\",\"Other\"))",
+        "onError": "set-to-blank",
+        "newColumnName": "Section_Type",
+        "columnInsertIndex": 9,
+        "description": "Create column ``Section_Type`` with the value `Article`, `Chapter`, or `Other` depending on the value in ``Data_Type``"
+    },
+    {
         "op": "core/text-transform",
         "engineConfig": {
             "facets": [],
@@ -132,9 +158,9 @@
         "ignoreBlankCells": false,
         "fillDown": true,
         "separator": null,
-        "keyColumnName": "R4_Month",
-        "valueColumnName": "R4_Count",
-        "description": "Pivot all columns with counts into two columns, one named ``R4_Month`` with the column name/date and the other named ``R4_Count`` with the data value/count"
+        "keyColumnName": "Usage_Date",
+        "valueColumnName": "Usage_Count",
+        "description": "Pivot all columns with counts into two columns, one named ``Usage_Date`` with the column name/date and the other named ``Usage_Count`` with the data value/count"
     },
     {
         "op": "core/row-removal",
@@ -142,9 +168,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "R4_Month",
+                    "name": "Usage_Date",
                     "expression": "grel:value.find(/[Rr]eporting\\s[Pp]eriod/).length()>0",
-                    "columnName": "R4_Month",
+                    "columnName": "Usage_Date",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -170,9 +196,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "R4_Count",
+                    "name": "Usage_Count",
                     "expression": "grel:or(isBlank(value),value==0)",
-                    "columnName": "R4_Count",
+                    "columnName": "Usage_Count",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -198,12 +224,12 @@
             "facets": [],
             "mode": "row-based"
         },
-        "columnName": "R4_Month",
+        "columnName": "Usage_Date",
         "expression": "grel:if(isError(value.toDate()),if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\\\w{3})\\\\-(\\\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\\\w*)\\\\-\\\\d{4}/)[0].length()>3,(value.match(/(\\\\w{3}).*/)[0]+\"-01\"+value.match(/\\\\w*(\\\\-\\\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\"))),value.find(/\\d{4}\\-\\d{2}\\-\\d{2}/)[0].toDate())",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
-        "description": "Change the values in column ``R4_Month`` to date data type with null time value"
+        "description": "Change the values in column ``Usage_Date`` to date data type with null time value"
     },
     {
         "op": "core/text-transform",

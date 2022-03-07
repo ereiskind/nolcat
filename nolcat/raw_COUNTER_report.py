@@ -41,6 +41,7 @@ class RawCOUNTERReport:
                 # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
                 dataframe = pd.read_excel(
                     file,
+                    #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
                     engine='openpyxl',
                     dtype={
                         'Resource_Name': 'string',
@@ -52,9 +53,10 @@ class RawCOUNTERReport:
                         'Print_ISSN': 'string',
                         'Online_ISSN': 'string',
                         'Data_Type': 'string',
+                        'Section_Type': 'string',
                         'Metric_Type': 'string',
-                        # R4_Month is fine as default datetime64[ns]
-                        'R4_Count': 'int',  # Python default used because this is a non-null field
+                        # Usage_Date is fine as default datetime64[ns]
+                        'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
                 )
                 logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
@@ -104,6 +106,11 @@ class RawCOUNTERReport:
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
+            #ToDo: SOME ISSUES TO CONSIDER
+                #ToDo: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
+                #ToDo: When the metadata for matched resources doesn't match, the user should select what data goes in the resources relation; should that occur along with or after matches are determined?
+                #ToDo: Should metadata elements not being kept in the resources relation be kept? Using them for resource matching purposes would be difficult, but they could be an alternative set of metadata against which searches for resources by ISBN or ISSN could be run.
+                #ToDo: Should anything be done to denote those titles where different stats sources assign different data types?
         
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index

@@ -242,6 +242,7 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
         statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}\.xlsx', string=spreadsheet)[0]
         dataframe = pd.read_excel(
             Path('tests', 'bin', 'OpenRefine_exports', spreadsheet),
+            #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
             engine='openpyxl',
             dtype={
                 'Resource_Name': 'string',
@@ -254,8 +255,9 @@ def RawCOUNTERReport_fixture_from_R4_spreadsheets():
                 'Online_ISSN': 'string',
                 'Data_Type': 'string',
                 'Metric_Type': 'string',
-                # R4_Month is fine as default datetime64[ns]
-                'R4_Count': 'int',
+                'Section_Type': 'string',
+                # Usage_Date is fine as default datetime64[ns]
+                'Usage_Count': 'int',
             },
         )
         dataframe['Statistics_Source_ID'] = statistics_source_ID  # This adds the field `Statistics_Source_ID` where all records have the value of the given variable
