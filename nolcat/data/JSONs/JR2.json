@@ -42,6 +42,19 @@
         "description": "Rename column ``Access denied category`` to ``Metric_Type``"
     },
     {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:value.replace(\"licence\",\"license\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Have `license` always use American English spelling"
+    },
+    {
         "op": "core/row-removal",
         "engineConfig": {
             "facets": [
