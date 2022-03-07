@@ -330,11 +330,11 @@ class StatisticsSourceNotes(Base):
     __tablename__ = 'statisticsSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    statistics_source_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    statistics_source_id = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
 
     statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
 
