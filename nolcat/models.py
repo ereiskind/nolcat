@@ -621,15 +621,15 @@ class UsageData(Base):
     __tablename__ = 'usageData'
     __table_args__ = {'schema': 'nolcat'}
 
-    usage_data_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_platform_id = Column(ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))  #ToDo: INT NOT NULL
-    metric_type = Column()  #ToDo: VARCHAR(75) NOT NULL
-    usage_date = Column()  #ToDo: DATE NOT NULL
-    usage_count = Column()  #ToDo: MEDIUMINT UNSIGNED NOT NULL
-    yop = Column()  #ToDo: SMALLINT
-    access_type = Column()  #ToDo: VARCHAR(20)
-    access_method = Column()  #ToDo: VARCHAR(10)
-    report_creation_date = Column()  #ToDo: DATETIME
+    usage_data_id = Column(Integer, primary_key=True)
+    resource_platform_id = Column(Integer, ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))
+    metric_type = Column(String(75))
+    usage_date = Column(Date)
+    usage_count = Column(Integer)
+    yop = Column(SmallInteger)
+    access_type = Column(String(20))
+    access_method = Column(String(10))
+    report_creation_date = Column(DateTime)
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 
