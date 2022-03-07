@@ -1,7 +1,7 @@
 """These classes represent the relations in the database."""
 
 from sqlalchemy import Column
-from sqlalchemy import Integer, String
+from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,17 +15,17 @@ class FiscalYears(Base):
     __tablename__ = 'fiscalYears'
     __table_args__ = {'schema': 'nolcat'}
 
-    fiscal_year_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    fiscal_year = Column()  #ToDo: CHAR(4) NOT NULL
-    start_date = Column()  #ToDo: DATE NOT NULL
-    end_date = Column()  #ToDo: DATE NOT NULL
-    acrl_60b = Column()  #ToDo: SMALLINT
-    acrl_63 = Column()  #ToDo: SMALLINT
-    arl_18 = Column()  #ToDo: SMALLINT
-    arl_19 = Column()  #ToDo: SMALLINT
-    arl_20 = Column()  #ToDo: SMALLINT
-    notes_on_statisticsSources_used = Column()  #ToDo: TEXT
-    notes_on_corrections_after_submission = Column()  #ToDo: TEXT
+    fiscal_year_id = Column(Integer, primary_key=True)
+    fiscal_year = Column(String(4))
+    start_date = Column(Date)
+    end_date = Column(Date)
+    acrl_60b = Column(SmallInteger)
+    acrl_63 = Column(SmallInteger)
+    arl_18 = Column(SmallInteger)
+    arl_19 = Column(SmallInteger)
+    arl_20 = Column(SmallInteger)
+    notes_on_statisticsSources_used = Column(Text)
+    notes_on_corrections_after_submission = Column(Text)
 
 
     def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
@@ -106,9 +106,9 @@ class Vendors(Base):
     __tablename__ = 'vendors'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    vendor_name = Column()  #ToDo: VARCHAR(80) NOT NULL
-    alma_vendor_code = Column()  #ToDo: VARCHAR(10)
+    vendor_id = Column(Integer, primary_key=True)
+    vendor_name = Column(String(80))
+    alma_vendor_code = Column(String(10))
 
 
     def __init__(self, vendor_id, vendor_name, alma_vendor_code):
@@ -139,11 +139,11 @@ class VendorNotes(Base):
     __tablename__ = 'vendorNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    vendor_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 
@@ -168,10 +168,10 @@ class StatisticsSources(Base):
     __tablename__ = 'statisticsSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    statistics_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
-    statistics_source_retrieval_code = Column()  #ToDo: VARCHAR(30)
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    statistics_source_id = Column(Integer, primary_key=True)
+    statistics_source_name = Column(String(100))
+    statistics_source_retrieval_code = Column(String(30))
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
@@ -330,11 +330,11 @@ class StatisticsSourceNotes(Base):
     __tablename__ = 'statisticsSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    statistics_source_id = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
+    statistics_source_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    statistics_source_id = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
 
     statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
 
@@ -368,9 +368,9 @@ class StatisticsResourceSources(Base):
     __tablename__ = 'statisticsResourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    srs_statistics_sources = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
-    srs_resource_sources = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
-    current_statistics_source = Column()  #ToDo: BOOLEAN NOT NULL
+    srs_statistics_sources = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    srs_resource_sources = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
+    current_statistics_source = Column(Boolean)
 
     statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
     resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resource_source_id')
@@ -389,11 +389,11 @@ class ResourceSources(Base):
     __tablename__ = 'resourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_source_name = Column()  #ToDo: VARCHAR(100) NOT NULL
-    source_in_use = Column()  #ToDo: BOOLEAN NOT NULL
-    use_stop_date = Column()  #ToDo: DATE
-    vendor_id = Column(ForeignKey('nolcat.Vendors.vendor_id'))  #ToDo: INT NOT NULL
+    resource_source_id = Column(Integer, primary_key=True)
+    resource_source_name = Column(String(100))
+    source_in_use = Column(Boolean)
+    use_stop_date = Column(Date)
+    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
 
@@ -420,11 +420,11 @@ class ResourceSourceNotes(Base):
     __tablename__ = 'resourceSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_notes_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    note = Column()  #ToDo: TEXT
-    written_by = Column()  #ToDo: VARCHAR(100)
-    date_written = Column()  #ToDo: DATE
-    resource_source_id = Column(ForeignKey('nolcat.ResourceSources.resource_source_id'))  #ToDo: INT NOT NULL
+    resource_source_notes_id = Column(Integer, primary_key=True)
+    note = Column(Text)
+    written_by = Column(String(100))
+    date_written = Column(Date)
+    resource_source_id = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
 
     resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
 
@@ -455,26 +455,27 @@ class AnnualUsageCollectionTracking(Base):
     __tablename__ = 'annualUsageCollectionTracking'
     __table_args__ = {'schema': 'nolcat'}
 
-    auct_statistics_source = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
-    auct_fiscal_year = Column(ForeignKey('nolcat.FiscalYears.fiscal_year_id'))  #ToDo: INT NOT NULL
-    usage_is_being_collected = Column()  #ToDo: BOOLEAN NOT NULL
-    manual_collection_required = Column()  #ToDo: BOOLEAN
-    collection_via_email = Column()  #ToDo: BOOLEAN
-    is_counter_compliant = Column()  #ToDo: BOOLEAN
-    collection_status = Column()  #ToDo: ENUM(
-        #'N/A: Paid by Law',
-        #'N/A: Paid by Med',
-        #'N/A: Paid by Music',
-        #'N/A: Open access',
-        #'N/A: Other (see notes)',
-        #'Collection not started',
-        #'Collection in process (see notes)',
-        #'Collection issues requiring resolution',
-        #'Collection complete',
-        #'Usage not provided',
-        #'No usage to report'
-    usage_file_path = Column()  #ToDo: VARCHAR(150)
-    notes = Column()  #ToDo: TEXT
+    auct_statistics_source = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    auct_fiscal_year = Column(Integer, ForeignKey('nolcat.FiscalYears.fiscal_year_id'), primary_key=True)
+    usage_is_being_collected = Column(Boolean)
+    manual_collection_required = Column(Boolean)
+    collection_via_email = Column(Boolean)
+    is_counter_compliant = Column(Boolean)
+    collection_status = Column('COLLECTION_STATUS', Enum(  # The first argument seems to be meant as a name, but what's being named is unclear; the argument value is named to represent the constant that is the values in the enumeration
+        'N/A: Paid by Law',
+        'N/A: Paid by Med',
+        'N/A: Paid by Music',
+        'N/A: Open access',
+        'N/A: Other (see notes)',
+        'Collection not started',
+        'Collection in process (see notes)',
+        'Collection issues requiring resolution',
+        'Collection complete',
+        'Usage not provided',
+        'No usage to report'
+    ))
+    usage_file_path = Column(String(150))
+    notes = Column(Text)
 
     statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
     fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
@@ -527,13 +528,13 @@ class Resources(Base):
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    doi = Column()  #ToDo: VARCHAR(75)
-    isbn = Column()  #ToDo: CHAR(17)
-    print_issn = Column()  #ToDo: CHAR(9)
-    online_issn = Column()  #ToDo: CHAR(9)
-    data_type = Column()  #ToDo: VARCHAR(25) NOT NULL
-    section_type = Column()  #ToDo: VARCHAR(10)
+    resource_id = Column(Integer, primary_key=True)
+    doi = Column(String(75))
+    isbn = Column(String(17))
+    print_issn = Column(String(9))
+    online_issn = Column(String(9))
+    data_type = Column(String(25))
+    section_type = Column(String(10))
 
 
     def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
@@ -559,9 +560,9 @@ class ResourceTitles(Base):
     __tablename__ = 'resourceTitles'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_title_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_title = Column()  #ToDo: VARCHAR(2000)
-    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+    resource_title_id = Column(Integer, primary_key=True)
+    resource_title = Column(String(2000))
+    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
 
@@ -584,14 +585,14 @@ class ResourcePlatforms(Base):
     __tablename__ = 'resourcePlatforms'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_platform_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    publisher = Column()  #ToDo: VARCHAR(225)
-    publisher_id = Column()  #ToDo: VARCHAR(50)
-    platform = Column()  #ToDo: VARCHAR(75) NOT NULL
-    proprietary_id = Column()  #ToDo: VARCHAR(100)
-    uri = Column()  #ToDo: VARCHAR(200)
-    interface = Column(ForeignKey('nolcat.StatisticsSources.statistics_source_id'))  #ToDo: INT NOT NULL
-    resource_id = Column(ForeignKey('nolcat.Resources.resource_id'))  #ToDo: INT NOT NULL
+    resource_platform_id = Column(Integer, primary_key=True)
+    publisher = Column(String(225))
+    publisher_id = Column(String(50))
+    platform = Column(String(75))
+    proprietary_id = Column(String(100))
+    uri = Column(String(200))
+    interface = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
+    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
     statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
@@ -620,15 +621,15 @@ class UsageData(Base):
     __tablename__ = 'usageData'
     __table_args__ = {'schema': 'nolcat'}
 
-    usage_data_id = Column()  #ToDo: INT PRIMARY KEY AUTO_INCREMENT NOT NULL
-    resource_platform_id = Column(ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))  #ToDo: INT NOT NULL
-    metric_type = Column()  #ToDo: VARCHAR(75) NOT NULL
-    usage_date = Column()  #ToDo: DATE NOT NULL
-    usage_count = Column()  #ToDo: MEDIUMINT UNSIGNED NOT NULL
-    yop = Column()  #ToDo: SMALLINT
-    access_type = Column()  #ToDo: VARCHAR(20)
-    access_method = Column()  #ToDo: VARCHAR(10)
-    report_creation_date = Column()  #ToDo: DATETIME
+    usage_data_id = Column(Integer, primary_key=True)
+    resource_platform_id = Column(Integer, ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))
+    metric_type = Column(String(75))
+    usage_date = Column(Date)
+    usage_count = Column(Integer)
+    yop = Column(SmallInteger)
+    access_type = Column(String(20))
+    access_method = Column(String(10))
+    report_creation_date = Column(DateTime)
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 
