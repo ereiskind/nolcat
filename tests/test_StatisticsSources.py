@@ -17,7 +17,16 @@ def engine():
     yield _engine()
 
 
-#ToDo: Create SQLAlchemy session fixture
+@pytest.fixture(scope='module')
+def session(engine):
+    """Creates a SQLAlchemy session object so all tests in this module run within a transaction that will be rolled back once the tests are complete."""
+    connection = engine.connect()
+    transaction = connection.begin()
+    session = sessionmaker(bind=connection)
+    yield session
+    connection.close()
+    session.close()
+    transaction.rollback()
 
 
 #ToDo: Create fixture to load into the statisticsSources relation based on the import but replacing the values in statisticsSources_relation['Statistics_Source_Retrieval_Code'] with random retrieval code values found in R5_SUSHI_credentials.json
