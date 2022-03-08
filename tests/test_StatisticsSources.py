@@ -13,6 +13,12 @@ from database_seeding_fixtures import vendors_relation
 from database_seeding_fixtures import statisticsSources_relation
 
 
+@pytest.fixture(scope="module")
+def engine():
+    """Creates a SQLAlchemy engine object."""
+    yield engine
+
+
 #ToDo: Create SQLAlchemy session fixture
 
 
