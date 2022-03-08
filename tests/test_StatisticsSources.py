@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 from sqlalchemy.orm import sessionmaker
 
-from nolcat.SQLAlchemy_engine import engine
+from nolcat.SQLAlchemy_engine import engine as _engine
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from database_seeding_fixtures import vendors_relation
@@ -12,9 +12,9 @@ from database_seeding_fixtures import statisticsSources_relation
 
 
 @pytest.fixture(scope="module")
-def engine_fixture():
+def engine():
     """Creates a SQLAlchemy engine object by calling the `create_engine` function with the appropriate variables."""
-    yield engine()
+    yield _engine()
 
 
 #ToDo: Create SQLAlchemy session fixture
