@@ -4,7 +4,6 @@ import pytest
 import pandas as pd
 from sqlalchemy.orm import sessionmaker
 
-from nolcat import Database_Credentials
 from nolcat.SQLAlchemy_engine import engine
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
