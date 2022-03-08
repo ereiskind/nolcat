@@ -29,7 +29,13 @@ def session(engine):
     transaction.rollback()
 
 
-#ToDo: Create fixture to load into the statisticsSources relation based on the import but replacing the values in statisticsSources_relation['Statistics_Source_Retrieval_Code'] with random retrieval code values found in R5_SUSHI_credentials.json
+@pytest.fixture
+def statisticsSources_fixture():
+    """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
+    
+    This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with random retrieval code values found in R5_SUSHI_credentials.json. As a result, methods including SUSHI API calls will have the data necessary to make the calls.
+    """
+    pass
 
 
 def test_engine_creation(engine_fixture):
@@ -37,4 +43,10 @@ def test_engine_creation(engine_fixture):
     assert repr(type(engine_fixture)) == "<class 'sqlalchemy.engine.base.Engine'>"
 
 
-#ToDo: Load the imported vendors_relation dataframe and the above modified statisticsSources_relation dataframe into the database
+def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixture):
+    """Test using the engine to load and query data.
+    
+    This is a basic integration test, determining if dataframes cna be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
+    """
+    #ToDo: Confirm that the imported fixture can be used as an argument directly
+    pass
