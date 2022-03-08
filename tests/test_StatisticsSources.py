@@ -2,7 +2,6 @@
 
 import pytest
 import pandas as pd
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from nolcat import Database_Credentials
@@ -15,8 +14,8 @@ from database_seeding_fixtures import statisticsSources_relation
 
 @pytest.fixture(scope="module")
 def engine():
-    """Creates a SQLAlchemy engine object."""
-    yield engine
+    """Creates a SQLAlchemy engine object by calling the `create_engine` function with the appropriate variables."""
+    yield engine()
 
 
 #ToDo: Create SQLAlchemy session fixture
