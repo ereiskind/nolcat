@@ -14,4 +14,4 @@ DATABASE_PORT = Database_Credentials.Post
 def engine():
     """Returns a SQLAlchemy engine object."""
     engine = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
-    return engine.connect()
+    return engine
