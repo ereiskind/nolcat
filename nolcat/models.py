@@ -117,7 +117,7 @@ class FiscalYears(Base):
     def collect_fiscal_year_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
 
         Returns:
             RawCOUNTERReport: a RawCOUNTERReport object for all the usage for the given fiscal year
@@ -359,7 +359,7 @@ class StatisticsSources(Base):
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
         """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
@@ -564,7 +564,7 @@ class AnnualUsageCollectionTracking(Base):
     def collect_annual_usage_statistics(self):
         """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object.
+        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
 
         Returns:
             RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given fiscal year
