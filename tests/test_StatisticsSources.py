@@ -118,11 +118,19 @@ def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixtu
 
 def test_fetch_SUSHI_information_for_API():
     """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning a value suitable for use in a API call."""
+    #ToDo: Query database to get data for a StatisticsSources object
+    #ToDo: stats_source = StatisticsSources object based on above data
+    #ToDo: credentials = stats_source.fetch_SUSHI_information()
+    #ToDo: assert credentials['customer_id'] exists and credentials['URL'] matches regex /https?:\/\/.*\//
     pass
 
 
 def test_fetch_SUSHI_information_for_display():
     """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning the credentials for user display."""
+    #ToDo: Query database to get data for a StatisticsSources object
+    #ToDo: stats_source = StatisticsSources object based on above data
+    #ToDo: credentials = stats_source.fetch_SUSHI_information(False)
+    #ToDo: assert `credentials` is displaying credentials to the user
     pass
 
 
