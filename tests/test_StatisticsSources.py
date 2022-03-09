@@ -114,3 +114,31 @@ def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixtu
 
     #ToDo: assert_frame_equal(vendors_relation, retrieved_vendors_data) and assert_frame_equal(statisticsSources_fixture, retrieved_statisticsSources_data)
     pass
+
+
+def test_fetch_SUSHI_information_for_API():
+    """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning a value suitable for use in a API call."""
+    pass
+
+
+def test_fetch_SUSHI_information_for_display():
+    """Test collecting SUSHI credentials based on a StatisticsSources.statistics_source_retrieval_code value and returning the credentials for user display."""
+    pass
+
+
+def test_harvest_R5_SUSHI(most_recent_month_with_usage):
+    """Tests collecting all available R5 reports for a StatisticsSources.statistics_source_retrieval_code value and combining them into a single dataframe."""
+    pass
+
+
+def test_collect_usage_statistics(most_recent_month_with_usage):
+    """Tests wrapping SUSHI usage data in a RawCOUNTERReport object."""
+    pass
+
+
+def test_upload_R4_report():
+    pass
+
+
+def test_upload_R5_report():
+    pass
