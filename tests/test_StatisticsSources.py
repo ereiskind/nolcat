@@ -136,6 +136,11 @@ def test_fetch_SUSHI_information_for_display():
 
 def test_harvest_R5_SUSHI(most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a StatisticsSources.statistics_source_retrieval_code value and combining them into a single dataframe."""
+    #ToDo: Query database to get data for a StatisticsSources object
+    #ToDo: stats_source = StatisticsSources object based on above data
+    #ToDo: last_day = the last day of the month represented by most_recent_month_with_usage
+    #ToDo: SUSHI_data = stats_source._harvest_R5_SUSHI(most_recent_month_with_usage, last_day)
+    #ToDo: assert SUSHI_data is a dataframe; what else can be checked to confirm the right data was returned?
     pass
 
 
