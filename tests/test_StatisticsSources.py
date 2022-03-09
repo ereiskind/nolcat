@@ -1,5 +1,7 @@
 """Tests the methods in StatisticsSources."""
 
+import json
+from random import sample
 import pytest
 import pandas as pd
 from sqlalchemy.orm import sessionmaker
@@ -33,8 +35,34 @@ def session(engine):
 def statisticsSources_fixture():
     """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
     
-    This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with random retrieval code values found in R5_SUSHI_credentials.json. As a result, methods including SUSHI API calls will have the data necessary to make the calls.
+    This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
     """
+    #Section: Get List of StatisticsSources.statistics_source_retrieval_code Values
+    #ToDo: list_of_interface_IDs = []
+    #ToDo: with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+        #ToDo: SUSHI_data_file = json.load(JSON_file)
+        #ToDo: for vendor in SUSHI_data_file:
+            #ToDo: for stats_source in vendor['interface']:
+                #ToDo: if "interface_id" in list(stats_source.keys()):
+                        #ToDo: list_of_interface_IDs.append(stats_source['interface_id'])
+    
+    #Section: Remove Values for Ineligible Statistics Sources
+    #ToDo: if before the 10th of the current month:
+        #ToDo: month_of_most_recent_usage = first day of two months ago
+    #ToDo: else:
+        #ToDo: month_of_most_recent_usage = first day of last month
+    #ToDo: retrieval_codes = []
+    #ToDo: for interface in list_of_interface_IDs:
+        #ToDo: query database: for interface, find the StatisticsSources.statistics_source_id, then find any usage data from that stats source from month_of_most_recent_usage
+        #ToDo: if the above returns an empty set:
+            #ToDo: retrieval_codes.append(interface)
+    
+    #Section: Create Dataframe
+    #ToDo: df = statisticsSources_relation
+    #ToDo: number_of_records = number of records in df
+    #ToDo: retrieval_code_series = sample(retrieval_codes, number_of_records)
+    #ToDo: Replace series `df['Statistics_Source_Retrieval_Code']` with retrieval_code_series
+    #ToDo: yield df
     pass
 
 
