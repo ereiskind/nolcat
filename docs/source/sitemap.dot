@@ -17,15 +17,41 @@ digraph nolcat_sitemap {
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
     collection_homepage
+    collection_homepage -> add_COUNTER_data
+    collection_homepage -> select_FY_for_AUCT_display
+    collection_homepage -> show_statisticsSources
+    collection_homepage -> show_resourceSources
+    initialization wizard
+    add_COUNTER_data
+    add_COUNTER_data -> upload_R4_reports
+    add_COUNTER_data -> upload_R5_reports
+    add_COUNTER_data -> harvest_SUSHI_for_custom_dates
+
+    // Pages for ingesting COUNTER data
+    upload_R4_reports
+    upload_R5_reports
+    harvest_SUSHI_for_custom_dates
+
+    // Pages for organizing usage statistics collection
+    select_FY_for_AUCT_display
+    select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
+    all_AUCT_records_for_chosen_FY
     
-    /*
-        - initialization wizard
-        - upload R4 reports
-        - upload R5 reports
-        - run sushi harvester
-        - AUCT
-        - viewing and editing some notes
-    */
+    show_statisticsSources
+    show_statisticsSources -> add_statisticsSources_record
+    show_statisticsSources -> show_statisticsSources_record_detail
+    add_statisticsSources_record
+    show_statisticsSources_record_detail
+    show_statisticsSources_record_detail -> edit_statisticsSources_record
+    edit_statisticsSources_record // Includes adding or editing notes
+
+    show_resourceSources
+    show_resourceSources -> add_resourceSources_record
+    show_resourceSources -> show_resourceSources_record_detail
+    add_resourceSources_record
+    show_resourceSources_record_detail
+    show_resourceSources_record_detail -> edit_resourceSources_record
+    edit_resourceSources_record // Includes adding or editing notes
 
 
     /* *** Reviewing Usage Statistics *** */
