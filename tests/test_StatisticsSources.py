@@ -146,6 +146,11 @@ def test_harvest_R5_SUSHI(most_recent_month_with_usage):
 
 def test_collect_usage_statistics(most_recent_month_with_usage):
     """Tests wrapping SUSHI usage data in a RawCOUNTERReport object."""
+    #ToDo: Query database to get data for a StatisticsSources object
+    #ToDo: stats_source = StatisticsSources object based on above data
+    #ToDo: last_day = the last day of the month represented by most_recent_month_with_usage
+    #ToDo: wrapped_data = stats_source.collect_usage_statistics(most_recent_month_with_usage, last_day)
+    #ToDo: assert wrapped_data is a RawCOUNTERReport
     pass
 
 
