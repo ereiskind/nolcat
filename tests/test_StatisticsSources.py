@@ -33,7 +33,17 @@ def session(engine):
 
 
 @pytest.fixture
-def statisticsSources_fixture():
+def most_recent_month_with_usage():
+    """Creates the value that will be used for the `begin_date` SUSHI parameter and for database queries in other locations in the testing module."""
+    #ToDo: if before the 10th of the current month:
+        #ToDo: yield first day of two months ago
+    #ToDo: else:
+        #ToDo: yield first day of last month
+    pass
+
+
+@pytest.fixture
+def statisticsSources_fixture(most_recent_month_with_usage):
     """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
     
     This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
@@ -48,13 +58,9 @@ def statisticsSources_fixture():
                         #ToDo: list_of_interface_IDs.append(stats_source['interface_id'])
     
     #Section: Remove Values for Ineligible Statistics Sources
-    #ToDo: if before the 10th of the current month:
-        #ToDo: month_of_most_recent_usage = first day of two months ago
-    #ToDo: else:
-        #ToDo: month_of_most_recent_usage = first day of last month
     #ToDo: retrieval_codes = []
     #ToDo: for interface in list_of_interface_IDs:
-        #ToDo: query database: for interface, find the StatisticsSources.statistics_source_id, then find any usage data from that stats source from month_of_most_recent_usage
+        #ToDo: query database: for interface, find the StatisticsSources.statistics_source_id, then find any usage data from that stats source from month most_recent_month_with_usage
         #ToDo: if the above returns an empty set:
             #ToDo: retrieval_codes.append(interface)
     
