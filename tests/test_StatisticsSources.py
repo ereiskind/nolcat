@@ -4,6 +4,7 @@ import json
 from random import sample
 import pytest
 import pandas as pd
+from pandas._testing import assert_frame_equal
 from sqlalchemy.orm import sessionmaker
 
 from nolcat.SQLAlchemy_engine import engine as _engine
@@ -76,5 +77,34 @@ def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixtu
     
     This is a basic integration test, determining if dataframes cna be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
     """
-    #ToDo: Confirm that the imported fixture can be used as an argument directly
+    ###ToDo: Confirm that the imported fixture can be used as an argument directly
+    #ToDo: vendors_relation.to_sql(
+        # name='vendors',
+        # con=engine,
+        # if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
+        # chunksize=1000,
+        # index=True,
+        # index_label='Vendor_ID',
+    #ToDo: )
+    #ToDo: statisticsSources_fixture.to_sql(
+        # name='statisticsSources',
+        # con=engine,
+        # if_exists='replace',
+        # chunksize=1000,
+        # index=True,
+        # index_label='Statistics_Source_ID',
+    #ToDo: )
+
+    #ToDo: retrieved_vendors_data = pd.read_sql(
+        # sql="SELECT * FROM vendors;",
+        # con=engine,
+        # index_col='Vendor_ID',
+    #ToDo: )
+    #ToDo: retrieved_statisticsSources_data = pd.read_sql(
+        # sql="SELECT * FROM statisticsSources;",
+        # con=engine,
+        # index_col='Statistics_Source_ID',
+    #ToDo: )
+
+    #ToDo: assert_frame_equal(vendors_relation, retrieved_vendors_data) and assert_frame_equal(statisticsSources_fixture, retrieved_statisticsSources_data)
     pass
