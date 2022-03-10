@@ -2,9 +2,11 @@
 
 import json
 from random import sample
+import datetime
 import pytest
 import pandas as pd
 from pandas._testing import assert_frame_equal
+from dateutil import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 from sqlalchemy.orm import sessionmaker
 
 from nolcat.SQLAlchemy_engine import engine as _engine
@@ -35,11 +37,13 @@ def session(engine):
 @pytest.fixture
 def most_recent_month_with_usage():
     """Creates the value that will be used for the `begin_date` SUSHI parameter and for database queries in other locations in the testing module."""
-    #ToDo: if before the 10th of the current month:
-        #ToDo: yield first day of two months ago
-    #ToDo: else:
-        #ToDo: yield first day of last month
-    pass
+    current_date = datetime.date.today()
+    if current_date.day < 10:
+        begin_month = current_date + relativedelta(months=-2)
+        yield begin_month.replace(day=1)
+    else:
+        begin_month = current_date + relativedelta(months=-1)
+        yield begin_month.replace(day=1)
 
 
 @pytest.fixture
