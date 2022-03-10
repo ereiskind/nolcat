@@ -53,13 +53,13 @@ def statisticsSources_fixture(most_recent_month_with_usage):
     This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
     """
     #Section: Get List of StatisticsSources.statistics_source_retrieval_code Values
-    list_of_interface_IDs = []
+    retrieval_codes_as_interface_IDs = []
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
         for vendor in SUSHI_data_file:
             for stats_source in vendor['interface']:
                 if "interface_id" in list(stats_source.keys()):
-                        list_of_interface_IDs.append(stats_source['interface_id'])
+                        retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
     
     #Section: Remove Values for Ineligible Statistics Sources
     #ToDo: retrieval_codes = []
