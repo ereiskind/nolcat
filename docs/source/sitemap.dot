@@ -57,14 +57,35 @@ digraph nolcat_sitemap {
     /* *** Reviewing Usage Statistics *** */
     // Pages for reviewing usage data
     review_homepage
+    review_homepage -> create_report_from_SQL
+    review_homepage -> create_report_from_wizard
+    review_homepage -> create report_from_saved_queries
+    review_homepage -> show_resourceSources /* DUPLICATED BOX */
+    review_homepage -> show_resources
+    review_homepage -> show_vendors
+    
+    create_report_from_SQL // Runs a custom SQL statement against the database
+    create_report_from_wizard // GUI options are used to write SQL behind the scenes
+    create report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
 
-    /*
-        - generate query via dropdown
-        - write sql
-        - data viz
-        - view notes
-        - edit notes
-    */
+    create_report_from_SQL -> view_report
+    create_report_from_wizard -> view_report
+    create_report_from_saved_queries -> view_report
+    view_report
+
+    show_resources // Meaning the items in the resources table
+    
+    show_resourceSources -> add_resourceSources_record
+    add_resourceSources_record
+    show_resourceSources_record_detail -> edit_resourceSources_record
+    edit_resourceSources_record // Includes adding or editing notes
+    /* A way to handle adding `statisticsSources` to these `resourcesSources` must be developed */
+
+    show_vendors
+    show_vendors -> add_vendors_record
+    add_vendors_record
+    show_vendors_record_detail -> edit_vendors_record
+    edit_vendors_record // Includes adding or editing notes
 
 
     /* *** Program Documentation *** */
