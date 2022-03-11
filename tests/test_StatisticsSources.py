@@ -77,12 +77,11 @@ def statisticsSources_fixture():
             #ToDo: retrieval_codes.append(interface)
     
     #Section: Create Dataframe
-    #ToDo: df = statisticsSources_relation
-    #ToDo: number_of_records = number of records in df
-    #ToDo: retrieval_code_series = sample(retrieval_codes, number_of_records)
-    #ToDo: Replace series `df['Statistics_Source_Retrieval_Code']` with retrieval_code_series
-    #ToDo: yield df
-    pass
+    df = statisticsSources_relation
+    number_of_records = len(df.index)
+    retrieval_code_series = sample(retrieval_codes, number_of_records)
+    df['Statistics_Source_Retrieval_Code'] = retrieval_code_series
+    yield df
 
 
 def test_engine_creation(engine_fixture):
