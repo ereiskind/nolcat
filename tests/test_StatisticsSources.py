@@ -2,9 +2,11 @@
 
 import json
 from random import sample
+import datetime
 import pytest
 import pandas as pd
 from pandas._testing import assert_frame_equal
+from dateutil import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 from sqlalchemy.orm import sessionmaker
 
 from nolcat.SQLAlchemy_engine import engine as _engine
@@ -35,42 +37,51 @@ def session(engine):
 @pytest.fixture
 def most_recent_month_with_usage():
     """Creates the value that will be used for the `begin_date` SUSHI parameter and for database queries in other locations in the testing module."""
-    #ToDo: if before the 10th of the current month:
-        #ToDo: yield first day of two months ago
-    #ToDo: else:
-        #ToDo: yield first day of last month
-    pass
+    current_date = datetime.date.today()
+    if current_date.day < 10:
+        begin_month = current_date + relativedelta(months=-2)
+        yield begin_month.replace(day=1)
+    else:
+        begin_month = current_date + relativedelta(months=-1)
+        yield begin_month.replace(day=1)
 
 
 @pytest.fixture
-def statisticsSources_fixture(most_recent_month_with_usage):
+def statisticsSources_fixture():
     """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
     
     This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
+    #ALERT: Using just the data from the  `database_seeding_fixtures` helper module, the above described problem will never become an issue, but when running tests on the program in production, which will include more recent data, the above will need to be handled. A plan for removing `statisticsSources` records with usage data from `most_recent_month_with_usage` in the database is outlined in the second section of this function. When the change is made, the `engine` and `most_recent_month_with_usage` fixtures will need to be added as arguments to this test. The piece that needs to be determined is how this function will know if the `usageData` relation has production data.
     """
     #Section: Get List of StatisticsSources.statistics_source_retrieval_code Values
-    #ToDo: list_of_interface_IDs = []
-    #ToDo: with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
-        #ToDo: SUSHI_data_file = json.load(JSON_file)
-        #ToDo: for vendor in SUSHI_data_file:
-            #ToDo: for stats_source in vendor['interface']:
-                #ToDo: if "interface_id" in list(stats_source.keys()):
-                        #ToDo: list_of_interface_IDs.append(stats_source['interface_id'])
+    retrieval_codes_as_interface_IDs = []
+    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+        SUSHI_data_file = json.load(JSON_file)
+        for vendor in SUSHI_data_file:
+            for stats_source in vendor['interface']:
+                if "interface_id" in list(stats_source.keys()):
+                        retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
     
     #Section: Remove Values for Ineligible Statistics Sources
-    #ToDo: retrieval_codes = []
-    #ToDo: for interface in list_of_interface_IDs:
-        #ToDo: query database: for interface, find the StatisticsSources.statistics_source_id, then find any usage data from that stats source from month most_recent_month_with_usage
+    retrieval_codes = []
+    for interface in retrieval_codes_as_interface_IDs:
+        retrieval_codes.append(interface)  #ToDo: When rewriting this function per the alert in the docstring, this line will be removed in favor of the identical one below marked as a "ToDo"
+        #ToDo: Run query below against database
+            # SELECT COUNT(*)
+            # FROM usageData
+            # JOIN resourcePlatforms ON resourcePlatforms.Resource_Platform_ID=usageData.Resource_Platform_ID
+            # JOIN statisticsSources ON statisticsSources.Statistics_Source_ID=resourcePlatforms.Interface
+            # WHERE statisticsSources.Statistics_Source_Retrieval_Code = {code}
+            # AND WHERE usageData.Usage_Date = {str(most_recent_month_with_usage)};
         #ToDo: if the above returns an empty set:
             #ToDo: retrieval_codes.append(interface)
     
     #Section: Create Dataframe
-    #ToDo: df = statisticsSources_relation
-    #ToDo: number_of_records = number of records in df
-    #ToDo: retrieval_code_series = sample(retrieval_codes, number_of_records)
-    #ToDo: Replace series `df['Statistics_Source_Retrieval_Code']` with retrieval_code_series
-    #ToDo: yield df
-    pass
+    df = statisticsSources_relation
+    number_of_records = len(df.index)
+    retrieval_code_series = sample(retrieval_codes, number_of_records)
+    df['Statistics_Source_Retrieval_Code'] = retrieval_code_series
+    yield df
 
 
 def test_engine_creation(engine_fixture):
