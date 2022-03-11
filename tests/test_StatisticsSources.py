@@ -47,10 +47,11 @@ def most_recent_month_with_usage():
 
 
 @pytest.fixture
-def statisticsSources_fixture(most_recent_month_with_usage):
+def statisticsSources_fixture():
     """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
     
     This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
+    #ALERT: Using just the data from the  `database_seeding_fixtures` helper module, the above described problem will never become an issue, but when running tests on the program in production, which will include more recent data, the above will need to be handled. A plan for removing `statisticsSources` records with usage data from `most_recent_month_with_usage` in the database is outlined in the second section of this function. When the change is made, the `engine` and `most_recent_month_with_usage` fixtures will need to be added as arguments to this test. The piece that needs to be determined is how this function will know if the `usageData` relation has production data.
     """
     #Section: Get List of StatisticsSources.statistics_source_retrieval_code Values
     retrieval_codes_as_interface_IDs = []
@@ -62,9 +63,16 @@ def statisticsSources_fixture(most_recent_month_with_usage):
                         retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
     
     #Section: Remove Values for Ineligible Statistics Sources
-    #ToDo: retrieval_codes = []
-    #ToDo: for interface in list_of_interface_IDs:
-        #ToDo: query database: for interface, find the StatisticsSources.statistics_source_id, then find any usage data from that stats source from month most_recent_month_with_usage
+    retrieval_codes = []
+    for interface in retrieval_codes_as_interface_IDs:
+        retrieval_codes.append(interface)  #ToDo: When rewriting this function per the alert in the docstring, this line will be removed in favor of the identical one below marked as a "ToDo"
+        #ToDo: Run query below against database
+            # SELECT COUNT(*)
+            # FROM usageData
+            # JOIN resourcePlatforms ON resourcePlatforms.Resource_Platform_ID=usageData.Resource_Platform_ID
+            # JOIN statisticsSources ON statisticsSources.Statistics_Source_ID=resourcePlatforms.Interface
+            # WHERE statisticsSources.Statistics_Source_Retrieval_Code = {code}
+            # AND WHERE usageData.Usage_Date = {str(most_recent_month_with_usage)};
         #ToDo: if the above returns an empty set:
             #ToDo: retrieval_codes.append(interface)
     
