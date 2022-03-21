@@ -1,5 +1,7 @@
 digraph nolcat_sitemap {
     /* *** NoLCAT SITEMAP *** */
+    rankdir=LR
+
 
     /* *** Homepage and Authentication *** */
     // The web app homepage and pages for authentication
