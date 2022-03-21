@@ -3,6 +3,18 @@ digraph nolcat_sitemap {
     rankdir=LR
 
 
+    /* *** Main NoLCAT Folder *** */
+    //
+
+
+    /* *** `ingest` Blueprint *** */
+    //
+
+
+    /* *** `view` Blueprint *** */
+    //
+
+
     /* *** Homepage and Authentication *** */
     // The web app homepage and pages for authentication
     homepage [shape="box"]
