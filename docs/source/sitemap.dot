@@ -10,6 +10,9 @@ digraph nolcat_sitemap {
         homepage -> view_usage_homepage
         homepage -> Sphinx_homepage
     login_page
+        login_page -> create_account
+    create_account
+        create_account -> initialization_wizard // Page in `ingest` section; linkage because program will request data for database initialization upon creation of first account
     // And any other pages needed for authentication
 
 
@@ -28,6 +31,7 @@ digraph nolcat_sitemap {
     upload_R4_reports
     upload_R5_reports
     harvest_SUSHI_for_custom_dates
+    initialization_wizard
 
 
     /* *** `view` Blueprint *** */
@@ -36,9 +40,6 @@ digraph nolcat_sitemap {
 
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
-    
-    initialization_wizard
-    
     
 
     // Pages for organizing usage statistics collection
