@@ -89,13 +89,8 @@ digraph nolcat_sitemap {
     edit_vendors_record // Includes adding or editing notes
 
 
-    
-
-
-    /* *** Program Documentation *** */
-    // The Sphinx documentation for the web app
+    /* *** Sphinx *** */
     Sphinx_homepage [shape="house"]
-        //Sphinx_homepage -> Sphinx_other_pages
-
+        Sphinx_homepage -> Sphinx_other_pages
     Sphinx_other_pages // Use Sphinx itself for site organization
 }
