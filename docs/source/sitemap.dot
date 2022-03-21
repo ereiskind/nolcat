@@ -40,7 +40,22 @@ digraph nolcat_sitemap {
 
 
     /* *** `view` Blueprint *** */
-    //
+    view_usage_homepage [shape="house"]
+        view_usage_homepage -> create_report_from_SQL
+        view_usage_homepage -> create_report_from_wizard
+        view_usage_homepage -> create_report_from_saved_queries
+        view_usage_homepage -> show_resourceSources_list
+        view_usage_homepage -> show_resources
+        view_usage_homepage -> show_vendors_list
+    
+    // Pages for Querying and Displaying Usage Data
+    create_report_from_SQL // Runs a custom SQL statement against the database
+        create_report_from_SQL -> view_report
+    create_report_from_wizard // GUI options are used to write SQL behind the scenes
+        create_report_from_wizard -> view_report
+    create_report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
+        create_report_from_saved_queries -> view_report
+    view_report
 
 
     /* *** View Records from a Relation *** */
@@ -67,22 +82,7 @@ digraph nolcat_sitemap {
     
     /* *** Reviewing Usage Statistics *** */
     // Pages for reviewing usage data
-    review_homepage [shape="house"]
-        //review_homepage -> create_report_from_SQL
-        //review_homepage -> create_report_from_wizard
-        //review_homepage -> create report_from_saved_queries
-        //review_homepage -> show_resourceSources /* DUPLICATED BOX */
-        //review_homepage -> show_resources
-        //review_homepage -> show_vendors
     
-    create_report_from_SQL // Runs a custom SQL statement against the database
-    create_report_from_wizard // GUI options are used to write SQL behind the scenes
-    create report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
-
-        //create_report_from_SQL -> view_report
-        //create_report_from_wizard -> view_report
-        //create_report_from_saved_queries -> view_report
-    view_report
 
     show_resources // Meaning the items in the resources table
     
