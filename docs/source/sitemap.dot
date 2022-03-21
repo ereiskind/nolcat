@@ -33,27 +33,33 @@ digraph nolcat_sitemap {
     harvest_SUSHI_for_custom_dates
     initialization_wizard
 
+    // Pages for viewing status of usage collection for a given FY
+    select_FY_for_AUCT_display
+        select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
+    all_AUCT_records_for_chosen_FY
+
 
     /* *** `view` Blueprint *** */
     //
+
+
+    /* *** View Records from a Relation *** */
+    // Not sure if this should go in `ingest`, `view`, or a new `records` blueprint
+    show_statisticsSources_list
+        show_statisticsSources_list -> add_statisticsSources_record
+        show_statisticsSources_list -> show_statisticsSources_record_detail
+    add_statisticsSources_record
+        add_statisticsSources_record -> edit_statisticsSources_record // To provide info for the new record
+    show_statisticsSources_record_detail
+        show_statisticsSources_record_detail -> edit_statisticsSources_record
+    edit_statisticsSources_record // Includes adding or editing notes
 
 
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
     
 
-    // Pages for organizing usage statistics collection
-    select_FY_for_AUCT_display
-        //select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
-    all_AUCT_records_for_chosen_FY
     
-    show_statisticsSources
-        //show_statisticsSources -> add_statisticsSources_record
-        //show_statisticsSources -> show_statisticsSources_record_detail
-    add_statisticsSources_record
-    show_statisticsSources_record_detail
-        //show_statisticsSources_record_detail -> edit_statisticsSources_record
-    edit_statisticsSources_record // Includes adding or editing notes
 
     show_resourceSources
         //show_resourceSources -> add_resourceSources_record
