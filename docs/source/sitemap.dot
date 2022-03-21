@@ -19,6 +19,15 @@ digraph nolcat_sitemap {
         ingest_usage_homepage -> show_statisticsSources_list
         ingest_usage_homepage -> show_resourceSources_list
         ingest_usage_homepage -> select_FY_for_AUCT_display
+    
+    // Pages for ingesting COUNTER data
+    ingest_COUNTER_data
+        ingest_COUNTER_data -> upload_R4_reports
+        ingest_COUNTER_data -> upload_R5_reports
+        ingest_COUNTER_data -> harvest_SUSHI_for_custom_dates
+    upload_R4_reports
+    upload_R5_reports
+    harvest_SUSHI_for_custom_dates
 
 
     /* *** `view` Blueprint *** */
@@ -29,15 +38,8 @@ digraph nolcat_sitemap {
     // Pages for collecting usage statistics
     
     initialization_wizard
-    add_COUNTER_data
-        //add_COUNTER_data -> upload_R4_reports
-        //add_COUNTER_data -> upload_R5_reports
-        //add_COUNTER_data -> harvest_SUSHI_for_custom_dates
-
-    // Pages for ingesting COUNTER data
-    upload_R4_reports
-    upload_R5_reports
-    harvest_SUSHI_for_custom_dates
+    
+    
 
     // Pages for organizing usage statistics collection
     select_FY_for_AUCT_display
