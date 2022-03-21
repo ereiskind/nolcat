@@ -14,7 +14,11 @@ digraph nolcat_sitemap {
 
 
     /* *** `ingest` Blueprint *** */
-    //
+    ingest_usage_homepage [shape="house"]
+        ingest_usage_homepage -> ingest_COUNTER_data
+        ingest_usage_homepage -> show_statisticsSources_list
+        ingest_usage_homepage -> show_resourceSources_list
+        ingest_usage_homepage -> select_FY_for_AUCT_display
 
 
     /* *** `view` Blueprint *** */
@@ -23,11 +27,7 @@ digraph nolcat_sitemap {
 
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
-    collection_homepage [shape="house"]
-        //collection_homepage -> add_COUNTER_data
-        //collection_homepage -> select_FY_for_AUCT_display
-        //collection_homepage -> show_statisticsSources
-        //collection_homepage -> show_resourceSources
+    
     initialization_wizard
     add_COUNTER_data
         //add_COUNTER_data -> upload_R4_reports
