@@ -54,22 +54,17 @@ digraph nolcat_sitemap {
         show_statisticsSources_record_detail -> edit_statisticsSources_record
     edit_statisticsSources_record // Includes adding or editing notes
 
-
-    /* *** Collecting Usage Statistics *** */
-    // Pages for collecting usage statistics
-    
-
-    
-
-    show_resourceSources
-        //show_resourceSources -> add_resourceSources_record
-        //show_resourceSources -> show_resourceSources_record_detail
+    show_resourceSources_list
+        show_resourceSources_list -> add_resourceSources_record
+        show_resourceSources_list -> show_resourceSources_record_detail
     add_resourceSources_record
+        add_resourceSources_record -> edit_resourceSources_record // To provide info for the new record
     show_resourceSources_record_detail
-        //show_resourceSources_record_detail -> edit_resourceSources_record
+        show_resourceSources_record_detail -> edit_resourceSources_record
     edit_resourceSources_record // Includes adding or editing notes
 
 
+    
     /* *** Reviewing Usage Statistics *** */
     // Pages for reviewing usage data
     review_homepage [shape="house"]
