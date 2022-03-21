@@ -1,97 +1,74 @@
 digraph nolcat_sitemap {
     /* *** NoLCAT SITEMAP *** */
+    rankdir=LR
 
-    /* *** Homepage and Authentication *** */
-    // The web app homepage and pages for authentication
-    homepage
-    homepage -> login_page
-    homepage -> collection_homepage
-    homepage -> review_homepage
-    homepage -> Sphinx_homepage
-    
 
+    /* *** Main NoLCAT Folder *** */
+    homepage [shape="box"]
+        homepage -> login_page
+        homepage -> ingest_usage_homepage
+        homepage -> view_usage_homepage
+        homepage -> Sphinx_homepage
     login_page
+        login_page -> create_account
+    create_account
+        create_account -> initialization_wizard // Page in `ingest` section; linkage because program will request data for database initialization upon creation of first account
     // And any other pages needed for authentication
 
 
-    /* *** Collecting Usage Statistics *** */
-    // Pages for collecting usage statistics
-    collection_homepage
-    collection_homepage -> add_COUNTER_data
-    collection_homepage -> select_FY_for_AUCT_display
-    collection_homepage -> show_statisticsSources
-    collection_homepage -> show_resourceSources
-    initialization wizard
-    add_COUNTER_data
-    add_COUNTER_data -> upload_R4_reports
-    add_COUNTER_data -> upload_R5_reports
-    add_COUNTER_data -> harvest_SUSHI_for_custom_dates
-
+    /* *** `ingest` Blueprint *** */
+    ingest_usage_homepage [shape="house"]
+        ingest_usage_homepage -> ingest_COUNTER_data
+        ingest_usage_homepage -> show_records_list
+        ingest_usage_homepage -> select_FY_for_AUCT_display
+    
     // Pages for ingesting COUNTER data
+    ingest_COUNTER_data
+        ingest_COUNTER_data -> upload_R4_reports
+        ingest_COUNTER_data -> upload_R5_reports
+        ingest_COUNTER_data -> harvest_SUSHI_for_custom_dates
     upload_R4_reports
     upload_R5_reports
     harvest_SUSHI_for_custom_dates
+    initialization_wizard
 
-    // Pages for organizing usage statistics collection
+    // Pages for viewing status of usage collection for a given FY
     select_FY_for_AUCT_display
-    select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
+        select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
     all_AUCT_records_for_chosen_FY
-    
-    show_statisticsSources
-    show_statisticsSources -> add_statisticsSources_record
-    show_statisticsSources -> show_statisticsSources_record_detail
-    add_statisticsSources_record
-    show_statisticsSources_record_detail
-    show_statisticsSources_record_detail -> edit_statisticsSources_record
-    edit_statisticsSources_record // Includes adding or editing notes
-
-    show_resourceSources
-    show_resourceSources -> add_resourceSources_record
-    show_resourceSources -> show_resourceSources_record_detail
-    add_resourceSources_record
-    show_resourceSources_record_detail
-    show_resourceSources_record_detail -> edit_resourceSources_record
-    edit_resourceSources_record // Includes adding or editing notes
 
 
-    /* *** Reviewing Usage Statistics *** */
-    // Pages for reviewing usage data
-    review_homepage
-    review_homepage -> create_report_from_SQL
-    review_homepage -> create_report_from_wizard
-    review_homepage -> create report_from_saved_queries
-    review_homepage -> show_resourceSources /* DUPLICATED BOX */
-    review_homepage -> show_resources
-    review_homepage -> show_vendors
-    
-    create_report_from_SQL // Runs a custom SQL statement against the database
-    create_report_from_wizard // GUI options are used to write SQL behind the scenes
-    create report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
-
-    create_report_from_SQL -> view_report
-    create_report_from_wizard -> view_report
-    create_report_from_saved_queries -> view_report
-    view_report
-
+    /* *** `view` Blueprint *** */
+    view_usage_homepage [shape="house"]
+        view_usage_homepage -> create_report_from_SQL
+        view_usage_homepage -> create_report_from_wizard
+        view_usage_homepage -> create_report_from_saved_queries
+        view_usage_homepage -> show_records_list
+        view_usage_homepage -> show_resources
     show_resources // Meaning the items in the resources table
     
-    show_resourceSources -> add_resourceSources_record
-    add_resourceSources_record
-    show_resourceSources_record_detail -> edit_resourceSources_record
-    edit_resourceSources_record // Includes adding or editing notes
-    /* A way to handle adding `statisticsSources` to these `resourcesSources` must be developed */
+    // Pages for Querying and Displaying Usage Data
+    create_report_from_SQL // Runs a custom SQL statement against the database
+        create_report_from_SQL -> view_report
+    create_report_from_wizard // GUI options are used to write SQL behind the scenes
+        create_report_from_wizard -> view_report
+    create_report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
+        create_report_from_saved_queries -> view_report
+    view_report
 
-    show_vendors
-    show_vendors -> add_vendors_record
-    add_vendors_record
-    show_vendors_record_detail -> edit_vendors_record
-    edit_vendors_record // Includes adding or editing notes
+    // Pages for Viewing, Adding, and Editing Records to a Relation
+    show_records_list
+        show_records_list -> add_new_record
+        show_records_list -> show_record_details
+    add_new_record
+        add_new_record -> edit_record_details // To provide info for the new record
+    show_record_details
+        show_record_details -> edit_record_details
+    edit_record_details // Includes adding or editing notes
 
 
-    /* *** Program Documentation *** */
-    // The Sphinx documentation for the web app
-    Sphinx_homepage
-    Sphinx_homepage -> Sphinx_other_pages
-
+    /* *** Sphinx *** */
+    Sphinx_homepage [shape="house"]
+        Sphinx_homepage -> Sphinx_other_pages
     Sphinx_other_pages // Use Sphinx itself for site organization
 }
