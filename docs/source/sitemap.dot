@@ -4,7 +4,13 @@ digraph nolcat_sitemap {
 
 
     /* *** Main NoLCAT Folder *** */
-    //
+    homepage [shape="box"]
+        homepage -> login_page
+        homepage -> ingest_usage_homepage
+        homepage -> view_usage_homepage
+        homepage -> Sphinx_homepage
+    login_page
+    // And any other pages needed for authentication
 
 
     /* *** `ingest` Blueprint *** */
@@ -13,19 +19,6 @@ digraph nolcat_sitemap {
 
     /* *** `view` Blueprint *** */
     //
-
-
-    /* *** Homepage and Authentication *** */
-    // The web app homepage and pages for authentication
-    homepage [shape="box"]
-        //homepage -> login_page
-        //homepage -> collection_homepage
-        //homepage -> review_homepage
-        //homepage -> Sphinx_homepage
-    
-
-    login_page
-    // And any other pages needed for authentication
 
 
     /* *** Collecting Usage Statistics *** */
