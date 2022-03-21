@@ -23,7 +23,7 @@ digraph nolcat_sitemap {
     collection_homepage -> select_FY_for_AUCT_display
     collection_homepage -> show_statisticsSources
     collection_homepage -> show_resourceSources
-    initialization wizard
+    initialization_wizard
     add_COUNTER_data
     add_COUNTER_data -> upload_R4_reports
     add_COUNTER_data -> upload_R5_reports
