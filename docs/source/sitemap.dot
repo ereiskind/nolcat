@@ -5,7 +5,7 @@ digraph nolcat_sitemap {
 
     /* *** Homepage and Authentication *** */
     // The web app homepage and pages for authentication
-    homepage
+    homepage [shape="box"]
         //homepage -> login_page
         //homepage -> collection_homepage
         //homepage -> review_homepage
@@ -18,7 +18,7 @@ digraph nolcat_sitemap {
 
     /* *** Collecting Usage Statistics *** */
     // Pages for collecting usage statistics
-    collection_homepage
+    collection_homepage [shape="house"]
         //collection_homepage -> add_COUNTER_data
         //collection_homepage -> select_FY_for_AUCT_display
         //collection_homepage -> show_statisticsSources
@@ -58,7 +58,7 @@ digraph nolcat_sitemap {
 
     /* *** Reviewing Usage Statistics *** */
     // Pages for reviewing usage data
-    review_homepage
+    review_homepage [shape="house"]
         //review_homepage -> create_report_from_SQL
         //review_homepage -> create_report_from_wizard
         //review_homepage -> create report_from_saved_queries
@@ -92,7 +92,7 @@ digraph nolcat_sitemap {
 
     /* *** Program Documentation *** */
     // The Sphinx documentation for the web app
-    Sphinx_homepage
+    Sphinx_homepage [shape="house"]
         //Sphinx_homepage -> Sphinx_other_pages
 
     Sphinx_other_pages // Use Sphinx itself for site organization
