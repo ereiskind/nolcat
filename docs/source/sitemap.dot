@@ -19,8 +19,7 @@ digraph nolcat_sitemap {
     /* *** `ingest` Blueprint *** */
     ingest_usage_homepage [shape="house"]
         ingest_usage_homepage -> ingest_COUNTER_data
-        ingest_usage_homepage -> show_statisticsSources_list
-        ingest_usage_homepage -> show_resourceSources_list
+        ingest_usage_homepage -> show_records_list
         ingest_usage_homepage -> select_FY_for_AUCT_display
     
     // Pages for ingesting COUNTER data
@@ -44,9 +43,8 @@ digraph nolcat_sitemap {
         view_usage_homepage -> create_report_from_SQL
         view_usage_homepage -> create_report_from_wizard
         view_usage_homepage -> create_report_from_saved_queries
-        view_usage_homepage -> show_resourceSources_list
+        view_usage_homepage -> show_records_list
         view_usage_homepage -> show_resources
-        view_usage_homepage -> show_vendors_list
     show_resources // Meaning the items in the resources table
     
     // Pages for Querying and Displaying Usage Data
@@ -58,35 +56,15 @@ digraph nolcat_sitemap {
         create_report_from_saved_queries -> view_report
     view_report
 
-
-    /* *** View Records from a Relation *** */
-    // Not sure if this should go in `ingest`, `view`, or a new `records` blueprint
-    show_statisticsSources_list
-        show_statisticsSources_list -> add_statisticsSources_record
-        show_statisticsSources_list -> show_statisticsSources_record_detail
-    add_statisticsSources_record
-        add_statisticsSources_record -> edit_statisticsSources_record // To provide info for the new record
-    show_statisticsSources_record_detail
-        show_statisticsSources_record_detail -> edit_statisticsSources_record
-    edit_statisticsSources_record // Includes adding or editing notes
-
-    show_resourceSources_list
-        show_resourceSources_list -> add_resourceSources_record
-        show_resourceSources_list -> show_resourceSources_record_detail
-    add_resourceSources_record
-        add_resourceSources_record -> edit_resourceSources_record // To provide info for the new record
-    show_resourceSources_record_detail
-        show_resourceSources_record_detail -> edit_resourceSources_record
-    edit_resourceSources_record // Includes adding or editing notes
-
-    show_vendors_list
-        show_vendors_list -> add_vendors_record
-        show_vendors_list -> show_vendors_record_detail
-    add_vendors_record
-        add_vendors_record -> edit_vendors_record // To provide info for the new record
-    show_vendors_record_detail
-        show_vendors_record_detail -> edit_vendors_record
-    edit_vendors_record // Includes adding or editing notes
+    // Pages for Viewing, Adding, and Editing Records to a Relation
+    show_records_list
+        show_records_list -> add_new_record
+        show_records_list -> show_record_details
+    add_new_record
+        add_new_record -> edit_record_details // To provide info for the new record
+    show_record_details
+        show_record_details -> edit_record_details
+    edit_record_details // Includes adding or editing notes
 
 
     /* *** Sphinx *** */
