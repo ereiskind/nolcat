@@ -23,6 +23,10 @@ def create_app():
     app.config['SECRET_KEY'] = "ReplaceMeLater"
     app.config['UPLOAD_FOLDER'] = './data'
 
+    #Section: Create Homepage and Register Other Blueprints
+    from nolcat import login
+    app.register_blueprint(login.bp)
+
     from nolcat import ingest
     app.register_blueprint(ingest.bp)
 
@@ -32,8 +36,7 @@ def create_app():
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
-        #ToDo: Add login for `ingest` blueprint
-        #ToDo: Add login for `view` blueprint
+        #ToDo: Create a link to the login page
         return render_template('index.html')
     
 
