@@ -9,11 +9,21 @@ digraph nolcat_sitemap {
         homepage -> ingest_usage_homepage
         homepage -> view_usage_homepage
         homepage -> Sphinx_homepage
+    
+
+    /* *** `login` Blueprint *** */
     login_page
         login_page -> create_account
     create_account
         create_account -> initialization_wizard // Page in `ingest` section; linkage because program will request data for database initialization upon creation of first account
     // And any other pages needed for authentication
+    
+
+
+
+
+    /* ******************************************************************************************* */
+    
 
 
     /* *** `ingest` Blueprint *** */
