@@ -43,6 +43,7 @@ Base = declarative_base()
 
 class FiscalYears(Base):
     """A relation representing the fiscal years for which data has been collected."""
+    #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
     __table_args__ = {'schema': 'nolcat'}
 

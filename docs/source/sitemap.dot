@@ -41,9 +41,9 @@ digraph nolcat_sitemap {
     manage_usage_collection_homepage [shape="house"]
         manage_usage_collection_homepage -> view_sources_list // For StatisticsSources and ResourceSources
         manage_usage_collection_homepage -> view_vendors_list
-        manage_usage_collection_homepage -> select_FY_for_AUCT_display
-    select_FY_for_AUCT_display
-        select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
+        manage_usage_collection_homepage -> view_FY_details // The FY for which the details will be shown is selected before going to the page
+    view_FY_details
+        view_FY_details -> all_AUCT_records_for_chosen_FY
     all_AUCT_records_for_chosen_FY
     
 
