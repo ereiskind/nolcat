@@ -7,6 +7,7 @@ digraph nolcat_sitemap {
     homepage [shape="box"]
         homepage -> login_page
         homepage -> ingest_usage_homepage
+        homepage -> manage_usage_collection_homepage
         homepage -> view_usage_homepage
         homepage -> Sphinx_homepage
     
@@ -34,6 +35,16 @@ digraph nolcat_sitemap {
     upload_R5_reports
     harvest_SUSHI_for_custom_dates
     upload_non_COUNTER_reports
+
+
+    /* *** `annual_stats` Blueprint *** */
+    manage_usage_collection_homepage [shape="house"]
+        manage_usage_collection_homepage -> view_sources_list // For StatisticsSources and ResourceSources
+        manage_usage_collection_homepage -> view_vendors_list
+        manage_usage_collection_homepage -> select_FY_for_AUCT_display
+    select_FY_for_AUCT_display
+        select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
+    all_AUCT_records_for_chosen_FY
     
 
 
@@ -47,15 +58,7 @@ digraph nolcat_sitemap {
     ingest_usage_homepage [shape="house"]
 
         ingest_usage_homepage -> show_records_list
-        ingest_usage_homepage -> select_FY_for_AUCT_display
-    
-    
-
-    // Pages for viewing status of usage collection for a given FY
-    select_FY_for_AUCT_display
-        select_FY_for_AUCT_display -> all_AUCT_records_for_chosen_FY
-    all_AUCT_records_for_chosen_FY
-
+   
 
     /* *** `view` Blueprint *** */
     view_usage_homepage [shape="house"]
