@@ -18,6 +18,10 @@ digraph nolcat_sitemap {
     create_account
         create_account -> initialization_wizard // Page in `ingest` section; linkage because program will request data for database initialization upon creation of first account
     // And any other pages needed for authentication
+
+
+    /* *** `initialization` Blueprint *** */
+    initialization_wizard
     
 
 
@@ -41,7 +45,6 @@ digraph nolcat_sitemap {
     upload_R4_reports
     upload_R5_reports
     harvest_SUSHI_for_custom_dates
-    initialization_wizard
 
     // Pages for viewing status of usage collection for a given FY
     select_FY_for_AUCT_display
