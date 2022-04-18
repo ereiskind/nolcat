@@ -3,10 +3,7 @@
 
 #Section: Updating Information
 #Subsection: Adding Data
-#ToDo: Create route to and page for adding non-COUNTER compliant usage
-#ToDo: How should non-COUNTER usage be stored? As BLOB in MySQL, as files in the container, as a Docker volume, in some other manner?
-#ToDo: Find all resources to which this applies with `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
-# render_template('upload-historical-non-COUNTER-data.html')
+
 
 
 #ToDo: Create route to and page for creating new records in `vendors`
