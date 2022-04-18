@@ -42,12 +42,16 @@ def create_app():
     from nolcat import annual_stats
     app.register_blueprint(annual_stats.bp)
 
+    from nolcat import view_resources
+    app.register_blueprint(view_resources.bp)
+
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
         #ToDo: Create a link to the login page
         #ToDo: create a link to ingest_usage_homepage
         #ToDo: Create a link to manage_usage_collection_homepage
+        #ToDo: Create a link to view_resources_list
         return render_template('index.html')
     
 
