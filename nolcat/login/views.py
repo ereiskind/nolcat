@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route for login page with Flask-User
+#ToDo: returns login_page.html
 
 
 #ToDo: If individual accounts are to be used, create route to account creation page with Flask-User
