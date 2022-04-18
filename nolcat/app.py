@@ -36,6 +36,9 @@ def create_app():
     from nolcat import initialization
     app.register_blueprint(initialization.bp)
 
+    from nolcat import ingest_usage
+    app.register_blueprint(ingest_usage.bp)
+
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
