@@ -584,9 +584,10 @@ class Resources(Base):
     online_issn = Column(String(9))
     data_type = Column(String(25))
     section_type = Column(String(10))
+    note = Column(Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
 
-    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
+    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type, note):
         """A constructor setting the field values as class attributes."""
         self.resource_id = resource_id
         self.doi = doi
@@ -595,6 +596,7 @@ class Resources(Base):
         self.online_issn = online_issn
         self.data_type = data_type
         self.section_type = section_type
+        self.note = note
 
 
     def __repr__(self):

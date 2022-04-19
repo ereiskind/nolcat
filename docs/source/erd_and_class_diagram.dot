@@ -199,6 +199,7 @@ digraph erd_and_classes {
         Online_ISSN
         Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
         __Section_Type // This is in R5 IR only-how to add it? Does it go here?
+        Note
 
         // Methods
     }
