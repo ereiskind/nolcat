@@ -107,7 +107,7 @@ class RawCOUNTERReport:
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
             #ToDo: SOME ISSUES TO CONSIDER
-                #ToDo: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
+                #Alert: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
                 #ToDo: When the metadata for matched resources doesn't match, the user should select what data goes in the resources relation; should that occur along with or after matches are determined?
                 #ToDo: Should metadata elements not being kept in the resources relation be kept? Using them for resource matching purposes would be difficult, but they could be an alternative set of metadata against which searches for resources by ISBN or ISSN could be run.
                 #ToDo: Should anything be done to denote those titles where different stats sources assign different data types?

@@ -209,12 +209,13 @@ CREATE TABLE resources (
 );
 
 
-CREATE TABLE resourceTitles (
-    Resource_Title_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Resource_Title VARCHAR(2000),
+CREATE TABLE resourceMetadata (
+    Resource_Metadata_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Metadata_Field VARCHAR(35),
+    Metadata_Value VARCHAR(2000),
     Resource_ID INT NOT NULL,
     INDEX resources_FK_INDX (Resource_ID),
-    CONSTRAINT resources_FK_resourceTitles FOREIGN KEY resources_FK_INDX (Resource_ID)
+    CONSTRAINT resources_FK_resourceMetadata FOREIGN KEY resources_FK_INDX (Resource_ID)
         REFERENCES resources(Resource_ID)
         ON UPDATE restrict
         ON DELETE restrict
