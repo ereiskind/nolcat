@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route to view resources list
+    # return view_resources.html
 
 
 #ToDo: Create route to add a new resource or edit a resource
