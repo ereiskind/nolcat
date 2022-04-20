@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route to view vendors list
+    # return view_vendors.html
 
 
 #ToDo: Create route to add a new vendor or edit a vendor
@@ -16,3 +17,4 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 #ToDo: Create route to view vendor details
+    # return view_vendor_details.html
