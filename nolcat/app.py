@@ -49,11 +49,6 @@ def create_app():
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
-        #ToDo: Create a link to the login page
-        #ToDo: create a link to ingest_usage_homepage
-        #ToDo: Create a link to manage_usage_collection_homepage
-        #ToDo: Create a link to view_resources_list
-        #ToDo: Create a link to view_usage_homepage
         return render_template('index.html')
     
 
