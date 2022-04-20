@@ -5,8 +5,6 @@ from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
-
 csrf = CSRFProtect()
 
 def page_not_found(error):
@@ -26,12 +24,6 @@ def create_app():
     #Section: Create Homepage and Register Other Blueprints
     from nolcat import login
     app.register_blueprint(login.bp)
-
-    from nolcat import ingest
-    app.register_blueprint(ingest.bp)
-
-    from nolcat import view
-    app.register_blueprint(view.bp)
 
     from nolcat import initialization
     app.register_blueprint(initialization.bp)
