@@ -12,7 +12,7 @@ USE `nolcat`;
 
 CREATE TABLE fiscalYears (
     Fiscal_Year_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Fiscal_Year CHAR(4) NOT NULL,
+    Fiscal_Year YEAR NOT NULL,
     Start_Date DATE NOT NULL,
     End_Date DATE NOT NULL,
     ACRL_60b SMALLINT,
