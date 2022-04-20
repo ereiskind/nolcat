@@ -81,21 +81,13 @@ digraph nolcat_sitemap {
     view_vendor_details
         view_vendor_details -> edit_vendor_details
     edit_vendor_details // Includes adding or editing notes
-    
 
 
-
-
-    /* ******************************************************************************************* */
-
-    /* *** `view` Blueprint *** */
+    /* *** `view_usage` Blueprint *** */
     view_usage_homepage [shape="house"]
         view_usage_homepage -> create_report_from_SQL
         view_usage_homepage -> create_report_from_wizard
         view_usage_homepage -> create_report_from_saved_queries
-    
-    
-    // Pages for Querying and Displaying Usage Data
     create_report_from_SQL // Runs a custom SQL statement against the database
         create_report_from_SQL -> view_report
     create_report_from_wizard // GUI options are used to write SQL behind the scenes
@@ -103,6 +95,14 @@ digraph nolcat_sitemap {
     create_report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
         create_report_from_saved_queries -> view_report
     view_report
+    
+
+
+
+
+    /* ******************************************************************************************* */
+
+    
 
 
     /* *** Sphinx *** */

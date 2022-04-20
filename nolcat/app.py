@@ -51,6 +51,9 @@ def create_app():
     from nolcat import view_vendors
     app.register_blueprint(view_vendors.bp)
 
+    from nolcat import view_usage
+    app.register_blueprint(view_usage.bp)
+
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
@@ -58,6 +61,7 @@ def create_app():
         #ToDo: create a link to ingest_usage_homepage
         #ToDo: Create a link to manage_usage_collection_homepage
         #ToDo: Create a link to view_resources_list
+        #ToDo: Create a link to view_usage_homepage
         return render_template('index.html')
     
 
