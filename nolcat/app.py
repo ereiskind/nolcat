@@ -22,17 +22,17 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = './data'
 
     #Section: Create Homepage and Register Other Blueprints
-    from nolcat import login
-    app.register_blueprint(login.bp)
-
-    from nolcat import initialization
-    app.register_blueprint(initialization.bp)
+    from nolcat import annual_stats
+    app.register_blueprint(annual_stats.bp)
 
     from nolcat import ingest_usage
     app.register_blueprint(ingest_usage.bp)
 
-    from nolcat import annual_stats
-    app.register_blueprint(annual_stats.bp)
+    from nolcat import initialization
+    app.register_blueprint(initialization.bp)
+
+    from nolcat import login
+    app.register_blueprint(login.bp)
 
     from nolcat import view_resources
     app.register_blueprint(view_resources.bp)
@@ -40,11 +40,11 @@ def create_app():
     from nolcat import view_sources
     app.register_blueprint(view_sources.bp)
 
-    from nolcat import view_vendors
-    app.register_blueprint(view_vendors.bp)
-
     from nolcat import view_usage
     app.register_blueprint(view_usage.bp)
+
+    from nolcat import view_vendors
+    app.register_blueprint(view_vendors.bp)
 
     @app.route('/')
     def homepage():
