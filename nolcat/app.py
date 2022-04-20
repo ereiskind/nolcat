@@ -5,8 +5,6 @@ from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from nolcat.ingest import forms  #ToDo: If routes are still in this file when `view` blueprint is added, add `as ingest_forms`
-
 csrf = CSRFProtect()
 
 def page_not_found(error):
@@ -23,17 +21,34 @@ def create_app():
     app.config['SECRET_KEY'] = "ReplaceMeLater"
     app.config['UPLOAD_FOLDER'] = './data'
 
-    from nolcat import ingest
-    app.register_blueprint(ingest.bp)
+    #Section: Create Homepage and Register Other Blueprints
+    from nolcat import annual_stats
+    app.register_blueprint(annual_stats.bp)
 
-    from nolcat import view
-    app.register_blueprint(view.bp)
+    from nolcat import ingest_usage
+    app.register_blueprint(ingest_usage.bp)
+
+    from nolcat import initialization
+    app.register_blueprint(initialization.bp)
+
+    from nolcat import login
+    app.register_blueprint(login.bp)
+
+    from nolcat import view_resources
+    app.register_blueprint(view_resources.bp)
+
+    from nolcat import view_sources
+    app.register_blueprint(view_sources.bp)
+
+    from nolcat import view_usage
+    app.register_blueprint(view_usage.bp)
+
+    from nolcat import view_vendors
+    app.register_blueprint(view_vendors.bp)
 
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
-        #ToDo: Add login for `ingest` blueprint
-        #ToDo: Add login for `view` blueprint
         return render_template('index.html')
     
 

@@ -1,0 +1,20 @@
+import logging
+from . import bp
+from ..view import forms
+
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+
+
+#ToDo: Create route to view vendors list
+    # return view_vendors.html
+
+
+#ToDo: Create route to add a new vendor or edit a vendor
+    #ToDo: Adding a vendor = none of the form fields are filled in
+    #ToDo: Editing a vendor = form fields are prefilled with the existing data for the vendor and whatever is in the forms when the page is saved is committed back to the database
+    #ToDo: The page needs to include a way to connect vendors to statisticsSources and resourceSources
+
+
+#ToDo: Create route to view vendor details
+    # return view_vendor_details.html

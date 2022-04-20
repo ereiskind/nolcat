@@ -206,15 +206,17 @@ CREATE TABLE resources (
     Online_ISSN CHAR(9),
     Data_Type VARCHAR(25) NOT NULL, -- While different statistics sources may assign the same resource different Data_Type values, R5, in dividing reports by level of granularity and allowing for a wide variety of data types, seems to have cut down on these issues; additionally, without a record with the `Platform` Data_Type, that aspect of data would be lost while resourcePlatforms.Resource_ID would need to allow nulls.
     Section_Type VARCHAR(10),
+    Note TEXT,
 );
 
 
-CREATE TABLE resourceTitles (
-    Resource_Title_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Resource_Title VARCHAR(2000),
+CREATE TABLE resourceMetadata (
+    Resource_Metadata_ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Metadata_Field VARCHAR(35),
+    Metadata_Value VARCHAR(2000),
     Resource_ID INT NOT NULL,
     INDEX resources_FK_INDX (Resource_ID),
-    CONSTRAINT resources_FK_resourceTitles FOREIGN KEY resources_FK_INDX (Resource_ID)
+    CONSTRAINT resources_FK_resourceMetadata FOREIGN KEY resources_FK_INDX (Resource_ID)
         REFERENCES resources(Resource_ID)
         ON UPDATE restrict
         ON DELETE restrict

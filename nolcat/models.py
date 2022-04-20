@@ -43,6 +43,7 @@ Base = declarative_base()
 
 class FiscalYears(Base):
     """A relation representing the fiscal years for which data has been collected."""
+    #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
     __table_args__ = {'schema': 'nolcat'}
 
@@ -373,18 +374,6 @@ class StatisticsSources(Base):
         pass
 
 
-    @hybrid_method
-    def upload_R4_report(self):
-        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
-        pass
-
-
-    @hybrid_method
-    def upload_R5_report(self):
-        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
-        pass
-
-
 class StatisticsSourceNotes(Base):
     """A relation containing notes about statistics sources."""
     __tablename__ = 'statisticsSourceNotes'
@@ -595,9 +584,10 @@ class Resources(Base):
     online_issn = Column(String(9))
     data_type = Column(String(25))
     section_type = Column(String(10))
+    note = Column(Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
 
-    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type):
+    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type, note):
         """A constructor setting the field values as class attributes."""
         self.resource_id = resource_id
         self.doi = doi
@@ -606,6 +596,7 @@ class Resources(Base):
         self.online_issn = online_issn
         self.data_type = data_type
         self.section_type = section_type
+        self.note = note
 
 
     def __repr__(self):
@@ -614,23 +605,35 @@ class Resources(Base):
         pass
 
 
-class ResourceTitles(Base):
-    """A relation containing all the title strings found in COUNTER reports for resources, compiled to preserve all of a resource's names."""
-    #ToDo: Figure out handling having the `Database`, `Title`, and `Item` fields from the DR, TR, IR come into this single table; should the granularity/report of origin be recorded?
-    __tablename__ = 'resourceTitles'
+class ResourceMetadata(Base):
+    """The titles and alternate metadata for the resources in `Resources`.
+    
+    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, the `resources` relation can only hold a single value for the DOI, ISBN, ISSN, and eISSN fields, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+    
+    Attributes:
+        self.resource_title_id (int): the primary key
+        self.metadata_field (str): the metadata field label
+        self.metadata_value (str): the metadata value
+        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
+        #ToDo: Does there need to be a Boolean field for indicating the default value for a metadata field for a given resource? Is this how getting a title for deduping should be handled? Should the ISBN, ISSN, and eISSN, which are frequently multiple, be handled this way as well, instead of having them be in the `resources` relation? Would organizing the metadata in this way be better for deduping?
+        self.resource_id (int): the foreign key for `resources`
+    """
+    __tablename__ = 'resourceMetadata'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_title_id = Column(Integer, primary_key=True)
-    resource_title = Column(String(2000))
+    resource_metadata_id = Column(Integer, primary_key=True)
+    metadata_field = Column(String(35))
+    metadata_value = Column(String(2000))
     resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
 
-    resources_FK_resourceTitles = relationship('Resources', backref='resource_id')
+    resources_FK_resourceMetadata = relationship('Resources', backref='resource_id')
 
 
-    def __init__(self, resource_title_id, resource_title, resource_id):
+    def __init__(self, resource_metadata_id, metadata_field, metadata_value, resource_id):
         """A constructor setting the field values as class attributes."""
-        self.resource_title_id = resource_title_id
-        self.resource_title = resource_title
+        self.resource_metadata_id = resource_metadata_id
+        self.metadata_field = metadata_field
+        self.metadata_value = metadata_value
         self.resource_id = resource_id
     
 

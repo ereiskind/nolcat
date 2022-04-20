@@ -199,27 +199,29 @@ digraph erd_and_classes {
         Online_ISSN
         Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
         __Section_Type // This is in R5 IR only-how to add it? Does it go here?
+        Note
 
         // Methods
     }
 
 
-    subgraph cluster_Resource_Titles {
-        label="Resource_Titles"
+    subgraph cluster_resource_Metadata {
+        label="resource_Metadata"
 
         // Attributes
-        Resource_Title_ID [shape="note"]
-        Resource_Title [
+        Resource_Metadata_ID [shape="note"]
+        Metadata_Field
+        Metadata_Value [
             shape="record"
-            label="\N|title (R4)|database (DR)|title (TR)|item (IR)"
+            label="\N|DOI|ISBN|Print ISSN|Online ISSN|title (R4)|database (DR)|title (TR)|item (IR)"
         ]
-        Resource_ID_in_Resource_Titles [
+        Resource_ID_in_Resource_Metadata [
             label="Resource_ID"
             shape="folder"
         ]
 
         // Methods
-        find // aka search titles
+        search
     }
 
 
@@ -383,7 +385,7 @@ digraph erd_and_classes {
     ]
 
 
-    Resource_ID -> Resource_ID_in_Resource_Titles [
+    Resource_ID -> Resource_ID_in_Resource_Metadata [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
