@@ -96,15 +96,7 @@ digraph nolcat_sitemap {
         create_report_from_saved_queries -> view_report
     view_report
     
-
-
-
-
-    /* ******************************************************************************************* */
-
     
-
-
     /* *** Sphinx *** */
     Sphinx_homepage [shape="house"]
         Sphinx_homepage -> Sphinx_other_pages
