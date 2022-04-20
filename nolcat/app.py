@@ -48,6 +48,9 @@ def create_app():
     from nolcat import view_sources
     app.register_blueprint(view_sources.bp)
 
+    from nolcat import view_vendors
+    app.register_blueprint(view_vendors.bp)
+
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""

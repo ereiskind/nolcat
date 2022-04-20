@@ -70,27 +70,29 @@ digraph nolcat_sitemap {
     view_source_details
         view_source_details -> edit_source_details
     edit_source_details // Includes adding or editing notes
+
+
+     /* *** `view_vendors` Blueprint *** */
+    view_vendors_list
+        view_vendors_list -> add_new_vendor
+        view_vendors_list -> view_vendor_details
+    add_new_vendor
+        add_new_vendor -> edit_vendor_details // To provide info for the new vendor
+    view_vendor_details
+        view_vendor_details -> edit_vendor_details
+    edit_vendor_details // Includes adding or editing notes
     
 
 
 
 
     /* ******************************************************************************************* */
-    
-
-
-    /* *** `ingest` Blueprint *** */
-    ingest_usage_homepage [shape="house"]
-
-        ingest_usage_homepage -> show_records_list
-   
 
     /* *** `view` Blueprint *** */
     view_usage_homepage [shape="house"]
         view_usage_homepage -> create_report_from_SQL
         view_usage_homepage -> create_report_from_wizard
         view_usage_homepage -> create_report_from_saved_queries
-        view_usage_homepage -> show_records_list
     
     
     // Pages for Querying and Displaying Usage Data
@@ -101,16 +103,6 @@ digraph nolcat_sitemap {
     create_report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
         create_report_from_saved_queries -> view_report
     view_report
-
-    // Pages for Viewing, Adding, and Editing Records to a Relation
-    show_records_list
-        show_records_list -> add_new_record
-        show_records_list -> show_record_details
-    add_new_record
-        add_new_record -> edit_record_details // To provide info for the new record
-    show_record_details
-        show_record_details -> edit_record_details
-    edit_record_details // Includes adding or editing notes
 
 
     /* *** Sphinx *** */
