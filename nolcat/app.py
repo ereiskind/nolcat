@@ -54,6 +54,7 @@ def create_app():
 
     #Section: Routes Involving Forms
     #ToDo: Figure out how to manage CSRF tokens with a nested source code folder
+    """ These are sample form creation and submission routes 
     @app.route('/enter-data')
     def enter_data():
         form = forms.TestForm()
@@ -65,6 +66,7 @@ def create_app():
         if form.validate_on_submit():
             return render_template('ok.html', val=form.string.data)
         return render_template('index.html')
+    """
 
     return app
 
