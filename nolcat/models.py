@@ -82,32 +82,32 @@ class FiscalYears(Base):
 
 
     @hybrid_method
-    def calculate_ACRL_60b():
+    def calculate_ACRL_60b(self):
         pass
 
 
     @hybrid_method
-    def calculate_ACRL_63():
+    def calculate_ACRL_63(self):
         pass
 
 
     @hybrid_method
-    def calculate_ARL_18():
+    def calculate_ARL_18(self):
         pass
 
     
     @hybrid_method
-    def calculate_ARL_19():
+    def calculate_ARL_19(self):
         pass
 
 
     @hybrid_method
-    def calculate_ARL_20():
+    def calculate_ARL_20(self):
         pass
 
 
     @hybrid_method
-    def create_usage_tracking_records_for_fiscal_year():
+    def create_usage_tracking_records_for_fiscal_year(self):
         #ToDo: For every record in statisticsSources
             #ToDo: For all of its statisticsResourceSources records
                 #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_id of the instance this method is being run on
@@ -157,12 +157,12 @@ class Vendors(Base):
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_Alma():
+    def get_SUSHI_credentials_from_Alma(self):
         pass
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_JSON():
+    def get_SUSHI_credentials_from_JSON(self):
         pass
 
 
@@ -223,7 +223,7 @@ class StatisticsSources(Base):
 
 
     @hybrid_method
-    def fetch_SUSHI_information(for_API_call=True):
+    def fetch_SUSHI_information(self, for_API_call=True):
         """A method for fetching the information required to make a SUSHI API call for the statistics source.
 
         This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
@@ -453,13 +453,13 @@ class ResourceSources(Base):
 
 
     @hybrid_method
-    def add_access_stop_date():
+    def add_access_stop_date(self):
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
 
 
     @hybrid_method
-    def remove_access_stop_date():
+    def remove_access_stop_date(self):
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
 
@@ -568,7 +568,7 @@ class AnnualUsageCollectionTracking(Base):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file():
+    def upload_nonstandard_usage_file(self):
         pass
 
 
