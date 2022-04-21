@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
     #ToDo: RawCOUNTERReport.load_data_into_database
 
 
-#ToDo: Create route for getting start and end dates for custon SUSHI range, then putting them into StatisticsSources.collect_usage_statistics
+#ToDo: Create route for getting start and end dates for custom SUSHI range, then putting them into StatisticsSources.collect_usage_statistics
 
 
 #ToDo: Create route to and page for adding non-COUNTER compliant usage
