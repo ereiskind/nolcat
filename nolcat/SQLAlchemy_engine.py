@@ -1,4 +1,4 @@
-"""This script holds the SQLAlchemy engine creation function because when the function is in `app.py`, an ImportError due to circular imports occurs."""
+"""This script holds the SQLAlchemy engine creation function because when the function is in `app.py`, an ImportError due to circular imports occurs. Since this module effectively contains a single function which creates an object to be used by other functions, this module has no test module of its own; the test that the `engine` function returns a SQLAlchemy engine object is in the `tests/test_StatisticsSources` module."""
 
 from sqlalchemy import create_engine
 import nolcat.Database_Credentials as Database_Credentials  # The "nolcat/Database_Credentials.py" file is added to the repo as part of the container build; there is a placeholder for it in the repo at present
