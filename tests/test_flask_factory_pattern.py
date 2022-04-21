@@ -42,6 +42,3 @@ def test_404_page(flask_client):
     HTML_file.close()
     HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")  # This replaces the Jinja with what it renders to--this replacement is safe because it replaces the homepage function with the homepage/root route
     assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup
-
-
-#ToDo: Do the  `enter_data()` and `submit_check()` subfunctions need their own tests?
