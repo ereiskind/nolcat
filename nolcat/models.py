@@ -166,6 +166,12 @@ class Vendors(Base):
         pass
 
 
+    @hybrid_method
+    def add_note(self):
+        #ToDo: Create a method for adding notes
+        pass
+
+
 class VendorNotes(Base):
     """A relation containing notes about vendors."""
     __tablename__ = 'vendorNotes'
@@ -374,6 +380,12 @@ class StatisticsSources(Base):
         pass
 
 
+    @hybrid_method
+    def add_note(self):
+        #ToDo: Create a method for adding notes
+        pass
+
+
 class StatisticsSourceNotes(Base):
     """A relation containing notes about statistics sources."""
     __tablename__ = 'statisticsSourceNotes'
@@ -400,12 +412,6 @@ class StatisticsSourceNotes(Base):
     def __repr__(self):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-    @hybrid_method
-    def write_note(self):
-        #ToDo: Create a method for adding notes
         pass
 
 
@@ -464,6 +470,12 @@ class ResourceSources(Base):
         pass
 
 
+    @hybrid_method
+    def add_note(self):
+        #ToDo: Create a method for adding notes
+        pass
+
+
 class ResourceSourceNotes(Base):
     """A relation containing notes about resource sources."""
     __tablename__ = 'resourceSourceNotes'
@@ -490,12 +502,6 @@ class ResourceSourceNotes(Base):
     def __repr__(self):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-    @hybrid_method
-    def write_note(self):
-        #ToDo: Create a method for adding notes
         pass
 
 
