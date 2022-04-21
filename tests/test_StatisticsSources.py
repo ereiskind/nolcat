@@ -163,13 +163,3 @@ def test_collect_usage_statistics(most_recent_month_with_usage):
     #ToDo: wrapped_data = stats_source.collect_usage_statistics(most_recent_month_with_usage, last_day)
     #ToDo: assert wrapped_data is a RawCOUNTERReport
     pass
-
-
-def test_upload_R4_report():
-    #ToDo: Outline a test when outlining the method
-    pass
-
-
-def test_upload_R5_report():
-    #ToDo: Outline a test when outlining the method
-    pass
