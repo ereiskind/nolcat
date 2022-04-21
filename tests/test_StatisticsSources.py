@@ -16,7 +16,16 @@ from database_seeding_fixtures import vendors_relation
 from database_seeding_fixtures import statisticsSources_relation
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(autouse=True, scope='function')
+def CREDENTIALS_FILE_PATH():
+    """This will skip the rest of the tests in this module if the nolcat.models.PATH_TO_CREDENTAILS_FILE function doesn't return a string."""
+    #ALERT: This is untested
+    if str(type(PATH_TO_CREDENTIALS_FILE())) == "<class 'str'>":
+        yield PATH_TO_CREDENTIALS_FILE()
+    pytest.skip("Credentials file path not available.")
+
+
+@pytest.fixture(scope='module')
 def engine():
     """Creates a SQLAlchemy engine object by calling the `create_engine` function with the appropriate variables."""
     yield _engine()
@@ -47,7 +56,7 @@ def most_recent_month_with_usage():
 
 
 @pytest.fixture
-def statisticsSources_fixture():
+def statisticsSources_fixture(CREDENTIALS_FILE_PATH):
     """Creates a dataframe for loading into the statisticsSources relation with data for creating StatisticsSources objects.
     
     This fixture modifies the `statisticsSources_relation` fixture from the  `database_seeding_fixtures` helper module by replacing the values in `statisticsSources_relation['Statistics_Source_Retrieval_Code']` with retrieval code values found in "R5_SUSHI_credentials.json" so any SUSHI API calls will work. Because the `_harvest_R5_SUSHI` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics cannot be used.
@@ -55,7 +64,7 @@ def statisticsSources_fixture():
     """
     #Section: Get List of StatisticsSources.statistics_source_retrieval_code Values
     retrieval_codes_as_interface_IDs = []
-    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+    with open(CREDENTIALS_FILE_PATH) as JSON_file:  #Alert: Use of fixture instead of function directly untested
         SUSHI_data_file = json.load(JSON_file)
         for vendor in SUSHI_data_file:
             for stats_source in vendor['interface']:

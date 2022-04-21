@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(m
 def PATH_TO_CREDENTIALS_FILE():
     """Contains the constant for the path to the SUSHI credentials file.
     
-    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows.
+    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows. In test modules for classes that use this constant, the first function is a fixture that will skip all other tests in the module if the function doesn't return a string.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
