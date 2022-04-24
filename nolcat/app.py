@@ -1,6 +1,7 @@
 from pathlib import Path
 from flask import Flask
 from flask import render_template
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
