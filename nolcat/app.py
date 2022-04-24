@@ -6,7 +6,10 @@ from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from database_connectors import SQLALCHEMY_DATABASE_URI
+
 csrf = CSRFProtect()
+db = SQLAlchemy()
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""
@@ -18,8 +21,9 @@ def create_app():
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
     csrf.init_app(app)
-    #ToDo: Replace regerating secret key with reference to container environment variable
-    app.config['SECRET_KEY'] = "ReplaceMeLater"
+    db.init_app(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI()
+    app.config['SECRET_KEY'] = "ReplaceMeLater"  #ToDo: Replace secret key with reference to secret string (container environment variable?)
     app.config['UPLOAD_FOLDER'] = './data'
 
     #Section: Create Homepage and Register Other Blueprints
