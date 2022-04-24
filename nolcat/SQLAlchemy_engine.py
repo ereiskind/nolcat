@@ -1,7 +1,13 @@
-"""This script holds the SQLAlchemy engine creation function because when the function is in `app.py`, an ImportError due to circular imports occurs. Since this module effectively contains a single function which creates an object to be used by other functions, this module has no test module of its own; the test that the `engine` function returns a SQLAlchemy engine object is in the `tests/test_StatisticsSources` module."""
+"""This module contains functions that return objects for connecting to the database with SQLAlchemy and Flask-SQLAlchemy. These functions have their own module because when in `app.py`, an ImportError due to circular imports occurs."""
 
 from sqlalchemy import create_engine
 import nolcat.Database_Credentials as Database_Credentials  # The "nolcat/Database_Credentials.py" file is added to the repo as part of the container build; there is a placeholder for it in the repo at present
+
+
+DATABASE_USERNAME = Database_Credentials.Username
+DATABASE_PASSWORD = Database_Credentials.Password
+DATABASE_HOST = Database_Credentials.Host
+DATABASE_PORT = Database_Credentials.Post
 
 def _DATABASE_SCHEMA_NAME():
     """Contains the constant for the name of the database.
@@ -12,17 +18,15 @@ def _DATABASE_SCHEMA_NAME():
         return Database_Credentials.Database
     except:
         return "nolcat_db_dev"
-
-
 DATABASE_SCHEMA_NAME = _DATABASE_SCHEMA_NAME()
-DATABASE_USERNAME = Database_Credentials.Username
-DATABASE_PASSWORD = Database_Credentials.Password
-DATABASE_HOST = Database_Credentials.Host
-DATABASE_PORT = Database_Credentials.Post
 
-# https://docs.sqlalchemy.org/en/14/dialects/mysql.html#dialect-mysql for all possible MySQL DBAPI options
 
 def engine():
     """Returns a SQLAlchemy engine object."""
     engine = create_engine(f'mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
     return engine
+
+
+def SQLALCHEMY_DATABASE_URI():
+    """Returns a string with the database URI Flask-SQLAlchemy uses for the config variable `SQLALCHEMY_DATABASE_URI`."""
+    return f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
