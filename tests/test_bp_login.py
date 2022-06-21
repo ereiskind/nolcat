@@ -1,4 +1,3 @@
-
 """Tests the routes in the `login` blueprint."""
 
 import pytest
