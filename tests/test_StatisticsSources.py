@@ -101,7 +101,7 @@ def test_engine_creation(engine_fixture):
 def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixture):
     """Test using the engine to load and query data.
     
-    This is a basic integration test, determining if dataframes cna be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
+    This is a basic integration test, determining if dataframes can be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
     """
     ###ToDo: Confirm that the imported fixture can be used as an argument directly
     #ToDo: vendors_relation.to_sql(
