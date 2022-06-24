@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class takes a dataframe made from a R4 report CSV converted with the supplied JSONs or a R5 report harvested via SUSHI and handles its processing.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple CSV files for R4 and as an API call response (or possibly a CSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
@@ -108,8 +108,6 @@ class RawCOUNTERReport:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
             #ToDo: SOME ISSUES TO CONSIDER
                 #Alert: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
-                #ToDo: When the metadata for matched resources doesn't match, the user should select what data goes in the resources relation; should that occur along with or after matches are determined?
-                #ToDo: Should metadata elements not being kept in the resources relation be kept? Using them for resource matching purposes would be difficult, but they could be an alternative set of metadata against which searches for resources by ISBN or ISSN could be run.
                 #ToDo: Should anything be done to denote those titles where different stats sources assign different data types?
         
 
