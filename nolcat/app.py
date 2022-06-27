@@ -38,6 +38,26 @@ def create_app():
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './data'
 
+    #Section: Create Command to Build Schema
+    # Documentation at https://flask.palletsprojects.com/en/2.1.x/appcontext/
+    @app.cli.command('create-db')
+    def create_db():
+        with create_app().app_context():
+            from .models import FiscalYears
+            from .models import Vendors
+            from .models import VendorNotes
+            from .models import StatisticsSources
+            from .models import StatisticsSourceNotes
+            from .models import StatisticsResourceSources
+            from .models import ResourceSources
+            from .models import ResourceSourceNotes
+            from .models import AnnualUsageCollectionTracking
+            from .models import Resources
+            from .models import ResourceMetadata
+            from .models import ResourcePlatforms
+            from .models import UsageData
+            db.create_all()
+
     #Section: Create Homepage and Register Other Blueprints
     from ..nolcat import annual_stats
     app.register_blueprint(annual_stats.bp)
