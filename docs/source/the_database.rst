@@ -54,8 +54,8 @@ To handle this complexity, three relations in a junction table-like relationship
 4. If numbers weren't added to ``Statistics_Source_ID`` and ``Resource_Source_ID`` in all records as the spreadsheet was being filled in, finish adding sequential numbering to those fields (any records that have duplicates or a note should already have an ID number).
 5. Copy the values in the spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", including copying the ``Resource Vendor`` and ``Stats Vendor`` columns into the ``REFERENCE Vendor_ID`` fields in the appropriate CSV.
 6. Remove duplicate records in "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", then double check that there are no duplicated values in ``Resource_Source_ID`` or ``Statistics_Source_ID``; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.
-7. In "initialize_resourceSources.csv", copy ``=VLOOKUP(D2,initialize_vendors.csv!$A:$C,3,0)`` into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field ``REFERENCE Vendor_ID``).
-8. In "initialize_statisticsSources.csv", copy ``=VLOOKUP(C2,initialize_vendors.csv!$A:$C,3,0)`` into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field ``REFERENCE Vendor_ID``).
+7. In "initialize_resourceSources.csv", copy ``=VLOOKUP(D2,initialize_vendors.csv!$A:$C,3,0)`` into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field ``REFERENCE Vendor_ID``).
+8. In "initialize_statisticsSources.csv", copy ``=VLOOKUP(C2,initialize_vendors.csv!$A:$C,3,0)`` into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field ``REFERENCE Vendor_ID``).
 9. Create a new CSV file and name it "initialize_statisticsResourceSources.csv".
 10. Copy the ``Statistics_Source_ID``, ``Resource_Source_ID``, and ``Current_Statistics_Source`` columns from the spreadsheet into "initialize_statisticsResourceSources.csv".
 11. In "initialize_statisticsResourceSources.csv", change ``Statistics_Source_ID`` to ``SRS_Statistics_Source`` and ``Resource_Source_ID`` to ``SRS_Resource_Source``.
@@ -66,11 +66,11 @@ To handle this complexity, three relations in a junction table-like relationship
 2. Download "initialize_annualUsageCollectionTracking.csv" from the next page in the web app
 3. Save a copy of the CSV and fill it out from existing documentation
 
-   * For statistics sources/interfaces not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`
-   * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`
-   * For statistics sources with manually collected COUNTER R4 reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
+   * For statistics sources/interfaces not requiring usage collection, set ``Usage_Is_Being_Collected`` to false and choose the appropriate ``Collection_Status``
+   * For statistics sources which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set ``Usage_Is_Being_Collected`` and ``Manual_Collection_Required`` to true, ``Is_COUNTER_Compliant`` to false, choose the appropriate ``Collection_Status``, and if a file with the usage exists, put "true" in ``Usage_File_Path``
+   * For statistics sources with manually collected COUNTER R4 reports, set ``Usage_Is_Being_Collected``, ``Manual_Collection_Required``, and ``Is_COUNTER_Compliant`` to true, choose the appropriate ``Collection_Status``, then prepare the R4 reports:
 
-     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project `<Statistics_Source_ID>_<report type>_<ending year of fiscal year in "yyyy" format>`
+     1. Load each R4 report into OpenRefine, ignoring the first seven (7) lines at the beginning of the file and naming the project ``<Statistics_Source_ID>_<report type>_<ending year of fiscal year in "yyyy" format>``
 
         * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
         * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
@@ -78,60 +78,19 @@ To handle this complexity, three relations in a junction table-like relationship
      2. Apply the JSON appropriate for the report type
      3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
 
-   * For statistics sources with R5 SUSHI, set `Usage_Is_Being_Collected` to true, `Manual_Collection_Required` to false, and `Collection_Status` to "Collection not started"
+   * For statistics sources with R5 SUSHI, set ``Usage_Is_Being_Collected`` to true, ``Manual_Collection_Required`` to false, and ``Collection_Status`` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
 
-4. Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields
+4. Delete the columns with the ``statisticsSources.Statistics_Source_Name`` and ``fiscalYears.Year`` fields
 5. Upload the CSV
 
 5. Upload and Dedupe Historical R4 Usage
 ========================================
 Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.
 
-1. In the file selector on the next web app page, select all the transformed R4 CSVs; if all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder
+1. In the file selector on the next web app page, select all the transformed R4 CSVs; if all the files are in a single folder and that folder contains no other items, navigate to that folder, then use ``Ctrl + a`` to select all the files in the folder
 2. On the next web app page, <this is the page for confirming matches--write instructions from this point on when pages and forms are established>
 
 6. Upload Historical R5 Usage
 =============================
-1. Run `FiscalYears.collect_fiscal_year_usage` for all the fiscal years including and after calendar year 2019
-
-Naming Conventions in the Database and Source Code
-**************************************************
-For clarity, relations and fields have the same names in the database and the source code. To distinguish between the relations and fields of MySQL and the classes and attributes of SQLAlchemy, different stylistic conventions are used.
-
-* MySQL relation names are written in camelCase; SQLAlchemy class names are written in PascalCase, also called UpperCamelCase.
-* MySQL field names are written in Titlecase_with_Underscores; SQLAlchemy attribute names are written in lowercase_with_underscores.
-
-The above styling is used in both the code and the documentation.
-
-Metric Types in R4 and R5
-*************************
-COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generations of the standard shouldn't be directly compared; all COUNTER data, however, is stored in the same relation. Usage from the two generations is separated by the  different metric types used.
-
-R4 Metric Types
-===============
-* Successful Title Requests (BR1)
-* Successful Section Requests (BR2)
-* Access denied: concurrent/simultaneous user license limit exceeded (BR3, DB2, JR2)
-* Access denied: content item not licensed (BR3, DB2, JR2)
-* Regular Searches (BR5, DB1, PR1)
-* Searches-federated and automated (BR5, DB1, PR1)
-* Result Clicks (DB1, PR1)
-* Record Views (DB1, PR1)
-* Successful Full-text Article Requests (JR1)
-* Successful Content Unit Requests (MR1)
-
-R5 Metric Types
-===============
-* Searches_Regular
-* Searches_Automated
-* Searches_Federated
-* Searches_Platform
-* Total_Item_investigations
-* Unique_Item_Investigations
-* Unique_Title_Investigations
-* Total_Item_Requests
-* Unique_Item_Requests
-* Unique_Title_Requests
-* No_License
-* Limit_Exceeded
+1. Run ``FiscalYears.collect_fiscal_year_usage`` for all the fiscal years including and after calendar year 2019

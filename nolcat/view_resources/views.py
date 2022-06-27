@@ -1,6 +1,9 @@
 import logging
+
 from . import bp
-from ..view_resources import forms
+from ..app import db
+#from .forms import <name of form classes>
+#from ..models import <name of SQLAlchemy classes used in views below>
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages

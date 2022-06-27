@@ -12,9 +12,9 @@ import pandas as pd
 from sqlalchemy.sql import text
 
 from . import bp
-from ..initialization import forms
-from nolcat.SQLAlchemy_engine import engine
-from nolcat.raw_COUNTER_report import *
+from ..app import db
+from .forms import InitialRelationDataForm, TestForm
+#from ..models import <name of SQLAlchemy classes used in views below>
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -31,14 +31,14 @@ def download_file(filename):
 @bp.route('/initialize-database')
 def initialize_initial_relations():
     """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
-    form_being_filled_out = forms.InitialRelationDataForm()
+    form_being_filled_out = InitialRelationDataForm()
     return render_template('start-database-initialization.html', form=form_being_filled_out)
 
 
 @bp.route('/initialize-collection-tracking', methods=["GET","POST"])
 def save_historical_collection_tracking_info():
     """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
-    form_being_submitted = forms.InitialRelationDataForm()
+    form_being_submitted = InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
         vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
@@ -49,55 +49,56 @@ def save_historical_collection_tracking_info():
         resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
         resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
 
-        db_connection = engine.connect()
+        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         vendors_dataframe.to_sql(
             'vendors',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         vendorNotes_dataframe.to_sql(
             'vendorNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsSources_dataframe.to_sql(
             'statisticsSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsSourceNotes_dataframe.to_sql(
             'statisticsSourceNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsResourceSources_dataframe.to_sql(
             'statisticsResourceSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         resourceSources_dataframe.to_sql(
             'resourceSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
-        db_connection.close()
+        db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
         
         #ALERT: Due to database unavailability, code from this point forward is untested
-        db_connection = engine.connect()
         #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
-        SQL_statement = text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;")
-        what_data_type_is_this = db_connection.execute(SQL_statement).fetchall()
-        db_connection.close()
+        with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
+            AUCT_records = connection.execute(text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;"))
+            for record in AUCT_records:
+                print(repr(type(record)))
+                print(record)
 
         #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
             # Usage_Is_Being_Collected

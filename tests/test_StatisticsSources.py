@@ -9,7 +9,6 @@ from pandas._testing import assert_frame_equal
 from dateutil import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 from sqlalchemy.orm import sessionmaker
 
-from nolcat.SQLAlchemy_engine import engine as _engine
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from database_seeding_fixtures import vendors_relation
@@ -28,12 +27,14 @@ def CREDENTIALS_FILE_PATH():
 @pytest.fixture(scope='module')
 def engine():
     """Creates a SQLAlchemy engine object by calling the `create_engine` function with the appropriate variables."""
+    #ToDo: Adjust test to basic "check that program can connect to database" test using Flask-SQLAlchemy
     yield _engine()
 
 
 @pytest.fixture(scope='module')
 def session(engine):
     """Creates a SQLAlchemy session object so all tests in this module run within a transaction that will be rolled back once the tests are complete."""
+    #ToDo: Determine if or how a engine creation test works with Flask-SQLAlchemy
     connection = engine.connect()
     transaction = connection.begin()
     session = sessionmaker(bind=connection)
@@ -95,11 +96,12 @@ def statisticsSources_fixture(CREDENTIALS_FILE_PATH):
 
 def test_engine_creation(engine_fixture):
     """Test that a SQLAlchemy engine is created."""
+    #ToDo: Is there an equivalent test for Flask-SQLAlchemy?
     assert repr(type(engine_fixture)) == "<class 'sqlalchemy.engine.base.Engine'>"
 
 
 def test_loading_into_relation(engine, vendors_relation, statisticsSources_fixture):
-    """Test using the engine to load and query data.
+    """Test using the engine to load and query data.  #ToDo: Change to use Flask-SQLAlchemy connection
     
     This is a basic integration test, determining if dataframes can be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
     """
