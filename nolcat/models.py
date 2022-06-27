@@ -182,7 +182,15 @@ class Vendors(db.Model):
 
 
 class VendorNotes(db.Model):
-    """A relation containing notes about vendors."""
+    """The class representation of the `vendorNotes` relation, which contains notes about the vendors in `vendors`.
+    
+    Attributes:
+        self.vendor_notes_ID (int): the primary key
+        self.note (text): the content of the note
+        self.written_by (str): the note author
+        self.date_written (date): the day the note was last edited
+        self.vendor_ID (int): the foreign key for `vendors`
+    """
     __tablename__ = 'vendorNotes'
 
     vendor_notes_ID = db.Column(db.Integer, primary_key=True)
