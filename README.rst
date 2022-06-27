@@ -6,7 +6,6 @@ To-Do List
 
 High Priority
 =============
-* Create docstrings for model classes
 * Write `FiscalYears.create_usage_tracking_records_for_fiscal_year` method (creates AUCT records for the given FY)
 
 Branch: Configure Flask-User
@@ -16,17 +15,12 @@ Branch: Configure Flask-User
 
 Branch: Configure Flask-SQLAlchemy
 ----------------------------------
-* Conform with Flask-SQLAlchemy, which includes building the schema with a subfunction of the Flask factory pattern called as a command line argument
-* Update documentation as necessary
-* Add link to documentation about above functionality to Teams chat
 * Create main homepage, including links to appropriate blueprint homepages
 * **Question:** Does a module that just creates Flask-SQLAlchemy config variables and SQLAlchemy variables need tests?
 * Move `tests.test_StatisticsSources.test_loading_into_relation` to `tests.test_flask_factory_pattern` with a new name indicating it tests database read/write, then confirm the test does exactly that
 
 Branch: Import Data from Secret Files
 -------------------------------------
-* Update secret key variable
-* Import database credentials to module in `nolcat` (renamed `nolcat.SQLAlchemy_engine`?)
 * Import file path to JSON with R5 SUSHI credentials
 
 Branch: Rework Database Structure
