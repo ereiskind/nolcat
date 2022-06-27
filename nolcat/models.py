@@ -519,7 +519,23 @@ class ResourceSourceNotes(db.Model):
 
 
 class AnnualUsageCollectionTracking(db.Model):
-    """A relation for tracking the usage statistics collection process. """
+    """The class representation of the `annualUsageCollectionTracking` relation, which tracks the collecting of usage statistics by containing a record for each fiscal year and statistics source.
+    
+    Attributes:
+        self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
+        self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
+        self.usage_is_being_collected (bool): indicates if usage needs to be collected
+        self.manual_collection_required (bool): indicates if usage needs to be collected manually
+        self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
+        self.is_counter_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.collection_status (enum): the status of the usage statistics collection
+        self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
+        self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
+    
+    Methods:
+        collect_annual_usage_statistics: A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
+    """
     __tablename__ = 'annualUsageCollectionTracking'
 
     AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
