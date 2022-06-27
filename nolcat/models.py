@@ -207,7 +207,20 @@ class VendorNotes(db.Model):
 
 
 class StatisticsSources(db.Model):
-    """A relation containing information about sources of usage statistics."""
+    """The class representation of the `statisticsSources` relation, which contains a list of all the possible sources of usage statistics.
+    
+    Attributes:
+        self.statistics_source_ID (int): the primary key
+        self.statistics_source_name (str): the name of the statistics source
+        self.statistics_source_retrieval_code (str): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
+        self.vendor_ID (int): the foreign key for `vendors`
+    
+    Methods:
+        fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
+        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+        collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        add_note: #ToDo: Copy first line of docstring here
+    """
     __tablename__ = 'statisticsSources'
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True)
