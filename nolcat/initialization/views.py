@@ -12,8 +12,9 @@ import pandas as pd
 from sqlalchemy.sql import text
 
 from . import bp
-from ..initialization import forms
-from nolcat.raw_COUNTER_report import *
+from ..app import db
+from .forms import InitialRelationDataForm, TestForm
+#from ..models import <name of SQLAlchemy classes used in views below>
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -30,14 +31,14 @@ def download_file(filename):
 @bp.route('/initialize-database')
 def initialize_initial_relations():
     """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
-    form_being_filled_out = forms.InitialRelationDataForm()
+    form_being_filled_out = InitialRelationDataForm()
     return render_template('start-database-initialization.html', form=form_being_filled_out)
 
 
 @bp.route('/initialize-collection-tracking', methods=["GET","POST"])
 def save_historical_collection_tracking_info():
     """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
-    form_being_submitted = forms.InitialRelationDataForm()
+    form_being_submitted = InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
         vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
