@@ -4,12 +4,10 @@ import logging
 from pathlib import Path
 import os
 import sys
-from sqlalchemy import Column
-from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Enum
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
+
+from .app import db
 
 #ToDo: Should the values in the `__table_args__` dictionaries be f-strings referencing `Database_Credentials.Database`?
 
@@ -38,26 +36,23 @@ def PATH_TO_CREDENTIALS_FILE():
     sys.exit()
 
 
-Base = declarative_base()
-
-
-class FiscalYears(Base):
+class FiscalYears(db.Model):
     """A relation representing the fiscal years for which data has been collected."""
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
     __table_args__ = {'schema': 'nolcat'}
 
-    fiscal_year_id = Column(Integer, primary_key=True)
-    fiscal_year = Column(String(4))
-    start_date = Column(Date)
-    end_date = Column(Date)
-    acrl_60b = Column(SmallInteger)
-    acrl_63 = Column(SmallInteger)
-    arl_18 = Column(SmallInteger)
-    arl_19 = Column(SmallInteger)
-    arl_20 = Column(SmallInteger)
-    notes_on_statisticsSources_used = Column(Text)
-    notes_on_corrections_after_submission = Column(Text)
+    fiscal_year_id = db.Column(db.Integer, primary_key=True)
+    fiscal_year = db.Column(db.String(4))
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    acrl_60b = db.Column(db.SmallInteger)
+    acrl_63 = db.Column(db.SmallInteger)
+    arl_18 = db.Column(db.SmallInteger)
+    arl_19 = db.Column(db.SmallInteger)
+    arl_20 = db.Column(db.SmallInteger)
+    notes_on_statisticsSources_used = db.Column(db.Text)
+    notes_on_corrections_after_submission = db.Column(db.Text)
 
 
     def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
@@ -133,14 +128,14 @@ class FiscalYears(Base):
         pass
 
 
-class Vendors(Base):
+class Vendors(db.Model):
     """A relation representing resource providers."""
     __tablename__ = 'vendors'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_id = Column(Integer, primary_key=True)
-    vendor_name = Column(String(80))
-    alma_vendor_code = Column(String(10))
+    vendor_id = db.Column(db.Integer, primary_key=True)
+    vendor_name = db.Column(db.String(80))
+    alma_vendor_code = db.Column(db.String(10))
 
 
     def __init__(self, vendor_id, vendor_name, alma_vendor_code):
@@ -172,16 +167,16 @@ class Vendors(Base):
         pass
 
 
-class VendorNotes(Base):
+class VendorNotes(db.Model):
     """A relation containing notes about vendors."""
     __tablename__ = 'vendorNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    vendor_notes_id = Column(Integer, primary_key=True)
-    note = Column(Text)
-    written_by = Column(String(100))
-    date_written = Column(Date)
-    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
+    vendor_notes_id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.Text)
+    written_by = db.Column(db.String(100))
+    date_written = db.Column(db.Date)
+    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
 
@@ -201,15 +196,15 @@ class VendorNotes(Base):
         pass
 
 
-class StatisticsSources(Base):
+class StatisticsSources(db.Model):
     """A relation containing information about sources of usage statistics."""
     __tablename__ = 'statisticsSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_id = Column(Integer, primary_key=True)
-    statistics_source_name = Column(String(100))
-    statistics_source_retrieval_code = Column(String(30))
-    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
+    statistics_source_id = db.Column(db.Integer, primary_key=True)
+    statistics_source_name = db.Column(db.String(100))
+    statistics_source_retrieval_code = db.Column(db.String(30))
+    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
 
@@ -386,16 +381,16 @@ class StatisticsSources(Base):
         pass
 
 
-class StatisticsSourceNotes(Base):
+class StatisticsSourceNotes(db.Model):
     """A relation containing notes about statistics sources."""
     __tablename__ = 'statisticsSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    statistics_source_notes_id = Column(Integer, primary_key=True)
-    note = Column(Text)
-    written_by = Column(String(100))
-    date_written = Column(Date)
-    statistics_source_id = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
+    statistics_source_notes_id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.Text)
+    written_by = db.Column(db.String(100))
+    date_written = db.Column(db.Date)
+    statistics_source_id = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
 
     statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
 
@@ -415,7 +410,7 @@ class StatisticsSourceNotes(Base):
         pass
 
 
-class StatisticsResourceSources(Base):
+class StatisticsResourceSources(db.Model):
     """A relation connecting sources of usage statistics and sources of resources.
     
     The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
@@ -423,9 +418,9 @@ class StatisticsResourceSources(Base):
     __tablename__ = 'statisticsResourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    srs_statistics_sources = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
-    srs_resource_sources = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
-    current_statistics_source = Column(Boolean)
+    srs_statistics_sources = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    srs_resource_sources = db.Column(db.Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
+    current_statistics_source = db.Column(db.Boolean)
 
     statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
     resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resource_source_id')
@@ -436,7 +431,7 @@ class StatisticsResourceSources(Base):
         pass
 
 
-class ResourceSources(Base):
+class ResourceSources(db.Model):
     """A relation containing information about the sources of resources.
     
     This relation lists where users go to get resources. Often called platforms, they are frequently a HTTP domain. Alma calls them interfaces.
@@ -444,11 +439,11 @@ class ResourceSources(Base):
     __tablename__ = 'resourceSources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_id = Column(Integer, primary_key=True)
-    resource_source_name = Column(String(100))
-    source_in_use = Column(Boolean)
-    use_stop_date = Column(Date)
-    vendor_id = Column(Integer, ForeignKey('nolcat.Vendors.vendor_id'))
+    resource_source_id = db.Column(db.Integer, primary_key=True)
+    resource_source_name = db.Column(db.String(100))
+    source_in_use = db.Column(db.Boolean)
+    use_stop_date = db.Column(db.Date)
+    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
 
     vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
 
@@ -476,16 +471,16 @@ class ResourceSources(Base):
         pass
 
 
-class ResourceSourceNotes(Base):
+class ResourceSourceNotes(db.Model):
     """A relation containing notes about resource sources."""
     __tablename__ = 'resourceSourceNotes'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_source_notes_id = Column(Integer, primary_key=True)
-    note = Column(Text)
-    written_by = Column(String(100))
-    date_written = Column(Date)
-    resource_source_id = Column(Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
+    resource_source_notes_id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.Text)
+    written_by = db.Column(db.String(100))
+    date_written = db.Column(db.Date)
+    resource_source_id = db.Column(db.Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
 
     resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
 
@@ -505,18 +500,19 @@ class ResourceSourceNotes(Base):
         pass
 
 
-class AnnualUsageCollectionTracking(Base):
+class AnnualUsageCollectionTracking(db.Model):
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'
     __table_args__ = {'schema': 'nolcat'}
 
-    auct_statistics_source = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
-    auct_fiscal_year = Column(Integer, ForeignKey('nolcat.FiscalYears.fiscal_year_id'), primary_key=True)
-    usage_is_being_collected = Column(Boolean)
-    manual_collection_required = Column(Boolean)
-    collection_via_email = Column(Boolean)
-    is_counter_compliant = Column(Boolean)
-    collection_status = Column('COLLECTION_STATUS', Enum(  # The first argument seems to be meant as a name, but what's being named is unclear; the argument value is named to represent the constant that is the values in the enumeration
+    auct_statistics_source = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
+    auct_fiscal_year = db.Column(db.Integer, ForeignKey('nolcat.FiscalYears.fiscal_year_id'), primary_key=True)
+    usage_is_being_collected = db.Column(db.Boolean)
+    manual_collection_required = db.Column(db.Boolean)
+    collection_via_email = db.Column(db.Boolean)
+    is_counter_compliant = db.Column(db.Boolean)
+    #ToDo: Check how to do enums in Flask-SQLAlchemy
+    collection_status = db.Column(db.Enum(
         'N/A: Paid by Law',
         'N/A: Paid by Med',
         'N/A: Paid by Music',
@@ -529,8 +525,8 @@ class AnnualUsageCollectionTracking(Base):
         'Usage not provided',
         'No usage to report'
     ))
-    usage_file_path = Column(String(150))
-    notes = Column(Text)
+    usage_file_path = db.Column(db.String(150))
+    notes = db.Column(db.Text)
 
     statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
     fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
@@ -578,19 +574,19 @@ class AnnualUsageCollectionTracking(Base):
         pass
 
 
-class Resources(Base):
+class Resources(db.Model):
     """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_id = Column(Integer, primary_key=True)
-    doi = Column(String(75))
-    isbn = Column(String(17))
-    print_issn = Column(String(9))
-    online_issn = Column(String(9))
-    data_type = Column(String(25))
-    section_type = Column(String(10))
-    note = Column(Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
+    resource_id = db.Column(db.Integer, primary_key=True)
+    doi = db.Column(db.String(75))
+    isbn = db.Column(db.String(17))
+    print_issn = db.Column(db.String(9))
+    online_issn = db.Column(db.String(9))
+    data_type = db.Column(db.String(25))
+    section_type = db.Column(db.String(10))
+    note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
 
     def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type, note):
@@ -611,7 +607,7 @@ class Resources(Base):
         pass
 
 
-class ResourceMetadata(Base):
+class ResourceMetadata(db.Model):
     """The titles and alternate metadata for the resources in `Resources`.
     
     This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, the `resources` relation can only hold a single value for the DOI, ISBN, ISSN, and eISSN fields, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
@@ -627,10 +623,10 @@ class ResourceMetadata(Base):
     __tablename__ = 'resourceMetadata'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_metadata_id = Column(Integer, primary_key=True)
-    metadata_field = Column(String(35))
-    metadata_value = Column(String(2000))
-    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
+    resource_metadata_id = db.Column(db.Integer, primary_key=True)
+    metadata_field = db.Column(db.String(35))
+    metadata_value = db.Column(db.String(2000))
+    resource_id = db.Column(db.Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourceMetadata = relationship('Resources', backref='resource_id')
 
@@ -649,19 +645,19 @@ class ResourceMetadata(Base):
         pass
 
 
-class ResourcePlatforms(Base):
+class ResourcePlatforms(db.Model):
     """A relation for the platform-specific resource metadata."""
     __tablename__ = 'resourcePlatforms'
     __table_args__ = {'schema': 'nolcat'}
 
-    resource_platform_id = Column(Integer, primary_key=True)
-    publisher = Column(String(225))
-    publisher_id = Column(String(50))
-    platform = Column(String(75))
-    proprietary_id = Column(String(100))
-    uri = Column(String(200))
-    interface = Column(Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
-    resource_id = Column(Integer, ForeignKey('nolcat.Resources.resource_id'))
+    resource_platform_id = db.Column(db.Integer, primary_key=True)
+    publisher = db.Column(db.String(225))
+    publisher_id = db.Column(db.String(50))
+    platform = db.Column(db.String(75))
+    proprietary_id = db.Column(db.String(100))
+    uri = db.Column(db.String(200))
+    interface = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
+    resource_id = db.Column(db.Integer, ForeignKey('nolcat.Resources.resource_id'))
 
     resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
     statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
@@ -685,20 +681,20 @@ class ResourcePlatforms(Base):
         pass
 
 
-class UsageData(Base):
+class UsageData(db.Model):
     """A relation containing usage metrics."""
     __tablename__ = 'usageData'
     __table_args__ = {'schema': 'nolcat'}
 
-    usage_data_id = Column(Integer, primary_key=True)
-    resource_platform_id = Column(Integer, ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))
-    metric_type = Column(String(75))
-    usage_date = Column(Date)
-    usage_count = Column(Integer)
-    yop = Column(SmallInteger)
-    access_type = Column(String(20))
-    access_method = Column(String(10))
-    report_creation_date = Column(DateTime)
+    usage_data_id = db.Column(db.Integer, primary_key=True)
+    resource_platform_id = db.Column(db.Integer, ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))
+    metric_type = db.Column(db.String(75))
+    usage_date = db.Column(db.Date)
+    usage_count = db.Column(db.Integer)
+    yop = db.Column(db.SmallInteger)
+    access_type = db.Column(db.String(20))
+    access_method = db.Column(db.String(10))
+    report_creation_date = db.Column(db.DateTime)
 
     resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
 
