@@ -138,7 +138,18 @@ class FiscalYears(db.Model):
 
 
 class Vendors(db.Model):
-    """A relation representing resource providers."""
+    """The class representation of the `vendors` relation, which contains a list of entities that provide access to either electronic resources or usage statistics.
+    
+    Attributes:
+        self. vendor_ID (int): the primary key
+        self.vendor_name (str): the name of the vendor= db.Column(db.String(80))
+        self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
+
+    Methods:
+        get_SUSHI_credentials_from_Alma: #ToDo: Copy first line of docstring here
+        get_SUSHI_credentials_from_JSON: #ToDo: Copy first line of docstring here
+        add_note: #ToDo: Copy first line of docstring here
+    """
     __tablename__ = 'vendors'
 
     vendor_ID = db.Column(db.Integer, primary_key=True)
