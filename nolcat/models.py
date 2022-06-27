@@ -41,19 +41,19 @@ class FiscalYears(db.Model):
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
-    fiscal_year_id = db.Column(db.Integer, primary_key=True)
+    fiscal_year_ID = db.Column(db.Integer, primary_key=True)
     fiscal_year = db.Column(db.String(4))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
-    acrl_60b = db.Column(db.SmallInteger)
-    acrl_63 = db.Column(db.SmallInteger)
-    arl_18 = db.Column(db.SmallInteger)
-    arl_19 = db.Column(db.SmallInteger)
-    arl_20 = db.Column(db.SmallInteger)
+    ACRL_60b = db.Column(db.SmallInteger)
+    ACRL_63 = db.Column(db.SmallInteger)
+    ARL_18 = db.Column(db.SmallInteger)
+    ARL_19 = db.Column(db.SmallInteger)
+    ARL_20 = db.Column(db.SmallInteger)
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
-    fiscal_years_fk = db.relationship('ChildRelation', backref='FiscalYearsFK')
+    fiscal_years_FK = db.relationship('ChildRelation', backref='FiscalYearsFK')
 
 
     def __repr__(self):
@@ -118,11 +118,11 @@ class Vendors(db.Model):
     """A relation representing resource providers."""
     __tablename__ = 'vendors'
 
-    vendor_id = db.Column(db.Integer, primary_key=True)
+    vendor_ID = db.Column(db.Integer, primary_key=True)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
-    vendors_fk = db.relationship('ChildRelation', backref='VendorsFK')
+    vendors_FK = db.relationship('ChildRelation', backref='VendorsFK')
 
 
     def __repr__(self):
@@ -151,11 +151,11 @@ class VendorNotes(db.Model):
     """A relation containing notes about vendors."""
     __tablename__ = 'vendorNotes'
 
-    vendor_notes_id = db.Column(db.Integer, primary_key=True)
+    vendor_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
 
     def __repr__(self):
@@ -168,12 +168,12 @@ class StatisticsSources(db.Model):
     """A relation containing information about sources of usage statistics."""
     __tablename__ = 'statisticsSources'
 
-    statistics_source_id = db.Column(db.Integer, primary_key=True)
+    statistics_source_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
-    statistics_sources_fk = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
+    statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
 
 
     def __repr__(self):
@@ -344,11 +344,11 @@ class StatisticsSourceNotes(db.Model):
     """A relation containing notes about statistics sources."""
     __tablename__ = 'statisticsSourceNotes'
 
-    statistics_source_notes_id = db.Column(db.Integer, primary_key=True)
+    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_id = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
     
 
     def __repr__(self):
@@ -364,8 +364,8 @@ class StatisticsResourceSources(db.Model):
     """
     __tablename__ = 'statisticsResourceSources'
 
-    srs_statistics_sources = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    srs_resource_sources = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
+    SRS_statistics_sources = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    SRS_resource_sources = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -381,13 +381,13 @@ class ResourceSources(db.Model):
     """
     __tablename__ = 'resourceSources'
 
-    resource_source_id = db.Column(db.Integer, primary_key=True)
+    resource_source_ID = db.Column(db.Integer, primary_key=True)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
-    resource_sources_fk = db.relationship('ChildRelation', backref='ResourceSourcesFK')
+    resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
 
     def __repr__(self):
@@ -417,11 +417,11 @@ class ResourceSourceNotes(db.Model):
     """A relation containing notes about resource sources."""
     __tablename__ = 'resourceSourceNotes'
 
-    resource_source_notes_id = db.Column(db.Integer, primary_key=True)
+    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_id = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'))
     
 
     def __repr__(self):
@@ -434,8 +434,8 @@ class AnnualUsageCollectionTracking(db.Model):
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    auct_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    auct_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_id'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_id'), primary_key=True)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -491,16 +491,16 @@ class Resources(db.Model):
     """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
 
-    resource_id = db.Column(db.Integer, primary_key=True)
-    doi = db.Column(db.String(75))
-    isbn = db.Column(db.String(17))
-    print_issn = db.Column(db.String(9))
-    online_issn = db.Column(db.String(9))
+    resource_ID = db.Column(db.Integer, primary_key=True)
+    DOI = db.Column(db.String(75))
+    ISBN = db.Column(db.String(17))
+    print_ISSN = db.Column(db.String(9))
+    online_ISSN = db.Column(db.String(9))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))
     note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
-    resources_fk = db.relationship('ChildRelation', backref='ResourcesFK')
+    resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
 
 
     def __repr__(self):
@@ -515,19 +515,19 @@ class ResourceMetadata(db.Model):
     This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, the `resources` relation can only hold a single value for the DOI, ISBN, ISSN, and eISSN fields, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
     
     Attributes:
-        self.resource_title_id (int): the primary key
+        self.resource_title_ID (int): the primary key
         self.metadata_field (str): the metadata field label
         self.metadata_value (str): the metadata value
         #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
         #ToDo: Does there need to be a Boolean field for indicating the default value for a metadata field for a given resource? Is this how getting a title for deduping should be handled? Should the ISBN, ISSN, and eISSN, which are frequently multiple, be handled this way as well, instead of having them be in the `resources` relation? Would organizing the metadata in this way be better for deduping?
-        self.resource_id (int): the foreign key for `resources`
+        self.resource_ID (int): the foreign key for `resources`
     """
     __tablename__ = 'resourceMetadata'
 
-    resource_metadata_id = db.Column(db.Integer, primary_key=True)
+    resource_metadata_ID = db.Column(db.Integer, primary_key=True)
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
-    resource_id = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
     
 
     def __repr__(self):
@@ -540,16 +540,16 @@ class ResourcePlatforms(db.Model):
     """A relation for the platform-specific resource metadata."""
     __tablename__ = 'resourcePlatforms'
 
-    resource_platform_id = db.Column(db.Integer, primary_key=True)
+    resource_platform_ID = db.Column(db.Integer, primary_key=True)
     publisher = db.Column(db.String(225))
-    publisher_id = db.Column(db.String(50))
+    publisher_ID = db.Column(db.String(50))
     platform = db.Column(db.String(75))
-    proprietary_id = db.Column(db.String(100))
-    uri = db.Column(db.String(200))
+    proprietary_ID = db.Column(db.String(100))
+    URI = db.Column(db.String(200))
     interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
-    resource_id = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
 
-    resource_platforms_fk = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
+    resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
 
 
     def __repr__(self):
@@ -562,12 +562,12 @@ class UsageData(db.Model):
     """A relation containing usage metrics."""
     __tablename__ = 'usageData'
 
-    usage_data_id = db.Column(db.Integer, primary_key=True)
-    resource_platform_id = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
+    usage_data_ID = db.Column(db.Integer, primary_key=True)
+    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
-    yop = db.Column(db.SmallInteger)
+    YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
     report_creation_date = db.Column(db.DateTime)
