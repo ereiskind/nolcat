@@ -40,7 +40,6 @@ class FiscalYears(db.Model):
     """A relation representing the fiscal years for which data has been collected."""
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
-    __table_args__ = {'schema': 'nolcat'}
 
     fiscal_year_id = db.Column(db.Integer, primary_key=True)
     fiscal_year = db.Column(db.String(4))
@@ -54,20 +53,7 @@ class FiscalYears(db.Model):
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
-
-    def __init__(self, fiscal_year_id, fiscal_year, start_date, end_date, acrl_60b, acrl_63, arl_18, arl_19, arl_20, notes_on_statisticsSources_used,  notes_on_corrections_after_submission):
-        """A constructor setting the field values as class attributes."""
-        self.fiscal_year_id = fiscal_year_id
-        self.fiscal_year = fiscal_year
-        self.start_date = start_date
-        self.end_date = end_date
-        self.acrl_60b = acrl_60b
-        self.acrl_63 = acrl_63
-        self.arl_18 = arl_18
-        self.arl_19 = arl_19
-        self.arl_20 = arl_20
-        self.notes_on_statisticsSources_used = notes_on_statisticsSources_used
-        self.notes_on_corrections_after_submission = notes_on_corrections_after_submission
+    fiscal_years_fk = db.relationship('ChildRelation', backref='FiscalYearsFK')
 
 
     def __repr__(self):
@@ -131,18 +117,12 @@ class FiscalYears(db.Model):
 class Vendors(db.Model):
     """A relation representing resource providers."""
     __tablename__ = 'vendors'
-    __table_args__ = {'schema': 'nolcat'}
 
     vendor_id = db.Column(db.Integer, primary_key=True)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
-
-    def __init__(self, vendor_id, vendor_name, alma_vendor_code):
-        """A constructor setting the field values as class attributes."""
-        self.vendor_id = vendor_id
-        self.vendor_name = vendor_name
-        self.alma_vendor_code = alma_vendor_code
+    vendors_fk = db.relationship('ChildRelation', backref='VendorsFK')
 
 
     def __repr__(self):
@@ -170,24 +150,12 @@ class Vendors(db.Model):
 class VendorNotes(db.Model):
     """A relation containing notes about vendors."""
     __tablename__ = 'vendorNotes'
-    __table_args__ = {'schema': 'nolcat'}
 
     vendor_notes_id = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
-
-    vendors_FK_vendorNotes = relationship('Vendors', backref='vendor_id')
-
-
-    def __init__(self, vendor_notes_id, note, written_by, date_written, vendor_id):
-        """A constructor setting the field values as class attributes."""
-        self.vendor_notes_id = vendor_notes_id
-        self.note = note
-        self.written_by = written_by
-        self.date_written = date_written
-        self.vendor_id = vendor_id
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
 
     def __repr__(self):
@@ -199,22 +167,13 @@ class VendorNotes(db.Model):
 class StatisticsSources(db.Model):
     """A relation containing information about sources of usage statistics."""
     __tablename__ = 'statisticsSources'
-    __table_args__ = {'schema': 'nolcat'}
 
     statistics_source_id = db.Column(db.Integer, primary_key=True)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
-    vendors_FK_statisticsSources = relationship('Vendors', backref='vendor_id')
-
-
-    def __init__(self, statistics_source_id, statistics_source_name, statistics_source_retrieval_code, vendor_id):
-        """A constructor setting the field values as class attributes."""
-        self.statistics_source_id = statistics_source_id
-        self.statistics_source_name = statistics_source_name
-        self.statistics_source_retrieval_code = statistics_source_retrieval_code
-        self.vendor_id = vendor_id
+    statistics_sources_fk = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
 
 
     def __repr__(self):
@@ -384,24 +343,12 @@ class StatisticsSources(db.Model):
 class StatisticsSourceNotes(db.Model):
     """A relation containing notes about statistics sources."""
     __tablename__ = 'statisticsSourceNotes'
-    __table_args__ = {'schema': 'nolcat'}
 
     statistics_source_notes_id = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_id = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
-
-    statisticsSources_FK_statisticsSourceNotes = relationship('StatisticsSources', backref='statistics_source_id')
-
-
-    def __init__(self, statistics_source_notes_id, note, written_by, date_written, statistics_source_id):
-        """A constructor setting the field values as class attributes."""
-        self.statistics_source_notes_id = statistics_source_notes_id
-        self.note = note
-        self.written_by = written_by
-        self.date_written = date_written
-        self.statistics_source_id = statistics_source_id
+    statistics_source_id = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
     
 
     def __repr__(self):
@@ -416,14 +363,10 @@ class StatisticsResourceSources(db.Model):
     The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
     """
     __tablename__ = 'statisticsResourceSources'
-    __table_args__ = {'schema': 'nolcat'}
 
-    srs_statistics_sources = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
-    srs_resource_sources = db.Column(db.Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'), primary_key=True)
+    srs_statistics_sources = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    srs_resource_sources = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = db.Column(db.Boolean)
-
-    statisticsSources_FK_statisticsResourceSources = relationship('StatisticsSources', backref='statistics_source_id')
-    resourceSources_FK_statisticsResourceSources = relationship('ResourceSources', backref='resource_source_id')
 
 
     def __repr__(self):
@@ -437,15 +380,14 @@ class ResourceSources(db.Model):
     This relation lists where users go to get resources. Often called platforms, they are frequently a HTTP domain. Alma calls them interfaces.
     """
     __tablename__ = 'resourceSources'
-    __table_args__ = {'schema': 'nolcat'}
 
     resource_source_id = db.Column(db.Integer, primary_key=True)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_id = db.Column(db.Integer, ForeignKey('nolcat.Vendors.vendor_id'))
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
 
-    vendors_FK_resourceSources = relationship('Vendors', backref='vendor_id')
+    resource_sources_fk = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
 
     def __repr__(self):
@@ -474,24 +416,12 @@ class ResourceSources(db.Model):
 class ResourceSourceNotes(db.Model):
     """A relation containing notes about resource sources."""
     __tablename__ = 'resourceSourceNotes'
-    __table_args__ = {'schema': 'nolcat'}
 
     resource_source_notes_id = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_id = db.Column(db.Integer, ForeignKey('nolcat.ResourceSources.resource_source_id'))
-
-    resourceSources_FK_resourceSourceNotes = relationship('ResourceSources', backref='resource_source_id')
-
-
-    def __init__(self, resource_source_notes_id, note, written_by, date_written, resource_source_id):
-        """A constructor setting the field values as class attributes."""
-        self.resource_source_notes_id = resource_source_notes_id
-        self.note = note
-        self.written_by = written_by
-        self.date_written = date_written
-        self.resource_source_id = resource_source_id
+    resource_source_id = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'))
     
 
     def __repr__(self):
@@ -503,10 +433,9 @@ class ResourceSourceNotes(db.Model):
 class AnnualUsageCollectionTracking(db.Model):
     """A relation for tracking the usage statistics collection process. """
     __tablename__ = 'annualUsageCollectionTracking'
-    __table_args__ = {'schema': 'nolcat'}
 
-    auct_statistics_source = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'), primary_key=True)
-    auct_fiscal_year = db.Column(db.Integer, ForeignKey('nolcat.FiscalYears.fiscal_year_id'), primary_key=True)
+    auct_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    auct_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_id'), primary_key=True)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -527,22 +456,6 @@ class AnnualUsageCollectionTracking(db.Model):
     ))
     usage_file_path = db.Column(db.String(150))
     notes = db.Column(db.Text)
-
-    statisticsSources_FK_annualUsageCollectionTracking = relationship('StatisticsSources', backref='statistics_source_id')
-    fiscalYears_FK_annualUsageCollectionTracking = relationship('FiscalYears', backref='fiscal_year_id')
-
-
-    def __init__(self, auct_statistics_source, auct_fiscal_year, usage_is_being_collected, manual_collection_required, collection_via_email, is_counter_compliant, collection_status, usage_file_path, notes):
-        """A constructor setting the field values as class attributes."""
-        self.auct_statistics_source = auct_statistics_source
-        self.auct_fiscal_year = auct_fiscal_year
-        self.usage_is_being_collected = usage_is_being_collected
-        self.manual_collection_required = manual_collection_required
-        self.collection_via_email = collection_via_email
-        self.is_counter_compliant = is_counter_compliant
-        self.collection_status = collection_status
-        self.usage_file_path = usage_file_path
-        self.notes = notes
 
 
     def __repr__(self):
@@ -577,7 +490,6 @@ class AnnualUsageCollectionTracking(db.Model):
 class Resources(db.Model):
     """A relation for resource metadata that's consistant across all platforms."""
     __tablename__ = 'resources'
-    __table_args__ = {'schema': 'nolcat'}
 
     resource_id = db.Column(db.Integer, primary_key=True)
     doi = db.Column(db.String(75))
@@ -588,17 +500,7 @@ class Resources(db.Model):
     section_type = db.Column(db.String(10))
     note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
-
-    def __init__(self, resource_id, doi, isbn, print_issn, online_issn, data_type, section_type, note):
-        """A constructor setting the field values as class attributes."""
-        self.resource_id = resource_id
-        self.doi = doi
-        self.isbn = isbn
-        self.print_issn = print_issn
-        self.online_issn = online_issn
-        self.data_type = data_type
-        self.section_type = section_type
-        self.note = note
+    resources_fk = db.relationship('ChildRelation', backref='ResourcesFK')
 
 
     def __repr__(self):
@@ -621,22 +523,11 @@ class ResourceMetadata(db.Model):
         self.resource_id (int): the foreign key for `resources`
     """
     __tablename__ = 'resourceMetadata'
-    __table_args__ = {'schema': 'nolcat'}
 
     resource_metadata_id = db.Column(db.Integer, primary_key=True)
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
-    resource_id = db.Column(db.Integer, ForeignKey('nolcat.Resources.resource_id'))
-
-    resources_FK_resourceMetadata = relationship('Resources', backref='resource_id')
-
-
-    def __init__(self, resource_metadata_id, metadata_field, metadata_value, resource_id):
-        """A constructor setting the field values as class attributes."""
-        self.resource_metadata_id = resource_metadata_id
-        self.metadata_field = metadata_field
-        self.metadata_value = metadata_value
-        self.resource_id = resource_id
+    resource_id = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
     
 
     def __repr__(self):
@@ -648,7 +539,6 @@ class ResourceMetadata(db.Model):
 class ResourcePlatforms(db.Model):
     """A relation for the platform-specific resource metadata."""
     __tablename__ = 'resourcePlatforms'
-    __table_args__ = {'schema': 'nolcat'}
 
     resource_platform_id = db.Column(db.Integer, primary_key=True)
     publisher = db.Column(db.String(225))
@@ -656,23 +546,10 @@ class ResourcePlatforms(db.Model):
     platform = db.Column(db.String(75))
     proprietary_id = db.Column(db.String(100))
     uri = db.Column(db.String(200))
-    interface = db.Column(db.Integer, ForeignKey('nolcat.StatisticsSources.statistics_source_id'))
-    resource_id = db.Column(db.Integer, ForeignKey('nolcat.Resources.resource_id'))
+    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
+    resource_id = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
 
-    resources_FK_resourcePlatforms = relationship('Resources', backref='resource_id')
-    statisticsSources_FK_resourcePlatforms = relationship('StatisticsSources', backref='interface')
-
-
-    def __init__(self, resource_platform_id, publisher, publisher_id, platform, proprietary_id, uri, interface, resource_id):
-        """A constructor setting the field values as class attributes."""
-        self.resource_platform_id = resource_platform_id
-        self.publisher = publisher
-        self.publisher_id = publisher_id
-        self.platform = platform
-        self.proprietary_id = proprietary_id
-        self.uri = uri
-        self.interface = interface
-        self.resource_id = resource_id
+    resource_platforms_fk = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
 
 
     def __repr__(self):
@@ -684,10 +561,9 @@ class ResourcePlatforms(db.Model):
 class UsageData(db.Model):
     """A relation containing usage metrics."""
     __tablename__ = 'usageData'
-    __table_args__ = {'schema': 'nolcat'}
 
     usage_data_id = db.Column(db.Integer, primary_key=True)
-    resource_platform_id = db.Column(db.Integer, ForeignKey('nolcat.ResourcePlatforms.resource_platform_id'))
+    resource_platform_id = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
@@ -695,21 +571,6 @@ class UsageData(db.Model):
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
     report_creation_date = db.Column(db.DateTime)
-
-    resourcePlatforms_FK_usageData = relationship('ResourcePlatforms', backref='resource_platform_id')
-
-
-    def __init__(self, usage_data_id, resource_platform_id, metric_type, usage_date, usage_count, yop, access_type, access_method, report_creation_date):
-        """A constructor setting the field values as class attributes."""
-        self.usage_data_id = usage_data_id
-        self.resource_platform_id = resource_platform_id
-        self.metric_type = metric_type
-        self.usage_date = usage_date
-        self.usage_count = usage_count
-        self.yop = yop
-        self.access_type = access_type
-        self.access_method = access_method
-        self.report_creation_date = report_creation_date
 
 
     def __repr__(self):
