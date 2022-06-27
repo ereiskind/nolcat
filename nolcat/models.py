@@ -494,7 +494,15 @@ class ResourceSources(db.Model):
 
 
 class ResourceSourceNotes(db.Model):
-    """A relation containing notes about resource sources."""
+    """The class representation of the `resourceSourceNotes` relation, which contains notes about the resource sources in `resourceSources`.
+    
+    Attributes:
+        self.resource_source_notes_ID (int): the primary key
+        self.note (text): the content of the note
+        self.written_by (str): the note author
+        self.date_written (date): the day the note was last edited
+        self.resource_source_ID (int): the foreign key for `resourceSources`
+    """
     __tablename__ = 'resourceSourceNotes'
 
     resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
