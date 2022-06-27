@@ -443,9 +443,21 @@ class StatisticsResourceSources(db.Model):
 
 
 class ResourceSources(db.Model):
-    """A relation containing information about the sources of resources.
+    """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
+
+    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains. 
     
-    This relation lists where users go to get resources. Often called platforms, they are frequently a HTTP domain. Alma calls them interfaces.
+    Attributes:
+        self.resource_source_ID (int): the primary key
+        self.resource_source_name (str): the resource source name
+        self.source_in_use (bool): indicates if we currently have access to resources at the resource source
+        self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
+        self.vendor_ID (int): the foreign key for `vendors`
+    
+    Methods:
+        add_access_stop_date: #ToDo: Copy first line of docstring here
+        remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        add_note:  #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'resourceSources'
 
