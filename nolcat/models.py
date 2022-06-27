@@ -654,7 +654,18 @@ class ResourceMetadata(db.Model):
 
 
 class ResourcePlatforms(db.Model):
-    """A relation for the platform-specific resource metadata."""
+    """The class representation of the `resourcePlatforms` relation, which contains metadata from COUNTER reports specific to a statistics source.
+    
+    Attributes:
+        self.resource_platform_ID (int): the primary key
+        self.publisher (str): the name of the publisher
+        self.publisher_ID (str): the statistics source's ID for the publisher
+        self.platform (str): the name of the resource's platform in the COUNTER report
+        self.proprietary_ID (str): the statistics source's ID for the resource
+        self.URI (str): the statistics source's permalink to the resource
+        self.interface (int): the foreign key for `statisticsSources`
+        self.resource_ID (int): the foreign key for `resources`
+    """
     __tablename__ = 'resourcePlatforms'
 
     resource_platform_ID = db.Column(db.Integer, primary_key=True)
