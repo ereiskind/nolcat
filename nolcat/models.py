@@ -37,7 +37,30 @@ def PATH_TO_CREDENTIALS_FILE():
 
 
 class FiscalYears(db.Model):
-    """A relation representing the fiscal years for which data has been collected."""
+    """The class representation of the `fiscalYears` relation, which contains a list of the fiscal years with data in the database as well as information about the national reporting aggregate statistics for the given fiscal year.
+    
+    Attributes:
+        self.fiscal_year_ID (int): the primary key
+        self.fiscal_year (str): the fiscal year in "yyyy" format; the ending year of the range is used
+        self.start_date (date): the first day of the fiscal year
+        self.end_date (date) the last day of the fiscal year
+        self.ACRL_60b (smallInt): the reported value for ACRL 60b
+        self.ACRL_63 (smallInt): the reported value for ACRL 63
+        self.ARL_18 (smallInt): the reported value for ARL 18
+        self.ARL_19 (smallInt): the reported value for ARL 19
+        self.ARL_20 (smallInt): the reported value for ARL 20
+        self.notes_on_statisticsSources_used (text): notes on data sources used to collect ARL and ACRL/IPEDS numbers
+        self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
+
+    Methods:
+        calculate_ACRL_60b: #ToDo: Copy first line of docstring here
+        calculate_ACRL_63: #ToDo: Copy first line of docstring here
+        calculate_ARL_18: #ToDo: Copy first line of docstring here
+        calculate_ARL_19: #ToDo: Copy first line of docstring here
+        calculate_ARL_20: #ToDo: Copy first line of docstring here
+        create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
+        collect_fiscal_year_usage_statistics: A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+    """
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
