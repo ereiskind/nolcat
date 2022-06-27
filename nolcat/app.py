@@ -6,7 +6,19 @@ from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from database_connectors import SQLALCHEMY_DATABASE_URI
+"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file exclusive to the container and imported into this file.
+
+The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no init file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from the `secrets.py` file here.
+"""
+import nolcat.secrets as secrets  #ToDo: Confirm the secrets file location, name, and variable names
+
+DATABASE_USERNAME = secrets.Username
+DATABASE_PASSWORD = secrets.Password
+DATABASE_HOST = secrets.Host
+DATABASE_PORT = secrets.Post
+DATABASE_SCHEMA_NAME = secrets.Database
+SECRET_KEY = secrets.Secret
+
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
@@ -22,8 +34,8 @@ def create_app():
     app.register_error_handler(404, page_not_found)
     csrf.init_app(app)
     db.init_app(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI()
-    app.config['SECRET_KEY'] = "ReplaceMeLater"  #ToDo: Replace secret key with reference to secret string (container environment variable?)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './data'
 
     #Section: Create Homepage and Register Other Blueprints

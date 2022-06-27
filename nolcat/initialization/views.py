@@ -13,7 +13,6 @@ from sqlalchemy.sql import text
 
 from . import bp
 from ..initialization import forms
-from nolcat.database_connectors import engine
 from nolcat.raw_COUNTER_report import *
 
 
@@ -49,7 +48,7 @@ def save_historical_collection_tracking_info():
         resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
         resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
 
-        db_connection = engine.connect()
+        #ToDo: Figure out Flask-SQLAlchemy replacement for db_connection = engine.connect()
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
             con=db_connection,
@@ -93,7 +92,7 @@ def save_historical_collection_tracking_info():
         db_connection.close()
         
         #ALERT: Due to database unavailability, code from this point forward is untested
-        db_connection = engine.connect()
+        #ToDo: Figure out Flask-SQLAlchemy replacement for db_connection = engine.connect()
         #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
         SQL_statement = text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;")
         what_data_type_is_this = db_connection.execute(SQL_statement).fetchall()
