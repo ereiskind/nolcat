@@ -49,55 +49,56 @@ def save_historical_collection_tracking_info():
         resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
         resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
 
-        #ToDo: Figure out Flask-SQLAlchemy replacement for db_connection = engine.connect()
+        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         vendors_dataframe.to_sql(
             'vendors',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         vendorNotes_dataframe.to_sql(
             'vendorNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsSources_dataframe.to_sql(
             'statisticsSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsSourceNotes_dataframe.to_sql(
             'statisticsSourceNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         statisticsResourceSources_dataframe.to_sql(
             'statisticsResourceSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         resourceSources_dataframe.to_sql(
             'resourceSources',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
-            con=db_connection,
+            con=db.engine,
             if_exists='replace',
         )
-        db_connection.close()
+        db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
         
         #ALERT: Due to database unavailability, code from this point forward is untested
-        #ToDo: Figure out Flask-SQLAlchemy replacement for db_connection = engine.connect()
         #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
-        SQL_statement = text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;")
-        what_data_type_is_this = db_connection.execute(SQL_statement).fetchall()
-        db_connection.close()
+        with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
+            AUCT_records = connection.execute(text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;"))
+            for record in AUCT_records:
+                print(repr(type(record)))
+                print(record)
 
         #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
             # Usage_Is_Being_Collected
