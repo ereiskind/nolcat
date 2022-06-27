@@ -592,7 +592,20 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
 class Resources(db.Model):
-    """A relation for resource metadata that's consistant across all platforms."""
+    """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
+
+    #ToDo: Write an extended summary about how moving the metadata fields allows for greater functionality
+    
+    Attributes:
+        self.resource_ID (int): the primary key
+        self.DOI (str): the DOI
+        self.ISBN (str): the ISBN
+        self.print_ISSN (str): the print ISSN
+        self.online_ISSN (str): the online ISSN
+        self.data_type (str): the COUNTER data type
+        self.section_type (str): the COUNTER section type
+        self.note (text): qualitative collections management information for the resource
+    """
     __tablename__ = 'resources'
 
     resource_ID = db.Column(db.Integer, primary_key=True)
