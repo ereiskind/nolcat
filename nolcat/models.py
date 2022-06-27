@@ -687,7 +687,19 @@ class ResourcePlatforms(db.Model):
 
 
 class UsageData(db.Model):
-    """A relation containing usage metrics."""
+    """The class representation of the `usageData` relation, which contains the COUNTER usage statistics and the fields by which they're broken down.
+    
+    Attributes:
+        self.usage_data_ID (int): the primary key
+        self.resource_platform_ID (int): the foreign key for `resourcePlatforms`
+        self.metric_type (str): the COUNTER metric type
+        self.usage_date (date): the month when the use occurred, represented by the first day of that month
+        self.usage_count (int): the number of uses
+        self.YOP (smallInt): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
+        self.access_type (str): the COUNTER access type
+        self.access_method (str): the COUNTER access method
+        self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
+    """
     __tablename__ = 'usageData'
 
     usage_data_ID = db.Column(db.Integer, primary_key=True)
