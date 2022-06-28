@@ -15,7 +15,6 @@ Branch: Configure Flask-User
 
 Branch: Configure Flask-SQLAlchemy
 ----------------------------------
-* Create main homepage, including links to appropriate blueprint homepages
 * **Question:** Does a module that just creates Flask-SQLAlchemy config variables and SQLAlchemy variables need tests?
 * Move `tests.test_StatisticsSources.test_loading_into_relation` to `tests.test_flask_factory_pattern` with a new name indicating it tests database read/write, then confirm the test does exactly that
 
