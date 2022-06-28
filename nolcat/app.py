@@ -15,7 +15,7 @@ import nolcat.secrets as secrets  #ToDo: Confirm the secrets file location, name
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
 DATABASE_HOST = secrets.Host
-DATABASE_PORT = secrets.Post
+DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
