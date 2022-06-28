@@ -1,6 +1,5 @@
 import logging
-
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template
 
 from . import bp
 from ..app import db
@@ -11,8 +10,10 @@ from ..app import db
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
-#ToDo: Create route for admin homepage
-    # return index.html
+@bp.route('/')
+def homepage():
+    """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
+    return render_template('index.html')
 
 
 #ToDo: Create route for details of a fiscal year
