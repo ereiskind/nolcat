@@ -12,12 +12,13 @@ def fiscalYears_relation():
             ["2018", "2017-07-01", "2018-06-30", None, None, None, None, None, None, None],
             ["2019", "2018-07-01", "2019-06-30", None, None, None, None, None, None, None],
             ["2020", "2019-07-01", "2020-06-30", None, None, None, None, None, None, None],
-            ["2021", "2021-07-01", "2022-06-30", None, None, None, None, None, None, None],
+            ["2021", "2020-07-01", "2021-06-30", None, None, None, None, None, None, None],
+            ["2022", "2021-07-01", "2022-06-30", None, None, None, None, None, None, None],
         ],
-        # Index: 0-4
-        columns=["Year", "Start_Date", "End_Date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "Notes_on_statisticsSources_Used", "Notes_on_Corrections_After_Submission"]
+        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"]
     )
-    df.index.name = "Fiscal_Year_ID"
+    df.index = df.index + 1  # To make a one-based index
+    df.index.name = "fiscal_year_ID"
     yield df
 
 
