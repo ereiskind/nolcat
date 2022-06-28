@@ -28,11 +28,11 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
-@bp.route('/initialize-database')
-def initialize_initial_relations():
+@bp.route('/')
+def homepage():
     """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
     form_being_filled_out = InitialRelationDataForm()
-    return render_template('start-database-initialization.html', form=form_being_filled_out)
+    return render_template('index.html', form=form_being_filled_out)
 
 
 @bp.route('/initialize-collection-tracking', methods=["GET","POST"])
