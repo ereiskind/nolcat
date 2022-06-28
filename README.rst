@@ -227,9 +227,7 @@ Remove Unneeded Files
 ---------------------
 * Determine if "CSRF_token.missing.rst" needs to be kept and, if not, if the StackOverflow resource links should be preserved elsewhere
 * Decide if keeping "tests/titles_in_sample_R4_reports.txt"
-* Remove "nolcat/templates/enter-data.html" and "nolcat/templates/ok.html"
 * Clean up/move contents of "notes_from_older_erd.rst"
-* Remove `nolcat.initialization.forms.TestForm`
 
 Improve UI
 ----------
