@@ -527,7 +527,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.usage_is_being_collected (bool): indicates if usage needs to be collected
         self.manual_collection_required (bool): indicates if usage needs to be collected manually
         self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
-        self.is_counter_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.is_COUNTER_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
@@ -543,7 +543,7 @@ class AnnualUsageCollectionTracking(db.Model):
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
-    is_counter_compliant = db.Column(db.Boolean)
+    is_COUNTER_compliant = db.Column(db.Boolean)
     #ToDo: Check how to do enums in Flask-SQLAlchemy
     collection_status = db.Column(db.Enum(
         'N/A: Paid by Law',
