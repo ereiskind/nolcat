@@ -24,9 +24,7 @@ Branch: Import Data from Secret Files
 
 Branch: Rework Database Structure
 ---------------------------------
-* Reorganize `models.Resources` and `models.ResourceMetadata` so all titles, DOIs, ISBNs, ISSNs are stored in the latter relation, which will also have an attribute to indicate the default value for each title; edit everything using the above classes to fit the new structure
 * Correct "tests/database_seeding_fixtures.py" to match the current schema
-* Update/correct `RawCOUNTERReport.test_perform_deduplication_matching`
 * Filter out ISBN and title matches in `RawCOUNTERReport.perform_deduplication_matching` if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
 
 Branch: Complete Initialization Process

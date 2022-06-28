@@ -527,7 +527,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.usage_is_being_collected (bool): indicates if usage needs to be collected
         self.manual_collection_required (bool): indicates if usage needs to be collected manually
         self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
-        self.is_counter_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.is_COUNTER_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
@@ -543,7 +543,7 @@ class AnnualUsageCollectionTracking(db.Model):
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
-    is_counter_compliant = db.Column(db.Boolean)
+    is_COUNTER_compliant = db.Column(db.Boolean)
     #ToDo: Check how to do enums in Flask-SQLAlchemy
     collection_status = db.Column(db.Enum(
         'N/A: Paid by Law',
@@ -594,14 +594,10 @@ class AnnualUsageCollectionTracking(db.Model):
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
 
-    #ToDo: Write an extended summary about how moving the metadata fields allows for greater functionality
+    Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
     
     Attributes:
         self.resource_ID (int): the primary key
-        self.DOI (str): the DOI
-        self.ISBN (str): the ISBN
-        self.print_ISSN (str): the print ISSN
-        self.online_ISSN (str): the online ISSN
         self.data_type (str): the COUNTER data type
         self.section_type (str): the COUNTER section type
         self.note (text): qualitative collections management information for the resource
@@ -609,10 +605,6 @@ class Resources(db.Model):
     __tablename__ = 'resources'
 
     resource_ID = db.Column(db.Integer, primary_key=True)
-    DOI = db.Column(db.String(75))
-    ISBN = db.Column(db.String(17))
-    print_ISSN = db.Column(db.String(9))
-    online_ISSN = db.Column(db.String(9))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))
     note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
@@ -629,14 +621,14 @@ class Resources(db.Model):
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
     
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, the `resources` relation can only hold a single value for the DOI, ISBN, ISSN, and eISSN fields, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for metadata type (titles, DOI, ISBN, ISSN, and eISSN) fields would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
     
     Attributes:
-        self.resource_title_ID (int): the primary key
+        self.resource_metadata_ID (int): the primary key
         self.metadata_field (str): the metadata field label
         self.metadata_value (str): the metadata value
         #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
-        #ToDo: Does there need to be a Boolean field for indicating the default value for a metadata field for a given resource? Is this how getting a title for deduping should be handled? Should the ISBN, ISSN, and eISSN, which are frequently multiple, be handled this way as well, instead of having them be in the `resources` relation? Would organizing the metadata in this way be better for deduping?
+        self.default (bool): indicates if the value is the default for the field and title
         self.resource_ID (int): the foreign key for `resources`
     """
     __tablename__ = 'resourceMetadata'
@@ -644,6 +636,7 @@ class ResourceMetadata(db.Model):
     resource_metadata_ID = db.Column(db.Integer, primary_key=True)
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
+    default = db.Column(db.Boolean)
     resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
     
 

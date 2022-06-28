@@ -94,21 +94,21 @@ class RawCOUNTERReport:
         This function looks at all the records in the parameter dataframe(s) and creates pairs with the record index values if the records are deemed to be for the same resource based on a variety of criteria. Those pairs referring to matches needing manual confirmation are grouped together and set aside so they can be added to the list of matches or not depending on user response captured via Flask.
 
         Args:
-            normalized_resource_data (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
+            normalized_resource_data (dataframe, optional): a dataframe of all the resources in the database with their data types and default metadata values with a value of `None` during database initialization; see "Note" for the SQL instructions for creating this dataframe
         
         Returns:
-            tuple: the variables matched_records and matches_to_manually_confirm, described in the note, in a tuple for unpacking through multiple assignment
+            tuple: the variables `matched_records` and `matches_to_manually_confirm` in a tuple for unpacking through multiple assignment; "See Also" describes the individual variables
         
-        Note:
+        See Also:
             matched_records: a set of tuples containing the record index values of matched records
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
+        
+        Note:
+            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN as well as the data type and possibly the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
-            #ToDo: SOME ISSUES TO CONSIDER
-                #Alert: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
-                #ToDo: Should anything be done to denote those titles where different stats sources assign different data types?
         
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
