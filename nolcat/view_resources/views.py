@@ -1,4 +1,5 @@
 import logging
+from flask import render_template
 
 from . import bp
 from ..app import db
@@ -9,8 +10,10 @@ from ..app import db
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
-#ToDo: Create route to view resources list
-    # return view_resources.html
+@bp.route('/')
+def homepage():
+    """Returns the homepage for the `view_resources` blueprint, which shows a list of resources."""
+    return render_template('index.html')
 
 
 #ToDo: Create route to add a new resource or edit a resource

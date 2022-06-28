@@ -14,7 +14,3 @@ class InitialRelationDataForm(FlaskForm):
     statisticsResourceSources_CSV = FileField("Select the filled out `initialize_statisticsResourceSources.csv` file here.", validators=[FileRequired()])
     resourceSources_CSV = FileField("Select the filled out `initialize_resourceSources.csv` file here.", validators=[FileRequired()])
     resourceSourceNotes_CSV = FileField("Select the filled out `initialize_resourceSourceNotes.csv` file here.", validators=[FileRequired()])
-
-
-class TestForm(FlaskForm):
-    string = StringField('This is a string submission field')

@@ -15,7 +15,6 @@ Branch: Configure Flask-User
 
 Branch: Configure Flask-SQLAlchemy
 ----------------------------------
-* Create main homepage, including links to appropriate blueprint homepages
 * **Question:** Does a module that just creates Flask-SQLAlchemy config variables and SQLAlchemy variables need tests?
 * Move `tests.test_StatisticsSources.test_loading_into_relation` to `tests.test_flask_factory_pattern` with a new name indicating it tests database read/write, then confirm the test does exactly that
 
@@ -202,6 +201,7 @@ Branch: Finish `view_resources` Blueprint
 -----------------------------------------
 * Create route/page for adding or editing a resource (associated Vendor records are chosen here)
 * Create route/page for viewing resource details
+* Add search functionality to view resource page
 * Create test for route to add a resource
 * Create test for route to edit a resource
 * Create test for route to view resource details
@@ -227,9 +227,7 @@ Remove Unneeded Files
 ---------------------
 * Determine if "CSRF_token.missing.rst" needs to be kept and, if not, if the StackOverflow resource links should be preserved elsewhere
 * Decide if keeping "tests/titles_in_sample_R4_reports.txt"
-* Remove "nolcat/templates/enter-data.html" and "nolcat/templates/ok.html"
 * Clean up/move contents of "notes_from_older_erd.rst"
-* Remove `nolcat.initialization.forms.TestForm`
 
 Improve UI
 ----------

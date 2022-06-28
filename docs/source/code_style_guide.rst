@@ -32,3 +32,4 @@ Naming Flask Routes and Webpages
 ================================
 
 * Flask routes that handle data ingestion from a form will contain at least two ``return`` statements with the ``render_template`` function: one for the page the form is on, and one for each form representing the page the web app will go to when the form is submitted
+* Each blueprint will have a homepage with the route ``/``, the HTML file name "index.html", and the function name ``homepage``

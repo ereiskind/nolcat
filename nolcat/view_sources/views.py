@@ -1,4 +1,5 @@
 import logging
+from flask import render_template
 
 from . import bp
 from ..app import db
@@ -9,9 +10,10 @@ from ..app import db
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
-#ToDo: Create route to view sources list
-    #ToDo: Use variable route to determine if viewing resourceSources or statisticsSources
-    # return view_sources.html
+@bp.route('/')  #ToDo: Update to include variable route to determine if viewing resourceSources or statisticsSources
+def homepage():
+    """Returns the homepage for the `view_sources` blueprint, which shows the list of resourceSources or statisticsSources records depending on the variable route value."""
+    return render_template('index.html')
 
 
 #ToDo: Create route to view source details
