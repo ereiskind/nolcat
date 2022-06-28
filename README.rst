@@ -202,6 +202,7 @@ Branch: Finish `view_resources` Blueprint
 -----------------------------------------
 * Create route/page for adding or editing a resource (associated Vendor records are chosen here)
 * Create route/page for viewing resource details
+* Add search functionality to view resource page
 * Create test for route to add a resource
 * Create test for route to edit a resource
 * Create test for route to view resource details
