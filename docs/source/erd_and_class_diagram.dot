@@ -186,10 +186,6 @@ digraph erd_and_classes {
 
         // Attributes
         resource_ID [shape="note"]
-        DOI
-        ISBN
-        print_ISSN
-        online_ISSN
         data_type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
         __section_type // This is in R5 IR only-how to add it? Does it go here?
         note
@@ -206,8 +202,9 @@ digraph erd_and_classes {
         metadata_field
         metadata_value [
             shape="record"
-            label="\N|DOI|ISBN|Print ISSN|Online ISSN|title (R4)|database (DR)|title (TR)|item (IR)"
+            label="\N|title (R4)|title (TR)|database (DR)|item (IR)|DOI|ISBN|print ISSN|online ISSN"
         ]
+        default
         resource_ID_in_resourceMetadata [
             label="resource_ID"
             shape="folder"
