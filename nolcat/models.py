@@ -426,14 +426,14 @@ class StatisticsResourceSources(db.Model):
     The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
     
     Attributes:
-        self.SRS_statistics_sources (int): part of the composite primary key; the foreign key for `statisticsSources`
-        self.SRS_resource_sources (int): part of the composite primary key; the foreign key for `resourceSources`
+        self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
+        self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
         self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_sources = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    SRS_resource_sources = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = db.Column(db.Boolean)
 
 
