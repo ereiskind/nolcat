@@ -171,20 +171,8 @@ def resourceSources_relation():
 @pytest.fixture
 def annualUsageCollectionTracking_relation():
     """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation."""
-    #ToDo: Add FY 2019-2020, 2020-2021 to the relation
     multiindex = pd.DataFrame(
         [
-            [0, 0],
-            [2, 0],
-            [1, 0],
-            [3, 0],
-            [4, 0],
-            [5, 0],
-            [6, 0],
-            [7, 0],
-            [9, 0],
-            [10, 0],
-            [0, 1],
             [1, 1],
             [2, 1],
             [3, 1],
@@ -192,9 +180,9 @@ def annualUsageCollectionTracking_relation():
             [5, 1],
             [6, 1],
             [7, 1],
-            [9, 1],
+            [8, 1],
             [10, 1],
-            [0, 2],
+            [11, 1],
             [1, 2],
             [2, 2],
             [3, 2],
@@ -202,28 +190,48 @@ def annualUsageCollectionTracking_relation():
             [5, 2],
             [6, 2],
             [7, 2],
-            [9, 2],
+            [8, 2],
             [10, 2],
-            # [0, 3],
-            # [1, 3],
-            # [2, 3],
-            # [3, 3],
-            # [4, 3],
-            # [5, 3],
-            # [8, 3],
-            # [9, 3],
-            # [10, 3],
-            # [0, 4],
-            # [1, 4],
-            # [2, 4],
-            # [3, 4],
-            # [4, 4],
-            # [5, 4],
-            # [8, 4],
-            # [9, 4],
-            # [10, 4],
+            [11, 2],
+            [1, 3],
+            [2, 3],
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [8, 3],
+            [10, 3],
+            [11, 3],
+            [1, 4],
+            [2, 4],
+            [3, 4],
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [9, 4],
+            [10, 4],
+            [11, 4],
+            [1, 5],
+            [2, 5],
+            [3, 5],
+            [4, 5],
+            [5, 5],
+            [6, 5],
+            [9, 5],
+            [10, 5],
+            [11, 5],
+            [1, 6],
+            [2, 6],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [9, 6],
+            [10, 6],
+            [11, 6],
         ],
-        columns=["AUCT_Statistics_Source", "AUCT_Fiscal_Year"]
+        columns=["AUCT_statistics_source", "AUCT_fiscal_year"]
     )
     multiindex = pd.MultiIndex.from_frame(multiindex)
     df = pd.DataFrame(
@@ -259,30 +267,40 @@ def annualUsageCollectionTracking_relation():
             [True, True, True, False, "Collection complete", None, None],
             [True, True, True, False, "Collection complete", None, None],
             [False, False, False, False, "N/A: Open access", None, None],
-            [True, True, False, False, "Collection not started", None, "This is the first FY with usage statistics"],
+            [True, True, False, False, "Collection complete", None, "This is the first FY with usage statistics"],
 
-            # ProQuest FY 2019-2020
-            # EBSCOhost FY 2019-2020
-            # Gale Cengage Learning FY 2019-2020
-            # iG Library/Business Expert Press (BEP) FY 2019-2020
-            # DemographicsNow FY 2019-2020
-            # Ebook Central FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
-            # Peterson's Prep FY 2019-2020  [True, True, False, False, "Collection complete", None, None],
-            # Pivot FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
-            # Ulrichsweb FY 2019-2020
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
 
-            # ProQuest FY 2020-2021
-            # EBSCOhost FY 2020-2021
-            # Gale Cengage Learning FY 2020-2021
-            # iG Library/Business Expert Press (BEP) FY 2020-2021
-            # DemographicsNow FY 2020-2021
-            # Ebook Central FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
-            # Peterson's Prep FY 2020-2021  [True, True, False, False, "Collection complete", None, None],
-            # Pivot FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
-            # Ulrichsweb FY 2020-2021
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, "Ended subscription, only Med has content now"],
+            [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+
+            [True, True, False, True, "Collection not started", None, None],
+            [True, True, False, True, "Collection not started", None, None],
+            [True, True, False, True, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Paid by Med", None, "Still have access to content through Med"],
+            [True, True, True, False, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection not started", None, None],
         ],
         index=multiindex,
-        columns=["Usage_Is_Being_Collected", "Manual_Collection_Required", "Collection_Via_Email", "Is_COUNTER_Compliant", "Collection_Status", "Usage_File_Path", "Notes"]
+        columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"]
     )
     yield df
 
