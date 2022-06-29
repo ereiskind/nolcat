@@ -7,26 +7,11 @@ from pathlib import Path
 import os
 import pytest
 
-from nolcat.app import create_app
 from conftest import app
 
 
-@pytest.fixture
-def flask_client():
-    """Creates an instance of the Flask web app for testing."""
-    app = create_app()
-    app.testing = True  # Lets exceptions come through to test client
-    with app.test_client() as client:
-        yield client
-
-
-def test_flask_client_creation(flask_client):
-    """Tests that the flask_client fixture creates a FlaskClient object for `nolcat.app`."""
-    assert repr(flask_client) == "<FlaskClient <Flask 'nolcat.app'>>"
-
-
-def test_flask_client_creation2(app):
-    """Tests that the flask_client fixture creates a FlaskClient object for `nolcat.app`."""
+def test_flask_client_creation(app):
+    """Tests that the fixture for creating the Flask web app client returned a FlaskClient object for `nolcat.app`."""
     assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
