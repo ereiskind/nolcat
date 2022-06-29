@@ -6,6 +6,7 @@
 from pathlib import Path
 import os
 import pytest
+from bs4 import BeautifulSoup
 
 from conftest import app
 
