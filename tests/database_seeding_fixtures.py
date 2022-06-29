@@ -50,22 +50,22 @@ def statisticsSources_relation():
     """Creates a dataframe that can be loaded into the `statisticsSources` relation."""
     df = pd.DataFrame(
         [
-            ["ProQuest", None, 0],
-            ["EBSCOhost", None, 1],
-            ["Gale Cengage Learning", None, 2],
-            ["iG Library/Business Expert Press (BEP)", None, 3],
-            ["DemographicsNow", None, 2],
-            ["Ebook Central", None, 0],
-            ["Peterson's Career Prep", None, 2],
-            ["Peterson's Test Prep", None, 2],
-            ["Peterson's Prep", None, 2],
-            ["Pivot", None, 0],
-            ["Ulrichsweb", None, 0],
+            ["ProQuest", None, 1],
+            ["EBSCOhost", None, 2],
+            ["Gale Cengage Learning", None, 3],
+            ["iG Library/Business Expert Press (BEP)", None, 4],
+            ["DemographicsNow", None, 3],
+            ["Ebook Central", None, 1],
+            ["Peterson's Career Prep", None, 3],
+            ["Peterson's Test Prep", None, 3],
+            ["Peterson's Prep", None, 3],
+            ["Pivot", None, 1],
+            ["Ulrichsweb", None, 1],
         ],
-        # Index: 0-10
-        columns=["Statistics_Source_Name", "Statistics_Source_Retrieval_Code", "Vendor_ID"]
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_ID"]
     )
-    df.index.name = "Statistics_Source_ID"
+    df.index = df.index + 1
+    df.index.name = "statistics_source_ID"
     yield df
 
 
