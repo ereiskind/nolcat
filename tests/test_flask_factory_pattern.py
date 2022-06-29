@@ -8,6 +8,7 @@ import os
 import pytest
 
 from nolcat.app import create_app
+from conftest import app
 
 
 @pytest.fixture
@@ -22,6 +23,11 @@ def flask_client():
 def test_flask_client_creation(flask_client):
     """Tests that the flask_client fixture creates a FlaskClient object for `nolcat.app`."""
     assert repr(flask_client) == "<FlaskClient <Flask 'nolcat.app'>>"
+
+
+def test_flask_client_creation2(app):
+    """Tests that the flask_client fixture creates a FlaskClient object for `nolcat.app`."""
+    assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
 def test_homepage(flask_client):
