@@ -16,9 +16,9 @@ def test_flask_client_creation(app):
     assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_homepage(flask_client):
+def test_homepage(app):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    homepage = flask_client.get('/')
+    homepage = app.get('/')
     HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
     HTML_markup = HTML_file.read().replace(b"\r", b"")  # This removes the carriage return so the HTML file written on Windows matches the line feed-only Flask response
     HTML_file.close()
@@ -26,9 +26,9 @@ def test_homepage(flask_client):
     assert homepage.status == "200 OK" and homepage.data == HTML_markup
 
 
-def test_404_page(flask_client):
+def test_404_page(app):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    nonexistant_page = flask_client.get('/404')
+    nonexistant_page = app.get('/404')
     HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'rb')
     HTML_markup = HTML_file.read().replace(b"\r", b"")
     HTML_file.close()
