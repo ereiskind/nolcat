@@ -35,10 +35,10 @@ def vendors_relation():
             ["Ebrary", None],
             ["MyiLibrary", None],
         ],
-        # Index: 0-6
-        columns=["Vendor_Name", "Alma_Vendor_Code"]
+        columns=["vendor_name", "alma_vendor_code"]
     )
-    df.index.name = "Vendor_ID"
+    df.index = df.index + 1
+    df.index.name = "vendor_ID"
     yield df
 
 
