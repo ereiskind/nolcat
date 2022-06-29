@@ -19,18 +19,23 @@ def test_flask_client_creation(app):
 def test_homepage(app):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     homepage = app.get('/')
-    HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'rb')  # CWD is where the tests are being run (root for this suite)
-    HTML_markup = HTML_file.read().replace(b"\r", b"")  # This removes the carriage return so the HTML file written on Windows matches the line feed-only Flask response
-    HTML_file.close()
-    #ToDo: HTML_markup shows the Jinja, data attribute shows what's rendered by Jinja--if necessary, find way to resolve
-    assert homepage.status == "200 OK" and homepage.data == HTML_markup
+    with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'r') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = soup.head.title
+        HTML_file_page_title = soup.body.h1
+    with homepage.data as GET_response:
+        print(f"`homepage.data` is {homepage.data} of type {repr(type(homepage.data))}")
+        soup = BeautifulSoup(HTML_file, 'lxml')
+        GET_response_title = soup.head.title
+        GET_response_page_title = soup.body.h1
+    assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
 def test_404_page(app):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    nonexistant_page = app.get('/404')
-    HTML_file = open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'rb')
-    HTML_markup = HTML_file.read().replace(b"\r", b"")
-    HTML_file.close()
-    HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")  # This replaces the Jinja with what it renders to--this replacement is safe because it replaces the homepage function with the homepage/root route
-    assert nonexistant_page.status == "404 NOT FOUND" and nonexistant_page.data == HTML_markup
+    nonexistent_page = app.get('/404')
+    with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'r') as HTML_file:
+        # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
+        HTML_markup = HTML_file.read().replace(b"\r", b"")
+        HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
+    assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
