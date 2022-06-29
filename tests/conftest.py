@@ -5,7 +5,7 @@ import pytest
 from nolcat.app import create_app
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def app():
     """Creates an instance of the Flask web app for testing."""
     app = create_app()
