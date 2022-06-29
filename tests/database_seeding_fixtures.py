@@ -80,28 +80,28 @@ def statisticsResourceSources_relation():
     """
     multiindex = pd.DataFrame(
         [
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [0, 5],
-            [10, 6],
-            [6, 7],
-            [8, 7],
-            [7, 8],
-            [8, 8],
-            [9, 9],
-            [4, 10],
-            [5, 11],
-            [5, 12],
-            [5, 13],
-            [1, 14],
+            [1, 1],
+            [1, 2],
+            [1, 3],
+            [1, 4],
+            [1, 5],
+            [1, 6],
             [2, 15],
             [3, 16],
-            [5, 17],
+            [4, 17],
+            [5, 11],
+            [6, 12],
+            [6, 13],
+            [6, 14],
+            [6, 18],
+            [7, 8],
+            [8, 9],
+            [9, 8],
+            [9, 9],
+            [10, 10],
+            [11, 7],
         ],
-        columns=["SRS_Statistics_Source", "SRS_Resource_Source"]
+        columns=["SRS_statistics_source", "SRS_resource_source"]
     )
     multiindex = pd.MultiIndex.from_frame(multiindex)
     series = pd.Series(
@@ -113,22 +113,22 @@ def statisticsResourceSources_relation():
             True,
             True,
             True,
-            False,
-            True,
-            False,
             True,
             True,
             True,
             True,
             False,
             False,
-            True,
-            True,
-            True,
             False,
+            False,
+            False,
+            True,
+            True,
+            True,
+            True,
         ],
         index=multiindex,
-        name="Current_Statistics_Source"
+        name="current_statistics_source"
     )
     yield series
 
