@@ -20,14 +20,16 @@ def test_homepage(app):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     homepage = app.get('/')
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
-        soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = soup.head.title
-        HTML_file_page_title = soup.body.h1
-    print(f"`homepage.data` is {homepage.data} of type {repr(type(homepage.data))}")
-    with open(homepage.data, 'br') as GET_response:
-        soup = BeautifulSoup(GET_response, 'lxml')
-        GET_response_title = soup.head.title
-        GET_response_page_title = soup.body.h1
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        print(f"`HTML_file_title` is {HTML_file_title} of type {repr(type(HTML_file_title))}")
+        HTML_file_page_title = file_soup.body.h1
+        print(f"`HTML_file_page_title` is {HTML_file_page_title} of type {repr(type(HTML_file_page_title))}")
+    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    print(f"`GET_response_title` is {GET_response_title} of type {repr(type(GET_response_title))}")
+    GET_response_page_title = GET_soup.body.h1
+    print(f"`GET_response_page_title` is {GET_response_page_title} of type {repr(type(GET_response_page_title))}")
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
