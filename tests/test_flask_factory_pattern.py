@@ -7,8 +7,10 @@ from pathlib import Path
 import os
 import pytest
 from bs4 import BeautifulSoup
+import pandas as pd
 
-from conftest import app
+from conftest import app, session
+from database_seeding_fixtures import vendors_relation
 
 
 def test_flask_client_creation(app):
@@ -37,6 +39,31 @@ def test_404_page(app):
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
     assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
+
+
+def test_loading_data_into_relation(app, vendors_relation):
+    """Tests loading data into and querying data from a relation.
+    
+    This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
+    """
+    print(f"`vendors_relation` is {vendors_relation}")
+    vendors_relation.to_sql(
+        name='vendors',
+        con=session,
+        if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
+        chunksize=1000,
+        index=True,
+        index_label='vendor_ID',
+    )
+
+    retrieved_vendors_data = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=session,
+        index_col='vendor_ID',
+    )
+    print(f"`retrieved_vendors_data` is {retrieved_vendors_data}")
+
+    pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
 def test_loading_data_into_relation(engine, vendors_relation, statisticsSources_fixture):
