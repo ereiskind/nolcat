@@ -74,7 +74,7 @@ def statisticsSources_relation():
 
 @pytest.fixture
 def statisticsResourceSources_relation():
-    """Creates a dataframe that can be loaded into the `statisticsResourceSources` relation.
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation.
     
     Because this relation has only three fields, two of which are a composite primary key, this is a pandas series object with a multiindex rather than a dataframe.
     """
