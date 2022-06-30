@@ -23,9 +23,9 @@ def test_homepage(app):
         soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = soup.head.title
         HTML_file_page_title = soup.body.h1
+    print(f"`homepage.data` is {homepage.data} of type {repr(type(homepage.data))}")
     with homepage.data as GET_response:
-        print(f"`homepage.data` is {homepage.data} of type {repr(type(homepage.data))}")
-        soup = BeautifulSoup(HTML_file, 'lxml')
+        soup = BeautifulSoup(GET_response, 'lxml')
         GET_response_title = soup.head.title
         GET_response_page_title = soup.body.h1
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
