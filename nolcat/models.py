@@ -594,20 +594,19 @@ class AnnualUsageCollectionTracking(db.Model):
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
 
-    Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
+    This relation serves as a location for notes and the primary key numbers which deduplicate the resources. All metadata fields have a one to many relationship with their resources, so normalized metadata within this relationship is not possible:
+    * For metadata specific to the resource, historical reasons related to both resources and the rules of standards bodies make it possible if not common for a resource to have multiple standard identifiers. Normalizing the data by saving all of this type of metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
+    * For metadata from the content provider, there will be a set of metadata from each of the many providers of a resource.
+    * for metadata related to the usage instance, the more detailed data R5 provides is enabled by splitting the metadata out across a large number of metadata fields.
     
     Attributes:
         self.resource_ID (int): the primary key
-        self.data_type (str): the COUNTER data type
-        self.section_type (str): the COUNTER section type
         self.note (text): qualitative collections management information for the resource
     """
     __tablename__ = 'resources'
 
     resource_ID = db.Column(db.Integer, primary_key=True)
-    data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
-    note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
+    note = db.Column(db.Text)
 
     resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
 
