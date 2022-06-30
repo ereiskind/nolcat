@@ -1,6 +1,5 @@
 """This module contains the fixtures and configurations for testing."""
 
-import sys
 import pytest
 
 from nolcat.app import db
@@ -26,18 +25,13 @@ def session(db, request):
         db (_type_): the name of the database??? the connection to the database???
         request (pytest.FixtureRequest): a built-in fixture providing access to the requesting test's context (https://docs.pytest.org/en/7.1.x/reference/reference.html#request)
     """
-    sys.stdout.write(f"`db` is {db} of type {repr(type(db))}")
+    #ToDo: Even with `-s` flag, neither `print` nor `sys.stdout.write` output f-strings to the console, so the exact nature and types of the variables invoked below are unknown
     engine = db.engine
-    sys.stdout.write(f"`engine` is {engine} of type {repr(type(engine))}")
     connection = engine.connect()  # Creates a connection to the database
-    sys.stdout.write(f"`connection` is {connection} of type {repr(type(connection))}")
     transaction = connection.begin()  # Begins a transaction
-    sys.stdout.write(f"`transaction` is {transaction} of type {repr(type(transaction))}")
     options = dict(bind=connection, binds={})  #ToDo: What does this do?
     session = db.create_scoped_session(options=options)  # Creates the scoped session; `session = sessionmaker(bind=connection)` in SQLAlchemy alone
-    sys.stdout.write(f"`session` is {session} of type {repr(type(session))}")
     # db.session = session  #ToDo: What does this do?
-    sys.stdout.write(f"`db.session` is {db.session} of type {repr(type(db.session))}")
     def teardown():
         """Rolls back, closes, and removes (garbage collects?) the session created for testing."""
         transaction.rollback()
