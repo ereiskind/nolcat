@@ -104,7 +104,7 @@ class RawCOUNTERReport:
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
         
         Note:
-            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN as well as the data type and possibly the ID from `resources` itself
+            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN, and data type as well as the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
