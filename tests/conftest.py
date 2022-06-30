@@ -15,7 +15,7 @@ def app():
         yield client
     
 @pytest.fixture(scope='module')
-def db():
+def temp():
     yield db
 
 
