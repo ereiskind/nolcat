@@ -13,10 +13,6 @@ def app():
     app.testing = True  # Lets exceptions come through to test client
     with app.test_client() as client:
         yield client
-    
-@pytest.fixture(scope='module')
-def temp():
-    yield db
 
 
 @pytest.fixture(scope='module')
