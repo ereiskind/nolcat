@@ -24,7 +24,7 @@ def test_homepage(app):
         HTML_file_title = soup.head.title
         HTML_file_page_title = soup.body.h1
     print(f"`homepage.data` is {homepage.data} of type {repr(type(homepage.data))}")
-    with homepage.data as GET_response:
+    with open(homepage.data, 'br') as GET_response:
         soup = BeautifulSoup(GET_response, 'lxml')
         GET_response_title = soup.head.title
         GET_response_page_title = soup.body.h1
