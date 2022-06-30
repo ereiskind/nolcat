@@ -1,5 +1,6 @@
 """This module contains the fixtures and configurations for testing."""
 
+import sys
 import pytest
 
 from nolcat.app import db
@@ -25,18 +26,18 @@ def session(db, request):
         db (_type_): the name of the database??? the connection to the database???
         request (pytest.FixtureRequest): a built-in fixture providing access to the requesting test's context (https://docs.pytest.org/en/7.1.x/reference/reference.html#request)
     """
-    print(f"`db` is {db} of type {repr(type(db))}")
+    sys.stdout.write(f"`db` is {db} of type {repr(type(db))}")
     engine = db.engine
-    print(f"`engine` is {engine} of type {repr(type(engine))}")
+    sys.stdout.write(f"`engine` is {engine} of type {repr(type(engine))}")
     connection = engine.connect()  # Creates a connection to the database
-    print(f"`connection` is {connection} of type {repr(type(connection))}")
+    sys.stdout.write(f"`connection` is {connection} of type {repr(type(connection))}")
     transaction = connection.begin()  # Begins a transaction
-    print(f"`transaction` is {transaction} of type {repr(type(transaction))}")
+    sys.stdout.write(f"`transaction` is {transaction} of type {repr(type(transaction))}")
     options = dict(bind=connection, binds={})  #ToDo: What does this do?
     session = db.create_scoped_session(options=options)  # Creates the scoped session; `session = sessionmaker(bind=connection)` in SQLAlchemy alone
-    print(f"`session` is {session} of type {repr(type(session))}")
+    sys.stdout.write(f"`session` is {session} of type {repr(type(session))}")
     # db.session = session  #ToDo: What does this do?
-    print(f"`db.session` is {db.session} of type {repr(type(db.session))}")
+    sys.stdout.write(f"`db.session` is {db.session} of type {repr(type(db.session))}")
     def teardown():
         """Rolls back, closes, and removes (garbage collects?) the session created for testing."""
         transaction.rollback()
