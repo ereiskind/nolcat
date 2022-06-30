@@ -152,7 +152,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_DOI_and_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
         if normalized_resource_data:
@@ -178,7 +177,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_DOI_and_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -205,7 +203,6 @@ class RawCOUNTERReport:
         comparing_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -231,7 +228,6 @@ class RawCOUNTERReport:
         comparing_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -257,7 +253,6 @@ class RawCOUNTERReport:
         comparing_print_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_print_ISSN.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_print_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -283,7 +278,6 @@ class RawCOUNTERReport:
         comparing_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_online_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
