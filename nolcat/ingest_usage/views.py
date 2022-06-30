@@ -19,7 +19,8 @@ def homepage():
 #ToDo: Create route for uploading R4 reports
     #ToDo: Upload CSV of transformed R4 report, getting StatisticsSource ID from file name
     #ToDo: Make R4 a RawCOUNTERReport object
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching
+    #ToDo: normalized_resources_in_database = a dataframe using the SQL in the class docstring
+    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching(normalized_resources_in_database)
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
     #ToDo: RawCOUNTERReport.load_data_into_database
 
@@ -27,7 +28,8 @@ def homepage():
 #ToDo: Create route for uploading R5 reports--JSON FOR TABULAR R5 DOES NOT EXIST YET--Create way to change PR, DR, TR, IR from tabular report into something RawCOUNTERReport can handle
     #ToDo: Upload CSV of transformed R5 report, getting StatisticsSource ID from file name
     #ToDo: Make R5 a RawCOUNTERReport object
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching
+    #ToDo: normalized_resources_in_database = a dataframe using the SQL in the class docstring
+    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching(normalized_resources_in_database)
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
     #ToDo: RawCOUNTERReport.load_data_into_database
 

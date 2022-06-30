@@ -94,21 +94,21 @@ class RawCOUNTERReport:
         This function looks at all the records in the parameter dataframe(s) and creates pairs with the record index values if the records are deemed to be for the same resource based on a variety of criteria. Those pairs referring to matches needing manual confirmation are grouped together and set aside so they can be added to the list of matches or not depending on user response captured via Flask.
 
         Args:
-            normalized_resource_data (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
+            normalized_resource_data (dataframe, optional): a dataframe of all the resources in the database with their data types and default metadata values with a value of `None` during database initialization; see "Note" for the SQL instructions for creating this dataframe
         
         Returns:
-            tuple: the variables matched_records and matches_to_manually_confirm, described in the note, in a tuple for unpacking through multiple assignment
+            tuple: the variables `matched_records` and `matches_to_manually_confirm` in a tuple for unpacking through multiple assignment; "See Also" describes the individual variables
         
-        Note:
+        See Also:
             matched_records: a set of tuples containing the record index values of matched records
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
+        
+        Note:
+            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN, and data type as well as the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
-            #ToDo: SOME ISSUES TO CONSIDER
-                #Alert: The existing program uses a dataframe that includes the resource name, but the resources are stored with the names in a separate relation; how should the names be recombined with the other resource data for deduping against newly loaded reports?
-                #ToDo: Should anything be done to denote those titles where different stats sources assign different data types?
         
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
@@ -152,7 +152,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_DOI_and_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
         if normalized_resource_data:
@@ -178,7 +177,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_DOI_and_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -205,7 +203,6 @@ class RawCOUNTERReport:
         comparing_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -231,7 +228,6 @@ class RawCOUNTERReport:
         comparing_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -257,7 +253,6 @@ class RawCOUNTERReport:
         comparing_print_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_print_ISSN.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_print_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -283,7 +278,6 @@ class RawCOUNTERReport:
         comparing_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_online_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -422,8 +416,6 @@ class RawCOUNTERReport:
             "resource_one_print_ISSN",
             "resource_zero_online_ISSN",
             "resource_one_online_ISSN",
-            "resource_zero_data_type",
-            "resource_one_data_type",
         ]
 
         fuzzy_match_records = []
@@ -440,8 +432,6 @@ class RawCOUNTERReport:
                 resource_data.loc[match[1]]['Print_ISSN'],
                 resource_data.loc[match[0]]['Online_ISSN'],
                 resource_data.loc[match[1]]['Online_ISSN'],
-                resource_data.loc[match[0]]['Data_Type'],
-                resource_data.loc[match[1]]['Data_Type'],
             )))
         fuzzy_match_table = pd.DataFrame(
             fuzzy_match_records,
@@ -463,7 +453,6 @@ class RawCOUNTERReport:
             "resource_one_ISBN",
             "resource_one_print_ISSN",
             "resource_one_online_ISSN",
-            "resource_one_data_type",
         ], dropna=False):
             paired_resource_metadata = list(paired_resource_metadata)
             for i, metadata in enumerate(paired_resource_metadata):  # Changing an index referenced item in `paired_resource_metadata` makes the change independent of the loop 

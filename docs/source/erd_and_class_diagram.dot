@@ -16,10 +16,10 @@ digraph erd_and_classes {
         label="fiscalYears"
 
         // Attributes
-        Fiscal_Year_ID [shape="note"]
-        Year
-        _Start_Date // The FY start as date data type to go in SQL queries
-        _End_Date // The FY end as date data type to go in SQL queries
+        fiscal_year_ID [shape="note"]
+        year
+        _start_date // The FY start as date data type to go in SQL queries
+        _end_date // The FY end as date data type to go in SQL queries
         // The submitted values are stored because vendors sometimes report issues with their stats collection, which require reharvesting
         ACRL_60b // Initial Circulation: Digital/Electronic
         ACRL_63 // E-Serials Usage: Digital/Electronic
@@ -27,8 +27,8 @@ digraph erd_and_classes {
         ARL_19 // Number of regular searches (databases)
         ARL_20 // Number of federated searches (databases)
         // Should the date when the numbers were collected be saved?
-        Notes_on_statisticsSources_Used
-        Notes_on_Corrections_After_Submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
+        notes_on_statisticsSources_used
+        notes_on_corrections_after_submission // If a vendor issues a correction requiring reharvesting after numbers are submitted, should it be recorded here or on the page of the specific source being reharvested?
 
         // Methods
         // Should each number have its own method, or should all of them be calculated at the same time?
@@ -46,26 +46,27 @@ digraph erd_and_classes {
         label="vendors"
 
         //Attributes
-        Vendor_ID [shape="note"]
-        Vendor_Name
-        Alma_Vendor_Code
+        vendor_ID [shape="note"]
+        vendor_name
+        alma_vendor_code
 
         //Methods
         get_SUSHI_credentials_from_Alma [shape="Mrecord"]
         get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+        add_note [shape="Mrecord"]
     }
 
-
+    
     subgraph cluster_vendorNotes {
         label="vendorNotes"
 
         //Attributes
-        Vendor_Notes_ID [shape="note"]
-        Note_in_vendorNotes [label="Note"]
-        Written_By_in_vendorNotes [label="Written_By"]
-        Date_Written_in_vendorNotes [label="Date_Written"]
-        Vendor_ID_in_vendorNotes [
-            label="Vendor_ID"
+        vendor_notes_ID [shape="note"]
+        note_in_vendorNotes [label="note"]
+        written_by_in_vendorNotes [label="written_by"]
+        date_written_in_vendorNotes [label="date_written"]
+        vendor_ID_in_vendorNotes [
+            label="vendor_ID"
             shape="folder"
         ]
 
@@ -77,21 +78,20 @@ digraph erd_and_classes {
         label="statisticsSources"
 
         // Attributes
-        Statistics_Source_ID [shape="note"]
-        Statistics_Source_Name
-        Statistics_Source_Retrieval_Code
-        Vendor_ID_in_statisticsSources [
-            label="Vendor_ID"
+        statistics_source_ID [shape="note"]
+        statistics_source_name
+        statistics_source_retrieval_code
+        vendor_ID_in_statisticsSources [
+            label="vendor_ID"
             shape="folder"
         ]
         
 
         // Methods
-        show_SUSHI_credentials [shape="Mrecord"]
+        fetch_SUSHI_information [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
         collect_usage_statistics [shape="Mrecord"]
-        upload_R4_report [shape="Mrecord"]
-        upload_R5_report [shape="Mrecord"]
+        add_note [shape="Mrecord"]
     }
 
 
@@ -99,20 +99,16 @@ digraph erd_and_classes {
         label="statisticsSourceNotes"
 
         //Attributes
-        Statistics_Source_Notes_ID [shape="note"]
-        Note_in_statisticsSourceNotes [label="Note"]
-        Written_By_in_statisticsSourceNotes [label="Written_By"]
-        Date_Written_in_statisticsSourceNotes [label="Date_Written"]
-        Statistics_Source_ID_in_statisticsSourceNotes [
-            label="Statistics_Source_ID"
+        statistics_source_notes_ID [shape="note"]
+        note_in_statisticsSourceNotes [label="note"]
+        written_by_in_statisticsSourceNotes [label="written_by"]
+        date_written_in_statisticsSourceNotes [label="date_written"]
+        statistics_source_ID_in_statisticsSourceNotes [
+            label="statistics_source_ID"
             shape="folder"
         ]
 
         //Methods
-        write_note_in_statisticsSourceNotes [
-            label="write_note"
-            shape="Mrecord"
-        ]
     }
 
 
@@ -120,9 +116,9 @@ digraph erd_and_classes {
         label="statisticsResourceSources"
 
         // Attributes
-        SRS_Statistics_Source [shape="component"]
-        SRS_Resource_Source [shape="component"]
-        Current_Statistics_Source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
+        SRS_statistics_source [shape="component"]
+        SRS_resource_source [shape="component"]
+        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
 
         // Methods
     }
@@ -132,18 +128,19 @@ digraph erd_and_classes {
         label="resourceSources"
 
         // Attributes
-        Resource_Source_ID [shape="note"]
-        Resource_Source_Name
-        Source_in_Use
-        Use_Stop_Date
-        Vendor_ID_in_resourceSources [
-            label="Vendor_ID"
+        resource_source_ID [shape="note"]
+        resource_source_name
+        source_in_use
+        use_stop_date
+        vendor_ID_in_resourceSources [
+            label="vendor_ID"
             shape="folder"
         ]
 
         // Methods
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
+        add_note [shape="Mrecord"]
     }
 
 
@@ -151,20 +148,16 @@ digraph erd_and_classes {
         label="resourceSourceNotes"
 
         //Attributes
-        Resource_Source_Notes_ID [shape="note"]
-        Note_in_resourceSourceNotes [label="Note"]
-        Written_By_in_resourceSourceNotes [label="Written_By"]
-        Date_Written_in_resourceSourceNotes [label="Date_Written"]
-        Resource_Source_ID_in_resourceSourceNotes [
-            label="Resource_Source_ID"
+        resource_source_notes_ID [shape="note"]
+        note_in_resourceSourceNotes [label="note"]
+        written_by_in_resourceSourceNotes [label="written_by"]
+        date_written_in_resourceSourceNotes [label="date_written"]
+        resource_source_ID_in_resourceSourceNotes [
+            label="resource_source_ID"
             shape="folder"
         ]
 
         //Methods
-        write_note_in_resourceSourceNotes [
-            label="write_note"
-            shape="Mrecord"
-        ]
     }
 
 
@@ -172,15 +165,15 @@ digraph erd_and_classes {
         label="annualUsageCollectionTracking"
 
         // Attributes
-        AUCT_Fiscal_Year [shape="component"]
-        AUCT_Statistics_Source [shape="component"]
-        Usage_Is_Being_Collected
-        __Manual_Collection_Required
-        __Collection_Via_Email
-        __Is_COUNTER_Compliant
-        __Collection_Status
-        __Usage_File_Path
-        Notes
+        AUCT_statistics_source [shape="component"]
+        AUCT_fiscal_year [shape="component"]
+        usage_is_being_collected
+        __manual_collection_required
+        __collection_via_email
+        __is_COUNTER_compliant
+        __collection_status
+        __usage_file_path
+        notes
 
         // Methods
         collect_annual_usage_statistics [shape="Mrecord"]
@@ -192,36 +185,30 @@ digraph erd_and_classes {
         label="resources"
 
         // Attributes
-        Resource_ID [shape="note"]
-        DOI
-        ISBN
-        Print_ISSN
-        Online_ISSN
-        Data_Type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
-        __Section_Type // This is in R5 IR only-how to add it? Does it go here?
-        Note
+        resource_ID [shape="note"]
+        note
 
         // Methods
     }
 
 
-    subgraph cluster_resource_Metadata {
-        label="resource_Metadata"
+    subgraph cluster_resourceMetadata {
+        label="resourceMetadata"
 
         // Attributes
-        Resource_Metadata_ID [shape="note"]
-        Metadata_Field
-        Metadata_Value [
+        resource_metadata_ID [shape="note"]
+        metadata_field
+        metadata_value [
             shape="record"
-            label="\N|DOI|ISBN|Print ISSN|Online ISSN|title (R4)|database (DR)|title (TR)|item (IR)"
+            label="\N|title (R4)|title (TR)|database (DR)|item (IR)|DOI|ISBN|print ISSN|online ISSN"
         ]
-        Resource_ID_in_Resource_Metadata [
-            label="Resource_ID"
+        default
+        resource_ID_in_resourceMetadata [
+            label="resource_ID"
             shape="folder"
         ]
 
         // Methods
-        search
     }
 
 
@@ -229,21 +216,21 @@ digraph erd_and_classes {
         label="resourcePlatforms"
 
         // Attributes
-        Resource_Platform_ID [shape="note"]
-        Publisher // From the COUNTER report
-        Publisher_ID // This is found in R5 only—how to add it?
-        Platform [
+        resource_platform_ID [shape="note"]
+        publisher // From the COUNTER report
+        publisher_ID // This is found in R5 only—how to add it?
+        platform [
             shape="record"
             label="\N|user interfaces"
         ]
-        Proprietary_ID
+        proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
         // Parent_Data_Type?
         // Parent_DOI?
         // Parent_Proprietary_ID?
-        Interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
-        Resource_ID_in_Resource_Platforms [
-            label="Resource_ID"
+        interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
+        resource_ID_in_resourcePlatforms [
+            label="resource_ID"
             shape="folder"
         ]
 
@@ -255,27 +242,25 @@ digraph erd_and_classes {
         label="usageData"
 
         // Nouns: Classes or Attributes
-        Usage_Data_ID [shape="note"]
-        Resource_Platform_ID_in_COUNTER_Usage_Data [
-            label="Resource_Platform_ID"
+        usage_data_ID [shape="note"]
+        resource_platform_ID_in_usageData [
+            label="resource_platform_ID"
             shape="folder"
         ]
-        __Metric_Type
-        __Usage_Date
-        Usage_Count [
+        __metric_type
+        __usage_date
+        usage_count [
             shape="record"
             label="\N|usage stats|e-resources usage numbers"
         ]
-        __YOP // This is found in R5 TR, IR only—how to add it?
-        __Access_Type // This is found in R5 TR, IR only—how to add it?
-        __Access_Method // This is found in R5 only—how to add it?
+        __YOP
+        __access_type
+        __access_method
+        data_type
+        __section_type
+        __report_creation_date
         
-        __Report_Creation_Date // For harvested R5 reports
-
-        // Verbs: Methods
-        create // create report--move to route function in view blueprint?
-        look // aka view reports--move to route function in view blueprint?
-        __download_reports // move to route function in view blueprint?
+        // Methods
     }
 
 
@@ -295,12 +280,55 @@ digraph erd_and_classes {
         label="CLASS: SUSHICallAndResponse"
 
         // Attributes
+        Chrome_user_agent
+        calling_to
         call_URL
         call_path
         parameter_string
 
         // Methods
-        
+        make_SUSHI_call [shape="Mrecord"]
+        _retrieve_downloaded_JSON [shape="Mrecord"]
+        _handle_SUSHI_exceptions [shape="Mrecord"]
+        _create_error_query_text [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_Blueprints {
+        label="CLASS: Blueprints"
+
+        annual_stats [
+            shape="record"
+            label="\N"
+        ]
+        ingest_usage [
+            shape="record"
+            label="\N|COUNTER reports|R4 reports|R5 SUSHI"
+        ]
+        initialization [
+            shape="record"
+            label="\N|COUNTER reports|historical usage data"
+        ]
+        login [
+            shape="record"
+            label="\N|librarians (as users)"
+        ]
+        view_resources [
+            shape="record"
+            label="\N"
+        ]
+        view_sources [
+            shape="record"
+            label="\N"
+        ]
+        view_usage [
+            shape="record"
+            label="\N|COUNTER stats"
+        ]
+        view_vendors [
+            shape="record"
+            label="\N"
+        ]
     }
 
 
@@ -317,109 +345,100 @@ digraph erd_and_classes {
         crowtee = 1..N (neither optional nor unique)
     */
 
-    Fiscal_Year_ID -> AUCT_Fiscal_Year [
+    fiscal_year_ID -> AUCT_fiscal_year [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
 
-    Vendor_ID -> Vendor_ID_in_vendorNotes [
+    vendor_ID -> vendor_ID_in_vendorNotes [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
-    Vendor_ID -> Vendor_ID_in_statisticsSources [
-        dir="both"
-        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
-        arrowtail="teetee"
-    ]
 
-    Vendor_ID -> Vendor_ID_in_resourceSources [
+    vendor_ID -> vendor_ID_in_statisticsSources [
         dir="both"
         arrowhead="crowodot" // Want the option to have a vendor without a statistics source
         arrowtail="teetee"
     ]
 
 
-    Statistics_Source_ID -> Statistics_Source_ID_in_statisticsSourceNotes [
+    vendor_ID -> vendor_ID_in_resourceSources [
+        dir="both"
+        arrowhead="crowodot" // Want the option to have a vendor without a statistics source
+        arrowtail="teetee"
+    ]
+
+
+    statistics_source_ID -> statistics_source_ID_in_statisticsSourceNotes [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
 
-    Statistics_Source_ID -> SRS_Statistics_Source [
+    statistics_source_ID -> SRS_statistics_source [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
 
-    Statistics_Source_ID -> AUCT_Statistics_Source [
+    statistics_source_ID -> AUCT_statistics_source [
         dir="both"
         arrowhead="crowodot" // Since sources don't need to be connected to a collection year, they can be added as they arise, rather than needing to wait for the first round of collections in which they'll be included
         arrowtail="teetee"
     ]
-    
-    
-    Statistics_Source_ID -> Interface [
+
+
+    statistics_source_ID -> interface [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
 
-    Resource_Source_ID -> SRS_Resource_Source [
+    resource_source_ID -> SRS_resource_source [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
 
-    Resource_Source_ID -> Resource_Source_ID_in_resourceSourceNotes [
+    resource_source_ID -> resource_source_ID_in_resourceSourceNotes [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
     ]
 
 
-    Resource_ID -> Resource_ID_in_Resource_Metadata [
+    resource_ID -> resource_ID_in_resourceMetadata [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
 
-    Resource_ID -> Resource_ID_in_Resource_Platforms [
+    resource_ID -> resource_ID_in_resourcePlatforms [
         dir="both"
         arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
         arrowtail="teetee"
     ]
 
 
-    Resource_Platform_ID -> Resource_Platform_ID_in_COUNTER_Usage_Data [
+    resource_platform_ID -> resource_platform_ID_in_usageData [
         dir="both"
         arrowhead="crowtee"
         arrowtail="teetee"
     ]
 
 
-
     /* *** OBJECTS TO BE ORGANIZED *** */
 
     // Nouns: Classes or Attributes
-    resources
-    "non_COUNTER usage stats"
-    notes [
-        shape="record"
-        label="notes|thoughts"
-    ]
-    librarians [
-        shape="record"
-        label="e-resources library associate|e-resources librarian|database developer|assessment librarian"
-    ]
     "Databases A to Z"
     "Databases A to Z items"
     "names a databases goes and has gone by"
@@ -437,36 +456,6 @@ digraph erd_and_classes {
     match
     connect
     change
-
-    /* Do these need to be kept?
-        send
-        add
-        know
-        organize
-        has gone by
-        use
-        start
-        pulled
-        submitted
-        retained
-    */
-
-    subgraph cluster_COUNTER_Terms {
-        // Nouns: Classes or Attributes
-        "COUNTER reports"
-        "R4 reports"
-        "R5 SUSHI"
-        "COUNTER stats"
-        "SUSHI reports"
-        report
-        // Verbs: Methods
-    }
-
-    subgraph cluster_Annual_Collection_Terms{
-        // Nouns: Classes or Attributes
-        "historical usage data"
-        // Verbs: Methods
-    }
 
     subgraph cluster_Technical_Terms {
         // Nouns: Classes or Attributes
