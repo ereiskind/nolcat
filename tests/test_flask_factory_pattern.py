@@ -9,8 +9,7 @@ import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from nolcat.app import db
-from conftest import app, session
+from conftest import app, session, db
 from database_seeding_fixtures import vendors_relation
 
 def test_session(db, request):
