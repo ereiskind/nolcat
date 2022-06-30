@@ -416,8 +416,6 @@ class RawCOUNTERReport:
             "resource_one_print_ISSN",
             "resource_zero_online_ISSN",
             "resource_one_online_ISSN",
-            "resource_zero_data_type",
-            "resource_one_data_type",
         ]
 
         fuzzy_match_records = []
@@ -434,8 +432,6 @@ class RawCOUNTERReport:
                 resource_data.loc[match[1]]['Print_ISSN'],
                 resource_data.loc[match[0]]['Online_ISSN'],
                 resource_data.loc[match[1]]['Online_ISSN'],
-                resource_data.loc[match[0]]['Data_Type'],
-                resource_data.loc[match[1]]['Data_Type'],
             )))
         fuzzy_match_table = pd.DataFrame(
             fuzzy_match_records,
@@ -457,7 +453,6 @@ class RawCOUNTERReport:
             "resource_one_ISBN",
             "resource_one_print_ISSN",
             "resource_one_online_ISSN",
-            "resource_one_data_type",
         ], dropna=False):
             paired_resource_metadata = list(paired_resource_metadata)
             for i, metadata in enumerate(paired_resource_metadata):  # Changing an index referenced item in `paired_resource_metadata` makes the change independent of the loop 
