@@ -19,7 +19,7 @@ def test_flask_client_creation(app):
 def test_homepage(app):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     homepage = app.get('/')
-    with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'r') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = soup.head.title
         HTML_file_page_title = soup.body.h1
