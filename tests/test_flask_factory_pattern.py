@@ -66,7 +66,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-def test_loading_connected_data_into_other_relation(engine, vendors_relation, statisticsSources_fixture):
+def test_loading_connected_data_into_other_relation():
     """Test using the engine to load and query data.  #ToDo: Change to use Flask-SQLAlchemy connection
     
     This is a basic integration test, determining if dataframes can be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
