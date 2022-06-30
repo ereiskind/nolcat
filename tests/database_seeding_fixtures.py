@@ -307,16 +307,19 @@ def annualUsageCollectionTracking_relation():
 
 @pytest.fixture
 def resources_relation():
-    """Creates a dataframe that can be loaded into the `resources` relation."""
-    df = pd.DataFrame(
-        [
-            #ToDo: Data types and section types proved inconsistent even within the sample data; having an ID for the resource and a space for its notes but putting all other data in the metadata relation may be the better solution
+    """Creates a series that can be loaded into the `resources` relation.
+    
+    Because this relation has only two fields, one of which is the primary key, this is a pandas series object rather than a dataframe.
+    """
+    series = pd.Series(
+        data=[
+            #ToDo: Add data
         ],
-        columns=["data_type", "section_type", "note"]
+        name="note"
     )
-    df.index = df.index + 1
-    df.index.name = "resource_ID"
-    yield df
+    series.index = series.index + 1
+    series.index.name = "resource_ID"
+    yield series
 
 
 @pytest.fixture
@@ -354,7 +357,7 @@ def usageData_relation():
         [
             #ToDo: Add data
         ],
-        columns=["resource_platform_ID", "metric_type", "usage_date", "usage_count", "YOP", "access_type", "access_method", "report_creation_date"]
+        columns=["resource_platform_ID", "metric_type", "usage_date", "usage_count", "YOP", "access_type", "access_method", "data_type", "section_type", "report_creation_date"]
     )
     df.index = df.index + 1
     df.index.name = "usage_data_ID"
