@@ -18,7 +18,7 @@ class RawCOUNTERReport:
     
     Methods:
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
-        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations.
+        load_data_into_database: Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations.
     
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
@@ -486,7 +486,7 @@ class RawCOUNTERReport:
     
 
     def load_data_into_database():
-        """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
+        """Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations."""
         #ToDo: Write a more detailed docstring
         #ToDo: Filter out non-standard metrics
         pass
