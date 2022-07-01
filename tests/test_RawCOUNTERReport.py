@@ -8,6 +8,36 @@ import pandas as pd
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 
+#ToDo: Create fixture of `werkzeug.datastructures.ImmutableMultiDict` object
+
+
+#ToDo: Create fixture of API response object
+
+
+#ToDo: Create fixture for dataframe containing reformatted R4 COUNTER reports
+
+
+#ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
+
+
+#ToDo: Create fixture combining the R4 and R5 dataframes into a single dataframe
+
+
+#ToDo: Test constructor with `werkzeug.datastructures.ImmutableMultiDict` object
+
+
+#ToDo: Test constructor with API response object
+
+
+#ToDo: Test `perform_deduplication_matching` method
+
+
+#ToDo: Test `perform_deduplication_matching` method with a `normalized_resource_data` value
+
+
+#ToDo: Test `load_data_into_database` method
+
+
 @pytest.fixture
 def sample_R4_form_result():
     """Creates an object highly similar to that returned by the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
