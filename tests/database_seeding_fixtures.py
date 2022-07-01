@@ -3,6 +3,7 @@
 import pytest
 import pandas as pd
 
+#Section: Data for Sources of Resources and Statistics
 @pytest.fixture
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
@@ -305,6 +306,7 @@ def annualUsageCollectionTracking_relation():
     yield df
 
 
+#Section: Data for Resources (from samples based on ProQuest, EBSCOhost, Gale Cengage Learning reports)
 @pytest.fixture
 def resources_relation():
     """Creates a series that can be loaded into the `resources` relation.
