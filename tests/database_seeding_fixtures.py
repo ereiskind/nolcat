@@ -3,6 +3,7 @@
 import pytest
 import pandas as pd
 
+#Section: Data for Sources of Resources and Statistics
 @pytest.fixture
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
@@ -12,12 +13,13 @@ def fiscalYears_relation():
             ["2018", "2017-07-01", "2018-06-30", None, None, None, None, None, None, None],
             ["2019", "2018-07-01", "2019-06-30", None, None, None, None, None, None, None],
             ["2020", "2019-07-01", "2020-06-30", None, None, None, None, None, None, None],
-            ["2021", "2021-07-01", "2022-06-30", None, None, None, None, None, None, None],
+            ["2021", "2020-07-01", "2021-06-30", None, None, None, None, None, None, None],
+            ["2022", "2021-07-01", "2022-06-30", None, None, None, None, None, None, None],
         ],
-        # Index: 0-4
-        columns=["Year", "Start_Date", "End_Date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "Notes_on_statisticsSources_Used", "Notes_on_Corrections_After_Submission"]
+        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"]
     )
-    df.index.name = "Fiscal_Year_ID"
+    df.index = df.index + 1  # To make a one-based index
+    df.index.name = "fiscal_year_ID"
     yield df
 
 
@@ -34,10 +36,10 @@ def vendors_relation():
             ["Ebrary", None],
             ["MyiLibrary", None],
         ],
-        # Index: 0-6
-        columns=["Vendor_Name", "Alma_Vendor_Code"]
+        columns=["vendor_name", "alma_vendor_code"]
     )
-    df.index.name = "Vendor_ID"
+    df.index = df.index + 1
+    df.index.name = "vendor_ID"
     yield df
 
 
@@ -49,22 +51,22 @@ def statisticsSources_relation():
     """Creates a dataframe that can be loaded into the `statisticsSources` relation."""
     df = pd.DataFrame(
         [
-            ["ProQuest", None, 0],
-            ["EBSCOhost", None, 1],
-            ["Gale Cengage Learning", None, 2],
-            ["iG Library/Business Expert Press (BEP)", None, 3],
-            ["DemographicsNow", None, 2],
-            ["Ebook Central", None, 0],
-            ["Peterson's Career Prep", None, 2],
-            ["Peterson's Test Prep", None, 2],
-            ["Peterson's Prep", None, 2],
-            ["Pivot", None, 0],
-            ["Ulrichsweb", None, 0],
+            ["ProQuest", None, 1],
+            ["EBSCOhost", None, 2],
+            ["Gale Cengage Learning", None, 3],
+            ["iG Library/Business Expert Press (BEP)", None, 4],
+            ["DemographicsNow", None, 3],
+            ["Ebook Central", None, 1],
+            ["Peterson's Career Prep", None, 3],
+            ["Peterson's Test Prep", None, 3],
+            ["Peterson's Prep", None, 3],
+            ["Pivot", None, 1],
+            ["Ulrichsweb", None, 1],
         ],
-        # Index: 0-10
-        columns=["Statistics_Source_Name", "Statistics_Source_Retrieval_Code", "Vendor_ID"]
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_ID"]
     )
-    df.index.name = "Statistics_Source_ID"
+    df.index = df.index + 1
+    df.index.name = "statistics_source_ID"
     yield df
 
 
@@ -73,34 +75,34 @@ def statisticsSources_relation():
 
 @pytest.fixture
 def statisticsResourceSources_relation():
-    """Creates a dataframe that can be loaded into the `statisticsResourceSources` relation.
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation.
     
     Because this relation has only three fields, two of which are a composite primary key, this is a pandas series object with a multiindex rather than a dataframe.
     """
     multiindex = pd.DataFrame(
         [
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [0, 5],
-            [10, 6],
-            [6, 7],
-            [8, 7],
-            [7, 8],
-            [8, 8],
-            [9, 9],
-            [4, 10],
-            [5, 11],
-            [5, 12],
-            [5, 13],
-            [1, 14],
+            [1, 1],
+            [1, 2],
+            [1, 3],
+            [1, 4],
+            [1, 5],
+            [1, 6],
             [2, 15],
             [3, 16],
-            [5, 17],
+            [4, 17],
+            [5, 11],
+            [6, 12],
+            [6, 13],
+            [6, 14],
+            [6, 18],
+            [7, 8],
+            [8, 9],
+            [9, 8],
+            [9, 9],
+            [10, 10],
+            [11, 7],
         ],
-        columns=["SRS_Statistics_Source", "SRS_Resource_Source"]
+        columns=["SRS_statistics_source", "SRS_resource_source"]
     )
     multiindex = pd.MultiIndex.from_frame(multiindex)
     series = pd.Series(
@@ -112,22 +114,22 @@ def statisticsResourceSources_relation():
             True,
             True,
             True,
-            False,
-            True,
-            False,
             True,
             True,
             True,
             True,
             False,
             False,
-            True,
-            True,
-            True,
             False,
+            False,
+            False,
+            True,
+            True,
+            True,
+            True,
         ],
         index=multiindex,
-        name="Current_Statistics_Source"
+        name="current_statistics_source"
     )
     yield series
 
@@ -137,30 +139,30 @@ def resourceSources_relation():
     """Creates a dataframe that can be loaded into the `resourceSources` relation."""
     df = pd.DataFrame(
         [
-            ["ProQuest Congressional", True, None, 0],
-            ["ProQuest Databases", True, None, 0],
-            ["ProQuest History Vault", True, None, 0],
-            ["ProQuest Statistical Insight", True, None, 0],
-            ["ProQuest U.K. Parliamentary Papers", True, None, 0],
-            ["Statistical Abstract of the US", True, None, 0],
-            ["Ulrichsweb", True, None, 0],
-            ["Peterson's Career Prep", True, None, 2],
-            ["Peterson's Test Prep", True, None, 2],
-            ["Pivot", True, None, 0],
-            ["DemographicsNow", True, None, 2],
-            ["Ebook Central", True, None, 0],
-            ["Ebook Library", False, "2019-06-30", 4],
-            ["Ebrary", False, "2017-12-31", 5],
-            ["EBSCOhost", True, None, 1],
-            ["Gale Cengage Learning", True, None, 2],
-            ["iG Library/Business Expert Press (BEP)", True, None, 3],
-            ["MyiLibrary", False, "2019-06-30", 6],
+            ["ProQuest Congressional", True, None, 1],
+            ["ProQuest Databases", True, None, 1],
+            ["ProQuest History Vault", True, None, 1],
+            ["ProQuest Statistical Insight", True, None, 1],
+            ["ProQuest U.K. Parliamentary Papers", True, None, 1],
+            ["Statistical Abstract of the US", True, None, 1],
+            ["Ulrichsweb", True, None, 1],
+            ["Peterson's Career Prep", True, None, 3],
+            ["Peterson's Test Prep", True, None, 3],
+            ["Pivot", True, None, 1],
+            ["DemographicsNow", True, None, 3],
+            ["Ebook Central", True, None, 1],
+            ["Ebook Library", False, "2019-06-30", 5],
+            ["Ebrary", False, "2017-12-31", 6],
+            ["EBSCOhost", True, None, 2],
+            ["Gale Cengage Learning", True, None, 3],
+            ["iG Library/Business Expert Press (BEP)", True, None, 4],
+            ["MyiLibrary", False, "2019-06-30", 7],
             
         ],
-        # Index: 0-17
-        columns=["Resource_Source_Name", "Source_in_Use", "Use_Stop_Date", "Vendor_ID"]
+        columns=["resource_source_name", "source_in_use", "use_stop_date", "vendor_ID"]
     )
-    df.index.name = "Resource_Source_ID"
+    df.index = df.index + 1
+    df.index.name = "resource_source_ID"
     yield df
 
 
@@ -170,20 +172,8 @@ def resourceSources_relation():
 @pytest.fixture
 def annualUsageCollectionTracking_relation():
     """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation."""
-    #ToDo: Add FY 2019-2020, 2020-2021 to the relation
     multiindex = pd.DataFrame(
         [
-            [0, 0],
-            [2, 0],
-            [1, 0],
-            [3, 0],
-            [4, 0],
-            [5, 0],
-            [6, 0],
-            [7, 0],
-            [9, 0],
-            [10, 0],
-            [0, 1],
             [1, 1],
             [2, 1],
             [3, 1],
@@ -191,9 +181,9 @@ def annualUsageCollectionTracking_relation():
             [5, 1],
             [6, 1],
             [7, 1],
-            [9, 1],
+            [8, 1],
             [10, 1],
-            [0, 2],
+            [11, 1],
             [1, 2],
             [2, 2],
             [3, 2],
@@ -201,28 +191,48 @@ def annualUsageCollectionTracking_relation():
             [5, 2],
             [6, 2],
             [7, 2],
-            [9, 2],
+            [8, 2],
             [10, 2],
-            # [0, 3],
-            # [1, 3],
-            # [2, 3],
-            # [3, 3],
-            # [4, 3],
-            # [5, 3],
-            # [8, 3],
-            # [9, 3],
-            # [10, 3],
-            # [0, 4],
-            # [1, 4],
-            # [2, 4],
-            # [3, 4],
-            # [4, 4],
-            # [5, 4],
-            # [8, 4],
-            # [9, 4],
-            # [10, 4],
+            [11, 2],
+            [1, 3],
+            [2, 3],
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [8, 3],
+            [10, 3],
+            [11, 3],
+            [1, 4],
+            [2, 4],
+            [3, 4],
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [9, 4],
+            [10, 4],
+            [11, 4],
+            [1, 5],
+            [2, 5],
+            [3, 5],
+            [4, 5],
+            [5, 5],
+            [6, 5],
+            [9, 5],
+            [10, 5],
+            [11, 5],
+            [1, 6],
+            [2, 6],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [9, 6],
+            [10, 6],
+            [11, 6],
         ],
-        columns=["AUCT_Statistics_Source", "AUCT_Fiscal_Year"]
+        columns=["AUCT_statistics_source", "AUCT_fiscal_year"]
     )
     multiindex = pd.MultiIndex.from_frame(multiindex)
     df = pd.DataFrame(
@@ -258,30 +268,40 @@ def annualUsageCollectionTracking_relation():
             [True, True, True, False, "Collection complete", None, None],
             [True, True, True, False, "Collection complete", None, None],
             [False, False, False, False, "N/A: Open access", None, None],
-            [True, True, False, False, "Collection not started", None, "This is the first FY with usage statistics"],
+            [True, True, False, False, "Collection complete", None, "This is the first FY with usage statistics"],
 
-            # ProQuest FY 2019-2020
-            # EBSCOhost FY 2019-2020
-            # Gale Cengage Learning FY 2019-2020
-            # iG Library/Business Expert Press (BEP) FY 2019-2020
-            # DemographicsNow FY 2019-2020
-            # Ebook Central FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
-            # Peterson's Prep FY 2019-2020  [True, True, False, False, "Collection complete", None, None],
-            # Pivot FY 2019-2020  [False, False, False, False, "N/A: Open access", None, None],
-            # Ulrichsweb FY 2019-2020
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
 
-            # ProQuest FY 2020-2021
-            # EBSCOhost FY 2020-2021
-            # Gale Cengage Learning FY 2020-2021
-            # iG Library/Business Expert Press (BEP) FY 2020-2021
-            # DemographicsNow FY 2020-2021
-            # Ebook Central FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
-            # Peterson's Prep FY 2020-2021  [True, True, False, False, "Collection complete", None, None],
-            # Pivot FY 2020-2021  [False, False, False, False, "N/A: Open access", None, None],
-            # Ulrichsweb FY 2020-2021
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, None],
+            [True, True, False, True, "Collection complete", None, "Ended subscription, only Med has content now"],
+            [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection complete", None, None],
+
+            [True, True, False, True, "Collection not started", None, None],
+            [True, True, False, True, "Collection not started", None, None],
+            [True, True, False, True, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Paid by Med", None, "Still have access to content through Med"],
+            [True, True, True, False, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection not started", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [True, True, False, False, "Collection not started", None, None],
         ],
         index=multiindex,
-        columns=["Usage_Is_Being_Collected", "Manual_Collection_Required", "Collection_Via_Email", "Is_COUNTER_Compliant", "Collection_Status", "Usage_File_Path", "Notes"]
+        columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"]
     )
     yield df
 

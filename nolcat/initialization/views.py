@@ -10,10 +10,11 @@ from werkzeug.utils import secure_filename
 import xlrd
 import pandas as pd
 from sqlalchemy.sql import text
+import csv
 
 from . import bp
 from ..app import db
-from .forms import InitialRelationDataForm, TestForm
+from .forms import InitialRelationDataForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -91,25 +92,39 @@ def save_historical_collection_tracking_info():
             if_exists='replace',
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
-        
-        #ALERT: Due to database unavailability, code from this point forward is untested
-        #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
-        with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
-            AUCT_records = connection.execute(text("SELECT statisticsSources.Statistics_Source_ID, fiscalYears.Fiscal_Year_ID, statisticsSources.Statistics_Source_Name, fiscalYears.Year FROM statisticsSources JOIN fiscalYears;"))
-            for record in AUCT_records:
-                print(repr(type(record)))
-                print(record)
 
-        #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
-            # Usage_Is_Being_Collected
-            # Manual_Collection_Required
-            # Collection_Via_Email
-            # Is_COUNTER_Compliant
-            # Collection_Status
-            # Usage_File_Path
-            # Notes
-        #ToDo: Download all R4 OpenRefine JSONs
-    return render_template('historical-collection-tracking.html')
+        #ALERT: Due to database unavailability, code from this point forward is untested
+        #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
+        #ToDo: dict_writer = csv.DictWriter(CSV_file, [
+            #ToDo: "AUCT_statistics_source",
+            #ToDo: "AUCT_fiscal_year",
+            #ToDo: "Statistics Source",
+            #ToDo: "Fiscal Year",
+            #ToDo: "usage_is_being_collected",
+            #ToDo: "manual_collection_required",
+            #ToDo: "collection_via_email",
+            #ToDo: "is_COUNTER_compliant",
+            #ToDo: "collection_status",
+            #ToDo: "usage_file_path",
+            #ToDo: "notes",
+        #ToDo: ])
+        #ToDo: dict_writer.writeheader()
+
+        with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
+            #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
+            AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
+            for record in AUCT_records:
+                #ToDo: Determine how to break up instance of `record` to get the individual fields returned
+                #ToDo: dict_writer.writerow({
+                    #ToDo: "AUCT_statistics_source": statisticsSources.statistics_source_ID,
+                    #ToDo: "AUCT_fiscal_year": fiscalYears.fiscal_year_ID,
+                    #ToDo: "Statistics Source": statisticsSources.statistics_source_name,
+                    #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
+                #ToDo: })
+        #ToDo: CSV_file.close()
+        #ToDo: return render_template('historical-collection-tracking.html')
+
+    #ToDo: return render_template(page to go to when reaching this route through means other than submitting form of CSVs with basic data for database)
 
 
 @bp.route('/historical-COUNTER-data')
@@ -125,16 +140,7 @@ def determine_if_resources_match():
     #ToDo: historical_data = RawCOUNTERReport(uploaded files)
     #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    form = TestForm()
-    logging.info(f"\nerrors before if-else: {form.errors}\n")
-    if form.validate_on_submit():  # This is when the form has been submitted
-        logging.info(f"\nerrors in validate_on_submit: {form.errors}\n")
-        return redirect(url_for('data_load_complete'))
-    elif request.method == 'POST':  # This is when the function is receiving the data to render the form
-        logging.info(f"\nerrors in method==POST: {form.errors}\n")
-        return render_template('select-matches.html', form=form)
-    else:
-        return abort(404)
+    return render_template('select-matches.html')
 
 
 @bp.route('/database-creation-complete')

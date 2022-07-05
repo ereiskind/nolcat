@@ -1,0 +1,41 @@
+"""This module contains the fixtures and configurations for testing."""
+
+import pytest
+
+from nolcat.app import db
+from nolcat.app import create_app
+
+
+@pytest.fixture(scope='session')
+def app():
+    """Creates an instance of the Flask web app for testing."""
+    app = create_app()
+    app.testing = True  # Lets exceptions come through to test client
+    with app.test_client() as client:
+        yield client
+
+
+@pytest.fixture(scope='module')
+def session(request):
+    """A fixture creating a session for a module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
+    
+    The scope of the fixture is set to module because setting the scope to `function` would prevent tests from building upon one another--for example, to test loading data with foreign keys in an environment whereCRUD operations were rolled back after every test function, the function would need to load the data from which the foreign keys derive and then the data containing the foreign keys; when the session covers the entire module, the data in the database from a previous test for loading data can be used as the reference for the foreign keys.
+
+    Args:
+        db (_type_): the name of the database??? the connection to the database???
+        request (pytest.FixtureRequest): a built-in fixture providing access to the requesting test's context (https://docs.pytest.org/en/7.1.x/reference/reference.html#request)
+    """
+    #ToDo: Even with `-s` flag, neither `print` nor `sys.stdout.write` output f-strings to the console, so the exact nature and types of the variables invoked below are unknown
+    engine = db.engine
+    connection = engine.connect()  # Creates a connection to the database
+    transaction = connection.begin()  # Begins a transaction
+    options = dict(bind=connection, binds={})  #ToDo: What does this do?
+    session = db.create_scoped_session(options=options)  # Creates the scoped session; `session = sessionmaker(bind=connection)` in SQLAlchemy alone
+    # db.session = session  #ToDo: What does this do?
+    def teardown():
+        """Rolls back, closes, and removes (garbage collects?) the session created for testing."""
+        transaction.rollback()
+        connection.close()
+        session.remove()  # `session.close()` in SQLAlchemy alone
+    request.addfinalizer(teardown)  # Runs the `teardown` subfunction after any test that uses this fixture
+    yield session
