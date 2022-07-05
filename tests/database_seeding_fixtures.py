@@ -294,8 +294,16 @@ def resources_relation():
     Because this relation has only two fields, one of which is the primary key, this is a pandas series object rather than a dataframe.
     """
     series = pd.Series(
-        data=[
-            #ToDo: Add data
+        data=[  # No notes, but need PK values of 0-86, so 87 `None` items
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None,
         ],
         name="note"
     )
