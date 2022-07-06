@@ -121,6 +121,7 @@ def save_historical_collection_tracking_info():
                     #ToDo: "Statistics Source": statisticsSources.statistics_source_name,
                     #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
                 #ToDo: })
+                continue  # To close the block at runtime
         #ToDo: CSV_file.close()
         #ToDo: return render_template('historical-collection-tracking.html')
 
