@@ -16,7 +16,7 @@ def app():
         yield client
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.fixture(scope='module')
 def session():
     """A fixture creating a session for a module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
     
