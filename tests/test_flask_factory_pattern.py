@@ -65,42 +65,42 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-def test_loading_connected_data_into_other_relation():
-    """Test using the engine to load and query data.  #ToDo: Change to use Flask-SQLAlchemy connection
-    
-    This is a basic integration test, determining if dataframes can be loaded into the database and if data can be queried out of the database, not a StatisticsSources method test. All of those method tests, however, require the database I/O to be working and the existence of data in the `statisticsSources` and `vendors` relations; this test checks the former and ensures the latter.
+def test_loading_connected_data_into_other_relation(session, statisticsSources_relation):
+    """Tests loading data into a second relation connected with foreign keys and performing a joined query.
+
+    This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
-    ###ToDo: Confirm that the imported fixture can be used as an argument directly
-    #ToDo: vendors_relation.to_sql(
-        # name='vendors',
-        # con=engine,
-        # if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
-        # chunksize=1000,
-        # index=True,
-        # index_label='Vendor_ID',
-    #ToDo: )
-    #ToDo: statisticsSources_fixture.to_sql(
-        # name='statisticsSources',
-        # con=engine,
-        # if_exists='replace',
-        # chunksize=1000,
-        # index=True,
-        # index_label='Statistics_Source_ID',
-    #ToDo: )
+    statisticsSources_relation.to_sql(
+        name='statisticsSources',
+        con=session,
+        if_exists='replace',
+        chunksize=1000,
+        index=True,
+        index_label='statistics_source_ID',
+    )
 
-    #ToDo: retrieved_vendors_data = pd.read_sql(
-        # sql="SELECT * FROM vendors;",
-        # con=engine,
-        # index_col='Vendor_ID',
-    #ToDo: )
-    #ToDo: retrieved_statisticsSources_data = pd.read_sql(
-        # sql="SELECT * FROM statisticsSources;",
-        # con=engine,
-        # index_col='Statistics_Source_ID',
-    #ToDo: )
+    retrieved_data = pd.read_sql(
+        sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_vendor_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
+        con=session,
+        index_col='statisticsSources.statistics_source_ID'  # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+    )
 
-    #ToDo: assert_frame_equal(vendors_relation, retrieved_vendors_data) and assert_frame_equal(statisticsSources_fixture, retrieved_statisticsSources_data)
-    pass
+    expected_output_data = pd.DataFrame(
+        [
+            ["ProQuest", None, "ProQuest", None],
+            ["EBSCOhost", None, "EBSCO", None],
+            ["Gale Cengage Learning", None, "Gale", None],
+            ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
+            ["DemographicsNow", None, "Gale", None],
+            ["Ebook Central", None, "ProQuest", None],
+            ["Peterson's Career Prep", None, "Gale", None],
+            ["Peterson's Test Prep", None, "Gale", None],
+            ["Peterson's Prep", None, "Gale", None],
+            ["Pivot", None, "ProQuest", None],
+            ["Ulrichsweb", None, "ProQuest", None],
+        ],
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"]
+    )
+    expected_output_data.index.name = "statistics_source_ID"
 
-
-#ToDo: Test loading data with foreign keys into the database
+    pd.assert_frame_equal(retrieved_data, expected_output_data)
