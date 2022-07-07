@@ -33,11 +33,11 @@ def temp_fixture():
     """A temporary fixture creating a RawCOUNTERReport object from the files in `tests/bin/OpenRefine_exports` to be copied for the fixture above."""
     dfs_to_concatenate = []
     for file in os.listdir('tests/bin/OpenRefine_exports'):
-        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
-        df = pd.read_excel(
+        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.csv', string=Path(file.filename).parts[-1])[0]
+        df = pd.read_csv(
             file,
-            #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being put as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
-            engine='openpyxl',
+             encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
+            encoding_errors='backslashreplace',
             dtype={
                 'Resource_Name': 'string',
                 'Publisher': 'string',

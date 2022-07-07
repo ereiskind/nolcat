@@ -1,0 +1,48 @@
+Resource_Name,Publisher,Platform,Metric_Type,Data_Type,Usage_Date,Usage_Count
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-07-01,897
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-08-01,721
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-09-01,1377
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-10-01,1635
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-11-01,1059
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-12-01,687
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-01-01,759
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-02-01,1529
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-03-01,1487
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-04-01,1041
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-05-01,551
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-06-01,501
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-08-01,7
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-09-01,25
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-10-01,17
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-11-01,139
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-12-01,145
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-01-01,195
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-02-01,127
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-03-01,213
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-04-01,179
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-05-01,725
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-06-01,1005
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-07-01,523
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-08-01,267
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-09-01,977
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-10-01,1151
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-11-01,785
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-12-01,389
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-01-01,489
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-02-01,813
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-03-01,981
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-04-01,651
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-05-01,253
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-06-01,651
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-07-01,331
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-08-01,191
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-09-01,609
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-10-01,699
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-11-01,521
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-12-01,211
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-01-01,299
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-02-01,485
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-03-01,597
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-04-01,397
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-05-01,127
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-06-01,503

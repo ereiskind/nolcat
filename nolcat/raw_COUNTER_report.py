@@ -28,25 +28,25 @@ class RawCOUNTERReport:
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
 
         The constructor for a RawCOUNTERReport object, it can take in objects of multiple other data types:
-        * `werkzeug.datastructures.ImmutableMultiDict` objects, which contain one or more binary files uploaded via Flask
+        * `werkzeug.datastructures.ImmutableMultiDict` objects, which contain one or more CSV files uploaded via Flask
         * API response objects, which are the result of SUSHI calls
         * `pandas.core.frame.DataFrame` objects, which are used to test the `perform_deduplication_matching` method in isolation of the constructor
-        Binary files containing COUNTER data must be reformatted, a process explained on the Flask pages where such files can be uploaded, and named with the statistics source ID, the report type, and the fiscal year separated by underscores.
+        Files containing COUNTER data must be reformatted, a process explained on the Flask pages where such files can be uploaded, and named with the statistics source ID, the report type, and the fiscal year separated by underscores.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
             dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):  #ToDo: Make sure this isn't locked to a single Flask input form
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.csv', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
                     #ToDo: Return an error with a message like the above that exits the constructor method
                 # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
-                dataframe = pd.read_excel(
+                dataframe = pd.read_csv(
                     file,
-                    #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being put as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
-                    engine='openpyxl',
+                    encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
+                    encoding_errors='backslashreplace',
                     dtype={
                         'Resource_Name': 'string',
                         'Publisher': 'string',
@@ -62,6 +62,7 @@ class RawCOUNTERReport:
                         # Usage_Date is fine as default datetime64[ns]
                         'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
+                    #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
                 )
                 logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
                 dataframe['Statistics_Source_ID'] = statistics_source_ID
