@@ -31,8 +31,40 @@ def R4_RawCOUNTERReport_fixture():
 @pytest.fixture
 def temp_fixture():
     """A temporary fixture creating a RawCOUNTERReport object from the files in `tests/bin/OpenRefine_exports` to be copied for the fixture above."""
-    pass
-    
+    dfs_to_concatenate = []
+    for file in os.listdir('tests/bin/OpenRefine_exports'):
+        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
+        df = pd.read_excel(
+            file,
+            #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being put as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
+            engine='openpyxl',
+            dtype={
+                'Resource_Name': 'string',
+                'Publisher': 'string',
+                'Platform': 'string',
+                'DOI': 'string',
+                'Proprietary_ID': 'string',
+                'ISBN': 'string',
+                'Print_ISSN': 'string',
+                'Online_ISSN': 'string',
+                'Data_Type': 'string',
+                'Section_Type': 'string',
+                'Metric_Type': 'string',
+                # Usage_Date is fine as default datetime64[ns]
+                'Usage_Count': 'int',  # Python default used because this is a non-null field
+            },
+        )
+        df['Statistics_Source_ID'] = statistics_source_ID
+        df.date.dt.to_period('M').dt.to_timestamp()
+        print(f"Dataframe:\n{df}\n")
+        dfs_to_concatenate.append(df)
+    temp_df = pd.concat(
+        dfs_to_concatenate,
+        ignore_index=True
+    )
+    print(f"Final dataframe:\n{temp_df}")
+
+
 #ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
 
 
