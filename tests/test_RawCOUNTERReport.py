@@ -28,6 +28,11 @@ def R4_RawCOUNTERReport_fixture():
     pass
 
 
+@pytest.fixture
+def temp_fixture():
+    """A temporary fixture creating a RawCOUNTERReport object from the files in `tests/bin/OpenRefine_exports` to be copied for the fixture above."""
+    pass
+    
 #ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
 
 
