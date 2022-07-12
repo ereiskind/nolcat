@@ -71,6 +71,9 @@ def temp_fixture():
 #ToDo: Create fixture combining the R4 and R5 dataframes into a single dataframe
 
 
+#ToDo: Create fixture of `normalized_resource_data`
+
+
 def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
     """Tests turning the data in one or more binary files uploaded into Flask, which is within a ImmutableMultiDict object, into a RawCOUNTERReport object."""
     #ToDo: raw_report = RawCOUNTERReport(sample_ImmutableMultiDict)
@@ -79,6 +82,9 @@ def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
 
 
 #ToDo: Test constructor with API response object
+
+
+#ToDo: Test `create_normalized_resource_data_argument` method (perform method, then compare results with fixture for it)
 
 
 def test_perform_deduplication_matching(R4_RawCOUNTERReport_fixture):

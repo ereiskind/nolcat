@@ -93,13 +93,38 @@ class RawCOUNTERReport:
         return self.report_dataframe.equals(other.report_dataframe)
     
 
+    def create_normalized_resource_data_argument(self):
+        """Creates a dataframe with the default metadata values of existing resources.
+
+        The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for those resources that have metadata in the resourceMetadata relation, pull the values where `default` is true and assign them to the appropriate field, otherwise get the platform name and assign it to the appropriate field.
+
+        Returns:
+            dataframe: a dataframe with all resources.resource_ID values and their default metadata
+        """
+        #ToDo: df_values = []
+        #ToDo: df_fields = [resource ID, metadata values, platform]
+        #ToDo: Get list of resources.resource_ID
+        #ToDo: Get set of resourceMetadata.resource_ID
+        #ToDo: for resource ID in set:
+            #ToDo: `SELECT * FROM resourceMetadata WHERE resource_ID={resource_ID} AND default=True`
+            #ToDo: For each of the possible `metadata_field` values `resource_name`, `DOI`, `ISBN`, `print_ISSN`, and `online_ISSN`, get the corresponding value from the dataframe above
+            #ToDo: Create list with all values according to the order of df_fields
+            #ToDo: Append list to df_values
+        #ToDo: for resource ID not in set:
+            #ToDo: `SELECT platform FROM resourcePlatforms WHERE resource_ID={resource_ID}`
+            #ToDo: Make list with resource ID at start, platform from above at end, and a `None` for each metadata value
+            #ToDo: Append list to df_values
+        #ToDo: Create dataframe from df_values and df_fields
+        pass
+    
+
     def perform_deduplication_matching(self, normalized_resource_data=None):
         """Matches the line items in a COUNTER report for the same resource.
 
         This function looks at all the records in the parameter dataframe(s) and creates pairs with the record index values if the records are deemed to be for the same resource based on a variety of criteria. Those pairs referring to matches needing manual confirmation are grouped together and set aside so they can be added to the list of matches or not depending on user response captured via Flask.
 
         Args:
-            normalized_resource_data (dataframe, optional): a dataframe of all the resources in the database with their data types and default metadata values with a value of `None` during database initialization; see "Note" for the SQL instructions for creating this dataframe
+            normalized_resource_data (dataframe, optional): a dataframe of all the resources in the database with default metadata values; the value is `None` during database initialization and created with the `create_normalized_resource_data_argument` when adding to the database
         
         Returns:
             tuple: the variables `matched_records` and `matches_to_manually_confirm` in a tuple for unpacking through multiple assignment; "See Also" describes the individual variables
@@ -107,9 +132,6 @@ class RawCOUNTERReport:
         See Also:
             matched_records: a set of tuples containing the record index values of matched records
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
-        
-        Note:
-            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN, and data type as well as the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
