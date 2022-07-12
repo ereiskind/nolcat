@@ -1,4 +1,10 @@
 """This module contains the fixtures and configurations for testing."""
+# https://github.com/jeancochrane/pytest-flask-sqlalchemy
+# https://xvrdm.github.io/2017/07/03/testing-flask-sqlalchemy-database-with-pytest/
+# https://flask.palletsprojects.com/en/2.1.x/tutorial/tests/
+# https://stackoverflow.com/a/49215772
+# https://stackoverflow.com/questions/29706278/python-pandas-to-sql-with-sqlalchemy-how-to-speed-up-exporting-to-ms-sql
+# https://pypi.org/project/memory-profiler/
 
 import pytest
 import pandas as pd
