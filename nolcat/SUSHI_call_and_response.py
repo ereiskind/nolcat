@@ -67,12 +67,21 @@ class SUSHICallAndResponse:
         #Section: Make API Call
         API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
-        try:
+
+        #Subsection: Write Binary API Response to File
+        with open('SUSHI_API_response.json', 'wb') as API_response_file:
             logging.debug(f"Calling {self.calling_to} for {self.call_path}.")
-            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
-            API_response.raise_for_status()
-            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
-        
+            try:
+                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
+                API_response.raise_for_status()
+                #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
+                #ToDo: Is error checking for the write to file process needed?
+                API_response_file.write(API_response.content)
+    
+
+        #Subsection: Write JSON File API Response to File
+
+
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 time.sleep(1)
