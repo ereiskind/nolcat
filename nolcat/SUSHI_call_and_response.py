@@ -68,18 +68,25 @@ class SUSHICallAndResponse:
         API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
 
-        #Subsection: Write Binary API Response to File
-        with open('SUSHI_API_response.json', 'wb') as API_response_file:
-            logging.debug(f"Calling {self.calling_to} for {self.call_path}.")
-            try:
-                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
-                API_response.raise_for_status()
-                #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
-                #ToDo: Is error checking for the write to file process needed?
-                API_response_file.write(API_response.content)
-    
+        #Subsection: Make API Call with Error Checking
+        logging.debug(f"Calling {self.calling_to} for {self.call_path}.")
+        try:
+            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
+            API_response.raise_for_status()
+            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
+        
+        #ToDo: except blocks here
 
-        #Subsection: Write JSON File API Response to File
+        #Subsection: Write API Response to File
+        API_response_binary_file = open('SUSHI_API_response.json', 'wb')
+        API_response_binary_file.write(API_response.content)
+        #ToDo: If this fails, is an error raised?
+        API_response_binary_file.close()
+
+        API_response_text_file = open('SUSHI_API_response.json', 'r')
+        text_file = json.load(API_response_text_file)  #ToDo: Does this need to be saved to a variable?
+        #ToDo: Is error checking for the write to file process needed?
+        API_response_text_file.close()
 
 
         except Timeout as error:
