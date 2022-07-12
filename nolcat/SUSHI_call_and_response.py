@@ -75,20 +75,6 @@ class SUSHICallAndResponse:
             API_response.raise_for_status()
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
         
-        #ToDo: except blocks here
-
-        #Subsection: Write API Response to File
-        API_response_binary_file = open('SUSHI_API_response.json', 'wb')
-        API_response_binary_file.write(API_response.content)
-        #ToDo: If this fails, is an error raised?
-        API_response_binary_file.close()
-
-        API_response_text_file = open('SUSHI_API_response.json', 'r')
-        text_file = json.load(API_response_text_file)  #ToDo: Does this need to be saved to a variable?
-        #ToDo: Is error checking for the write to file process needed?
-        API_response_text_file.close()
-
-
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 time.sleep(1)
@@ -100,35 +86,28 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}"}
             
-            except HTTPError as error_plus_timeout:
-                if format(error_plus_timeout.response) == "<Response [403]>":
-                    API_response = self.retrieve_downloaded_JSON()
-                    if API_response == []:
-                        logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                        return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
-                else:
-                    logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                    return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
-            
             except Exception as error_plus_timeout:
+                # Code using Selenium checked HTTPError separately with condition `if format(error_plus_timeout.response) == "<Response [403]>"` because that indicated a downloaded JSON
+                #ToDo: Does writing the text file need to go here using the condition above?
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
         
-        except HTTPError as error:
-            if format(error.response) == "<Response [403]>":
-                API_response = self.retrieve_downloaded_JSON()
-                if API_response == []:
-                    logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-                    return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
-            else:
-                logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-                return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
-        
         except Exception as error:
-            # Old note: ToDo: Be able to view error information and confirm or deny if site is safe
-            # Old note: Attempt to isolate Allen Press by SSLError message and redo request without checking certificate led to ConnectionError
+            # Code using Selenium checked HTTPError separately with condition `if format(error.response) == "<Response [403]>"` because that indicated a downloaded JSON
+            #ToDo: (based on old notes) Be able to review error in case of SSLError (Allen Press), handled with Requests ConnectionError exception, and possibly redo request without checking certificate
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
+
+        #Subsection: Write API Response to File
+        API_response_binary_file = open('SUSHI_API_response.json', 'wb')
+        API_response_binary_file.write(API_response.content)  #ToDo: Does argument need `.decode('utf8')`? Is it possible to feed anything that raises a UnicodeDecodeError to `ord()`?
+        #ToDo: If this fails, is an error raised?
+        API_response_binary_file.close()
+
+        API_response_text_file = open('SUSHI_API_response.json', 'r')
+        text_file = json.load(API_response_text_file)  #ToDo: Does this need to be saved to a variable? Is any encoding/decoding assistance needed?
+        #ToDo: Is error checking for the write to file process needed?
+        API_response_text_file.close()
 
 
         #Section: Convert Response to Python Data Types
