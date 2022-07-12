@@ -59,6 +59,8 @@ class SUSHICallAndResponse:
 
         This API call method handles all the possible calls in the SUSHI standard, converting their JSON responses into native Python data types. Errors in both the API call process and the SUSHI response are handled here, and in those instances where there is an error, a single-item dictionary with the key `ERROR` and a value describing the error is returned instead of SUSHI data.
 
+        To handle statistics sources that respond to SUSHI API calls by downloading a JSON file with the requested data without using Selenium, the API call is in a block for writing binary data to a file, so when the response object contains binary data, it's written to a file. Another block for reading a text file copies the data if a JSON file in the response object into a new file. At this point, the response data is written to a file regardless of how it was initially delivered, so the method can read the data from the file and move on to processing it.
+
         Returns:
             dict: the API call response or an error message
         """
