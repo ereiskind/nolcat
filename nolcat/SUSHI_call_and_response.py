@@ -67,10 +67,12 @@ class SUSHICallAndResponse:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        logging.info(f"Calling {self.calling_to} for {self.call_path} with parameters {self.parameters}.")
+        logging.info(f"Calling {self.calling_to} for {self.call_path} with parameters {self.parameters}.")  # Printed `self.parameters` shows encoded values (e.g. `%3D` is an equals sign), but in the GET request, the appropriate unencoded value is used
+        API_call_URL = self.call_URL + self.call_path
+
         #Subsection: Make GET Request
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
-        API_response = requests.get(self.call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
+        API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
         if not API_response.ok:  # Meaning the HTTP status was 4xx or 5xx
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
             logging.debug(f"`raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
