@@ -66,6 +66,8 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response or an error message
         """
+        return "This is the end of the reconstructed method"
+        '''
         #Section: Make API Call
         API_call_URL = self.call_URL + self.call_path
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
@@ -230,6 +232,7 @@ class SUSHICallAndResponse:
         
         logging.info(f"The SUSHI API response:\n{API_response}")
         return API_response
+        '''
 
 
     def __repr__(self):
