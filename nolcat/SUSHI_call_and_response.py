@@ -53,7 +53,7 @@ class SUSHICallAndResponse:
         self.call_URL = call_URL
         self.call_path = call_path
         #ToDo: DELETE IF UNNEEDED: self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
-        self.parameters = {key: requests.utils.unquote(value) for key, value in parameters.items()}
+        self.parameters = {key: (requests.utils.unquote(value) if str(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
     
 
     def make_SUSHI_call(self):
