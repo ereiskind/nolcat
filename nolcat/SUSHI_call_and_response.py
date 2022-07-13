@@ -66,6 +66,8 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response or an error message
         """
+        #ToDo: requests.<response object>.ok:  # Meaning the HTTP status was 4xx or 5xx
+        #ToDo: How to use raise_for_status() without try-except?
         return "This is the end of the reconstructed method"
         '''
         #Section: Make API Call
