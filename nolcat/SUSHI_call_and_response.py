@@ -77,7 +77,7 @@ class SUSHICallAndResponse:
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
             logging.debug(f"`raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
             #ToDo: Error handling here
-            return "The reconstructed method is ending here because of an error"
+            return {0: "This is the end of the reconstructed method because of an error; it's a dict to match the valid data type returned tests"}
         logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
@@ -86,7 +86,7 @@ class SUSHICallAndResponse:
         logging.debug(f"`API_response.text` is {API_response.text} of type {repr(type(API_response.text))}.")
         logging.debug(f"`json.loads(API_response.content.decode('utf-8'))` is {json.loads(API_response.content.decode('utf-8'))} of type {repr(type(json.loads(API_response.content.decode('utf-8'))))}.")
         
-        return "This is the end of the reconstructed method"
+        return {1: "This is the end of the reconstructed method; it's a dict to match the valid data type returned tests"}
         '''
         #Subsection: Make API Call with Error Checking
         
