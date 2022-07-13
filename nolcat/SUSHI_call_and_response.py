@@ -66,20 +66,27 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response or an error message
         """
-        #ToDo: requests.<response object>.ok:  # Meaning the HTTP status was 4xx or 5xx
-        #ToDo: How to use raise_for_status() without try-except?
+        #Section: Make API Call
+        logging.info(f"Calling {self.calling_to} for {self.call_path} with parameters {self.parameters}.")
+        #Subsection: Make GET Request
+        time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
+        API_response = requests.get(self.call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
+        if not API_response.ok:  # Meaning the HTTP status was 4xx or 5xx
+            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
+            logging.debug(f"`raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
+            #ToDo: Error handling here
+            return "The reconstructed method is ending here because of an error"
+        logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
+
+        #Subsection: Convert Response to Python Data Types
+        logging.debug(f"`API_response` is {API_response} of type {repr(type(API_response))}.")
+        logging.debug(f"`API_response.raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
+        logging.debug(f"`API_response.text` is {API_response.text} of type {repr(type(API_response.text))}.")
+        logging.debug(f"`json.loads(API_response.content.decode('utf-8'))` is {json.loads(API_response.content.decode('utf-8'))} of type {repr(type(json.loads(API_response.content.decode('utf-8'))))}.")
+        
         return "This is the end of the reconstructed method"
         '''
-        #Section: Make API Call
-        API_call_URL = self.call_URL + self.call_path
-        time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
-
         #Subsection: Make API Call with Error Checking
-        logging.debug(f"Calling {self.calling_to} for {self.call_path}.")
-        try:
-            API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=90, headers=self.Chrome_user_agent)
-            API_response.raise_for_status()
-            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
         
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
