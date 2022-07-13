@@ -81,9 +81,16 @@ class SUSHICallAndResponse:
         logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
-        logging.debug(f"`API_response` is {API_response} of type {repr(type(API_response))}.")
-        logging.debug(f"`API_response.raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
-        logging.debug(f"`API_response.text` is {API_response.text} of type {repr(type(API_response.text))}.")
+        # `API_response` is the status code <class 'requests.models.Response'>
+        # When the status code is OK, `API_response.raise_for_status()` is None
+        # `API_response.text` is the text of the response with a variable type; use to know when type isn't converting to JSON
+
+        logging.debug(f"`API_response.raise_for_status()` with OK status code is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
+        logging.debug(f"Types: `API_response` = {repr(type(API_response))} aka string {str(type(API_response))}; `API_response.text` = {repr(type(API_response.text))}; `API_response.content` = {repr(type(API_response.content))}.")
+        #ToDo: str(type(API_response)) == "<class 'requests.models.Response'>": API_response = API_response.json()
+        #ToDo: str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>": API_response = API_response[0]
+        #ToDo: str(type(API_response)) == "<class 'list'>" and self.call_path == "reports": API_response = dict(reports = API_response)  # The "reports" endpoint should return a list; if there's a SUSHI error, a dictionary is returned.
+        #toDo: str(type(API_response)) == "<class 'dict'>": pass
         logging.debug(f"`json.loads(API_response.content.decode('utf-8'))` is {json.loads(API_response.content.decode('utf-8'))} of type {repr(type(json.loads(API_response.content.decode('utf-8'))))}.")
         
         return {1: "This is the end of the reconstructed method; it's a dict to match the valid data type returned tests"}
