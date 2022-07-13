@@ -26,7 +26,8 @@ class SUSHICallAndResponse:
         self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-        self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
+        parameters (dict): the parameter values for the API call
+        #ToDo: DELETE IF UNNEEDED: self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
@@ -46,12 +47,13 @@ class SUSHICallAndResponse:
             calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
             call_URL (str): the root URL for the SUSHI API call
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-            parameters (dict): the parameter values as key-value pairs
+            parameters (dict): the parameter values for the API call  #ToDo: Change to string if needed
         """
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
+        #ToDo: DELETE IF UNNEEDED: self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
+        self.parameters = {key: requests.utils.unquote(value) for key, value in parameters.items()}
     
 
     def make_SUSHI_call(self):
