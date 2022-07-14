@@ -72,8 +72,10 @@ class SUSHICallAndResponse:
 
         #Subsection: Make GET Request
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
-        API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
-        if not API_response.ok:  # Meaning the HTTP status was 4xx or 5xx
+        try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
+            API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
+            API_response.raise_for_status()
+        except Exception as error:  #ToDo: Error handling with specific Exceptions
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
             logging.debug(f"`raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
             #ToDo: Error handling here
