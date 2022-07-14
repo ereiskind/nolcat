@@ -75,11 +75,27 @@ class SUSHICallAndResponse:
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
             API_response.raise_for_status()
-        except Exception as error:  #ToDo: Error handling with specific Exceptions
+        except Timeout as error:
+            try:  # Timeout errors seem to be random, so going to try get request again with more time
+                logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
+                time.sleep(1)
+                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.Chrome_user_agent)
+                API_response.raise_for_status()
+            except Timeout as error_after_timeout:
+                logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}"}
+            except Exception as error_after_timeout:
+                # Code using Selenium checked HTTPError separately with condition `if format(error_plus_timeout.response) == "<Response [403]>"` because that indicated a downloaded JSON
+                #ToDo: Does writing the text file need to go here using the condition above?
+                logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
+                return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
+        except Exception as error:
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
-            logging.debug(f"`raise_for_status()` is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
-            #ToDo: Error handling here
-            return {0: "This is the end of the reconstructed method because of an error; it's a dict to match the valid data type returned tests"}
+            # Code using Selenium checked HTTPError separately with condition `if format(error.response) == "<Response [403]>"` because that indicated a downloaded JSON
+            #ToDo: (based on old notes) Be able to review error in case of SSLError (Allen Press), handled with Requests ConnectionError exception, and possibly redo request without checking certificate
+            logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
+            return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
+
         logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
