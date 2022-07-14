@@ -55,6 +55,9 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Times out
 
 * Allen Press/Pinnacle Hosting
+
+* ``HTTPSConnectionPool`` error caused by urllib3 ``NewConnectionError`` (``Failed to establish a new connection: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond'``)
+
 * Ambrose Digital Streaming Video
 * AMS (American Meteorological Society) Journals Online
 
