@@ -74,6 +74,7 @@ class SUSHICallAndResponse:
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
+            logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
@@ -85,14 +86,10 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}"}
             except Exception as error_after_timeout:
-                # Code using Selenium checked HTTPError separately with condition `if format(error_plus_timeout.response) == "<Response [403]>"` because that indicated a downloaded JSON
-                #ToDo: Does writing the text file need to go here using the condition above?
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
             #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
-            # Code using Selenium checked HTTPError separately with condition `if format(error.response) == "<Response [403]>"` because that indicated a downloaded JSON
-            #ToDo: (based on old notes) Be able to review error in case of SSLError (Allen Press), handled with Requests ConnectionError exception, and possibly redo request without checking certificate
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
