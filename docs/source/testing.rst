@@ -32,26 +32,119 @@ The fixture `sample_R4_RawCOUNTERReport` creates a MultiDict of FileStorage obje
 
 SUSHI Variations
 ****************
-Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, common issues and some vendors that display them are listed here so that the edge cases they represent can be covered while testing the ``SUSHICallAndResponse`` class.
-* Requiring a requestor ID and an API key: Columbia International Affairs Online (CIAO), Company of Biologists, Portland Press, University of California Press, Rockefeller University Press, Films on Demand, ABC-CLIO Databases
-* Requiring only a customer ID: Japan Science & Technology Agency (JST)
-* Downloading a JSON file: 
-* Variants on the ``Service_Active`` field in ``status`` call
-  * Using a lowercase string in the field: OECD iLibrary
-  * Naming the field ``ServiceActive``: Adam Matthew
-* ``status`` call always has a key for SUSHI errors, which has an empty value if there aren't any errors
-  * ``Alerts`` key at top level with list value: Adam Matthew
-* Times out: Alexander Street Press
-* Has no ``status`` endpoint: MathSciNet
-* ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch: AMS (American Meteorological Society) Journals Online
-* Requires a ``platform`` parameter: de Gruyter, Sciendo, Loeb Classical Library
-* Has Unicode charaacters
-* No PR report offered:
-* No DR report offered: Akademiai Kiado, Brill Books and Journals
-* No TR report offered: Adam Matthew, Loeb Classical Library
-* No IR report offered: Akademiai Kiado, Brill Books and Journals, Loeb Classical Library
+Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the ``SUSHICallAndResponse`` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
 
-Internally Inconsistent
-=======================
-These vendors show internal inconsistencies in testing:
-* Adam Matthew: ``status`` call always has a top-level ``Alerts`` key, but ``handle_SUSHI_exceptions`` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call
+* ABC-CLIO Databases
+
+  * Requiring a requestor ID and an API key
+
+* Adam Matthew
+
+  * ``Service_Active`` field in ``status`` call doesn't contain underscore
+  * ``status`` call always has ``Alerts`` key at top level with list value for SUSHI errors; no errors means an empty list
+  * Related to above, ``SUSHICallAndResponse.handle_SUSHI_exceptions()`` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
+  * No TR offered
+
+* Akademiai Kiado
+
+  * No DR offered
+  * No IR offered
+
+* Alexander Street Press
+
+  * Times out
+
+* Allen Press/Pinnacle Hosting
+* Ambrose Digital Streaming Video
+* AMS (American Meteorological Society) Journals Online
+
+  * ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch
+
+* BioScientifica
+
+  * Dates 2021-06 to 2022-06 have no data
+
+* Brepols Online
+
+  * Contains unicode characters ``ç`` and ``É```
+
+* Brill Books and Journals
+
+  * No DR offered
+  * No IR offered
+
+* Brill Scholarly Editions
+* China National Knowledge Infrastructure (CNKI)
+* Cochrane
+* Columbia International Affairs Online (CIAO)
+
+  * Requiring a requestor ID and an API key
+
+* Company of Biologists
+
+  * Requiring a requestor ID and an API key
+
+* de Gruyter
+
+  * Requires a ``platform`` parameter
+
+* Duke University Press
+
+  * ``status`` call always has ``Alerts`` key at top level with list value for SUSHI errors; no errors means an empty list
+  * Downloads a JSON
+  * No DR offered
+  * Contains custom report forms with report IDs starting "CR_"
+
+* Duxiu Knowledge Search Database
+* Ebook Central
+* EBSCOhost
+* Érudit
+* Films on Demand
+
+  * Requiring a requestor ID and an API key
+
+* Gale Cengage Learning
+* HighWire
+* J-STAGE
+
+  * Requiring only a customer ID
+
+* JSTOR
+* Loeb Classical Library
+
+  * Requires a ``platform`` parameter
+  * No TR offered
+  * No IR offered
+
+* Lyell Collection
+* MathSciNet
+
+  * Has no ``status`` endpoint
+
+* Morgan & Claypool
+* OECD iLibrary
+
+  * ``Service_Active`` field in ``status`` call is all lowercase
+
+* Portland Press
+
+  * Requiring a requestor ID and an API key
+
+* ProQuest
+* Rockefeller University Press
+
+  * Requiring a requestor ID and an API key
+
+* SAGE Journals
+* SAGE/CQ Press
+* Sciendo
+
+  * Requires a ``platform`` parameter
+
+* Taylor & Francis
+* Taylor & Francis eJournals
+* University of California Press
+
+  * Requiring a requestor ID and an API key
+
+* Web of Science
