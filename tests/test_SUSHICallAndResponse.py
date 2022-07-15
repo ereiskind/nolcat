@@ -68,7 +68,7 @@ def SUSHI_credentials_fixture():
 
 @pytest.mark.dependency()
 def test_status_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``status`` endpoint."""
+    """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
     assert str(type(response)) == "<class 'dict'>"
@@ -76,7 +76,7 @@ def test_status_call(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
 def test_status_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``status`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
     if list(response.keys()) == ["ERROR"]:
@@ -91,7 +91,7 @@ def test_status_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency()
 def test_reports_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports`` endpoint."""
+    """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
@@ -99,7 +99,7 @@ def test_reports_call(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
 def test_reports_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     if list(response.keys()) == ["ERROR"]:
@@ -115,7 +115,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_PR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
@@ -131,7 +131,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_DR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
@@ -147,7 +147,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_TR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
@@ -163,7 +163,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_IR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False
