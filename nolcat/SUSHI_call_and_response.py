@@ -96,90 +96,23 @@ class SUSHICallAndResponse:
         logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
-        # `API_response` is the status code <class 'requests.models.Response'>
-        # When the status code is OK, `API_response.raise_for_status()` is None
-        # `API_response.text` is the text of the response with a variable type; use to know when type isn't converting to JSON
-
-        logging.debug(f"`API_response.raise_for_status()` with OK status code is {API_response.raise_for_status()} of type {repr(type(API_response.raise_for_status()))}.")
-        logging.debug(f"Types: `API_response` = {repr(type(API_response))} aka string {str(type(API_response))}; `API_response.text` = {repr(type(API_response.text))}; `API_response.content` = {repr(type(API_response.content))}.")
-        #ToDo: str(type(API_response)) == "<class 'requests.models.Response'>": API_response = API_response.json()
-        #ToDo: str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>": API_response = API_response[0]
-        #ToDo: str(type(API_response)) == "<class 'list'>" and self.call_path == "reports": API_response = dict(reports = API_response)  # The "reports" endpoint should return a list; if there's a SUSHI error, a dictionary is returned.
-        #toDo: str(type(API_response)) == "<class 'dict'>": pass
-        logging.debug(f"`json.loads(API_response.content.decode('utf-8'))` is {json.loads(API_response.content.decode('utf-8'))} of type {repr(type(json.loads(API_response.content.decode('utf-8'))))}.")
-        
-        return {1: "This is the end of the reconstructed method; it's a dict to match the valid data type returned tests"}
-        '''
-        #Subsection: Make API Call with Error Checking
-        
-        except Timeout as error:
-            try:  # Timeout errors seem to be random, so going to try get request again with more time
-                time.sleep(1)
-                logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
-                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.Chrome_user_agent)
-                API_response.raise_for_status()
-            
-            except Timeout as error_plus_timeout:
-                logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_plus_timeout)}"}
-            
-            except Exception as error_plus_timeout:
-                # Code using Selenium checked HTTPError separately with condition `if format(error_plus_timeout.response) == "<Response [403]>"` because that indicated a downloaded JSON
-                #ToDo: Does writing the text file need to go here using the condition above?
-                logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_plus_timeout)}"}
-        
-        except Exception as error:
-            # Code using Selenium checked HTTPError separately with condition `if format(error.response) == "<Response [403]>"` because that indicated a downloaded JSON
-            #ToDo: (based on old notes) Be able to review error in case of SSLError (Allen Press), handled with Requests ConnectionError exception, and possibly redo request without checking certificate
-            logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-            return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
-
-        #Subsection: Write API Response to File
-        API_response_binary_file = open('SUSHI_API_response.json', 'wb')
-        API_response_binary_file.write(API_response.content)  #ToDo: Does argument need `.decode('utf8')`? Is it possible to feed anything that raises a UnicodeDecodeError to `ord()`?
-        #ToDo: If this fails, is an error raised?
-        API_response_binary_file.close()
-
-        API_response_text_file = open('SUSHI_API_response.json', 'r')
-        text_file = json.load(API_response_text_file)  #ToDo: Does this need to be saved to a variable? Is any encoding/decoding assistance needed?
-        #ToDo: Is error checking for the write to file process needed?
-        API_response_text_file.close()
-
-
-        #Section: Convert Response to Python Data Types
-        try:
-            if API_response.text == "":
-                logging.warning(f"Call to {self.calling_to} returned an empty string")
-                return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
-        except:
-            pass  # In the case that API_response isn't a Requests response object, nothing needs to happen here
-
-        if str(type(API_response)) == "<class 'requests.models.Response'>":
-            try:
-                API_response = API_response.json()
-                #ToDo: Figure out how to get titles with Unicode replacement character to encode properly
-                    # json.loads(JSON.text.encode('utf8')) still has replacement character
-                    # json.loads(JSON.text.decode('utf8')) still has replacement character
-                    # json.loads(JSON.text) still has replacement character
-                    # json.loads(JSON.content.decode('utf8')) creates a JSON from the first item in Report_Items rather than the complete content, so ability to handle replacement characters unknown
-            except:
-                logging.warning(f"Call to {self.calling_to} returned a JSON that couldn't be converted into a dictionary")
-                return {"ERROR": f"Call to {self.calling_to} returned a JSON that couldn't be converted into a dictionary"}
-        
-        if str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
-            API_response = API_response[0]
-        elif str(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
-            API_response = dict(reports = API_response)  # The "reports" endpoint should return a list; if there's a SUSHI error, a dictionary is returned.
-        
-        if str(type(API_response)) == "<class 'dict'>":
-            pass
+        if str(type(API_response.text)) == "<class 'dict'>":  # The data is ready for JSON to Python dict conversion
+            API_response = json.loads(API_response.content.decode('utf-8'))
+            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
+        elif str(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":  # The data is the list of reports, which comes in list format; said list becomes the value in a single-item dict
+            API_response = json.loads(API_response.content.decode('utf-8'))
+            logging.debug(f"`json.loads(API_response.content.decode('utf-8'))` makes the result of a \"reports\" request into a {str(type(API_response))}.")
+            API_response = dict(reports = API_response)
+        elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":  # The data is a dict wrapped in a single-item list
+            API_response = json.loads(API_response[0].content.decode('utf-8'))
+        elif API_response.text == "":  # The data is an empty string
+            logging.warning(f"Call to {self.calling_to} returned an empty string")
+            return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
         else:
-            logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing.")
-            return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type and thus wasn't converted into a dict for further processing."}
-        
-        logging.debug(f"SUSHI data converted to Python dictionary:\n{API_response}")
-
+            logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
+            return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
+      
+        logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
 
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
