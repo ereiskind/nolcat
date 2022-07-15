@@ -114,6 +114,8 @@ class SUSHICallAndResponse:
       
         logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
 
+        return API_response
+        '''
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
         try:
