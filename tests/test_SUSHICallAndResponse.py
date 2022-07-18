@@ -101,7 +101,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    list_of_reports = response.values()
+    list_of_reports = [report for report in list(response.values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
@@ -117,7 +117,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
-    list_of_reports = check_for_report.values()
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "PR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_PR = True
@@ -133,7 +133,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
-    list_of_reports = check_for_report.values()
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "DR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_DR = True
@@ -149,7 +149,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
-    list_of_reports = check_for_report.values()
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "TR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_TR = True
@@ -165,7 +165,7 @@ def test_IR_call_validity(SUSHI_credentials_fixture):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False
-    list_of_reports = check_for_report.values()
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "IR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_IR = True
