@@ -41,8 +41,9 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Adam Matthew
 
   * ``Service_Active`` field in ``status`` call doesn't contain underscore
-  * ``status`` call always has ``Alerts`` key at top level with list value for SUSHI errors; no errors means an empty list
-  * Related to above, ``SUSHICallAndResponse.handle_SUSHI_exceptions()`` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
+  * ``status`` call always has ``Alerts`` key at top level with list value that seems to always be empty
+  * Errors are listed in the ``Exceptions`` key, which is nested under the ``Report_Header`` key
+  * Related to above, ``SUSHICallAndResponse._handle_SUSHI_exceptions()`` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
   * No TR offered
 
 * Akademiai Kiado
@@ -59,6 +60,10 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * ``HTTPSConnectionPool`` error caused by urllib3 ``NewConnectionError`` (``Failed to establish a new connection: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond'``)
 
 * Ambrose Digital Streaming Video
+* American Association for the Advancement of Science (AAAS)
+
+  * Errors are listed in the ``Exception`` key, which is nested under the ``Report_Header`` key
+
 * AMS (American Meteorological Society) Journals Online
 
   * ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch
@@ -70,11 +75,13 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Brepols Online
 
   * Contains unicode characters ``ç`` and ``É```
+  * Errors are under the ``Exception`` key, which is on the same level as the report keys
 
 * Brill Books and Journals
 
   * No DR offered
   * No IR offered
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Brill Scholarly Editions
 * China National Knowledge Infrastructure (CNKI)
@@ -82,14 +89,17 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Columbia International Affairs Online (CIAO)
 
   * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Company of Biologists
 
   * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * de Gruyter
 
   * Requires a ``platform`` parameter
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Duke University Press
 
@@ -97,6 +107,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Downloads a JSON
   * No DR offered
   * Contains custom report forms with report IDs starting "CR_"
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Duxiu Knowledge Search Database
 * Ebook Central
@@ -105,12 +116,14 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Films on Demand
 
   * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Gale Cengage Learning
 * HighWire
 * J-STAGE
 
   * Requiring only a customer ID
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * JSTOR
 * Loeb Classical Library
@@ -118,25 +131,33 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Requires a ``platform`` parameter
   * No TR offered
   * No IR offered
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Lyell Collection
 * MathSciNet
 
   * Has no ``status`` endpoint
+  * Errors reported in 404 pages with formatting, not in JSON format
 
 * Morgan & Claypool
 * OECD iLibrary
 
   * ``Service_Active`` field in ``status`` call is all lowercase
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * Portland Press
 
   * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
 
 * ProQuest
 * Rockefeller University Press
 
   * Requiring a requestor ID and an API key
+
+* Royal Society of Chemistry
+
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block contained within a list
 
 * SAGE Journals
 * SAGE/CQ Press
