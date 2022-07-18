@@ -5,6 +5,7 @@ import re
 import os
 from pathlib import Path
 import json
+import ast
 import requests
 from requests import HTTPError
 from requests import Timeout
@@ -114,6 +115,10 @@ class SUSHICallAndResponse:
         elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":
             logging.debug("The returned text is a dict wrapped in a single-item list, so the item in the list will be converted to JSON.")
             API_response = json.loads(API_response[0].content.decode('utf-8'))
+        
+        elif str(type(API_response.text)) == "<class 'str'>":
+            logging.debug("The returned text was read from a downloaded JSON file.")
+            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
         
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
