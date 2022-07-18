@@ -285,7 +285,7 @@ class SUSHICallAndResponse:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
             logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
-            dialog_box_text = self.create_error_query_text(error_contents)
+            dialog_box_text = self._create_error_query_text(error_contents)
         elif str(type(error_contents)) == "<class 'list'>":
             if len(error_contents) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
@@ -293,7 +293,7 @@ class SUSHICallAndResponse:
             dialog_box_text = []
             logging.info(f"Handling a SUSHI error for a {report_type} in list format.")
             for error in error_contents:
-                dialog_box_text.append(self.create_error_query_text(error))
+                dialog_box_text.append(self._create_error_query_text(error))
             dialog_box_text = "\n".join(dialog_box_text)
         else:
             logging.info(f"SUSHI error handling method for a {report_type} accepted data of an invalid type.")
