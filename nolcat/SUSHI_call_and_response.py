@@ -116,6 +116,11 @@ class SUSHICallAndResponse:
             logging.debug("The returned text is a dict wrapped in a single-item list, so the item in the list will be converted to JSON.")
             API_response = json.loads(API_response[0].content.decode('utf-8'))
         
+        elif str(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
+            logging.debug("The returned text was read from a downloaded JSON file but will be a list of reports and, to match the other reports' data types, made the value of an one-item dict.")
+            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+            API_response = dict(reports = API_response)
+        
         elif str(type(API_response.text)) == "<class 'str'>":
             logging.debug("The returned text was read from a downloaded JSON file.")
             API_response = ast.literal_eval(API_response.content.decode('utf-8'))
