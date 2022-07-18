@@ -95,7 +95,6 @@ class SUSHICallAndResponse:
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
-        logging.debug(f"GET request returned text {API_response.text}")
 
         #Subsection: Convert Response to Python Data Types
         if API_response.text == "":
