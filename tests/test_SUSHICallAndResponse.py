@@ -149,10 +149,10 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
-    #ToDo: list_of_reports = check_for_report.values()
-    #ToDo: for report in list_of_reports:
-        #ToDo: if report["Report_ID"] == "TR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
-            #toDo: has_TR = True
+    list_of_reports = check_for_report.values()
+    for report in list_of_reports:
+        if report["Report_ID"] == "TR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+            has_TR = True
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
