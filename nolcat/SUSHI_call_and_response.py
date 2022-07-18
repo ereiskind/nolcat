@@ -67,7 +67,7 @@ class SUSHICallAndResponse:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        logging.info(f"Calling {self.calling_to} for {self.call_path} with parameters {self.parameters}.")  # Printed `self.parameters` shows encoded values (e.g. `%3D` is an equals sign), but in the GET request, the appropriate unencoded value is used
+        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign)that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
 
         #Subsection: Make GET Request
@@ -93,7 +93,8 @@ class SUSHICallAndResponse:
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
-        logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
+        logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
+        logging.debug(f"GET request returned text {API_response.text}")
 
         #Subsection: Convert Response to Python Data Types
         if str(type(API_response.text)) == "<class 'dict'>":  # The data is ready for JSON to Python dict conversion
