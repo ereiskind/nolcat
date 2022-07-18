@@ -133,10 +133,13 @@ class SUSHICallAndResponse:
       
         logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
 
-        return API_response
-        '''
+
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
+        #ALERT: Couldn't find example cases for when the dict with the error info was the value for the top-level key `Exceptions`, `Alert`, or `Alerts`
+        
+        return API_response
+        '''
         try:
             logging.debug(f"The report has a `Report_Header` with an `Exception` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exception']}.")
             if not self.handle_SUSHI_exceptions(API_response['Report_Header']['Exception'], self.call_path, self.calling_to):
