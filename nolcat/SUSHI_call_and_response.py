@@ -122,7 +122,10 @@ class SUSHICallAndResponse:
         
         elif str(type(API_response.text)) == "<class 'str'>":
             logging.debug("The returned text was read from a downloaded JSON file.")
-            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+            try:
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            except:
+                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform lists
         
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
