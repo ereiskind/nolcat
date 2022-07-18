@@ -101,14 +101,14 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    #ToDo: list_of_reports = response.values()
-    #ToDo: number_of_reports_available = len(list_of_reports)
-    #ToDo: number_of_valid_Report_ID_values = 0
-    #ToDo: for report in list_of_reports:
-        #ToDo: if "Report_ID" in list(report.keys()):
-            #ToDo: if report["Report_ID"] matches /(Silverchair:CR_)?[PDTI]R(_\w\d)?/:
-                #ToDo: number_of_valid_Report_ID_values += 1
-    #ToDo: assert number_of_reports_available == number_of_valid_Report_ID_values
+    list_of_reports = response.values()
+    number_of_reports_available = len(list_of_reports)
+    number_of_valid_Report_ID_values = 0
+    for report in list_of_reports:
+        if "Report_ID" in list(report.keys()):
+            if re.fullmatch(r'(Silverchair:CR_)?[PDTI]R(_\w\d)?', report["Report_ID"]):
+                number_of_valid_Report_ID_values += 1
+    assert number_of_reports_available == number_of_valid_Report_ID_values
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
