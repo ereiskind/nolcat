@@ -21,11 +21,31 @@ def sample_ImmutableMultiDict():
 @pytest.fixture
 def R4_RawCOUNTERReport_fixture():
     """A RawCOUNTERReport object based on a CSV with the data of many reformatted R4 COUNTER reports; a single CSV is used to reduce the number of potential failure points."""
-    #ToDo: Hardcode data into CSV
-    #ToDo: df = Convert CSV to dataframe
-    #ToDo: raw_report = RawCOUNTERReport(df)
-    #ToDo: yield raw_report
-    pass
+    df = pd.read_csv(
+        Path('CSV_fixtures', 'R4_RawCOUNTERReport_fixture.csv'),
+        encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
+        encoding_errors='backslashreplace',
+        dtype={
+                'Resource_Name': 'string',
+                'Publisher': 'string',
+                'Platform': 'string',
+                'DOI': 'string',
+                'Proprietary_ID': 'string',
+                'ISBN': 'string',
+                'Print_ISSN': 'string',
+                'Online_ISSN': 'string',
+                'Data_Type': 'string',
+                'Section_Type': 'string',
+                'Metric_Type': 'string',
+                'Usage_Count': 'int',  # Python default used because this is a non-null field
+                'Statistics_Source_ID': 'int',
+            },
+            parse_dates=['Usage_Date'],
+            infer_datetime_format=True,
+            index_col=0,  # The index column in the CSV has no name, so it must be referenced by index
+    )
+    raw_report = RawCOUNTERReport(df)
+    yield raw_report
 
 
 #ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
