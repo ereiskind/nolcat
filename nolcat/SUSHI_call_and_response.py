@@ -154,17 +154,16 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        return API_response
-        '''
-        #ToDo: Before reformatting, a `status` response with the key-value pair `'Alerts': []` didn't trigger any of the method calls below, but the exact same status call with the exact same response 11 minutes later did--investigate the issue
-        try:
+        try:  #ALERT: Couldn't find a statistics source to use as a test case
             logging.debug(f"The report has an `Exception` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exception']}.")
-            if not self.handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
+            if not self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}"}
         except:
             pass
 
+        return API_response
+        '''
         try:
             logging.debug(f"The report has an `Exceptions` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exceptions']}.")
             if not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
