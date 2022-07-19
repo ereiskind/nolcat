@@ -202,15 +202,12 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        return API_response
-        '''
         #Subsection: Check Master Reports for Data
         # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
-        master_report_regex = re.compile(r'reports/..')
+        master_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if master_report_regex.search(self.call_path):
             try:
-                lines_of_data = len(API_response['Report_Items'])
-                if lines_of_data == 0:
+                if len(API_response['Report_Items']) == 0:
                     logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
                     return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
             except TypeError:
@@ -219,7 +216,6 @@ class SUSHICallAndResponse:
         
         logging.info(f"The SUSHI API response:\n{API_response}")
         return API_response
-        '''
 
 
     def __repr__(self):
