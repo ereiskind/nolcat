@@ -195,17 +195,17 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        return API_response
-        '''
         try:
-            if "Message" in API_response[0].keys():
+            if "Message" in API_response[0].keys():  # The `keys()` iterator also serves as a check that the item in the list is a dictionary
                 logging.debug("The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block.")
-                if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                if not self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
                     return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
+        return API_response
+        '''
         #Subsection: Check Master Reports for Data
         # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
         master_report_regex = re.compile(r'reports/..')
