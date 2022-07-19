@@ -27,8 +27,7 @@ class SUSHICallAndResponse:
         self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-        parameters (dict): the parameter values for the API call
-        #ToDo: DELETE IF UNNEEDED: self.parameter_string (str): the parameter values of the API call as a string, converted from a dictionary to prevent encoding problems
+        self.parameters (dict): the parameter values for the API call
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
@@ -48,12 +47,11 @@ class SUSHICallAndResponse:
             calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
             call_URL (str): the root URL for the SUSHI API call
             call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
-            parameters (dict): the parameter values for the API call  #ToDo: Change to string if needed
+            parameters (dict): the parameter values for the API call
         """
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        #ToDo: DELETE IF UNNEEDED: self.parameter_string = "&".join(f"{key}={value}" for key, value in parameters.items())
         self.parameters = {key: (requests.utils.unquote(value) if str(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
     
 
@@ -81,7 +79,7 @@ class SUSHICallAndResponse:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
                 time.sleep(1)
-                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.header_value)
+                API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:
                 logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")

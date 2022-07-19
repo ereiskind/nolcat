@@ -284,7 +284,7 @@ digraph erd_and_classes {
         calling_to
         call_URL
         call_path
-        parameter_string
+        parameters
 
         // Methods
         make_SUSHI_call [shape="Mrecord"]
