@@ -90,7 +90,6 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
-            #Alert: MathSciNet doesn't have a status report, but does have the other reports with the needed data--how should this be handled so that it can pass through?
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
@@ -136,7 +135,6 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
-        #ALERT: Couldn't find example cases for when the dict with the error info was the value for the top-level key `Exceptions`, `Alert`, or `Alerts`
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case
             logging.debug(f"The report has a `Report_Header` with an `Exception` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exception']}.")

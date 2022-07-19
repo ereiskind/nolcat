@@ -45,6 +45,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Errors are listed in the ``Exceptions`` key, which is nested under the ``Report_Header`` key
   * Related to above, ``SUSHICallAndResponse._handle_SUSHI_exceptions()`` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
   * No TR offered
+  * ``reports`` call is successful even if credentials are bad
 
 * Akademiai Kiado
 
@@ -62,7 +63,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Ambrose Digital Streaming Video
 * American Association for the Advancement of Science (AAAS)
 
-  * Error responses use 400 HTTP status code
+  * Error responses use 4XX HTTP status code
   * Errors are listed in the ``Exception`` key, which is nested under the ``Report_Header`` key
 
 * AMS (American Meteorological Society) Journals Online
@@ -77,6 +78,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 
   * Contains unicode characters ``ç`` and ``É```
   * Errors are under the ``Exception`` key, which is on the same level as the report keys
+  * Error responses use 4XX HTTP status code
 
 * Brill Books and Journals
 
@@ -137,8 +139,10 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Lyell Collection
 * MathSciNet
 
-  * Has no ``status`` endpoint
-  * Errors reported in 404 pages with formatting, not in JSON format
+  * ``reports`` call is successful even if credentials are bad
+  * Error responses use 4XX HTTP status code
+  * ``status`` call always results in 404 HTTP status code
+  * 4XX pages display in browser with formatting
 
 * Morgan & Claypool
 * OECD iLibrary
