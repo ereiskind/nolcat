@@ -62,6 +62,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 * Ambrose Digital Streaming Video
 * American Association for the Advancement of Science (AAAS)
 
+  * Error responses use 400 HTTP status code
   * Errors are listed in the ``Exception`` key, which is nested under the ``Report_Header`` key
 
 * AMS (American Meteorological Society) Journals Online
@@ -103,7 +104,7 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
 
 * Duke University Press
 
-  * ``status`` call always has ``Alerts`` key at top level with list value for SUSHI errors; no errors means an empty list
+  * ``status`` call always has ``Alerts`` key at top level with list value that seems to always be empty
   * Downloads a JSON
   * No DR offered
   * Contains custom report forms with report IDs starting "CR_"
