@@ -23,7 +23,7 @@ class SUSHICallAndResponse:
     * With multiple return statements, a single item dictionary with the key `ERROR` and a value with a message about the problem can be returned if there's a problem with the API call or the returned SUSHI value.
 
     Attributes:
-        self.Chrome_user_agent (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
+        self.header_value (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
         self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
@@ -36,7 +36,7 @@ class SUSHICallAndResponse:
         _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
         _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
     """
-    Chrome_user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+    header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
     def __init__(self, calling_to, call_URL, call_path, parameters):
@@ -74,14 +74,14 @@ class SUSHICallAndResponse:
         #Subsection: Make GET Request
         time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
-            API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.Chrome_user_agent)
+            API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
             logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
                 time.sleep(1)
-                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.Chrome_user_agent)
+                API_response = requests.get(API_call_URL, params=self.parameter_string, timeout=299, headers=self.header_value)
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:
                 logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")
