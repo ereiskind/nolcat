@@ -22,13 +22,7 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-The data used for testing in the fixtures in "database_seeding_fixtures.py" and "\\tests\\bin" is meant as an example of the data that will be present in the database once loaded. The COUNTER R4 reports in "\\tests\\bin" are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
-
-Using Selenium
-**************
-Some of the tests use Selenium, which allows for interfacing with web browsers. for more information on Selenium and setting it up, see :ref:`"Using Selenium" on the page about COUNTER and SUSHI <using-selenium>`.
-
-The fixture `sample_R4_RawCOUNTERReport` creates a MultiDict of FileStorage objects, all with the key `'R4_files'`, which matches the ImmutableMultiDict of FileStorage objects created when multiple files are passed to a route in the Flask app through the HTML-derived file selector in the web app. There are a few small differences between the FileStorage objects from the two sources: in the fixture, the `filename` attribute contains the file path starting from (but not including) `nolcat` and the `stream` attribute is a TextIOWrapper; when coming from Flask, `filename` is just the name of the file and `stream` is a `tempfile.SpooledTemporaryFile` object.
+The test suite makes use of data saved in "\\tests\\bin" or in the fixtures in "tests\\conftest.py" which actually contain the same data as is found in "tests\\bin\\RawCOUNTERReport_constructor_output.xlsx." That data is actually based off of the COUNTER R4 reports in "\\tests\\bin," which are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
 
 SUSHI Variations
 ****************
