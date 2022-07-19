@@ -36,7 +36,7 @@ def temp_fixture():
         statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.csv', string=Path(file.filename).parts[-1])[0]
         df = pd.read_csv(
             file,
-             encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
+            encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
             encoding_errors='backslashreplace',
             dtype={
                 'Resource_Name': 'string',
@@ -63,6 +63,12 @@ def temp_fixture():
         ignore_index=True
     )
     print(f"Final dataframe:\n{temp_df}")
+
+
+def test_print_temp_fixture(temp_fixture):
+    """Outputs the temp fixture."""
+    print(temp_fixture)
+    assert True
 
 
 #ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
