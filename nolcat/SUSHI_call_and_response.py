@@ -162,16 +162,16 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        return API_response
-        '''
-        try:
+        try:  #ALERT: Couldn't find a statistics source to use as a test case
             logging.debug(f"The report has an `Exceptions` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exceptions']}.")
-            if not self.handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
+            if not self._handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}")
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exceptions']}"}
         except:
             pass
 
+        return API_response
+        '''
         try:
             logging.debug(f"The report has an `Alert` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Alert']}.")
             if not self.handle_SUSHI_exceptions(API_response['Alert'], self.call_path, self.calling_to):
