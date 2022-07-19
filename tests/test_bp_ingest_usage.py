@@ -24,9 +24,7 @@ def flask_client():
 #ToDo: Create test for route for loading R5 report into database by comparing pd.from_sql of relations where the data was loaded to dataframes used to make the initial fixtures with data from uploaded report manually added
 
 
-#ToDo: Create test using Selenium to input the dates to use as arguments for StatisticsSources.collect_usage_statistics
-    # https://pytest-selenium.readthedocs.io/en/latest/user_guide.html
-    # https://www.lambdatest.com/blog/test-automation-using-pytest-and-selenium-webdriver/
+#ToDo: Create test to input the dates to use as arguments for StatisticsSources.collect_usage_statistics
 
 
 #ToDo: Create test for route for adding non-COUNTER usage stats

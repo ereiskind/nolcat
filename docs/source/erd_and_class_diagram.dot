@@ -280,15 +280,13 @@ digraph erd_and_classes {
         label="CLASS: SUSHICallAndResponse"
 
         // Attributes
-        Chrome_user_agent
         calling_to
         call_URL
         call_path
-        parameter_string
+        parameters
 
         // Methods
         make_SUSHI_call [shape="Mrecord"]
-        _retrieve_downloaded_JSON [shape="Mrecord"]
         _handle_SUSHI_exceptions [shape="Mrecord"]
         _create_error_query_text [shape="Mrecord"]
     }

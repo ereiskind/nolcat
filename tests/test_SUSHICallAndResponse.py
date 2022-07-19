@@ -2,6 +2,7 @@
 
 import calendar
 from datetime import date
+import re
 import pytest
 import pyinputplus
 
@@ -68,7 +69,7 @@ def SUSHI_credentials_fixture():
 
 @pytest.mark.dependency()
 def test_status_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``status`` endpoint."""
+    """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
     assert str(type(response)) == "<class 'dict'>"
@@ -76,22 +77,20 @@ def test_status_call(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
 def test_status_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``status`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
-    if list(response.keys()) == ["ERROR"]:
-        assert False
-    # When the assert statement is a series of expressions featuring named index references to `response` seperated by `or`, the test fails if the first expression features a dictionary key/field name not in `response`, even if one of the later expressions is true. Tests don't finish with a passing result at assert statements that evaluate to true, so if blocks and try/except statements aren't viable; an intermediary variable is the only viable solution.
-    if "Service_Active" in list(response.keys()):
-        service_active_value = response['Service_Active']
-    elif "ServiceActive" in list(response.keys()):
-        service_active_value = response['ServiceActive']
+    # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
+    service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
+    for key in list(response.keys()):
+        if re.fullmatch(r'[sS]ervice.?[aA]ctive', key):  # No match returns `None`, a Boolean `False`, while a match returns a match object, a Boolean `True`
+            service_active_value = response[key]  # The value that goes with `key` in `response`
     assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
 
 
 @pytest.mark.dependency()
 def test_reports_call(SUSHI_credentials_fixture):
-    """Tests that a valid value is returned from using ``make_SUSHI_call`` to make the API call to the ``reports`` endpoint."""
+    """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     assert str(type(response)) == "<class 'dict'>"
@@ -99,30 +98,29 @@ def test_reports_call(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
 def test_reports_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    if list(response.keys()) == ["ERROR"]:
-        assert False
-    for reports_list in response.values():
-        reports_list_length = len(reports_list)  # Because this loop only executes once, this assignment is viable
-        counting_Report_ID = 0
-        for report_description in reports_list:
-            if "Report_ID" in list(report_description.keys()):
-                counting_Report_ID += 1
-    assert reports_list_length == counting_Report_ID
+    list_of_reports = [report for report in list(response.values())[0]]
+    number_of_reports_available = len(list_of_reports)
+    number_of_valid_Report_ID_values = 0
+    for report in list_of_reports:
+        if "Report_ID" in list(report.keys()):
+            if re.fullmatch(r'(Silverchair:CR_)?[PDTI]R(_\w\d)?', report["Report_ID"]):
+                number_of_valid_Report_ID_values += 1
+    assert number_of_reports_available == number_of_valid_Report_ID_values
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_PR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/pr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
-    for reports_list in check_for_report.values():
-        for report_description in reports_list:
-            if report_description['Report_ID'] == "PR":
-                has_PR = True
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    for report in list_of_reports:
+        if report["Report_ID"] == "PR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+            has_PR = True
     if has_PR == False:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
@@ -131,14 +129,14 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_DR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/dr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
-    for reports_list in check_for_report.values():
-        for report_description in reports_list:
-            if report_description['Report_ID'] == "DR":
-                has_DR = True
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    for report in list_of_reports:
+        if report["Report_ID"] == "DR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+            has_DR = True
     if has_DR == False:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
@@ -147,14 +145,14 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_TR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/tr`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
-    for reports_list in check_for_report.values():
-        for report_description in reports_list:
-            if report_description['Report_ID'] == "TR":
-                has_TR = True
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    for report in list_of_reports:
+        if report["Report_ID"] == "TR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+            has_TR = True
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
@@ -163,14 +161,14 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_IR_call_validity(SUSHI_credentials_fixture):
-    """Tests that the API call to the ``reports/ir`` endpoint return a valid SUSHI response."""
+    """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False
-    for reports_list in check_for_report.values():
-        for report_description in reports_list:
-            if report_description['Report_ID'] == "IR":
-                has_IR = True
+    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    for report in list_of_reports:
+        if report["Report_ID"] == "IR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+            has_IR = True
     if has_IR == False:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
