@@ -185,18 +185,18 @@ class SUSHICallAndResponse:
                 return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Alerts']}"}
         except:
             pass
-        
-        return API_response
-        '''        
+
         try:
             if "Message" in API_response.keys():
                 logging.debug("The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block.")
-                if not self.handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                if not self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
                     logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}")
                     return {"ERROR": f"Call to {self.calling_to} returned the SUSHI error(s) {API_response}"}
         except:
             pass
 
+        return API_response
+        '''
         try:
             if "Message" in API_response[0].keys():
                 logging.debug("The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block.")
