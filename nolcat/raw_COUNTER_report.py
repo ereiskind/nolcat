@@ -233,16 +233,9 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on DOI and ISBN")
 
-        #ToDo: DOI, print ISSN, and online ISSN exact matches -> matched_records
-        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
-        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
-        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
-        """
-        #Subsection: Create Comparison on DOI and ISSNs
+
+        #Section: Find Matches--DOI and ISSNs
+        #Subsection: Create Comparison Objects
         logging.info("**Comparing based on DOI and ISSNs**")
         compare_DOI_and_ISSNs = recordlinkage.Compare()
         compare_DOI_and_ISSNs.exact('DOI', 'DOI', label='DOI')
@@ -250,13 +243,14 @@ class RawCOUNTERReport:
         compare_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
+        #Subsection: Return Dataframe with Comparison Results
         if normalized_resource_data:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data)
         logging.debug(f"DOI and ISSNs comparison results:\n{compare_DOI_and_ISSNs_table}")
 
-        #Subsection: Add Matches to `matched_records` Based on DOI and ISSNs
+        #Subsection: Add Matches to `matched_records`
         DOI_and_ISSNs_matches = compare_DOI_and_ISSNs_table[compare_DOI_and_ISSNs_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
         if DOI_and_ISSNs_matches:
@@ -266,6 +260,14 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on DOI and ISSNs")
 
+        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
+        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
+        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
+        """
         #Subsection: Create Comparison Based on ISBN
         #ToDo: Add filter that rejects match if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
         logging.info("**Comparing based on ISBN**")
