@@ -154,7 +154,7 @@ class RawCOUNTERReport:
         matched_records = set()
             # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
         matches_to_manually_confirm = dict()
-            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in resource_data and the potential index pairs are created through a Caretesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
+            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Caretesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
         # {
         #     (first resource metadata, second resource metadata): [
         #         (record index pair),
@@ -170,10 +170,10 @@ class RawCOUNTERReport:
         indexing = recordlinkage.Index()
         indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time,but the alternative commits to matching on a certain field
         if normalized_resource_data:
-            candidate_matches = indexing.index(resource_data, normalized_resource_data)  #Alert: Not tested
+            candidate_matches = indexing.index(new_resource_data, normalized_resource_data)  #Alert: Not tested
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
         else:
-            candidate_matches = indexing.index(resource_data)
+            candidate_matches = indexing.index(new_resource_data)
         
 
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
@@ -188,9 +188,9 @@ class RawCOUNTERReport:
 
         # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
         if normalized_resource_data:
-            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, resource_data)
+            comparing_DOI_and_ISBN_table = comparing_DOI_and_ISBN.compute(candidate_matches, new_resource_data)
         logging.debug(f"DOI and ISBN comparison results:\n{comparing_DOI_and_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records` Based on DOI and ISBN
@@ -212,9 +212,9 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data)
+            comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, new_resource_data)
         logging.debug(f"DOI and ISSNs comparison results:\n{comparing_DOI_and_ISSNs_table}")
 
         #Subsection: Add Matches to `matched_records` Based on DOI and ISSNs
@@ -238,9 +238,9 @@ class RawCOUNTERReport:
         comparing_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data)
+            comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, new_resource_data)
         logging.debug(f"ISBN comparison results:\n{comparing_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records` Based on ISBN
@@ -263,9 +263,9 @@ class RawCOUNTERReport:
         comparing_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data)
+            comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, new_resource_data)
         logging.debug(f"ISSNs comparison results:\n{comparing_ISSNs_table}")
 
         #Subsection: Add Matches to `matched_records` Based on ISSNs
@@ -288,9 +288,9 @@ class RawCOUNTERReport:
         comparing_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data)
+            comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, new_resource_data)
         logging.debug(f"Print ISSN comparison results:\n{comparing_print_ISSN_table}")
 
         #Subsection: Add Matches to `matched_records` Based on Print ISSN
@@ -313,9 +313,9 @@ class RawCOUNTERReport:
         comparing_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data)
+            comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, new_resource_data)
         logging.debug(f"Online ISSN comparison results:\n{comparing_online_ISSN_table}")
 
         #Subsection: Add Matches to `matched_records` Based on Online ISSN
@@ -337,14 +337,14 @@ class RawCOUNTERReport:
         comparing_database_names.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
-            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_database_names_table = comparing_database_names.compute(candidate_matches, resource_data)
+            comparing_database_names_table = comparing_database_names.compute(candidate_matches, new_resource_data)
         logging.debug(f"Database names high matching threshold comparison results:\n{comparing_database_names_table}")
 
         #Subsection: Filter the Comparison Results
-        comparing_database_names_table['index_zero_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Data_Type'])
-        comparing_database_names_table['index_one_data_type'] = comparing_database_names_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Data_Type'])
+        comparing_database_names_table['index_zero_data_type'] = comparing_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
+        comparing_database_names_table['index_one_data_type'] = comparing_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
         database_names_matches_table = comparing_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
             (comparing_database_names_table['Resource_Name'] == 1) &
             (comparing_database_names_table['Data_Type'] == 1) &
@@ -355,8 +355,8 @@ class RawCOUNTERReport:
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
         database_names_matches = database_names_matches_table.index.tolist()
         logging.info(f"Database names high matching threshold record pairs: {database_names_matches}")
-        database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
-        database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+        database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         for match in database_names_matches:
@@ -390,15 +390,15 @@ class RawCOUNTERReport:
         comparing_names_and_partials.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
         if normalized_resource_data:
-            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
+            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, resource_data)
+            comparing_names_and_partials_table = comparing_names_and_partials.compute(candidate_matches, new_resource_data)
         logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{comparing_names_and_partials_table}")
 
         #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
         #ALERT: See note in tests.test_RawCOUNTERReport about memory
-        comparing_names_and_partials_table['index_zero_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[0], 'Resource_Name'])
-        comparing_names_and_partials_table['index_one_name'] = comparing_names_and_partials_table.index.map(lambda index_value: resource_data.loc[index_value[1], 'Resource_Name'])
+        comparing_names_and_partials_table['index_zero_name'] = comparing_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        comparing_names_and_partials_table['index_one_name'] = comparing_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
         comparing_names_and_partials_table.dropna(
             axis='index',
@@ -455,16 +455,16 @@ class RawCOUNTERReport:
         for match in fuzzy_match_record_pairs:
             fuzzy_match_records.append(list((  # The list constructor takes an iterable, so the values going into the list must be wrapped in a tuple
                 match,
-                resource_data.loc[match[0]]['Resource_Name'],
-                resource_data.loc[match[1]]['Resource_Name'],
-                resource_data.loc[match[0]]['DOI'],
-                resource_data.loc[match[1]]['DOI'],
-                resource_data.loc[match[0]]['ISBN'],
-                resource_data.loc[match[1]]['ISBN'],
-                resource_data.loc[match[0]]['Print_ISSN'],
-                resource_data.loc[match[1]]['Print_ISSN'],
-                resource_data.loc[match[0]]['Online_ISSN'],
-                resource_data.loc[match[1]]['Online_ISSN'],
+                new_resource_data.loc[match[0]]['Resource_Name'],
+                new_resource_data.loc[match[1]]['Resource_Name'],
+                new_resource_data.loc[match[0]]['DOI'],
+                new_resource_data.loc[match[1]]['DOI'],
+                new_resource_data.loc[match[0]]['ISBN'],
+                new_resource_data.loc[match[1]]['ISBN'],
+                new_resource_data.loc[match[0]]['Print_ISSN'],
+                new_resource_data.loc[match[1]]['Print_ISSN'],
+                new_resource_data.loc[match[0]]['Online_ISSN'],
+                new_resource_data.loc[match[1]]['Online_ISSN'],
             )))
         fuzzy_match_table = pd.DataFrame(
             fuzzy_match_records,
