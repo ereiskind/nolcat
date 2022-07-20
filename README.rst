@@ -9,6 +9,8 @@ pd.read_csv(
     encoding_errors='backslashreplace',
 )
 
+This change will need to include changing the format of test data files and likely the content of text in both the conftest fixtures and their binary representation.
+
 To-Do List
 **********
 
