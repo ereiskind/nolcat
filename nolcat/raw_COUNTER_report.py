@@ -147,14 +147,11 @@ class RawCOUNTERReport:
         logging.debug(f"The new data for comparison:\n{new_resource_data}")
 
 
-        """
         #Section: Set Up Recordlinkage Matching
         #Subsection: Create Collections for Holding Matches
-        # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata and computer matching algorithms, however, means a simple list of the record index pairs won't work.
-        matched_records = set()
-            # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
-        matches_to_manually_confirm = dict()
-            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Caretesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
+        # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata, and computer matching algorithms, however, means a simple list of the record index pairs won't work.
+        matched_records = set()  # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
+        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
         # {
         #     (first resource metadata, second resource metadata): [
         #         (record index pair),
@@ -168,14 +165,13 @@ class RawCOUNTERReport:
 
         #Subsection: Create MultiIndex Object
         indexing = recordlinkage.Index()
-        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time,but the alternative commits to matching on a certain field
+        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time, but the alternative commits to matching on a certain field
         if normalized_resource_data:
             candidate_matches = indexing.index(new_resource_data, normalized_resource_data)  #Alert: Not tested
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
         else:
             candidate_matches = indexing.index(new_resource_data)
-        
-
+        """
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
         # recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, so matching on all fields doesn't produce much in the way of results because of the rarity of resources which have both ISSN and ISBN values
         #Subsection: Create Comparison on DOI and ISBN
