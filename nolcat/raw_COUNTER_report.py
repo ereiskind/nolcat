@@ -164,8 +164,9 @@ class RawCOUNTERReport:
         # }
 
         #Subsection: Create MultiIndex Object
+        # This method of indexing creates a object using a Cartesian product of all records in the dataframe. It is memory and time intensive--it can issue a warning about taking time--but the resulting object can be used in the compare method for any and all combinations of fields. Since a resource having values for all metadata fields is highly unlikely and recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, multiple comparisons are needed for thorough deduping; this more comprehensive indexing can be used for all comparisons, so indexing only needs to happen once. (In regards to null values, the `missing_value=1` argument makes any comparison where one of the values is null a match.)
         indexing = recordlinkage.Index()
-        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time, but the alternative commits to matching on a certain field
+        indexing.full()
         if normalized_resource_data:
             candidate_matches = indexing.index(new_resource_data, normalized_resource_data)  #Alert: Not tested
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
@@ -173,7 +174,6 @@ class RawCOUNTERReport:
             candidate_matches = indexing.index(new_resource_data)
         """
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
-        # recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, so matching on all fields doesn't produce much in the way of results because of the rarity of resources which have both ISSN and ISBN values
         #Subsection: Create Comparison on DOI and ISBN
         logging.info("**Comparing based on DOI and ISBN**")
         comparing_DOI_and_ISBN = recordlinkage.Compare()
