@@ -1,168 +1,83 @@
 Resource_Name,Publisher,Platform,Metric_Type,Data_Type,Usage_Date,Usage_Count
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-07-01,2636
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-08-01,1069
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-09-01,2345
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-10-01,5861
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-11-01,3425
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-12-01,2006
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-01-01,1769
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-02-01,3339
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-03-01,3362
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-04-01,2880
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-05-01,1349
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2018-06-01,2663
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-07-01,47
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-08-01,16
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-09-01,32
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-10-01,91
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-11-01,96
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-12-01,40
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-01-01,55
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-02-01,97
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-03-01,102
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-04-01,106
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-05-01,62
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2018-06-01,25
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-07-01,94
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-08-01,27
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-09-01,78
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-10-01,63
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-11-01,24
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-12-01,38
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-01-01,21
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-02-01,67
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-03-01,50
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-04-01,61
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-05-01,24
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2018-06-01,12
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2017-08-01,431
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2017-09-01,2348
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2017-10-01,5911
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2017-11-01,3420
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2017-12-01,2046
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-01-01,1834
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-02-01,3341
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-03-01,3351
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-04-01,2852
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-05-01,1338
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Regular Searches,Database,2018-06-01,2709
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2017-09-01,30
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2017-10-01,71
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2017-11-01,25
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2017-12-01,22
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-01-01,14
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-02-01,31
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-03-01,24
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-04-01,38
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-05-01,18
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Result Clicks,Database,2018-06-01,25
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2017-08-01,9
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2017-09-01,15
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2017-10-01,52
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2017-11-01,19
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2017-12-01,10
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-01-01,14
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-02-01,20
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-03-01,25
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-04-01,21
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-05-01,20
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection,ProQuest,ProQuest,Record Views,Database,2018-06-01,15
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2017-08-01,431
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2017-09-01,2348
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2017-10-01,5911
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2017-11-01,3420
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2017-12-01,2046
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-01-01,1834
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-02-01,3341
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-03-01,3351
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-04-01,2852
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-05-01,1338
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Regular Searches,Database,2018-06-01,2709
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2017-09-01,17
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2017-10-01,20
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2017-11-01,16
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2017-12-01,13
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-01-01,14
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-02-01,16
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-03-01,11
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-04-01,13
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-05-01,16
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Result Clicks,Database,2018-06-01,13
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2017-09-01,19
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2017-10-01,17
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2017-11-01,16
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2017-12-01,9
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-01-01,12
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-02-01,11
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-03-01,12
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-04-01,18
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-05-01,9
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2,ProQuest,ProQuest,Record Views,Database,2018-06-01,10
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2017-08-01,431
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2017-09-01,2348
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2017-10-01,5911
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2017-11-01,3420
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2017-12-01,2046
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-01-01,1834
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-02-01,3341
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-03-01,3351
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-04-01,2852
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-05-01,1338
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Regular Searches,Database,2018-06-01,2709
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2017-08-01,10
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2017-09-01,17
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2017-10-01,50
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2017-11-01,12
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2017-12-01,34
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-01-01,19
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-02-01,23
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-03-01,27
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-04-01,20
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-05-01,12
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Result Clicks,Database,2018-06-01,19
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2017-08-01,11
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2017-10-01,27
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2017-11-01,13
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2017-12-01,16
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-01-01,9
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-02-01,11
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-03-01,17
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-04-01,13
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-05-01,11
-Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3,ProQuest,ProQuest,Record Views,Database,2018-06-01,16
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-07-01,4000
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-08-01,1637
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-09-01,3850
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-10-01,7683
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-11-01,4932
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-12-01,2746
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-01-01,3171
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-02-01,5732
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-03-01,4819
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-04-01,4140
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-05-01,2295
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2018-06-01,3835
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-07-01,1370
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-08-01,733
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-09-01,1877
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-10-01,2616
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-11-01,1891
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-12-01,978
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-01-01,4840
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-02-01,1932
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-03-01,1067
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-04-01,849
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-05-01,1134
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2018-06-01,1352
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-07-01,1182
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-08-01,670
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-09-01,1823
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-10-01,2896
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-11-01,1977
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-12-01,852
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-01-01,3966
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-02-01,1881
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-03-01,1067
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-04-01,835
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-05-01,991
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2018-06-01,1310
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-07-01,636
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-08-01,387
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-09-01,773
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-10-01,1972
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-11-01,1222
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-12-01,884
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-01-01,526
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-02-01,1349
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-03-01,1654
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-04-01,1982
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-05-01,352
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-06-01,856
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-07-01,1221
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-08-01,33161
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-09-01,87561
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-10-01,165829
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-11-01,133629
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-12-01,76655
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-01-01,91574
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-02-01,140690
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-03-01,141310
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-04-01,155510
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-05-01,52981
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-06-01,71998
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-07-01,458
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-08-01,26210
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-09-01,3099
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-10-01,6048
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-11-01,4132
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-12-01,2200
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-01-01,2198
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-02-01,3996
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-03-01,5450
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-04-01,4551
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-05-01,1604
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-06-01,3088
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-07-01,283
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-08-01,24214
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-09-01,1853
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-10-01,3639
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-11-01,2281
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-12-01,1172
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-01-01,1119
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-02-01,2432
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-03-01,3595
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-04-01,2656
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-05-01,875
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-06-01,1933
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-07-01,1222
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-08-01,33147
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-09-01,87513
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-10-01,165715
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-11-01,133592
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-12-01,76597
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-01-01,91574
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-02-01,140544
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-03-01,141146
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-04-01,155241
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-05-01,52867
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-06-01,71850
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2017-08-01,5
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2017-09-01,82
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2017-10-01,260
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2017-11-01,183
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2017-12-01,73
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-01-01,88
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-02-01,222
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-03-01,290
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-04-01,226
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-05-01,93
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-06-01,102
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2017-08-01,3
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2017-09-01,48
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2017-10-01,183
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2017-11-01,103
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2017-12-01,44
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-01-01,53
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-02-01,141
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-03-01,175
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-04-01,147
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-05-01,50
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-06-01,61

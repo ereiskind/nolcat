@@ -1,41 +1,49 @@
 Platform,Publisher,Metric_Type,Data_Type,Usage_Date,Usage_Count
-ProQuest,ProQuest,Regular Searches,Platform,2018-07-01,22419
-ProQuest,ProQuest,Regular Searches,Platform,2018-08-01,7674
-ProQuest,ProQuest,Regular Searches,Platform,2018-09-01,19024
-ProQuest,ProQuest,Regular Searches,Platform,2018-10-01,22485
-ProQuest,ProQuest,Regular Searches,Platform,2018-11-01,36042
-ProQuest,ProQuest,Regular Searches,Platform,2018-12-01,13829
-ProQuest,ProQuest,Regular Searches,Platform,2019-01-01,12300
-ProQuest,ProQuest,Regular Searches,Platform,2019-02-01,20808
-ProQuest,ProQuest,Regular Searches,Platform,2019-03-01,25618
-ProQuest,ProQuest,Regular Searches,Platform,2019-04-01,14969
-ProQuest,ProQuest,Regular Searches,Platform,2019-05-01,7044
-ProQuest,ProQuest,Regular Searches,Platform,2019-06-01,14819
-ProQuest,ProQuest,Searches-federated and automated,Platform,2018-10-01,31
-ProQuest,ProQuest,Searches-federated and automated,Platform,2018-11-01,25
-ProQuest,ProQuest,Searches-federated and automated,Platform,2018-12-01,22
-ProQuest,ProQuest,Searches-federated and automated,Platform,2019-01-01,61
-ProQuest,ProQuest,Result Clicks,Platform,2018-07-01,37752
-ProQuest,ProQuest,Result Clicks,Platform,2018-08-01,66370
-ProQuest,ProQuest,Result Clicks,Platform,2018-09-01,32795
-ProQuest,ProQuest,Result Clicks,Platform,2018-10-01,33022
-ProQuest,ProQuest,Result Clicks,Platform,2018-11-01,20635
-ProQuest,ProQuest,Result Clicks,Platform,2018-12-01,71407
-ProQuest,ProQuest,Result Clicks,Platform,2019-01-01,18176
-ProQuest,ProQuest,Result Clicks,Platform,2019-02-01,16704
-ProQuest,ProQuest,Result Clicks,Platform,2019-03-01,41080
-ProQuest,ProQuest,Result Clicks,Platform,2019-04-01,32714
-ProQuest,ProQuest,Result Clicks,Platform,2019-05-01,45157
-ProQuest,ProQuest,Result Clicks,Platform,2019-06-01,106106
-ProQuest,ProQuest,Record Views,Platform,2018-07-01,36089
-ProQuest,ProQuest,Record Views,Platform,2018-08-01,68854
-ProQuest,ProQuest,Record Views,Platform,2018-09-01,31439
-ProQuest,ProQuest,Record Views,Platform,2018-10-01,29199
-ProQuest,ProQuest,Record Views,Platform,2018-11-01,20111
-ProQuest,ProQuest,Record Views,Platform,2018-12-01,71550
-ProQuest,ProQuest,Record Views,Platform,2019-01-01,34310
-ProQuest,ProQuest,Record Views,Platform,2019-02-01,15415
-ProQuest,ProQuest,Record Views,Platform,2019-03-01,49445
-ProQuest,ProQuest,Record Views,Platform,2019-04-01,29908
-ProQuest,ProQuest,Record Views,Platform,2019-05-01,63854
-ProQuest,ProQuest,Record Views,Platform,2019-06-01,84625
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-07-01,134563
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-08-01,60684
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-09-01,144832
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-10-01,236356
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-11-01,182900
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-12-01,110466
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-01-01,109701
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-02-01,195926
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-03-01,178243
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-04-01,191570
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-05-01,63681
+EBSCOhost,EBSCO,Regular Searches,Platform,2019-06-01,90847
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-07-01,276
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-08-01,478
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-09-01,2501
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-10-01,1487
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-11-01,99907
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-12-01,98964
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-01-01,94000
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-02-01,159632
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-03-01,156859
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-04-01,25797
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-05-01,294
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2019-06-01,412
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-07-01,171394
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-08-01,52261
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-09-01,166349
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-10-01,325674
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-11-01,243973
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-12-01,125570
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-01-01,115949
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-02-01,246154
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-03-01,231323
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-04-01,241848
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-05-01,73698
+EBSCOhost,EBSCO,Result Clicks,Platform,2019-06-01,137723
+EBSCOhost,EBSCO,Record Views,Platform,2018-07-01,93795
+EBSCOhost,EBSCO,Record Views,Platform,2018-08-01,24875
+EBSCOhost,EBSCO,Record Views,Platform,2018-09-01,90581
+EBSCOhost,EBSCO,Record Views,Platform,2018-10-01,191319
+EBSCOhost,EBSCO,Record Views,Platform,2018-11-01,129689
+EBSCOhost,EBSCO,Record Views,Platform,2018-12-01,61501
+EBSCOhost,EBSCO,Record Views,Platform,2019-01-01,55190
+EBSCOhost,EBSCO,Record Views,Platform,2019-02-01,136396
+EBSCOhost,EBSCO,Record Views,Platform,2019-03-01,118241
+EBSCOhost,EBSCO,Record Views,Platform,2019-04-01,118212
+EBSCOhost,EBSCO,Record Views,Platform,2019-05-01,34674
+EBSCOhost,EBSCO,Record Views,Platform,2019-06-01,78824

@@ -1,38 +1,46 @@
 Platform,Publisher,Metric_Type,Data_Type,Usage_Date,Usage_Count
-ProQuest,ProQuest,Regular Searches,Platform,2016-07-01,20103
-ProQuest,ProQuest,Regular Searches,Platform,2016-08-01,10413
-ProQuest,ProQuest,Regular Searches,Platform,2016-09-01,19559
-ProQuest,ProQuest,Regular Searches,Platform,2016-10-01,27121
-ProQuest,ProQuest,Regular Searches,Platform,2016-11-01,43473
-ProQuest,ProQuest,Regular Searches,Platform,2016-12-01,11490
-ProQuest,ProQuest,Regular Searches,Platform,2017-01-01,12415
-ProQuest,ProQuest,Regular Searches,Platform,2017-02-01,22544
-ProQuest,ProQuest,Regular Searches,Platform,2017-03-01,28193
-ProQuest,ProQuest,Regular Searches,Platform,2017-04-01,22959
-ProQuest,ProQuest,Regular Searches,Platform,2017-05-01,10087
-ProQuest,ProQuest,Regular Searches,Platform,2017-06-01,12638
-ProQuest,ProQuest,Searches-federated and automated,Platform,2016-09-01,75
-ProQuest,ProQuest,Result Clicks,Platform,2016-07-01,14003
-ProQuest,ProQuest,Result Clicks,Platform,2016-08-01,12757
-ProQuest,ProQuest,Result Clicks,Platform,2016-09-01,25926
-ProQuest,ProQuest,Result Clicks,Platform,2016-10-01,19349
-ProQuest,ProQuest,Result Clicks,Platform,2016-11-01,15032
-ProQuest,ProQuest,Result Clicks,Platform,2016-12-01,11822
-ProQuest,ProQuest,Result Clicks,Platform,2017-01-01,11935
-ProQuest,ProQuest,Result Clicks,Platform,2017-02-01,14702
-ProQuest,ProQuest,Result Clicks,Platform,2017-03-01,21949
-ProQuest,ProQuest,Result Clicks,Platform,2017-04-01,13981
-ProQuest,ProQuest,Result Clicks,Platform,2017-05-01,26799
-ProQuest,ProQuest,Result Clicks,Platform,2017-06-01,19748
-ProQuest,ProQuest,Record Views,Platform,2016-07-01,10446
-ProQuest,ProQuest,Record Views,Platform,2016-08-01,10956
-ProQuest,ProQuest,Record Views,Platform,2016-09-01,23612
-ProQuest,ProQuest,Record Views,Platform,2016-10-01,18843
-ProQuest,ProQuest,Record Views,Platform,2016-11-01,13878
-ProQuest,ProQuest,Record Views,Platform,2016-12-01,11790
-ProQuest,ProQuest,Record Views,Platform,2017-01-01,10209
-ProQuest,ProQuest,Record Views,Platform,2017-02-01,13256
-ProQuest,ProQuest,Record Views,Platform,2017-03-01,15489
-ProQuest,ProQuest,Record Views,Platform,2017-04-01,11339
-ProQuest,ProQuest,Record Views,Platform,2017-05-01,24413
-ProQuest,ProQuest,Record Views,Platform,2017-06-01,17402
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-07-01,30433
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-08-01,9053
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-09-01,36367
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-10-01,69689
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-11-01,33599
+EBSCOhost,EBSCO,Regular Searches,Platform,2016-12-01,14085
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-01-01,15801
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-02-01,67131
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-03-01,49139
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-04-01,33427
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-05-01,9791
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-06-01,16969
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2016-10-01,11
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2016-11-01,103
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2016-12-01,149
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-01-01,183
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-02-01,99
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-03-01,95
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-04-01,23
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-05-01,25
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-06-01,785
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-07-01,61323
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-08-01,19971
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-09-01,70425
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-10-01,149363
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-11-01,84873
+EBSCOhost,EBSCO,Result Clicks,Platform,2016-12-01,41651
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-01-01,39441
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-02-01,131331
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-03-01,116237
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-04-01,85421
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-05-01,25277
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-06-01,34315
+EBSCOhost,EBSCO,Record Views,Platform,2016-07-01,36581
+EBSCOhost,EBSCO,Record Views,Platform,2016-08-01,10393
+EBSCOhost,EBSCO,Record Views,Platform,2016-09-01,44085
+EBSCOhost,EBSCO,Record Views,Platform,2016-10-01,92801
+EBSCOhost,EBSCO,Record Views,Platform,2016-11-01,48625
+EBSCOhost,EBSCO,Record Views,Platform,2016-12-01,23315
+EBSCOhost,EBSCO,Record Views,Platform,2017-01-01,22029
+EBSCOhost,EBSCO,Record Views,Platform,2017-02-01,80925
+EBSCOhost,EBSCO,Record Views,Platform,2017-03-01,67579
+EBSCOhost,EBSCO,Record Views,Platform,2017-04-01,48643
+EBSCOhost,EBSCO,Record Views,Platform,2017-05-01,13597
+EBSCOhost,EBSCO,Record Views,Platform,2017-06-01,19381

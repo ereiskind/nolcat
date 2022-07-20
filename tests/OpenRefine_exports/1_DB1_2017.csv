@@ -1,78 +1,48 @@
 Resource_Name,Publisher,Platform,Metric_Type,Data_Type,Usage_Date,Usage_Count
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-07-01,1888
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-08-01,1983
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-09-01,2287
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-10-01,3493
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-11-01,4466
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2016-12-01,1596
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-01-01,1786
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-02-01,3600
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-03-01,4275
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-04-01,4183
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-05-01,1466
-Performing Arts Periodicals Database,ProQuest,ProQuest,Regular Searches,Database,2017-06-01,1781
-Performing Arts Periodicals Database,ProQuest,ProQuest,Searches-federated and automated,Database,2016-09-01,38
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-07-01,10
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-08-01,21
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-09-01,24
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-10-01,283
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-11-01,115
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2016-12-01,14
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-01-01,22
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-02-01,83
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-03-01,93
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-04-01,40
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-05-01,15
-Performing Arts Periodicals Database,ProQuest,ProQuest,Result Clicks,Database,2017-06-01,6
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-07-01,12
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-08-01,34
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-09-01,25
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-10-01,191
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-11-01,119
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2016-12-01,25
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-01-01,22
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-02-01,98
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-03-01,84
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-04-01,64
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-05-01,16
-Performing Arts Periodicals Database,ProQuest,ProQuest,Record Views,Database,2017-06-01,23
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-07-01,3762
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-08-01,2767
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-09-01,5038
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-10-01,6577
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-11-01,6614
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2016-12-01,2868
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-01-01,3316
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-02-01,351
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Searches-federated and automated,Database,2016-09-01,38
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-07-01,3503
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-08-01,3176
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-09-01,8685
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-10-01,3165
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-11-01,2224
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2016-12-01,1360
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-01-01,1457
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-02-01,124
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-07-01,3511
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-08-01,2908
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-09-01,8745
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-10-01,3435
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-11-01,2506
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2016-12-01,1434
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-01-01,1291
-ProQuest Social Sciences Premium Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-02-01,109
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-02-01,6184
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-03-01,6637
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-04-01,6075
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-05-01,2463
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Regular Searches,Database,2017-06-01,3322
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-02-01,2250
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-03-01,2214
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-04-01,1506
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-05-01,6997
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Result Clicks,Database,2017-06-01,5145
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-02-01,2219
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-03-01,2108
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-04-01,1282
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-05-01,6850
-Social Science Premium Collection->Education Collection->ERIC,ProQuest,ProQuest,Record Views,Database,2017-06-01,4824
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-07-01,897
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-08-01,721
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-09-01,1377
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-10-01,1635
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-11-01,1059
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2016-12-01,687
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-01-01,759
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-02-01,1529
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-03-01,1487
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-04-01,1041
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-05-01,551
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2017-06-01,501
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-08-01,7
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-09-01,25
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-10-01,17
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-11-01,139
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2016-12-01,145
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-01-01,195
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-02-01,127
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-03-01,213
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-04-01,179
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-05-01,725
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2017-06-01,1005
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-07-01,523
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-08-01,267
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-09-01,977
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-10-01,1151
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-11-01,785
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2016-12-01,389
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-01-01,489
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-02-01,813
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-03-01,981
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-04-01,651
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-05-01,253
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2017-06-01,651
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-07-01,331
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-08-01,191
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-09-01,609
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-10-01,699
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-11-01,521
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2016-12-01,211
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-01-01,299
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-02-01,485
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-03-01,597
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-04-01,397
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-05-01,127
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2017-06-01,503

@@ -1,26 +1,52 @@
 Resource_Name,Publisher,Platform,DOI,Proprietary_ID,Print_ISSN,Online_ISSN,Metric_Type,Data_Type,Section_Type,Usage_Date,Usage_Count
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-07-01,14
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-08-01,3
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-09-01,4
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,28
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-11-01,27
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-12-01,12
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-01-01,6
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-02-01,8
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,23
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-04-01,32
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-05-01,5
-Library Journal,Media Source  Inc.,ProQuest,NULL,NULL,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-06-01,11
-New Scientist,Reed Business Information Limited,ProQuest,NULL,NULL,0262-4079,NULL,Successful Full-text Article Requests,Journal,Article,2016-09-01,3
-New Scientist,Reed Business Information Limited,ProQuest,NULL,NULL,0262-4079,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,3
-New Scientist,Reed Business Information Limited,ProQuest,NULL,NULL,0262-4079,NULL,Successful Full-text Article Requests,Journal,Article,2017-02-01,5
-New Scientist,Reed Business Information Limited,ProQuest,NULL,NULL,0262-4079,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,3
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-07-01,3
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,18
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-11-01,24
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-12-01,26
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-02-01,24
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,23
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-04-01,23
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-05-01,4
-Women and Language,Organization for the Study of Communication Language and Gender,ProQuest,NULL,NULL,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-06-01,12
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-07-01,108
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-08-01,37
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-09-01,80
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,334
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-11-01,124
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2016-12-01,66
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-01-01,56
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-02-01,254
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,210
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-04-01,190
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-05-01,14
+Library Journal,"Library Journals, LLC",EBSCOhost,NULL,45875,0363-0277,NULL,Successful Full-text Article Requests,Journal,Article,2017-06-01,44
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-07-01,64
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-08-01,13
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-09-01,55
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-10-01,337
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-11-01,86
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2016-12-01,11
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2017-01-01,25
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2017-02-01,237
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2017-03-01,137
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2017-04-01,79
+New Scientist,Reed Business Information Ltd,EBSCOhost,NULL,51838,0262-4079,1356-1766,Successful Full-text Article Requests,Journal,Article,2017-06-01,10
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-08-01,2
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,5
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-11-01,21
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2016-12-01,15
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,8
+Women and Language,Michigan Technological University,EBSCOhost,NULL,69983,8755-4550,NULL,Successful Full-text Article Requests,Journal,Article,2017-04-01,2
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2016-07-01,8
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2016-09-01,5
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2016-10-01,15
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2016-11-01,2
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2017-01-01,3
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2017-02-01,8
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2017-03-01,4
+Yale Law Journal,Yale Law Journal,EBSCOhost,NULL,70693,0044-0094,1939-8611,Successful Full-text Article Requests,Journal,Article,2017-06-01,3
+Ágora: Estudos Clássicos em Debate,Universidade de Aveiro,EBSCOhost,NULL,1598020,0874-5498,NULL,Successful Full-text Article Requests,Journal,Article,2016-08-01,3
+???????????? ???????,"Scientific Council of the General Hospital of Piraeus ""Tzaneion""",EBSCOhost,NULL,10152036,1791-1362,2241-1666,Successful Full-text Article Requests,Journal,Article,2016-07-01,3
+??????? ??????????? ???????????? ???????????? ??. ?. ?????,??????????? ??????????????? ?????????? ??????????????? ?????????? ??????? ????????????????? ????????,EBSCOhost,NULL,970011,2223-2095,2310-3698,Successful Full-text Article Requests,Journal,Article,2016-07-01,2
+??????? ??????????? ???????????? ???????????? ??. ?. ?????,??????????? ??????????????? ?????????? ??????????????? ?????????? ??????? ????????????????? ????????,EBSCOhost,NULL,970011,2223-2095,2310-3698,Successful Full-text Article Requests,Journal,Article,2016-08-01,2
+??????? ??????????? ???????????? ???????????? ??. ?. ?????,??????????? ??????????????? ?????????? ??????????????? ?????????? ??????? ????????????????? ????????,EBSCOhost,NULL,970011,2223-2095,2310-3698,Successful Full-text Article Requests,Journal,Article,2016-10-01,3
+??????? ??????????? ???????????? ???????????? ??. ?. ?????,??????????? ??????????????? ?????????? ??????????????? ?????????? ??????? ????????????????? ????????,EBSCOhost,NULL,970011,2223-2095,2310-3698,Successful Full-text Article Requests,Journal,Article,2017-02-01,3
+??????? ??????????? ???????????? ???????????? ??. ?. ?????,??????????? ??????????????? ?????????? ??????????????? ?????????? ??????? ????????????????? ????????,EBSCOhost,NULL,970011,2223-2095,2310-3698,Successful Full-text Article Requests,Journal,Article,2017-03-01,5
+????????? = The Japanese journal of personality,?????????????,EBSCOhost,NULL,144395,1348-8406,1349-6174,Successful Full-text Article Requests,Journal,Article,2016-10-01,2
+????????? = The Japanese journal of personality,?????????????,EBSCOhost,NULL,144395,1348-8406,1349-6174,Successful Full-text Article Requests,Journal,Article,2017-04-01,3
+?????? = Shanghai Archives of Psychiatry,?????????,EBSCOhost,NULL,279947,1002-0829,NULL,Successful Full-text Article Requests,Journal,Article,2016-07-01,3
+?????? = Shanghai Archives of Psychiatry,?????????,EBSCOhost,NULL,279947,1002-0829,NULL,Successful Full-text Article Requests,Journal,Article,2016-10-01,4
+?????? = Shanghai Archives of Psychiatry,?????????,EBSCOhost,NULL,279947,1002-0829,NULL,Successful Full-text Article Requests,Journal,Article,2016-11-01,3
+?????? = Shanghai Archives of Psychiatry,?????????,EBSCOhost,NULL,279947,1002-0829,NULL,Successful Full-text Article Requests,Journal,Article,2016-12-01,3
+?????? = Shanghai Archives of Psychiatry,?????????,EBSCOhost,NULL,279947,1002-0829,NULL,Successful Full-text Article Requests,Journal,Article,2017-03-01,2
