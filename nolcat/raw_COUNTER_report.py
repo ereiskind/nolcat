@@ -18,7 +18,7 @@ class RawCOUNTERReport:
     
     Methods:
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
-        load_data_into_database: Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations.
+        load_data_into_database: Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations.
     
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
@@ -27,13 +27,17 @@ class RawCOUNTERReport:
     def __init__(self, df):
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
 
-        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
+        The constructor for a RawCOUNTERReport object, it can take in objects of multiple other data types:
+        * `werkzeug.datastructures.ImmutableMultiDict` objects, which contain one or more binary files uploaded via Flask
+        * API response objects, which are the result of SUSHI calls
+        * `pandas.core.frame.DataFrame` objects, which are used to test the `perform_deduplication_matching` method in isolation of the constructor
+        Binary files containing COUNTER data must be reformatted, a process explained on the Flask pages where such files can be uploaded, and named with the statistics source ID, the report type, and the fiscal year separated by underscores.
         """
-        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
+        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
             dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):
+            for file in df.getlist('R4_files'):  #ToDo: Make sure this isn't locked to a single Flask input form
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
@@ -41,7 +45,7 @@ class RawCOUNTERReport:
                 # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
                 dataframe = pd.read_excel(
                     file,
-                    #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
+                    #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being put as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
                     engine='openpyxl',
                     dtype={
                         'Resource_Name': 'string',
@@ -72,7 +76,7 @@ class RawCOUNTERReport:
         #ToDo: elif df is an API response object: (R5 SUSHI call response)
             #ToDo: self.report_dataframe = the data from the response object
             #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
-        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # This is used to instantiate RawCOUNTERReport_fixture_from_R4_spreadsheets
+        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":
             self.report_dataframe = df
         else:
             pass  #ToDo: Return an error message and quit the constructor
@@ -104,7 +108,7 @@ class RawCOUNTERReport:
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
         
         Note:
-            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN as well as the data type and possibly the ID from `resources` itself
+            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN, and data type as well as the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
@@ -152,7 +156,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_DOI_and_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
         if normalized_resource_data:
@@ -178,7 +181,6 @@ class RawCOUNTERReport:
         comparing_DOI_and_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_DOI_and_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_DOI_and_ISSNs_table = comparing_DOI_and_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -205,7 +207,6 @@ class RawCOUNTERReport:
         comparing_ISBN.exact('ISBN', 'ISBN', label='ISBN')
         comparing_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_ISBN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISBN_table = comparing_ISBN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -231,7 +232,6 @@ class RawCOUNTERReport:
         comparing_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_ISSNs.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_ISSNs_table = comparing_ISSNs.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -257,7 +257,6 @@ class RawCOUNTERReport:
         comparing_print_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_print_ISSN.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         comparing_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
-        comparing_print_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_print_ISSN_table = comparing_print_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -283,7 +282,6 @@ class RawCOUNTERReport:
         comparing_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         comparing_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         comparing_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        comparing_online_ISSN.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         if normalized_resource_data:
             comparing_online_ISSN_table = comparing_online_ISSN.compute(candidate_matches, resource_data, normalized_resource_data)  #Alert: Not tested
@@ -422,8 +420,6 @@ class RawCOUNTERReport:
             "resource_one_print_ISSN",
             "resource_zero_online_ISSN",
             "resource_one_online_ISSN",
-            "resource_zero_data_type",
-            "resource_one_data_type",
         ]
 
         fuzzy_match_records = []
@@ -440,8 +436,6 @@ class RawCOUNTERReport:
                 resource_data.loc[match[1]]['Print_ISSN'],
                 resource_data.loc[match[0]]['Online_ISSN'],
                 resource_data.loc[match[1]]['Online_ISSN'],
-                resource_data.loc[match[0]]['Data_Type'],
-                resource_data.loc[match[1]]['Data_Type'],
             )))
         fuzzy_match_table = pd.DataFrame(
             fuzzy_match_records,
@@ -463,7 +457,6 @@ class RawCOUNTERReport:
             "resource_one_ISBN",
             "resource_one_print_ISSN",
             "resource_one_online_ISSN",
-            "resource_one_data_type",
         ], dropna=False):
             paired_resource_metadata = list(paired_resource_metadata)
             for i, metadata in enumerate(paired_resource_metadata):  # Changing an index referenced item in `paired_resource_metadata` makes the change independent of the loop 
@@ -482,7 +475,7 @@ class RawCOUNTERReport:
     
 
     def load_data_into_database():
-        """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
+        """Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations."""
         #ToDo: Write a more detailed docstring
         #ToDo: Filter out non-standard metrics
         pass

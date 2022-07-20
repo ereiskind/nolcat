@@ -7,6 +7,7 @@ To-Do List
 High Priority
 =============
 * Write `FiscalYears.create_usage_tracking_records_for_fiscal_year` method (creates AUCT records for the given FY)
+* Library `mysqlclient` installed after `db.engine` line in `session` pytest fixture triggered `ModuleNotFoundError: No module named 'MySQLdb'` error; does this replace the `PyMySQL` library?
 
 Branch: Configure Flask-User
 ----------------------------

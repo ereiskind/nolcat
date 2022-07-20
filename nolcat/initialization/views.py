@@ -14,7 +14,7 @@ import csv
 
 from . import bp
 from ..app import db
-from .forms import InitialRelationDataForm, TestForm
+from .forms import InitialRelationDataForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -121,6 +121,7 @@ def save_historical_collection_tracking_info():
                     #ToDo: "Statistics Source": statisticsSources.statistics_source_name,
                     #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
                 #ToDo: })
+                continue  # To close the block at runtime
         #ToDo: CSV_file.close()
         #ToDo: return render_template('historical-collection-tracking.html')
 
@@ -140,16 +141,7 @@ def determine_if_resources_match():
     #ToDo: historical_data = RawCOUNTERReport(uploaded files)
     #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    form = TestForm()
-    logging.info(f"\nerrors before if-else: {form.errors}\n")
-    if form.validate_on_submit():  # This is when the form has been submitted
-        logging.info(f"\nerrors in validate_on_submit: {form.errors}\n")
-        return redirect(url_for('data_load_complete'))
-    elif request.method == 'POST':  # This is when the function is receiving the data to render the form
-        logging.info(f"\nerrors in method==POST: {form.errors}\n")
-        return render_template('select-matches.html', form=form)
-    else:
-        return abort(404)
+    return render_template('select-matches.html')
 
 
 @bp.route('/database-creation-complete')
