@@ -142,8 +142,8 @@ class RawCOUNTERReport:
         
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
-        # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
-        new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Platform']], index=self.report_dataframe.index)
+        # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, data type, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
+        new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', 'Platform']], index=self.report_dataframe.index)
         logging.debug(f"The new data for comparison:\n{new_resource_data}")
 
 
