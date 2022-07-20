@@ -17,6 +17,7 @@ class RawCOUNTERReport:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
     
     Methods:
+        create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
         load_data_into_database: Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations.
     
@@ -97,27 +98,58 @@ class RawCOUNTERReport:
     
 
     def create_normalized_resource_data_argument(self):
-        """Creates a dataframe with the default metadata values of existing resources.
+        """Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
 
-        The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for those resources that have metadata in the resourceMetadata relation, pull the values where `default` is true and assign them to the appropriate field, otherwise get the platform name and assign it to the appropriate field.
+        The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for each resource, the data required for deduplication is pulled from the database and assigned to the appropriate fields. 
 
         Returns:
-            dataframe: a dataframe with all resources.resource_ID values and their default metadata
+            dataframe: a dataframe with all resources.resource_ID values along with their default metadata, platform names, and data types
         """
-        #ToDo: df_values = []
-        #ToDo: df_fields = [resource ID, metadata values, platform]
+        #Section: Set Up the Dataframe
         #ToDo: Get list of resources.resource_ID
+        #ToDo: fields_and_data = {
+            # 'Resource_Name': None,
+            # 'DOI': None,
+            # 'ISBN': None,
+            # 'Print_ISSN': None,
+            # 'Online_ISSN': None,
+            # 'Data_Type': None,
+            # 'Platform': None,
+        #ToDo: }
+        #ToDo: df_content = dict()
+        #ToDo: for ID in resources.resource_ID:
+            #ToDo: df_content[ID] = fields_and_data
+        #ToDo: df = pd.DataFrame(df_content).transpose()
+
+
+        #Section: Get the Metadata Values
         #ToDo: Get set of resourceMetadata.resource_ID
         #ToDo: for resource ID in set:
             #ToDo: `SELECT * FROM resourceMetadata WHERE resource_ID={resource_ID} AND default=True`
-            #ToDo: For each of the possible `metadata_field` values `resource_name`, `DOI`, `ISBN`, `print_ISSN`, and `online_ISSN`, get the corresponding value from the dataframe above
-            #ToDo: Create list with all values according to the order of df_fields
-            #ToDo: Append list to df_values
-        #ToDo: for resource ID not in set:
+            #ToDo: For each possible `metadata_field` values `resource_name`, `DOI`, `ISBN`, `print_ISSN`, and `online_ISSN`, set df[resource ID][metadata_field] = metadata_value
+        
+
+        #Section: Get the Platforms
+        #ToDo: for ID in resources.resource_ID:
             #ToDo: `SELECT platform FROM resourcePlatforms WHERE resource_ID={resource_ID}`
-            #ToDo: Make list with resource ID at start, platform from above at end, and a `None` for each metadata value
-            #ToDo: Append list to df_values
-        #ToDo: Create dataframe from df_values and df_fields
+            #ToDo: df[ID]['Platform'] = above
+
+
+        #Section: Get the Data Types
+        #ToDo: for ID in resources.resource_ID:
+            #ToDo: `SELECT
+                # resourcePlatforms.resource_ID,
+                # resourcePlatforms.resource_platform_ID,
+                # usageData.data_type
+                # (frequency counts for data types should also be included)
+                # FROM resourcePlatforms
+                # JOIN usageData ON resourcePlatforms.resource_platform_ID = usageData.resource_platform_ID
+                # GROUP BY resourcePlatforms.resource_ID={resource_ID} (probably actually needs to be split up into a filter clause as well)
+            #ToDo: `
+            #ToDo: if only one data type returned:
+                #ToDo: df[ID]['Data_type'] = data type returned
+            #ToDo: else:
+                #ToDo: df[ID]['Data_type'] = data type returned most frequently
         pass
     
 

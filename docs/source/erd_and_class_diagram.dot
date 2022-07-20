@@ -271,6 +271,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
+        create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }
