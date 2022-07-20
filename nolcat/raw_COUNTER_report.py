@@ -141,11 +141,13 @@ class RawCOUNTERReport:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
         
 
-        """
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
-        resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type']], index=self.report_dataframe.index)
+        # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
+        new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Platform']], index=self.report_dataframe.index)
+        logging.debug(f"The new data for comparison:\n{new_resource_data}")
 
 
+        """
         #Section: Set Up Recordlinkage Matching
         #Subsection: Create Collections for Holding Matches
         # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata and computer matching algorithms, however, means a simple list of the record index pairs won't work.
