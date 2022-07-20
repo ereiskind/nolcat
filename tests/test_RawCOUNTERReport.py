@@ -75,9 +75,9 @@ def test_perform_deduplication_matching(R4_RawCOUNTERReport_fixture):
     """Tests the `perform_deduplication_matching` method when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
     #ALERT: On a workstation with 8GB RAM, this test fails with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the test successfully
     #ToDo: Do versions of this test using R5 data and combined data need to be created?
-    #ToDo: result = R4_RawCOUNTERReport_fixture.perform_deduplication_matching()
+    result = R4_RawCOUNTERReport_fixture.perform_deduplication_matching()
     #ToDo: assert result is equal to the same as literal value it should be
-    pass
+    assert True
 
 
 #ToDo: Test `perform_deduplication_matching` method with a `normalized_resource_data` value
