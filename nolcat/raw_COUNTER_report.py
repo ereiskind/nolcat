@@ -204,6 +204,16 @@ class RawCOUNTERReport:
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
         else:
             candidate_matches = indexing.index(new_resource_data)
+        
+        #ToDo: DOI and ISBN exact matches -> matched_records
+        #ToDo: DOI, print ISSN, and online ISSN exact matches -> matched_records
+        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
+        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
+        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
         """
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
         #Subsection: Create Comparison on DOI and ISBN
