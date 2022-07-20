@@ -44,6 +44,7 @@ def R4_RawCOUNTERReport_fixture():
             infer_datetime_format=True,
             index_col=0,  # The index column in the CSV has no name, so it must be referenced by index
     )
+    #ToDo: Perform methods `.encode('utf-8').decode('unicode-escape')` on all fields that might have non-ASCII escaped characters
     raw_report = RawCOUNTERReport(df)
     yield raw_report
 

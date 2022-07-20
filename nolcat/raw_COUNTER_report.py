@@ -62,6 +62,9 @@ class RawCOUNTERReport:
                         # Usage_Date is fine as default datetime64[ns]
                         'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
+                    #ToDo: parse_dates=['Usage_Date'],
+                    #ToDo: infer_datetime_format=True,
+                    #ToDo: Perform methods `.encode('utf-8').decode('unicode-escape')` on all fields that might have non-ASCII escaped characters
                     #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
                 )
                 logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line

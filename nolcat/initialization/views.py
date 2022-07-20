@@ -41,6 +41,7 @@ def save_historical_collection_tracking_info():
     """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
     form_being_submitted = InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
+        #ToDo: Are the keyword arguments for data types and encoding plus the `.encode('utf-8').decode('unicode-escape')` methods needed?
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
         vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
         vendorNotes_dataframe = pd.read_csv(form_being_submitted.vendorNotes_CSV.data)
