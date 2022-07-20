@@ -22,7 +22,7 @@ def sample_ImmutableMultiDict():
 def R4_RawCOUNTERReport_fixture():
     """A RawCOUNTERReport object based on a CSV with the data of many reformatted R4 COUNTER reports; a single CSV is used to reduce the number of potential failure points."""
     df = pd.read_csv(
-        Path('CSV_fixtures', 'R4_RawCOUNTERReport_fixture.csv'),
+        Path('tests', 'CSV_fixtures', 'R4_RawCOUNTERReport_fixture.csv'),
         encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
         encoding_errors='backslashreplace',
         dtype={
