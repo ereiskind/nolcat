@@ -205,18 +205,9 @@ class RawCOUNTERReport:
         else:
             candidate_matches = indexing.index(new_resource_data)
         
-        #ToDo: DOI and ISBN exact matches -> matched_records
-        #ToDo: DOI, print ISSN, and online ISSN exact matches -> matched_records
-        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
-        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
-        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
-        """
-        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
-        #Subsection: Create Comparison on DOI and ISBN
+
+        #Section: Find Matches--DOI and ISBN
+        #Subsection: Create Comparison Objects
         logging.info("**Comparing based on DOI and ISBN**")
         compare_DOI_and_ISBN = recordlinkage.Compare()
         compare_DOI_and_ISBN.exact('DOI', 'DOI',label='DOI')
@@ -224,14 +215,15 @@ class RawCOUNTERReport:
         compare_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
-        # Create a dataframe with two record indexes representing the cartesian product results, a field index representing the comparison methods, and individual values representing the results of the comparison on the record pair
+        #Subsection: Return Dataframe with Comparison Results
+        # Record index combines record indexes of records being compared into a multiindex, field index lists comparison objects, and values are the result--`1` is a match, `0` is not a match
         if normalized_resource_data:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data)
         logging.debug(f"DOI and ISBN comparison results:\n{compare_DOI_and_ISBN_table}")
 
-        #Subsection: Add Matches to `matched_records` Based on DOI and ISBN
+        #Subsection: Add Matches to `matched_records`
         DOI_and_ISBN_matches = compare_DOI_and_ISBN_table[compare_DOI_and_ISBN_table.sum(axis='columns') == 5].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
         logging.info(f"DOI and ISBN matching record pairs: {DOI_and_ISBN_matches}")
         if DOI_and_ISBN_matches:
@@ -241,6 +233,15 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on DOI and ISBN")
 
+        #ToDo: DOI, print ISSN, and online ISSN exact matches -> matched_records
+        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
+        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
+        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
+        """
         #Subsection: Create Comparison on DOI and ISSNs
         logging.info("**Comparing based on DOI and ISSNs**")
         compare_DOI_and_ISSNs = recordlinkage.Compare()
