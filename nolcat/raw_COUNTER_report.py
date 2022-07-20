@@ -141,6 +141,7 @@ class RawCOUNTERReport:
             logging.info(f"The normalized resource list:\n{normalized_resource_data}")
         
 
+        """
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
         resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type']], index=self.report_dataframe.index)
 
@@ -498,6 +499,7 @@ class RawCOUNTERReport:
             matched_records,
             matches_to_manually_confirm,
         )
+        """
     
 
     def load_data_into_database():
