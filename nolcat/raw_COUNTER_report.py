@@ -183,16 +183,22 @@ class RawCOUNTERReport:
         #Subsection: Create Collections for Holding Matches
         # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata, and computer matching algorithms, however, means a simple list of the record index pairs won't work.
         matched_records = set()  # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
-        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, the relevant metadata for the resource pairs will be put into tuples which will serve as dictionary keys to dictionary values of lists of tuples containing record indexes matching the resources in the dictionary key, as shown below.
+        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and lists as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each list will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
         # {
-        #     (first resource metadata, second resource metadata): [
+        #     (
+        #         (first resource metadata),
+        #         (second resource metadata)
+        #     ): [
         #         (record index pair),
         #         (record index pair)
         #     ],
-        #     (first resource metadata, second resource metadata): [
+        #     (
+        #         (first resource metadata),
+        #         (second resource metadata)
+        #     ): [
         #         (record index pair),
-        #         (record index pair)
-        #     ]
+        #         (record index pair),
+        #     ],
         # }
 
         #Subsection: Create MultiIndex Object
