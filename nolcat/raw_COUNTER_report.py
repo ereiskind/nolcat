@@ -150,6 +150,7 @@ class RawCOUNTERReport:
                 #ToDo: df[ID]['Data_type'] = data type returned
             #ToDo: else:
                 #ToDo: df[ID]['Data_type'] = data type returned most frequently
+            #ToDo: To use `None` in the string fields, use `df[field name].map(lambda cell_value: None if pd.isna(cell_value) else cell_value)` for the swap and `.astype('string')` to restore the data type
         pass
     
 
@@ -176,6 +177,7 @@ class RawCOUNTERReport:
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
         # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, data type, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
         new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', 'Platform']], index=self.report_dataframe.index)
+        new_resource_data = new_resource_data.applymap(lambda cell_value: None if pd.isna(cell_value) else cell_value).astype('string')
         logging.debug(f"The new data for comparison:\n{new_resource_data}")
 
 
