@@ -291,7 +291,58 @@ class RawCOUNTERReport:
         compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
         logging.debug(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
 
-        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex
+        ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 5].index.tolist()
+        logging.info(f"ISBN matching record pairs: {ISBN_matches}")
+        volume_regex = re.compile(r'\svol\.?(ume)?^\w')
+        edition_regex = re.compile(r'\sed\.?(ition)?^\w')
+
+        if ISBN_matches:
+            for match in ISBN_matches:  #ALERT: Not tested--the R4 test data contains no titles meeting the criteria below 
+                if compare_ISBN_table.loc[match]['index_zero_resource_name'] != compare_ISBN_table.loc[match]['index_zero_resource_name']:
+                    if volume_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or volume_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']):
+                        index_zero_metadata = (
+                            new_resource_data.loc[match[0]]['Resource_Name'],
+                            new_resource_data.loc[match[0]]['DOI'],
+                            new_resource_data.loc[match[0]]['ISBN'],
+                            new_resource_data.loc[match[0]]['Print_ISSN'],
+                            new_resource_data.loc[match[0]]['Online_ISSN'],
+                            new_resource_data.loc[match[0]]['Data_Type'],
+                            new_resource_data.loc[match[0]]['Platform'],
+                        )
+                        if normalized_resource_data:
+                            index_one_metadata = (
+                                normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                normalized_resource_data.loc[match[1]]['DOI'],
+                                normalized_resource_data.loc[match[1]]['ISBN'],
+                                normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                                normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                                normalized_resource_data.loc[match[1]]['Data_Type'],
+                                normalized_resource_data.loc[match[1]]['Platform'],
+                            )
+                        else:
+                            index_one_metadata = (
+                                new_resource_data.loc[match[1]]['Resource_Name'],
+                                new_resource_data.loc[match[1]]['DOI'],
+                                new_resource_data.loc[match[1]]['ISBN'],
+                                new_resource_data.loc[match[1]]['Print_ISSN'],
+                                new_resource_data.loc[match[1]]['Online_ISSN'],
+                                new_resource_data.loc[match[1]]['Data_Type'],
+                                new_resource_data.loc[match[1]]['Platform'],
+                            )
+                        matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                        try:
+                            matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                            logging.debug(f"{match} added as a match to manually confirm on ISBNs")
+                        except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                            logging.debug(f"{match} added as a match to manually confirm on ISBNs with a new key")
+                        continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on ISBNs")
+        else:
+            logging.info("No matches on ISBNs")
+
         #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
         #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
         #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
@@ -299,16 +350,6 @@ class RawCOUNTERReport:
         #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
         #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
         """
-        #Subsection: Add Matches to `matched_records` Based on ISBN
-        ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 6].index.tolist()
-        logging.info(f"ISBN matching record pairs: {ISBN_matches}")
-        if ISBN_matches:
-            for match in ISBN_matches:
-                matched_records.add(match)
-                logging.debug(f"{match} added as a match on ISBN")
-        else:
-            logging.info("No matches on ISBN")
-
         #Subsection: Create Comparison Based on ISSNs
         logging.info("**Comparing based on ISSNs**")
         compare_ISSNs = recordlinkage.Compare()
