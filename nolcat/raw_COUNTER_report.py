@@ -268,16 +268,9 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on DOI and ISSNs")
 
-        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
-        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
-        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
-        """
-        #Subsection: Create Comparison Based on ISBN
-        #ToDo: Add filter that rejects match if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
+
+        #Section: Find Matches--ISBN with Close Fuzzy Match on Resource Title
+        #Subsection: Create Comparison Objects
         logging.info("**Comparing based on ISBN**")
         compare_ISBN = recordlinkage.Compare()
         compare_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
@@ -286,12 +279,26 @@ class RawCOUNTERReport:
         compare_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        # The various editions or volumes of a title will be grouped together by fuzzy matching, and these can sometimes be given the same ISBN even when not appropriate. To keep this from causing problems, matches where one of the resource names has a volume or edition reference will be checked manually.
         if normalized_resource_data:
             compare_ISBN_table = compare_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
         else:
             compare_ISBN_table = compare_ISBN.compute(candidate_matches, new_resource_data)
-        logging.debug(f"ISBN comparison results:\n{compare_ISBN_table}")
+            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+        
+        compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        logging.debug(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
 
+        #ToDo: ISBN exact match, resource name not including regex `\sed\.?\s` or `\svol\.?\s` close match -> matched_records
+        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
+        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
+        """
         #Subsection: Add Matches to `matched_records` Based on ISBN
         ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 6].index.tolist()
         logging.info(f"ISBN matching record pairs: {ISBN_matches}")
