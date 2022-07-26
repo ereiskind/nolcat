@@ -343,14 +343,9 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on ISBNs")
 
-        #ToDo: Print ISSN and online ISSN exact match, resource name close match -> matched_resources
-        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
-        """
-        #Subsection: Create Comparison Based on ISSNs
+
+        #Section: Find Matches--ISSNs with Close Fuzzy Match on Resource Title
+        #Subsection: Create Comparison Objects
         logging.info("**Comparing based on ISSNs**")
         compare_ISSNs = recordlinkage.Compare()
         compare_ISSNs.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
@@ -359,14 +354,15 @@ class RawCOUNTERReport:
         compare_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
+        #Subsection: Return Dataframe with Comparison Results
         if normalized_resource_data:
             compare_ISSNs_table = compare_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_ISSNs_table = compare_ISSNs.compute(candidate_matches, new_resource_data)
         logging.debug(f"ISSNs comparison results:\n{compare_ISSNs_table}")
 
-        #Subsection: Add Matches to `matched_records` Based on ISSNs
-        ISSNs_matches = compare_ISSNs_table[compare_ISSNs_table.sum(axis='columns') == 6].index.tolist()
+        #Subsection: Add Matches to `matched_records`
+        ISSNs_matches = compare_ISSNs_table[compare_ISSNs_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"ISSNs matching record pairs: {ISSNs_matches}")
         if ISSNs_matches:
             for match in ISSNs_matches:
@@ -375,6 +371,12 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on ISSNs")
 
+        #ToDo: Print ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
+        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
+        """
         #Subsection: Create Comparison Based on Print ISSN
         logging.info("**Comparing based on print ISSN**")
         compare_print_ISSN = recordlinkage.Compare()
