@@ -400,27 +400,25 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on print ISSN")
 
-        #ToDo: `Section: Find Matches--Online ISSNs with Very Close Fuzzy Match on Resource Titles` -> matched_resources
-        #ToDo: `Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: `Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources and All Other Fields Null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
-        """
-        #Subsection: Create Comparison Based on Online ISSN
+
+        #Section: Find Matches--Online ISSNs with Very Close Fuzzy Match on Resource Titles
+        #Subsection: Create Comparison Objects
         logging.info("**Comparing based on online ISSN**")
         compare_online_ISSN = recordlinkage.Compare()
-        compare_online_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        compare_online_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.95, label='Resource_Name')
         compare_online_ISSN.exact('DOI', 'DOI', missing_value=1, label='DOI')
         compare_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
         compare_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
+        #Subsection: Return Dataframe with Comparison Results
         if normalized_resource_data:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data)
         logging.debug(f"Online ISSN comparison results:\n{compare_online_ISSN_table}")
 
-        #Subsection: Add Matches to `matched_records` Based on Online ISSN
+        #Subsection: Add Matches to `matched_records`
         online_ISSN_matches = compare_online_ISSN_table[compare_online_ISSN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
         if online_ISSN_matches:
@@ -431,6 +429,10 @@ class RawCOUNTERReport:
             logging.info("No matches on online ISSN")
         
 
+        #ToDo: `Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: `Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources and All Other Fields Null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
+        """
         #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
         logging.info("**Comparing databases with high name matching threshold**")
         #Subsection: Create Comparison Based on High String Matching Threshold
