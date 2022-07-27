@@ -48,7 +48,7 @@ class RawCOUNTERReport:
                     file,
                     encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
                     encoding_errors='backslashreplace',
-                    dtype={
+                    dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
                         'Resource_Name': 'string',
                         'Publisher': 'string',
                         'Platform': 'string',
