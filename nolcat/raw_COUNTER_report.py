@@ -232,7 +232,7 @@ class RawCOUNTERReport:
         logging.debug(f"DOI and ISBN comparison results:\n{compare_DOI_and_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records`
-        DOI_and_ISBN_matches = compare_DOI_and_ISBN_table[compare_DOI_and_ISBN_table.sum(axis='columns') == 5].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
+        DOI_and_ISBN_matches = compare_DOI_and_ISBN_table[compare_DOI_and_ISBN_table.sum(axis='columns') == 4].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
         logging.info(f"DOI and ISBN matching record pairs: {DOI_and_ISBN_matches}")
         if DOI_and_ISBN_matches:
             for match in DOI_and_ISBN_matches:
@@ -259,7 +259,7 @@ class RawCOUNTERReport:
         logging.debug(f"DOI and ISSNs comparison results:\n{compare_DOI_and_ISSNs_table}")
 
         #Subsection: Add Matches to `matched_records`
-        DOI_and_ISSNs_matches = compare_DOI_and_ISSNs_table[compare_DOI_and_ISSNs_table.sum(axis='columns') == 5].index.tolist()
+        DOI_and_ISSNs_matches = compare_DOI_and_ISSNs_table[compare_DOI_and_ISSNs_table.sum(axis='columns') == 4].index.tolist()
         logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
         if DOI_and_ISSNs_matches:
             for match in DOI_and_ISSNs_matches:
@@ -418,7 +418,7 @@ class RawCOUNTERReport:
         logging.debug(f"Online ISSN comparison results:\n{compare_online_ISSN_table}")
 
         #Subsection: Add Matches to `matched_records` Based on Online ISSN
-        online_ISSN_matches = compare_online_ISSN_table[compare_online_ISSN_table.sum(axis='columns') == 6].index.tolist()
+        online_ISSN_matches = compare_online_ISSN_table[compare_online_ISSN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
         if online_ISSN_matches:
             for match in online_ISSN_matches:
