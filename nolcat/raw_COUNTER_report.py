@@ -215,7 +215,7 @@ class RawCOUNTERReport:
             candidate_matches = indexing.index(new_resource_data)
         
 
-        #Section: Find Matches--DOI and ISBN
+        #Section: Find Matches--DOIs and ISBNs
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on DOI and ISBN**")
         compare_DOI_and_ISBN = recordlinkage.Compare()
@@ -243,7 +243,7 @@ class RawCOUNTERReport:
             logging.info("No matches on DOI and ISBN")
 
 
-        #Section: Find Matches--DOI and ISSNs
+        #Section: Find Matches--DOIs and ISSNs
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on DOI and ISSNs**")
         compare_DOI_and_ISSNs = recordlinkage.Compare()
@@ -270,7 +270,7 @@ class RawCOUNTERReport:
             logging.info("No matches on DOI and ISSNs")
 
 
-        #Section: Find Matches--ISBN with Close Fuzzy Match on Resource Title
+        #Section: Find Matches--ISBNs with Close Fuzzy Match on Resource Titles
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on ISBN**")
         compare_ISBN = recordlinkage.Compare()
@@ -345,7 +345,7 @@ class RawCOUNTERReport:
             logging.info("No matches on ISBNs")
 
 
-        #Section: Find Matches--ISSNs with Close Fuzzy Match on Resource Title
+        #Section: Find Matches--ISSNs with Close Fuzzy Match on Resource Titles
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on ISSNs**")
         compare_ISSNs = recordlinkage.Compare()
@@ -373,7 +373,7 @@ class RawCOUNTERReport:
             logging.info("No matches on ISSNs")
 
 
-        #Section: Find Matches--Print ISSNs with Very Close Fuzzy Match on Resource Title
+        #Section: Find Matches--Print ISSNs with Very Close Fuzzy Match on Resource Titles
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on print ISSN**")
         compare_print_ISSN = recordlinkage.Compare()
@@ -400,10 +400,10 @@ class RawCOUNTERReport:
         else:
             logging.info("No matches on print ISSN")
 
-        #ToDo: Online ISSN exact match, resource name very close match -> matched_resources
-        #ToDo: Resource name very close match, both resources database type -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: Platform name very close match, all other fields null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: Loose name matching or a match on a metadata field -> matches_to_manually_confirm (improve notes)
+        #ToDo: `Section: Find Matches--Online ISSNs with Very Close Fuzzy Match on Resource Titles` -> matched_resources
+        #ToDo: `Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: NEW: `Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources and All Other Fields Null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
         """
         #Subsection: Create Comparison Based on Online ISSN
         logging.info("**Comparing based on online ISSN**")
