@@ -429,38 +429,37 @@ class RawCOUNTERReport:
             logging.info("No matches on online ISSN")
         
 
-        #ToDo: `Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: NEW: `Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources and All Other Fields Null -> matched_resources or matches_to_manually_confirm based on resource name length
-        #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
-        """
-        #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
-        logging.info("**Comparing databases with high name matching threshold**")
-        #Subsection: Create Comparison Based on High String Matching Threshold
+        #Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources
+        #Subsection: Create Comparison Objects
+        logging.info("**Comparing databases based on names**")
         compare_database_names = recordlinkage.Compare()
         compare_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
         compare_database_names.exact('Data_Type', 'Data_Type', label='Data_Type')
 
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values
         if normalized_resource_data:
             compare_database_names_table = compare_database_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
         else:
             compare_database_names_table = compare_database_names.compute(candidate_matches, new_resource_data)
-        logging.debug(f"Database names high matching threshold comparison results:\n{compare_database_names_table}")
-
-        #Subsection: Filter the Comparison Results
+            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
+        
         compare_database_names_table['index_zero_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
-        compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
+        logging.debug(f"Database names comparison result with metadata:\n{compare_database_names_table}")
+
+        #Subsection: Filter and Update Comparison Results Dataframe
         database_names_matches_table = compare_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
             (compare_database_names_table['Resource_Name'] == 1) &
-            (compare_database_names_table['Data_Type'] == 1) &
             (compare_database_names_table['index_zero_data_type'] == "Database") &
             (compare_database_names_table['index_one_data_type'] == "Database")
         ]
 
-        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on a High String Matching Threshold
-        database_names_matches = database_names_matches_table.index.tolist()
-        logging.info(f"Database names high matching threshold record pairs: {database_names_matches}")
+        # Resource names are added after filtering to reduce the number of names that need to be found
         database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+        if normalized_resource_data:
+            database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
+        else:
+            database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         for match in database_names_matches:
