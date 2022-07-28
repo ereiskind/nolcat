@@ -466,7 +466,7 @@ class RawCOUNTERReport:
         database_names_matches_index = database_names_matches_table.index.tolist()
         logging.info(f"Database names high matching threshold record pairs: {database_names_matches_index}")
 
-        if ISBN_matches:
+        if database_names_matches_index:
             for match in database_names_matches_index:
                 if database_names_matches_table.loc[match]['index_zero_name'] != database_names_matches_table.loc[match]['index_one_name']:
                     if len(database_names_matches_table.loc[match]['index_zero_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_name']) >= 35:
