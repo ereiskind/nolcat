@@ -454,11 +454,11 @@ class RawCOUNTERReport:
         ]
 
         # Resource names are added after filtering to reduce the number of names that need to be found
-        database_names_matches_table['index_zero_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        database_names_matches_table['index_zero_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
         if normalized_resource_data:
-            database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
+            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
         else:
-            database_names_matches_table['index_one_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
@@ -468,8 +468,8 @@ class RawCOUNTERReport:
 
         if database_names_matches_index:
             for match in database_names_matches_index:
-                if database_names_matches_table.loc[match]['index_zero_name'] != database_names_matches_table.loc[match]['index_one_name']:
-                    if len(database_names_matches_table.loc[match]['index_zero_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_name']) >= 35:
+                if database_names_matches_table.loc[match]['index_zero_resource_name'] != database_names_matches_table.loc[match]['index_one_resource_name']:
+                    if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
                         index_zero_metadata = (
                             new_resource_data.loc[match[0]]['Resource_Name'],
                             new_resource_data.loc[match[0]]['DOI'],
