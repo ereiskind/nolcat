@@ -434,7 +434,6 @@ class RawCOUNTERReport:
         logging.info("**Comparing databases based on names**")
         compare_database_names = recordlinkage.Compare()
         compare_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
-        compare_database_names.exact('Data_Type', 'Data_Type', label='Data_Type')
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values
         if normalized_resource_data:
