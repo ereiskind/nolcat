@@ -513,7 +513,90 @@ class RawCOUNTERReport:
             logging.info("No matches on database names with a high matching threshold")
         
 
-        #ToDo: NEW: `Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources and All Other Fields Null -> matched_resources or matches_to_manually_confirm based on resource name length
+        #Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources
+        #Subsection: Create Comparison Objects
+        logging.info("**Comparing platforms based on names**")
+        compare_platform_names = recordlinkage.Compare()
+        compare_platform_names.string('Platform', 'Platform', threshold=0.925, label='Platform')
+
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        if normalized_resource_data:
+            compare_platform_names_table = compare_platform_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
+        else:
+            compare_platform_names_table = compare_platform_names.compute(candidate_matches, new_resource_data)
+            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
+        
+        compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
+        logging.debug(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
+
+        #Subsection: Filter and Update Comparison Results Dataframe
+        platform_names_matches_table = compare_platform_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are platforms
+            (compare_platform_names_table['Platform'] == 1) &
+            (compare_platform_names_table['index_zero_data_type'] == "Platform") &
+            (compare_platform_names_table['index_one_data_type'] == "Platform")
+        ]
+
+        # Platform names are added after filtering to reduce the number of names that need to be found
+        platform_names_matches_table['index_zero_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Platform'])
+        if normalized_resource_data:
+            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Platform'])
+        else:
+            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
+        logging.debug(f"Platform names matches table with metadata:\n{platform_names_matches_table}")
+
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
+        # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
+        platform_names_matches_index = platform_names_matches_table.index.tolist()
+        logging.info(f"Platform names high matching threshold record pairs: {platform_names_matches_index}")
+
+        if platform_names_matches_index:
+            for match in platform_names_matches_index:
+                if platform_names_matches_table.loc[match]['index_zero_platform_name'] != platform_names_matches_table.loc[match]['index_one_platform_name']:
+                    if len(platform_names_matches_table.loc[match]['index_zero_platform_name']) >= 35 or len(platform_names_matches_table.loc[match]['index_one_platform_name']) >= 35:
+                        index_zero_metadata = (
+                            new_resource_data.loc[match[0]]['Resource_Name'],
+                            new_resource_data.loc[match[0]]['DOI'],
+                            new_resource_data.loc[match[0]]['ISBN'],
+                            new_resource_data.loc[match[0]]['Print_ISSN'],
+                            new_resource_data.loc[match[0]]['Online_ISSN'],
+                            new_resource_data.loc[match[0]]['Data_Type'],
+                            new_resource_data.loc[match[0]]['Platform'],
+                        )
+                        if normalized_resource_data:
+                            index_one_metadata = (
+                                normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                normalized_resource_data.loc[match[1]]['DOI'],
+                                normalized_resource_data.loc[match[1]]['ISBN'],
+                                normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                                normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                                normalized_resource_data.loc[match[1]]['Data_Type'],
+                                normalized_resource_data.loc[match[1]]['Platform'],
+                            )
+                        else:
+                            index_one_metadata = (
+                                new_resource_data.loc[match[1]]['Resource_Name'],
+                                new_resource_data.loc[match[1]]['DOI'],
+                                new_resource_data.loc[match[1]]['ISBN'],
+                                new_resource_data.loc[match[1]]['Print_ISSN'],
+                                new_resource_data.loc[match[1]]['Online_ISSN'],
+                                new_resource_data.loc[match[1]]['Data_Type'],
+                                new_resource_data.loc[match[1]]['Platform'],
+                            )
+                        matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                        try:
+                            matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
+                        except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold with a new key")
+                        continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
+                matched_records.add(match)
+                logging.debug(f"{match} added as a match on platform names with a high matching threshold")
+        else:
+            logging.info("No matches on platform names with a high matching threshold")
+
+
         #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
         """
         #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
