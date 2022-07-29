@@ -792,8 +792,10 @@ class RawCOUNTERReport:
             logging.info("No matches on resource names with a high matching threshold")
 
 
-        """
         #Section: Return Record Index Pair Lists
+        logging.debug(f"`matched_records`:\n{matched_records}")
+        logging.debug(f"`matches_to_manually_confirm`:\n{matches_to_manually_confirm}")
+        """
         return (
             matched_records,
             matches_to_manually_confirm,
