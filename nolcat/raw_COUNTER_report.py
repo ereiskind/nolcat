@@ -336,7 +336,7 @@ class RawCOUNTERReport:
                             matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
@@ -504,7 +504,7 @@ class RawCOUNTERReport:
                             matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
                             logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
@@ -588,7 +588,7 @@ class RawCOUNTERReport:
                             matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
