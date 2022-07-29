@@ -601,46 +601,43 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on single matching identifier**")
         compare_identifiers = recordlinkage.Compare()
-        """
-        compare_names_and_partials.exact('DOI', 'DOI', label='DOI')
-        compare_names_and_partials.exact('ISBN', 'ISBN', label='ISBN')
-        compare_names_and_partials.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
-        compare_names_and_partials.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
-        """
+        compare_identifiers.exact('DOI', 'DOI', label='DOI')
+        compare_identifiers.exact('ISBN', 'ISBN', label='ISBN')
+        compare_identifiers.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
+        compare_identifiers.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results
-        """
         if normalized_resource_data:
-            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
-            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data)
-        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_names_and_partials_table}")
-        """
+            compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data)
+        logging.debug(f"Single matching identifier comparison results:\n{compare_identifiers_table}")
 
         #Subsection: Filter Comparison Results Dataframe
-        """
-        compare_names_and_partials_matches_table = compare_names_and_partials_table[
-            (compare_names_and_partials_table['DOI'] == 1) |
-            (compare_names_and_partials_table['ISBN'] == 1) |
-            (compare_names_and_partials_table['Print_ISSN'] == 1) |
-            (compare_names_and_partials_table['Online_ISSN'] == 1) |
+        compare_identifiers_matches_table = compare_identifiers_table[
+            (compare_identifiers_table['DOI'] == 1) |
+            (compare_identifiers_table['ISBN'] == 1) |
+            (compare_identifiers_table['Print_ISSN'] == 1) |
+            (compare_identifiers_table['Online_ISSN'] == 1)
         ]
-        """
+        logging.debug(f"Filtered single matching identifier comparison results:\n{compare_identifiers_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
-        """
-        fuzzy_match_record_pairs = []
-        #ToDo: List and tuple with same data NOT equal, but list wrapped in tuple constructor is
-        for potential_match in compare_names_and_partials_matches_table.index.tolist():
-            if potential_match not in matched_records:
-                if potential_match not in list(matches_to_manually_confirm.keys()): #ToDo: Is this iterating through the list of tuples?
-                    fuzzy_match_record_pairs.append(potential_match)
-        """
+        identifiers_matches_interim_index = compare_identifiers_matches_table.index.tolist()
+        identifiers_matches_index = []
+        # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
+        matches_already_found = matched_records.copy()  # `copy()` recreates the data at a different memory address
+        for value_set in matches_to_manually_confirm.values():
+            for index_tuple in value_set:
+                matches_already_found.add(index_tuple)
+        
+        for potential_match in identifiers_matches_interim_index:
+            if potential_match not in matches_already_found:
+                identifiers_matches_index.append(potential_match)
+        logging.info(f"Single matching identifier matching record pairs: {identifiers_matches_index}")
 
         #Subsection: Add Matches to `matches_to_manually_confirm`
         #ToDo: For the comparison `compare_something`
-        #ToDo: something_matches_index = something_matches_table.index.tolist()
-        logging.info(f"Single identifier matching record pairs: {something_matches_index}")
         #ToDo: if something_matches_index:
             #ToDo: for match in something_matches_index:
                 #ToDo: index_zero_metadata = (
