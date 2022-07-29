@@ -530,7 +530,7 @@ class RawCOUNTERReport:
         compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
         logging.debug(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
 
-        #Subsection: Filter and Update Comparison Results Dataframe
+        #Subsection: Filter Comparison Results Dataframe
         platform_names_matches_table = compare_platform_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are platforms
             (compare_platform_names_table['Platform'] == 1) &
             (compare_platform_names_table['index_zero_data_type'] == "Platform") &
