@@ -167,7 +167,7 @@ class RawCOUNTERReport:
         
         See Also:
             matched_records: a set of tuples containing the record index values of matched records
-            matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
+            matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
@@ -186,22 +186,22 @@ class RawCOUNTERReport:
         #Subsection: Create Collections for Holding Matches
         # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata, and computer matching algorithms, however, means a simple list of the record index pairs won't work.
         matched_records = set()  # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
-        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and lists as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each list will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
+        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and sets as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each set will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
         # {
         #     (
         #         (first resource metadata),
         #         (second resource metadata)
-        #     ): [
+        #     ): set(
         #         (record index pair),
         #         (record index pair)
-        #     ],
+        #     ),
         #     (
         #         (first resource metadata),
         #         (second resource metadata)
-        #     ): [
+        #     ): set(
         #         (record index pair),
         #         (record index pair),
-        #     ],
+        #     ),
         # }
 
         #Subsection: Create MultiIndex Object
@@ -333,10 +333,10 @@ class RawCOUNTERReport:
                             )
                         matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
                         try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
@@ -501,10 +501,10 @@ class RawCOUNTERReport:
                             )
                         matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
                         try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
                             logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
@@ -585,10 +585,10 @@ class RawCOUNTERReport:
                             )
                         matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
                         try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set(match)
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold with a new key")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
