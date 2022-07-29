@@ -597,35 +597,121 @@ class RawCOUNTERReport:
             logging.info("No matches on platform names with a high matching threshold")
 
 
-        #ToDo: `Section: Find Matches--Loose Fuzzy Matching and Cross-Field Metadata Matching`??? -> matches_to_manually_confirm (improve notes)
+        #Section: Find Matches--Single Standard Identifier Field for All Non-`Platform`-Type Resources
+        #Subsection: Create Comparison Objects
+        logging.info("**Comparing based on single matching identifier**")
+        compare_identifiers = recordlinkage.Compare()
         """
-        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Fuzzy Matching
-        logging.info("**Comparing based on fuzzy name matching and partially matching identifiers**")
-        #Subsection: Create Comparison Based on Fuzzy String Matching and Standardized Identifiers
-        compare_names_and_partials = recordlinkage.Compare()
-        
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
-
         compare_names_and_partials.exact('DOI', 'DOI', label='DOI')
         compare_names_and_partials.exact('ISBN', 'ISBN', label='ISBN')
         compare_names_and_partials.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_names_and_partials.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        """
 
+        #Subsection: Return Dataframe with Comparison Results
+        """
         if normalized_resource_data:
             compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data)
         logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_names_and_partials_table}")
+        """
 
-        #Subsection: Add FuzzyWuzzy Fuzzy String Matching to Comparison
-        #ALERT: See note in tests.test_RawCOUNTERReport about memory
+        #Subsection: Filter Comparison Results Dataframe
+        """
+        compare_names_and_partials_matches_table = compare_names_and_partials_table[
+            (compare_names_and_partials_table['DOI'] == 1) |
+            (compare_names_and_partials_table['ISBN'] == 1) |
+            (compare_names_and_partials_table['Print_ISSN'] == 1) |
+            (compare_names_and_partials_table['Online_ISSN'] == 1) |
+        ]
+        """
+
+        #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
+        """
+        fuzzy_match_record_pairs = []
+        #ToDo: List and tuple with same data NOT equal, but list wrapped in tuple constructor is
+        for potential_match in compare_names_and_partials_matches_table.index.tolist():
+            if potential_match not in matched_records:
+                if potential_match not in list(matches_to_manually_confirm.keys()): #ToDo: Is this iterating through the list of tuples?
+                    fuzzy_match_record_pairs.append(potential_match)
+        """
+
+        #Subsection: Add Matches to `matches_to_manually_confirm`
+        #ToDo: For the comparison `compare_something`
+        #ToDo: something_matches_index = something_matches_table.index.tolist()
+        logging.info(f"Single identifier matching record pairs: {something_matches_index}")
+        #ToDo: if something_matches_index:
+            #ToDo: for match in something_matches_index:
+                #ToDo: index_zero_metadata = (
+                    '''new_resource_data.loc[match[0]]['Resource_Name'],
+                    new_resource_data.loc[match[0]]['DOI'],
+                    new_resource_data.loc[match[0]]['ISBN'],
+                    new_resource_data.loc[match[0]]['Print_ISSN'],
+                    new_resource_data.loc[match[0]]['Online_ISSN'],
+                    new_resource_data.loc[match[0]]['Data_Type'],
+                    new_resource_data.loc[match[0]]['Platform'],
+                )'''
+                #ToDo: if normalized_resource_data:
+                    '''index_one_metadata = (
+                        normalized_resource_data.loc[match[1]]['Resource_Name'],
+                        normalized_resource_data.loc[match[1]]['DOI'],
+                        normalized_resource_data.loc[match[1]]['ISBN'],
+                        normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                        normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                        normalized_resource_data.loc[match[1]]['Data_Type'],
+                        normalized_resource_data.loc[match[1]]['Platform'],
+                    )
+                else:
+                    index_one_metadata = (
+                        new_resource_data.loc[match[1]]['Resource_Name'],
+                        new_resource_data.loc[match[1]]['DOI'],
+                        new_resource_data.loc[match[1]]['ISBN'],
+                        new_resource_data.loc[match[1]]['Print_ISSN'],
+                        new_resource_data.loc[match[1]]['Online_ISSN'],
+                        new_resource_data.loc[match[1]]['Data_Type'],
+                        new_resource_data.loc[match[1]]['Platform'],
+                    )
+                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)'''
+                #ToDo: try:
+                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    logging.debug(f"{match} added as a match to manually confirm on a single identifier")
+                #ToDo: except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    logging.debug(f"{match} added as a match to manually confirm on a single identifier with a new key")
+        #ToDo: else:
+            #ToDo: logging.info("No matches on single identifiers")
+
+
+        #Section: Find Matches--Loose Fuzzy Match on Resource Name
+        #Subsection: Create Comparison Objects
+        logging.info("**Comparing based on fuzzy resource name matching**")
+        compare_resource_name = recordlinkage.Compare()
+        """
+        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
+        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
+        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
+        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
+        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
+        """
+
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        """
+        if normalized_resource_data:
+            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            #ToDo: Create field with resource name from `normalized_resource_data`
+        else:
+            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data)
+            compare_names_and_partials_table['index_one_name'] = compare_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+        
         compare_names_and_partials_table['index_zero_name'] = compare_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        compare_names_and_partials_table['index_one_name'] = compare_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_names_and_partials_table}")
+        """
+
+        #Subsection: Filter and Update Comparison Results Dataframe for FuzzyWuzzy
+        #ALERT: See note in tests.test_RawCOUNTERReport about memory
         # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
+        """
         compare_names_and_partials_table.dropna(
             axis='index',
             subset=['index_zero_name', 'index_one_name'],
@@ -637,91 +723,79 @@ class RawCOUNTERReport:
         compare_names_and_partials_table['token_sort_ratio'] = compare_names_and_partials_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
         compare_names_and_partials_table['token_set_ratio'] = compare_names_and_partials_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
         logging.debug(f"Fuzzy matching comparison results:\n{compare_names_and_partials_table}")
+        """
 
-        #Subsection: Filter the Comparison Results
+        #Subsection: Filter Comparison Results Dataframe
+        """
         compare_names_and_partials_matches_table = compare_names_and_partials_table[
             (compare_names_and_partials_table['levenshtein'] > 0) |
             (compare_names_and_partials_table['jaro'] > 0) |
             (compare_names_and_partials_table['jarowinkler'] > 0) |
             (compare_names_and_partials_table['lcs'] > 0) |
             (compare_names_and_partials_table['smith_waterman'] > 0) |
-            (compare_names_and_partials_table['DOI'] == 1) |
-            (compare_names_and_partials_table['ISBN'] == 1) |
-            (compare_names_and_partials_table['Print_ISSN'] == 1) |
-            (compare_names_and_partials_table['Online_ISSN'] == 1) |
             (compare_names_and_partials_table['partial_ratio'] >= 75) |
             (compare_names_and_partials_table['token_sort_ratio'] >= 70) |
             (compare_names_and_partials_table['token_set_ratio'] >= 80)
         ]
+        """
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
+        """
         fuzzy_match_record_pairs = []
+        #ToDo: List and tuple with same data NOT equal, but list wrapped in tuple constructor is
         for potential_match in compare_names_and_partials_matches_table.index.tolist():
             if potential_match not in matched_records:
-                if potential_match not in list(matches_to_manually_confirm.keys()):
+                if potential_match not in list(matches_to_manually_confirm.keys()): #ToDo: Is this iterating through the list of tuples?
                     fuzzy_match_record_pairs.append(potential_match)
+        """
 
-        #Subsection: Collect the Metadata for Matches to be Added to `matches_to_manually_confirm`
-        # The metadata is collected in a dataframe so a groupby operation can serve as the Add Matches subsection loop
-        fuzzy_match_fields = [
-            "resource_PK_pairs",
-            "resource_zero_title",
-            "resource_one_title",
-            "resource_zero_DOI",
-            "resource_one_DOI",
-            "resource_zero_ISBN",
-            "resource_one_ISBN",
-            "resource_zero_print_ISSN",
-            "resource_one_print_ISSN",
-            "resource_zero_online_ISSN",
-            "resource_one_online_ISSN",
-        ]
+        #Subsection: Add Matches to `matches_to_manually_confirm`
+        #ToDo: For the comparison `compare_something`
+        #ToDo: something_matches_index = something_matches_table.index.tolist()
+        logging.info(f"Resource names with a low matching threshold matching record pairs: {something_matches_index}")
+        #ToDo: if something_matches_index:
+            #ToDo: for match in something_matches_index:
+                #ToDo: index_zero_metadata = (
+                    '''new_resource_data.loc[match[0]]['Resource_Name'],
+                    new_resource_data.loc[match[0]]['DOI'],
+                    new_resource_data.loc[match[0]]['ISBN'],
+                    new_resource_data.loc[match[0]]['Print_ISSN'],
+                    new_resource_data.loc[match[0]]['Online_ISSN'],
+                    new_resource_data.loc[match[0]]['Data_Type'],
+                    new_resource_data.loc[match[0]]['Platform'],
+                )'''
+                #ToDo: if normalized_resource_data:
+                    '''index_one_metadata = (
+                        normalized_resource_data.loc[match[1]]['Resource_Name'],
+                        normalized_resource_data.loc[match[1]]['DOI'],
+                        normalized_resource_data.loc[match[1]]['ISBN'],
+                        normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                        normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                        normalized_resource_data.loc[match[1]]['Data_Type'],
+                        normalized_resource_data.loc[match[1]]['Platform'],
+                    )
+                else:
+                    index_one_metadata = (
+                        new_resource_data.loc[match[1]]['Resource_Name'],
+                        new_resource_data.loc[match[1]]['DOI'],
+                        new_resource_data.loc[match[1]]['ISBN'],
+                        new_resource_data.loc[match[1]]['Print_ISSN'],
+                        new_resource_data.loc[match[1]]['Online_ISSN'],
+                        new_resource_data.loc[match[1]]['Data_Type'],
+                        new_resource_data.loc[match[1]]['Platform'],
+                    )
+                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)'''
+                #ToDo: try:
+                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    logging.debug(f"{match} added as a match to manually confirm on resource names with a low matching threshold")
+                #ToDo: except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    logging.debug(f"{match} added as a match to manually confirm on resource names with a low matching threshold with a new key")
+        #ToDo: else:
+            logging.info("No matches on resource names with a high matching threshold")
 
-        fuzzy_match_records = []
-        for match in fuzzy_match_record_pairs:
-            fuzzy_match_records.append(list((  # The list constructor takes an iterable, so the values going into the list must be wrapped in a tuple
-                match,
-                new_resource_data.loc[match[0]]['Resource_Name'],
-                new_resource_data.loc[match[1]]['Resource_Name'],
-                new_resource_data.loc[match[0]]['DOI'],
-                new_resource_data.loc[match[1]]['DOI'],
-                new_resource_data.loc[match[0]]['ISBN'],
-                new_resource_data.loc[match[1]]['ISBN'],
-                new_resource_data.loc[match[0]]['Print_ISSN'],
-                new_resource_data.loc[match[1]]['Print_ISSN'],
-                new_resource_data.loc[match[0]]['Online_ISSN'],
-                new_resource_data.loc[match[1]]['Online_ISSN'],
-            )))
-        fuzzy_match_table = pd.DataFrame(
-            fuzzy_match_records,
-            columns=fuzzy_match_fields,
-        )
-        logging.info(f"The record pairs and metadata for fuzzy matching:\n{fuzzy_match_table}")
 
-        #Subsection: Add Matches to `matches_to_manually_confirm` Based on Fuzzy Matching
-        # Since null values aren't equal in tuple equality comparisons, a dataframe groupby operation is used to group records with the same metadata
-        for paired_resource_metadata, record_pair in fuzzy_match_table.groupby([
-            "resource_zero_title",
-            "resource_zero_DOI",
-            "resource_zero_ISBN",
-            "resource_zero_print_ISSN",
-            "resource_zero_online_ISSN",
-            "resource_zero_data_type",
-            "resource_one_title",
-            "resource_one_DOI",
-            "resource_one_ISBN",
-            "resource_one_print_ISSN",
-            "resource_one_online_ISSN",
-        ], dropna=False):
-            paired_resource_metadata = list(paired_resource_metadata)
-            for i, metadata in enumerate(paired_resource_metadata):  # Changing an index referenced item in `paired_resource_metadata` makes the change independent of the loop 
-                if pd.isnull(metadata):
-                    paired_resource_metadata[i] = None  # This changes null values with numeric data types to None
-            resources_to_manually_confirm_key = (tuple(paired_resource_metadata[:6]), tuple(paired_resource_metadata[6:]))
-            matches_to_manually_confirm[resources_to_manually_confirm_key] = record_pair['resource_PK_pairs'].tolist()
-            logging.debug(f"{resources_to_manually_confirm_key}: {record_pair['resource_PK_pairs'].tolist()} added to matches_to_manually_confirm")
-        
-
+        """
         #Section: Return Record Index Pair Lists
         return (
             matched_records,
