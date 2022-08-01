@@ -50,6 +50,7 @@ def R4_RawCOUNTERReport_fixture():
 
 
 #ToDo: Create fixture for dataframe containing reformatted R5 COUNTER reports
+    #ToDo: Include `Gale Business: Entrepreneurship` in resources (Gale's Small Business Resource Center -> Gale Business: Entrepreneurship in early 2020)
 
 
 #ToDo: Create fixture combining the R4 and R5 dataframes into a single dataframe
