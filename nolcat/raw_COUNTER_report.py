@@ -673,7 +673,7 @@ class RawCOUNTERReport:
                     matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
                     logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
                 except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                    matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
                     logging.debug(f"{match} added as a match to manually confirm on a single matching identifier with a new key")
         else:
             logging.info("No matches on single matching identifiers")
