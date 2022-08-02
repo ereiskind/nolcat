@@ -637,20 +637,19 @@ class RawCOUNTERReport:
         logging.info(f"Single matching identifier matching record pairs: {identifiers_matches_index}")
 
         #Subsection: Add Matches to `matches_to_manually_confirm`
-        #ToDo: For the comparison `compare_something`
-        #ToDo: if something_matches_index:
-            #ToDo: for match in something_matches_index:
-                #ToDo: index_zero_metadata = (
-                    '''new_resource_data.loc[match[0]]['Resource_Name'],
+        if identifiers_matches_index:
+            for match in identifiers_matches_index:
+                index_zero_metadata = (
+                    new_resource_data.loc[match[0]]['Resource_Name'],
                     new_resource_data.loc[match[0]]['DOI'],
                     new_resource_data.loc[match[0]]['ISBN'],
                     new_resource_data.loc[match[0]]['Print_ISSN'],
                     new_resource_data.loc[match[0]]['Online_ISSN'],
                     new_resource_data.loc[match[0]]['Data_Type'],
                     new_resource_data.loc[match[0]]['Platform'],
-                )'''
-                #ToDo: if normalized_resource_data:
-                    '''index_one_metadata = (
+                )
+                if normalized_resource_data:
+                    index_one_metadata = (
                         normalized_resource_data.loc[match[1]]['Resource_Name'],
                         normalized_resource_data.loc[match[1]]['DOI'],
                         normalized_resource_data.loc[match[1]]['ISBN'],
@@ -669,15 +668,15 @@ class RawCOUNTERReport:
                         new_resource_data.loc[match[1]]['Data_Type'],
                         new_resource_data.loc[match[1]]['Platform'],
                     )
-                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)'''
-                #ToDo: try:
-                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
-                    logging.debug(f"{match} added as a match to manually confirm on a single identifier")
-                #ToDo: except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
-                    logging.debug(f"{match} added as a match to manually confirm on a single identifier with a new key")
-        #ToDo: else:
-            #ToDo: logging.info("No matches on single identifiers")
+                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                try:
+                    matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
+                except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                    matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
+                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier with a new key")
+        else:
+            logging.info("No matches on single matching identifiers")
 
 
         #Section: Find Matches--Loose Fuzzy Match on Resource Name
