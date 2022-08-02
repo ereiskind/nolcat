@@ -727,6 +727,7 @@ class RawCOUNTERReport:
             (compare_resource_name_table['token_sort_ratio'] >= 70) |
             (compare_resource_name_table['token_set_ratio'] >= 80)
         ]
+        logging.debug(f"Filtered resource name comparison results:\n{compare_resource_name_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         """
