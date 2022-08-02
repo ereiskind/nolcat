@@ -687,57 +687,49 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Objects
         logging.info("**Comparing based on fuzzy resource name matching**")
         compare_resource_name = recordlinkage.Compare()
-        """
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
-        compare_names_and_partials.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
-        """
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values
-        """
         if normalized_resource_data:
-            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            #ToDo: Create field with resource name from `normalized_resource_data`
+            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
         else:
-            compare_names_and_partials_table = compare_names_and_partials.compute(candidate_matches, new_resource_data)
-            compare_names_and_partials_table['index_one_name'] = compare_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data)
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         
-        compare_names_and_partials_table['index_zero_name'] = compare_names_and_partials_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_names_and_partials_table}")
-        """
+        compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe for FuzzyWuzzy
         #ALERT: See note in tests.test_RawCOUNTERReport about memory
         # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
-        """
-        compare_names_and_partials_table.dropna(
+        compare_resource_name_table.dropna(
             axis='index',
-            subset=['index_zero_name', 'index_one_name'],
+            subset=['index_zero_resource_name', 'index_one_resource_name'],
             inplace=True,
         )
-        logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_names_and_partials_table}")
+        logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
 
-        compare_names_and_partials_table['partial_ratio'] = compare_names_and_partials_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
-        compare_names_and_partials_table['token_sort_ratio'] = compare_names_and_partials_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
-        compare_names_and_partials_table['token_set_ratio'] = compare_names_and_partials_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
-        logging.debug(f"Fuzzy matching comparison results:\n{compare_names_and_partials_table}")
-        """
-
+        compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        logging.debug(f"Fuzzy matching comparison results:\n{compare_resource_name_table}")
+        
         #Subsection: Filter Comparison Results Dataframe
-        """
-        compare_names_and_partials_matches_table = compare_names_and_partials_table[
-            (compare_names_and_partials_table['levenshtein'] > 0) |
-            (compare_names_and_partials_table['jaro'] > 0) |
-            (compare_names_and_partials_table['jarowinkler'] > 0) |
-            (compare_names_and_partials_table['lcs'] > 0) |
-            (compare_names_and_partials_table['smith_waterman'] > 0) |
-            (compare_names_and_partials_table['partial_ratio'] >= 75) |
-            (compare_names_and_partials_table['token_sort_ratio'] >= 70) |
-            (compare_names_and_partials_table['token_set_ratio'] >= 80)
+        compare_resource_name_matches_table = compare_resource_name_table[
+            (compare_resource_name_table['levenshtein'] > 0) |
+            (compare_resource_name_table['jaro'] > 0) |
+            (compare_resource_name_table['jarowinkler'] > 0) |
+            (compare_resource_name_table['lcs'] > 0) |
+            (compare_resource_name_table['smith_waterman'] > 0) |
+            (compare_resource_name_table['partial_ratio'] >= 75) |
+            (compare_resource_name_table['token_sort_ratio'] >= 70) |
+            (compare_resource_name_table['token_set_ratio'] >= 80)
         ]
-        """
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         """
