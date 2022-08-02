@@ -692,6 +692,7 @@ class RawCOUNTERReport:
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
+        # This comparison will take about an hour on a 16GB RAM 1.61GHz workstation
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values
         if normalized_resource_data:
