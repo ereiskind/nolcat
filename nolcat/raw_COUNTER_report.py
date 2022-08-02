@@ -714,9 +714,9 @@ class RawCOUNTERReport:
         )
         logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
 
-        compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
-        compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
-        compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_name'], record['index_one_name']), axis='columns')
+        compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
+        compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
+        compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         logging.debug(f"Fuzzy matching comparison results:\n{compare_resource_name_table}")
         
         #Subsection: Filter Comparison Results Dataframe
