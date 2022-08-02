@@ -730,32 +730,33 @@ class RawCOUNTERReport:
         logging.debug(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
-        """
-        fuzzy_match_record_pairs = []
-        #ToDo: List and tuple with same data NOT equal, but list wrapped in tuple constructor is
-        for potential_match in compare_names_and_partials_matches_table.index.tolist():
-            if potential_match not in matched_records:
-                if potential_match not in list(matches_to_manually_confirm.keys()): #ToDo: Is this iterating through the list of tuples?
-                    fuzzy_match_record_pairs.append(potential_match)
-        """
+        resource_name_matches_interim_index = compare_resource_name_matches_table.index.tolist()
+        resource_name_matches_index = []
+        # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
+        matches_already_found = matched_records.copy()  # `copy()` recreates the data at a different memory address
+        for value_set in matches_to_manually_confirm.values():
+            for index_tuple in value_set:
+                matches_already_found.add(index_tuple)
+        
+        for potential_match in resource_name_matches_interim_index:
+            if potential_match not in matches_already_found:
+                resource_name_matches_index.append(potential_match)
+        logging.info(f"Fuzzy matching resource names matching record pairs: {resource_name_matches_index}")
 
         #Subsection: Add Matches to `matches_to_manually_confirm`
-        #ToDo: For the comparison `compare_something`
-        #ToDo: something_matches_index = something_matches_table.index.tolist()
-        logging.info(f"Resource names with a low matching threshold matching record pairs: {something_matches_index}")
-        #ToDo: if something_matches_index:
-            #ToDo: for match in something_matches_index:
-                #ToDo: index_zero_metadata = (
-                    '''new_resource_data.loc[match[0]]['Resource_Name'],
+        if resource_name_matches_index:
+            for match in resource_name_matches_index:
+                index_zero_metadata = (
+                    new_resource_data.loc[match[0]]['Resource_Name'],
                     new_resource_data.loc[match[0]]['DOI'],
                     new_resource_data.loc[match[0]]['ISBN'],
                     new_resource_data.loc[match[0]]['Print_ISSN'],
                     new_resource_data.loc[match[0]]['Online_ISSN'],
                     new_resource_data.loc[match[0]]['Data_Type'],
                     new_resource_data.loc[match[0]]['Platform'],
-                )'''
-                #ToDo: if normalized_resource_data:
-                    '''index_one_metadata = (
+                )
+                if normalized_resource_data:
+                    index_one_metadata = (
                         normalized_resource_data.loc[match[1]]['Resource_Name'],
                         normalized_resource_data.loc[match[1]]['DOI'],
                         normalized_resource_data.loc[match[1]]['ISBN'],
@@ -774,15 +775,15 @@ class RawCOUNTERReport:
                         new_resource_data.loc[match[1]]['Data_Type'],
                         new_resource_data.loc[match[1]]['Platform'],
                     )
-                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)'''
-                #ToDo: try:
-                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
-                    logging.debug(f"{match} added as a match to manually confirm on resource names with a low matching threshold")
-                #ToDo: except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                    #ToDo: matches_to_manually_confirm[matches_to_manually_confirm_key] = [match]
-                    logging.debug(f"{match} added as a match to manually confirm on resource names with a low matching threshold with a new key")
-        #ToDo: else:
-            logging.info("No matches on resource names with a high matching threshold")
+                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                try:
+                    matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+                except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                    matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names with a new key")
+        else:
+            logging.info("No matches on fuzzy matching resource names")
 
 
         #Section: Return Record Index Pair Lists
