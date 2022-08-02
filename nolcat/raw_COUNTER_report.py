@@ -699,7 +699,7 @@ class RawCOUNTERReport:
             compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         
         compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        logging.debug(f"Fuzzy matching comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
+        logging.debug(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe for FuzzyWuzzy
         #ALERT: See note in tests.test_RawCOUNTERReport about memory
@@ -709,12 +709,12 @@ class RawCOUNTERReport:
             subset=['index_zero_resource_name', 'index_one_resource_name'],
             inplace=True,
         )
-        logging.debug(f"Fuzzy matching comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
+        logging.debug(f"Fuzzy matching resource names comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
 
         compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
-        logging.debug(f"Fuzzy matching comparison results:\n{compare_resource_name_table}")
+        logging.debug(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
         
         #Subsection: Filter Comparison Results Dataframe
         compare_resource_name_matches_table = compare_resource_name_table[
@@ -727,7 +727,7 @@ class RawCOUNTERReport:
             (compare_resource_name_table['token_sort_ratio'] >= 70) |
             (compare_resource_name_table['token_set_ratio'] >= 80)
         ]
-        logging.debug(f"Filtered resource name comparison results:\n{compare_resource_name_matches_table}")
+        logging.debug(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         """
