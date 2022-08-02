@@ -620,7 +620,7 @@ class RawCOUNTERReport:
             (compare_identifiers_table['Print_ISSN'] == 1) |
             (compare_identifiers_table['Online_ISSN'] == 1)
         ]
-        logging.debug(f"Filtered single matching identifier comparison results:\n{compare_identifiers_table}")
+        logging.debug(f"Filtered single matching identifier comparison results:\n{compare_identifiers_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         identifiers_matches_interim_index = compare_identifiers_matches_table.index.tolist()
