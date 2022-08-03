@@ -670,7 +670,7 @@ class RawCOUNTERReport:
                     )
                 matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
                 try:
-                    matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                     logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
                 except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                     matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
@@ -777,7 +777,7 @@ class RawCOUNTERReport:
                     )
                 matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
                 try:
-                    matches_to_manually_confirm[matches_to_manually_confirm_key].append(match)
+                    matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
                     logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
                 except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                     matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
