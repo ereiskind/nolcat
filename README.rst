@@ -115,24 +115,23 @@ Branch: Develop Post-Initialization COUNTER Ingest Capability
 * Create route/page for uploading R4 reports in an Excel file
 * Create route/page for uploading R5 reports in an Excel file
 * Create test for route to choose type of upload
-* Test uploading R4 report: upload file via Selenium, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data
-* Test uploading R5 report: upload file via Selenium, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data
-* Create test using Selenium to input the dates to use as arguments for `StatisticsSources.collect_usage_statistics` (don't necessarily need to actually make API calls)
+* Test uploading R4 report: upload file through webpage, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data
+* Test uploading R5 report: upload file through webpage, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data
 
 Branch: Develop Canned Queries and Usage Query Tests
 ----------------------------------------------------
 * Create route/page for canned queries
-* Create test using selenium for choosing canned queries
-* Create test using Selenium to enter SQL into free SQL text box
+* Create test for choosing canned queries on the webpage
+* Create test to enter SQL into free SQL text box on the webpage
 
 Branch: Develop Testing for Initialization Process
 --------------------------------------------------
 * Figure out how to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `RawCOUNTERReport` test module
 * Write test for `RawCOUNTERReport.load_data_into_database` method
-* "ToDo: Create test using Selenium to confirm that form can successfully upload all CSV files"
+* "ToDo: Create test to confirm that form can successfully upload all CSV files"
 * "ToDo:Create test confirming the uploading of the data of the requested CSVs, the creation of the `annualUsageCollectionTracking` records, and the outputting of the CSV for that relation"
 * "ToDo: Create test confirming route uploading CSV with data for `annualUsageCollectionTracking` records"
-* "ToDo: Create test using Selenium to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching"
+* "ToDo: Create test to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching"
 * "ToDo: Create test for route showing data in database at end of initialization wizard"
 
 Branch: Develop Testing for SUSHI Call Functionality
@@ -167,7 +166,7 @@ Branch: Create Query Wizard and Query Results Output in UI
 ----------------------------------------------------------
 * Create route/page for query wizard
 * Create route/page for displaying query results
-* Create test using Selenium to make selections in query wizard to generate given SQL string
+* Create test for make selections in query wizard to generate given SQL string
 
 Branch: ARL and ACRL/IPEDS Calculations
 ---------------------------------------
@@ -213,8 +212,7 @@ Low-Priority Methods
 Possible Additional Tests
 -------------------------
 * **Question:** *"test_flask_factory_pattern.py"* Should any GET requests besides root (to the homepage) and a nonexistent route (to the 404 page) be tested?
-* *"test_flask_factory_pattern.py"* Create a test for making a Selenium webdriver object
-* **Question** *"test_SUSHICallAndResponse.py"* Are tests just for `_retrieve_downloaded_JSON`, `_handle_SUSHI_exceptions`, and/or `_create_error_query_text` needed?
+* **Question** *"test_SUSHICallAndResponse.py"* Are tests just for `_handle_SUSHI_exceptions` and/or `_create_error_query_text` needed?
 
 Organize Documentation Layout
 -----------------------------

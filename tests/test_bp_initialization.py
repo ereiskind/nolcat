@@ -15,9 +15,9 @@ def flask_client():
         yield client
 
 
-#ToDo: Create test using Selenium to confirm that form can successfully upload all CSV files
+#ToDo: Create test to confirm that form can successfully upload all CSV files
     #ToDo: Save CSV files with mock data in `tests/bin`
-    #ToDo: Use Selenium to submit those CSVs with the form on the page
+    #ToDo: Submit those CSVs with the form on the page
     #ToDo: Compare data from form submissions to dataframes with same data as in CSVs
 
 
@@ -27,7 +27,7 @@ def flask_client():
 #ToDo: Create test confirming route uploading CSV with data for `annualUsageCollectionTracking` records
 
 
-#ToDo: Create test using Selenium to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching
+#ToDo: Create test to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching
 
 
 #ToDo: Create test for route showing data in database at end of initialization wizard

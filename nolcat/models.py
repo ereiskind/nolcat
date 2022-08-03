@@ -197,7 +197,7 @@ class VendorNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
 
     def __repr__(self):
@@ -299,6 +299,7 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+        #Alert: MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable--how should this be handled so that it can pass through?
 
 
         #Section: Get List of Resources
