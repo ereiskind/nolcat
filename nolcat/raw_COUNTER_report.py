@@ -29,9 +29,8 @@ class RawCOUNTERReport:
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
 
         The constructor for a RawCOUNTERReport object, it can take in objects of multiple other data types:
-        * `werkzeug.datastructures.ImmutableMultiDict` objects, which contain one or more CSV files uploaded via Flask
-        * API response objects, which are the result of SUSHI calls
-        * `pandas.core.frame.DataFrame` objects, which are used to test the `perform_deduplication_matching` method in isolation of the constructor
+        * `werkzeug.datastructures.ImmutableMultiDict` objects, which are returned when one or more CSV files is uploaded via Flask
+        * `pandas.core.frame.DataFrame` objects, which are returned by the `StatisticsSources._harvest_R5_SUSHI` method
         Files containing COUNTER data must be reformatted, a process explained on the Flask pages where such files can be uploaded, and named with the statistics source ID, the report type, and the fiscal year separated by underscores.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
@@ -78,9 +77,6 @@ class RawCOUNTERReport:
             )
             #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
             logging.info(f"Final dataframe:\n{self.report_dataframe}")
-        #ToDo: elif df is an API response object: (R5 SUSHI call response)
-            #ToDo: self.report_dataframe = the data from the response object
-            #ToDo: How to get the statisticsSources PK value here so it can be added to the dataframe?
         elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":
             self.report_dataframe = df
         else:

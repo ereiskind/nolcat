@@ -15,9 +15,6 @@ def sample_ImmutableMultiDict():
     pass
 
 
-#ToDo: Create fixture of API response object
-
-
 @pytest.fixture
 def R4_RawCOUNTERReport_fixture():
     """A RawCOUNTERReport object based on a CSV with the data of many reformatted R4 COUNTER reports; a single CSV is used to reduce the number of potential failure points."""
@@ -64,9 +61,6 @@ def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
     #ToDo: raw_report = RawCOUNTERReport(sample_ImmutableMultiDict)
     #ToDo: RawCOUNTERReport has a method recreating pandas `equals`, but asserting data run through a broken constructor is equal to the same data run through the same broken constructor will result in a passed test; would a comparison of the data in the dataframes and a check of the data type of the result of the constructor be a more accurate pass condition?
     pass
-
-
-#ToDo: Test constructor with API response object
 
 
 #ToDo: Test `create_normalized_resource_data_argument` method (perform method, then compare results with fixture for it)
