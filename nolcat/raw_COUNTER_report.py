@@ -449,12 +449,15 @@ class RawCOUNTERReport:
             (compare_database_names_table['index_one_data_type'] == "Database")
         ]
 
-        # Resource names are added after filtering to reduce the number of names that need to be found
+        # Resource names and platforms are added after filtering to reduce the number of names that need to be found
         database_names_matches_table['index_zero_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        database_names_matches_table['index_zero_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Platform'])
         if normalized_resource_data:
             database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
+            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Platform'])
         else:
             database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
         logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
@@ -464,47 +467,86 @@ class RawCOUNTERReport:
 
         if database_names_matches_index:
             for match in database_names_matches_index:
-                if database_names_matches_table.loc[match]['index_zero_resource_name'] != database_names_matches_table.loc[match]['index_one_resource_name']:
-                    if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
-                        index_zero_metadata = (
-                            new_resource_data.loc[match[0]]['Resource_Name'],
-                            new_resource_data.loc[match[0]]['DOI'],
-                            new_resource_data.loc[match[0]]['ISBN'],
-                            new_resource_data.loc[match[0]]['Print_ISSN'],
-                            new_resource_data.loc[match[0]]['Online_ISSN'],
-                            new_resource_data.loc[match[0]]['Data_Type'],
-                            new_resource_data.loc[match[0]]['Platform'],
+                if database_names_matches_table.loc[match]['index_zero_platform'] == database_names_matches_table.loc[match]['index_one_platform']:
+                    if database_names_matches_table.loc[match]['index_zero_resource_name'] != database_names_matches_table.loc[match]['index_one_resource_name']:
+                        if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
+                            index_zero_metadata = (
+                                new_resource_data.loc[match[0]]['Resource_Name'],
+                                new_resource_data.loc[match[0]]['DOI'],
+                                new_resource_data.loc[match[0]]['ISBN'],
+                                new_resource_data.loc[match[0]]['Print_ISSN'],
+                                new_resource_data.loc[match[0]]['Online_ISSN'],
+                                new_resource_data.loc[match[0]]['Data_Type'],
+                                new_resource_data.loc[match[0]]['Platform'],
+                            )
+                            if normalized_resource_data:
+                                index_one_metadata = (
+                                    normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                    normalized_resource_data.loc[match[1]]['DOI'],
+                                    normalized_resource_data.loc[match[1]]['ISBN'],
+                                    normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                                    normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                                    normalized_resource_data.loc[match[1]]['Data_Type'],
+                                    normalized_resource_data.loc[match[1]]['Platform'],
+                                )
+                            else:
+                                index_one_metadata = (
+                                    new_resource_data.loc[match[1]]['Resource_Name'],
+                                    new_resource_data.loc[match[1]]['DOI'],
+                                    new_resource_data.loc[match[1]]['ISBN'],
+                                    new_resource_data.loc[match[1]]['Print_ISSN'],
+                                    new_resource_data.loc[match[1]]['Online_ISSN'],
+                                    new_resource_data.loc[match[1]]['Data_Type'],
+                                    new_resource_data.loc[match[1]]['Platform'],
+                                )
+                            matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                            try:
+                                matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                            except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                                matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
+                            continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
+                        matched_records.add(match)
+                        logging.debug(f"{match} added as a match on database names with a high matching threshold")
+                else:  # While some databases are available on multiple platforms, different databases on different platforms can share a name, so all databases on different platforms are manually checked
+                    index_zero_metadata = (
+                        new_resource_data.loc[match[0]]['Resource_Name'],
+                        new_resource_data.loc[match[0]]['DOI'],
+                        new_resource_data.loc[match[0]]['ISBN'],
+                        new_resource_data.loc[match[0]]['Print_ISSN'],
+                        new_resource_data.loc[match[0]]['Online_ISSN'],
+                        new_resource_data.loc[match[0]]['Data_Type'],
+                        new_resource_data.loc[match[0]]['Platform'],
+                    )
+                    if normalized_resource_data:
+                        index_one_metadata = (
+                            normalized_resource_data.loc[match[1]]['Resource_Name'],
+                            normalized_resource_data.loc[match[1]]['DOI'],
+                            normalized_resource_data.loc[match[1]]['ISBN'],
+                            normalized_resource_data.loc[match[1]]['Print_ISSN'],
+                            normalized_resource_data.loc[match[1]]['Online_ISSN'],
+                            normalized_resource_data.loc[match[1]]['Data_Type'],
+                            normalized_resource_data.loc[match[1]]['Platform'],
                         )
-                        if normalized_resource_data:
-                            index_one_metadata = (
-                                normalized_resource_data.loc[match[1]]['Resource_Name'],
-                                normalized_resource_data.loc[match[1]]['DOI'],
-                                normalized_resource_data.loc[match[1]]['ISBN'],
-                                normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Data_Type'],
-                                normalized_resource_data.loc[match[1]]['Platform'],
-                            )
-                        else:
-                            index_one_metadata = (
-                                new_resource_data.loc[match[1]]['Resource_Name'],
-                                new_resource_data.loc[match[1]]['DOI'],
-                                new_resource_data.loc[match[1]]['ISBN'],
-                                new_resource_data.loc[match[1]]['Print_ISSN'],
-                                new_resource_data.loc[match[1]]['Online_ISSN'],
-                                new_resource_data.loc[match[1]]['Data_Type'],
-                                new_resource_data.loc[match[1]]['Platform'],
-                            )
-                        matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                        try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
-                            logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
-                        except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                            logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
-                        continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
-                matched_records.add(match)
-                logging.debug(f"{match} added as a match on database names with a high matching threshold")
+                    else:
+                        index_one_metadata = (
+                            new_resource_data.loc[match[1]]['Resource_Name'],
+                            new_resource_data.loc[match[1]]['DOI'],
+                            new_resource_data.loc[match[1]]['ISBN'],
+                            new_resource_data.loc[match[1]]['Print_ISSN'],
+                            new_resource_data.loc[match[1]]['Online_ISSN'],
+                            new_resource_data.loc[match[1]]['Data_Type'],
+                            new_resource_data.loc[match[1]]['Platform'],
+                        )
+                    matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
+                    try:
+                        matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                    except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
+                        matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
+                    continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
         else:
             logging.info("No matches on database names with a high matching threshold")
         
