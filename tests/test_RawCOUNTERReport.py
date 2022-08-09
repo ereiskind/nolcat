@@ -19,7 +19,7 @@ def sample_ImmutableMultiDict():
 def sample_R4_RawCOUNTERReport():
     """A RawCOUNTERReport object based on a CSV with the data of many reformatted R4 COUNTER reports; a single CSV is used to reduce the number of potential failure points."""
     df = pd.read_csv(
-        Path('tests', 'CSV_fixtures', 'sample_R4_RawCOUNTERReport.csv'),
+        Path('tests', 'fixture_constants', 'sample_R4_RawCOUNTERReport.csv'),
         encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
         encoding_errors='backslashreplace',
         dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
