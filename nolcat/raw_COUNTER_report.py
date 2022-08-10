@@ -6,6 +6,9 @@ import recordlinkage
 from fuzzywuzzy import fuzz
 
 logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
+# In this class, some logging levels have very specific uses:
+    # DEBUG: adding a value to a set or list or a statement that no such additions were made
+    # WARNING: method return values
 
 
 class RawCOUNTERReport:
@@ -38,9 +41,9 @@ class RawCOUNTERReport:
             for file in df.getlist('R4_files'):  #ToDo: Make sure this isn't locked to a single Flask input form
                 try:
                     statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.csv', string=Path(file.filename).parts[-1])[0]
-                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
+                    logging.debug(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
-                    logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
+                    logging.error(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
                     #ToDo: Return an error with a message like the above that exits the constructor method
                 # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
                 dataframe = pd.read_csv(
@@ -67,16 +70,16 @@ class RawCOUNTERReport:
                     #ToDo: Perform methods `.encode('utf-8').decode('unicode-escape')` on all fields that might have non-ASCII escaped characters
                     #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
                 )
-                logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
+                logging.info(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
                 dataframe['Statistics_Source_ID'] = statistics_source_ID
-                logging.debug(f"Dataframe:\n{dataframe}\n")
+                logging.info(f"Dataframe:\n{dataframe}\n")
                 dataframes_to_concatenate.append(dataframe)
             self.report_dataframe = pd.concat(
                 dataframes_to_concatenate,
                 ignore_index=True
             )
             #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
-            logging.info(f"Final dataframe:\n{self.report_dataframe}")
+            logging.warning(f"Final dataframe:\n{self.report_dataframe}")
         elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":
             self.report_dataframe = df
         else:
@@ -175,7 +178,7 @@ class RawCOUNTERReport:
         new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', 'Platform']], index=self.report_dataframe.index)
         # The recordlinkage `missing_value` argument doesn't recognize pd.NA, the null value for strings in dataframes, as a missing value, so those values need to be replaced with `None`. Performing this swap changes the data type of all the field back to pandas' generic `object`, but since recordlinkage can do string comparisons on string of the object data type, this change doesn't cause problems with the program's functionality.
         new_resource_data = new_resource_data.applymap(lambda cell_value: None if pd.isna(cell_value) else cell_value)
-        logging.debug(f"The new data for comparison:\n{new_resource_data}")
+        logging.info(f"The new data for comparison:\n{new_resource_data}")
 
 
         #Section: Set Up Recordlinkage Matching
@@ -226,7 +229,7 @@ class RawCOUNTERReport:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data)
-        logging.debug(f"DOI and ISBN comparison results:\n{compare_DOI_and_ISBN_table}")
+        logging.info(f"DOI and ISBN comparison results:\n{compare_DOI_and_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records`
         DOI_and_ISBN_matches = compare_DOI_and_ISBN_table[compare_DOI_and_ISBN_table.sum(axis='columns') == 4].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
@@ -236,7 +239,7 @@ class RawCOUNTERReport:
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on DOI and ISBN")
         else:
-            logging.info("No matches on DOI and ISBN")
+            logging.debug("No matches on DOI and ISBN")
 
 
         #Section: Find Matches--DOIs and ISSNs
@@ -253,7 +256,7 @@ class RawCOUNTERReport:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data)
-        logging.debug(f"DOI and ISSNs comparison results:\n{compare_DOI_and_ISSNs_table}")
+        logging.info(f"DOI and ISSNs comparison results:\n{compare_DOI_and_ISSNs_table}")
 
         #Subsection: Add Matches to `matched_records`
         DOI_and_ISSNs_matches = compare_DOI_and_ISSNs_table[compare_DOI_and_ISSNs_table.sum(axis='columns') == 4].index.tolist()
@@ -263,7 +266,7 @@ class RawCOUNTERReport:
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on DOI and ISSNs")
         else:
-            logging.info("No matches on DOI and ISSNs")
+            logging.debug("No matches on DOI and ISSNs")
 
 
         #Section: Find Matches--ISBNs with Close Fuzzy Match on Resource Titles
@@ -286,7 +289,7 @@ class RawCOUNTERReport:
             compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         
         compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        logging.debug(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
+        logging.info(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex
         ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 5].index.tolist()
@@ -333,12 +336,13 @@ class RawCOUNTERReport:
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                             matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                            logging.debug(f"{match} added as a match to manually confirm on ISBNs with a new key")
+                            logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                            logging.debug(f"{match} added as a match to manually confirm on ISBNs")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on ISBNs")
         else:
-            logging.info("No matches on ISBNs")
+            logging.debug("No matches on ISBNs")
 
 
         #Section: Find Matches--ISSNs with Close Fuzzy Match on Resource Titles
@@ -356,7 +360,7 @@ class RawCOUNTERReport:
             compare_ISSNs_table = compare_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_ISSNs_table = compare_ISSNs.compute(candidate_matches, new_resource_data)
-        logging.debug(f"ISSNs comparison results:\n{compare_ISSNs_table}")
+        logging.info(f"ISSNs comparison results:\n{compare_ISSNs_table}")
 
         #Subsection: Add Matches to `matched_records`
         ISSNs_matches = compare_ISSNs_table[compare_ISSNs_table.sum(axis='columns') == 5].index.tolist()
@@ -366,7 +370,7 @@ class RawCOUNTERReport:
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on ISSNs")
         else:
-            logging.info("No matches on ISSNs")
+            logging.debug("No matches on ISSNs")
 
 
         #Section: Find Matches--Print ISSNs with Very Close Fuzzy Match on Resource Titles
@@ -384,7 +388,7 @@ class RawCOUNTERReport:
             compare_print_ISSN_table = compare_print_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_print_ISSN_table = compare_print_ISSN.compute(candidate_matches, new_resource_data)
-        logging.debug(f"Print ISSN comparison results:\n{compare_print_ISSN_table}")
+        logging.info(f"Print ISSN comparison results:\n{compare_print_ISSN_table}")
 
         #Subsection: Add Matches to `matched_records`
         print_ISSN_matches = compare_print_ISSN_table[compare_print_ISSN_table.sum(axis='columns') == 5].index.tolist()
@@ -394,7 +398,7 @@ class RawCOUNTERReport:
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on print ISSN")
         else:
-            logging.info("No matches on print ISSN")
+            logging.debug("No matches on print ISSN")
 
 
         #Section: Find Matches--Online ISSNs with Very Close Fuzzy Match on Resource Titles
@@ -412,7 +416,7 @@ class RawCOUNTERReport:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data)
-        logging.debug(f"Online ISSN comparison results:\n{compare_online_ISSN_table}")
+        logging.info(f"Online ISSN comparison results:\n{compare_online_ISSN_table}")
 
         #Subsection: Add Matches to `matched_records`
         online_ISSN_matches = compare_online_ISSN_table[compare_online_ISSN_table.sum(axis='columns') == 5].index.tolist()
@@ -422,7 +426,7 @@ class RawCOUNTERReport:
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on online ISSN")
         else:
-            logging.info("No matches on online ISSN")
+            logging.debug("No matches on online ISSN")
         
 
         #Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources
@@ -440,7 +444,7 @@ class RawCOUNTERReport:
             compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
         
         compare_database_names_table['index_zero_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
-        logging.debug(f"Database names comparison result with metadata:\n{compare_database_names_table}")
+        logging.info(f"Database names comparison result with metadata:\n{compare_database_names_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe
         database_names_matches_table = compare_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
@@ -458,7 +462,7 @@ class RawCOUNTERReport:
         else:
             database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
             database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
-        logging.debug(f"Database names matches table with metadata:\n{database_names_matches_table}")
+        logging.info(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
         # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
@@ -505,7 +509,8 @@ class RawCOUNTERReport:
                                 logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                             except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                                 matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
+                                logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                             continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                         matched_records.add(match)
                         logging.debug(f"{match} added as a match on database names with a high matching threshold")
@@ -545,10 +550,11 @@ class RawCOUNTERReport:
                         logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                     except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                         matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold with a new key")
+                        logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                     continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
         else:
-            logging.info("No matches on database names with a high matching threshold")
+            logging.debug("No matches on database names with a high matching threshold")
         
 
         #Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources
@@ -566,7 +572,7 @@ class RawCOUNTERReport:
             compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
         
         compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
-        logging.debug(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
+        logging.info(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
 
         #Subsection: Filter Comparison Results Dataframe
         platform_names_matches_table = compare_platform_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are platforms
@@ -581,7 +587,7 @@ class RawCOUNTERReport:
             platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Platform'])
         else:
             platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
-        logging.debug(f"Platform names matches table with metadata:\n{platform_names_matches_table}")
+        logging.info(f"Platform names matches table with metadata:\n{platform_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
         # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
@@ -627,12 +633,13 @@ class RawCOUNTERReport:
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
                         except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                             matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold with a new key")
+                            logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on platform names with a high matching threshold")
         else:
-            logging.info("No matches on platform names with a high matching threshold")
+            logging.debug("No matches on platform names with a high matching threshold")
 
 
         #Section: Find Matches--Single Standard Identifier Field for All Non-`Platform`-Type Resources
@@ -649,7 +656,7 @@ class RawCOUNTERReport:
             compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data)
-        logging.debug(f"Single matching identifier comparison results:\n{compare_identifiers_table}")
+        logging.info(f"Single matching identifier comparison results:\n{compare_identifiers_table}")
 
         #Subsection: Filter Comparison Results Dataframe
         compare_identifiers_matches_table = compare_identifiers_table[
@@ -658,7 +665,7 @@ class RawCOUNTERReport:
             (compare_identifiers_table['Print_ISSN'] == 1) |
             (compare_identifiers_table['Online_ISSN'] == 1)
         ]
-        logging.debug(f"Filtered single matching identifier comparison results:\n{compare_identifiers_matches_table}")
+        logging.info(f"Filtered single matching identifier comparison results:\n{compare_identifiers_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         identifiers_matches_interim_index = compare_identifiers_matches_table.index.tolist()
@@ -712,9 +719,10 @@ class RawCOUNTERReport:
                     logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
                 except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                     matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier with a new key")
+                    logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
         else:
-            logging.info("No matches on single matching identifiers")
+            logging.debug("No matches on single matching identifiers")
 
 
         #Section: Find Matches--Loose Fuzzy Match on Resource Name
@@ -737,7 +745,7 @@ class RawCOUNTERReport:
             compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
         
         compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        logging.debug(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
+        logging.info(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe for FuzzyWuzzy
         #ALERT: See note in tests.test_RawCOUNTERReport about memory
@@ -747,12 +755,12 @@ class RawCOUNTERReport:
             subset=['index_zero_resource_name', 'index_one_resource_name'],
             inplace=True,
         )
-        logging.debug(f"Fuzzy matching resource names comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
+        logging.info(f"Fuzzy matching resource names comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
 
         compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
-        logging.debug(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
+        logging.info(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
         
         #Subsection: Filter Comparison Results Dataframe
         compare_resource_name_matches_table = compare_resource_name_table[
@@ -765,7 +773,7 @@ class RawCOUNTERReport:
             (compare_resource_name_table['token_sort_ratio'] >= 70) |
             (compare_resource_name_table['token_set_ratio'] >= 80)
         ]
-        logging.debug(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
+        logging.info(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
 
         #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
         resource_name_matches_interim_index = compare_resource_name_matches_table.index.tolist()
@@ -819,14 +827,15 @@ class RawCOUNTERReport:
                     logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
                 except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
                     matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names with a new key")
+                    logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
         else:
-            logging.info("No matches on fuzzy matching resource names")
+            logging.debug("No matches on fuzzy matching resource names")
 
 
         #Section: Return Record Index Pair Lists
-        logging.debug(f"`matched_records`:\n{matched_records}")
-        logging.debug(f"`matches_to_manually_confirm`:\n{matches_to_manually_confirm}")
+        logging.warning(f"`matched_records`:\n{matched_records}")
+        logging.warning(f"`matches_to_manually_confirm`:\n{matches_to_manually_confirm}")
         """
         return (
             matched_records,
