@@ -524,8 +524,8 @@ class RawCOUNTERReport:
                                     logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
                                     logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                             continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
-                        matched_records.add(match)
-                        logging.debug(f"{match} added as a match on database names with a high matching threshold")
+                    matched_records.add(match)  # The indentation is level with the `if` statement for if the resource names are exact matches
+                    logging.debug(f"{match} added as a match on database names with a high matching threshold")
                 else:  # While some databases are available on multiple platforms, different databases on different platforms can share a name, so all databases on different platforms are manually checked
                     index_zero_metadata = (
                         new_resource_data.loc[match[0]]['Resource_Name'],
