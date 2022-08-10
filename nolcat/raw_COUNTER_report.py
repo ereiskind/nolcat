@@ -299,7 +299,7 @@ class RawCOUNTERReport:
 
         if ISBN_matches:
             for match in ISBN_matches:
-                if compare_ISBN_table.loc[match]['index_zero_resource_name'] != compare_ISBN_table.loc[match]['index_zero_resource_name']:
+                if compare_ISBN_table.loc[match]['index_zero_resource_name'] != compare_ISBN_table.loc[match]['index_one_resource_name']:
                     if volume_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or volume_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']):
                         index_zero_metadata = (
                             new_resource_data.loc[match[0]]['Resource_Name'],
