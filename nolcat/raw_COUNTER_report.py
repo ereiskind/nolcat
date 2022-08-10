@@ -291,11 +291,11 @@ class RawCOUNTERReport:
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex
         ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"ISBN matching record pairs: {ISBN_matches}")
-        volume_regex = re.compile(r'\svol\.?(ume)?^\w')
-        edition_regex = re.compile(r'\sed\.?(ition)?^\w')
+        volume_regex = re.compile(r'\bvol(ume)?s?\.?\b')
+        edition_regex = re.compile(r'\bed(ition)?s?\.?\b')
 
         if ISBN_matches:
-            for match in ISBN_matches:  #ALERT: Not tested--the R4 test data contains no titles meeting the criteria below 
+            for match in ISBN_matches:
                 if compare_ISBN_table.loc[match]['index_zero_resource_name'] != compare_ISBN_table.loc[match]['index_zero_resource_name']:
                     if volume_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or volume_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']):
                         index_zero_metadata = (
