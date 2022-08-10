@@ -872,6 +872,7 @@ class RawCOUNTERReport:
         #Section: Return Record Index Pair Lists
         logging.warning(f"`matched_records`:\n{matched_records}")
         logging.warning(f"`matches_to_manually_confirm`:\n{matches_to_manually_confirm}")
+        #ToDo: Resources where an ISSN appears in both the Print_ISSN and Online_ISSN fields and/or is paired with different ISSNs still need to be paired--can the node and edge model used after this initial manual matching perform that pairing?
         """
         return (
             matched_records,
