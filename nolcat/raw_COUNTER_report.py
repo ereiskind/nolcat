@@ -330,20 +330,17 @@ class RawCOUNTERReport:
                                 new_resource_data.loc[match[1]]['Data_Type'],
                                 new_resource_data.loc[match[1]]['Platform'],
                             )
-                        matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                        try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                        # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                        if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                            matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on ISBNs")
-                        except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                                reversed_key = (index_one_metadata, index_zero_metadata)
-                                matches_to_manually_confirm[reversed_key].add(match)
-                                logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                                logging.debug(f"{match} added as a match to manually confirm on ISBNs")
-                            except:
-                                matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                                logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                                logging.debug(f"{match} added as a match to manually confirm on ISBNs")
+                        elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                            matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                            logging.debug(f"{match} added as a match to manually confirm on ISBNs")
+                        else:
+                            matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                            logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                            logging.debug(f"{match} added as a match to manually confirm on ISBNs")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on ISBNs")
@@ -509,20 +506,17 @@ class RawCOUNTERReport:
                                     new_resource_data.loc[match[1]]['Data_Type'],
                                     new_resource_data.loc[match[1]]['Platform'],
                                 )
-                            matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                            try:
-                                matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                            # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                            if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                                matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                                 logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
-                            except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                                try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                                    reversed_key = (index_one_metadata, index_zero_metadata)
-                                    matches_to_manually_confirm[reversed_key].add(match)
-                                    logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                                    logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
-                                except:
-                                    matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                                    logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                                    logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                            elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                                matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                            else:
+                                matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                                logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                                logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                             continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                     matched_records.add(match)  # The indentation is level with the `if` statement for if the resource names are exact matches
                     logging.debug(f"{match} added as a match on database names with a high matching threshold")
@@ -556,20 +550,17 @@ class RawCOUNTERReport:
                             new_resource_data.loc[match[1]]['Data_Type'],
                             new_resource_data.loc[match[1]]['Platform'],
                         )
-                    matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                    try:
-                        matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                    # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                    if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                        matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                         logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
-                    except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                        try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                            reversed_key = (index_one_metadata, index_zero_metadata)
-                            matches_to_manually_confirm[reversed_key].add(match)
-                            logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                            logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
-                        except:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                            logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                            logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                    elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                        matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
+                    else:
+                        matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                        logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                        logging.debug(f"{match} added as a match to manually confirm on database names with a high matching threshold")
                     continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
         else:
             logging.debug("No matches on database names with a high matching threshold")
@@ -645,20 +636,17 @@ class RawCOUNTERReport:
                                 new_resource_data.loc[match[1]]['Data_Type'],
                                 new_resource_data.loc[match[1]]['Platform'],
                             )
-                        matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                        try:
-                            matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                        # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                        if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                            matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                             logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
-                        except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                            try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                                reversed_key = (index_one_metadata, index_zero_metadata)
-                                matches_to_manually_confirm[reversed_key].add(match)
-                                logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                                logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
-                            except:
-                                matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                                logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                                logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
+                        elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                            matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
+                        else:
+                            matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                            logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                            logging.debug(f"{match} added as a match to manually confirm on platform names with a high matching threshold")
                         continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                 matched_records.add(match)
                 logging.debug(f"{match} added as a match on platform names with a high matching threshold")
@@ -737,20 +725,17 @@ class RawCOUNTERReport:
                         new_resource_data.loc[match[1]]['Data_Type'],
                         new_resource_data.loc[match[1]]['Platform'],
                     )
-                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                try:
-                    matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                     logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
-                except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                    try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                        reversed_key = (index_one_metadata, index_zero_metadata)
-                        matches_to_manually_confirm[reversed_key].add(match)
-                        logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                        logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
-                    except:
-                        matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                        logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                        logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
+                elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                    matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
+                else:
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                    logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                    logging.debug(f"{match} added as a match to manually confirm on a single matching identifier")
         else:
             logging.debug("No matches on single matching identifiers")
 
@@ -851,20 +836,17 @@ class RawCOUNTERReport:
                         new_resource_data.loc[match[1]]['Data_Type'],
                         new_resource_data.loc[match[1]]['Platform'],
                     )
-                matches_to_manually_confirm_key = (index_zero_metadata, index_one_metadata)
-                try:
-                    matches_to_manually_confirm[matches_to_manually_confirm_key].add(match)
+                # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
                     logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
-                except:  # If the `matches_to_manually_confirm_key` isn't already in `matches_to_manually_confirm`
-                    try:  # This checks if the metadata in `matches_to_manually_confirm_key` in the opposite order is in `matches_to_manually_confirm`--recordlinkage doesn't have permutations in the record index, so how this is happening is unclear
-                        reversed_key = (index_one_metadata, index_zero_metadata)
-                        matches_to_manually_confirm[reversed_key].add(match)
-                        logging.info(f"Reverse of matches_to_manually_confirm key {matches_to_manually_confirm_key} found")
-                        logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
-                    except:
-                        matches_to_manually_confirm[matches_to_manually_confirm_key] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                        logging.info(f"New matches_to_manually_confirm key {matches_to_manually_confirm_key} created")
-                        logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+                elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                    matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+                else:
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                    logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
         else:
             logging.debug("No matches on fuzzy matching resource names")
 
