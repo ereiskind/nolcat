@@ -6,9 +6,9 @@ from flask_wtf.csrf import CSRFProtect
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file exclusive to the container and imported into this file.
+"""Since GitHub is used to manage the code, and the repo is public, the AWS instance is used to save confidential information.
 
-The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no init file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from the `secrets.py` file here.
+Flask-SQLAlchemy takes in the information for establishing a database connection through the string assigned to the config variable `SQLALCHEMY_DATABASE_URI`. Confidential information is currently set up to be imported from the `nolcat_secrets.py` file, but ultimately, all of the data in those files will be saved to environment variables. Naming the file `secrets.py` causes an ImportError with numpy.
 """
 import nolcat.secrets as secrets  #ToDo: Confirm the secrets file location, name, and variable names
 
