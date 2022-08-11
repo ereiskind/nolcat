@@ -140,4 +140,4 @@ dmypy.json
 tests/logs/*
 
 # Faux Environmental Variables
-nolcat/secrets.py
+nolcat/nolcat-secrets.py
