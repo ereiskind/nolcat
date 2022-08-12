@@ -24,11 +24,6 @@ Branch: Import Data from Secret Files
 -------------------------------------
 * Import file path to JSON with R5 SUSHI credentials
 
-Branch: Rework Database Structure
----------------------------------
-* Correct "tests/database_seeding_fixtures.py" to match the current schema
-* Filter out ISBN and title matches in `RawCOUNTERReport.perform_deduplication_matching` if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
-
 Branch: Complete Initialization Process
 ---------------------------------------
 * In `RawCOUNTERReport` constructor for uploaded files, make all dates the first of the month
