@@ -138,9 +138,9 @@ Branch: Develop Testing for Initialization Process
 --------------------------------------------------
 * Figure out how to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `RawCOUNTERReport` test module
 * Write test for `RawCOUNTERReport.load_data_into_database` method
-* "ToDo: Create test to confirm that form can successfully upload all CSV files"
-* "ToDo:Create test confirming the uploading of the data of the requested CSVs, the creation of the `annualUsageCollectionTracking` records, and the outputting of the CSV for that relation"
-* "ToDo: Create test confirming route uploading CSV with data for `annualUsageCollectionTracking` records"
+* "ToDo: Create test to confirm that form can successfully upload all TSV files"
+* "ToDo:Create test confirming the uploading of the data of the requested TSVs, the creation of the `annualUsageCollectionTracking` records, and the outputting of the TSV for that relation"
+* "ToDo: Create test confirming route uploading TSV with data for `annualUsageCollectionTracking` records"
 * "ToDo: Create test to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching"
 * "ToDo: Create test for route showing data in database at end of initialization wizard"
 
