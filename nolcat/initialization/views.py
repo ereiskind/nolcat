@@ -30,7 +30,7 @@ def download_file(filename):
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/')
 def homepage():
-    """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
+    """Returns the page with for downloading the TSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
     form_being_filled_out = InitialRelationDataForm()
     return render_template('index.html', form=form_being_filled_out)
 
