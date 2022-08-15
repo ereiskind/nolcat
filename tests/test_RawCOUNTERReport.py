@@ -10,7 +10,7 @@ from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 @pytest.fixture
 def sample_R4_form_result():
-    """Creates an object highly similar to that returned by the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
+    """Creates an object highly similar to that returned by the form at the end of route `initialization.wizard_page_3`, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
     #ToDo: This fixture needs to be created so the RawCOUNTERReport constructor can be tested independently of the form input functionality, but multiple days of work have failed to find a solution with the current configuration. Using WTForms to create the form taking in multiple Excel files may open up other options, but at the moment, the options are limited. Below are the methods attempted along with links and samples of code.
 
     #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects

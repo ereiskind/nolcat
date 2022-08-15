@@ -41,9 +41,9 @@ Branch: Complete Initialization Process
 ---------------------------------------
 * In `RawCOUNTERReport` constructor for uploaded files, make all dates the first of the month
 * Write `RawCOUNTERReport.load_data_into_database` method
-* Finish route `nolcat.initialization.views.save_historical_collection_tracking_info`
-* Create route `nolcat.initialization.views.upload_historical_COUNTER_usage`
-* Create route `nolcat.initialization.views.determine_if_resources_match`
+* Finish route `nolcat.initialization.views.wizard_page_2`
+* Create route `nolcat.initialization.views.wizard_page_3`
+* Create route `nolcat.initialization.views.wizard_page_4`
 * Figure out best format for metadata selector in "select-matches.html"
 
 Branch: Create Basic UI Pages

@@ -35,9 +35,9 @@ def homepage():
     return render_template('index.html', form=form_being_filled_out)
 
 
-@bp.route('/initialize-collection-tracking', methods=["GET","POST"])
-def save_historical_collection_tracking_info():
-    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
+@bp.route('/initialization-wizard-page-2', methods=['GET','POST'])
+def wizard_page_2():
+    """Intakes form with data for the initial relations and returns the page for downloading the TSV template for `annualUsageCollectionTracking` and the JSONs for formatting the historical R4 reports for upload and then uploading the `annualUsageCollectionTracking` relation data."""
     form_being_submitted = InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
@@ -112,16 +112,17 @@ def save_historical_collection_tracking_info():
     return render_template('historical-collection-tracking.html')
 
 
-@bp.route('/historical-COUNTER-data')
-def upload_historical_COUNTER_usage():
-    """Returns the page for uploading reformatted COUNTER R4 CSVs."""
+@bp.route('/initialization-wizard-page-3', methods=['GET','POST'])
+def wizard_page_3():
+    """Intakes form with the `annualUsageCollectionTracking` relation data and returns the page for uploading the reformatted COUNTER R4 reports."""
     #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
+    #ToDo: Set up form for intake of R4 data
     return render_template('select-R4-CSVs.html')
 
 
-@bp.route('/matching', methods=['GET', 'POST'])
-def determine_if_resources_match():
-    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
+@bp.route('/initialization-wizard-page-4', methods=['GET','POST'])
+def wizard_page_4():
+    """Intakes form with the reformatted COUNTER R4 reports and returns the page for choosing if pairs of records found by `RawCOUNTERReport.perform_deduplication_matching` refer to the same resource, and if so, what non-matching metadata should be set as the default."""
     #ToDo: historical_data = RawCOUNTERReport(uploaded files)
     #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
@@ -129,7 +130,7 @@ def determine_if_resources_match():
     logging.info(f"\nerrors before if-else: {form.errors}\n")
     if form.validate_on_submit():  # This is when the form has been submitted
         logging.info(f"\nerrors in validate_on_submit: {form.errors}\n")
-        return redirect(url_for('data_load_complete'))
+        return redirect(url_for('wizard_page_5'))
     elif request.method == 'POST':  # This is when the function is receiving the data to render the form
         logging.info(f"\nerrors in method==POST: {form.errors}\n")
         return render_template('select-matches.html', form=form)
@@ -137,7 +138,7 @@ def determine_if_resources_match():
         return abort(404)
 
 
-@bp.route('/database-creation-complete')
-def data_load_complete():
-    """Returns a page showing data just added to the database upon its successful loading into the database."""
+@bp.route('/initialization-wizard-page-5', methods=['GET','POST'])
+def wizard_page_5():
+    """Intakes form with confirmation of matches needing manual checking and the default metadata for the matched resources and returns the page showing the data just successfully loaded into the database."""
     return render_template('show-loaded-data.html')
