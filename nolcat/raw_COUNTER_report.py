@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple CSV files for R4 and as an API call response (or possibly a CSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple TSV files for R4 and as an API call response (or possibly a TSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
@@ -27,13 +27,13 @@ class RawCOUNTERReport:
     def __init__(self, df):
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
 
-        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
+        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report TSV files with a `<Statistics_Source_ID>_<report type>_<calendar year assigned to fiscal year in "yyyy" format>.tsv` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
             dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
