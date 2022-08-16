@@ -1,16 +1,6 @@
 NoLCAT
 ######
 
-THIS BRANCH: OpenRefine downloads as TSVs retain non-ASCII characters, including those in other languages, when CSV downloads don't, so COUNTER reports transformed in OpenRefine should be downloaded as TSVs, so this program should also expect the uploads to be TSVs. The TSVs can become dataframe using the method below followed by the `.encode('utf-8').decode('unicode-escape')` methods to convert the encoding errors back to Unicode characters.
-pd.read_csv(
-    "name_of_the_TSV_file.tsv",
-    sep='\t',
-    encoding='utf-8',
-    encoding_errors='backslashreplace',
-)
-
-This change will need to include changing the format of test data files and likely the content of text in both the conftest fixtures and their binary representation.
-
 To-Do List
 **********
 
