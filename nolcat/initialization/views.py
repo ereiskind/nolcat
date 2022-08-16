@@ -41,15 +41,75 @@ def wizard_page_2():
     form_being_submitted = InitialRelationDataForm()
     form_being_filled_out = AUCTForm()
     if form_being_submitted.validate_on_submit():
-        fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
-        vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
-        vendorNotes_dataframe = pd.read_csv(form_being_submitted.vendorNotes_CSV.data)
-        statisticsSources_dataframe = pd.read_csv(form_being_submitted.statisticsSources_CSV.data)
-        statisticsSourceNotes_dataframe = pd.read_csv(form_being_submitted.statisticsSourceNotes_CSV.data)
-        statisticsResourceSources_dataframe = pd.read_csv(form_being_submitted.statisticsResourceSources_CSV.data)
-        resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
-        resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
+        
+        #Section: Ingest Data from Uploaded TSVs
+        fiscalYears_dataframe = pd.read_csv(
+            form_being_submitted.fiscalYears_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
 
+        vendors_dataframe = pd.read_csv(
+            form_being_submitted.vendors_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+        
+
+        vendorNotes_dataframe = pd.read_csv(
+            form_being_submitted.vendorNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSources_dataframe = pd.read_csv(
+            form_being_submitted.statisticsSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSourceNotes_dataframe = pd.read_csv(
+            form_being_submitted.statisticsSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form_being_submitted.statisticsResourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+
+        resourceSources_dataframe = pd.read_csv(
+            form_being_submitted.resourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        resourceSourceNotes_dataframe = pd.read_csv(
+            form_being_submitted.resourceSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+
+        #Section: Load Data into Database
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
@@ -93,6 +153,8 @@ def wizard_page_2():
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
         
+
+        #Section: Create TSV Template for `annualUsageCollectionTracking`
         #ALERT: Due to database unavailability, code from this point forward is untested
         #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
         with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
@@ -100,8 +162,8 @@ def wizard_page_2():
             for record in AUCT_records:
                 print(repr(type(record)))
                 print(record)
-
-        #ToDo: Create downloadable CSV "initialize_annualUsageCollectionTracking.csv" with results of above as first four columns and the following field names in the rest of the first row
+        
+        #ToDo: Create downloadable TSV "initialize_annualUsageCollectionTracking.tsv" with results of above as first four columns and the following field names in the rest of the first row
             # Usage_Is_Being_Collected
             # Manual_Collection_Required
             # Collection_Via_Email
@@ -110,7 +172,10 @@ def wizard_page_2():
             # Usage_File_Path
             # Notes
         #ToDo: Download all R4 OpenRefine JSONs
-    return render_template('historical-collection-tracking.html', form=form_being_filled_out)
+        return render_template('historical-collection-tracking.html', form=form_being_filled_out)
+    else:
+        #ToDo: Should an error about attempting to bypass part of wizard be used?
+        return redirect(url_for('homepage'))
 
 
 @bp.route('/initialization-wizard-page-3', methods=['GET','POST'])
