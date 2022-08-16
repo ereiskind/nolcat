@@ -17,6 +17,7 @@ from .forms import InitialRelationDataForm, AUCTForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
+#ToDo: Should all routes be reconfigured to use the if-elif-else structure in `wizard_page_4` where if is for the POST and goes to the corresponding page, elif is the validation check which does all the work with the submitted data then uses redirect(url_for()) to go to the next page, and else is a 404? Is the structure reliant upon the validation check going before POST as the request type?
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
@@ -207,6 +208,7 @@ def wizard_page_3():
 @bp.route('/initialization-wizard-page-4', methods=['GET','POST'])
 def wizard_page_4():
     """Intakes form with the reformatted COUNTER R4 reports and returns the page for choosing if pairs of records found by `RawCOUNTERReport.perform_deduplication_matching` refer to the same resource, and if so, what non-matching metadata should be set as the default."""
+    #ToDo: Check that all stats source IDs used in file names are in database
     #ToDo: historical_data = RawCOUNTERReport(uploaded files)
     #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
     #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
