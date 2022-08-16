@@ -13,7 +13,7 @@ from sqlalchemy.sql import text
 
 from . import bp
 from ..app import db
-from .forms import InitialRelationDataForm, TestForm
+from .forms import InitialRelationDataForm, AUCTForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -39,6 +39,7 @@ def homepage():
 def wizard_page_2():
     """Intakes form with data for the initial relations and returns the page for downloading the TSV template for `annualUsageCollectionTracking` and the JSONs for formatting the historical R4 reports for upload and then uploading the `annualUsageCollectionTracking` relation data."""
     form_being_submitted = InitialRelationDataForm()
+    form_being_filled_out = AUCTForm()
     if form_being_submitted.validate_on_submit():
         fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
         vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
@@ -109,7 +110,7 @@ def wizard_page_2():
             # Usage_File_Path
             # Notes
         #ToDo: Download all R4 OpenRefine JSONs
-    return render_template('historical-collection-tracking.html')
+    return render_template('historical-collection-tracking.html', form=form_being_filled_out)
 
 
 @bp.route('/initialization-wizard-page-3', methods=['GET','POST'])
