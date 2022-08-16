@@ -181,9 +181,27 @@ def wizard_page_2():
 @bp.route('/initialization-wizard-page-3', methods=['GET','POST'])
 def wizard_page_3():
     """Intakes form with the `annualUsageCollectionTracking` relation data and returns the page for uploading the reformatted COUNTER R4 reports."""
-    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
-    #ToDo: Set up form for intake of R4 data
-    return render_template('select-R4-CSVs.html')
+    form_being_submitted = AUCTForm()
+    #ToDo: form_being_filled_out = class imported from `forms` module that exists to handle intake of reformatted R4 reports
+    if form_being_submitted.validate_on_submit():
+        annualUsageCollectionTracking_dataframe = pd.read_csv(
+            form_being_submitted.annualUsageCollectionTracking_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        annualUsageCollectionTracking_dataframe['Notes'] = annualUsageCollectionTracking_dataframe['Notes'].encode('utf-8').decode('unicode-escape')
+
+        #ToDo: Add any Flask-SQLAlchemy equivalents to `engine.connect()` and/or `db.engine.close()` or similar functions as needed
+        annualUsageCollectionTracking_dataframe.to_sql(
+            'annualUsageCollectionTracking',
+            con=db.engine,
+            if_exists='replace',
+        )
+        return render_template('select-R4-files.html', form=form_being_filled_out)
+    else:
+        #ToDo: Should an error about attempting to bypass part of wizard be used?
+        return redirect(url_for('homepage'))
 
 
 @bp.route('/initialization-wizard-page-4', methods=['GET','POST'])
