@@ -10,7 +10,7 @@ from nolcat.raw_COUNTER_report import RawCOUNTERReport
 
 @pytest.fixture
 def sample_R4_form_result():
-    """Creates an object highly similar to that returned by the form at the end of route upload_historical_COUNTER_usage, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
+    """Creates an object highly similar to that returned by the form at the end of route `initialization.wizard_page_3`, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
     #ToDo: This fixture needs to be created so the RawCOUNTERReport constructor can be tested independently of the form input functionality, but multiple days of work have failed to find a solution with the current configuration. Using WTForms to create the form taking in multiple Excel files may open up other options, but at the moment, the options are limited. Below are the methods attempted along with links and samples of code.
 
     #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects
@@ -107,10 +107,10 @@ def sample_R4_form_result():
 def RawCOUNTERReport_fixture_from_R4_spreadsheets():
     """A RawCOUNTERReport object created by passing all the sample R4 spreadsheets into a dataframe, then wrapping the dataframe in the RawCOUNTERReport class."""
     dataframes_to_concatenate = []
-    for spreadsheet in os.listdir(Path('tests', 'bin', 'OpenRefine_exports')):
+    for spreadsheet in os.listdir(Path('tests', 'data', 'sample_COUNTER_data')):
         statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}\.xlsx', string=spreadsheet)[0]
         dataframe = pd.read_excel(
-            Path('tests', 'bin', 'OpenRefine_exports', spreadsheet),
+            Path('tests', 'data', 'sample_COUNTER_data', spreadsheet),
             #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
             engine='openpyxl',
             dtype={

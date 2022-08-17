@@ -12,7 +12,7 @@
 
     <!--ToDo: Deduplication of resources from reformatted R4 upload-->
 
-    <form action="{{ url_for('ingest.data_load_complete') }}" method="POST">
+    <form action="{{ url_for('ingest.wizard_page_5') }}" method="POST">
         {{ form.csrf_token }}
         {{ form.hidden_tag() }}
         <fieldset>

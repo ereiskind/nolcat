@@ -6,11 +6,17 @@ from wtforms.validators import DataRequired
 
 
 class InitialRelationDataForm(FlaskForm):
-    fiscalYears_CSV = FileField("Select the filled out `initialize_fiscalYears.csv` file here.", validators=[FileRequired()])
-    vendors_CSV = FileField("Select the filled out `initialize_vendors.csv` file here.", validators=[FileRequired()])
-    vendorNotes_CSV = FileField("Select the filled out `initialize_vendorNotes.csv` file here.", validators=[FileRequired()])
-    statisticsSources_CSV = FileField("Select the filled out `initialize_statisticsSources.csv` file here.", validators=[FileRequired()])
-    statisticsSourceNotes_CSV = FileField("Select the filled out `initialize_statisticsSourceNotes.csv` file here.", validators=[FileRequired()])
-    statisticsResourceSources_CSV = FileField("Select the filled out `initialize_statisticsResourceSources.csv` file here.", validators=[FileRequired()])
-    resourceSources_CSV = FileField("Select the filled out `initialize_resourceSources.csv` file here.", validators=[FileRequired()])
-    resourceSourceNotes_CSV = FileField("Select the filled out `initialize_resourceSourceNotes.csv` file here.", validators=[FileRequired()])
+    """Creates a form for uploading the non-usage database initialization data."""
+    fiscalYears_TSV = FileField("Select the filled out \"initialize_fiscalYears.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    vendors_TSV = FileField("Select the filled out \"initialize_vendors.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    vendorNotes_TSV = FileField("Select the filled out \"initialize_vendorNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    statisticsSources_TSV = FileField("Select the filled out \"initialize_statisticsSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    statisticsSourceNotes_TSV = FileField("Select the filled out \"initialize_statisticsSourceNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    statisticsResourceSources_TSV = FileField("Select the filled out \"initialize_statisticsResourceSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    resourceSources_TSV = FileField("Select the filled out \"initialize_resourceSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+    resourceSourceNotes_TSV = FileField("Select the filled out \"initialize_resourceSourceNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
+
+
+class AUCTForm(FlaskForm):
+    """Creates a form for uploading the `annualUsageCollectionTracking` relation data."""
+    annualUsageCollectionTracking_TSV = FileField("Select the filled out \"initialize_annualUsageCollectionTracking.tsv\" file here.", validators=[FileRequired(), DataRequired()])

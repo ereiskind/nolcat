@@ -31,9 +31,9 @@ Branch: Complete Initialization Process
 ---------------------------------------
 * In `RawCOUNTERReport` constructor for uploaded files, make all dates the first of the month
 * Write `RawCOUNTERReport.load_data_into_database` method
-* Finish route `nolcat.initialization.views.save_historical_collection_tracking_info`
-* Create route `nolcat.initialization.views.upload_historical_COUNTER_usage`
-* Create route `nolcat.initialization.views.determine_if_resources_match`
+* Finish route `nolcat.initialization.views.wizard_page_2`
+* Create route `nolcat.initialization.views.wizard_page_3`
+* Create route `nolcat.initialization.views.wizard_page_4`
 * Figure out best format for metadata selector in "select-matches.html"
 
 Branch: Create Basic UI Pages
@@ -128,9 +128,9 @@ Branch: Develop Testing for Initialization Process
 --------------------------------------------------
 * Figure out how to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `RawCOUNTERReport` test module
 * Write test for `RawCOUNTERReport.load_data_into_database` method
-* "ToDo: Create test to confirm that form can successfully upload all CSV files"
-* "ToDo:Create test confirming the uploading of the data of the requested CSVs, the creation of the `annualUsageCollectionTracking` records, and the outputting of the CSV for that relation"
-* "ToDo: Create test confirming route uploading CSV with data for `annualUsageCollectionTracking` records"
+* "ToDo: Create test to confirm that form can successfully upload all TSV files"
+* "ToDo:Create test confirming the uploading of the data of the requested TSVs, the creation of the `annualUsageCollectionTracking` records, and the outputting of the TSV for that relation"
+* "ToDo: Create test confirming route uploading TSV with data for `annualUsageCollectionTracking` records"
 * "ToDo: Create test to upload formatter R4 reports into single RawCOUNTERReport object, then RawCOUNTERReport.perform_deduplication_matching"
 * "ToDo: Create test for route showing data in database at end of initialization wizard"
 
