@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.options import Options
 
 Flask-SQLAlchemy takes in the information for establishing a database connection through the string assigned to the config variable `SQLALCHEMY_DATABASE_URI`. Confidential information is currently set up to be imported from the `nolcat_secrets.py` file, but ultimately, all of the data in those files will be saved to environment variables. Naming the file `secrets.py` causes an ImportError with numpy.
 """
-import nolcat_secrets as secrets
+from .. import nolcat_secrets as secrets
 
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
