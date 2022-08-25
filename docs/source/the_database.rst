@@ -76,7 +76,7 @@ To handle this complexity, three relations in a junction table-like relationship
         * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
 
      2. Apply the JSON appropriate for the report type
-     3. Export the OpenRefine project as an Excel file (this preserves the encoding) into a folder just for these files
+     3. Export the OpenRefine project as a CSV file into a folder just for these files
 
    * For statistics sources with R5 SUSHI, set ``Usage_Is_Being_Collected`` to true, ``Manual_Collection_Required`` to false, and ``Collection_Status`` to "Collection not started"
    * For statistics sources not falling into any of the above categories, make selections as appropriate
