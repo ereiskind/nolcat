@@ -17,9 +17,12 @@ def test_flask_client_creation(app):
     assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
+#ToDo: `session` causes error `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/ .`
+
+
 def test_homepage(app):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    homepage = app.get('/')
+    homepage = app.get('/')  #ToDo: Resolve error `TypeError: __init__() got an unexpected keyword argument 'as_tuple'`
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
@@ -32,7 +35,7 @@ def test_homepage(app):
 
 def test_404_page(app):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    nonexistent_page = app.get('/404')
+    nonexistent_page = app.get('/404')  #ToDo: Resolve error `TypeError: __init__() got an unexpected keyword argument 'as_tuple'`
     with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
