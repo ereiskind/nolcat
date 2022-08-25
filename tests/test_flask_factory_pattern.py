@@ -65,7 +65,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-def test_loading_connected_data_into_other_relation(session, statisticsSources_relation):
+def test_loading_connected_data_into_other_relation(app, session, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
