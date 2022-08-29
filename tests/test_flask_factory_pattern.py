@@ -12,6 +12,11 @@ import pandas as pd
 from conftest import app, session, vendors_relation, statisticsSources_relation
 
 
+def test_flask_app_creation(app):
+    """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
+    assert repr(app) == "<Flask 'nolcat.app'>"
+
+
 def test_flask_client_creation(app):
     """Tests that the fixture for creating the Flask web app client returned a FlaskClient object for `nolcat.app`."""
     assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
