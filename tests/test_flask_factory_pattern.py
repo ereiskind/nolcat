@@ -9,7 +9,7 @@ import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from conftest import app, client, session, vendors_relation, statisticsSources_relation
+# `conftest.py` fixtures are imported automatically
 
 
 def test_flask_app_creation(app):

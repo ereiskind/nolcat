@@ -5,10 +5,10 @@ import re
 import pytest
 import pandas as pd
 
+# `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
 from fixture_constants.matched_records import matched_records
 from fixture_constants.matches_to_manually_confirm import matches_to_manually_confirm
-#ToDo: import database created by conftest with R4 resources
 
 
 #Section: Fixtures

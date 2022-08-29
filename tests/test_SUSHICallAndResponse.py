@@ -5,6 +5,7 @@ from datetime import date
 import pytest
 import pyinputplus
 
+# `conftest.py` fixtures are imported automatically
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 """ About this test module:
