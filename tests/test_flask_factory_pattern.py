@@ -9,7 +9,7 @@ import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from conftest import app, session, vendors_relation, statisticsSources_relation
+from conftest import app, client, session, vendors_relation, statisticsSources_relation
 
 
 def test_flask_app_creation(app):
@@ -17,12 +17,9 @@ def test_flask_app_creation(app):
     assert repr(app) == "<Flask 'nolcat.app'>"
 
 
-def test_flask_client_creation(app):
-    """Tests that the fixture for creating the Flask web app client returned a FlaskClient object for `nolcat.app`."""
-    assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
-
-
-#ToDo: `session` causes error `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/ .`
+def test_flask_client_creation(client):
+    """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
+    assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
 def test_homepage(app):

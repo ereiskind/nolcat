@@ -21,6 +21,15 @@ def app():
     yield app
 
 
+@pytest.fixture(scope='session')
+def client(app):
+    """Creates an instance of the Flask test client.
+    
+    The Flask test client lets tests make HTTP requests without running the server.
+    """
+    yield app.test_client()
+
+
 @pytest.fixture(scope='module')
 def session():
     """A fixture creating a session for a module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
