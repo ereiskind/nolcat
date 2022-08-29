@@ -15,7 +15,10 @@ from nolcat.app import create_app
 
 @pytest.fixture(scope='session')
 def app():
-    """Creates an instance of the Flask web app for testing."""
+    """Creates a test FlaskClient instance.
+    
+    Flask's test client sends HTTP requests to the application without running a live server. See https://flask.palletsprojects.com/en/2.0.x/testing/#sending-requests-with-the-test-client for more info.
+    """
     app = create_app()
     app.testing = True  # Lets exceptions come through to test client
     with app.test_client() as client:
