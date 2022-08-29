@@ -22,9 +22,9 @@ def test_flask_client_creation(client):
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_homepage(app):
+def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    homepage = app.get('/')  #ToDo: Resolve error `TypeError: __init__() got an unexpected keyword argument 'as_tuple'`
+    homepage = client.get('/')
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
@@ -35,9 +35,9 @@ def test_homepage(app):
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-def test_404_page(app):
+def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    nonexistent_page = app.get('/404')  #ToDo: Resolve error `TypeError: __init__() got an unexpected keyword argument 'as_tuple'`
+    nonexistent_page = client.get('/404')
     with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
