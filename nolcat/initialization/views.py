@@ -30,14 +30,14 @@ def download_file(filename):
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/')
-def homepage():
+def homepage():  #ToDo: Collecting initial relation data with `InitialRelationDataForm()`
     """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
     form_being_filled_out = InitialRelationDataForm()
     return render_template('index.html', form=form_being_filled_out)
 
 
 @bp.route('/initialize-collection-tracking', methods=["GET","POST"])
-def save_historical_collection_tracking_info():
+def save_historical_collection_tracking_info():  #ToDo: Handling data for `annualUsageCollectionTracking` relation
     """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
     form_being_submitted = InitialRelationDataForm()
     if form_being_submitted.validate_on_submit():
@@ -130,14 +130,14 @@ def save_historical_collection_tracking_info():
 
 
 @bp.route('/historical-COUNTER-data')
-def upload_historical_COUNTER_usage():
+def upload_historical_COUNTER_usage():  #ToDo: Transform and upload COUNTER R4 reports
     """Returns the page for uploading reformatted COUNTER R4 CSVs."""
     #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
     return render_template('select-R4-CSVs.html')
 
 
 @bp.route('/matching', methods=['GET', 'POST'])
-def determine_if_resources_match():
+def determine_if_resources_match():  #ToDo: Verify dedupe matches and choose default metadata values
     """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
     #ToDo: historical_data = RawCOUNTERReport(uploaded files)
     #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
