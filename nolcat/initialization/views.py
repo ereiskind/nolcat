@@ -14,7 +14,7 @@ import csv
 
 from . import bp
 from ..app import db
-from .forms import InitialRelationDataForm, AUCTForm
+from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
