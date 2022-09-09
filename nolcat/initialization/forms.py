@@ -14,3 +14,8 @@ class InitialRelationDataForm(FlaskForm):
     statisticsResourceSources_CSV = FileField("Select the filled out `initialize_statisticsResourceSources.csv` file here.", validators=[FileRequired()])
     resourceSources_CSV = FileField("Select the filled out `initialize_resourceSources.csv` file here.", validators=[FileRequired()])
     resourceSourceNotes_CSV = FileField("Select the filled out `initialize_resourceSourceNotes.csv` file here.", validators=[FileRequired()])
+
+
+class AUCTForm(FlaskForm):
+    """Creates a form for uploading the `annualUsageCollectionTracking` relation data."""
+    annualUsageCollectionTracking_TSV = FileField("Select the filled out \"initialize_annualUsageCollectionTracking.tsv\" file here.", validators=[FileRequired(), DataRequired()])
