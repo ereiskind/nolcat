@@ -73,7 +73,7 @@
             <ol>
                 <li>Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", "initialize_vendorNotes.csv", "initialize_statisticsSources.csv", "initialize_statisticsSourceNotes.csv", "initialize_statisticsResourceSources.csv", "initialize_resourceSources.csv", and "initialize_resourceSourceNotes.csv".</li>
             </ol>
-            <form method="POST" action="/initialize-collection-tracking" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <label>
                     {{ form.fiscalYears_CSV.label }}

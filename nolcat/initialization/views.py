@@ -30,26 +30,22 @@ def download_file(filename):
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/')
-def homepage():  #ToDo: Collecting initial relation data with `InitialRelationDataForm()`
-    """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
-    form_being_filled_out = InitialRelationDataForm()
-    return render_template('index.html', form=form_being_filled_out)
-
-
-@bp.route('/initialize-collection-tracking', methods=["GET","POST"])
-def save_historical_collection_tracking_info():  #ToDo: Handling data for `annualUsageCollectionTracking` relation
-    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
-    form_being_submitted = InitialRelationDataForm()
-    if form_being_submitted.validate_on_submit():
-        #ToDo: Are the keyword arguments for data types and encoding plus the `.encode('utf-8').decode('unicode-escape')` methods needed?
-        fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
-        vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
-        vendorNotes_dataframe = pd.read_csv(form_being_submitted.vendorNotes_CSV.data)
-        statisticsSources_dataframe = pd.read_csv(form_being_submitted.statisticsSources_CSV.data)
-        statisticsSourceNotes_dataframe = pd.read_csv(form_being_submitted.statisticsSourceNotes_CSV.data)
-        statisticsResourceSources_dataframe = pd.read_csv(form_being_submitted.statisticsResourceSources_CSV.data)
-        resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
-        resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
+def collect_initial_relation_data():
+    """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
+    
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_annualUsageCollectionTracking_data` route function.
+    """
+    #ALERT: Refactored form hasn't been tested
+    form = InitialRelationDataForm()
+    if form.validate_on_submit():
+        fiscalYears_dataframe = pd.read_csv(form.fiscalYears_CSV.data)
+        vendors_dataframe = pd.read_csv(form.vendors_CSV.data)
+        vendorNotes_dataframe = pd.read_csv(form.vendorNotes_CSV.data)
+        statisticsSources_dataframe = pd.read_csv(form.statisticsSources_CSV.data)
+        statisticsSourceNotes_dataframe = pd.read_csv(form.statisticsSourceNotes_CSV.data)
+        statisticsResourceSources_dataframe = pd.read_csv(form.statisticsResourceSources_CSV.data)
+        resourceSources_dataframe = pd.read_csv(form.resourceSources_CSV.data)
+        resourceSourceNotes_dataframe = pd.read_csv(form.resourceSourceNotes_CSV.data)
 
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
@@ -93,6 +89,24 @@ def save_historical_collection_tracking_info():  #ToDo: Handling data for `annua
             if_exists='replace',
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
+        return redirect(url_for('collect_annualUsageCollectionTracking_data'))
+
+    return render_template('index.html', form=form)
+
+
+@bp.route('/placeholder', methods=["GET","POST"])
+def collect_annualUsageCollectionTracking_data():  #ToDo: Handling data for `annualUsageCollectionTracking` relation
+    """Basic description of what the function does
+    
+    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function."""
+    pass
+
+
+@bp.route('/initialize-collection-tracking', methods=["GET","POST"])
+def save_historical_collection_tracking_info():
+    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
+    form_being_submitted = InitialRelationDataForm()
+    if form_being_submitted.validate_on_submit():
 
         #ALERT: Due to database unavailability, code from this point forward is untested
         #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
