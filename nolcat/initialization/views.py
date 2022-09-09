@@ -95,15 +95,17 @@ def collect_initial_relation_data():
 
 
 @bp.route('/initialization-page-2', methods=["GET","POST"])
-def collect_annualUsageCollectionTracking_data():
-    """This route function creates the template for the `annualUsageCollectionTracking` relation, lets the user download it then upload it when filled out, and finally loads that data into the database.
-    
-    Upon redirect, the route function renders the page showing the template for the `annualUsageCollectionTracking` relation and the form to submit that template once completed. When the TSV containing the data for the `annualUsageCollectionTracking` relation is submitted, the function saves the data by loading it into the database, then redirects to the `upload_historical_COUNTER_usage` route function.
+def collect_AUCT_and_historical_COUNTER_data():
+    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports sot he former is loaded into the database and the latter is divided and deduped.
+
+    Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
     """
     #ALERT: Due to database unavailability, code from this point forward is entirely untested
-    form = AUCTForm()
-    if request.method == 'GET':  # This is when the function is receiving the data to render the form; `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
-        #Section: Create `annualUsageConnectionTracking` Relation Template File
+    form = AUCTAndCOUNTERForm()
+    
+    #Section: Before Form Submission
+    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
         #ToDo: dict_writer = csv.DictWriter(CSV_file, [
             #ToDo: "AUCT_statistics_source",
@@ -120,7 +122,7 @@ def collect_annualUsageCollectionTracking_data():
         #ToDo: ])
         #ToDo: dict_writer.writeheader()
 
-        #Section: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
+        #Subsection: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
         with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
             #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
             AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
@@ -134,8 +136,12 @@ def collect_annualUsageCollectionTracking_data():
                 #ToDo: })
                 continue  # To close the block at runtime
         #ToDo: CSV_file.close()
-        #ToDo: return render_template('historical-collection-tracking.html', form=form)
-    elif form.validate_on_submit():  # This is when the form has been submitted
+
+        #ToDo: return render_template('initial-data-upload-2.html', form=form)
+    
+    #Section: After Form Submission
+    elif form.validate_on_submit():
+        #Subsection: Load `annualUsageCollectionTracking` into Database
         annualUsageCollectionTracking_dataframe = pd.read_csv(form.annualUsageCollectionTracking_TSV.data)  #ToDo: Correct to handle TSV file properly
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         annualUsageCollectionTracking_dataframe.to_sql(
@@ -144,16 +150,15 @@ def collect_annualUsageCollectionTracking_data():
             if_exists='replace',
         )
         #ToDo: Make any other necessary additions or changes for data to be saved to the database
-        return redirect(url_for('upload_historical_COUNTER_usage'))
+
+        #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
+        #ToDo: Make sure that `RawCOUNTERReport.__init__` can handle an object of whatever type `form.COUNTER_TSVs.data` is--if said type is "<class 'werkzeug.datastructures.ImmutableMultiDict'>", then completing the existing to-dos should make the constructor below good to go
+        #ToDo: historical_data = RawCOUNTERReport(form.COUNTER_TSVs.data)
+        #ToDo: Save `historical_data` into a temp file
+        #ToDo: return redirect(url_for('determine_if_resources_match'))
+    
     else:
         return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
-
-
-@bp.route('/historical-COUNTER-data')
-def upload_historical_COUNTER_usage():  #ToDo: Transform and upload COUNTER R4 reports
-    """Returns the page for uploading reformatted COUNTER R4 CSVs."""
-    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
-    return render_template('select-R4-CSVs.html')
 
 
 @bp.route('/matching', methods=['GET', 'POST'])
