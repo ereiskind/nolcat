@@ -161,13 +161,35 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
 
 
-@bp.route('/matching', methods=['GET', 'POST'])
-def determine_if_resources_match():  #ToDo: Verify dedupe matches and choose default metadata values
-    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
-    #ToDo: historical_data = RawCOUNTERReport(uploaded files)
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
-    #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    return render_template('select-matches.html')
+@bp.route('/initialization-page-3', methods=['GET', 'POST'])
+def determine_if_resources_match():
+    #ToDo: Write actual docstring
+    """Basic description of what the function does
+    
+    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
+    """
+    #ToDo: form = imported_form_class()
+    try:
+        #ToDo: import temp file containing `historical_data` from `collect_AUCT_and_historical_COUNTER_data`
+        #ToDo: historical_data = contents of file containing `historical_data` (in other words, recreate the variable)
+        #ToDo: for each radio button field in the form:
+            #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")]
+    except:
+        return abort(404)  # The file to be imported above, which is created directly before the redirect to this route function, couldn't be imported if the code gets here, hence an error is raised--404 isn't the most accurate HTTP error for the situation, but it's the one with an existing page
+
+    #Section: Before Form Submission
+    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching()
+        #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same--this probably will involve dynamic radio button choice creation above
+        #ToDo: return render_template('select-matches.html', form=form)
+    
+    #Section: After Form Submission
+    elif form.validate_on_submit():
+        #ToDo: things related to saving and transforming form data
+        #ToDo: return redirect(url_for('the_next_route_function'))
+    
+    else:
+        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
 
 
 @bp.route('/database-creation-complete')
