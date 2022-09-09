@@ -94,21 +94,16 @@ def collect_initial_relation_data():
     return render_template('index.html', form=form)
 
 
-@bp.route('/placeholder', methods=["GET","POST"])
-def collect_annualUsageCollectionTracking_data():  #ToDo: Handling data for `annualUsageCollectionTracking` relation
-    """Basic description of what the function does
+@bp.route('/initialization-page-2', methods=["GET","POST"])
+def collect_annualUsageCollectionTracking_data():
+    """This route function creates the template for the `annualUsageCollectionTracking` relation, lets the user download it then upload it when filled out, and finally loads that data into the database.
     
-    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function."""
-    pass
-
-
-@bp.route('/initialize-collection-tracking', methods=["GET","POST"])
-def save_historical_collection_tracking_info():
-    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
-    form_being_submitted = InitialRelationDataForm()
-    if form_being_submitted.validate_on_submit():
-
-        #ALERT: Due to database unavailability, code from this point forward is untested
+    Upon redirect, the route function renders the page showing the template for the `annualUsageCollectionTracking` relation and the form to submit that template once completed. When the TSV containing the data for the `annualUsageCollectionTracking` relation is submitted, the function saves the data by loading it into the database, then redirects to the `upload_historical_COUNTER_usage` route function.
+    """
+    #ALERT: Due to database unavailability, code from this point forward is entirely untested
+    form = AUCTForm()
+    if request.method == 'GET':  # This is when the function is receiving the data to render the form; `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        #Section: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
         #ToDo: dict_writer = csv.DictWriter(CSV_file, [
             #ToDo: "AUCT_statistics_source",
@@ -125,6 +120,7 @@ def save_historical_collection_tracking_info():
         #ToDo: ])
         #ToDo: dict_writer.writeheader()
 
+        #Section: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
         with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
             #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
             AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
@@ -138,9 +134,19 @@ def save_historical_collection_tracking_info():
                 #ToDo: })
                 continue  # To close the block at runtime
         #ToDo: CSV_file.close()
-        #ToDo: return render_template('historical-collection-tracking.html')
-
-    #ToDo: return render_template(page to go to when reaching this route through means other than submitting form of CSVs with basic data for database)
+        #ToDo: return render_template('historical-collection-tracking.html', form=form)
+    elif form.validate_on_submit():  # This is when the form has been submitted
+        annualUsageCollectionTracking_dataframe = pd.read_csv(form.annualUsageCollectionTracking_TSV.data)  #ToDo: Correct to handle TSV file properly
+        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
+        annualUsageCollectionTracking_dataframe.to_sql(
+            'annualUsageCollectionTracking',
+            con=db.engine,
+            if_exists='replace',
+        )
+        #ToDo: Make any other necessary additions or changes for data to be saved to the database
+        return redirect(url_for('upload_historical_COUNTER_usage'))
+    else:
+        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
 
 
 @bp.route('/historical-COUNTER-data')
