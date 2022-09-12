@@ -98,28 +98,3 @@ def create_app():
     
     
     return app
-
-
-def Chrome_browser_driver():
-    """Creates a Selenium webdriver for a headless Chrome browser."""
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-notifications")
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--verbose')
-    chrome_options.add_experimental_option("prefs", {
-            "download.default_directory": "Downloads",
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "safebrowsing_for_trusted_sources_enabled": False,
-            "safebrowsing.enabled": False
-    })
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--disable-software-rasterizer')
-
-    ''' From the first program
-    Path_to_ChromeDriver = Path('..', 'usr', 'local', 'bin', 'chromedriver.exe') # On Windows, "chromedriver" must include the ".exe" extension; on Linux, when the file extension is included, there's a WebDriverException with the message "'chromedriver.exe' executable needs to be in PATH."
-    return webdriver.Chrome(options=chrome_options, executable_path=Path_to_ChromeDriver)
-    '''
-    return webdriver.Chrome(options=chrome_options)
