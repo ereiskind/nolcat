@@ -2,6 +2,7 @@
 
 import pytest
 
+# `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.initialization import *
 

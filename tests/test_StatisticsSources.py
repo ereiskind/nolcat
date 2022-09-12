@@ -9,6 +9,7 @@ from pandas._testing import assert_frame_equal
 from dateutil import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 from sqlalchemy.orm import sessionmaker
 
+# `conftest.py` fixtures are imported automatically
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from database_seeding_fixtures import vendors_relation

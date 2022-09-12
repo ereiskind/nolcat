@@ -9,17 +9,22 @@ import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from conftest import app, session, vendors_relation, statisticsSources_relation
+# `conftest.py` fixtures are imported automatically
 
 
-def test_flask_client_creation(app):
-    """Tests that the fixture for creating the Flask web app client returned a FlaskClient object for `nolcat.app`."""
-    assert repr(app) == "<FlaskClient <Flask 'nolcat.app'>>"
+def test_flask_app_creation(app):
+    """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
+    assert repr(app) == "<Flask 'nolcat.app'>"
 
 
-def test_homepage(app):
+def test_flask_client_creation(client):
+    """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
+    assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
+
+
+def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    homepage = app.get('/')
+    homepage = client.get('/')
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
@@ -30,9 +35,9 @@ def test_homepage(app):
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-def test_404_page(app):
+def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
-    nonexistent_page = app.get('/404')
+    nonexistent_page = client.get('/404')
     with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
@@ -45,7 +50,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    print(f"`vendors_relation` is {vendors_relation}")
+    print(f"`vendors_relation`:\n{vendors_relation}")
     vendors_relation.to_sql(
         name='vendors',
         con=session,
@@ -60,7 +65,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
         con=session,
         index_col='vendor_ID',
     )
-    print(f"`retrieved_vendors_data` is {retrieved_vendors_data}")
+    print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
     pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
@@ -70,6 +75,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
+    print(f"`statisticsSources_relation`:\n{statisticsSources_relation}")
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=session,
@@ -84,6 +90,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
         con=session,
         index_col='statisticsSources.statistics_source_ID'  # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
+    print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
     expected_output_data = pd.DataFrame(
         [

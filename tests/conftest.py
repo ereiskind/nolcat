@@ -15,11 +15,19 @@ from nolcat.app import create_app
 
 @pytest.fixture(scope='session')
 def app():
-    """Creates an instance of the Flask web app for testing."""
+    """Creates an instance of the Flask object."""
     app = create_app()
     app.testing = True  # Lets exceptions come through to test client
-    with app.test_client() as client:
-        yield client
+    yield app
+
+
+@pytest.fixture(scope='session')
+def client(app):
+    """Creates an instance of the Flask test client.
+    
+    The Flask test client lets tests make HTTP requests without running the server.
+    """
+    yield app.test_client()
 
 
 @pytest.fixture(scope='module')
