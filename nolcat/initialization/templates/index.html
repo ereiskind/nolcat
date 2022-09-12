@@ -70,51 +70,50 @@
         </li>
 
         <li><h2>Create the `annualUsageCollectionTracking` Relation</h2>
-            <ol>
-                <li>Upload the copies of "initialize_fiscalYear.csv", "initialize_vendors.csv", "initialize_vendorNotes.csv", "initialize_statisticsSources.csv", "initialize_statisticsSourceNotes.csv", "initialize_statisticsResourceSources.csv", "initialize_resourceSources.csv", and "initialize_resourceSourceNotes.csv".</li>
-            </ol>
-            <form method="POST" action="/initialize-collection-tracking" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                <label>
-                    {{ form.fiscalYears_CSV.label }}
-                    {{ form.fiscalYears_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.vendors_CSV.label }}
-                    {{ form.vendors_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.vendorNotes_CSV.label }}
-                    {{ form.vendorNotes_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.statisticsSources_CSV.label }}
-                    {{ form.statisticsSources_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.statisticsSourceNotes_CSV.label }}
-                    {{ form.statisticsSourceNotes_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.statisticsResourceSources_CSV.label }}
-                    {{ form.statisticsResourceSources_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.resourceSources_CSV.label }}
-                    {{ form.resourceSources_CSV }}
-                </label>
-                <br>
-                <label>
-                    {{ form.resourceSourceNotes_CSV.label }}
-                    {{ form.resourceSourceNotes_CSV }}
-                </label>
-                <br>
+                <ol>
+                    <label>
+                        <li>{{ form.fiscalYears_CSV.label }}</li>
+                        {{ form.fiscalYears_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.vendors_CSV.label }}</li>
+                        {{ form.vendors_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.vendorNotes_CSV.label }}</li>
+                        {{ form.vendorNotes_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.statisticsSources_CSV.label }}</li>
+                        {{ form.statisticsSources_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.statisticsSourceNotes_CSV.label }}</li>
+                        {{ form.statisticsSourceNotes_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.statisticsResourceSources_CSV.label }}</li>
+                        {{ form.statisticsResourceSources_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.resourceSources_CSV.label }}</li>
+                        {{ form.resourceSources_CSV }}
+                    </label>
+                    <br>
+                    <label>
+                        <li>{{ form.resourceSourceNotes_CSV.label }}</li>
+                        {{ form.resourceSourceNotes_CSV }}
+                    </label>
+                    <br>  <!--ToDo: Confirm if formatting requires this-->
+                </ol>
                 <input type="submit" value="Submit">
             </form>
         </li>

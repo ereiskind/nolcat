@@ -14,7 +14,7 @@ import csv
 
 from . import bp
 from ..app import db
-from .forms import InitialRelationDataForm
+from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -30,26 +30,22 @@ def download_file(filename):
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/')
-def homepage():
-    """Returns the page with for downloading the CSV templates for the fiscal year, vendor, resource source, and statistics source relations and uploading the initial data for those relations."""
-    form_being_filled_out = InitialRelationDataForm()
-    return render_template('index.html', form=form_being_filled_out)
-
-
-@bp.route('/initialize-collection-tracking', methods=["GET","POST"])
-def save_historical_collection_tracking_info():
-    """Returns the page for downloading the CSV template for `annualUsageCollectionTracking` and uploading the initial data for that relation as well as formatting the historical R4 reports for upload."""
-    form_being_submitted = InitialRelationDataForm()
-    if form_being_submitted.validate_on_submit():
-        #ToDo: Are the keyword arguments for data types and encoding plus the `.encode('utf-8').decode('unicode-escape')` methods needed?
-        fiscalYears_dataframe = pd.read_csv(form_being_submitted.fiscalYears_CSV.data)
-        vendors_dataframe = pd.read_csv(form_being_submitted.vendors_CSV.data)
-        vendorNotes_dataframe = pd.read_csv(form_being_submitted.vendorNotes_CSV.data)
-        statisticsSources_dataframe = pd.read_csv(form_being_submitted.statisticsSources_CSV.data)
-        statisticsSourceNotes_dataframe = pd.read_csv(form_being_submitted.statisticsSourceNotes_CSV.data)
-        statisticsResourceSources_dataframe = pd.read_csv(form_being_submitted.statisticsResourceSources_CSV.data)
-        resourceSources_dataframe = pd.read_csv(form_being_submitted.resourceSources_CSV.data)
-        resourceSourceNotes_dataframe = pd.read_csv(form_being_submitted.resourceSourceNotes_CSV.data)
+def collect_initial_relation_data():
+    """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
+    
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_annualUsageCollectionTracking_data` route function.
+    """
+    #ALERT: Refactored form hasn't been tested
+    form = InitialRelationDataForm()
+    if form.validate_on_submit():
+        fiscalYears_dataframe = pd.read_csv(form.fiscalYears_CSV.data)
+        vendors_dataframe = pd.read_csv(form.vendors_CSV.data)
+        vendorNotes_dataframe = pd.read_csv(form.vendorNotes_CSV.data)
+        statisticsSources_dataframe = pd.read_csv(form.statisticsSources_CSV.data)
+        statisticsSourceNotes_dataframe = pd.read_csv(form.statisticsSourceNotes_CSV.data)
+        statisticsResourceSources_dataframe = pd.read_csv(form.statisticsResourceSources_CSV.data)
+        resourceSources_dataframe = pd.read_csv(form.resourceSources_CSV.data)
+        resourceSourceNotes_dataframe = pd.read_csv(form.resourceSourceNotes_CSV.data)
 
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
@@ -93,8 +89,23 @@ def save_historical_collection_tracking_info():
             if_exists='replace',
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
+        return redirect(url_for('collect_annualUsageCollectionTracking_data'))
 
-        #ALERT: Due to database unavailability, code from this point forward is untested
+    return render_template('index.html', form=form)
+
+
+@bp.route('/initialization-page-2', methods=["GET","POST"])
+def collect_AUCT_and_historical_COUNTER_data():
+    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports sot he former is loaded into the database and the latter is divided and deduped.
+
+    Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
+    """
+    #ALERT: Due to database unavailability, code from this point forward is entirely untested
+    form = AUCTAndCOUNTERForm()
+    
+    #Section: Before Form Submission
+    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
         #ToDo: dict_writer = csv.DictWriter(CSV_file, [
             #ToDo: "AUCT_statistics_source",
@@ -111,6 +122,7 @@ def save_historical_collection_tracking_info():
         #ToDo: ])
         #ToDo: dict_writer.writeheader()
 
+        #Subsection: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
         with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
             #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
             AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
@@ -124,25 +136,60 @@ def save_historical_collection_tracking_info():
                 #ToDo: })
                 continue  # To close the block at runtime
         #ToDo: CSV_file.close()
-        #ToDo: return render_template('historical-collection-tracking.html')
 
-    #ToDo: return render_template(page to go to when reaching this route through means other than submitting form of CSVs with basic data for database)
+        #ToDo: return render_template('initial-data-upload-2.html', form=form)
+    
+    #Section: After Form Submission
+    elif form.validate_on_submit():
+        #Subsection: Load `annualUsageCollectionTracking` into Database
+        annualUsageCollectionTracking_dataframe = pd.read_csv(form.annualUsageCollectionTracking_TSV.data)  #ToDo: Correct to handle TSV file properly
+        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
+        annualUsageCollectionTracking_dataframe.to_sql(
+            'annualUsageCollectionTracking',
+            con=db.engine,
+            if_exists='replace',
+        )
+        #ToDo: Make any other necessary additions or changes for data to be saved to the database
+
+        #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
+        #ToDo: Make sure that `RawCOUNTERReport.__init__` can handle an object of whatever type `form.COUNTER_TSVs.data` is--if said type is "<class 'werkzeug.datastructures.ImmutableMultiDict'>", then completing the existing to-dos should make the constructor below good to go
+        #ToDo: historical_data = RawCOUNTERReport(form.COUNTER_TSVs.data)
+        #ToDo: Save `historical_data` into a temp file
+        #ToDo: return redirect(url_for('determine_if_resources_match'))
+    
+    else:
+        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
 
 
-@bp.route('/historical-COUNTER-data')
-def upload_historical_COUNTER_usage():
-    """Returns the page for uploading reformatted COUNTER R4 CSVs."""
-    #ToDo: Load "initialize_annualUsageCollectionTracking.csv" into titular relation
-    return render_template('select-R4-CSVs.html')
-
-
-@bp.route('/matching', methods=['GET', 'POST'])
+@bp.route('/initialization-page-3', methods=['GET', 'POST'])
 def determine_if_resources_match():
-    """Transforms all the formatted R4 reports into a single RawCOUNTERReport object, deduplicates the resources, and returns a page asking for confirmation of manual matches."""
-    #ToDo: historical_data = RawCOUNTERReport(uploaded files)
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching
-    #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    return render_template('select-matches.html')
+    #ToDo: Write actual docstring
+    """Basic description of what the function does
+    
+    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
+    """
+    #ToDo: form = imported_form_class()
+    try:
+        #ToDo: import temp file containing `historical_data` from `collect_AUCT_and_historical_COUNTER_data`
+        #ToDo: historical_data = contents of file containing `historical_data` (in other words, recreate the variable)
+        #ToDo: for each radio button field in the form:
+            #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")]
+    except:
+        return abort(404)  # The file to be imported above, which is created directly before the redirect to this route function, couldn't be imported if the code gets here, hence an error is raised--404 isn't the most accurate HTTP error for the situation, but it's the one with an existing page
+
+    #Section: Before Form Submission
+    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching()
+        #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same--this probably will involve dynamic radio button choice creation above
+        #ToDo: return render_template('select-matches.html', form=form)
+    
+    #Section: After Form Submission
+    elif form.validate_on_submit():
+        #ToDo: things related to saving and transforming form data
+        #ToDo: return redirect(url_for('the_next_route_function'))
+    
+    else:
+        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
 
 
 @bp.route('/database-creation-complete')
