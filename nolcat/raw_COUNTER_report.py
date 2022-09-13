@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple CSV files for R4 and as an API call response (or possibly a CSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple TSV files for R4 and as an API call response (or possibly a TSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
@@ -30,27 +30,24 @@ class RawCOUNTERReport:
     # Constructor Method
     def __init__(self, df):
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
-
-        The constructor for a RawCOUNTERReport object, it can take in objects of multiple other data types:
-        * `werkzeug.datastructures.ImmutableMultiDict` objects, which are returned when one or more CSV files is uploaded via Flask
-        * `pandas.core.frame.DataFrame` objects, which are returned by the `StatisticsSources._harvest_R5_SUSHI` method
-        Files containing COUNTER data must be reformatted, a process explained on the Flask pages where such files can be uploaded, and named with the statistics source ID, the report type, and the fiscal year separated by underscores.
+        
+        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report TSV files with a `<Statistics_Source_ID>_<report type>_<calendar year assigned to fiscal year in "yyyy" format>.tsv` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
             dataframes_to_concatenate = []
             for file in df.getlist('R4_files'):  #ToDo: Make sure this isn't locked to a single Flask input form
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.csv', string=Path(file.filename).parts[-1])[0]
-                    logging.debug(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
+                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.error(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
                     #ToDo: Return an error with a message like the above that exits the constructor method
-                # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
                 dataframe = pd.read_csv(
-                    file,
-                    encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
+                    file,  # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
+                    sep='\t',
+                    encoding='utf-8',
                     encoding_errors='backslashreplace',
-                    dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
+                    dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT"/`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
                         'Resource_Name': 'string',
                         'Publisher': 'string',
                         'Platform': 'string',
@@ -62,25 +59,30 @@ class RawCOUNTERReport:
                         'Data_Type': 'string',
                         'Section_Type': 'string',
                         'Metric_Type': 'string',
-                        # Usage_Date is fine as default datetime64[ns]
+                        # `parse_dates` and the flooring functions make data type of 'Usage_Date' datetime64[ns]
                         'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
-                    #ToDo: parse_dates=['Usage_Date'],
-                    #ToDo: infer_datetime_format=True,
-                    #ToDo: Perform methods `.encode('utf-8').decode('unicode-escape')` on all fields that might have non-ASCII escaped characters
+                    parse_dates=['Usage_Date'],
+                    infer_datetime_format=True,
                     #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
                 )
-                logging.info(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
+                logging.debug(f"Dataframe before modifications:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
                 dataframe['Statistics_Source_ID'] = statistics_source_ID
-                logging.info(f"Dataframe:\n{dataframe}\n")
+                dataframe['Resource_Name'] = dataframe['Resource_Name'].encode('utf-8').decode('unicode-escape')
+                dataframe['Publisher'] = dataframe['Publisher'].encode('utf-8').decode('unicode-escape')
+                dataframe['Platform'] = dataframe['Platform'].encode('utf-8').decode('unicode-escape')
+                try:  # From https://stackoverflow.com/a/42285489
+                    dataframe['Usage_Date'] = dataframe['Usage_Date'].astype('datetime64[M]')
+                except:  # Handles if for some reason `parse_dates` doesn't turn 'Usage_Date' into datetime64[ns]
+                    dataframe['Usage_Date'] = pd.to_datetime(dataframe['Usage_Date'].astype('datetime64[M]'))
+                logging.debug(f"Dataframe info and dataframe:\n{dataframe.info(verbose=True)}\n{dataframe}\n")
                 dataframes_to_concatenate.append(dataframe)
             self.report_dataframe = pd.concat(
                 dataframes_to_concatenate,
                 ignore_index=True
             )
-            #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
-            logging.warning(f"Final dataframe:\n{self.report_dataframe}")
-        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":
+            logging.info(f"Final dataframe:\n{self.report_dataframe}")
+        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # SUSHI responses are converted from JSON to dataframes before being passed into this class
             self.report_dataframe = df
         else:
             pass  #ToDo: Return an error message and quit the constructor
@@ -176,7 +178,7 @@ class RawCOUNTERReport:
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
         # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, data type, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
         new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', 'Platform']], index=self.report_dataframe.index)
-        # The recordlinkage `missing_value` argument doesn't recognize pd.NA, the null value for strings in dataframes, as a missing value, so those values need to be replaced with `None`. Performing this swap changes the data type of all the field back to pandas' generic `object`, but since recordlinkage can do string comparisons on string of the object data type, this change doesn't cause problems with the program's functionality.
+        # The recordlinkage `missing_value` argument doesn't recognize pd.NA, the null value for strings in dataframes, as a missing value, so those values need to be replaced with `None`. Performing this swap changes the data type of all the field back to pandas' generic `object`, but since recordlinkage can do string comparisons on strings of the object data type, this change doesn't cause problems with the program's functionality.
         new_resource_data = new_resource_data.applymap(lambda cell_value: None if pd.isna(cell_value) else cell_value)
         logging.info(f"The new data for comparison:\n{new_resource_data}")
 
@@ -214,8 +216,9 @@ class RawCOUNTERReport:
             candidate_matches = indexing.index(new_resource_data)
         
 
-        #Section: Find Matches--DOIs and ISBNs
-        #Subsection: Create Comparison Objects
+        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on Standardized Identifiers
+        # recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, so matching on all fields doesn't produce much in the way of results because of the rarity of resources which have both ISSN and ISBN values
+        #Subsection: Create Comparison Based on DOI and ISBN
         logging.info("**Comparing based on DOI and ISBN**")
         compare_DOI_and_ISBN = recordlinkage.Compare()
         compare_DOI_and_ISBN.exact('DOI', 'DOI',label='DOI')
@@ -223,7 +226,7 @@ class RawCOUNTERReport:
         compare_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on DOI and ISBN
         # Record index combines record indexes of records being compared into a multiindex, field index lists comparison objects, and values are the result--`1` is a match, `0` is not a match
         if normalized_resource_data:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
@@ -231,7 +234,7 @@ class RawCOUNTERReport:
             compare_DOI_and_ISBN_table = compare_DOI_and_ISBN.compute(candidate_matches, new_resource_data)
         logging.info(f"DOI and ISBN comparison results:\n{compare_DOI_and_ISBN_table}")
 
-        #Subsection: Add Matches to `matched_records`
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISBN
         DOI_and_ISBN_matches = compare_DOI_and_ISBN_table[compare_DOI_and_ISBN_table.sum(axis='columns') == 4].index.tolist()  # Create a list of tuples with the record index values of records where all the above criteria match
         logging.info(f"DOI and ISBN matching record pairs: {DOI_and_ISBN_matches}")
         if DOI_and_ISBN_matches:
@@ -241,9 +244,7 @@ class RawCOUNTERReport:
         else:
             logging.debug("No matches on DOI and ISBN")
 
-
-        #Section: Find Matches--DOIs and ISSNs
-        #Subsection: Create Comparison Objects
+        #Subsection: Create Comparison Based on DOI and ISSNs
         logging.info("**Comparing based on DOI and ISSNs**")
         compare_DOI_and_ISSNs = recordlinkage.Compare()
         compare_DOI_and_ISSNs.exact('DOI', 'DOI', label='DOI')
@@ -251,14 +252,14 @@ class RawCOUNTERReport:
         compare_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on DOI and ISSNs
         if normalized_resource_data:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_DOI_and_ISSNs_table = compare_DOI_and_ISSNs.compute(candidate_matches, new_resource_data)
         logging.info(f"DOI and ISSNs comparison results:\n{compare_DOI_and_ISSNs_table}")
 
-        #Subsection: Add Matches to `matched_records`
+        #Subsection: Add Matches to `matched_records` Based on DOI and ISSNs
         DOI_and_ISSNs_matches = compare_DOI_and_ISSNs_table[compare_DOI_and_ISSNs_table.sum(axis='columns') == 4].index.tolist()
         logging.info(f"DOI and ISSNs matching record pairs: {DOI_and_ISSNs_matches}")
         if DOI_and_ISSNs_matches:
@@ -268,9 +269,7 @@ class RawCOUNTERReport:
         else:
             logging.debug("No matches on DOI and ISSNs")
 
-
-        #Section: Find Matches--ISBNs with Close Fuzzy Match on Resource Titles
-        #Subsection: Create Comparison Objects
+        #Subsection: Create Comparison Based on ISBN
         logging.info("**Comparing based on ISBN**")
         compare_ISBN = recordlinkage.Compare()
         compare_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
@@ -279,7 +278,7 @@ class RawCOUNTERReport:
         compare_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on ISBN
         # The various editions or volumes of a title will be grouped together by fuzzy matching, and these can sometimes be given the same ISBN even when not appropriate. To keep this from causing problems, matches where one of the resource names has a volume or edition reference will be checked manually.
         if normalized_resource_data:
             compare_ISBN_table = compare_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
@@ -291,7 +290,7 @@ class RawCOUNTERReport:
         compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
         logging.info(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
 
-        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex and ISBN
         ISBN_matches = compare_ISBN_table[compare_ISBN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"ISBN matching record pairs: {ISBN_matches}")
         volume_regex = re.compile(r'\bvol(ume)?s?\.?\b')
@@ -347,9 +346,7 @@ class RawCOUNTERReport:
         else:
             logging.debug("No matches on ISBNs")
 
-
-        #Section: Find Matches--ISSNs with Close Fuzzy Match on Resource Titles
-        #Subsection: Create Comparison Objects
+        #Subsection: Create Comparison Based on ISSNs
         logging.info("**Comparing based on ISSNs**")
         compare_ISSNs = recordlinkage.Compare()
         compare_ISSNs.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
@@ -358,7 +355,7 @@ class RawCOUNTERReport:
         compare_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on ISSNs
         if normalized_resource_data:
             compare_ISSNs_table = compare_ISSNs.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
@@ -375,9 +372,7 @@ class RawCOUNTERReport:
         else:
             logging.debug("No matches on ISSNs")
 
-
-        #Section: Find Matches--Print ISSNs with Very Close Fuzzy Match on Resource Titles
-        #Subsection: Create Comparison Objects
+        #Subsection: Create Comparison Based on Print ISSN
         logging.info("**Comparing based on print ISSN**")
         compare_print_ISSN = recordlinkage.Compare()
         compare_print_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.95, label='Resource_Name')
@@ -386,14 +381,14 @@ class RawCOUNTERReport:
         compare_print_ISSN.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on Print ISSN
         if normalized_resource_data:
             compare_print_ISSN_table = compare_print_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_print_ISSN_table = compare_print_ISSN.compute(candidate_matches, new_resource_data)
         logging.info(f"Print ISSN comparison results:\n{compare_print_ISSN_table}")
 
-        #Subsection: Add Matches to `matched_records`
+        #Subsection: Add Matches to `matched_records` Based on Print ISSN
         print_ISSN_matches = compare_print_ISSN_table[compare_print_ISSN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"Print ISSN matching record pairs: {print_ISSN_matches}")
         if print_ISSN_matches:
@@ -403,9 +398,7 @@ class RawCOUNTERReport:
         else:
             logging.debug("No matches on print ISSN")
 
-
-        #Section: Find Matches--Online ISSNs with Very Close Fuzzy Match on Resource Titles
-        #Subsection: Create Comparison Objects
+        #Subsection: Create Comparison Based on Online ISSN
         logging.info("**Comparing based on online ISSN**")
         compare_online_ISSN = recordlinkage.Compare()
         compare_online_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.95, label='Resource_Name')
@@ -414,14 +407,14 @@ class RawCOUNTERReport:
         compare_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
         compare_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on Online ISSN
         if normalized_resource_data:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_online_ISSN_table = compare_online_ISSN.compute(candidate_matches, new_resource_data)
         logging.info(f"Online ISSN comparison results:\n{compare_online_ISSN_table}")
 
-        #Subsection: Add Matches to `matched_records`
+        #Subsection: Add Matches to `matched_records` Based on Online ISSN
         online_ISSN_matches = compare_online_ISSN_table[compare_online_ISSN_table.sum(axis='columns') == 5].index.tolist()
         logging.info(f"Online ISSN matching record pairs: {online_ISSN_matches}")
         if online_ISSN_matches:
@@ -432,13 +425,13 @@ class RawCOUNTERReport:
             logging.debug("No matches on online ISSN")
         
 
-        #Section: Find Matches--Very Close Fuzzy Match on Resource Titles with `Database`-Type Resources
-        #Subsection: Create Comparison Objects
-        logging.info("**Comparing databases based on names**")
+        #Section: Identify Pairs of Dataframe Records for the Same Database Based on a High String Matching Threshold
+        logging.info("**Comparing databases with high resource name matching threshold**")
+        #Subsection: Create Comparison Based on High Database Name String Matching Threshold
         compare_database_names = recordlinkage.Compare()
         compare_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
 
-        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Database Name String Matching Threshold
         if normalized_resource_data:
             compare_database_names_table = compare_database_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
             compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
@@ -449,7 +442,7 @@ class RawCOUNTERReport:
         compare_database_names_table['index_zero_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
         logging.info(f"Database names comparison result with metadata:\n{compare_database_names_table}")
 
-        #Subsection: Filter and Update Comparison Results Dataframe
+        #Subsection: Filter and Update Comparison Results Dataframe Based on High Database Name String Matching Threshold
         database_names_matches_table = compare_database_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are databases
             (compare_database_names_table['Resource_Name'] == 1) &
             (compare_database_names_table['index_zero_data_type'] == "Database") &
@@ -467,7 +460,7 @@ class RawCOUNTERReport:
             database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
         logging.info(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
-        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length and High Database Name String Matching Threshold
         # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
         database_names_matches_index = database_names_matches_table.index.tolist()
         logging.info(f"Database names high matching threshold record pairs: {database_names_matches_index}")
@@ -477,6 +470,7 @@ class RawCOUNTERReport:
                 if database_names_matches_table.loc[match]['index_zero_platform'] == database_names_matches_table.loc[match]['index_one_platform']:
                     if database_names_matches_table.loc[match]['index_zero_resource_name'] != database_names_matches_table.loc[match]['index_one_resource_name']:
                         if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
+                            # The DOI, ISBN, and ISSNs are collected not to use for comparison here but to keep the number of metadata elements in the inner tuples of `matches_to_manually_confirm` keys constant
                             index_zero_metadata = (
                                 new_resource_data.loc[match[0]]['Resource_Name'],
                                 new_resource_data.loc[match[0]]['DOI'],
@@ -566,13 +560,13 @@ class RawCOUNTERReport:
             logging.debug("No matches on database names with a high matching threshold")
         
 
-        #Section: Find Matches--Very Close Fuzzy Match on Platform Name with `Platform`-Type Resources
-        #Subsection: Create Comparison Objects
-        logging.info("**Comparing platforms based on names**")
+        #Section: Identify Pairs of Dataframe Records for the Same Platform Based on a High String Matching Threshold
+        logging.info("**Comparing platforms with high platform name matching threshold**")
+        #Subsection: Create Comparison Based on High Platform Name String Matching Threshold
         compare_platform_names = recordlinkage.Compare()
         compare_platform_names.string('Platform', 'Platform', threshold=0.925, label='Platform')
 
-        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Platform Name String Matching Threshold
         if normalized_resource_data:
             compare_platform_names_table = compare_platform_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
             compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
@@ -583,7 +577,7 @@ class RawCOUNTERReport:
         compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
         logging.info(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
 
-        #Subsection: Filter Comparison Results Dataframe
+        #Subsection: Filter and Update Comparison Results Dataframe Based on High Platform Name String Matching Threshold
         platform_names_matches_table = compare_platform_names_table[  # Creates dataframe with the records which meet the high name matching threshold and where both resources are platforms
             (compare_platform_names_table['Platform'] == 1) &
             (compare_platform_names_table['index_zero_data_type'] == "Platform") &
@@ -598,7 +592,7 @@ class RawCOUNTERReport:
             platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
         logging.info(f"Platform names matches table with metadata:\n{platform_names_matches_table}")
 
-        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length
+        #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length and High Platform Name String Matching Threshold
         # The same Levenstein distance meets a higher threshold if the strings being compared are longer, so a manual confirmation on longer strings is required
         platform_names_matches_index = platform_names_matches_table.index.tolist()
         logging.info(f"Platform names high matching threshold record pairs: {platform_names_matches_index}")
@@ -607,6 +601,7 @@ class RawCOUNTERReport:
             for match in platform_names_matches_index:
                 if platform_names_matches_table.loc[match]['index_zero_platform_name'] != platform_names_matches_table.loc[match]['index_one_platform_name']:
                     if len(platform_names_matches_table.loc[match]['index_zero_platform_name']) >= 35 or len(platform_names_matches_table.loc[match]['index_one_platform_name']) >= 35:
+                        # The DOI, ISBN, and ISSNs are collected not to use for comparison here but to keep the number of metadata elements in the inner tuples of `matches_to_manually_confirm` keys constant
                         index_zero_metadata = (
                             new_resource_data.loc[match[0]]['Resource_Name'],
                             new_resource_data.loc[match[0]]['DOI'],
@@ -654,23 +649,23 @@ class RawCOUNTERReport:
             logging.debug("No matches on platform names with a high matching threshold")
 
 
-        #Section: Find Matches--Single Standard Identifier Field for All Non-`Platform`-Type Resources
-        #Subsection: Create Comparison Objects
+        #Section: Identify Pairs of Dataframe Records Based on a Single Standard Identifier Field
         logging.info("**Comparing based on single matching identifier**")
+        #Subsection: Create Comparison Based on a Single Standard Identifier Field
         compare_identifiers = recordlinkage.Compare()
         compare_identifiers.exact('DOI', 'DOI', label='DOI')
         compare_identifiers.exact('ISBN', 'ISBN', label='ISBN')
         compare_identifiers.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
         compare_identifiers.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
 
-        #Subsection: Return Dataframe with Comparison Results
+        #Subsection: Return Dataframe with Comparison Results Based on a Single Standard Identifier Field
         if normalized_resource_data:
             compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
         else:
             compare_identifiers_table = compare_identifiers.compute(candidate_matches, new_resource_data)
         logging.info(f"Single matching identifier comparison results:\n{compare_identifiers_table}")
 
-        #Subsection: Filter Comparison Results Dataframe
+        #Subsection: Filter Comparison Results Dataframe Based on a Single Standard Identifier Field
         compare_identifiers_matches_table = compare_identifiers_table[
             (compare_identifiers_table['DOI'] == 1) |
             (compare_identifiers_table['ISBN'] == 1) |
@@ -679,7 +674,7 @@ class RawCOUNTERReport:
         ]
         logging.info(f"Filtered single matching identifier comparison results:\n{compare_identifiers_matches_table}")
 
-        #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
+        #Subsection: Update Comparison Results Based on a Single Standard Identifier Field
         identifiers_matches_interim_index = compare_identifiers_matches_table.index.tolist()
         identifiers_matches_index = []
         # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
@@ -693,7 +688,7 @@ class RawCOUNTERReport:
                 identifiers_matches_index.append(potential_match)
         logging.info(f"Single matching identifier matching record pairs: {identifiers_matches_index}")
 
-        #Subsection: Add Matches to `matches_to_manually_confirm`
+        #Subsection: Add Matches to `matches_to_manually_confirm` Based on a Single Standard Identifier Field
         if identifiers_matches_index:
             for match in identifiers_matches_index:
                 index_zero_metadata = (
@@ -740,18 +735,18 @@ class RawCOUNTERReport:
             logging.debug("No matches on single matching identifiers")
 
 
-        #Section: Find Matches--Loose Fuzzy Match on Resource Name
-        #Subsection: Create Comparison Objects
-        logging.info("**Comparing based on fuzzy resource name matching**")
+        #Section: Identify Pairs of Dataframe Records for the Same Resource Based on a High String Matching Threshold
+        logging.info("**Comparing resources with high resource name matching threshold**")
+        #Subsection: Create Comparison Based on High Resource Name String Matching Threshold
         compare_resource_name = recordlinkage.Compare()
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  #ToDo: From jellyfish: `DeprecationWarning: the jaro_distance function incorrectly returns the jaro similarity, replace your usage with jaro_similarity before 1.0`
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  #ToDo: From jellyfish: `DeprecationWarning: the name 'jaro_winkler' is deprecated and will be removed in jellyfish 1.0, for the same functionality please use jaro_winkler_similarity`
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
+        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
         # This comparison will take about an hour on a 16GB RAM 1.61GHz workstation
 
-        #Subsection: Return Dataframe with Comparison Results and Filtering Values
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Resource Name String Matching Threshold
         if normalized_resource_data:
             compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
             compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
@@ -762,7 +757,7 @@ class RawCOUNTERReport:
         compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
         logging.info(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
 
-        #Subsection: Filter and Update Comparison Results Dataframe for FuzzyWuzzy
+        #Subsection: Update Comparison Results Dataframe Using FuzzyWuzzy Based on High Resource Name String Matching Threshold
         #ALERT: See note in tests.test_RawCOUNTERReport about memory
         # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
         compare_resource_name_table.dropna(
@@ -777,7 +772,7 @@ class RawCOUNTERReport:
         compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
         logging.info(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
         
-        #Subsection: Filter Comparison Results Dataframe
+        #Subsection: Filter Comparison Results Dataframe Based on High Resource Name String Matching Threshold
         compare_resource_name_matches_table = compare_resource_name_table[
             (compare_resource_name_table['levenshtein'] > 0) |
             (compare_resource_name_table['jaro'] > 0) |
@@ -790,7 +785,7 @@ class RawCOUNTERReport:
         ]
         logging.info(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
 
-        #Subsection: Remove Matches Already in `matched_records` and `matches_to_manually_confirm`
+        #Subsection: Update Comparison Results Based on High Resource Name String Matching Threshold
         resource_name_matches_interim_index = compare_resource_name_matches_table.index.tolist()
         resource_name_matches_index = []
         # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
@@ -804,7 +799,7 @@ class RawCOUNTERReport:
                 resource_name_matches_index.append(potential_match)
         logging.info(f"Fuzzy matching resource names matching record pairs: {resource_name_matches_index}")
 
-        #Subsection: Add Matches to `matches_to_manually_confirm`
+        #Subsection: Add Matches to `matches_to_manually_confirm` Based on High Resource Name String Matching Threshold
         if resource_name_matches_index:
             for match in resource_name_matches_index:
                 index_zero_metadata = (
