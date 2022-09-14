@@ -3,7 +3,7 @@
 import pyinputplus as pyip
 
 fixture = pyip.inputMenu(
-    prompt="Enter the number of the relation that should be output to a TSV. ",
+    prompt="Enter the number of the relation that should be output to a TSV.\n",
     choices=[
         "fiscalYears",
         "vendors",
