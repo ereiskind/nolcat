@@ -3,8 +3,6 @@ from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 """Since GitHub is used to manage the code, and the repo is public, the AWS instance is used to save confidential information.
 
