@@ -2230,5 +2230,30 @@ if __name__ == "__main__":
         numbered=True,
     )
 
+    if fixture == "fiscalYears":
+        fixture = fiscalYears_relation()
+    elif fixture == "vendors":
+        fixture = vendors_relation()
+    #ToDo: vendorNotes
+    elif fixture == "statisticsSources":
+        fixture = statisticsSources_relation()
+    #ToDo: statisticsSourceNotes
+    elif fixture == "statisticsResourceSources":
+        fixture = statisticsResourceSources_relation()
+    elif fixture == "resourceSources":
+        fixture = resourceSources_relation()
+    #ToDo: resourceSourceNotes
+    elif fixture == "annualUsageCollectionTracking":
+        fixture = annualUsageCollectionTracking_relation()
+    elif fixture == "resources":
+        fixture = resources_relation()
+    elif fixture == "resourceMetadata":
+        fixture = resourceMetadata_relation()
+    elif fixture == "resourcePlatforms":
+        fixture = resourcePlatforms_relation()
+    elif fixture == "usageData":
+        fixture = usageData_relation()
+    # No need for `else` statement, as value being matched comes from fixed list
+
     print(type(fixture))
     print(fixture)
