@@ -22,4 +22,39 @@ fixture = pyip.inputMenu(
     numbered=True,
 )
 
+if fixture == "fiscalYears":
+    from conftest import fiscalYears_relation
+    fixture = fiscalYears_relation
+elif fixture == "vendors":
+    from conftest import vendors_relation
+    fixture = vendors_relation
+#ToDo: vendorNotes
+elif fixture == "statisticsSources":
+    from conftest import statisticsSources_relation
+    fixture = statisticsSources_relation
+#ToDo: statisticsSourceNotes
+elif fixture == "statisticsResourceSources":
+    from conftest import statisticsResourceSources_relation
+    fixture = statisticsResourceSources_relation
+elif fixture == "resourceSources":
+    from conftest import resourceSources_relation
+    fixture = resourceSources_relation
+#ToDo: resourceSourceNotes
+elif fixture == "annualUsageCollectionTracking":
+    from conftest import annualUsageCollectionTracking_relation
+    fixture = annualUsageCollectionTracking_relation
+elif fixture == "resources":
+    from conftest import resources_relation
+    fixture = resources_relation
+elif fixture == "resourceMetadata":
+    from conftest import resourceMetadata_relation
+    fixture = resourceMetadata_relation
+elif fixture == "resourcePlatforms":
+    from conftest import resourcePlatforms_relation
+    fixture = resourcePlatforms_relation
+elif fixture == "usageData":
+    from conftest import usageData_relation
+    fixture = usageData_relation
+
+print(type(fixture))
 print(fixture)
