@@ -9,11 +9,13 @@
 import pytest
 import pandas as pd
 
-try:  # Works with `nolcat# python -m pytest` commands in the container
+# To ensure no problems found in tests are from importing the test data for relations from other files, that data is kept in the fixture functions below. Having this data in a tabular format will also be needed at times, but having another tabular file runs the risk of getting the files out of sync. To solve that issue, a function to produce the tabular file with data from the fixture on demand has been added to this module, using an `if __name__ == "__main__":` so it runs only when this module is called directly.
+
+if __name__ == "__main__":  # When running this module directly, the imports raise a `ModuleNotFoundError` with the message `No module named 'nolcat'`. Since the imports aren't needed to output the relation fixture data to TSV, the imports are skipped when the module is run directly.
+    print("pass")
+else:
     from nolcat.app import db
     from nolcat.app import create_app
-except ModuleNotFoundError as error:
-    print(f"in `conftest.py`, __name__ is set to: ``{format(__name__)}`` and `ModuleNotFoundError` {error} raised when imports from `nolcat.app` attempted.")
 
 
 @pytest.fixture(scope='session')
