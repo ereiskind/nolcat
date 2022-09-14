@@ -9,8 +9,13 @@
 import pytest
 import pandas as pd
 
-from nolcat.app import db
-from nolcat.app import create_app
+try:  # Works with `nolcat# python -m pytest` commands in the container
+    from nolcat.app import db
+    from nolcat.app import create_app
+except:
+    from ..nolcat.app import db
+    from ..nolcat.app import create_app
+    print("Import was `from ..nolcat.app import db`")
 
 
 @pytest.fixture(scope='session')
