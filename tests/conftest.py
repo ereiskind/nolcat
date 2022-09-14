@@ -13,7 +13,7 @@ try:  # Works with `nolcat# python -m pytest` commands in the container
     from nolcat.app import db
     from nolcat.app import create_app
 except ModuleNotFoundError as error:
-    print(f"in `conftest.py`, `ModuleNotFoundError` {error} raised when imports from `nolcat.app` attempted.")
+    print(f"in `conftest.py`, __name__ is set to: ``{format(__name__)}`` and `ModuleNotFoundError` {error} raised when imports from `nolcat.app` attempted.")
 
 
 @pytest.fixture(scope='session')
@@ -2204,3 +2204,7 @@ def usageData_relation():
     )
     df.index.name = "usage_data_ID"
     yield df
+
+
+if __name__ == "__main__":
+        print(f"`conftest` ran directly")
