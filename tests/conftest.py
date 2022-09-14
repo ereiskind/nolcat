@@ -12,10 +12,8 @@ import pandas as pd
 try:  # Works with `nolcat# python -m pytest` commands in the container
     from nolcat.app import db
     from nolcat.app import create_app
-except:
-    from ..nolcat.app import db
-    from ..nolcat.app import create_app
-    print("Import was `from ..nolcat.app import db`")
+except ModuleNotFoundError as error:
+    print(f"in `conftest.py`, `ModuleNotFoundError` {error} raised when imports from `nolcat.app` attempted.")
 
 
 @pytest.fixture(scope='session')
