@@ -8,6 +8,7 @@
 
 import pytest
 import pandas as pd
+import pyinputplus as pyip
 
 # To ensure no problems found in tests are from importing the test data for relations from other files, that data is kept in the fixture functions below. Having this data in a tabular format will also be needed at times, but having another tabular file runs the risk of getting the files out of sync. To solve that issue, a function to produce the tabular file with data from the fixture on demand has been added to this module, using an `if __name__ == "__main__":` so it runs only when this module is called directly.
 
@@ -2209,4 +2210,25 @@ def usageData_relation():
 
 
 if __name__ == "__main__":
-        print(f"`conftest` ran directly")
+    fixture = pyip.inputMenu(
+        prompt="Enter the number of the relation that should be output to a TSV.\n",
+        choices=[
+            "fiscalYears",
+            "vendors",
+            #ToDo: vendorNotes,
+            "statisticsSources",
+            #ToDo: statisticsSourceNotes,
+            "statisticsResourceSources",
+            "resourceSources",
+            #ToDo: resourceSourceNotes,
+            "annualUsageCollectionTracking",
+            "resources",
+            "resourceMetadata",
+            "resourcePlatforms",
+            "usageData",
+        ],
+        numbered=True,
+    )
+
+    print(type(fixture))
+    print(fixture)
