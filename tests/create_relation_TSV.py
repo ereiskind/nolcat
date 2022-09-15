@@ -67,3 +67,4 @@ TSV_file = fixture.to_csv(
 )
 
 print(TSV_file)
+#ToDo: Should the TSV file be brought from the AWS instance to the local machine through GitHub (the module can be run locally or in the instance, the newly created file can be added as a commit to the repo, the commit is pushed to GitHub, then the file is downloaded from GitHub's website to the local machine)?
