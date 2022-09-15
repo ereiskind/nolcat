@@ -7,12 +7,12 @@ fixture = pyip.inputMenu(
     choices=[
         "fiscalYears",
         "vendors",
-        #ToDo: vendorNotes,
+        #"vendorNotes",  #ToDo: Uncomment when dataframe is created
         "statisticsSources",
-        #ToDo: statisticsSourceNotes,
+        #"statisticsSourceNotes",  #ToDo: Uncomment when dataframe is created
         "statisticsResourceSources",
         "resourceSources",
-        #ToDo: resourceSourceNotes,
+        #"resourceSourceNotes",  #ToDo: Uncomment when dataframe is created
         "annualUsageCollectionTracking",
         "resources",
         "resourceMetadata",
