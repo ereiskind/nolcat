@@ -2,7 +2,7 @@
 
 import pyinputplus as pyip
 
-from .data import relations
+from data import relations
 
 fixture = pyip.inputMenu(
     prompt="Enter the number of the relation that should be output to a TSV.\n",
