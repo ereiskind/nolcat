@@ -1,6 +1,7 @@
 """This module outputs the test data used in the relations as TSVs."""
 
 import pyinputplus as pyip
+import pandas as pd
 
 from data import relations
 
@@ -54,5 +55,15 @@ elif fixture == "resourcePlatforms":
 elif fixture == "usageData":
     fixture = relations.usageData_relation()
 
-print(type(fixture))
-print(fixture)
+TSV_file = fixture.to_csv(
+    #ToDo: `Path` or write() object for where the file should go
+    sep='\t',
+    # na_rep=string of how nulls should be represented; defaults to empty strings
+    # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
+    # encoding='utf-8', not supported if path or buff is non-binary file object
+    # chunksize=number of records to write at a time as an int
+    # date_format=format string for datetime object output
+    # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
+)
+
+print(TSV_file)
