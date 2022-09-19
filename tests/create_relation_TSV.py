@@ -56,7 +56,7 @@ elif fixture == "resourcePlatforms":
 elif fixture == "usageData":
     fixture = relations.usageData_relation()
 
-TSV_file_name = Path('.', 'data', 'relation_TSVs', f'{fixture}_relation.tsv')
+TSV_file_name = Path('nolcat', 'tests', 'data', 'relation_TSVs', f'{fixture}_relation.tsv')
 TSV_file_IO = open(
     TSV_file_name,
     'w',
