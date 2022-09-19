@@ -57,9 +57,15 @@ elif fixture == "usageData":
     fixture = relations.usageData_relation()
 
 TSV_file_name = Path('.', 'data', 'relation_TSVs', f'{fixture}_relation.tsv')
+TSV_file_IO = open(
+    TSV_file_name,
+    'w',
+    encoding='utf-8',
+    errors='backslashreplace',
+)
 
 TSV_file = fixture.to_csv(
-    TSV_file_name,
+    TSV_file_IO,
     sep='\t',
     # na_rep=string of how nulls should be represented; defaults to empty strings
     # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
@@ -67,3 +73,4 @@ TSV_file = fixture.to_csv(
     # date_format=format string for datetime object output
     # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
 )
+TSV_file_IO.close()
