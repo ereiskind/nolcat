@@ -1,5 +1,6 @@
-"""This module outputs the test data used in the relations as TSVs."""
+"""This module outputs the test data used in the relations as TSVs. By running this module to create a TSV file, committing the file, and pushing the commit to GitHub, these file can be downloaded to a local machine for further manipulation in a spreadsheet program, like Excel."""
 
+from pathlib import Path
 import pyinputplus as pyip
 import pandas as pd
 
@@ -55,16 +56,14 @@ elif fixture == "resourcePlatforms":
 elif fixture == "usageData":
     fixture = relations.usageData_relation()
 
+TSV_file_name = Path('.', 'data', 'relation_TSVs', f'{fixture}_relation.tsv')
+
 TSV_file = fixture.to_csv(
-    #ToDo: `Path` or write() object for where the file should go
+    TSV_file_name,
     sep='\t',
     # na_rep=string of how nulls should be represented; defaults to empty strings
     # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-    # encoding='utf-8', not supported if path or buff is non-binary file object
     # chunksize=number of records to write at a time as an int
     # date_format=format string for datetime object output
     # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
 )
-
-print(TSV_file)
-#ToDo: Should the TSV file be brought from the AWS instance to the local machine through GitHub (the module can be run locally or in the instance, the newly created file can be added as a commit to the repo, the commit is pushed to GitHub, then the file is downloaded from GitHub's website to the local machine)?
