@@ -56,58 +56,13 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
-try:
-    TSV_file_name = Path('/', 'nolcat', 'tests', 'data', 'relation_TSVs', f'{relation_name}_relation.tsv')
-    TSV_file = relation_data.to_csv(
-        TSV_file_name,
-        sep='\t',
-        # na_rep=string of how nulls should be represented; defaults to empty strings
-        # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-        # chunksize=number of records to write at a time as an int
-        # date_format=format string for datetime object output
-        # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
-    )
-    print(f"Using Path object and `relation_TSVs`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
-except Exception as error1:
-    try:
-        TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
-        TSV_file = relation_data.to_csv(
-            TSV_file_name,
-            sep='\t',
-            # na_rep=string of how nulls should be represented; defaults to empty strings
-            # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-            # chunksize=number of records to write at a time as an int
-            # date_format=format string for datetime object output
-            # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
-        )
-        print(f"Using Path object; Path object with folder `relation_TSVs` caused error `{error1}`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
-    except Exception as error2:
-        try:
-            TSV_file_name = f'{relation_name}_relation.tsv'
-            TSV_file_name = r'/nolcat/tests/data/relation_TSVs/' + TSV_file_name
-            TSV_file = relation_data.to_csv(
-                TSV_file_name,
-                sep='\t',
-                # na_rep=string of how nulls should be represented; defaults to empty strings
-                # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-                # chunksize=number of records to write at a time as an int
-                # date_format=format string for datetime object output
-                # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
-            )
-            print(f"Using string and `relation_TSVs`; Path object with folder `relation_TSVs` caused error `{error1}`; Path object without folder `relation_TSVs` caused error `{error2}`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
-        except Exception as error3:
-            try:
-                TSV_file_name = f'{relation_name}_relation.tsv'
-                TSV_file_name = r'/nolcat/tests/data/' + TSV_file_name
-                TSV_file = relation_data.to_csv(
-                    TSV_file_name,
-                    sep='\t',
-                    # na_rep=string of how nulls should be represented; defaults to empty strings
-                    # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-                    # chunksize=number of records to write at a time as an int
-                    # date_format=format string for datetime object output
-                    # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
-                )
-                print(f"Using string; Path object with folder `relation_TSVs` caused error `{error1}`; Path object without folder `relation_TSVs` caused error `{error2}`; string with folder `relation_TSVs` caused error `{error3}`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
-            except Exception as error4:
-                print(f"Path object with folder `relation_TSVs` caused error `{error1}`; Path object without folder `relation_TSVs` caused error `{error2}`; string with folder `relation_TSVs` caused error `{error3}`; string without folder `relation_TSVs` caused error `{error4}`.")
+TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
+TSV_file = relation_data.to_csv(
+    TSV_file_name,
+    sep='\t',
+    # na_rep=string of how nulls should be represented; defaults to empty strings
+    # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
+    # chunksize=number of records to write at a time as an int
+    # date_format=format string for datetime object output
+    # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
+)
