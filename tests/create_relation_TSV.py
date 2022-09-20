@@ -57,12 +57,16 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
-print(os.getcwd().split("nolcat"))
-# `C:\Users\ereiskind\nolcat>python tests/create_relation_TSV.py` -> `C:\Users\ereiskind\nolcat`
-# `C:\Users\ereiskind\nolcat\tests>python create_relation_TSV.py` -> `C:\Users\ereiskind\nolcat\tests`
-# `root@...:/nolcat# python tests/create_relation_TSV.py` -> `/nolcat`
-# `root@...:/nolcat/tests# python create_relation_TSV.py` -> `/nolcat/tests`
-TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
+TSV_file_name = Path('/', 'nolcat', 'tests', 'data')
+if TSV_file_name.exists():
+    TSV_file_name = TSV_file_name / f'{relation_name}_relation.tsv'
+else:
+    TSV_file_name_start_elements = os.getcwd().split('nolcat')[0].split('\\')
+    TSV_file_name_start = Path(TSV_file_name_start_elements[0], '/')
+    for element in TSV_file_name_start_elements[1:-1]:  # This removes the drive letter from the beginning and the empty string from the end
+        TSV_file_name_start = TSV_file_name_start / element
+    TSV_file_name = TSV_file_name_start / 'nolcat' / 'tests' / 'data' / f'{relation_name}_relation.tsv'
+
 TSV_file = relation_data.to_csv(
     TSV_file_name,
     sep='\t',
