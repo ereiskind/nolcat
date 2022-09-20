@@ -1,5 +1,6 @@
 """This module outputs the test data used in the relations as TSVs. By running this module to create a TSV file, committing the file, and pushing the commit to GitHub, these file can be downloaded to a local machine for further manipulation in a spreadsheet program, like Excel."""
 
+import os
 from pathlib import Path
 import pyinputplus as pyip
 import pandas as pd
@@ -56,7 +57,7 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
-print(relation_data)
+print(os.getcwd())
 TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
 TSV_file = relation_data.to_csv(
     TSV_file_name,
