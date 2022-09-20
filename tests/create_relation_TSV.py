@@ -56,6 +56,7 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
+print(relation_data)
 TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
 TSV_file = relation_data.to_csv(
     TSV_file_name,
