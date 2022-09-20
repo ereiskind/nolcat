@@ -6,7 +6,7 @@ import pandas as pd
 
 from data import relations
 
-fixture = pyip.inputMenu(
+relation_name = pyip.inputMenu(
     prompt="Enter the number of the relation that should be output to a TSV.\n",
     choices=[
         "fiscalYears",
@@ -26,39 +26,39 @@ fixture = pyip.inputMenu(
     numbered=True,
 )
 
-if fixture == "fiscalYears":
-    fixture = relations.fiscalYears_relation()
-elif fixture == "vendors":
-    fixture = relations.vendors_relation()
-elif fixture == "vendorNotes":
-    #fixture = relations.vendorNotes_relation()
+if relation_name == "fiscalYears":
+    relation_data = relations.fiscalYears_relation()
+elif relation_name == "vendors":
+    relation_data = relations.vendors_relation()
+elif relation_name == "vendorNotes":
+    #relation_data = relations.vendorNotes_relation()
     pass  #ToDo: Update when dataframe is created 
-elif fixture == "statisticsSources":
-    fixture = relations.statisticsSources_relation()
-elif fixture == "statisticsSourceNotes":
-    #fixture = relations.statisticsSourceNotes_relation()
+elif relation_name == "statisticsSources":
+    relation_data = relations.statisticsSources_relation()
+elif relation_name == "statisticsSourceNotes":
+    #relation_data = relations.statisticsSourceNotes_relation()
     pass  #ToDo: Update when dataframe is created
-elif fixture == "statisticsResourceSources":
-    fixture = relations.statisticsResourceSources_relation()
-elif fixture == "resourceSources":
-    fixture = relations.resourceSources_relation()
-elif fixture == "resourceSourceNotes":
-    #fixture = relations.resourceSourceNotes_relation()
+elif relation_name == "statisticsResourceSources":
+    relation_data = relations.statisticsResourceSources_relation()
+elif relation_name == "resourceSources":
+    relation_data = relations.resourceSources_relation()
+elif relation_name == "resourceSourceNotes":
+    #relation_data = relations.resourceSourceNotes_relation()
     pass  #ToDo: Update when dataframe is created
-elif fixture == "annualUsageCollectionTracking":
-    fixture = relations.annualUsageCollectionTracking_relation()
-elif fixture == "resources":
-    fixture = relations.resources_relation()
-elif fixture == "resourceMetadata":
-    fixture = relations.resourceMetadata_relation()
-elif fixture == "resourcePlatforms":
-    fixture = relations.resourcePlatforms_relation()
-elif fixture == "usageData":
-    fixture = relations.usageData_relation()
+elif relation_name == "annualUsageCollectionTracking":
+    relation_data = relations.annualUsageCollectionTracking_relation()
+elif relation_name == "resources":
+    relation_data = relations.resources_relation()
+elif relation_name == "resourceMetadata":
+    relation_data = relations.resourceMetadata_relation()
+elif relation_name == "resourcePlatforms":
+    relation_data = relations.resourcePlatforms_relation()
+elif relation_name == "usageData":
+    relation_data = relations.usageData_relation()
 
 try:
-    TSV_file_name = Path('/', 'nolcat', 'tests', 'data', 'relation_TSVs', f'{fixture}_relation.tsv')
-    TSV_file = fixture.to_csv(
+    TSV_file_name = Path('/', 'nolcat', 'tests', 'data', 'relation_TSVs', f'{relation_name}_relation.tsv')
+    TSV_file = relation_data.to_csv(
         TSV_file_name,
         sep='\t',
         # na_rep=string of how nulls should be represented; defaults to empty strings
@@ -70,8 +70,8 @@ try:
     print(f"Using Path object and `relation_TSVs`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
 except Exception as error1:
     try:
-        TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{fixture}_relation.tsv')
-        TSV_file = fixture.to_csv(
+        TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
+        TSV_file = relation_data.to_csv(
             TSV_file_name,
             sep='\t',
             # na_rep=string of how nulls should be represented; defaults to empty strings
@@ -83,9 +83,9 @@ except Exception as error1:
         print(f"Using Path object; Path object with folder `relation_TSVs` caused error `{error1}`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
     except Exception as error2:
         try:
-            TSV_file_name = f'{fixture}_relation.tsv'
+            TSV_file_name = f'{relation_name}_relation.tsv'
             TSV_file_name = r'/nolcat/tests/data/relation_TSVs/' + TSV_file_name
-            TSV_file = fixture.to_csv(
+            TSV_file = relation_data.to_csv(
                 TSV_file_name,
                 sep='\t',
                 # na_rep=string of how nulls should be represented; defaults to empty strings
@@ -97,9 +97,9 @@ except Exception as error1:
             print(f"Using string and `relation_TSVs`; Path object with folder `relation_TSVs` caused error `{error1}`; Path object without folder `relation_TSVs` caused error `{error2}`\n`TSV_file_name` (type {type(TSV_file_name)}):\n{TSV_file_name}\n\n`TSV_file` (type {type(TSV_file)}):\n{TSV_file}\n\n")
         except Exception as error3:
             try:
-                TSV_file_name = f'{fixture}_relation.tsv'
+                TSV_file_name = f'{relation_name}_relation.tsv'
                 TSV_file_name = r'/nolcat/tests/data/' + TSV_file_name
-                TSV_file = fixture.to_csv(
+                TSV_file = relation_data.to_csv(
                     TSV_file_name,
                     sep='\t',
                     # na_rep=string of how nulls should be represented; defaults to empty strings
