@@ -57,7 +57,11 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
-print(os.getcwd())
+print(os.getcwd().split("nolcat"))
+# `C:\Users\ereiskind\nolcat>python tests/create_relation_TSV.py` -> `C:\Users\ereiskind\nolcat`
+# `C:\Users\ereiskind\nolcat\tests>python create_relation_TSV.py` -> `C:\Users\ereiskind\nolcat\tests`
+# `root@...:/nolcat# python tests/create_relation_TSV.py` -> `/nolcat`
+# `root@...:/nolcat/tests# python create_relation_TSV.py` -> `/nolcat/tests`
 TSV_file_name = Path('/', 'nolcat', 'tests', 'data', f'{relation_name}_relation.tsv')
 TSV_file = relation_data.to_csv(
     TSV_file_name,
