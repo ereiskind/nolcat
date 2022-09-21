@@ -70,9 +70,7 @@ else:
 TSV_file = relation_data.to_csv(
     TSV_file_name,
     sep='\t',
-    # na_rep=string of how nulls should be represented; defaults to empty strings
-    # index_label=field label for record index; with defaults, the index name is used, but a sequence should be given if there's a MultiIndex
-    # chunksize=number of records to write at a time as an int
-    # date_format=format string for datetime object output
-    # errors='backslashreplace',  # Replace with character sequences that need `.encode('utf-8').decode('unicode-escape')`
+    encoding='utf-16',  # Using the `utf-8` encoding, opening TSV directly in Excel causes encoding issues, but `utf-16` is fine
+    # `None` values in dataframes meet Excel's `isblank` criteria in TSVs, so `na_rep=` argument left as default
+    # Dates are ISO-formatted strings when opened in text editors and date data types when opened in Excel, so `date_format=` argument left as default
 )
