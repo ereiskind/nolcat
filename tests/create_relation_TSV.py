@@ -57,6 +57,7 @@ elif relation_name == "resourcePlatforms":
 elif relation_name == "usageData":
     relation_data = relations.usageData_relation()
 
+# Ideally, this module can run in the container in the AWS instance, but an inability to authenticate from that command line to GitHub makes running the module on the local machine the only way to access the TSVs on the local machine. This module is thus set up to determine if it's running in the AWS instance or on a local machine and create a `pathlib.Path` object for the absolute path of the file based on the environment and folder the module is run from.
 TSV_file_name = Path('/', 'nolcat', 'tests', 'data')
 if TSV_file_name.exists():
     TSV_file_name = TSV_file_name / f'{relation_name}_relation.tsv'
