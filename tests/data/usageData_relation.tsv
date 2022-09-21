@@ -1,0 +1,1562 @@
+usage_data_ID	resource_platform_ID	metric_type	usage_date	usage_count	YOP	access_type	access_method	data_type	section_type	report_creation_date
+0	25	Successful Title Requests	2018-08-01	2				Book	Book	
+1	25	Successful Title Requests	2018-09-01	1				Book	Book	
+2	25	Successful Title Requests	2018-10-01	2				Book	Book	
+3	25	Successful Title Requests	2018-11-01	2				Book	Book	
+4	25	Successful Title Requests	2018-12-01	3				Book	Book	
+5	25	Successful Title Requests	2019-01-01	1				Book	Book	
+6	25	Successful Title Requests	2019-02-01	3				Book	Book	
+7	25	Successful Title Requests	2019-03-01	2				Book	Book	
+8	61	Successful Title Requests	2019-03-01	1				Book	Book	
+9	25	Successful Section Requests	2016-07-01	1				Book	Book_Segment	
+10	25	Successful Section Requests	2016-10-01	1				Book	Book_Segment	
+11	25	Successful Section Requests	2016-11-01	3				Book	Book_Segment	
+12	25	Successful Section Requests	2016-12-01	2				Book	Book_Segment	
+13	25	Successful Section Requests	2017-03-01	2				Book	Book_Segment	
+14	25	Successful Section Requests	2017-10-01	2				Book	Book_Segment	
+15	25	Successful Section Requests	2017-11-01	3				Book	Book_Segment	
+16	25	Successful Section Requests	2017-12-01	2				Book	Book_Segment	
+17	25	Successful Section Requests	2018-01-01	2				Book	Book_Segment	
+18	25	Successful Section Requests	2018-04-01	1				Book	Book_Segment	
+19	25	Successful Section Requests	2018-06-01	3				Book	Book_Segment	
+20	61	Successful Section Requests	2017-10-01	3				Book	Book_Segment	
+21	25	Successful Section Requests	2018-07-01	2				Book	Book_Segment	
+22	0	Regular Searches	2016-07-01	1888				Database		
+23	0	Regular Searches	2016-08-01	1983				Database		
+24	0	Regular Searches	2016-09-01	2287				Database		
+25	0	Regular Searches	2016-10-01	3493				Database		
+26	0	Regular Searches	2016-11-01	4466				Database		
+27	0	Regular Searches	2016-12-01	1596				Database		
+28	0	Regular Searches	2017-01-01	1786				Database		
+29	0	Regular Searches	2017-02-01	3600				Database		
+30	0	Regular Searches	2017-03-01	4275				Database		
+31	0	Regular Searches	2017-04-01	4183				Database		
+32	0	Regular Searches	2017-05-01	1466				Database		
+33	0	Regular Searches	2017-06-01	1781				Database		
+34	0	Searches-federated and automated	2016-09-01	38				Database		
+35	0	Result Clicks	2016-07-01	10				Database		
+36	0	Result Clicks	2016-08-01	21				Database		
+37	0	Result Clicks	2016-09-01	24				Database		
+38	0	Result Clicks	2016-10-01	283				Database		
+39	0	Result Clicks	2016-11-01	115				Database		
+40	0	Result Clicks	2016-12-01	14				Database		
+41	0	Result Clicks	2017-01-01	22				Database		
+42	0	Result Clicks	2017-02-01	83				Database		
+43	0	Result Clicks	2017-03-01	93				Database		
+44	0	Result Clicks	2017-04-01	40				Database		
+45	0	Result Clicks	2017-05-01	15				Database		
+46	0	Result Clicks	2017-06-01	6				Database		
+47	0	Record Views	2016-07-01	12				Database		
+48	0	Record Views	2016-08-01	34				Database		
+49	0	Record Views	2016-09-01	25				Database		
+50	0	Record Views	2016-10-01	191				Database		
+51	0	Record Views	2016-11-01	119				Database		
+52	0	Record Views	2016-12-01	25				Database		
+53	0	Record Views	2017-01-01	22				Database		
+54	0	Record Views	2017-02-01	98				Database		
+55	0	Record Views	2017-03-01	84				Database		
+56	0	Record Views	2017-04-01	64				Database		
+57	0	Record Views	2017-05-01	16				Database		
+58	0	Record Views	2017-06-01	23				Database		
+59	2	Regular Searches	2016-07-01	3762				Database		
+60	2	Regular Searches	2016-08-01	2767				Database		
+61	2	Regular Searches	2016-09-01	5038				Database		
+62	2	Regular Searches	2016-10-01	6577				Database		
+63	2	Regular Searches	2016-11-01	6614				Database		
+64	2	Regular Searches	2016-12-01	2868				Database		
+65	2	Regular Searches	2017-01-01	3316				Database		
+66	2	Regular Searches	2017-02-01	351				Database		
+67	2	Searches-federated and automated	2016-09-01	38				Database		
+68	2	Result Clicks	2016-07-01	3503				Database		
+69	2	Result Clicks	2016-08-01	3176				Database		
+70	2	Result Clicks	2016-09-01	8685				Database		
+71	2	Result Clicks	2016-10-01	3165				Database		
+72	2	Result Clicks	2016-11-01	2224				Database		
+73	2	Result Clicks	2016-12-01	1360				Database		
+74	2	Result Clicks	2017-01-01	1457				Database		
+75	2	Result Clicks	2017-02-01	124				Database		
+76	2	Record Views	2016-07-01	3511				Database		
+77	2	Record Views	2016-08-01	2908				Database		
+78	2	Record Views	2016-09-01	8745				Database		
+79	2	Record Views	2016-10-01	3435				Database		
+80	2	Record Views	2016-11-01	2506				Database		
+81	2	Record Views	2016-12-01	1434				Database		
+82	2	Record Views	2017-01-01	1291				Database		
+83	2	Record Views	2017-02-01	109				Database		
+84	2	Regular Searches	2017-02-01	6184				Database		
+85	2	Regular Searches	2017-03-01	6637				Database		
+86	2	Regular Searches	2017-04-01	6075				Database		
+87	2	Regular Searches	2017-05-01	2463				Database		
+88	2	Regular Searches	2017-06-01	3322				Database		
+89	2	Result Clicks	2017-02-01	2250				Database		
+90	2	Result Clicks	2017-03-01	2214				Database		
+91	2	Result Clicks	2017-04-01	1506				Database		
+92	2	Result Clicks	2017-05-01	6997				Database		
+93	2	Result Clicks	2017-06-01	5145				Database		
+94	2	Record Views	2017-02-01	2219				Database		
+95	2	Record Views	2017-03-01	2108				Database		
+96	2	Record Views	2017-04-01	1282				Database		
+97	2	Record Views	2017-05-01	6850				Database		
+98	2	Record Views	2017-06-01	4824				Database		
+99	0	Regular Searches	2017-07-01	2636				Database		
+100	0	Regular Searches	2017-08-01	1069				Database		
+101	0	Regular Searches	2017-09-01	2345				Database		
+102	0	Regular Searches	2017-10-01	5861				Database		
+103	0	Regular Searches	2017-11-01	3425				Database		
+104	0	Regular Searches	2017-12-01	2006				Database		
+105	0	Regular Searches	2018-01-01	1769				Database		
+106	0	Regular Searches	2018-02-01	3339				Database		
+107	0	Regular Searches	2018-03-01	3362				Database		
+108	0	Regular Searches	2018-04-01	2880				Database		
+109	0	Regular Searches	2018-05-01	1349				Database		
+110	0	Regular Searches	2018-06-01	2663				Database		
+111	0	Result Clicks	2017-07-01	47				Database		
+112	0	Result Clicks	2017-08-01	16				Database		
+113	0	Result Clicks	2017-09-01	32				Database		
+114	0	Result Clicks	2017-10-01	91				Database		
+115	0	Result Clicks	2017-11-01	96				Database		
+116	0	Result Clicks	2017-12-01	40				Database		
+117	0	Result Clicks	2018-01-01	55				Database		
+118	0	Result Clicks	2018-02-01	97				Database		
+119	0	Result Clicks	2018-03-01	102				Database		
+120	0	Result Clicks	2018-04-01	106				Database		
+121	0	Result Clicks	2018-05-01	62				Database		
+122	0	Result Clicks	2018-06-01	25				Database		
+123	0	Record Views	2017-07-01	94				Database		
+124	0	Record Views	2017-08-01	27				Database		
+125	0	Record Views	2017-09-01	78				Database		
+126	0	Record Views	2017-10-01	63				Database		
+127	0	Record Views	2017-11-01	24				Database		
+128	0	Record Views	2017-12-01	38				Database		
+129	0	Record Views	2018-01-01	21				Database		
+130	0	Record Views	2018-02-01	67				Database		
+131	0	Record Views	2018-03-01	50				Database		
+132	0	Record Views	2018-04-01	61				Database		
+133	0	Record Views	2018-05-01	24				Database		
+134	0	Record Views	2018-06-01	12				Database		
+135	8	Regular Searches	2017-08-01	431				Database		
+136	8	Regular Searches	2017-09-01	2348				Database		
+137	8	Regular Searches	2017-10-01	5911				Database		
+138	8	Regular Searches	2017-11-01	3420				Database		
+139	8	Regular Searches	2017-12-01	2046				Database		
+140	8	Regular Searches	2018-01-01	1834				Database		
+141	8	Regular Searches	2018-02-01	3341				Database		
+142	8	Regular Searches	2018-03-01	3351				Database		
+143	8	Regular Searches	2018-04-01	2852				Database		
+144	8	Regular Searches	2018-05-01	1338				Database		
+145	8	Regular Searches	2018-06-01	2709				Database		
+146	8	Result Clicks	2017-09-01	30				Database		
+147	8	Result Clicks	2017-10-01	71				Database		
+148	8	Result Clicks	2017-11-01	25				Database		
+149	8	Result Clicks	2017-12-01	22				Database		
+150	8	Result Clicks	2018-01-01	14				Database		
+151	8	Result Clicks	2018-02-01	31				Database		
+152	8	Result Clicks	2018-03-01	24				Database		
+153	8	Result Clicks	2018-04-01	38				Database		
+154	8	Result Clicks	2018-05-01	18				Database		
+155	8	Result Clicks	2018-06-01	25				Database		
+156	8	Record Views	2017-08-01	9				Database		
+157	8	Record Views	2017-09-01	15				Database		
+158	8	Record Views	2017-10-01	52				Database		
+159	8	Record Views	2017-11-01	19				Database		
+160	8	Record Views	2017-12-01	10				Database		
+161	8	Record Views	2018-01-01	14				Database		
+162	8	Record Views	2018-02-01	20				Database		
+163	8	Record Views	2018-03-01	25				Database		
+164	8	Record Views	2018-04-01	21				Database		
+165	8	Record Views	2018-05-01	20				Database		
+166	8	Record Views	2018-06-01	15				Database		
+167	27	Regular Searches	2017-08-01	431				Database		
+168	27	Regular Searches	2017-09-01	2348				Database		
+169	27	Regular Searches	2017-10-01	5911				Database		
+170	27	Regular Searches	2017-11-01	3420				Database		
+171	27	Regular Searches	2017-12-01	2046				Database		
+172	27	Regular Searches	2018-01-01	1834				Database		
+173	27	Regular Searches	2018-02-01	3341				Database		
+174	27	Regular Searches	2018-03-01	3351				Database		
+175	27	Regular Searches	2018-04-01	2852				Database		
+176	27	Regular Searches	2018-05-01	1338				Database		
+177	27	Regular Searches	2018-06-01	2709				Database		
+178	27	Result Clicks	2017-09-01	17				Database		
+179	27	Result Clicks	2017-10-01	20				Database		
+180	27	Result Clicks	2017-11-01	16				Database		
+181	27	Result Clicks	2017-12-01	13				Database		
+182	27	Result Clicks	2018-01-01	14				Database		
+183	27	Result Clicks	2018-02-01	16				Database		
+184	27	Result Clicks	2018-03-01	11				Database		
+185	27	Result Clicks	2018-04-01	13				Database		
+186	27	Result Clicks	2018-05-01	16				Database		
+187	27	Result Clicks	2018-06-01	13				Database		
+188	27	Record Views	2017-09-01	19				Database		
+189	27	Record Views	2017-10-01	17				Database		
+190	27	Record Views	2017-11-01	16				Database		
+191	27	Record Views	2017-12-01	9				Database		
+192	27	Record Views	2018-01-01	12				Database		
+193	27	Record Views	2018-02-01	11				Database		
+194	27	Record Views	2018-03-01	12				Database		
+195	27	Record Views	2018-04-01	18				Database		
+196	27	Record Views	2018-05-01	9				Database		
+197	27	Record Views	2018-06-01	10				Database		
+198	15	Regular Searches	2017-08-01	431				Database		
+199	15	Regular Searches	2017-09-01	2348				Database		
+200	15	Regular Searches	2017-10-01	5911				Database		
+201	15	Regular Searches	2017-11-01	3420				Database		
+202	15	Regular Searches	2017-12-01	2046				Database		
+203	15	Regular Searches	2018-01-01	1834				Database		
+204	15	Regular Searches	2018-02-01	3341				Database		
+205	15	Regular Searches	2018-03-01	3351				Database		
+206	15	Regular Searches	2018-04-01	2852				Database		
+207	15	Regular Searches	2018-05-01	1338				Database		
+208	15	Regular Searches	2018-06-01	2709				Database		
+209	15	Result Clicks	2017-08-01	10				Database		
+210	15	Result Clicks	2017-09-01	17				Database		
+211	15	Result Clicks	2017-10-01	50				Database		
+212	15	Result Clicks	2017-11-01	12				Database		
+213	15	Result Clicks	2017-12-01	34				Database		
+214	15	Result Clicks	2018-01-01	19				Database		
+215	15	Result Clicks	2018-02-01	23				Database		
+216	15	Result Clicks	2018-03-01	27				Database		
+217	15	Result Clicks	2018-04-01	20				Database		
+218	15	Result Clicks	2018-05-01	12				Database		
+219	15	Result Clicks	2018-06-01	19				Database		
+220	15	Record Views	2017-08-01	11				Database		
+221	15	Record Views	2017-10-01	27				Database		
+222	15	Record Views	2017-11-01	13				Database		
+223	15	Record Views	2017-12-01	16				Database		
+224	15	Record Views	2018-01-01	9				Database		
+225	15	Record Views	2018-02-01	11				Database		
+226	15	Record Views	2018-03-01	17				Database		
+227	15	Record Views	2018-04-01	13				Database		
+228	15	Record Views	2018-05-01	11				Database		
+229	15	Record Views	2018-06-01	16				Database		
+230	2	Regular Searches	2017-07-01	4000				Database		
+231	2	Regular Searches	2017-08-01	1637				Database		
+232	2	Regular Searches	2017-09-01	3850				Database		
+233	2	Regular Searches	2017-10-01	7683				Database		
+234	2	Regular Searches	2017-11-01	4932				Database		
+235	2	Regular Searches	2017-12-01	2746				Database		
+236	2	Regular Searches	2018-01-01	3171				Database		
+237	2	Regular Searches	2018-02-01	5732				Database		
+238	2	Regular Searches	2018-03-01	4819				Database		
+239	2	Regular Searches	2018-04-01	4140				Database		
+240	2	Regular Searches	2018-05-01	2295				Database		
+241	2	Regular Searches	2018-06-01	3835				Database		
+242	2	Result Clicks	2017-07-01	1370				Database		
+243	2	Result Clicks	2017-08-01	733				Database		
+244	2	Result Clicks	2017-09-01	1877				Database		
+245	2	Result Clicks	2017-10-01	2616				Database		
+246	2	Result Clicks	2017-11-01	1891				Database		
+247	2	Result Clicks	2017-12-01	978				Database		
+248	2	Result Clicks	2018-01-01	4840				Database		
+249	2	Result Clicks	2018-02-01	1932				Database		
+250	2	Result Clicks	2018-03-01	1067				Database		
+251	2	Result Clicks	2018-04-01	849				Database		
+252	2	Result Clicks	2018-05-01	1134				Database		
+253	2	Result Clicks	2018-06-01	1352				Database		
+254	2	Record Views	2017-07-01	1182				Database		
+255	2	Record Views	2017-08-01	670				Database		
+256	2	Record Views	2017-09-01	1823				Database		
+257	2	Record Views	2017-10-01	2896				Database		
+258	2	Record Views	2017-11-01	1977				Database		
+259	2	Record Views	2017-12-01	852				Database		
+260	2	Record Views	2018-01-01	3966				Database		
+261	2	Record Views	2018-02-01	1881				Database		
+262	2	Record Views	2018-03-01	1067				Database		
+263	2	Record Views	2018-04-01	835				Database		
+264	2	Record Views	2018-05-01	991				Database		
+265	2	Record Views	2018-06-01	1310				Database		
+266	46	Regular Searches	2018-09-01	165				Database		
+267	46	Regular Searches	2019-05-01	849				Database		
+268	46	Regular Searches	2019-06-01	2431				Database		
+269	57	Regular Searches	2018-09-01	165				Database		
+270	57	Regular Searches	2019-05-01	849				Database		
+271	57	Regular Searches	2019-06-01	2431				Database		
+272	0	Regular Searches	2018-07-01	2631				Database		
+273	0	Regular Searches	2018-08-01	1326				Database		
+274	0	Regular Searches	2018-09-01	2924				Database		
+275	0	Regular Searches	2018-10-01	4078				Database		
+276	0	Regular Searches	2018-11-01	4469				Database		
+277	0	Regular Searches	2018-12-01	2526				Database		
+278	0	Regular Searches	2019-01-01	1611				Database		
+279	0	Regular Searches	2019-02-01	2890				Database		
+280	0	Regular Searches	2019-03-01	3708				Database		
+281	0	Regular Searches	2019-04-01	2832				Database		
+282	0	Regular Searches	2019-05-01	1153				Database		
+283	0	Regular Searches	2019-06-01	2443				Database		
+284	0	Result Clicks	2018-07-01	101				Database		
+285	0	Result Clicks	2018-08-01	15				Database		
+286	0	Result Clicks	2018-09-01	65				Database		
+287	0	Result Clicks	2018-10-01	198				Database		
+288	0	Result Clicks	2018-11-01	106				Database		
+289	0	Result Clicks	2018-12-01	156				Database		
+290	0	Result Clicks	2019-01-01	61				Database		
+291	0	Result Clicks	2019-02-01	103				Database		
+292	0	Result Clicks	2019-03-01	119				Database		
+293	0	Result Clicks	2019-04-01	55				Database		
+294	0	Result Clicks	2019-05-01	72				Database		
+295	0	Result Clicks	2019-06-01	96				Database		
+296	0	Record Views	2018-07-01	18				Database		
+297	0	Record Views	2018-08-01	10				Database		
+298	0	Record Views	2018-09-01	28				Database		
+299	0	Record Views	2018-10-01	87				Database		
+300	0	Record Views	2018-11-01	63				Database		
+301	0	Record Views	2018-12-01	133				Database		
+302	0	Record Views	2019-01-01	23				Database		
+303	0	Record Views	2019-02-01	68				Database		
+304	0	Record Views	2019-03-01	58				Database		
+305	0	Record Views	2019-04-01	22				Database		
+306	0	Record Views	2019-05-01	66				Database		
+307	0	Record Views	2019-06-01	83				Database		
+308	8	Regular Searches	2018-07-01	2631				Database		
+309	8	Regular Searches	2018-08-01	1341				Database		
+310	8	Regular Searches	2018-09-01	2898				Database		
+311	8	Regular Searches	2018-10-01	3945				Database		
+312	8	Regular Searches	2018-11-01	4435				Database		
+313	8	Regular Searches	2018-12-01	2541				Database		
+314	8	Regular Searches	2019-01-01	1591				Database		
+315	8	Regular Searches	2019-02-01	2824				Database		
+316	8	Regular Searches	2019-03-01	3601				Database		
+317	8	Regular Searches	2019-04-01	2823				Database		
+318	8	Regular Searches	2019-05-01	1174				Database		
+319	8	Regular Searches	2019-06-01	2462				Database		
+320	8	Result Clicks	2018-07-01	18				Database		
+321	8	Result Clicks	2018-08-01	13				Database		
+322	8	Result Clicks	2018-09-01	35				Database		
+323	8	Result Clicks	2018-10-01	39				Database		
+324	8	Result Clicks	2018-11-01	49				Database		
+325	8	Result Clicks	2018-12-01	205				Database		
+326	8	Result Clicks	2019-01-01	26				Database		
+327	8	Result Clicks	2019-02-01	24				Database		
+328	8	Result Clicks	2019-03-01	41				Database		
+329	8	Result Clicks	2019-04-01	50				Database		
+330	8	Result Clicks	2019-05-01	34				Database		
+331	8	Result Clicks	2019-06-01	66				Database		
+332	8	Record Views	2018-07-01	13				Database		
+333	8	Record Views	2018-09-01	15				Database		
+334	8	Record Views	2018-10-01	31				Database		
+335	8	Record Views	2018-11-01	44				Database		
+336	8	Record Views	2018-12-01	178				Database		
+337	8	Record Views	2019-01-01	15				Database		
+338	8	Record Views	2019-02-01	17				Database		
+339	8	Record Views	2019-03-01	26				Database		
+340	8	Record Views	2019-04-01	27				Database		
+341	8	Record Views	2019-05-01	31				Database		
+342	8	Record Views	2019-06-01	48				Database		
+343	27	Regular Searches	2018-07-01	2631				Database		
+344	27	Regular Searches	2018-08-01	1341				Database		
+345	27	Regular Searches	2018-09-01	2898				Database		
+346	27	Regular Searches	2018-10-01	3945				Database		
+347	27	Regular Searches	2018-11-01	4435				Database		
+348	27	Regular Searches	2018-12-01	2541				Database		
+349	27	Regular Searches	2019-01-01	1591				Database		
+350	27	Regular Searches	2019-02-01	2824				Database		
+351	27	Regular Searches	2019-03-01	3601				Database		
+352	27	Regular Searches	2019-04-01	2823				Database		
+353	27	Regular Searches	2019-05-01	1174				Database		
+354	27	Regular Searches	2019-06-01	2462				Database		
+355	27	Result Clicks	2018-07-01	13				Database		
+356	27	Result Clicks	2018-09-01	17				Database		
+357	27	Result Clicks	2018-10-01	26				Database		
+358	27	Result Clicks	2018-11-01	32				Database		
+359	27	Result Clicks	2018-12-01	74				Database		
+360	27	Result Clicks	2019-01-01	9				Database		
+361	27	Result Clicks	2019-02-01	16				Database		
+362	27	Result Clicks	2019-03-01	13				Database		
+363	27	Result Clicks	2019-04-01	14				Database		
+364	27	Result Clicks	2019-05-01	23				Database		
+365	27	Result Clicks	2019-06-01	28				Database		
+366	27	Record Views	2018-07-01	11				Database		
+367	27	Record Views	2018-08-01	7				Database		
+368	27	Record Views	2018-09-01	10				Database		
+369	27	Record Views	2018-10-01	17				Database		
+370	27	Record Views	2018-11-01	12				Database		
+371	27	Record Views	2018-12-01	59				Database		
+372	27	Record Views	2019-01-01	10				Database		
+373	27	Record Views	2019-02-01	16				Database		
+374	27	Record Views	2019-03-01	10				Database		
+375	27	Record Views	2019-04-01	16				Database		
+376	27	Record Views	2019-05-01	16				Database		
+377	27	Record Views	2019-06-01	19				Database		
+378	15	Regular Searches	2018-07-01	2631				Database		
+379	15	Regular Searches	2018-08-01	1341				Database		
+380	15	Regular Searches	2018-09-01	2898				Database		
+381	15	Regular Searches	2018-10-01	3945				Database		
+382	15	Regular Searches	2018-11-01	4435				Database		
+383	15	Regular Searches	2018-12-01	2541				Database		
+384	15	Regular Searches	2019-01-01	1591				Database		
+385	15	Regular Searches	2019-02-01	2824				Database		
+386	15	Regular Searches	2019-03-01	3601				Database		
+387	15	Regular Searches	2019-04-01	2823				Database		
+388	15	Regular Searches	2019-05-01	1174				Database		
+389	15	Regular Searches	2019-06-01	2462				Database		
+390	15	Result Clicks	2018-07-01	23				Database		
+391	15	Result Clicks	2018-08-01	13				Database		
+392	15	Result Clicks	2018-09-01	21				Database		
+393	15	Result Clicks	2018-10-01	54				Database		
+394	15	Result Clicks	2018-11-01	30				Database		
+395	15	Result Clicks	2018-12-01	75				Database		
+396	15	Result Clicks	2019-01-01	13				Database		
+397	15	Result Clicks	2019-02-01	18				Database		
+398	15	Result Clicks	2019-03-01	29				Database		
+399	15	Result Clicks	2019-04-01	29				Database		
+400	15	Result Clicks	2019-05-01	38				Database		
+401	15	Result Clicks	2019-06-01	45				Database		
+402	15	Record Views	2018-07-01	12				Database		
+403	15	Record Views	2018-09-01	16				Database		
+404	15	Record Views	2018-10-01	36				Database		
+405	15	Record Views	2018-11-01	23				Database		
+406	15	Record Views	2018-12-01	60				Database		
+407	15	Record Views	2019-01-01	12				Database		
+408	15	Record Views	2019-02-01	7				Database		
+409	15	Record Views	2019-03-01	10				Database		
+410	15	Record Views	2019-04-01	17				Database		
+411	15	Record Views	2019-05-01	32				Database		
+412	15	Record Views	2019-06-01	41				Database		
+413	2	Regular Searches	2018-07-01	3738				Database		
+414	2	Regular Searches	2018-08-01	1951				Database		
+415	2	Regular Searches	2018-09-01	4940				Database		
+416	2	Regular Searches	2018-10-01	6301				Database		
+417	2	Regular Searches	2018-11-01	6058				Database		
+418	2	Regular Searches	2018-12-01	3676				Database		
+419	2	Regular Searches	2019-01-01	2908				Database		
+420	2	Regular Searches	2019-02-01	5572				Database		
+421	2	Regular Searches	2019-03-01	5184				Database		
+422	2	Regular Searches	2019-04-01	4386				Database		
+423	2	Regular Searches	2019-05-01	2161				Database		
+424	2	Regular Searches	2019-06-01	4172				Database		
+425	2	Result Clicks	2018-07-01	15410				Database		
+426	2	Result Clicks	2018-08-01	7979				Database		
+427	2	Result Clicks	2018-09-01	4074				Database		
+428	2	Result Clicks	2018-10-01	2051				Database		
+429	2	Result Clicks	2018-11-01	1806				Database		
+430	2	Result Clicks	2018-12-01	822				Database		
+431	2	Result Clicks	2019-01-01	2032				Database		
+432	2	Result Clicks	2019-02-01	2319				Database		
+433	2	Result Clicks	2019-03-01	5305				Database		
+434	2	Result Clicks	2019-04-01	1678				Database		
+435	2	Result Clicks	2019-05-01	947				Database		
+436	2	Result Clicks	2019-06-01	2378				Database		
+437	2	Record Views	2018-07-01	16084				Database		
+438	2	Record Views	2018-08-01	10827				Database		
+439	2	Record Views	2018-09-01	3845				Database		
+440	2	Record Views	2018-10-01	2347				Database		
+441	2	Record Views	2018-11-01	2072				Database		
+442	2	Record Views	2018-12-01	767				Database		
+443	2	Record Views	2019-01-01	2207				Database		
+444	2	Record Views	2019-02-01	2476				Database		
+445	2	Record Views	2019-03-01	8234				Database		
+446	2	Record Views	2019-04-01	1726				Database		
+447	2	Record Views	2019-05-01	863				Database		
+448	2	Record Views	2019-06-01	2674				Database		
+449	59	Access denied. Content item not licensed	2019-02-01	2				Database		
+450	59	Access denied. Content item not licensed	2019-04-01	1				Database		
+451	23	Successful Full-text Article Requests	2016-07-01	14				Journal	Article	
+452	23	Successful Full-text Article Requests	2016-08-01	3				Journal	Article	
+453	23	Successful Full-text Article Requests	2016-09-01	4				Journal	Article	
+454	23	Successful Full-text Article Requests	2016-10-01	28				Journal	Article	
+455	23	Successful Full-text Article Requests	2016-11-01	27				Journal	Article	
+456	23	Successful Full-text Article Requests	2016-12-01	12				Journal	Article	
+457	23	Successful Full-text Article Requests	2017-01-01	6				Journal	Article	
+458	23	Successful Full-text Article Requests	2017-02-01	8				Journal	Article	
+459	23	Successful Full-text Article Requests	2017-03-01	23				Journal	Article	
+460	23	Successful Full-text Article Requests	2017-04-01	32				Journal	Article	
+461	23	Successful Full-text Article Requests	2017-05-01	5				Journal	Article	
+462	23	Successful Full-text Article Requests	2017-06-01	11				Journal	Article	
+463	5	Successful Full-text Article Requests	2016-09-01	3				Journal	Article	
+464	5	Successful Full-text Article Requests	2016-10-01	3				Journal	Article	
+465	5	Successful Full-text Article Requests	2017-02-01	5				Journal	Article	
+466	5	Successful Full-text Article Requests	2017-03-01	3				Journal	Article	
+467	9	Successful Full-text Article Requests	2016-07-01	3				Journal	Article	
+468	9	Successful Full-text Article Requests	2016-10-01	18				Journal	Article	
+469	9	Successful Full-text Article Requests	2016-11-01	24				Journal	Article	
+470	9	Successful Full-text Article Requests	2016-12-01	26				Journal	Article	
+471	9	Successful Full-text Article Requests	2017-02-01	24				Journal	Article	
+472	9	Successful Full-text Article Requests	2017-03-01	23				Journal	Article	
+473	9	Successful Full-text Article Requests	2017-04-01	23				Journal	Article	
+474	9	Successful Full-text Article Requests	2017-05-01	4				Journal	Article	
+475	9	Successful Full-text Article Requests	2017-06-01	12				Journal	Article	
+476	23	Successful Full-text Article Requests	2017-07-01	6				Journal	Article	
+477	23	Successful Full-text Article Requests	2017-08-01	1				Journal	Article	
+478	23	Successful Full-text Article Requests	2017-09-01	7				Journal	Article	
+479	23	Successful Full-text Article Requests	2017-10-01	3				Journal	Article	
+480	23	Successful Full-text Article Requests	2017-11-01	5				Journal	Article	
+481	23	Successful Full-text Article Requests	2017-12-01	1				Journal	Article	
+482	23	Successful Full-text Article Requests	2018-01-01	4				Journal	Article	
+483	23	Successful Full-text Article Requests	2018-02-01	6				Journal	Article	
+484	23	Successful Full-text Article Requests	2018-03-01	5				Journal	Article	
+485	23	Successful Full-text Article Requests	2018-04-01	10				Journal	Article	
+486	23	Successful Full-text Article Requests	2018-05-01	2				Journal	Article	
+487	23	Successful Full-text Article Requests	2018-06-01	4				Journal	Article	
+488	5	Successful Full-text Article Requests	2017-07-01	1				Journal	Article	
+489	5	Successful Full-text Article Requests	2017-08-01	1				Journal	Article	
+490	5	Successful Full-text Article Requests	2017-09-01	1				Journal	Article	
+491	5	Successful Full-text Article Requests	2017-10-01	1				Journal	Article	
+492	5	Successful Full-text Article Requests	2017-11-01	1				Journal	Article	
+493	5	Successful Full-text Article Requests	2017-12-01	1				Journal	Article	
+494	5	Successful Full-text Article Requests	2018-01-01	1				Journal	Article	
+495	5	Successful Full-text Article Requests	2018-02-01	5				Journal	Article	
+496	5	Successful Full-text Article Requests	2018-03-01	4				Journal	Article	
+497	5	Successful Full-text Article Requests	2018-04-01	4				Journal	Article	
+498	5	Successful Full-text Article Requests	2018-05-01	1				Journal	Article	
+499	5	Successful Full-text Article Requests	2018-06-01	1				Journal	Article	
+500	9	Successful Full-text Article Requests	2017-07-01	14				Journal	Article	
+501	9	Successful Full-text Article Requests	2017-08-01	4				Journal	Article	
+502	9	Successful Full-text Article Requests	2017-09-01	2				Journal	Article	
+503	9	Successful Full-text Article Requests	2017-10-01	8				Journal	Article	
+504	9	Successful Full-text Article Requests	2017-11-01	4				Journal	Article	
+505	9	Successful Full-text Article Requests	2017-12-01	10				Journal	Article	
+506	9	Successful Full-text Article Requests	2018-01-01	1				Journal	Article	
+507	9	Successful Full-text Article Requests	2018-02-01	9				Journal	Article	
+508	9	Successful Full-text Article Requests	2018-03-01	6				Journal	Article	
+509	9	Successful Full-text Article Requests	2018-04-01	8				Journal	Article	
+510	9	Successful Full-text Article Requests	2018-05-01	2				Journal	Article	
+511	9	Successful Full-text Article Requests	2018-06-01	1				Journal	Article	
+512	23	Successful Full-text Article Requests	2018-07-01	4				Journal	Article	
+513	23	Successful Full-text Article Requests	2018-09-01	6				Journal	Article	
+514	23	Successful Full-text Article Requests	2018-10-01	11				Journal	Article	
+515	23	Successful Full-text Article Requests	2018-11-01	5				Journal	Article	
+516	23	Successful Full-text Article Requests	2019-01-01	3				Journal	Article	
+517	23	Successful Full-text Article Requests	2019-02-01	6				Journal	Article	
+518	23	Successful Full-text Article Requests	2019-03-01	10				Journal	Article	
+519	23	Successful Full-text Article Requests	2019-04-01	9				Journal	Article	
+520	23	Successful Full-text Article Requests	2019-05-01	5				Journal	Article	
+521	23	Successful Full-text Article Requests	2019-06-01	4				Journal	Article	
+522	5	Successful Full-text Article Requests	2018-08-01	4				Journal	Article	
+523	5	Successful Full-text Article Requests	2018-11-01	3				Journal	Article	
+524	5	Successful Full-text Article Requests	2019-03-01	7				Journal	Article	
+525	5	Successful Full-text Article Requests	2019-04-01	4				Journal	Article	
+526	9	Successful Full-text Article Requests	2018-07-01	11				Journal	Article	
+527	9	Successful Full-text Article Requests	2018-09-01	6				Journal	Article	
+528	9	Successful Full-text Article Requests	2018-10-01	6				Journal	Article	
+529	9	Successful Full-text Article Requests	2018-11-01	5				Journal	Article	
+530	9	Successful Full-text Article Requests	2018-12-01	6				Journal	Article	
+531	9	Successful Full-text Article Requests	2019-01-01	6				Journal	Article	
+532	9	Successful Full-text Article Requests	2019-02-01	5				Journal	Article	
+533	9	Successful Full-text Article Requests	2019-04-01	17				Journal	Article	
+534	9	Successful Full-text Article Requests	2019-06-01	10				Journal	Article	
+535	43	Access denied. Content item not licensed	2016-09-01	3				Journal	Article	
+536	43	Access denied. Content item not licensed	2016-11-01	4				Journal	Article	
+537	43	Access denied. Content item not licensed	2016-12-01	3				Journal	Article	
+538	43	Access denied. Content item not licensed	2017-02-01	3				Journal	Article	
+539	43	Access denied. Content item not licensed	2017-04-01	5				Journal	Article	
+540	43	Access denied. Content item not licensed	2016-09-01	3				Journal	Article	
+541	43	Access denied. Content item not licensed	2016-11-01	4				Journal	Article	
+542	43	Access denied. Content item not licensed	2016-12-01	4				Journal	Article	
+543	43	Access denied. Content item not licensed	2017-02-01	3				Journal	Article	
+544	43	Access denied. Content item not licensed	2017-03-01	3				Journal	Article	
+545	43	Access denied. Content item not licensed	2017-04-01	5				Journal	Article	
+546	29	Access denied. Content item not licensed	2016-07-01	65				Journal	Article	
+547	29	Access denied. Content item not licensed	2016-08-01	16				Journal	Article	
+548	29	Access denied. Content item not licensed	2016-09-01	149				Journal	Article	
+549	29	Access denied. Content item not licensed	2016-10-01	162				Journal	Article	
+550	29	Access denied. Content item not licensed	2016-11-01	133				Journal	Article	
+551	29	Access denied. Content item not licensed	2016-12-01	64				Journal	Article	
+552	56	Access denied. Content item not licensed	2018-02-01	1				Journal	Article	
+553	56	Access denied. Content item not licensed	2018-03-01	2				Journal	Article	
+554	56	Access denied. Content item not licensed	2018-07-01	2				Journal	Article	
+555	34	Successful Content Unit Requests	2017-01-01	2				Multimedia		
+556	34	Successful Content Unit Requests	2017-02-01	4				Multimedia		
+557	34	Successful Content Unit Requests	2017-03-01	4				Multimedia		
+558	34	Successful Content Unit Requests	2017-04-01	2				Multimedia		
+559	34	Successful Content Unit Requests	2017-06-01	1				Multimedia		
+560	34	Successful Content Unit Requests	2017-07-01	1				Multimedia		
+561	34	Successful Content Unit Requests	2018-01-01	3				Multimedia		
+562	85	Regular Searches	2016-07-01	20103				Platform		
+563	85	Regular Searches	2016-08-01	10413				Platform		
+564	85	Regular Searches	2016-09-01	19559				Platform		
+565	85	Regular Searches	2016-10-01	27121				Platform		
+566	85	Regular Searches	2016-11-01	43473				Platform		
+567	85	Regular Searches	2016-12-01	11490				Platform		
+568	85	Regular Searches	2017-01-01	12415				Platform		
+569	85	Regular Searches	2017-02-01	22544				Platform		
+570	85	Regular Searches	2017-03-01	28193				Platform		
+571	85	Regular Searches	2017-04-01	22959				Platform		
+572	85	Regular Searches	2017-05-01	10087				Platform		
+573	85	Regular Searches	2017-06-01	12638				Platform		
+574	85	Searches-federated and automated	2016-09-01	75				Platform		
+575	85	Result Clicks	2016-07-01	14003				Platform		
+576	85	Result Clicks	2016-08-01	12757				Platform		
+577	85	Result Clicks	2016-09-01	25926				Platform		
+578	85	Result Clicks	2016-10-01	19349				Platform		
+579	85	Result Clicks	2016-11-01	15032				Platform		
+580	85	Result Clicks	2016-12-01	11822				Platform		
+581	85	Result Clicks	2017-01-01	11935				Platform		
+582	85	Result Clicks	2017-02-01	14702				Platform		
+583	85	Result Clicks	2017-03-01	21949				Platform		
+584	85	Result Clicks	2017-04-01	13981				Platform		
+585	85	Result Clicks	2017-05-01	26799				Platform		
+586	85	Result Clicks	2017-06-01	19748				Platform		
+587	85	Record Views	2016-07-01	10446				Platform		
+588	85	Record Views	2016-08-01	10956				Platform		
+589	85	Record Views	2016-09-01	23612				Platform		
+590	85	Record Views	2016-10-01	18843				Platform		
+591	85	Record Views	2016-11-01	13878				Platform		
+592	85	Record Views	2016-12-01	11790				Platform		
+593	85	Record Views	2017-01-01	10209				Platform		
+594	85	Record Views	2017-02-01	13256				Platform		
+595	85	Record Views	2017-03-01	15489				Platform		
+596	85	Record Views	2017-04-01	11339				Platform		
+597	85	Record Views	2017-05-01	24413				Platform		
+598	85	Record Views	2017-06-01	17402				Platform		
+599	85	Regular Searches	2017-07-01	23931				Platform		
+600	85	Regular Searches	2017-08-01	7054				Platform		
+601	85	Regular Searches	2017-09-01	16031				Platform		
+602	85	Regular Searches	2017-10-01	48833				Platform		
+603	85	Regular Searches	2017-11-01	24270				Platform		
+604	85	Regular Searches	2017-12-01	13726				Platform		
+605	85	Regular Searches	2018-01-01	13562				Platform		
+606	85	Regular Searches	2018-02-01	21233				Platform		
+607	85	Regular Searches	2018-03-01	25792				Platform		
+608	85	Regular Searches	2018-04-01	18994				Platform		
+609	85	Regular Searches	2018-05-01	9116				Platform		
+610	85	Regular Searches	2018-06-01	14796				Platform		
+611	85	Result Clicks	2017-07-01	15780				Platform		
+612	85	Result Clicks	2017-08-01	66236				Platform		
+613	85	Result Clicks	2017-09-01	27536				Platform		
+614	85	Result Clicks	2017-10-01	21873				Platform		
+615	85	Result Clicks	2017-11-01	17613				Platform		
+616	85	Result Clicks	2017-12-01	8625				Platform		
+617	85	Result Clicks	2018-01-01	13076				Platform		
+618	85	Result Clicks	2018-02-01	14073				Platform		
+619	85	Result Clicks	2018-03-01	21435				Platform		
+620	85	Result Clicks	2018-04-01	16496				Platform		
+621	85	Result Clicks	2018-05-01	24140				Platform		
+622	85	Result Clicks	2018-06-01	32286				Platform		
+623	85	Record Views	2017-07-01	13851				Platform		
+624	85	Record Views	2017-08-01	65161				Platform		
+625	85	Record Views	2017-09-01	25172				Platform		
+626	85	Record Views	2017-10-01	18693				Platform		
+627	85	Record Views	2017-11-01	16035				Platform		
+628	85	Record Views	2017-12-01	6010				Platform		
+629	85	Record Views	2018-01-01	11036				Platform		
+630	85	Record Views	2018-02-01	11226				Platform		
+631	85	Record Views	2018-03-01	16758				Platform		
+632	85	Record Views	2018-04-01	19182				Platform		
+633	85	Record Views	2018-05-01	20613				Platform		
+634	85	Record Views	2018-06-01	36132				Platform		
+635	85	Regular Searches	2018-07-01	22419				Platform		
+636	85	Regular Searches	2018-08-01	7674				Platform		
+637	85	Regular Searches	2018-09-01	19024				Platform		
+638	85	Regular Searches	2018-10-01	22485				Platform		
+639	85	Regular Searches	2018-11-01	36042				Platform		
+640	85	Regular Searches	2018-12-01	13829				Platform		
+641	85	Regular Searches	2019-01-01	12300				Platform		
+642	85	Regular Searches	2019-02-01	20808				Platform		
+643	85	Regular Searches	2019-03-01	25618				Platform		
+644	85	Regular Searches	2019-04-01	14969				Platform		
+645	85	Regular Searches	2019-05-01	7044				Platform		
+646	85	Regular Searches	2019-06-01	14819				Platform		
+647	85	Searches-federated and automated	2018-10-01	31				Platform		
+648	85	Searches-federated and automated	2018-11-01	25				Platform		
+649	85	Searches-federated and automated	2018-12-01	22				Platform		
+650	85	Searches-federated and automated	2019-01-01	61				Platform		
+651	85	Result Clicks	2018-07-01	37752				Platform		
+652	85	Result Clicks	2018-08-01	66370				Platform		
+653	85	Result Clicks	2018-09-01	32795				Platform		
+654	85	Result Clicks	2018-10-01	33022				Platform		
+655	85	Result Clicks	2018-11-01	20635				Platform		
+656	85	Result Clicks	2018-12-01	71407				Platform		
+657	85	Result Clicks	2019-01-01	18176				Platform		
+658	85	Result Clicks	2019-02-01	16704				Platform		
+659	85	Result Clicks	2019-03-01	41080				Platform		
+660	85	Result Clicks	2019-04-01	32714				Platform		
+661	85	Result Clicks	2019-05-01	45157				Platform		
+662	85	Result Clicks	2019-06-01	106106				Platform		
+663	85	Record Views	2018-07-01	36089				Platform		
+664	85	Record Views	2018-08-01	68854				Platform		
+665	85	Record Views	2018-09-01	31439				Platform		
+666	85	Record Views	2018-10-01	29199				Platform		
+667	85	Record Views	2018-11-01	20111				Platform		
+668	85	Record Views	2018-12-01	71550				Platform		
+669	85	Record Views	2019-01-01	34310				Platform		
+670	85	Record Views	2019-02-01	15415				Platform		
+671	85	Record Views	2019-03-01	49445				Platform		
+672	85	Record Views	2019-04-01	29908				Platform		
+673	85	Record Views	2019-05-01	63854				Platform		
+674	85	Record Views	2019-06-01	84625				Platform		
+675	64	Successful Title Requests	2017-03-01	2				Book	Book	
+676	33	Successful Title Requests	2016-10-01	2				Book	Book	
+677	33	Successful Title Requests	2017-02-01	2				Book	Book	
+678	52	Successful Title Requests	2016-11-01	2				Book	Book	
+679	50	Successful Title Requests	2016-07-01	4				Book	Book	
+680	50	Successful Title Requests	2016-10-01	5				Book	Book	
+681	65	Successful Title Requests	2016-10-01	2				Book	Book	
+682	30	Successful Title Requests	2017-03-01	4				Book	Book	
+683	30	Successful Title Requests	2017-05-01	2				Book	Book	
+684	74	Successful Title Requests	2017-05-01	4				Book	Book	
+685	31	Successful Title Requests	2016-10-01	1				Book	Book	
+686	47	Successful Title Requests	2017-11-01	5				Book	Book	
+687	47	Successful Title Requests	2018-04-01	4				Book	Book	
+688	47	Successful Title Requests	2018-06-01	2				Book	Book	
+689	60	Successful Title Requests	2018-03-01	2				Book	Book	
+690	44	Successful Title Requests	2017-08-01	4				Book	Book	
+691	33	Successful Title Requests	2017-09-01	2				Book	Book	
+692	33	Successful Title Requests	2017-10-01	2				Book	Book	
+693	33	Successful Title Requests	2017-11-01	2				Book	Book	
+694	33	Successful Title Requests	2018-01-01	2				Book	Book	
+695	33	Successful Title Requests	2018-03-01	2				Book	Book	
+696	33	Successful Title Requests	2018-06-01	2				Book	Book	
+697	48	Successful Title Requests	2017-11-01	3				Book	Book	
+698	48	Successful Title Requests	2018-03-01	2				Book	Book	
+699	52	Successful Title Requests	2018-03-01	3				Book	Book	
+700	53	Successful Title Requests	2017-12-01	5				Book	Book	
+701	51	Successful Title Requests	2018-04-01	2				Book	Book	
+702	51	Successful Title Requests	2018-06-01	2				Book	Book	
+703	65	Successful Title Requests	2017-11-01	2				Book	Book	
+704	35	Successful Title Requests	2017-10-01	2				Book	Book	
+705	31	Successful Title Requests	2017-10-01	5				Book	Book	
+706	31	Successful Title Requests	2018-02-01	5				Book	Book	
+707	31	Successful Title Requests	2018-03-01	2				Book	Book	
+708	31	Successful Title Requests	2018-06-01	2				Book	Book	
+709	64	Successful Title Requests	2018-11-01	3				Book	Book	
+710	66	Successful Title Requests	2019-04-01	3				Book	Book	
+711	67	Successful Title Requests	2018-07-01	3				Book	Book	
+712	47	Successful Title Requests	2018-07-01	3				Book	Book	
+713	60	Successful Title Requests	2018-07-01	3				Book	Book	
+714	45	Successful Title Requests	2018-09-01	3				Book	Book	
+715	45	Successful Title Requests	2019-01-01	19				Book	Book	
+716	45	Successful Title Requests	2019-02-01	10				Book	Book	
+717	45	Successful Title Requests	2019-06-01	3				Book	Book	
+718	33	Successful Title Requests	2018-07-01	3				Book	Book	
+719	33	Successful Title Requests	2018-11-01	6				Book	Book	
+720	33	Successful Title Requests	2019-03-01	3				Book	Book	
+721	33	Successful Title Requests	2019-04-01	3				Book	Book	
+722	48	Successful Title Requests	2018-07-01	3				Book	Book	
+723	48	Successful Title Requests	2018-09-01	4				Book	Book	
+724	48	Successful Title Requests	2018-10-01	3				Book	Book	
+725	48	Successful Title Requests	2019-03-01	3				Book	Book	
+726	48	Successful Title Requests	2019-04-01	3				Book	Book	
+727	52	Successful Title Requests	2018-10-01	4				Book	Book	
+728	52	Successful Title Requests	2019-04-01	3				Book	Book	
+729	53	Successful Title Requests	2019-03-01	3				Book	Book	
+730	54	Successful Title Requests	2018-10-01	3				Book	Book	
+731	54	Successful Title Requests	2019-04-01	3				Book	Book	
+732	70	Successful Title Requests	2019-01-01	3				Book	Book	
+733	50	Successful Title Requests	2018-11-01	3				Book	Book	
+734	50	Successful Title Requests	2019-04-01	3				Book	Book	
+735	22	Successful Title Requests	2019-02-01	3				Book	Book	
+736	4	Successful Title Requests	2019-02-01	3				Book	Book	
+737	51	Successful Title Requests	2018-09-01	4				Book	Book	
+738	51	Successful Title Requests	2018-10-01	7				Book	Book	
+739	39	Successful Title Requests	2018-07-01	3				Book	Book	
+740	39	Successful Title Requests	2018-09-01	5				Book	Book	
+741	39	Successful Title Requests	2018-10-01	3				Book	Book	
+742	39	Successful Title Requests	2019-02-01	3				Book	Book	
+743	39	Successful Title Requests	2019-04-01	3				Book	Book	
+744	39	Successful Title Requests	2019-06-01	3				Book	Book	
+745	72	Successful Title Requests	2019-01-01	4				Book	Book	
+746	40	Successful Title Requests	2018-09-01	3				Book	Book	
+747	40	Successful Title Requests	2018-10-01	5				Book	Book	
+748	40	Successful Title Requests	2018-12-01	3				Book	Book	
+749	40	Successful Title Requests	2019-03-01	4				Book	Book	
+750	40	Successful Title Requests	2019-04-01	3				Book	Book	
+751	73	Successful Title Requests	2018-09-01	3				Book	Book	
+752	30	Successful Title Requests	2018-10-01	3				Book	Book	
+753	30	Successful Title Requests	2019-04-01	3				Book	Book	
+754	30	Successful Title Requests	2019-05-01	3				Book	Book	
+755	35	Successful Title Requests	2018-09-01	5				Book	Book	
+756	35	Successful Title Requests	2018-10-01	16				Book	Book	
+757	35	Successful Title Requests	2018-12-01	4				Book	Book	
+758	35	Successful Title Requests	2019-02-01	8				Book	Book	
+759	35	Successful Title Requests	2019-03-01	16				Book	Book	
+760	35	Successful Title Requests	2019-04-01	4				Book	Book	
+761	38	Successful Title Requests	2018-12-01	3				Book	Book	
+762	38	Successful Title Requests	2019-01-01	6				Book	Book	
+763	38	Successful Title Requests	2019-02-01	3				Book	Book	
+764	32	Successful Title Requests	2019-05-01	3				Book	Book	
+765	19	Successful Title Requests	2019-02-01	3				Book	Book	
+766	75	Successful Title Requests	2018-07-01	3				Book	Book	
+767	63	Successful Title Requests	2018-07-01	4				Book	Book	
+768	63	Successful Title Requests	2019-03-01	4				Book	Book	
+769	76	Successful Title Requests	2018-07-01	3				Book	Book	
+770	77	Successful Title Requests	2018-07-01	3				Book	Book	
+771	78	Successful Title Requests	2018-07-01	3				Book	Book	
+772	79	Successful Title Requests	2018-07-01	3				Book	Book	
+773	80	Successful Title Requests	2018-07-01	4				Book	Book	
+774	81	Successful Title Requests	2018-07-01	3				Book	Book	
+775	82	Successful Title Requests	2018-07-01	3				Book	Book	
+776	17	Successful Title Requests	2019-02-01	3				Book	Book	
+777	31	Successful Title Requests	2018-09-01	3				Book	Book	
+778	31	Successful Title Requests	2018-11-01	3				Book	Book	
+779	31	Successful Title Requests	2018-12-01	5				Book	Book	
+780	31	Successful Title Requests	2019-02-01	3				Book	Book	
+781	31	Successful Title Requests	2019-06-01	4				Book	Book	
+782	42	Successful Section Requests	2017-03-01	2				Book	Book_Segment	
+783	36	Successful Section Requests	2017-03-01	3				Book	Book_Segment	
+784	83	Successful Section Requests	2017-04-01	2				Book	Book_Segment	
+785	42	Successful Section Requests	2018-04-01	2				Book	Book_Segment	
+786	42	Successful Section Requests	2017-11-01	3				Book	Book_Segment	
+787	42	Successful Section Requests	2017-12-01	2				Book	Book_Segment	
+788	36	Successful Section Requests	2017-08-01	5				Book	Book_Segment	
+789	36	Successful Section Requests	2018-01-01	3				Book	Book_Segment	
+790	36	Successful Section Requests	2018-02-01	3				Book	Book_Segment	
+791	36	Successful Section Requests	2018-03-01	2				Book	Book_Segment	
+792	36	Successful Section Requests	2018-05-01	4				Book	Book_Segment	
+793	36	Successful Section Requests	2018-06-01	2				Book	Book_Segment	
+794	83	Successful Section Requests	2017-08-01	8				Book	Book_Segment	
+795	83	Successful Section Requests	2017-09-01	2				Book	Book_Segment	
+796	83	Successful Section Requests	2017-11-01	2				Book	Book_Segment	
+797	36	Successful Section Requests	2018-07-01	2				Book	Book_Segment	
+798	36	Successful Section Requests	2018-08-01	2				Book	Book_Segment	
+799	36	Successful Section Requests	2018-09-01	2				Book	Book_Segment	
+800	36	Successful Section Requests	2019-03-01	4				Book	Book_Segment	
+801	36	Successful Section Requests	2019-05-01	3				Book	Book_Segment	
+802	83	Successful Section Requests	2018-07-01	3				Book	Book_Segment	
+803	30	Access denied: concurrent/simultaneous user license limit exceeded	2017-03-01	6				Book	Book	
+804	41	Access denied: concurrent/simultaneous user license limit exceeded	2018-01-01	2				Book	Book	
+805	41	Access denied: concurrent/simultaneous user license limit exceeded	2018-02-01	29				Book	Book	
+806	41	Access denied: concurrent/simultaneous user license limit exceeded	2019-03-01	5				Book	Book	
+807	3	Regular Searches	2016-07-01	897				Database		
+808	3	Regular Searches	2016-08-01	721				Database		
+809	3	Regular Searches	2016-09-01	1377				Database		
+810	3	Regular Searches	2016-10-01	1635				Database		
+811	3	Regular Searches	2016-11-01	1059				Database		
+812	3	Regular Searches	2016-12-01	687				Database		
+813	3	Regular Searches	2017-01-01	759				Database		
+814	3	Regular Searches	2017-02-01	1529				Database		
+815	3	Regular Searches	2017-03-01	1487				Database		
+816	3	Regular Searches	2017-04-01	1041				Database		
+817	3	Regular Searches	2017-05-01	551				Database		
+818	3	Regular Searches	2017-06-01	501				Database		
+819	3	Searches-federated and automated	2016-08-01	7				Database		
+820	3	Searches-federated and automated	2016-09-01	25				Database		
+821	3	Searches-federated and automated	2016-10-01	17				Database		
+822	3	Searches-federated and automated	2016-11-01	139				Database		
+823	3	Searches-federated and automated	2016-12-01	145				Database		
+824	3	Searches-federated and automated	2017-01-01	195				Database		
+825	3	Searches-federated and automated	2017-02-01	127				Database		
+826	3	Searches-federated and automated	2017-03-01	213				Database		
+827	3	Searches-federated and automated	2017-04-01	179				Database		
+828	3	Searches-federated and automated	2017-05-01	725				Database		
+829	3	Searches-federated and automated	2017-06-01	1005				Database		
+830	3	Result Clicks	2016-07-01	523				Database		
+831	3	Result Clicks	2016-08-01	267				Database		
+832	3	Result Clicks	2016-09-01	977				Database		
+833	3	Result Clicks	2016-10-01	1151				Database		
+834	3	Result Clicks	2016-11-01	785				Database		
+835	3	Result Clicks	2016-12-01	389				Database		
+836	3	Result Clicks	2017-01-01	489				Database		
+837	3	Result Clicks	2017-02-01	813				Database		
+838	3	Result Clicks	2017-03-01	981				Database		
+839	3	Result Clicks	2017-04-01	651				Database		
+840	3	Result Clicks	2017-05-01	253				Database		
+841	3	Result Clicks	2017-06-01	651				Database		
+842	3	Record Views	2016-07-01	331				Database		
+843	3	Record Views	2016-08-01	191				Database		
+844	3	Record Views	2016-09-01	609				Database		
+845	3	Record Views	2016-10-01	699				Database		
+846	3	Record Views	2016-11-01	521				Database		
+847	3	Record Views	2016-12-01	211				Database		
+848	3	Record Views	2017-01-01	299				Database		
+849	3	Record Views	2017-02-01	485				Database		
+850	3	Record Views	2017-03-01	597				Database		
+851	3	Record Views	2017-04-01	397				Database		
+852	3	Record Views	2017-05-01	127				Database		
+853	3	Record Views	2017-06-01	503				Database		
+854	3	Regular Searches	2017-07-01	636				Database		
+855	3	Regular Searches	2017-08-01	387				Database		
+856	3	Regular Searches	2017-09-01	773				Database		
+857	3	Regular Searches	2017-10-01	1972				Database		
+858	3	Regular Searches	2017-11-01	1222				Database		
+859	3	Regular Searches	2017-12-01	884				Database		
+860	3	Regular Searches	2018-01-01	526				Database		
+861	3	Regular Searches	2018-02-01	1349				Database		
+862	3	Regular Searches	2018-03-01	1654				Database		
+863	3	Regular Searches	2018-04-01	1982				Database		
+864	3	Regular Searches	2018-05-01	352				Database		
+865	3	Regular Searches	2018-06-01	856				Database		
+866	3	Searches-federated and automated	2017-07-01	1221				Database		
+867	3	Searches-federated and automated	2017-08-01	33161				Database		
+868	3	Searches-federated and automated	2017-09-01	87561				Database		
+869	3	Searches-federated and automated	2017-10-01	165829				Database		
+870	3	Searches-federated and automated	2017-11-01	133629				Database		
+871	3	Searches-federated and automated	2017-12-01	76655				Database		
+872	3	Searches-federated and automated	2018-01-01	91574				Database		
+873	3	Searches-federated and automated	2018-02-01	140690				Database		
+874	3	Searches-federated and automated	2018-03-01	141310				Database		
+875	3	Searches-federated and automated	2018-04-01	155510				Database		
+876	3	Searches-federated and automated	2018-05-01	52981				Database		
+877	3	Searches-federated and automated	2018-06-01	71998				Database		
+878	3	Result Clicks	2017-07-01	458				Database		
+879	3	Result Clicks	2017-08-01	26210				Database		
+880	3	Result Clicks	2017-09-01	3099				Database		
+881	3	Result Clicks	2017-10-01	6048				Database		
+882	3	Result Clicks	2017-11-01	4132				Database		
+883	3	Result Clicks	2017-12-01	2200				Database		
+884	3	Result Clicks	2018-01-01	2198				Database		
+885	3	Result Clicks	2018-02-01	3996				Database		
+886	3	Result Clicks	2018-03-01	5450				Database		
+887	3	Result Clicks	2018-04-01	4551				Database		
+888	3	Result Clicks	2018-05-01	1604				Database		
+889	3	Result Clicks	2018-06-01	3088				Database		
+890	3	Record Views	2017-07-01	283				Database		
+891	3	Record Views	2017-08-01	24214				Database		
+892	3	Record Views	2017-09-01	1853				Database		
+893	3	Record Views	2017-10-01	3639				Database		
+894	3	Record Views	2017-11-01	2281				Database		
+895	3	Record Views	2017-12-01	1172				Database		
+896	3	Record Views	2018-01-01	1119				Database		
+897	3	Record Views	2018-02-01	2432				Database		
+898	3	Record Views	2018-03-01	3595				Database		
+899	3	Record Views	2018-04-01	2656				Database		
+900	3	Record Views	2018-05-01	875				Database		
+901	3	Record Views	2018-06-01	1933				Database		
+902	12	Searches-federated and automated	2017-07-01	1222				Database		
+903	12	Searches-federated and automated	2017-08-01	33147				Database		
+904	12	Searches-federated and automated	2017-09-01	87513				Database		
+905	12	Searches-federated and automated	2017-10-01	165715				Database		
+906	12	Searches-federated and automated	2017-11-01	133592				Database		
+907	12	Searches-federated and automated	2017-12-01	76597				Database		
+908	12	Searches-federated and automated	2018-01-01	91574				Database		
+909	12	Searches-federated and automated	2018-02-01	140544				Database		
+910	12	Searches-federated and automated	2018-03-01	141146				Database		
+911	12	Searches-federated and automated	2018-04-01	155241				Database		
+912	12	Searches-federated and automated	2018-05-01	52867				Database		
+913	12	Searches-federated and automated	2018-06-01	71850				Database		
+914	12	Result Clicks	2017-08-01	5				Database		
+915	12	Result Clicks	2017-09-01	82				Database		
+916	12	Result Clicks	2017-10-01	260				Database		
+917	12	Result Clicks	2017-11-01	183				Database		
+918	12	Result Clicks	2017-12-01	73				Database		
+919	12	Result Clicks	2018-01-01	88				Database		
+920	12	Result Clicks	2018-02-01	222				Database		
+921	12	Result Clicks	2018-03-01	290				Database		
+922	12	Result Clicks	2018-04-01	226				Database		
+923	12	Result Clicks	2018-05-01	93				Database		
+924	12	Result Clicks	2018-06-01	102				Database		
+925	12	Record Views	2017-08-01	3				Database		
+926	12	Record Views	2017-09-01	48				Database		
+927	12	Record Views	2017-10-01	183				Database		
+928	12	Record Views	2017-11-01	103				Database		
+929	12	Record Views	2017-12-01	44				Database		
+930	12	Record Views	2018-01-01	53				Database		
+931	12	Record Views	2018-02-01	141				Database		
+932	12	Record Views	2018-03-01	175				Database		
+933	12	Record Views	2018-04-01	147				Database		
+934	12	Record Views	2018-05-01	50				Database		
+935	12	Record Views	2018-06-01	61				Database		
+936	3	Regular Searches	2018-07-01	1457				Database		
+937	3	Regular Searches	2018-08-01	433				Database		
+938	3	Regular Searches	2018-09-01	1407				Database		
+939	3	Regular Searches	2018-10-01	2368				Database		
+940	3	Regular Searches	2018-11-01	1326				Database		
+941	3	Regular Searches	2018-12-01	926				Database		
+942	3	Regular Searches	2019-01-01	1096				Database		
+943	3	Regular Searches	2019-02-01	1877				Database		
+944	3	Regular Searches	2019-03-01	1939				Database		
+945	3	Regular Searches	2019-04-01	1847				Database		
+946	3	Regular Searches	2019-05-01	595				Database		
+947	3	Regular Searches	2019-06-01	920				Database		
+948	3	Searches-federated and automated	2018-07-01	91367				Database		
+949	3	Searches-federated and automated	2018-08-01	44761				Database		
+950	3	Searches-federated and automated	2018-09-01	111940				Database		
+951	3	Searches-federated and automated	2018-10-01	163380				Database		
+952	3	Searches-federated and automated	2018-11-01	149031				Database		
+953	3	Searches-federated and automated	2018-12-01	89064				Database		
+954	3	Searches-federated and automated	2019-01-01	87914				Database		
+955	3	Searches-federated and automated	2019-02-01	138928				Database		
+956	3	Searches-federated and automated	2019-03-01	138555				Database		
+957	3	Searches-federated and automated	2019-04-01	155543				Database		
+958	3	Searches-federated and automated	2019-05-01	51791				Database		
+959	3	Searches-federated and automated	2019-06-01	72776				Database		
+960	3	Result Clicks	2018-07-01	3764				Database		
+961	3	Result Clicks	2018-08-01	1699				Database		
+962	3	Result Clicks	2018-09-01	3046				Database		
+963	3	Result Clicks	2018-10-01	5952				Database		
+964	3	Result Clicks	2018-11-01	4639				Database		
+965	3	Result Clicks	2018-12-01	2327				Database		
+966	3	Result Clicks	2019-01-01	3312				Database		
+967	3	Result Clicks	2019-02-01	4737				Database		
+968	3	Result Clicks	2019-03-01	4344				Database		
+969	3	Result Clicks	2019-04-01	4529				Database		
+970	3	Result Clicks	2019-05-01	2260				Database		
+971	3	Result Clicks	2019-06-01	3137				Database		
+972	3	Record Views	2018-07-01	2175				Database		
+973	3	Record Views	2018-08-01	1181				Database		
+974	3	Record Views	2018-09-01	1817				Database		
+975	3	Record Views	2018-10-01	3757				Database		
+976	3	Record Views	2018-11-01	2791				Database		
+977	3	Record Views	2018-12-01	1373				Database		
+978	3	Record Views	2019-01-01	2063				Database		
+979	3	Record Views	2019-02-01	2926				Database		
+980	3	Record Views	2019-03-01	2658				Database		
+981	3	Record Views	2019-04-01	2623				Database		
+982	3	Record Views	2019-05-01	1353				Database		
+983	3	Record Views	2019-06-01	1716				Database		
+984	12	Searches-federated and automated	2018-07-01	91202				Database		
+985	12	Searches-federated and automated	2018-08-01	44646				Database		
+986	12	Searches-federated and automated	2018-09-01	111693				Database		
+987	12	Searches-federated and automated	2018-10-01	163165				Database		
+988	12	Searches-federated and automated	2018-11-01	148881				Database		
+989	12	Searches-federated and automated	2018-12-01	88946				Database		
+990	12	Searches-federated and automated	2019-01-01	87713				Database		
+991	12	Searches-federated and automated	2019-02-01	138551				Database		
+992	12	Searches-federated and automated	2019-03-01	138341				Database		
+993	12	Searches-federated and automated	2019-04-01	155335				Database		
+994	12	Searches-federated and automated	2019-05-01	51627				Database		
+995	12	Searches-federated and automated	2019-06-01	72639				Database		
+996	12	Result Clicks	2018-07-01	174				Database		
+997	12	Result Clicks	2018-08-01	40				Database		
+998	12	Result Clicks	2018-09-01	106				Database		
+999	12	Result Clicks	2018-10-01	249				Database		
+1000	12	Result Clicks	2018-11-01	198				Database		
+1001	12	Result Clicks	2018-12-01	103				Database		
+1002	12	Result Clicks	2019-01-01	46				Database		
+1003	12	Result Clicks	2019-02-01	69				Database		
+1004	12	Result Clicks	2019-03-01	82				Database		
+1005	12	Result Clicks	2019-04-01	74				Database		
+1006	12	Result Clicks	2019-05-01	41				Database		
+1007	12	Result Clicks	2019-06-01	46				Database		
+1008	12	Record Views	2018-07-01	106				Database		
+1009	12	Record Views	2018-08-01	28				Database		
+1010	12	Record Views	2018-09-01	72				Database		
+1011	12	Record Views	2018-10-01	162				Database		
+1012	12	Record Views	2018-11-01	127				Database		
+1013	12	Record Views	2018-12-01	68				Database		
+1014	12	Record Views	2019-01-01	29				Database		
+1015	12	Record Views	2019-02-01	41				Database		
+1016	12	Record Views	2019-03-01	52				Database		
+1017	12	Record Views	2019-04-01	43				Database		
+1018	12	Record Views	2019-05-01	27				Database		
+1019	12	Record Views	2019-06-01	35				Database		
+1020	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-07-01	7				Database		
+1021	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-08-01	12				Database		
+1022	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-09-01	1023				Database		
+1023	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-10-01	79				Database		
+1024	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-11-01	30				Database		
+1025	28	Access denied: concurrent/simultaneous user license limit exceeded	2018-12-01	9				Database		
+1026	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-01-01	27				Database		
+1027	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-02-01	22				Database		
+1028	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-03-01	17				Database		
+1029	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-04-01	30				Database		
+1030	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-05-01	28				Database		
+1031	28	Access denied: concurrent/simultaneous user license limit exceeded	2019-06-01	36				Database		
+1032	22	Successful Full-text Article Requests	2016-07-01	108				Journal	Article	
+1033	22	Successful Full-text Article Requests	2016-08-01	37				Journal	Article	
+1034	22	Successful Full-text Article Requests	2016-09-01	80				Journal	Article	
+1035	22	Successful Full-text Article Requests	2016-10-01	334				Journal	Article	
+1036	22	Successful Full-text Article Requests	2016-11-01	124				Journal	Article	
+1037	22	Successful Full-text Article Requests	2016-12-01	66				Journal	Article	
+1038	22	Successful Full-text Article Requests	2017-01-01	56				Journal	Article	
+1039	22	Successful Full-text Article Requests	2017-02-01	254				Journal	Article	
+1040	22	Successful Full-text Article Requests	2017-03-01	210				Journal	Article	
+1041	22	Successful Full-text Article Requests	2017-04-01	190				Journal	Article	
+1042	22	Successful Full-text Article Requests	2017-05-01	14				Journal	Article	
+1043	22	Successful Full-text Article Requests	2017-06-01	44				Journal	Article	
+1044	4	Successful Full-text Article Requests	2016-07-01	64				Journal	Article	
+1045	4	Successful Full-text Article Requests	2016-08-01	13				Journal	Article	
+1046	4	Successful Full-text Article Requests	2016-09-01	55				Journal	Article	
+1047	4	Successful Full-text Article Requests	2016-10-01	337				Journal	Article	
+1048	4	Successful Full-text Article Requests	2016-11-01	86				Journal	Article	
+1049	4	Successful Full-text Article Requests	2016-12-01	11				Journal	Article	
+1050	4	Successful Full-text Article Requests	2017-01-01	25				Journal	Article	
+1051	4	Successful Full-text Article Requests	2017-02-01	237				Journal	Article	
+1052	4	Successful Full-text Article Requests	2017-03-01	137				Journal	Article	
+1053	4	Successful Full-text Article Requests	2017-04-01	79				Journal	Article	
+1054	4	Successful Full-text Article Requests	2017-06-01	10				Journal	Article	
+1055	10	Successful Full-text Article Requests	2016-08-01	2				Journal	Article	
+1056	10	Successful Full-text Article Requests	2016-10-01	5				Journal	Article	
+1057	10	Successful Full-text Article Requests	2016-11-01	21				Journal	Article	
+1058	10	Successful Full-text Article Requests	2016-12-01	15				Journal	Article	
+1059	10	Successful Full-text Article Requests	2017-03-01	8				Journal	Article	
+1060	10	Successful Full-text Article Requests	2017-04-01	2				Journal	Article	
+1061	17	Successful Full-text Article Requests	2016-07-01	8				Journal	Article	
+1062	17	Successful Full-text Article Requests	2016-09-01	5				Journal	Article	
+1063	17	Successful Full-text Article Requests	2016-10-01	15				Journal	Article	
+1064	17	Successful Full-text Article Requests	2016-11-01	2				Journal	Article	
+1065	17	Successful Full-text Article Requests	2017-01-01	3				Journal	Article	
+1066	17	Successful Full-text Article Requests	2017-02-01	8				Journal	Article	
+1067	17	Successful Full-text Article Requests	2017-03-01	4				Journal	Article	
+1068	17	Successful Full-text Article Requests	2017-06-01	3				Journal	Article	
+1069	58	Successful Full-text Article Requests	2016-08-01	3				Journal	Article	
+1070	49	Successful Full-text Article Requests	2016-07-01	3				Journal	Article	
+1071	14	Successful Full-text Article Requests	2016-07-01	2				Journal	Article	
+1072	14	Successful Full-text Article Requests	2016-08-01	2				Journal	Article	
+1073	14	Successful Full-text Article Requests	2016-10-01	3				Journal	Article	
+1074	14	Successful Full-text Article Requests	2017-02-01	3				Journal	Article	
+1075	14	Successful Full-text Article Requests	2017-03-01	5				Journal	Article	
+1076	21	Successful Full-text Article Requests	2016-10-01	2				Journal	Article	
+1077	21	Successful Full-text Article Requests	2017-04-01	3				Journal	Article	
+1078	16	Successful Full-text Article Requests	2016-07-01	3				Journal	Article	
+1079	16	Successful Full-text Article Requests	2016-10-01	4				Journal	Article	
+1080	16	Successful Full-text Article Requests	2016-11-01	3				Journal	Article	
+1081	16	Successful Full-text Article Requests	2016-12-01	3				Journal	Article	
+1082	16	Successful Full-text Article Requests	2017-03-01	2				Journal	Article	
+1083	22	Successful Full-text Article Requests	2017-07-01	126				Journal	Article	
+1084	22	Successful Full-text Article Requests	2017-08-01	112				Journal	Article	
+1085	22	Successful Full-text Article Requests	2017-09-01	292				Journal	Article	
+1086	22	Successful Full-text Article Requests	2017-10-01	498				Journal	Article	
+1087	22	Successful Full-text Article Requests	2017-11-01	385				Journal	Article	
+1088	22	Successful Full-text Article Requests	2017-12-01	171				Journal	Article	
+1089	22	Successful Full-text Article Requests	2018-01-01	203				Journal	Article	
+1090	22	Successful Full-text Article Requests	2018-02-01	424				Journal	Article	
+1091	22	Successful Full-text Article Requests	2018-03-01	486				Journal	Article	
+1092	22	Successful Full-text Article Requests	2018-04-01	414				Journal	Article	
+1093	22	Successful Full-text Article Requests	2018-05-01	117				Journal	Article	
+1094	22	Successful Full-text Article Requests	2018-06-01	128				Journal	Article	
+1095	6	Successful Full-text Article Requests	2018-04-01	11				Journal	Article	
+1096	6	Successful Full-text Article Requests	2018-06-01	19				Journal	Article	
+1097	4	Successful Full-text Article Requests	2017-07-01	90				Journal	Article	
+1098	4	Successful Full-text Article Requests	2017-08-01	20				Journal	Article	
+1099	4	Successful Full-text Article Requests	2017-09-01	48				Journal	Article	
+1100	4	Successful Full-text Article Requests	2017-10-01	320				Journal	Article	
+1101	4	Successful Full-text Article Requests	2017-11-01	80				Journal	Article	
+1102	4	Successful Full-text Article Requests	2017-12-01	41				Journal	Article	
+1103	4	Successful Full-text Article Requests	2018-01-01	45				Journal	Article	
+1104	4	Successful Full-text Article Requests	2018-02-01	179				Journal	Article	
+1105	4	Successful Full-text Article Requests	2018-03-01	146				Journal	Article	
+1106	4	Successful Full-text Article Requests	2018-04-01	120				Journal	Article	
+1107	4	Successful Full-text Article Requests	2018-05-01	32				Journal	Article	
+1108	4	Successful Full-text Article Requests	2018-06-01	70				Journal	Article	
+1109	10	Successful Full-text Article Requests	2017-07-01	7				Journal	Article	
+1110	10	Successful Full-text Article Requests	2017-08-01	31				Journal	Article	
+1111	10	Successful Full-text Article Requests	2017-09-01	13				Journal	Article	
+1112	10	Successful Full-text Article Requests	2017-10-01	51				Journal	Article	
+1113	10	Successful Full-text Article Requests	2017-11-01	17				Journal	Article	
+1114	10	Successful Full-text Article Requests	2017-12-01	9				Journal	Article	
+1115	10	Successful Full-text Article Requests	2018-01-01	7				Journal	Article	
+1116	10	Successful Full-text Article Requests	2018-02-01	19				Journal	Article	
+1117	10	Successful Full-text Article Requests	2018-03-01	16				Journal	Article	
+1118	10	Successful Full-text Article Requests	2018-04-01	38				Journal	Article	
+1119	10	Successful Full-text Article Requests	2018-05-01	7				Journal	Article	
+1120	10	Successful Full-text Article Requests	2018-06-01	7				Journal	Article	
+1121	17	Successful Full-text Article Requests	2017-07-01	12				Journal	Article	
+1122	17	Successful Full-text Article Requests	2017-08-01	9				Journal	Article	
+1123	17	Successful Full-text Article Requests	2017-09-01	10				Journal	Article	
+1124	17	Successful Full-text Article Requests	2017-10-01	20				Journal	Article	
+1125	17	Successful Full-text Article Requests	2017-11-01	12				Journal	Article	
+1126	17	Successful Full-text Article Requests	2017-12-01	9				Journal	Article	
+1127	17	Successful Full-text Article Requests	2018-01-01	10				Journal	Article	
+1128	17	Successful Full-text Article Requests	2018-02-01	16				Journal	Article	
+1129	17	Successful Full-text Article Requests	2018-03-01	31				Journal	Article	
+1130	17	Successful Full-text Article Requests	2018-04-01	23				Journal	Article	
+1131	17	Successful Full-text Article Requests	2018-05-01	7				Journal	Article	
+1132	17	Successful Full-text Article Requests	2018-06-01	10				Journal	Article	
+1133	49	Successful Full-text Article Requests	2017-10-01	9				Journal	Article	
+1134	14	Successful Full-text Article Requests	2017-07-01	9				Journal	Article	
+1135	14	Successful Full-text Article Requests	2017-09-01	8				Journal	Article	
+1136	14	Successful Full-text Article Requests	2017-10-01	15				Journal	Article	
+1137	14	Successful Full-text Article Requests	2017-11-01	9				Journal	Article	
+1138	14	Successful Full-text Article Requests	2017-12-01	9				Journal	Article	
+1139	14	Successful Full-text Article Requests	2018-01-01	7				Journal	Article	
+1140	14	Successful Full-text Article Requests	2018-02-01	8				Journal	Article	
+1141	14	Successful Full-text Article Requests	2018-04-01	7				Journal	Article	
+1142	21	Successful Full-text Article Requests	2017-07-01	7				Journal	Article	
+1143	21	Successful Full-text Article Requests	2017-11-01	8				Journal	Article	
+1144	21	Successful Full-text Article Requests	2017-12-01	7				Journal	Article	
+1145	21	Successful Full-text Article Requests	2018-01-01	7				Journal	Article	
+1146	21	Successful Full-text Article Requests	2018-02-01	8				Journal	Article	
+1147	21	Successful Full-text Article Requests	2018-03-01	8				Journal	Article	
+1148	21	Successful Full-text Article Requests	2018-06-01	10				Journal	Article	
+1149	16	Successful Full-text Article Requests	2017-07-01	11				Journal	Article	
+1150	16	Successful Full-text Article Requests	2017-09-01	8				Journal	Article	
+1151	16	Successful Full-text Article Requests	2017-10-01	8				Journal	Article	
+1152	16	Successful Full-text Article Requests	2017-12-01	13				Journal	Article	
+1153	16	Successful Full-text Article Requests	2018-01-01	7				Journal	Article	
+1154	16	Successful Full-text Article Requests	2018-02-01	9				Journal	Article	
+1155	16	Successful Full-text Article Requests	2018-03-01	12				Journal	Article	
+1156	16	Successful Full-text Article Requests	2018-04-01	13				Journal	Article	
+1157	16	Successful Full-text Article Requests	2018-06-01	9				Journal	Article	
+1158	58	Successful Full-text Article Requests	2018-11-01	4				Journal	Article	
+1159	22	Successful Full-text Article Requests	2018-07-01	277				Journal	Article	
+1160	22	Successful Full-text Article Requests	2018-08-01	103				Journal	Article	
+1161	22	Successful Full-text Article Requests	2018-09-01	317				Journal	Article	
+1162	22	Successful Full-text Article Requests	2018-10-01	578				Journal	Article	
+1163	22	Successful Full-text Article Requests	2018-11-01	476				Journal	Article	
+1164	22	Successful Full-text Article Requests	2018-12-01	187				Journal	Article	
+1165	22	Successful Full-text Article Requests	2019-01-01	160				Journal	Article	
+1166	22	Successful Full-text Article Requests	2019-02-01	468				Journal	Article	
+1167	22	Successful Full-text Article Requests	2019-03-01	362				Journal	Article	
+1168	22	Successful Full-text Article Requests	2019-04-01	343				Journal	Article	
+1169	22	Successful Full-text Article Requests	2019-05-01	142				Journal	Article	
+1170	22	Successful Full-text Article Requests	2019-06-01	134				Journal	Article	
+1171	6	Successful Full-text Article Requests	2018-07-01	20				Journal	Article	
+1172	6	Successful Full-text Article Requests	2018-09-01	16				Journal	Article	
+1173	6	Successful Full-text Article Requests	2018-10-01	66				Journal	Article	
+1174	6	Successful Full-text Article Requests	2018-11-01	22				Journal	Article	
+1175	6	Successful Full-text Article Requests	2018-12-01	16				Journal	Article	
+1176	6	Successful Full-text Article Requests	2019-01-01	12				Journal	Article	
+1177	6	Successful Full-text Article Requests	2019-02-01	49				Journal	Article	
+1178	6	Successful Full-text Article Requests	2019-03-01	75				Journal	Article	
+1179	6	Successful Full-text Article Requests	2019-04-01	33				Journal	Article	
+1180	6	Successful Full-text Article Requests	2019-05-01	25				Journal	Article	
+1181	6	Successful Full-text Article Requests	2019-06-01	8				Journal	Article	
+1182	4	Successful Full-text Article Requests	2018-07-01	78				Journal	Article	
+1183	4	Successful Full-text Article Requests	2018-08-01	8				Journal	Article	
+1184	4	Successful Full-text Article Requests	2018-09-01	47				Journal	Article	
+1185	4	Successful Full-text Article Requests	2018-10-01	197				Journal	Article	
+1186	4	Successful Full-text Article Requests	2018-11-01	46				Journal	Article	
+1187	4	Successful Full-text Article Requests	2018-12-01	19				Journal	Article	
+1188	4	Successful Full-text Article Requests	2019-01-01	18				Journal	Article	
+1189	4	Successful Full-text Article Requests	2019-02-01	161				Journal	Article	
+1190	4	Successful Full-text Article Requests	2019-03-01	51				Journal	Article	
+1191	4	Successful Full-text Article Requests	2019-04-01	26				Journal	Article	
+1192	4	Successful Full-text Article Requests	2019-05-01	19				Journal	Article	
+1193	4	Successful Full-text Article Requests	2019-06-01	34				Journal	Article	
+1194	10	Successful Full-text Article Requests	2018-07-01	10				Journal	Article	
+1195	10	Successful Full-text Article Requests	2018-09-01	8				Journal	Article	
+1196	10	Successful Full-text Article Requests	2018-10-01	22				Journal	Article	
+1197	10	Successful Full-text Article Requests	2018-11-01	19				Journal	Article	
+1198	10	Successful Full-text Article Requests	2018-12-01	10				Journal	Article	
+1199	10	Successful Full-text Article Requests	2019-01-01	12				Journal	Article	
+1200	10	Successful Full-text Article Requests	2019-02-01	21				Journal	Article	
+1201	10	Successful Full-text Article Requests	2019-03-01	9				Journal	Article	
+1202	10	Successful Full-text Article Requests	2019-04-01	27				Journal	Article	
+1203	10	Successful Full-text Article Requests	2019-05-01	3				Journal	Article	
+1204	10	Successful Full-text Article Requests	2019-06-01	11				Journal	Article	
+1205	17	Successful Full-text Article Requests	2018-07-01	6				Journal	Article	
+1206	17	Successful Full-text Article Requests	2018-09-01	7				Journal	Article	
+1207	17	Successful Full-text Article Requests	2018-10-01	21				Journal	Article	
+1208	17	Successful Full-text Article Requests	2018-11-01	20				Journal	Article	
+1209	17	Successful Full-text Article Requests	2018-12-01	5				Journal	Article	
+1210	17	Successful Full-text Article Requests	2019-01-01	3				Journal	Article	
+1211	17	Successful Full-text Article Requests	2019-02-01	20				Journal	Article	
+1212	17	Successful Full-text Article Requests	2019-03-01	15				Journal	Article	
+1213	17	Successful Full-text Article Requests	2019-04-01	9				Journal	Article	
+1214	17	Successful Full-text Article Requests	2019-05-01	3				Journal	Article	
+1215	17	Successful Full-text Article Requests	2019-06-01	6				Journal	Article	
+1216	49	Successful Full-text Article Requests	2018-12-01	3				Journal	Article	
+1217	49	Successful Full-text Article Requests	2019-03-01	3				Journal	Article	
+1218	14	Successful Full-text Article Requests	2018-07-01	3				Journal	Article	
+1219	14	Successful Full-text Article Requests	2018-10-01	3				Journal	Article	
+1220	14	Successful Full-text Article Requests	2018-11-01	3				Journal	Article	
+1221	21	Successful Full-text Article Requests	2018-07-01	3				Journal	Article	
+1222	21	Successful Full-text Article Requests	2018-11-01	3				Journal	Article	
+1223	21	Successful Full-text Article Requests	2018-12-01	4				Journal	Article	
+1224	21	Successful Full-text Article Requests	2019-01-01	4				Journal	Article	
+1225	21	Successful Full-text Article Requests	2019-04-01	4				Journal	Article	
+1226	55	Successful Full-text Article Requests	2018-08-01	3				Journal	Article	
+1227	55	Successful Full-text Article Requests	2018-10-01	3				Journal	Article	
+1228	86	Regular Searches	2016-07-01	30433				Platform		
+1229	86	Regular Searches	2016-08-01	9053				Platform		
+1230	86	Regular Searches	2016-09-01	36367				Platform		
+1231	86	Regular Searches	2016-10-01	69689				Platform		
+1232	86	Regular Searches	2016-11-01	33599				Platform		
+1233	86	Regular Searches	2016-12-01	14085				Platform		
+1234	86	Regular Searches	2017-01-01	15801				Platform		
+1235	86	Regular Searches	2017-02-01	67131				Platform		
+1236	86	Regular Searches	2017-03-01	49139				Platform		
+1237	86	Regular Searches	2017-04-01	33427				Platform		
+1238	86	Regular Searches	2017-05-01	9791				Platform		
+1239	86	Regular Searches	2017-06-01	16969				Platform		
+1240	86	Searches-federated and automated	2016-10-01	11				Platform		
+1241	86	Searches-federated and automated	2016-11-01	103				Platform		
+1242	86	Searches-federated and automated	2016-12-01	149				Platform		
+1243	86	Searches-federated and automated	2017-01-01	183				Platform		
+1244	86	Searches-federated and automated	2017-02-01	99				Platform		
+1245	86	Searches-federated and automated	2017-03-01	95				Platform		
+1246	86	Searches-federated and automated	2017-04-01	23				Platform		
+1247	86	Searches-federated and automated	2017-05-01	25				Platform		
+1248	86	Searches-federated and automated	2017-06-01	785				Platform		
+1249	86	Result Clicks	2016-07-01	61323				Platform		
+1250	86	Result Clicks	2016-08-01	19971				Platform		
+1251	86	Result Clicks	2016-09-01	70425				Platform		
+1252	86	Result Clicks	2016-10-01	149363				Platform		
+1253	86	Result Clicks	2016-11-01	84873				Platform		
+1254	86	Result Clicks	2016-12-01	41651				Platform		
+1255	86	Result Clicks	2017-01-01	39441				Platform		
+1256	86	Result Clicks	2017-02-01	131331				Platform		
+1257	86	Result Clicks	2017-03-01	116237				Platform		
+1258	86	Result Clicks	2017-04-01	85421				Platform		
+1259	86	Result Clicks	2017-05-01	25277				Platform		
+1260	86	Result Clicks	2017-06-01	34315				Platform		
+1261	86	Record Views	2016-07-01	36581				Platform		
+1262	86	Record Views	2016-08-01	10393				Platform		
+1263	86	Record Views	2016-09-01	44085				Platform		
+1264	86	Record Views	2016-10-01	92801				Platform		
+1265	86	Record Views	2016-11-01	48625				Platform		
+1266	86	Record Views	2016-12-01	23315				Platform		
+1267	86	Record Views	2017-01-01	22029				Platform		
+1268	86	Record Views	2017-02-01	80925				Platform		
+1269	86	Record Views	2017-03-01	67579				Platform		
+1270	86	Record Views	2017-04-01	48643				Platform		
+1271	86	Record Views	2017-05-01	13597				Platform		
+1272	86	Record Views	2017-06-01	19381				Platform		
+1273	86	Regular Searches	2017-07-01	39008				Platform		
+1274	86	Regular Searches	2017-08-01	46829				Platform		
+1275	86	Regular Searches	2017-09-01	130252				Platform		
+1276	86	Regular Searches	2017-10-01	251367				Platform		
+1277	86	Regular Searches	2017-11-01	186063				Platform		
+1278	86	Regular Searches	2017-12-01	104949				Platform		
+1279	86	Regular Searches	2018-01-01	123544				Platform		
+1280	86	Regular Searches	2018-02-01	213414				Platform		
+1281	86	Regular Searches	2018-03-01	198729				Platform		
+1282	86	Regular Searches	2018-04-01	197136				Platform		
+1283	86	Regular Searches	2018-05-01	69025				Platform		
+1284	86	Regular Searches	2018-06-01	92730				Platform		
+1285	86	Searches-federated and automated	2017-07-01	169				Platform		
+1286	86	Searches-federated and automated	2017-08-01	58				Platform		
+1287	86	Searches-federated and automated	2017-09-01	76				Platform		
+1288	86	Searches-federated and automated	2017-10-01	981				Platform		
+1289	86	Searches-federated and automated	2017-11-01	624				Platform		
+1290	86	Searches-federated and automated	2017-12-01	301				Platform		
+1291	86	Searches-federated and automated	2018-01-01	137				Platform		
+1292	86	Searches-federated and automated	2018-02-01	179				Platform		
+1293	86	Searches-federated and automated	2018-03-01	106				Platform		
+1294	86	Searches-federated and automated	2018-04-01	370				Platform		
+1295	86	Searches-federated and automated	2018-05-01	388				Platform		
+1296	86	Searches-federated and automated	2018-06-01	390				Platform		
+1297	86	Result Clicks	2017-07-01	64709				Platform		
+1298	86	Result Clicks	2017-08-01	70350				Platform		
+1299	86	Result Clicks	2017-09-01	146446				Platform		
+1300	86	Result Clicks	2017-10-01	334196				Platform		
+1301	86	Result Clicks	2017-11-01	239894				Platform		
+1302	86	Result Clicks	2017-12-01	116878				Platform		
+1303	86	Result Clicks	2018-01-01	134439				Platform		
+1304	86	Result Clicks	2018-02-01	255826				Platform		
+1305	86	Result Clicks	2018-03-01	275961				Platform		
+1306	86	Result Clicks	2018-04-01	252815				Platform		
+1307	86	Result Clicks	2018-05-01	74265				Platform		
+1308	86	Result Clicks	2018-06-01	110620				Platform		
+1309	86	Record Views	2017-07-01	37432				Platform		
+1310	86	Record Views	2017-08-01	47840				Platform		
+1311	86	Record Views	2017-09-01	87622				Platform		
+1312	86	Record Views	2017-10-01	196858				Platform		
+1313	86	Record Views	2017-11-01	132349				Platform		
+1314	86	Record Views	2017-12-01	63925				Platform		
+1315	86	Record Views	2018-01-01	76478				Platform		
+1316	86	Record Views	2018-02-01	149869				Platform		
+1317	86	Record Views	2018-03-01	158496				Platform		
+1318	86	Record Views	2018-04-01	136650				Platform		
+1319	86	Record Views	2018-05-01	37705				Platform		
+1320	86	Record Views	2018-06-01	57301				Platform		
+1321	86	Regular Searches	2018-07-01	134563				Platform		
+1322	86	Regular Searches	2018-08-01	60684				Platform		
+1323	86	Regular Searches	2018-09-01	144832				Platform		
+1324	86	Regular Searches	2018-10-01	236356				Platform		
+1325	86	Regular Searches	2018-11-01	182900				Platform		
+1326	86	Regular Searches	2018-12-01	110466				Platform		
+1327	86	Regular Searches	2019-01-01	109701				Platform		
+1328	86	Regular Searches	2019-02-01	195926				Platform		
+1329	86	Regular Searches	2019-03-01	178243				Platform		
+1330	86	Regular Searches	2019-04-01	191570				Platform		
+1331	86	Regular Searches	2019-05-01	63681				Platform		
+1332	86	Regular Searches	2019-06-01	90847				Platform		
+1333	86	Searches-federated and automated	2018-07-01	276				Platform		
+1334	86	Searches-federated and automated	2018-08-01	478				Platform		
+1335	86	Searches-federated and automated	2018-09-01	2501				Platform		
+1336	86	Searches-federated and automated	2018-10-01	1487				Platform		
+1337	86	Searches-federated and automated	2018-11-01	99907				Platform		
+1338	86	Searches-federated and automated	2018-12-01	98964				Platform		
+1339	86	Searches-federated and automated	2019-01-01	94000				Platform		
+1340	86	Searches-federated and automated	2019-02-01	159632				Platform		
+1341	86	Searches-federated and automated	2019-03-01	156859				Platform		
+1342	86	Searches-federated and automated	2019-04-01	25797				Platform		
+1343	86	Searches-federated and automated	2019-05-01	294				Platform		
+1344	86	Searches-federated and automated	2019-06-01	412				Platform		
+1345	86	Result Clicks	2018-07-01	171394				Platform		
+1346	86	Result Clicks	2018-08-01	52261				Platform		
+1347	86	Result Clicks	2018-09-01	166349				Platform		
+1348	86	Result Clicks	2018-10-01	325674				Platform		
+1349	86	Result Clicks	2018-11-01	243973				Platform		
+1350	86	Result Clicks	2018-12-01	125570				Platform		
+1351	86	Result Clicks	2019-01-01	115949				Platform		
+1352	86	Result Clicks	2019-02-01	246154				Platform		
+1353	86	Result Clicks	2019-03-01	231323				Platform		
+1354	86	Result Clicks	2019-04-01	241848				Platform		
+1355	86	Result Clicks	2019-05-01	73698				Platform		
+1356	86	Result Clicks	2019-06-01	137723				Platform		
+1357	86	Record Views	2018-07-01	93795				Platform		
+1358	86	Record Views	2018-08-01	24875				Platform		
+1359	86	Record Views	2018-09-01	90581				Platform		
+1360	86	Record Views	2018-10-01	191319				Platform		
+1361	86	Record Views	2018-11-01	129689				Platform		
+1362	86	Record Views	2018-12-01	61501				Platform		
+1363	86	Record Views	2019-01-01	55190				Platform		
+1364	86	Record Views	2019-02-01	136396				Platform		
+1365	86	Record Views	2019-03-01	118241				Platform		
+1366	86	Record Views	2019-04-01	118212				Platform		
+1367	86	Record Views	2019-05-01	34674				Platform		
+1368	86	Record Views	2019-06-01	78824				Platform		
+1369	62	Successful Section Requests	2018-03-01	2				Book	Book_Segment	
+1370	68	Successful Section Requests	2017-11-01	2				Book	Book_Segment	
+1371	37	Successful Section Requests	2017-07-01	2				Book	Book_Segment	
+1372	37	Successful Section Requests	2017-09-01	2				Book	Book_Segment	
+1373	37	Successful Section Requests	2017-10-01	2				Book	Book_Segment	
+1374	84	Successful Section Requests	2017-07-01	2				Book	Book_Segment	
+1375	84	Successful Section Requests	2018-02-01	2				Book	Book_Segment	
+1376	26	Successful Section Requests	2017-07-01	2				Book	Book_Segment	
+1377	26	Successful Section Requests	2017-10-01	2				Book	Book_Segment	
+1378	26	Successful Section Requests	2017-11-01	4				Book	Book_Segment	
+1379	26	Successful Section Requests	2017-12-01	2				Book	Book_Segment	
+1380	26	Successful Section Requests	2018-03-01	2				Book	Book_Segment	
+1381	26	Successful Section Requests	2018-04-01	2				Book	Book_Segment	
+1382	71	Successful Section Requests	2017-08-01	3				Book	Book_Segment	
+1383	13	Successful Section Requests	2017-10-01	3				Book	Book_Segment	
+1384	13	Successful Section Requests	2017-11-01	2				Book	Book_Segment	
+1385	13	Successful Section Requests	2018-02-01	3				Book	Book_Segment	
+1386	13	Successful Section Requests	2018-03-01	2				Book	Book_Segment	
+1387	62	Successful Section Requests	2019-01-01	2				Book	Book_Segment	
+1388	37	Successful Section Requests	2018-08-01	22				Book	Book_Segment	
+1389	84	Successful Section Requests	2019-01-01	4				Book	Book_Segment	
+1390	84	Successful Section Requests	2019-06-01	2				Book	Book_Segment	
+1391	69	Successful Section Requests	2018-11-01	2				Book	Book_Segment	
+1392	26	Successful Section Requests	2018-08-01	5				Book	Book_Segment	
+1393	26	Successful Section Requests	2019-04-01	2				Book	Book_Segment	
+1394	13	Successful Section Requests	2018-08-01	2				Book	Book_Segment	
+1395	13	Successful Section Requests	2019-03-01	2				Book	Book_Segment	
+1396	1	Regular Searches	2016-07-01	11				Database		
+1397	1	Regular Searches	2016-08-01	7				Database		
+1398	1	Regular Searches	2016-09-01	7				Database		
+1399	1	Regular Searches	2016-10-01	9				Database		
+1400	1	Regular Searches	2016-11-01	10				Database		
+1401	1	Regular Searches	2016-12-01	7				Database		
+1402	1	Regular Searches	2017-02-01	11				Database		
+1403	1	Regular Searches	2017-03-01	39				Database		
+1404	1	Regular Searches	2017-04-01	19				Database		
+1405	1	Regular Searches	2017-05-01	4				Database		
+1406	1	Regular Searches	2017-06-01	12				Database		
+1407	1	Result Clicks	2016-07-01	4				Database		
+1408	1	Result Clicks	2016-08-01	4				Database		
+1409	1	Result Clicks	2016-09-01	4				Database		
+1410	1	Result Clicks	2016-10-01	4				Database		
+1411	1	Result Clicks	2016-11-01	4				Database		
+1412	1	Result Clicks	2016-12-01	4				Database		
+1413	1	Result Clicks	2017-02-01	7				Database		
+1414	1	Result Clicks	2017-03-01	4				Database		
+1415	1	Result Clicks	2017-06-01	9				Database		
+1416	1	Record Views	2016-07-01	4				Database		
+1417	1	Record Views	2016-08-01	4				Database		
+1418	1	Record Views	2016-09-01	4				Database		
+1419	1	Record Views	2016-10-01	4				Database		
+1420	1	Record Views	2016-12-01	4				Database		
+1421	1	Record Views	2017-02-01	7				Database		
+1422	1	Record Views	2017-03-01	4				Database		
+1423	1	Record Views	2017-06-01	9				Database		
+1424	13	Regular Searches	2016-07-01	9				Database		
+1425	13	Regular Searches	2016-08-01	13				Database		
+1426	13	Regular Searches	2016-09-01	23				Database		
+1427	13	Regular Searches	2016-10-01	15				Database		
+1428	13	Regular Searches	2016-11-01	12				Database		
+1429	13	Regular Searches	2017-01-01	4				Database		
+1430	13	Regular Searches	2017-02-01	12				Database		
+1431	13	Regular Searches	2017-03-01	4				Database		
+1432	13	Regular Searches	2017-04-01	16				Database		
+1433	13	Regular Searches	2017-05-01	25				Database		
+1434	13	Result Clicks	2016-11-01	7				Database		
+1435	13	Result Clicks	2017-01-01	4				Database		
+1436	13	Result Clicks	2017-02-01	5				Database		
+1437	13	Result Clicks	2017-04-01	8				Database		
+1438	13	Result Clicks	2017-05-01	16				Database		
+1439	13	Record Views	2016-07-01	4				Database		
+1440	13	Record Views	2016-08-01	6				Database		
+1441	13	Record Views	2016-09-01	9				Database		
+1442	13	Record Views	2016-10-01	7				Database		
+1443	13	Record Views	2016-11-01	7				Database		
+1444	13	Record Views	2017-01-01	4				Database		
+1445	13	Record Views	2017-02-01	5				Database		
+1446	13	Record Views	2017-04-01	8				Database		
+1447	13	Record Views	2017-05-01	16				Database		
+1448	1	Regular Searches	2017-07-01	24				Database		
+1449	1	Regular Searches	2017-08-01	9				Database		
+1450	1	Regular Searches	2017-09-01	11				Database		
+1451	1	Regular Searches	2017-10-01	15				Database		
+1452	1	Regular Searches	2017-11-01	20				Database		
+1453	1	Regular Searches	2017-12-01	2				Database		
+1454	1	Regular Searches	2018-01-01	28				Database		
+1455	1	Regular Searches	2018-02-01	15				Database		
+1456	1	Regular Searches	2018-03-01	10				Database		
+1457	1	Regular Searches	2018-04-01	20				Database		
+1458	1	Regular Searches	2018-05-01	9				Database		
+1459	1	Regular Searches	2018-06-01	11				Database		
+1460	1	Result Clicks	2017-07-01	4				Database		
+1461	1	Result Clicks	2017-10-01	2				Database		
+1462	1	Result Clicks	2017-11-01	2				Database		
+1463	1	Result Clicks	2017-12-01	5				Database		
+1464	1	Result Clicks	2018-03-01	3				Database		
+1465	1	Result Clicks	2018-04-01	3				Database		
+1466	1	Result Clicks	2018-05-01	2				Database		
+1467	1	Result Clicks	2018-06-01	2				Database		
+1468	1	Record Views	2017-07-01	4				Database		
+1469	1	Record Views	2017-10-01	2				Database		
+1470	1	Record Views	2017-11-01	2				Database		
+1471	1	Record Views	2017-12-01	5				Database		
+1472	1	Record Views	2018-03-01	4				Database		
+1473	1	Record Views	2018-04-01	3				Database		
+1474	1	Record Views	2018-06-01	2				Database		
+1475	13	Regular Searches	2017-07-01	7				Database		
+1476	13	Regular Searches	2017-08-01	5				Database		
+1477	13	Regular Searches	2017-09-01	11				Database		
+1478	13	Regular Searches	2017-10-01	19				Database		
+1479	13	Regular Searches	2017-11-01	5				Database		
+1480	13	Regular Searches	2018-01-01	4				Database		
+1481	13	Regular Searches	2018-02-01	11				Database		
+1482	13	Regular Searches	2018-03-01	19				Database		
+1483	13	Regular Searches	2018-04-01	3				Database		
+1484	13	Regular Searches	2018-05-01	2				Database		
+1485	13	Regular Searches	2018-06-01	5				Database		
+1486	13	Result Clicks	2017-07-01	2				Database		
+1487	13	Result Clicks	2017-08-01	2				Database		
+1488	13	Result Clicks	2017-09-01	9				Database		
+1489	13	Result Clicks	2017-10-01	22				Database		
+1490	13	Result Clicks	2017-11-01	9				Database		
+1491	13	Result Clicks	2018-02-01	10				Database		
+1492	13	Result Clicks	2018-03-01	13				Database		
+1493	13	Result Clicks	2018-04-01	2				Database		
+1494	13	Record Views	2017-07-01	2				Database		
+1495	13	Record Views	2017-08-01	2				Database		
+1496	13	Record Views	2017-10-01	24				Database		
+1497	13	Record Views	2017-11-01	9				Database		
+1498	13	Record Views	2018-02-01	6				Database		
+1499	13	Record Views	2018-03-01	10				Database		
+1500	13	Record Views	2018-04-01	2				Database		
+1501	24	Successful Full-text Article Requests	2018-07-01	7				Journal	Article	
+1502	24	Successful Full-text Article Requests	2018-08-01	9				Journal	Article	
+1503	24	Successful Full-text Article Requests	2018-09-01	7				Journal	Article	
+1504	24	Successful Full-text Article Requests	2018-10-01	8				Journal	Article	
+1505	24	Successful Full-text Article Requests	2018-11-01	12				Journal	Article	
+1506	24	Successful Full-text Article Requests	2018-12-01	13				Journal	Article	
+1507	24	Successful Full-text Article Requests	2019-01-01	9				Journal	Article	
+1508	24	Successful Full-text Article Requests	2019-02-01	12				Journal	Article	
+1509	24	Successful Full-text Article Requests	2019-03-01	18				Journal	Article	
+1510	24	Successful Full-text Article Requests	2019-04-01	12				Journal	Article	
+1511	24	Successful Full-text Article Requests	2019-05-01	5				Journal	Article	
+1512	24	Successful Full-text Article Requests	2019-06-01	6				Journal	Article	
+1513	7	Successful Full-text Article Requests	2018-07-01	2				Journal	Article	
+1514	7	Successful Full-text Article Requests	2018-08-01	1				Journal	Article	
+1515	7	Successful Full-text Article Requests	2018-09-01	1				Journal	Article	
+1516	7	Successful Full-text Article Requests	2018-10-01	2				Journal	Article	
+1517	7	Successful Full-text Article Requests	2018-11-01	2				Journal	Article	
+1518	7	Successful Full-text Article Requests	2018-12-01	1				Journal	Article	
+1519	7	Successful Full-text Article Requests	2019-01-01	1				Journal	Article	
+1520	7	Successful Full-text Article Requests	2019-02-01	1				Journal	Article	
+1521	7	Successful Full-text Article Requests	2019-03-01	2				Journal	Article	
+1522	7	Successful Full-text Article Requests	2019-04-01	1				Journal	Article	
+1523	7	Successful Full-text Article Requests	2019-05-01	1				Journal	Article	
+1524	7	Successful Full-text Article Requests	2019-06-01	1				Journal	Article	
+1525	20	Successful Full-text Article Requests	2018-07-01	2				Journal	Article	
+1526	20	Successful Full-text Article Requests	2018-08-01	1				Journal	Article	
+1527	20	Successful Full-text Article Requests	2018-09-01	1				Journal	Article	
+1528	20	Successful Full-text Article Requests	2018-10-01	3				Journal	Article	
+1529	20	Successful Full-text Article Requests	2018-11-01	1				Journal	Article	
+1530	20	Successful Full-text Article Requests	2018-12-01	1				Journal	Article	
+1531	20	Successful Full-text Article Requests	2019-01-01	4				Journal	Article	
+1532	20	Successful Full-text Article Requests	2019-02-01	2				Journal	Article	
+1533	20	Successful Full-text Article Requests	2019-03-01	2				Journal	Article	
+1534	20	Successful Full-text Article Requests	2019-04-01	5				Journal	Article	
+1535	20	Successful Full-text Article Requests	2019-05-01	1				Journal	Article	
+1536	20	Successful Full-text Article Requests	2019-06-01	2				Journal	Article	
+1537	11	Successful Full-text Article Requests	2018-07-01	1				Journal	Article	
+1538	11	Successful Full-text Article Requests	2018-08-01	1				Journal	Article	
+1539	11	Successful Full-text Article Requests	2018-09-01	5				Journal	Article	
+1540	11	Successful Full-text Article Requests	2018-10-01	3				Journal	Article	
+1541	11	Successful Full-text Article Requests	2018-11-01	2				Journal	Article	
+1542	11	Successful Full-text Article Requests	2018-12-01	4				Journal	Article	
+1543	11	Successful Full-text Article Requests	2019-01-01	1				Journal	Article	
+1544	11	Successful Full-text Article Requests	2019-02-01	2				Journal	Article	
+1545	11	Successful Full-text Article Requests	2019-03-01	1				Journal	Article	
+1546	11	Successful Full-text Article Requests	2019-04-01	1				Journal	Article	
+1547	11	Successful Full-text Article Requests	2019-05-01	1				Journal	Article	
+1548	11	Successful Full-text Article Requests	2019-06-01	1				Journal	Article	
+1549	18	Successful Full-text Article Requests	2018-07-01	1				Journal	Article	
+1550	18	Successful Full-text Article Requests	2018-08-01	1				Journal	Article	
+1551	18	Successful Full-text Article Requests	2018-09-01	1				Journal	Article	
+1552	18	Successful Full-text Article Requests	2018-10-01	8				Journal	Article	
+1553	18	Successful Full-text Article Requests	2018-11-01	1				Journal	Article	
+1554	18	Successful Full-text Article Requests	2018-12-01	1				Journal	Article	
+1555	18	Successful Full-text Article Requests	2019-01-01	2				Journal	Article	
+1556	18	Successful Full-text Article Requests	2019-02-01	1				Journal	Article	
+1557	18	Successful Full-text Article Requests	2019-03-01	2				Journal	Article	
+1558	18	Successful Full-text Article Requests	2019-04-01	1				Journal	Article	
+1559	18	Successful Full-text Article Requests	2019-05-01	1				Journal	Article	
+1560	18	Successful Full-text Article Requests	2019-06-01	1				Journal	Article	

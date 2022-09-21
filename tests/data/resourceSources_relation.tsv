@@ -1,0 +1,19 @@
+resource_source_ID	resource_source_name	source_in_use	use_stop_date	vendor_ID
+0	ProQuest Congressional	True		0
+1	ProQuest Databases	True		0
+2	ProQuest History Vault	True		0
+3	ProQuest Statistical Insight	True		0
+4	ProQuest U.K. Parliamentary Papers	True		0
+5	Statistical Abstract of the US	True		0
+6	Ulrichsweb	True		0
+7	Peterson's Career Prep	True		2
+8	Peterson's Test Prep	True		2
+9	Pivot	True		0
+10	DemographicsNow	True		2
+11	Ebook Central	True		0
+12	Ebook Library	False	2019-06-30	4
+13	Ebrary	False	2017-12-31	5
+14	EBSCOhost	True		1
+15	Gale Cengage Learning	True		2
+16	iG Library/Business Expert Press (BEP)	True		3
+17	MyiLibrary	False	2019-06-30	6
