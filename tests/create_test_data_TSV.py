@@ -6,9 +6,10 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
+from data import COUNTER_reports
 
 relation_name = pyip.inputMenu(
-    prompt="Enter the number of the relation that should be output to a TSV.\n",
+    prompt="Enter the number of the test data dataframe that should be output to a TSV.\n",
     choices=[
         "fiscalYears",
         "vendors",
