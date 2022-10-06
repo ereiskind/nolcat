@@ -1,0 +1,49 @@
+Platform,Publisher,Metric_Type,Data_Type,Usage_Date,Usage_Count
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-07-01,39008
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-08-01,46829
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-09-01,130252
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-10-01,251367
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-11-01,186063
+EBSCOhost,EBSCO,Regular Searches,Platform,2017-12-01,104949
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-01-01,123544
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-02-01,213414
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-03-01,198729
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-04-01,197136
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-05-01,69025
+EBSCOhost,EBSCO,Regular Searches,Platform,2018-06-01,92730
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-07-01,169
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-08-01,58
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-09-01,76
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-10-01,981
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-11-01,624
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2017-12-01,301
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-01-01,137
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-02-01,179
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-03-01,106
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-04-01,370
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-05-01,388
+EBSCOhost,EBSCO,Searches-federated and automated,Platform,2018-06-01,390
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-07-01,64709
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-08-01,70350
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-09-01,146446
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-10-01,334196
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-11-01,239894
+EBSCOhost,EBSCO,Result Clicks,Platform,2017-12-01,116878
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-01-01,134439
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-02-01,255826
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-03-01,275961
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-04-01,252815
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-05-01,74265
+EBSCOhost,EBSCO,Result Clicks,Platform,2018-06-01,110620
+EBSCOhost,EBSCO,Record Views,Platform,2017-07-01,37432
+EBSCOhost,EBSCO,Record Views,Platform,2017-08-01,47840
+EBSCOhost,EBSCO,Record Views,Platform,2017-09-01,87622
+EBSCOhost,EBSCO,Record Views,Platform,2017-10-01,196858
+EBSCOhost,EBSCO,Record Views,Platform,2017-11-01,132349
+EBSCOhost,EBSCO,Record Views,Platform,2017-12-01,63925
+EBSCOhost,EBSCO,Record Views,Platform,2018-01-01,76478
+EBSCOhost,EBSCO,Record Views,Platform,2018-02-01,149869
+EBSCOhost,EBSCO,Record Views,Platform,2018-03-01,158496
+EBSCOhost,EBSCO,Record Views,Platform,2018-04-01,136650
+EBSCOhost,EBSCO,Record Views,Platform,2018-05-01,37705
+EBSCOhost,EBSCO,Record Views,Platform,2018-06-01,57301

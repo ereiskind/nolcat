@@ -1,0 +1,6 @@
+Resource_Name,Publisher,Platform,DOI,Proprietary_ID,ISBN,Online_ISSN,Metric_Type,Data_Type,Section_Type,Usage_Date,Usage_Count
+Illumina Biological Content - unstructured,CSA Title Bucket,ProQuest,NULL,NULL,NULL,NULL,Successful Section Requests,Book,Book_Segment,2016-07-01,1
+Illumina Biological Content - unstructured,CSA Title Bucket,ProQuest,NULL,NULL,NULL,NULL,Successful Section Requests,Book,Book_Segment,2016-10-01,1
+Illumina Biological Content - unstructured,CSA Title Bucket,ProQuest,NULL,NULL,NULL,NULL,Successful Section Requests,Book,Book_Segment,2016-11-01,3
+Illumina Biological Content - unstructured,CSA Title Bucket,ProQuest,NULL,NULL,NULL,NULL,Successful Section Requests,Book,Book_Segment,2016-12-01,2
+Illumina Biological Content - unstructured,CSA Title Bucket,ProQuest,NULL,NULL,NULL,NULL,Successful Section Requests,Book,Book_Segment,2017-03-01,2

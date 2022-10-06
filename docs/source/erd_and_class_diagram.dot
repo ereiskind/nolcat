@@ -186,8 +186,6 @@ digraph erd_and_classes {
 
         // Attributes
         resource_ID [shape="note"]
-        data_type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
-        __section_type // This is in R5 IR only-how to add it? Does it go here?
         note
 
         // Methods
@@ -255,11 +253,13 @@ digraph erd_and_classes {
             shape="record"
             label="\N|usage stats|e-resources usage numbers"
         ]
-        __YOP // This is found in R5 TR, IR only—how to add it?
-        __access_type // This is found in R5 TR, IR only—how to add it?
-        __access_method // This is found in R5 only—how to add it?
-        __report_creation_date // For harvested R5 reports
-
+        __YOP
+        __access_type
+        __access_method
+        data_type
+        __section_type
+        __report_creation_date
+        
         // Methods
     }
 
@@ -271,6 +271,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
+        create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }

@@ -1,0 +1,85 @@
+Resource_Name,Publisher,Platform,Metric_Type,Data_Type,Usage_Date,Usage_Count
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-07-01,1457
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-08-01,433
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-09-01,1407
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-10-01,2368
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-11-01,1326
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2018-12-01,926
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-01-01,1096
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-02-01,1877
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-03-01,1939
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-04-01,1847
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-05-01,595
+ERIC,EBSCO,EBSCOhost,Regular Searches,Database,2019-06-01,920
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-07-01,91367
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-08-01,44761
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-09-01,111940
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-10-01,163380
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-11-01,149031
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-12-01,89064
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-01-01,87914
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-02-01,138928
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-03-01,138555
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-04-01,155543
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-05-01,51791
+ERIC,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-06-01,72776
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-07-01,3764
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-08-01,1699
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-09-01,3046
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-10-01,5952
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-11-01,4639
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2018-12-01,2327
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-01-01,3312
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-02-01,4737
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-03-01,4344
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-04-01,4529
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-05-01,2260
+ERIC,EBSCO,EBSCOhost,Result Clicks,Database,2019-06-01,3137
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-07-01,2175
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-08-01,1181
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-09-01,1817
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-10-01,3757
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-11-01,2791
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2018-12-01,1373
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-01-01,2063
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-02-01,2926
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-03-01,2658
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-04-01,2623
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-05-01,1353
+ERIC,EBSCO,EBSCOhost,Record Views,Database,2019-06-01,1716
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-07-01,91202
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-08-01,44646
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-09-01,111693
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-10-01,163165
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-11-01,148881
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2018-12-01,88946
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-01-01,87713
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-02-01,138551
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-03-01,138341
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-04-01,155335
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-05-01,51627
+Small Business Resource Center,EBSCO,EBSCOhost,Searches-federated and automated,Database,2019-06-01,72639
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-07-01,174
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-08-01,40
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-09-01,106
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-10-01,249
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-11-01,198
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2018-12-01,103
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-01-01,46
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-02-01,69
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-03-01,82
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-04-01,74
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-05-01,41
+Small Business Resource Center,EBSCO,EBSCOhost,Result Clicks,Database,2019-06-01,46
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-07-01,106
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-08-01,28
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-09-01,72
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-10-01,162
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-11-01,127
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2018-12-01,68
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-01-01,29
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-02-01,41
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-03-01,52
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-04-01,43
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-05-01,27
+Small Business Resource Center,EBSCO,EBSCOhost,Record Views,Database,2019-06-01,35
