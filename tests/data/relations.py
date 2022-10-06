@@ -300,7 +300,7 @@ def resources_relation():
     Because this relation has only two fields, one of which is the primary key, this is a pandas series object rather than a dataframe.
     """
     series = pd.Series(
-        data=[  # No notes, but need PK values of 0-76, so 77 `None` items
+        data=[  # 78 non-platform resources with no notes (PK values of 0-77) plus two platform resources (for platforms with PR1 reports)
             None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None,
@@ -308,7 +308,7 @@ def resources_relation():
             None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None,
             None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, "Platform record for PQ", "Platform record for EBSCOhost",
         ],
         name="note"
     )
