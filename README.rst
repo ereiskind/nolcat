@@ -1,6 +1,19 @@
 NoLCAT
 ######
 
+Integration Branch
+******************
+This branch is based off of the 2022-10-06 state of `main` and exists so other branches can be merged into it.
+
+* Branch `refactor_route_functions` includes the current test data
+* Branch `update_database_connection_tests`
+* Branch `add_WSGI_file_to_repo`
+* Branch `recreate_test_bin_files_and_fixtures`
+* Branch `write_harvest_methods_in_StatisticsSources`
+* Branch `create_page_for_R5_harvesting`
+* Branch `create_jinja_template`
+
+
 To-Do List
 **********
 
