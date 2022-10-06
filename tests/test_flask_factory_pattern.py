@@ -1,7 +1,6 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-# https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
 
 from pathlib import Path
 import os

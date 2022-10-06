@@ -7,8 +7,8 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
-from fixture_constants.matched_records import matched_records
-from fixture_constants.matches_to_manually_confirm import matches_to_manually_confirm
+from data.matched_records import matched_records
+from data.matches_to_manually_confirm import matches_to_manually_confirm
 
 
 #Section: Fixtures

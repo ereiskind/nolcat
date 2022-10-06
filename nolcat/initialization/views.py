@@ -38,15 +38,73 @@ def collect_initial_relation_data():
     #ALERT: Refactored form hasn't been tested
     form = InitialRelationDataForm()
     if form.validate_on_submit():
-        fiscalYears_dataframe = pd.read_csv(form.fiscalYears_CSV.data)
-        vendors_dataframe = pd.read_csv(form.vendors_CSV.data)
-        vendorNotes_dataframe = pd.read_csv(form.vendorNotes_CSV.data)
-        statisticsSources_dataframe = pd.read_csv(form.statisticsSources_CSV.data)
-        statisticsSourceNotes_dataframe = pd.read_csv(form.statisticsSourceNotes_CSV.data)
-        statisticsResourceSources_dataframe = pd.read_csv(form.statisticsResourceSources_CSV.data)
-        resourceSources_dataframe = pd.read_csv(form.resourceSources_CSV.data)
-        resourceSourceNotes_dataframe = pd.read_csv(form.resourceSourceNotes_CSV.data)
+        #Section: Ingest Data from Uploaded TSVs
+        fiscalYears_dataframe = pd.read_csv(
+            form.fiscalYears_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
 
+        vendors_dataframe = pd.read_csv(
+            form.vendors_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+        
+
+        vendorNotes_dataframe = pd.read_csv(
+            form.vendorNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSources_dataframe = pd.read_csv(
+            form.statisticsSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSourceNotes_dataframe = pd.read_csv(
+            form.statisticsSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form.statisticsResourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+
+        resourceSources_dataframe = pd.read_csv(
+            form.resourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        resourceSourceNotes_dataframe = pd.read_csv(
+            form.resourceSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        #Section: Load Data into Database
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
@@ -106,8 +164,8 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Form Submission
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
-        #ToDo: dict_writer = csv.DictWriter(CSV_file, [
+        #ToDo: TSV_file = open('initialize_annualUsageCollectionTracking.tsv', 'w', newline='')
+        #ToDo: dict_writer = csv.DictWriter(TSV_file, delimiter="\t", [
             #ToDo: "AUCT_statistics_source",
             #ToDo: "AUCT_fiscal_year",
             #ToDo: "Statistics Source",
@@ -135,14 +193,20 @@ def collect_AUCT_and_historical_COUNTER_data():
                     #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
                 #ToDo: })
                 continue  # To close the block at runtime
-        #ToDo: CSV_file.close()
+        #ToDo: TSV_file.close()
 
         #ToDo: return render_template('initial-data-upload-2.html', form=form)
     
     #Section: After Form Submission
     elif form.validate_on_submit():
         #Subsection: Load `annualUsageCollectionTracking` into Database
-        annualUsageCollectionTracking_dataframe = pd.read_csv(form.annualUsageCollectionTracking_TSV.data)  #ToDo: Correct to handle TSV file properly
+        annualUsageCollectionTracking_dataframe = pd.read_csv(
+            form.annualUsageCollectionTracking_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        annualUsageCollectionTracking_dataframe['Notes'] = annualUsageCollectionTracking_dataframe['Notes'].encode('utf-8').decode('unicode-escape')
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         annualUsageCollectionTracking_dataframe.to_sql(
             'annualUsageCollectionTracking',
