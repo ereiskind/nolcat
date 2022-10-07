@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class takes a dataframe made from a R4 report CSV converted with the supplied JSONs or a R5 report harvested via SUSHI and handles its processing.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple TSV files for R4 and as an API call response (or possibly a TSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
@@ -26,14 +26,14 @@ class RawCOUNTERReport:
     # Constructor Method
     def __init__(self, df):
         """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
-
-        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report binary files with a `<Statistics_Source_ID>_<report type>_<fiscal year in "yy-yy" format>.xlsx` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
+        
+        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report TSV files with a `<Statistics_Source_ID>_<report type>_<calendar year assigned to fiscal year in "yyyy" format>.tsv` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
             dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):
+            for file in df.getlist('R4_files'):  #ToDo: Ensure this can work wil all COUNTER upload requests, not just at initialization
                 try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.xlsx', string=Path(file.filename).parts[-1])[0]
+                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
                 except:
                     logging.info(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
@@ -52,9 +52,10 @@ class RawCOUNTERReport:
                         'Print_ISSN': 'string',
                         'Online_ISSN': 'string',
                         'Data_Type': 'string',
+                        'Section_Type': 'string',
                         'Metric_Type': 'string',
-                        # R4_Month is fine as default datetime64[ns]
-                        'R4_Count': 'int',  # Python default used because this is a non-null field
+                        # Usage_Date is fine as default datetime64[ns]
+                        'Usage_Count': 'int',  # Python default used because this is a non-null field
                     },
                 )
                 logging.debug(f"Dataframe without Statistics_Source_ID:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
@@ -92,14 +93,17 @@ class RawCOUNTERReport:
         This function looks at all the records in the parameter dataframe(s) and creates pairs with the record index values if the records are deemed to be for the same resource based on a variety of criteria. Those pairs referring to matches needing manual confirmation are grouped together and set aside so they can be added to the list of matches or not depending on user response captured via Flask.
 
         Args:
-            normalized_resource_data (dataframe, optional): the database's normalized list of resources; has a value of None during the initial construction of that list
+            normalized_resource_data (dataframe, optional): a dataframe of all the resources in the database with their data types and default metadata values with a value of `None` during database initialization; see "Note" for the SQL instructions for creating this dataframe
         
         Returns:
-            tuple: the variables matched_records and matches_to_manually_confirm, described in the note, in a tuple for unpacking through multiple assignment
+            tuple: the variables `matched_records` and `matches_to_manually_confirm` in a tuple for unpacking through multiple assignment; "See Also" describes the individual variables
         
-        Note:
+        See Also:
             matched_records: a set of tuples containing the record index values of matched records
             matches_to_manually_confirm: a dict with keys that are tuples containing the metadata for two resources and values that are a list of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple
+        
+        Note:
+            #ToDo: Develop the SQL query that will return all the default values from `resourceMetadata` then for each resource in `resources` returns the default title, DOI, ISBN, ISSN, eISSN as well as the data type and possibly the ID from `resources` itself
         """
         logging.info(f"The new COUNTER report:\n{self}")
         if normalized_resource_data:
@@ -192,6 +196,7 @@ class RawCOUNTERReport:
             logging.info("No matches on DOI and ISSNs")
 
         #Subsection: Create Comparison Based on ISBN
+        #ToDo: Add filter that rejects match if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
         logging.info("**Comparing based on ISBN**")
         comparing_ISBN = recordlinkage.Compare()
         comparing_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
@@ -478,4 +483,5 @@ class RawCOUNTERReport:
     def load_data_into_database():
         """Add the COUNTER report to the database by adding records to the Resource, Resource_Platforms, and COUNTER_Usage_Data relations."""
         #ToDo: Write a more detailed docstring
+        #ToDo: Filter out non-standard metrics
         pass
