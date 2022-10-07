@@ -1,6 +1,5 @@
 """These classes represent the relations in the database."""
 
-
 import logging
 from pathlib import Path
 import os
@@ -225,6 +224,8 @@ class StatisticsSources(db.Model):
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
         collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        upload_R4_report: #ToDo: Copy first line of docstring here
+        upload_R5_report: #ToDo: Copy first line of docstring here
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
@@ -407,6 +408,18 @@ class StatisticsSources(db.Model):
         """
         #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         #ToDo: return RawCOUNTERReport(above dataframe)
+        pass
+
+
+    @hybrid_method
+    def upload_R4_report(self):
+        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
+        pass
+
+
+    @hybrid_method
+    def upload_R5_report(self):
+        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
         pass
 
 
@@ -646,9 +659,9 @@ class ResourceMetadata(db.Model):
     
     Attributes:
         self.resource_metadata_ID (int): the primary key
-        self.metadata_field (str): the metadata field label
+        self.metadata_field (str): the metadata field label  #ToDo: Should this actually be an `enum`?
         self.metadata_value (str): the metadata value
-        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
+        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin?
         self.default (bool): indicates if the value is the default for the field and title
         self.resource_ID (int): the foreign key for `resources`
     """
