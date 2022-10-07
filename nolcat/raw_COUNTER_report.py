@@ -31,7 +31,7 @@ class RawCOUNTERReport:
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":
             dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):
+            for file in df.getlist('R4_files'):  #ToDo: Ensure this can work wil all COUNTER upload requests, not just at initialization
                 try:
                     statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
@@ -41,7 +41,6 @@ class RawCOUNTERReport:
                 # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
                 dataframe = pd.read_excel(
                     file,
-                    #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
                     engine='openpyxl',
                     dtype={
                         'Resource_Name': 'string',
