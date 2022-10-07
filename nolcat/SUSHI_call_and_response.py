@@ -73,6 +73,7 @@ class SUSHICallAndResponse:
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
             logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
+        
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
@@ -86,6 +87,7 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
+            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
