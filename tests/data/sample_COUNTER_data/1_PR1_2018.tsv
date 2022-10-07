@@ -1,0 +1,49 @@
+Platform	Publisher	Metric_Type	Data_Type	Usage_Date	Usage_Count
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-07-01T00:00:00Z	39008.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-08-01T00:00:00Z	46829.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-09-01T00:00:00Z	130252.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-10-01T00:00:00Z	251367.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-11-01T00:00:00Z	186063.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2017-12-01T00:00:00Z	104949.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-01-01T00:00:00Z	123544.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-02-01T00:00:00Z	213414.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-03-01T00:00:00Z	198729.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-04-01T00:00:00Z	197136.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-05-01T00:00:00Z	69025.0
+EBSCOhost	EBSCO	Regular Searches	Platform	2018-06-01T00:00:00Z	92730.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-07-01T00:00:00Z	169.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-08-01T00:00:00Z	58.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-09-01T00:00:00Z	76.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-10-01T00:00:00Z	981.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-11-01T00:00:00Z	624.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2017-12-01T00:00:00Z	301.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-01-01T00:00:00Z	137.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-02-01T00:00:00Z	179.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-03-01T00:00:00Z	106.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-04-01T00:00:00Z	370.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-05-01T00:00:00Z	388.0
+EBSCOhost	EBSCO	Searches-federated and automated	Platform	2018-06-01T00:00:00Z	390.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-07-01T00:00:00Z	64709.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-08-01T00:00:00Z	70350.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-09-01T00:00:00Z	146446.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-10-01T00:00:00Z	334196.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-11-01T00:00:00Z	239894.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2017-12-01T00:00:00Z	116878.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-01-01T00:00:00Z	134439.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-02-01T00:00:00Z	255826.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-03-01T00:00:00Z	275961.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-04-01T00:00:00Z	252815.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-05-01T00:00:00Z	74265.0
+EBSCOhost	EBSCO	Result Clicks	Platform	2018-06-01T00:00:00Z	110620.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-07-01T00:00:00Z	37432.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-08-01T00:00:00Z	47840.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-09-01T00:00:00Z	87622.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-10-01T00:00:00Z	196858.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-11-01T00:00:00Z	132349.0
+EBSCOhost	EBSCO	Record Views	Platform	2017-12-01T00:00:00Z	63925.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-01-01T00:00:00Z	76478.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-02-01T00:00:00Z	149869.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-03-01T00:00:00Z	158496.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-04-01T00:00:00Z	136650.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-05-01T00:00:00Z	37705.0
+EBSCOhost	EBSCO	Record Views	Platform	2018-06-01T00:00:00Z	57301.0
