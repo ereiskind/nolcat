@@ -1,10 +1,10 @@
 """These classes represent the relations in the database."""
 
-
 import logging
-from pathlib import Path
 import os
 import sys
+from pathlib import Path
+import logging
 import json
 from sqlalchemy import Column
 from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
@@ -57,7 +57,7 @@ class FiscalYears(db.Model):
         self.ARL_20 (smallInt): the reported value for ARL 20
         self.notes_on_statisticsSources_used (text): notes on data sources used to collect ARL and ACRL/IPEDS numbers
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
-
+    
     Methods:
         calculate_ACRL_60b: #ToDo: Copy first line of docstring here
         calculate_ACRL_63: #ToDo: Copy first line of docstring here
@@ -150,7 +150,7 @@ class Vendors(db.Model):
         self. vendor_ID (int): the primary key
         self.vendor_name (str): the name of the vendor= db.Column(db.String(80))
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
-
+    
     Methods:
         get_SUSHI_credentials_from_Alma: #ToDo: Copy first line of docstring here
         get_SUSHI_credentials_from_JSON: #ToDo: Copy first line of docstring here
@@ -225,6 +225,8 @@ class StatisticsSources(db.Model):
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
         collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        upload_R4_report: #ToDo: Copy first line of docstring here
+        upload_R5_report: #ToDo: Copy first line of docstring here
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
@@ -246,7 +248,6 @@ class StatisticsSources(db.Model):
     @hybrid_method
     def fetch_SUSHI_information(self, for_API_call=True):
         """A method for fetching the information required to make a SUSHI API call for the statistics source.
-
         This method fetches the information for making a SUSHI API call and, depending on the optional argument value, returns them for use in an API call or for display to the user.
 
         Args:
@@ -411,6 +412,18 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
+    def upload_R4_report(self):
+        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
+        pass
+
+
+    @hybrid_method
+    def upload_R5_report(self):
+        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
+        pass
+
+
+    @hybrid_method
     def add_note(self):
         #ToDo: Create a method for adding notes
         pass
@@ -443,7 +456,7 @@ class StatisticsSourceNotes(db.Model):
 
 class StatisticsResourceSources(db.Model):
     """The class representation of the `statisticsResourceSources` relation, which functions as the junction table between `statisticsSources` and `resourceSources`.
-
+    
     The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
     
     Attributes:
@@ -465,7 +478,7 @@ class StatisticsResourceSources(db.Model):
 
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
-
+    
     Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains. 
     
     Attributes:
@@ -614,7 +627,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
-
+    
     Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
     
     Attributes:
@@ -646,9 +659,9 @@ class ResourceMetadata(db.Model):
     
     Attributes:
         self.resource_metadata_ID (int): the primary key
-        self.metadata_field (str): the metadata field label
+        self.metadata_field (str): the metadata field label  #ToDo: Should this actually be an `enum`?
         self.metadata_value (str): the metadata value
-        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
+        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin?
         self.default (bool): indicates if the value is the default for the field and title
         self.resource_ID (int): the foreign key for `resources`
     """

@@ -22,7 +22,12 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-The test suite makes use of data saved in "\\tests\\bin" or in the fixtures in "tests\\conftest.py" which actually contain the same data as is found in "tests\\bin\\RawCOUNTERReport_constructor_output.xlsx." That data is actually based off of the COUNTER R4 reports in "\\tests\\bin," which are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+For the purposes of the OpenRefine exports, the ``Statistics_Source_ID`` values as as follows
+* EBSCO = 
+* ProQuest = 
+* Gale = 
 
 SUSHI Variations
 ****************
@@ -171,3 +176,8 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Requiring a requestor ID and an API key
 
 * Web of Science
+
+Internally Inconsistent
+=======================
+These vendors show internal inconsistencies in testing:
+* Adam Matthew: ``status`` call always has a top-level ``Alerts`` key, but ``handle_SUSHI_exceptions`` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call
