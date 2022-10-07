@@ -139,5 +139,5 @@ dmypy.json
 # Log file
 tests/logs/*
 
-# Database_Credentials
-nolcat/Database_Credentials.py
+# Faux Environmental Variables
+nolcat/secrets.py
