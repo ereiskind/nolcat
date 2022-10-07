@@ -151,6 +151,11 @@ def test_perform_deduplication_matching(sample_R4_form_result, RawCOUNTERReport_
     assert sample_R4_reports.perform_deduplication_matching() == RawCOUNTERReport_fixture_from_R4_spreadsheets.perform_deduplication_matching()
 
 
+def test_harvest_SUSHI_report(sample_R4_form_result):
+    #ToDo: Write a docstring when the format of the return value is set
+    pass
+    
+
 def test_load_data_into_database(sample_R4_form_result):
     #ToDo: Write a docstring when the format of the return value is set
     pass
