@@ -22,13 +22,12 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual R4 COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
 
-For the purposes of the OpenRefine exports, the Statistics_Source_ID values as as follows
-* EBSCO = 1
-* ProQuest = 2
-* Gale = 3
-* iG Publishing/BEP = 4 (BR5 only)
+For the purposes of the OpenRefine exports, the ``Statistics_Source_ID`` values as as follows
+* EBSCO = 
+* ProQuest = 
+* Gale = 
 
 Using Selenium
 **************
@@ -38,24 +37,151 @@ The fixture `sample_R4_RawCOUNTERReport` creates a MultiDict of FileStorage obje
 
 SUSHI Variations
 ****************
-Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, common issues and some vendors that display them are listed here so that the edge cases they represent can be covered while testing the ``SUSHICallAndResponse`` class.
-* Requiring a requestor ID and an API key: Columbia International Affairs Online (CIAO), Company of Biologists, Portland Press, University of California Press, Rockefeller University Press, Films on Demand, ABC-CLIO Databases
-* Requiring only a customer ID: Japan Science & Technology Agency (JST)
-* Downloading a JSON file: 
-* Variants on the ``Service_Active`` field in ``status`` call
-  * Using a lowercase string in the field: OECD iLibrary
-  * Naming the field ``ServiceActive``: Adam Matthew
-* ``status`` call always has a key for SUSHI errors, which has an empty value if there aren't any errors
-  * ``Alerts`` key at top level with list value: Adam Matthew
-* Times out: Alexander Street Press
-* Has no ``status`` endpoint: MathSciNet
-* ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch: AMS (American Meteorological Society) Journals Online
-* Requires a ``platform`` parameter: de Gruyter, Sciendo, Loeb Classical Library
-* Has Unicode charaacters
-* No PR report offered:
-* No DR report offered: Akademiai Kiado, Brill Books and Journals
-* No TR report offered: Adam Matthew, Loeb Classical Library
-* No IR report offered: Akademiai Kiado, Brill Books and Journals, Loeb Classical Library
+Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the ``SUSHICallAndResponse`` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
+
+* ABC-CLIO Databases
+
+  * Requiring a requestor ID and an API key
+
+* Adam Matthew
+
+  * ``Service_Active`` field in ``status`` call doesn't contain underscore
+  * ``status`` call always has ``Alerts`` key at top level with list value that seems to always be empty
+  * Errors are listed in the ``Exceptions`` key, which is nested under the ``Report_Header`` key
+  * Related to above, ``SUSHICallAndResponse._handle_SUSHI_exceptions()`` isn't always called: witnessed API calls made 11 minutes apart returning the exact same data behaving differently in regards to the method call
+  * No TR offered
+  * ``reports`` call is successful even if credentials are bad
+
+* Akademiai Kiado
+
+  * No DR offered
+  * No IR offered
+
+* Alexander Street Press
+
+  * Times out
+
+* Allen Press/Pinnacle Hosting
+
+* ``HTTPSConnectionPool`` error caused by urllib3 ``NewConnectionError`` (``Failed to establish a new connection: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond'``)
+
+* Ambrose Digital Streaming Video
+* American Association for the Advancement of Science (AAAS)
+
+  * Error responses use 4XX HTTP status code
+  * Errors are listed in the ``Exception`` key, which is nested under the ``Report_Header`` key
+
+* AMS (American Meteorological Society) Journals Online
+
+  * ``SSLCertVerificationError`` caused by hostname and certificate domain mismatch
+
+* BioScientifica
+
+  * Dates 2021-06 to 2022-06 have no data
+
+* Brepols Online
+
+  * Contains unicode characters ``ç`` and ``É```
+  * Errors are under the ``Exception`` key, which is on the same level as the report keys
+  * Error responses use 4XX HTTP status code
+
+* Brill Books and Journals
+
+  * No DR offered
+  * No IR offered
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Brill Scholarly Editions
+* China National Knowledge Infrastructure (CNKI)
+* Cochrane
+* Columbia International Affairs Online (CIAO)
+
+  * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Company of Biologists
+
+  * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* de Gruyter
+
+  * Requires a ``platform`` parameter
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Duke University Press
+
+  * ``status`` call always has ``Alerts`` key at top level with list value that seems to always be empty
+  * Downloads a JSON
+  * No DR offered
+  * Contains custom report forms with report IDs starting "CR_"
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Duxiu Knowledge Search Database
+* Ebook Central
+* EBSCOhost
+* Érudit
+* Films on Demand
+
+  * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Gale Cengage Learning
+* HighWire
+* J-STAGE
+
+  * Requiring only a customer ID
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* JSTOR
+* Loeb Classical Library
+
+  * Requires a ``platform`` parameter
+  * No TR offered
+  * No IR offered
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Lyell Collection
+* MathSciNet
+
+  * ``reports`` call is successful even if credentials are bad
+  * Error responses use 4XX HTTP status code
+  * ``status`` call always results in 404 HTTP status code
+  * 4XX pages display in browser with formatting
+
+* Morgan & Claypool
+* OECD iLibrary
+
+  * ``Service_Active`` field in ``status`` call is all lowercase
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* Portland Press
+
+  * Requiring a requestor ID and an API key
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block
+
+* ProQuest
+* Rockefeller University Press
+
+  * Requiring a requestor ID and an API key
+
+* Royal Society of Chemistry
+
+  * Errors reported by returning a dict with the contents of a COUNTER "Exceptions" block contained within a list
+
+* SAGE Journals
+* SAGE/CQ Press
+* Sciendo
+
+  * Requires a ``platform`` parameter
+
+* Taylor & Francis
+* Taylor & Francis eJournals
+* University of California Press
+
+  * Requiring a requestor ID and an API key
+
+* Web of Science
 
 Internally Inconsistent
 =======================
