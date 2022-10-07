@@ -10,5 +10,15 @@
 <body>
     <h1>NoLCAT Homepage</h1>
     <p>This is the NoLCAT homepage.</p>
+    <p>For the purpose of providing a direct link, <a href="{{ url_for('initialization.homepage') }}">access the initialization wizard here</a>.</p>
+
+    <h2>Links</h2>
+    <ul>
+        <li><a href="{{ url_for('login.homepage') }}">Click here</a> to log in</li>
+        <li><a href="{{ url_for('ingest_usage.homepage') }}">Click here</a> for usage ingest options</li>
+        <li><a href="{{ url_for('annual_stats.homepage') }}">click here</a> for admin features homepage</li>
+        <li><a href="{{ url_for('view_resources.homepage') }}">Click here</a> to view the list of resources</li>
+        <li><a href="{{ url_for('view_vendors.homepage') }}">click here</a> to view the list of vendors</li>
+    </ul>
 </body>
 </html>
