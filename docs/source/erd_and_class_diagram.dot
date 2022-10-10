@@ -256,11 +256,13 @@ digraph erd_and_classes {
             shape="record"
             label="\N|usage stats|e-resources usage numbers"
         ]
-        __YOP // This is found in R5 TR, IR only—how to add it?
-        __access_type // This is found in R5 TR, IR only—how to add it?
-        __access_method // This is found in R5 only—how to add it?
-        __report_creation_date // For harvested R5 reports
-
+        __YOP
+        __access_type
+        __access_method
+        data_type
+        __section_type
+        __report_creation_date // For SUSHI harvested R5 reports only
+        
         // Methods
     }
 
@@ -272,6 +274,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
+        create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }

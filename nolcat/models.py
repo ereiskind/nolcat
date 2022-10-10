@@ -327,7 +327,7 @@ class StatisticsSources(db.Model):
         #Subsection: Make API Call
         #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a single-item dict with the key "reports" is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
+        #ToDo: If a single-item dict with the key "reports" is returned, iterate through the list so the ultimate result is all_available_reports = a list of all available reports
 
         #Subsection: Get List of Master Reports
         #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
@@ -460,14 +460,14 @@ class StatisticsResourceSources(db.Model):
     The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
     
     Attributes:
-        self.SRS_statistics_sources (int): part of the composite primary key; the foreign key for `statisticsSources`
-        self.SRS_resource_sources (int): part of the composite primary key; the foreign key for `resourceSources`
+        self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
+        self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
         self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_sources = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    SRS_resource_sources = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -627,20 +627,16 @@ class AnnualUsageCollectionTracking(db.Model):
 
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
-
+    
     Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
     
     Attributes:
         self.resource_ID (int): the primary key
-        self.data_type (str): the COUNTER data type
-        self.section_type (str): the COUNTER section type
         self.note (text): qualitative collections management information for the resource
     """
     __tablename__ = 'resources'
 
     resource_ID = db.Column(db.Integer, primary_key=True)
-    data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
     note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
     resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
@@ -716,6 +712,8 @@ class ResourcePlatforms(db.Model):
 class UsageData(db.Model):
     """The class representation of the `usageData` relation, which contains the COUNTER usage statistics and the fields by which they're broken down.
     
+    Many of the attributes became available in R5 as part of the improvements to COUNTER, as they made mode detailed investigations of usage data possible. Furthermore, not all attributes apply to all types of reports. In those instances where an attribute isn't present because the generation or type of report lacks that attribute, a null value is used. Another of the updates made for R5 was combining all resource types at a given level of granularity into a single report; as a result, while data derived from R4 reports uses a small number of general types largely derived from the type of report the data is from, `data_type` and `section_type` in R5 are fixed vocabulary fields used to give information about instances of usage. Finally, the `report_creation_date` attribute is used for R5 reports uploaded via SUSHI so on those occasions when a statistics source provider says the numbers provided during a given date range were incorrect and need to be ingested again, the SUSHI reports can be targeted to determine if they were harvested during the given date range and, if they were, more easily removed so corrected reports can be uploaded.
+    
     Attributes:
         self.usage_data_ID (int): the primary key
         self.resource_platform_ID (int): the foreign key for `resourcePlatforms`
@@ -725,6 +723,8 @@ class UsageData(db.Model):
         self.YOP (smallInt): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
         self.access_type (str): the COUNTER access type
         self.access_method (str): the COUNTER access method
+        self.data_type (str): the COUNTER data type
+        self.section_type (str): the COUNTER section type
         self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
     """
     __tablename__ = 'usageData'
@@ -737,6 +737,8 @@ class UsageData(db.Model):
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
+    data_type = db.Column(db.String(25))
+    section_type = db.Column(db.String(10))
     report_creation_date = db.Column(db.DateTime)
 
 
