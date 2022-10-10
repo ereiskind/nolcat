@@ -1,13 +1,9 @@
 import logging
-import shutil
 import time
 import re
-import os
-from pathlib import Path
 import json
 import ast
 import requests
-from requests import HTTPError
 from requests import Timeout
 import pyinputplus
 
@@ -58,22 +54,19 @@ class SUSHICallAndResponse:
 
         This API call method handles all the possible calls in the SUSHI standard, converting their JSON responses into native Python data types. Errors in both the API call process and the SUSHI response are handled here, and in those instances where there is an error, a single-item dictionary with the key `ERROR` and a value describing the error is returned instead of SUSHI data.
 
-        To handle statistics sources that respond to SUSHI API calls by downloading a JSON file with the requested data without using Selenium, the API call is in a block for writing binary data to a file, so when the response object contains binary data, it's written to a file. Another block for reading a text file copies the data if a JSON file in the response object into a new file. At this point, the response data is written to a file regardless of how it was initially delivered, so the method can read the data from the file and move on to processing it.
-
         Returns:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign)that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
 
         #Subsection: Make GET Request
-        time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
+            time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
             logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
-        
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
@@ -87,10 +80,8 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
-            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
-
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
@@ -100,8 +91,7 @@ class SUSHICallAndResponse:
 
         elif str(type(API_response.text)) == "<class 'dict'>":
             logging.debug("The returned text is in dict format, so it's ready for JSON conversion.")
-            API_response = json.loads(API_response.content.decode('utf-8'))
-            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
+            API_response = json.loads(API_response.content.decode('utf-8'))  #ToDo: Old note says this creates a JSON from the first dict value, not the complete content--double check this, and if true, find another way to handle encoding issues
         
         elif str(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
             logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {str(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dict.")
@@ -223,6 +213,7 @@ class SUSHICallAndResponse:
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+        #ToDo: When the `StatisticsSources._harvest_R5_SUSHI()` method is triggered in the Flask UI, have these messages display in Flask
 
         This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
         
