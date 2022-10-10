@@ -54,6 +54,8 @@ class SUSHICallAndResponse:
 
         This API call method handles all the possible calls in the SUSHI standard, converting their JSON responses into native Python data types. Errors in both the API call process and the SUSHI response are handled here, and in those instances where there is an error, a single-item dictionary with the key `ERROR` and a value describing the error is returned instead of SUSHI data.
 
+        To handle statistics sources that respond to SUSHI API calls by downloading a JSON file with the requested data without using Selenium, the API call is in a block for writing binary data to a file, so when the response object contains binary data, it's written to a file. Another block for reading a text file copies the data if a JSON file in the response object into a new file. At this point, the response data is written to a file regardless of how it was initially delivered, so the method can read the data from the file and move on to processing it.
+
         Returns:
             dict: the API call response or an error message
         """
@@ -67,6 +69,7 @@ class SUSHICallAndResponse:
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
             logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
+        
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
@@ -80,8 +83,10 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
+            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
+
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
         #Subsection: Convert Response to Python Data Types
@@ -91,7 +96,8 @@ class SUSHICallAndResponse:
 
         elif str(type(API_response.text)) == "<class 'dict'>":
             logging.debug("The returned text is in dict format, so it's ready for JSON conversion.")
-            API_response = json.loads(API_response.content.decode('utf-8'))  #ToDo: Old note says this creates a JSON from the first dict value, not the complete content--double check this, and if true, find another way to handle encoding issues
+            API_response = json.loads(API_response.content.decode('utf-8'))
+            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
         
         elif str(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
             logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {str(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dict.")
@@ -269,7 +275,7 @@ class SUSHICallAndResponse:
     def _create_error_query_text(self, error_contents):
         """This method creates the text for the `handle_SUSHI_exceptions` dialog box.
 
-        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single doalog box.
+        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single dialog box.
 
         Args:
             error_contents (dict): the contents of the error message
