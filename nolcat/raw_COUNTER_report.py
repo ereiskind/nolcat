@@ -22,7 +22,7 @@ class RawCOUNTERReport:
     Methods:
         create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
-        load_data_into_database: Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations.
+        load_data_into_database: Add the COUNTER report to the database by adding records to the `resource`, `resourceMetadata`, `resourcePlatforms`, and `usageData` relations.
     
     Note:
         In all methods, the dataframe appears in the parameters list as `self`, but to use pandas functionality, it must be referenced as `self.report_dataframe`.
@@ -35,7 +35,7 @@ class RawCOUNTERReport:
         """
         if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
             dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):  #ToDo: Make sure this isn't locked to a single Flask input form
+            for file in df.getlist('R4_files'):  #ToDo: Ensure this can work wil all COUNTER upload requests, not just at initialization
                 try:
                     statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
                     logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
@@ -81,6 +81,7 @@ class RawCOUNTERReport:
                 dataframes_to_concatenate,
                 ignore_index=True
             )
+            #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
             logging.info(f"Final dataframe:\n{self.report_dataframe}")
         elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # SUSHI responses are converted from JSON to dataframes before being passed into this class
             self.report_dataframe = df
@@ -99,12 +100,12 @@ class RawCOUNTERReport:
     
 
     def create_normalized_resource_data_argument(self):
-        """Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
+        """Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, the `resourcePlatforms.platform` value, and the `usageData.data_type` value.
 
         The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for each resource, the data required for deduplication is pulled from the database and assigned to the appropriate fields. 
 
         Returns:
-            dataframe: a dataframe with all resources.resource_ID values along with their default metadata, platform names, and data types
+            dataframe: a dataframe with all `resources.resource_ID` values along with their default metadata, platform names, and data types
         """
         #Section: Set Up the Dataframe
         #ToDo: Get list of resources.resource_ID
@@ -186,8 +187,10 @@ class RawCOUNTERReport:
         #Section: Set Up Recordlinkage Matching
         #Subsection: Create Collections for Holding Matches
         # The automated matching performed with recordlinkage generates pairs of record indexes for two records in a dataframe that match. The nature of relational data in a flat file format, scholarly resource metadata, and computer matching algorithms, however, means a simple list of the record index pairs won't work.
-        matched_records = set()  # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
-        matches_to_manually_confirm = dict()  # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in new_resource_data and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and sets as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each set will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
+        matched_records = set()
+            # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
+        matches_to_manually_confirm = dict()
+            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in `new_resource_data` and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and sets as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each set will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
         # {
         #     (
         #         (first resource metadata),
@@ -208,7 +211,7 @@ class RawCOUNTERReport:
         #Subsection: Create MultiIndex Object
         # This method of indexing creates a object using a Cartesian product of all records in the dataframe. It is memory and time intensive--it can issue a warning about taking time--but the resulting object can be used in the compare method for any and all combinations of fields. Since a resource having values for all metadata fields is highly unlikely and recordlinkage doesn't consider two null values (whether `None` or `NaN`) to be equal, multiple comparisons are needed for thorough deduping; this more comprehensive indexing can be used for all comparisons, so indexing only needs to happen once. (In regards to null values, the `missing_value=1` argument makes any comparison where one of the values is null a match.)
         indexing = recordlinkage.Index()
-        indexing.full()
+        indexing.full()  # Sets up a pandas.MultiIndex object with a cartesian product of all the pairs of records in the database--it issues a warning about taking time, but the alternative commits to matching on a certain field
         if normalized_resource_data:
             candidate_matches = indexing.index(new_resource_data, normalized_resource_data)  #Alert: Not tested
             #ToDo: Make sure that multiple records for a new resource in a COUNTER report get grouped together
@@ -467,7 +470,7 @@ class RawCOUNTERReport:
 
         if database_names_matches_index:
             for match in database_names_matches_index:
-                if database_names_matches_table.loc[match]['index_zero_platform'] == database_names_matches_table.loc[match]['index_one_platform']:
+                if database_names_matches_table.loc[match]['index_zero_platform'] == database_names_matches_table.loc[match]['index_one_platform']:  # While some databases are available on multiple platforms, different databases on different platforms can share a name, so all databases on different platforms are manually checked with an `else` statement for this `if` statement
                     if database_names_matches_table.loc[match]['index_zero_resource_name'] != database_names_matches_table.loc[match]['index_one_resource_name']:
                         if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
                             # The DOI, ISBN, and ISSNs are collected not to use for comparison here but to keep the number of metadata elements in the inner tuples of `matches_to_manually_confirm` keys constant
@@ -514,7 +517,7 @@ class RawCOUNTERReport:
                             continue  # This restarts the loop if the above steps were taken; in contrast, if one of the above if statements evaluated to false, the loop would've gone directly to the step below
                     matched_records.add(match)  # The indentation is level with the `if` statement for if the resource names are exact matches
                     logging.debug(f"{match} added as a match on database names with a high matching threshold")
-                else:  # While some databases are available on multiple platforms, different databases on different platforms can share a name, so all databases on different platforms are manually checked
+                else:
                     index_zero_metadata = (
                         new_resource_data.loc[match[0]]['Resource_Name'],
                         new_resource_data.loc[match[0]]['DOI'],
@@ -858,7 +861,7 @@ class RawCOUNTERReport:
     
 
     def load_data_into_database():
-        """Add the COUNTER report to the database by adding records to the resource, resourceMetadata, resourcePlatforms, and usageData relations."""
+        """Add the COUNTER report to the database by adding records to the `resource`, `resourceMetadata`, `resourcePlatforms`, and `usageData` relations."""
         #ToDo: Write a more detailed docstring
         #ToDo: Filter out non-standard metrics
         pass
