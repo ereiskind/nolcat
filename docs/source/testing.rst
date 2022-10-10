@@ -24,7 +24,12 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-The data used for testing is meant as an example of the data that will be present in the database once loaded. The COUNTER R4 reports in "\\tests\\bin" are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+For the purposes of the OpenRefine exports, the ``Statistics_Source_ID`` values are as follows
+* EBSCO = 1
+* Gale = 2
+* ProQuest = 0
 
 SUSHI Variations
 ****************
