@@ -36,6 +36,10 @@
                                         <li><a href="{{ url_for('initialization.download_file', filename='../nolcat_db_data/JSONs/TR2.json') }}">TR2</a></li>
                                     </ul>
                                 </li>
+                                <!-- Issues with specific stats sources:
+                                    * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
+                                    * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
+                                -->
                                 <li>Export the OpenRefine project as a TSV (to preserves the encoding) into a folder just for these files</li>
                             </ol>
                         </li>
@@ -45,23 +49,20 @@
                     </ul>
                 </li>
                 <li>Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields</li>
+                <form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data"></form>
+                    {{ form.csrf_token }}
+                    <li><label><!--ToDo: Confirm that numbering continuing from instructions `ol` is on form label text-->
+                        {{ form.annualUsageCollectionTracking_TSV.label }}
+                        {{ form.annualUsageCollectionTracking_TSV }}
+                    </label></li>
+                    <br>
+                    <li><label>
+                        {{ form.COUNTER_TSVs.label }}
+                        {{ form.COUNTER_TSVs }}
+                    </label></li>
+                    <input type="submit" value="Submit">
+                </form>
             </ol>
-        </li>
-
-        <li><h2>Complete the Database Initialization with Historical Data</h2>
-            <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
-                {{ form.csrf_token }}
-                <li><label>
-                    {{ form.annualUsageCollectionTracking_TSV.label }}
-                    {{ form.annualUsageCollectionTracking_TSV }}
-                </label></li>
-                <br>
-                <li><label>
-                    {{ form.COUNTER_TSVs.label }}
-                    {{ form.COUNTER_TSVs }}
-                </label></li>
-                <input type="submit" value="Submit">
-            </form></ol>
         </li>
     </ol>
 </body>
