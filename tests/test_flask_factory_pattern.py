@@ -1,6 +1,7 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
 # https://flask.palletsprojects.com/en/2.0.x/testing/
 # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
+# https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
 
 from pathlib import Path
 import os
@@ -9,6 +10,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.app import create_app
 
 
 def test_flask_app_creation(app):
@@ -21,16 +23,20 @@ def test_flask_client_creation(client):
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_homepage(client):
+def test_GET_request_for_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    #Section: Get Data from `GET` Requested Page
     homepage = client.get('/')
+    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+    
+    #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    GET_soup = BeautifulSoup(homepage.data, 'lxml')
-    GET_response_title = GET_soup.head.title
-    GET_response_page_title = GET_soup.body.h1
+    
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
