@@ -10,6 +10,19 @@ from nolcat.raw_COUNTER_report import RawCOUNTERReport
 from data import COUNTER_reports
 
 
+#Section: Fixtures
+#Subsection: Constants for Test Conditions
+@pytest.fixture
+def sample_R4_normalized_resource_data():
+    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data` method when the underlying dataframe has resource data from only R4 reports."""
+
+
+@pytest.fixture
+def sample_normalized_resource_data():
+    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data` method when the underlying dataframe has resource data from R4 and R5 reports."""
+
+
+#Subsection: `RawCOUNTERReport` Input and Output Objects
 @pytest.fixture
 def sample_ImmutableMultiDict():
     """Creates a `werkzeug.datastructures.ImmutableMultiDict` object for testing how the constructor handles such an object."""
@@ -61,18 +74,8 @@ def sample_RawCOUNTERReport():
     #ToDo: Combine above into RawCOUNTERReport
 
 
-@pytest.fixture
-def sample_R4_normalized_resource_data():
-    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data` method when the underlying dataframe has resource data from only R4 reports."""
-
-
-@pytest.fixture
-def sample_normalized_resource_data():
-    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data` method when the underlying dataframe has resource data from R4 and R5 reports."""
-
-
 #Section: Tests
-#Subsection: Test `RawCOUNTERReport.__init__`
+#Subsection: Test `RawCOUNTERReport.__init__()`
 def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
     """Tests turning the data in one or more binary files uploaded into Flask, which is within a ImmutableMultiDict object, into a RawCOUNTERReport object."""
     #ToDo: raw_report = RawCOUNTERReport(sample_ImmutableMultiDict)
@@ -80,7 +83,7 @@ def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
     pass
 
 
-#Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument`
+#Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument()`
 def test_create_normalized_resource_data_argument_with_R4():
     """Tests the `create_normalized_resource_data_argument` method when pulling from a database with resource data from only R4 reports."""
     #ToDo: Establish database fixture with data from only R4 resources
@@ -95,7 +98,7 @@ def test_create_normalized_resource_data_argument_with_R4_and_R5():
     pass
 
 
-#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching`
+#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()`
 #ALERT: On a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
 #ToDo: Review the amount of variance between the method outputs depending on their inputs and ensure constants exist for confirming all test results
 def test_perform_deduplication_matching_with_R4(sample_R4_RawCOUNTERReport):
@@ -146,7 +149,7 @@ def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_fro
     pass
 
 
-#Subsection: Test `RawCOUNTERReport.load_data_into_database`
+#Subsection: Test `RawCOUNTERReport.load_data_into_database()`
 #ToDo: Determine what the input constant(s) should be for each function
 def test_load_data_into_database_from_R4():
     #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4` after manual matching
