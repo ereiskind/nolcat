@@ -269,6 +269,24 @@ def determine_if_resources_match():
 #ToDo: Create a route and page for picking default metadata values
 
 
+#ToDo: @bp.route('/historical-non-COUNTER-data')
+#ToDo: def upload_historical_non_COUNTER_usage():
+    #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
+    #ToDo: form = FileUploadForNon-COUNTERResources()
+    #ToDo: if request.method == 'GET':
+        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
+        #ToDo: Create an iterable to pass all the records returned by the above to a form
+        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
+        #ToDo: return render_template('page-the-form-is-on.html', form=form)
+    #ToDo: elif form.validate_on_submit():
+        #ToDo: For each file uploaded in the form
+            #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
+            #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
+        #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+    #ToDo: else:
+        #ToDo: return abort(404)
+
+
 @bp.route('/database-creation-complete', methods=['GET','POST'])
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
