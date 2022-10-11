@@ -11,7 +11,9 @@ Test modules are designed to be run from the root folder with the command ``pyth
 
 * To view logging statements in the pytest output, add ``-s --log-cli-level="info"`` (or whatever logging level is appropriate) to the command. (The `-s` flag is for showing standard terminal output, but it also gets all columns of dataframes to display.)
 * To save the pytest output to stdout, add ``-p pytest_session2file --session2file=logfile_name`` to the command, where ``logfile_name`` is the name of the logfile, including the file extension and the relative path from the root folder (the folder in which the command is being run) for the desired location.
+
   * In stdout, the test functions are reproduced until the point of the error, at which point the error is stated; in the log files, these reproductions contain a fair number of extra characters with no discernable meaning that can be removed by replacing the regex ``\[[\d;]*m`` with no characters.
+
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
 Using the Test Container
@@ -22,7 +24,12 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-The test suite makes use of data saved in "\\tests\\bin" or in the fixtures in "tests\\conftest.py" which actually contain the same data as is found in "tests\\bin\\RawCOUNTERReport_constructor_output.xlsx." That data is actually based off of the COUNTER R4 reports in "\\tests\\bin," which are actual reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+For the purposes of the OpenRefine exports, the ``Statistics_Source_ID`` values are as follows
+* EBSCO = 1
+* Gale = 2
+* ProQuest = 0
 
 SUSHI Variations
 ****************
@@ -171,3 +178,9 @@ Compliance to the SUSHI standard is often inexact, featuring differences people 
   * Requiring a requestor ID and an API key
 
 * Web of Science
+
+Internally Inconsistent
+=======================
+These vendors show internal inconsistencies in testing:
+
+* Adam Matthew: ``status`` call always has a top-level ``Alerts`` key, but ``handle_SUSHI_exceptions`` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call

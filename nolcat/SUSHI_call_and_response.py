@@ -1,13 +1,9 @@
 import logging
-import shutil
 import time
 import re
-import os
-from pathlib import Path
 import json
 import ast
 import requests
-from requests import HTTPError
 from requests import Timeout
 import pyinputplus
 
@@ -64,15 +60,16 @@ class SUSHICallAndResponse:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign)that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
 
         #Subsection: Make GET Request
-        time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
+            time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
             logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
+        
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
                 logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
@@ -86,6 +83,7 @@ class SUSHICallAndResponse:
                 logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
         except Exception as error:
+            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
             return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
 
@@ -221,6 +219,7 @@ class SUSHICallAndResponse:
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+        #ToDo: When the `StatisticsSources._harvest_R5_SUSHI()` method is triggered in the Flask UI, have these messages display in Flask
 
         This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
         
@@ -276,7 +275,7 @@ class SUSHICallAndResponse:
     def _create_error_query_text(self, error_contents):
         """This method creates the text for the `handle_SUSHI_exceptions` dialog box.
 
-        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single doalog box.
+        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single dialog box.
 
         Args:
             error_contents (dict): the contents of the error message

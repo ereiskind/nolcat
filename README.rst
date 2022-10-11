@@ -1,12 +1,26 @@
 NoLCAT
 ######
 
+Integration Branch
+******************
+This branch is based off of the 2022-10-06 state of `main` and exists so other branches can be merged into it.
+
+* Branch `refactor_route_functions` includes the current test data
+* Branch `add_WSGI_file_to_repo`
+* Branch `recreate_test_bin_files_and_fixtures`
+* Branch `write_harvest_methods_in_StatisticsSources`
+* Branch `create_page_for_R5_harvesting`
+* Branch `create_jinja_template`
+
+
 To-Do List
 **********
 
 High Priority
 =============
 * Write `FiscalYears.create_usage_tracking_records_for_fiscal_year` method (creates AUCT records for the given FY)
+* OpenRefine exports were Excel files to preserve encoding, but some data will be too large for Excel--how can te encoding be preserved when exporting as CSV?
+* Library `mysqlclient` installed after `db.engine` line in `session` pytest fixture triggered `ModuleNotFoundError: No module named 'MySQLdb'` error; does this replace the `PyMySQL` library?
 
 Branch: Configure Flask-User
 ----------------------------
@@ -21,11 +35,6 @@ Branch: Configure Flask-SQLAlchemy
 Branch: Import Data from Secret Files
 -------------------------------------
 * Import file path to JSON with R5 SUSHI credentials
-
-Branch: Rework Database Structure
----------------------------------
-* Correct "tests/database_seeding_fixtures.py" to match the current schema
-* Filter out ISBN and title matches in `RawCOUNTERReport.perform_deduplication_matching` if one of the resource names contains regex `\sed\.?\s` or `\svol\.?\s`
 
 Branch: Complete Initialization Process
 ---------------------------------------
@@ -112,8 +121,8 @@ Create Tests for Record View, Detail, and Editing Pages
 
 Branch: Develop Post-Initialization COUNTER Ingest Capability
 -------------------------------------------------------------
-* Create route/page for uploading R4 reports in an Excel file
-* Create route/page for uploading R5 reports in an Excel file
+* Create route/page for uploading R4 reports in an Excel or CSV file
+* Create route/page for uploading R5 reports in an Excel or CSV file
 * Create test for route to choose type of upload
 * Test uploading R4 report: upload file through webpage, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data
 * Test uploading R5 report: upload file through webpage, get contents back via `pd.from_sql`, and compare that dataframe to the original uploaded data

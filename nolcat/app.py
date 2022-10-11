@@ -4,7 +4,7 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
-"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file exclusive to the container and imported into this file.
+"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file exclusive to the Docker container and imported into this file.
 
 The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no init file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from the `secrets.py` file here.
 """
@@ -86,21 +86,5 @@ def create_app():
         """Returns the homepage in response to web app root requests."""
         return render_template('index.html')
     
-
-    #Section: Routes Involving Forms
-    #ToDo: Figure out how to manage CSRF tokens with a nested source code folder
-    """ These are sample form creation and submission routes 
-    @app.route('/enter-data')
-    def enter_data():
-        form = forms.TestForm()
-        return render_template('enter-data.html', form=form)
-
-    @app.route('/check', methods=["GET","POST"])
-    def submit_check():
-        form = forms.TestForm()
-        if form.validate_on_submit():
-            return render_template('ok.html', val=form.string.data)
-        return render_template('index.html')
-    """
-
+    
     return app

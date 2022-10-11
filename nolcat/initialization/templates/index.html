@@ -14,7 +14,7 @@
     <ol>
         <li><h2>Create the `fiscalYears` Relation with Historical Years</h2>
             <ol>
-                <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_fiscalYears.tsv') }}">"initialize_fiscalYear.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.tsv') }}">"initialize_fiscalYear.tsv"</a>.</li>
                 <li>For all previous fiscal years for which there is usage data, fill out a row in the TSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required).</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Fiscal_Year_ID` field.</li>
             </ol>
@@ -22,11 +22,11 @@
 
         <li><h2>Create the `vendors` and `vendorNotes` Relations</h2>
             <ol>
-                <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_vendors.tsv') }}">"initialize_vendors.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.tsv') }}">"initialize_vendors.tsv"</a>.</li>
                 <li>In the `Vendor_Name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
                 <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field.</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Vendor_ID` field.</li>
-                <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_vendorNotes.tsv') }}">"initialize_vendorNotes.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.tsv') }}">"initialize_vendorNotes.tsv"</a>.</li>
                 <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
                 <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation, then fill out the `Note`, `Written_By`, and `Date_Written` fields.</li>
                 <li>Copy <code>=VLOOKUP(A2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
@@ -47,7 +47,7 @@
             To handle this complexity, three relations in a junction table-like relationship are employed: the `resourceSources` relation contains records for sources of e-resource content, including if that content is still available to patrons; the `statisticsSources` relation contains records for all the different usage statistics sources and a field for linking to externally stored SUSHI R5 credentials; and the `statisticsResourceSources` relation is a junction table for the other two relations with an additional field to indicate if the given statistics source currently provides usage for the given resource source. This model can integrate with other e-resource management tools through the `resourceSources` relation and track changes to system backends that don't cause frontend changes.</p>
             
             <ol>
-                <li>Download <a href="{{ url_for('ingest.download_file', filename='initialize_resourceSources.tsv') }}">"initialize_resourceSources.tsv"</a>, <a href="{{ url_for('ingest.download_file', filename='initialize_statisticsSources.tsv') }}">"initialize_statisticsSources.tsv"</a>, <a href="{{ url_for('ingest.download_file', filename='initialize_resourceSourceNotes.tsv') }}">"initialize_resourceSourceNotes.tsv"</a>, and <a href="{{ url_for('ingest.download_file', filename='initialize_statisticsSourceNotes.tsv') }}">"initialize_statisticsSourceNotes.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.tsv') }}">"initialize_resourceSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.tsv') }}">"initialize_statisticsSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.tsv') }}">"initialize_resourceSourceNotes.tsv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.tsv') }}">"initialize_statisticsSourceNotes.tsv"</a>.</li>
                 <li>Create a spreadsheet with all the field names from the resourceSources and statisticsSources TSVs, replacing `Vendor_ID` in any field names with `Resource Vendor` or `Stats Vendor` depending on the source of the field name and adding the field name `Current_Statistics_Source`.</li>
                 <li>Create the list of statistics sources and resource sources pairings in the above spreadsheet, adding to the notes TSVs whenever appropriate. This is a comprehensive listing, so the best methods to use will depend on how much data is already gathered and what form it is in. Below are some ideas that form a potential procedure.
                     <ul>
@@ -70,7 +70,7 @@
         </li>
 
         <li><h2>Upload the Relation TSVs</h2>
-            <ol><form method="POST" action="/initialization-wizard-page-2" enctype="multipart/form-data">
+            <ol><form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <li><label>
                     {{ form.fiscalYears_TSV.label }}

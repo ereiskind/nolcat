@@ -101,19 +101,6 @@
         "description": "Remove total rows"
     },
     {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "baseColumnName": "Data_Type",
-        "expression": "grel:if(value==\"Journal\",\"Article\",if(value==\"Book\",\"Chapter\",\"Other\"))",
-        "onError": "set-to-blank",
-        "newColumnName": "Section_Type",
-        "columnInsertIndex": 9,
-        "description": "Create column ``Section_Type`` with the value `Article`, `Chapter`, or `Other` depending on the value in ``Data_Type``"
-    },
-    {
         "op": "core/text-transform",
         "engineConfig": {
             "facets": [],
