@@ -7,11 +7,9 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
-from fixture_constants.matched_records import matched_records
-from fixture_constants.matches_to_manually_confirm import matches_to_manually_confirm
+from data import COUNTER_reports
 
 
-#Section: Fixtures
 @pytest.fixture
 def sample_ImmutableMultiDict():
     """Creates a `werkzeug.datastructures.ImmutableMultiDict` object for testing how the constructor handles such an object."""
@@ -21,31 +19,27 @@ def sample_ImmutableMultiDict():
 
 @pytest.fixture
 def sample_R4_RawCOUNTERReport():
-    """A RawCOUNTERReport object based on a CSV with the data of many reformatted R4 COUNTER reports; a single CSV is used to reduce the number of potential failure points."""
-    df = pd.read_csv(
-        Path('tests', 'fixture_constants', 'sample_R4_RawCOUNTERReport.csv'),
-        encoding='utf-8',  # Some of the CSVs are coming in with encoding errors and strings of non-ASCII characters as question marks
-        encoding_errors='backslashreplace',
-        dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
-                'Resource_Name': 'string',
-                'Publisher': 'string',
-                'Platform': 'string',
-                'DOI': 'string',
-                'Proprietary_ID': 'string',
-                'ISBN': 'string',
-                'Print_ISSN': 'string',
-                'Online_ISSN': 'string',
-                'Data_Type': 'string',
-                'Section_Type': 'string',
-                'Metric_Type': 'string',
-                'Usage_Count': 'int',  # Python default used because this is a non-null field
-                'Statistics_Source_ID': 'int',
-            },
-            parse_dates=['Usage_Date'],
-            infer_datetime_format=True,
-            index_col=0,  # The index column in the CSV has no name, so it must be referenced by index
-    )
-    #ToDo: Perform methods `.encode('utf-8').decode('unicode-escape')` on all fields that might have non-ASCII escaped characters
+    """Creates a dataframe with all the data of the R4 COUNTER reports. 
+    
+    A function containing all the raw data and creating the dataframe is used so file import issues don't create problems.
+    """
+    df = COUNTER_reports.sample_R4_COUNTER_reports()
+    #ToDo: Set dtypes based on below:
+    # dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
+    #     'Resource_Name': 'string',
+    #     'Publisher': 'string',
+    #     'Platform': 'string',
+    #     'DOI': 'string',
+    #     'Proprietary_ID': 'string',
+    #     'ISBN': 'string',
+    #     'Print_ISSN': 'string',
+    #     'Online_ISSN': 'string',
+    #     'Data_Type': 'string',
+    #     'Section_Type': 'string',
+    #     'Metric_Type': 'string',
+    #     'Usage_Count': 'int',  # Python default used because this is a non-null field
+    #     'Statistics_Source_ID': 'int',
+    # },
     raw_report = RawCOUNTERReport(df)
     yield raw_report
 

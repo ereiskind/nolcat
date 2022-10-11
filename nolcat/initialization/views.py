@@ -18,6 +18,18 @@ from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
+#ToDo: Reconfigure all routes based on the structure below
+'''
+form = FormClass()
+if request.method == 'GET':
+    #ToDo: Anything that's needed before the page the form is on renders
+    return render_template('page-the-form-is-on.html', form=form)
+elif form.validate_on_submit():
+    #ToDo: Process data from `form`
+    return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+else:
+    return abort(404)
+'''
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
@@ -38,15 +50,72 @@ def collect_initial_relation_data():
     #ALERT: Refactored form hasn't been tested
     form = InitialRelationDataForm()
     if form.validate_on_submit():
-        fiscalYears_dataframe = pd.read_csv(form.fiscalYears_CSV.data)
-        vendors_dataframe = pd.read_csv(form.vendors_CSV.data)
-        vendorNotes_dataframe = pd.read_csv(form.vendorNotes_CSV.data)
-        statisticsSources_dataframe = pd.read_csv(form.statisticsSources_CSV.data)
-        statisticsSourceNotes_dataframe = pd.read_csv(form.statisticsSourceNotes_CSV.data)
-        statisticsResourceSources_dataframe = pd.read_csv(form.statisticsResourceSources_CSV.data)
-        resourceSources_dataframe = pd.read_csv(form.resourceSources_CSV.data)
-        resourceSourceNotes_dataframe = pd.read_csv(form.resourceSourceNotes_CSV.data)
+        #Section: Ingest Data from Uploaded TSVs
+        fiscalYears_dataframe = pd.read_csv(
+            form.fiscalYears_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
 
+        vendors_dataframe = pd.read_csv(
+            form.vendors_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+
+        vendorNotes_dataframe = pd.read_csv(
+            form.vendorNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSources_dataframe = pd.read_csv(
+            form.statisticsSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSourceNotes_dataframe = pd.read_csv(
+            form.statisticsSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form.statisticsResourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+
+        resourceSources_dataframe = pd.read_csv(
+            form.resourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        resourceSourceNotes_dataframe = pd.read_csv(
+            form.resourceSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        #Section: Load Data into Database
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
@@ -103,11 +172,11 @@ def collect_AUCT_and_historical_COUNTER_data():
     #ALERT: Due to database unavailability, code from this point forward is entirely untested
     form = AUCTAndCOUNTERForm()
     
-    #Section: Before Form Submission
+    #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: CSV_file = open('initialize_annualUsageCollectionTracking.csv', 'w', newline='')
-        #ToDo: dict_writer = csv.DictWriter(CSV_file, [
+        #ToDo: TSV_file = open('initialize_annualUsageCollectionTracking.tsv', 'w', newline='')
+        #ToDo: dict_writer = csv.DictWriter(TSV_file, delimiter="\t", [
             #ToDo: "AUCT_statistics_source",
             #ToDo: "AUCT_fiscal_year",
             #ToDo: "Statistics Source",
@@ -127,6 +196,8 @@ def collect_AUCT_and_historical_COUNTER_data():
             #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
             AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
             for record in AUCT_records:
+                print(repr(type(record)))
+                print(record)
                 #ToDo: Determine how to break up instance of `record` to get the individual fields returned
                 #ToDo: dict_writer.writerow({
                     #ToDo: "AUCT_statistics_source": statisticsSources.statistics_source_ID,
@@ -135,14 +206,19 @@ def collect_AUCT_and_historical_COUNTER_data():
                     #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
                 #ToDo: })
                 continue  # To close the block at runtime
-        #ToDo: CSV_file.close()
-
-        #ToDo: return render_template('initial-data-upload-2.html', form=form)
+        #ToDo: TSV_file.close()
+        return render_template('initial-data-upload-2.html', form=form)
     
     #Section: After Form Submission
     elif form.validate_on_submit():
         #Subsection: Load `annualUsageCollectionTracking` into Database
-        annualUsageCollectionTracking_dataframe = pd.read_csv(form.annualUsageCollectionTracking_TSV.data)  #ToDo: Correct to handle TSV file properly
+        annualUsageCollectionTracking_dataframe = pd.read_csv(
+            form.annualUsageCollectionTracking_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        annualUsageCollectionTracking_dataframe['Notes'] = annualUsageCollectionTracking_dataframe['Notes'].encode('utf-8').decode('unicode-escape')
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
         annualUsageCollectionTracking_dataframe.to_sql(
             'annualUsageCollectionTracking',
@@ -169,30 +245,36 @@ def determine_if_resources_match():
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
     #ToDo: form = imported_form_class()
-    try:
+
+    #Section: Before Page Renders
+    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #ToDo: import temp file containing `historical_data` from `collect_AUCT_and_historical_COUNTER_data`
         #ToDo: historical_data = contents of file containing `historical_data` (in other words, recreate the variable)
-        #ToDo: for each radio button field in the form:
-            #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")]
-    except:
-        return abort(404)  # The file to be imported above, which is created directly before the redirect to this route function, couldn't be imported if the code gets here, hence an error is raised--404 isn't the most accurate HTTP error for the situation, but it's the one with an existing page
-
-    #Section: Before Form Submission
-    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching()
-        #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same--this probably will involve dynamic radio button choice creation above
+        #ToDo: for metadata_pair in dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata.keys():  #ToDo: May need to change depending on connections via network library
+            #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")] where the display value comes from `metadata_pair`
         #ToDo: return render_template('select-matches.html', form=form)
+        pass
     
     #Section: After Form Submission
     elif form.validate_on_submit():
         #ToDo: things related to saving and transforming form data
         #ToDo: return redirect(url_for('the_next_route_function'))
+        pass
     
     else:
-        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
+        return abort(404)  # The file to be imported above, which is created directly before the redirect to this route function, couldn't be imported if the code gets here, hence an error is raised--404 isn't the most accurate HTTP error for the situation, but it's the one with an existing page
 
 
-@bp.route('/database-creation-complete')
+#ToDo: Create a route and page for picking default metadata values
+
+
+@bp.route('/database-creation-complete', methods=['GET','POST'])
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
+    #ToDo: Write actual docstring
+    """Basic description of what the function does
+    
+    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
+    """
     return render_template('show-loaded-data.html')

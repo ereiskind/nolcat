@@ -13,10 +13,10 @@ from nolcat.login import *
 #ToDo: Create test for logging in as admin user
 
 
-#ToDo: Create test using Selenium to log in as a regular user
+#ToDo: Create test to log in as a regular user
 
 
-#ToDo: Create test using Selenium to log in as an admin user
+#ToDo: Create test to log in as an admin user
 
 
-#ToDo: If individual accounts are to be created, create test for making an account both with and without Selenium
+#ToDo: If individual accounts are to be created, create test for making an account

@@ -144,7 +144,7 @@
             "mode": "row-based"
         },
         "columnName": "Usage_Date",
-        "expression": "grel:if(isError(value.toDate()),if(value.contains(/E[D|S]T/),value.replace(/E[D|S]T/,\"\").toDate(),if(isNotNull(value.match(/(\\\\w{3})\\\\-(\\\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\\\w*)\\\\-\\\\d{4}/)[0].length()>3,(value.match(/(\\\\w{3}).*/)[0]+\"-01\"+value.match(/\\\\w*(\\\\-\\\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\"))),value.find(/\\d{4}\\-\\d{2}\\-\\d{2}/)[0].toDate())",
+        "expression": "grel:if(isError(value.replace(/E[D|S]T/,\"\").toDate()),if(isNotNull(value.match(/(\\w{3})\\-(\\d{4})/)),value.replace(\"-\",\"-01-\").toDate(),if(value.match(/(\\w*)\\-\\d{4}/)[0].length()>3,(value.match(/(\\w{3}).*/)[0]+\"-01\"+value.match(/\\w*(\\-\\d{4})/)[0]).toDate(),\"ERROR [\"+value+\"]\")),value.replace(/E[D|S]T/,\"\").toDate())",
         "onError": "keep-original",
         "repeat": false,
         "repeatCount": 10,
@@ -175,19 +175,6 @@
         "newColumnName": "Data_Type",
         "columnInsertIndex": 8,
         "description": "Create column ``Data_Type`` containing value `Book`"
-    },
-    {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "baseColumnName": "Metric_Type",
-        "expression": "grel:\"Book\"",
-        "onError": "set-to-blank",
-        "newColumnName": "Section_Type",
-        "columnInsertIndex": 9,
-        "description": "Create column ``Section_Type`` containing value `Book`"
     },
     {
         "op": "core/text-transform",

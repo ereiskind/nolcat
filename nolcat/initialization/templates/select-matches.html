@@ -5,13 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
-    <title>Database Initialization Wizard 4</title>
+    <title>Database Initialization Wizard 3</title>
 </head>
 <body>
-    <h1>Database Initialization Wizard: Page 4</h1>
+    <h1>Database Initialization Wizard: Page 3</h1>
 
-    <!--ToDo: Deduplication of resources from reformatted R4 upload-->
+    <!--ToDo:
+        For each pair of resources matched that need manual confirmation:
+            Display all metadata
+            Have Boolean for if the pair is a match or not
+            Have ability to select what value is default from confirmed matches when both resources have data for a field, but the data is different
+    -->
 
+    <!--Sample from TestForm-->
+    <form action="{{ url_for('ingest.wizard_page_5') }}" method="POST">
+        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <label>{{ form.checkbox.label }}</label>
+            {{ form.checkbox }}
+        </fieldset>
+        {{ form.submit_button }}
+    </form>
     <p>a form containing the metadata for each potential resource match pair with a checkbox for indicating if it is a pair and radio buttons to indicate which set of metadata to save to the Resources relation</p>
+
+    <!--  ON THE NEXT PAGE
+        6. Upload Historical R5 Usage
+        =============================
+        1. Run ``FiscalYears.collect_fiscal_year_usage`` for all the fiscal years including and after calendar year 2019
+    -->
 </body>
 </html>

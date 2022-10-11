@@ -4,7 +4,12 @@ import logging
 from pathlib import Path
 import os
 import sys
-from sqlalchemy import Enum
+import json
+from sqlalchemy import Column
+from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 
 from .app import db
@@ -219,6 +224,8 @@ class StatisticsSources(db.Model):
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
         collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        upload_R4_report: #ToDo: Copy first line of docstring here
+        upload_R5_report: #ToDo: Copy first line of docstring here
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
@@ -233,8 +240,8 @@ class StatisticsSources(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
+        return f"<'statistics_source_id': '{self.statistics_source_id}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_id': '{self.vendor_id}'>"
 
 
     @hybrid_method
@@ -253,29 +260,43 @@ class StatisticsSources(db.Model):
         #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
-        #ToDo: path_to_credentials_file = function providing path to credentials depending on if program is being run on AWS or a local machine
-        #ToDo: with open(path_to_credentials_file) as JSON_file:
-            #ToDo: SUSHI_data_file = json.load(JSON_File)
-            #ToDo: for vendor in SUSHI_data_file:
-                #ToDo: for stats_source in vendor:
-                    #ToDo: if stats_source['interface_id'] == self.statistics_source_retrieval_code:
-                        #ToDo: credentials = dict(
-                            #ToDo: URL = stats_source['online_location'],
-                            #ToDo: customer_id = stats_source['user_id']
-                        #ToDo: )
-                        #ToDo: try: credentials['requestor_id'] = stats_source['user_password']
-                        #ToDo: try: credentials['api_key'] = stats_source['user_pass_note']
-                        #ToDo: try: credentials['platform'] = stats_source['delivery_address']
+        with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+            SUSHI_data_file = json.load(JSON_file)
+            logging.debug("JSON with SUSHI credentials loaded.")
+            for vendor in SUSHI_data_file:
+                for stats_source in vendor:
+                    if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                        logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                        credentials = dict(
+                            URL = stats_source['online_location'],
+                            customer_id = stats_source['user_id']
+                        )
+
+                        try:
+                            credentials['requestor_id'] = stats_source['user_password']
+                        except:
+                            pass
+
+                        try:
+                            credentials['api_key'] = stats_source['user_pass_note']
+                        except:
+                            pass
+
+                        try:
+                            credentials['platform'] = stats_source['delivery_address']
+                        except:
+                            pass
 
         #Subsection: Retrieve Data from Alma
         #ToDo: When credentials are in Alma, create this functionality
 
 
         #Section: Return Data in Requested Format
-        #ToDo: if for_API_call:
-            #ToDo: return credentials
-        #ToDo: else:
-            #ToDo: Insert `credentials` values into a Flask page or popup and display it to the user
+        if for_API_call:
+            logging.debug(f"Returning the credentials {credentials} for a SUSHI API call.")
+            return credentials
+        else:
+            return None  #ToDo: Change to a way to display the `credentials` values to the user via Flask
 
 
     @hybrid_method
@@ -299,13 +320,14 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+        #Alert: MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable--how should this be handled so that it can pass through?
 
 
         #Section: Get List of Resources
         #Subsection: Make API Call
         #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
         #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a single-item dict with the key "reports" is returned, interate through the list so the ultimate result is all_available_reports = a list of all available reports
+        #ToDo: If a single-item dict with the key "reports" is returned, iterate through the list so the ultimate result is all_available_reports = a list of all available reports
 
         #Subsection: Get List of Master Reports
         #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
@@ -386,6 +408,18 @@ class StatisticsSources(db.Model):
         """
         #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         #ToDo: return RawCOUNTERReport(above dataframe)
+        pass
+
+
+    @hybrid_method
+    def upload_R4_report(self):
+        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
+        pass
+
+
+    @hybrid_method
+    def upload_R5_report(self):
+        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
         pass
 
 
@@ -593,11 +627,8 @@ class AnnualUsageCollectionTracking(db.Model):
 
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
-
-    This relation serves as a location for notes and the primary key numbers which deduplicate the resources. All metadata fields have a one to many relationship with their resources, so normalized metadata within this relationship is not possible:
-    * For metadata specific to the resource, historical reasons related to both resources and the rules of standards bodies make it possible if not common for a resource to have multiple standard identifiers. Normalizing the data by saving all of this type of metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
-    * For metadata from the content provider, there will be a set of metadata from each of the many providers of a resource.
-    * for metadata related to the usage instance, the more detailed data R5 provides is enabled by splitting the metadata out across a large number of metadata fields.
+    
+    Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
     
     Attributes:
         self.resource_ID (int): the primary key
@@ -606,7 +637,7 @@ class Resources(db.Model):
     __tablename__ = 'resources'
 
     resource_ID = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.Text)
+    note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
     resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
 
@@ -624,9 +655,9 @@ class ResourceMetadata(db.Model):
     
     Attributes:
         self.resource_metadata_ID (int): the primary key
-        self.metadata_field (str): the metadata field label
+        self.metadata_field (str): the metadata field label  #ToDo: Should this actually be an `enum`?
         self.metadata_value (str): the metadata value
-        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin
+        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin?
         self.default (bool): indicates if the value is the default for the field and title
         self.resource_ID (int): the foreign key for `resources`
     """
@@ -681,7 +712,7 @@ class ResourcePlatforms(db.Model):
 class UsageData(db.Model):
     """The class representation of the `usageData` relation, which contains the COUNTER usage statistics and the fields by which they're broken down.
     
-    Many of the attributes became available in R5 as part of the improvements to COUNTER, as they made mode detailed investigations of usage data possible. Furthermore, not all attributes apply to all types of reports. In those instances where an attribute isn't present because the generation or type of report lacks that attribute, a null value is used. Another of the updates made for R5 was combining all mediums at a given level of granularity into a single report; as a result, while data derived from R4 reports uses a small number of general types largely derived from the type of report the data is from, `data_type` and `section_type` in R5 are fixed vocabulary fields used to give information about instances of usage. Finally, the `report_creation_date` attribute is used for R5 reports uploaded via SUSHI so on those occasions when a statistics source provider says the numbers provided during a given date range were incorrect and need to be ingested again, the SUSHI reports can be targeted to determine if they were harvested during the given date range and, if they were, more easily removed so corrected reports can be uploaded.
+    Many of the attributes became available in R5 as part of the improvements to COUNTER, as they made mode detailed investigations of usage data possible. Furthermore, not all attributes apply to all types of reports. In those instances where an attribute isn't present because the generation or type of report lacks that attribute, a null value is used. Another of the updates made for R5 was combining all resource types at a given level of granularity into a single report; as a result, while data derived from R4 reports uses a small number of general types largely derived from the type of report the data is from, `data_type` and `section_type` in R5 are fixed vocabulary fields used to give information about instances of usage. Finally, the `report_creation_date` attribute is used for R5 reports uploaded via SUSHI so on those occasions when a statistics source provider says the numbers provided during a given date range were incorrect and need to be ingested again, the SUSHI reports can be targeted to determine if they were harvested during the given date range and, if they were, more easily removed so corrected reports can be uploaded.
     
     Attributes:
         self.usage_data_ID (int): the primary key
