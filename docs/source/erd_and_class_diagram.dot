@@ -86,7 +86,6 @@ digraph erd_and_classes {
             label="vendor_ID"
             shape="folder"
         ]
-        
 
         // Methods
         fetch_SUSHI_information [shape="Mrecord"]
