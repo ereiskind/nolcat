@@ -6,11 +6,12 @@ digraph erd_and_classes {
         folder = FK
         component = FK that makes up a composite PK
         Mrecord = methods
-
+        
         Starting with two underscores means not from user stories
     */
 
     /* *** ESTABLISHED RELATIONS/CLASSES *** */
+    
 
     subgraph cluster_fiscalYears {
         label="fiscalYears"
@@ -85,7 +86,6 @@ digraph erd_and_classes {
             label="vendor_ID"
             shape="folder"
         ]
-        
 
         // Methods
         fetch_SUSHI_information [shape="Mrecord"]
@@ -255,11 +255,13 @@ digraph erd_and_classes {
             shape="record"
             label="\N|usage stats|e-resources usage numbers"
         ]
-        __YOP // This is found in R5 TR, IR only—how to add it?
-        __access_type // This is found in R5 TR, IR only—how to add it?
-        __access_method // This is found in R5 only—how to add it?
-        __report_creation_date // For harvested R5 reports
-
+        __YOP
+        __access_type
+        __access_method
+        data_type
+        __section_type
+        __report_creation_date // For SUSHI harvested R5 reports only
+        
         // Methods
     }
 
@@ -271,6 +273,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
+        create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }
@@ -336,7 +339,7 @@ digraph erd_and_classes {
         table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
         arrowhead = how PK table can connect to FK table
         arrowtail = how FK table can connect to PK table
-
+        
         teeodot = 0..1 (unique but optional)
         crowodot = 0..N (optional, not unique)
         teetee = 1..1 (exactly one)

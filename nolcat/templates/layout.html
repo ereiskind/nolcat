@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>{% block metadata_title %}{% endblock %}</title>
+</head>
+<body>
+    <header>
+        NoLCAT: Noles Library Collection Assessment Tool
+        <nav>
+            <!--ToDo: Create nav menu when pages for purposes other than database setup have been created-->
+        </nav>
+        <!--ToDo: When authentication is set up, add login/logout function-->
+        <!--ToDo: Does anything else need to go in the header?-->
+    </header>
+
+    <main>
+        {% block main_content %}{% endblock %}
+    </main>
+
+    <footer>
+        NoLCAT, created by FSU Libraries
+        <a href="https://github.com/ereiskind/nolcat"><img src="../static/GitHub-Mark.png" alt="GitHub mark"></a>
+    </footer>
+</body>
+</html>

@@ -5,152 +5,215 @@ import re
 import pytest
 import pandas as pd
 
+# `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
+from data import COUNTER_reports
+
+
+#Section: Fixtures
+#Subsection: Constants for Test Conditions
+@pytest.fixture
+def sample_R4_COUNTER_reports():
+    """Creates a dataframe with the data from all the COUNTER R4 reports."""
+    yield COUNTER_reports.sample_R4_COUNTER_reports()
 
 
 @pytest.fixture
-def sample_R4_form_result():
-    """Creates an object highly similar to that returned by the form at the end of route `initialization.wizard_page_3`, simulating one of the possible arguments for the RawCOUNTERReport constructor."""
-    #ToDo: This fixture needs to be created so the RawCOUNTERReport constructor can be tested independently of the form input functionality, but multiple days of work have failed to find a solution with the current configuration. Using WTForms to create the form taking in multiple Excel files may open up other options, but at the moment, the options are limited. Below are the methods attempted along with links and samples of code.
-
-    #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects
-    '''R4_reports = MultiDict()
-    for file in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
-        R4_reports.add(
-            'R4_files',
-            FileStorage(
-                stream=open(
-                    Path('.', 'tests', 'bin', 'OpenRefine_exports', file),
-                    encoding='unicode_escape',
-                ),
-                name='R4_files',
-                headers={
-                    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'Content-Encoding': 'utf-8',
-                    'mode': 'b',
-                }
-            )
-        )
-    yield R4_reports'''
-    # https://stackoverflow.com/questions/18249949/python-file-object-to-flasks-filestorage
-    # https://stackoverflow.com/questions/39437909/flask-filestorage-object-to-file-object
-    # https://stackoverflow.com/questions/20015550/read-file-data-without-saving-it-in-flask
-    # https://stackoverflow.com/questions/52514442/reading-xlsx-file-from-a-bytestring
-    # https://stackoverflow.com/questions/20635778/using-openpyxl-to-read-file-from-memory
-
-    #Section: Creating a werkzeug.datastructures.MultiDict object containing werkzeug.datastructures.FileStorage objects where the files in question are tempfile.SpooledTemporaryFile objects
-    # https://docs.pytest.org/en/6.2.x/tmpdir.html
-    '''file_in_bytes = open(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename), 'rb')
-        logging.info(f"file_in_bytes type: {type(file_in_bytes)}")
-        logging.info(f"file_in_bytes.read() type: {type(file_in_bytes.read())}")
-        logging.info(f"file_in_bytes.read(): {file_in_bytes.read()}")
-        tempfile_constructor.write(file_in_bytes.read())  #ToDo: Figure out how to get SpooledTemporaryFile objects into FileStorage objects
-        logging.info(f"tempfile_constructor type: {type(tempfile_constructor)}")
-        tempfile_constructor.seek(0)
-        logging.info(f"tempfile_constructor.read(): {tempfile_constructor.read()}")
-        FileStorage_object = FileStorage(
-            stream=tempfile_constructor,
-            filename=filename,
-            name='R4_files',
-            headers={
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Encoding': 'utf-8',
-                'mode': 'b',
-            }
-        )
-        logging.info(f"FileStorage_object type: {type(FileStorage_object)}")
-        R4_reports.add(
-            'R4_files',
-            FileStorage_object
-        )
-        file_in_bytes.close()
-    yield R4_reports
-    tempfile_constructor.close()'''
-    '''with tempfile.SpooledTemporaryFile() as temp:
-            workbook_data.save(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename))
-            logging.info(f"workbook_data.save(filename) type: {type(workbook_data.save(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename)))}")
-            temp.seek(0)
-            logging.info(f"temp.read(): {temp.read()}")
-            logging.info(f"temp.read() type: {type(temp.read())}")'''
-    '''R4_reports = MultiDict()
-    for filename in os.listdir(Path('.', 'tests', 'bin', 'OpenRefine_exports')):  # The paths are based off the project root so pytest can be invoked through the Python interpreter at the project root
-        workbook_data = load_workbook(io.BytesIO(Path('.', 'tests', 'bin', 'OpenRefine_exports', filename).read_bytes()))
-        with tempfile.SpooledTemporaryFile() as temp:
-            logging.info(f"workbook_data.active: {workbook_data.active}")
-            for row in workbook_data.active.values:
-                for value in row:
-                    print(value)
-                    print(type(value))
-            logging.info(f"workbook_data.active type: {type(workbook_data.active)}")
-            temp.write(workbook_data.active)
-            logging.info(f"temp.write(workbook_data.active): {temp.write(workbook_data.active)}")
-            logging.info(f"temp.write(workbook_data.active) type: {type(temp.write(workbook_data.active))}")'''
-    # https://python.plainenglish.io/leveraging-the-power-of-tempfile-library-in-python-672786cd9ebf
-    # https://stackoverflow.com/questions/47160211/why-doesnt-tempfile-spooledtemporaryfile-implement-readable-writable-seekable
-    # https://stackoverflow.com/questions/36070031/creating-a-temporary-directory-in-pytest
-    # https://stackoverflow.com/questions/62335029/how-do-i-use-tmpdir-with-my-pytest-fixture
-    # https://stackoverflow.com/questions/25525202/py-test-temporary-folder-for-the-session-scope
-
-    #Section: Creating a Flask/WSGI test client fixture and a test that uses its post method then captures the form return value
-    # https://werkzeug.palletsprojects.com/en/2.0.x/test/
-    # https://flask.palletsprojects.com/en/2.0.x/testing/
-    # https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-    # https://python.plainenglish.io/how-to-test-sending-files-with-flask-795d4545262e
-    # https://stackoverflow.com/questions/35684436/testing-file-uploads-in-flask | https://stackoverflow.com/questions/35684436/testing-file-uploads-in-flask/35707921
-    # https://stackoverflow.com/questions/20080123/testing-file-upload-with-flask-and-python-3
-    # https://stackoverflow.com/questions/47216204/how-do-i-upload-multiple-files-using-the-flask-test-client
-    # https://stackoverflow.com/questions/53336768/spin-up-a-local-flask-server-for-testing-with-pytest
-    # https://stackoverflow.com/questions/7428124/how-can-i-fake-request-post-and-get-params-for-unit-testing-in-flask
+def sample_R5_COUNTER_reports():
+    """Creates a dataframe with the data from all the COUNTER R5 reports."""
+    #yield COUNTER_reports.sample_R5_COUNTER_reports()
+    pass  #ToDo: Update when dataframe is created
 
 
 @pytest.fixture
-def RawCOUNTERReport_fixture_from_R4_spreadsheets():
-    """A RawCOUNTERReport object created by passing all the sample R4 spreadsheets into a dataframe, then wrapping the dataframe in the RawCOUNTERReport class."""
-    dataframes_to_concatenate = []
-    for spreadsheet in os.listdir(Path('tests', 'data', 'sample_COUNTER_data')):
-        statistics_source_ID = re.findall(r'(\d*)_\w{2}\d_\d{4}\.xlsx', string=spreadsheet)[0]
-        dataframe = pd.read_excel(
-            Path('tests', 'data', 'sample_COUNTER_data', spreadsheet),
-            #ToDo: Figure out encoding--spreadsheets have non-ASCII characters that are being putput as question marks--Stack Overflow has `encoding=` argument being added, but documentation doesn't show it as a valid argument
-            engine='openpyxl',
-            dtype={
-                'Resource_Name': 'string',
-                'Publisher': 'string',
-                'Platform': 'string',
-                'DOI': 'string',
-                'Proprietary_ID': 'string',
-                'ISBN': 'string',
-                'Print_ISSN': 'string',
-                'Online_ISSN': 'string',
-                'Data_Type': 'string',
-                'Metric_Type': 'string',
-                'Section_Type': 'string',
-                # Usage_Date is fine as default datetime64[ns]
-                'Usage_Count': 'int',
-            },
-        )
-        dataframe['Statistics_Source_ID'] = statistics_source_ID  # This adds the field `Statistics_Source_ID` where all records have the value of the given variable
-        dataframes_to_concatenate.append(dataframe)
-    RawCOUNTERReport_fixture = pd.concat(
-        dataframes_to_concatenate,
-        ignore_index=True
-    )
-    yield RawCOUNTERReport(RawCOUNTERReport_fixture)
+def sample_COUNTER_reports():
+    """Creates a dataframe with the data from all the COUNTER reports."""
+    #yield COUNTER_reports.sample_COUNTER_reports()
+    pass  #ToDo: Update when dataframe is created
+
+
+@pytest.fixture
+def sample_R4_normalized_resource_data():
+    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from only R4 reports."""
+
+
+@pytest.fixture
+def sample_normalized_resource_data():
+    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from R4 and R5 reports."""
+
+
+#Subsection: `RawCOUNTERReport` Input and Output Objects
+@pytest.fixture
+def sample_ImmutableMultiDict():
+    """Creates a `werkzeug.datastructures.ImmutableMultiDict` object for testing how the constructor handles such an object."""
+    #ToDo: Multiple days of work, shown and documented with prior commits in this repo, were unable to come up with a solution here. This was before Flask and WTForms were set up, so an actual upload is a solution now, but it also introduces a larger number of variables.
+    pass
+
+
+@pytest.fixture
+def sample_R4_RawCOUNTERReport():
+    """Creates a dataframe with all the data of the R4 COUNTER reports. 
     
-    
-def test_RawCOUNTERReport_R4_constructor(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
-    """Confirms that constructor for RawCOUNTERReport that takes in reformatted R4 reports is working correctly."""
-    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
-    assert sample_R4_reports.equals(RawCOUNTERReport_fixture_from_R4_spreadsheets)
+    A function containing all the raw data and creating the dataframe is used so file import issues don't create problems.
+    """
+    df = COUNTER_reports.sample_R4_COUNTER_reports()
+    #ToDo: Set dtypes based on below:
+    # dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
+    #     'Resource_Name': 'string',
+    #     'Publisher': 'string',
+    #     'Platform': 'string',
+    #     'DOI': 'string',
+    #     'Proprietary_ID': 'string',
+    #     'ISBN': 'string',
+    #     'Print_ISSN': 'string',
+    #     'Online_ISSN': 'string',
+    #     'Data_Type': 'string',
+    #     'Section_Type': 'string',
+    #     'Metric_Type': 'string',
+    #     'Usage_Count': 'int',  # Python default used because this is a non-null field
+    #     'Statistics_Source_ID': 'int',
+    # },
+    raw_report = RawCOUNTERReport(df)
+    yield raw_report
 
 
-def test_perform_deduplication_matching(sample_R4_form_result, RawCOUNTERReport_fixture_from_R4_spreadsheets):
-    """Tests that the `perform_deduplication_matching` method returns the data representing resource matches both confirmed and needing confirmation when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
-    #ALERT: On a workstation with 8GB RAM, this test fails with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the test successfully
-    sample_R4_reports = RawCOUNTERReport_fixture_from_R4_spreadsheets  #ToDo: Change to RawCOUNTERReport(sample_R4_form_result)
-    assert sample_R4_reports.perform_deduplication_matching() == RawCOUNTERReport_fixture_from_R4_spreadsheets.perform_deduplication_matching()
+@pytest.fixture
+def sample_R5_RawCOUNTERReport():
+    """A RawCOUNTERReport object with the data of reformatted R5 COUNTER reports."""
+    #ToDo: Mock data in tabular R5 reports from same statistics sources with same resources as in R4
+    #ToDo: Include `Gale Business: Entrepreneurship` in resources (Gale's Small Business Resource Center -> Gale Business: Entrepreneurship in early 2020)
+    #ToDo: Set up R5 data like R4 data
+    #ToDo: Determine best way to get all of above data into single RawCOUNTERReport object
+    pass
 
 
-def test_load_data_into_database(sample_R4_form_result):
-    #ToDo: Write a docstring when the format of the return value is set
+@pytest.fixture
+def sample_RawCOUNTERReport():
+    """A RawCOUNTERReport object with the data of reformatted R4 and R5 COUNTER reports."""
+    #ToDo: Get both R4 and R5 data
+    #ToDo: Combine above into RawCOUNTERReport
+
+
+#Section: Tests
+#Subsection: Test `RawCOUNTERReport.__init__()`
+def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
+    """Tests turning the data in one or more binary files uploaded into Flask, which is within a ImmutableMultiDict object, into a RawCOUNTERReport object."""
+    #ToDo: raw_report = RawCOUNTERReport(sample_ImmutableMultiDict)
+    #ToDo: RawCOUNTERReport has a method recreating pandas `equals`, but asserting data run through a broken constructor is equal to the same data run through the same broken constructor will result in a passed test; would a comparison of the data in the dataframes and a check of the data type of the result of the constructor be a more accurate pass condition?
+    pass
+
+
+#Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument()`
+def test_create_normalized_resource_data_argument_with_R4():
+    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from only R4 reports."""
+    #ToDo: Establish database fixture with data from only R4 resources
+    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_R4_normalized_resource_data
+    pass
+
+
+def test_create_normalized_resource_data_argument_with_R4_and_R5():
+    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from R4 and R5 reports."""
+    #ToDo: Establish database fixture with data from R4 and R5 resources
+    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_normalized_resource_data
+    pass
+
+
+#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()`
+#ALERT: On a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
+#ToDo: Review the amount of variance between the method outputs depending on their inputs and ensure constants exist for confirming all test results
+def test_perform_deduplication_matching_with_R4(sample_R4_RawCOUNTERReport):
+    """Tests the `perform_deduplication_matching()` method when a RawCOUNTERReport object instantiated from reformatted R4 reports is the sole argument."""
+    # Resources where an ISSN appears in both the Print_ISSN and Online_ISSN fields and/or is paired with different ISSNs still need to be paired
+    assert sample_R4_RawCOUNTERReport.perform_deduplication_matching() == (matched_records, matches_to_manually_confirm)  # ToDo: Confirm that these imports don't need to be parameters
+
+
+def test_perform_deduplication_matching_with_R4_and_R5(sample_RawCOUNTERReport):
+    """Tests the `perform_deduplication_matching()` method when a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports is the sole argument."""
+    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching() == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4(sample_R4_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4_and_R5(sample_R4_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4(sample_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4_and_R5(sample_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4(sample_R5_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4_and_R5(sample_R5_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
+    pass
+
+
+#Subsection: Test `RawCOUNTERReport.load_data_into_database()`
+#ToDo: Determine what the input constant(s) should be for each function
+def test_load_data_into_database_from_R4():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R4_and_R5():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4_and_R5` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R4_and_normalized_resource_data_from_R4():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R4_and_normalized_resource_data_from_R4_and_R5():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4_and_R5` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R4_and_R5_and_normalized_resource_data_from_R4():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R4_and_R5_and_normalized_resource_data_from_R4_and_R5():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4_and_R5` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R5_and_normalized_resource_data_from_R4():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+def test_load_data_into_database_from_R5_and_normalized_resource_data_from_R4_and_R5():
+    #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4_and_R5` after manual matching
+    #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
     pass
