@@ -3,9 +3,9 @@ NoLCAT
 
 Use Pandas to Transform COUNTER Binary Files
 ********************************************
-Initially, the CSv, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
+Initially, the CSV, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
 
-1. Add R5 test data
+1. Add R5 test data--this branch/pull request
 2. Create COUNTER report transformation class
 3. Have `initialization` blueprint use the new class
 4. Have `ingest_usage` blueprint use the new class
