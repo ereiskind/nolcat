@@ -384,6 +384,7 @@ class StatisticsSources(db.Model):
             #Subsection: Make Master Report API Call
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
+            #ALERT: JSON from API to dataframe is required for `RawCOUNTERReport` to be used
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
