@@ -15,6 +15,15 @@ def flask_client():
     with app.test_client() as client:
         yield client
 
+        
+#ToDo: Routes:
+    # download_file
+    # collect_initial_relation_data
+    # collect_AUCT_and_historical_COUNTER_data
+    # determine_if_resources_match
+    #ToDo: Create a route and page for picking default metadata values
+    #ToDo: upload_historical_non_COUNTER_usage
+    # data_load_complete
 
 #ToDo: Create test rendering page at `collect_initial_relation_data()` without submitting data
     #ToDo: This is just showing a page--is this test needed?
