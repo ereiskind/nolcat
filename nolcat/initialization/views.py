@@ -245,6 +245,10 @@ def determine_if_resources_match():
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
     #ToDo: form = imported_form_class()
+        # https://stackoverflow.com/a/59515390
+        # https://stackoverflow.com/q/19213458
+        # https://stackoverflow.com/a/40450435
+        # https://stackoverflow.com/q/31112719
 
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
