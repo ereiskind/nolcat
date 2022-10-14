@@ -8,7 +8,13 @@ from flask_wtf.csrf import CSRFProtect
 
 The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no init file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from the `secrets.py` file here.
 """
-from .. import nolcat_secrets as secrets
+try:
+    import nolcat_secrets as secrets
+except:
+    try:
+        from .. import nolcat_secrets as secrets
+    except:
+        print("Unable to import `nolcat_secrets`")
 
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
