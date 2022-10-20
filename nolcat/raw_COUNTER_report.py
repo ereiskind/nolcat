@@ -20,7 +20,7 @@ class RawCOUNTERReport:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
     
     Methods:
-        create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
+        create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, `resourcePlatforms.platform`, and `usageData.data_type`.
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
         load_data_into_database: Add the COUNTER report to the database by adding records to the `resource`, `resourceMetadata`, `resourcePlatforms`, and `usageData` relations.
     
@@ -440,7 +440,7 @@ class RawCOUNTERReport:
     
 
     def create_normalized_resource_data_argument(self):
-        """Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, the `resourcePlatforms.platform` value, and the `usageData.data_type` value.
+        """Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, `resourcePlatforms.platform`, and `usageData.data_type`.
 
         The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for each resource, the data required for deduplication is pulled from the database and assigned to the appropriate fields. 
 
