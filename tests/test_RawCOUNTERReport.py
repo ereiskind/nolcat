@@ -35,11 +35,13 @@ def sample_COUNTER_reports():
 @pytest.fixture
 def sample_R4_normalized_resource_data():
     """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from only R4 reports."""
+    pass
 
 
 @pytest.fixture
 def sample_normalized_resource_data():
     """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from R4 and R5 reports."""
+    pass
 
 
 #Subsection: `RawCOUNTERReport` Input and Output Objects
@@ -92,6 +94,7 @@ def sample_RawCOUNTERReport():
     """A RawCOUNTERReport object with the data of reformatted R4 and R5 COUNTER reports."""
     #ToDo: Get both R4 and R5 data
     #ToDo: Combine above into RawCOUNTERReport
+    pass
 
 
 #Section: Tests
