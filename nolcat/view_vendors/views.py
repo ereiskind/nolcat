@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def view_vendors_homepage():
     """Returns the homepage for the `view_vendors` blueprint, which lists the records in `vendors`."""
     return render_template('index.html')
 

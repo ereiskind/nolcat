@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def annual_stats_homepage():
     """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
     return render_template('index.html')
 

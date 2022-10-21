@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def view_resources_homepage():
     """Returns the homepage for the `view_resources` blueprint, which shows a list of resources."""
     return render_template('index.html')
 

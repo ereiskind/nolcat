@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def view_usage_homepage():
     """Returns the homepage for the `view_usage` blueprint, which links to the usage query methods."""
     return render_template('index.html')
 

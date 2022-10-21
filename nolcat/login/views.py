@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def login_homepage():
     """Returns the homepage for the `login` blueprint."""
     #ToDo: Should this be the page for logging in (entering existing credentials) with Flask-User?
     return render_template('index.html')
