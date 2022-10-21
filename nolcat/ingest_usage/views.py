@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')
-def homepage():
+def ingest_usage_homepage():
     """Returns the homepage for the `ingest_usage` blueprint, which has links to the different usage upload options."""
     return render_template('index.html')
 
