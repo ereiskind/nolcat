@@ -650,6 +650,7 @@ class Resources(db.Model):
 
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
+    #ToDo: Include `Authors` in the metadata values captured here
     #ToDo: Adjust class to include following IR-only fields for search purposes
         #Parent_Title
         #Parent_Authors
@@ -708,6 +709,8 @@ class ResourcePlatforms(db.Model):
         self.platform (str): the name of the resource's platform in the COUNTER report
         self.proprietary_ID (str): the statistics source's ID for the resource
         self.URI (str): the statistics source's permalink to the resource
+        #ToDo: Publication_Date
+        #ToDo: Article_Version
         self.interface (int): the foreign key for `statisticsSources`
         self.resource_ID (int): the foreign key for `resources`
     """
