@@ -40,7 +40,7 @@ This folder contains all the Excel files, which are split into three subfolders:
 
 
 "\\tests\\data\\COUNTER_reports_LFS.py"
------------------------------------
+---------------------------------------
 
 This module contains the functions:
 

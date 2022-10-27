@@ -15,7 +15,7 @@ from data import deduplication_data
 @pytest.fixture
 def sample_COUNTER_reports():
     """Creates a dataframe with the data from all the COUNTER reports."""
-    yield COUNTER_reports.sample_COUNTER_reports()
+    yield COUNTER_reports_LFS.sample_COUNTER_reports()
 
 
 @pytest.fixture
