@@ -7,7 +7,7 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
-from data import COUNTER_reports
+from data import COUNTER_reports_LFS
 
 
 #Section: Fixtures

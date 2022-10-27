@@ -6,7 +6,7 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
-from data import COUNTER_reports
+from data import COUNTER_reports_LFS
 
 relation_name = pyip.inputMenu(
     prompt="Enter the number of the test data dataframe that should be output to a TSV.\n",
@@ -24,9 +24,7 @@ relation_name = pyip.inputMenu(
         "resourceMetadata_relation",
         "resourcePlatforms_relation",
         "usageData_relation",
-        "sample_R4_COUNTER_reports",
-        #"sample_R5_COUNTER_reports",  #ToDo: Uncomment when dataframe is created
-        #"sample_COUNTER_reports",  #ToDo: Uncomment when dataframe is created
+        "sample_COUNTER_reports",
     ],
     numbered=True,
 )
@@ -60,14 +58,8 @@ elif relation_name == "resourcePlatforms_relation":
     relation_data = relations.resourcePlatforms_relation()
 elif relation_name == "usageData_relation":
     relation_data = relations.usageData_relation()
-elif relation_name == "sample_R4_COUNTER_reports":
-    relation_data = COUNTER_reports.sample_R4_COUNTER_reports()
-elif relation_name == "sample_R5_COUNTER_reports":
-    #relation_data = COUNTER_reports.sample_R5_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
 elif relation_name == "sample_COUNTER_reports":
-    #relation_data = COUNTER_reports.sample_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
+    relation_data = COUNTER_reports_LFS.sample_COUNTER_reports()
 
 # Ideally, this module can run in the container in the AWS instance, but an inability to authenticate from that command line to GitHub makes running the module on the local machine the only way to access the TSVs on the local machine. This module is thus set up to determine if it's running in the AWS instance or on a local machine and create a `pathlib.Path` object for the absolute path of the file based on the environment and folder the module is run from.
 TSV_file_name = Path('/', 'nolcat', 'tests', 'data')
