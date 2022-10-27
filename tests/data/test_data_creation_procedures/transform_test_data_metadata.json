@@ -1,0 +1,544 @@
+[
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "index",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make cells in column ``index`` numbers"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Statistics_Source_ID",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make cells in column ``Statistics_Source_ID`` numbers"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "YOP",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make cells in column ``YOP`` numbers"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publication_Date",
+        "expression": "grel:value.split(\"T\")[0].toDate()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make cells in column ``Publication_Date`` dates"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "DOI",
+        "expression": "grel:if(or(value==\"\",value==\" \"),null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change whitespace values to null in column ``DOI``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Proprietary Identifier",
+        "expression": "grel:if(or(value==\"\",value==\" \"),null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change whitespace values to null in column ``Proprietary Identifier``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "Proprietary Identifier",
+        "newColumnName": "Proprietary_ID",
+        "description": "Rename column ``Proprietary Identifier`` to ``Proprietary_ID``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:value.replace(\"licence\",\"license\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Have `license` always use American English spelling"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:value.replace(/\\n/,\"\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Remove errant newlines from ``Resource_Name`` values"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "BR1",
+                                "l": "BR1"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "BR3",
+                                "l": "BR3"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Book\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Book` for BR1 and BR3 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "BR2",
+                                "l": "BR2"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Book_Segment\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Book_Segment` for BR2 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "DB1",
+                                "l": "DB1"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "DB2",
+                                "l": "DB2"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Database\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Database` for DB1 and DB2 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "JR1",
+                                "l": "JR1"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "JR2",
+                                "l": "JR2"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Journal\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Journal` for JR1 and JR2 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "MR1",
+                                "l": "MR1"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Multimedia\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Multimedia` for MR1 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "PR1",
+                                "l": "PR1"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Data_Type",
+        "expression": "grel:\"Platform\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Data_Type`` to `Platform` for PR1 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "TR1",
+                                "l": "TR1"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "BR1",
+                                "l": "BR1"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:\"Successful Title Requests\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Metric_Type`` to `Successful Title Requests` for BR1 and TR1 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "MR1",
+                                "l": "MR1"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:\"Successful Content Unit Requests\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Metric_Type`` to `Successful Content Unit Requests` for MR1 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "JR1",
+                                "l": "JR1"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:\"Successful Full-text Article Requests\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Metric_Type`` to `Successful Full-text Article Requests` for JR1 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Report",
+                    "expression": "value",
+                    "columnName": "Report",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "BR2",
+                                "l": "BR2"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Metric_Type",
+        "expression": "grel:\"Successful Section Requests\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change values in column ``Metric_Type`` to `Successful Section Requests` for BR2 reports"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Resource_Name`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publisher",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Publisher`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Platform",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Platform`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Authors",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Authors`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Parent_Title",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Parent_Title`` are encoded with UTF-8"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Parent_Authors",
+        "expression": "grel:value.reinterpret(\"utf-8\").unescape(\"html\")",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Ensure values in column ``Parent_Authors`` are encoded with UTF-8"
+    }
+]

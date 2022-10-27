@@ -71,6 +71,26 @@ This module contains the functions:
 * ``resourcePlatforms_relation()``: The dataframe of test data for the `resourcePlatforms` relation.
 * ``usageData_relation()``: The dataframe of test data for the `usageData` relation.
 
+Creating the Test Data
+======================
+All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+In the test data, the ``Statistics_Source_ID`` values are as follows
+* EBSCO = 1
+* Gale = 2
+* ProQuest = 0
+
+Test Data Creation Procedure
+----------------------------
+
+1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
+2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
+3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields, and add an ``index`` field with a sequential count.
+4. Split the above sheet into two CSVs: one without the usage data and one with just the usage data and the index.
+5. Load the metadata and the usage data CSVs into OpenRefine to create projects "nolcat_test_metadata" and "nolcat_test_usage" respectively.
+6. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_metadata.json" to the "nolcat_test_metadata" project.
+7. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_usage.json" to the "nolcat_test_usage" project.
+
 SUSHI Variations
 ****************
 Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the ``SUSHICallAndResponse`` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
