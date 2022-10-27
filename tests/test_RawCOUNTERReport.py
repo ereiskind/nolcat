@@ -12,25 +12,10 @@ from data import deduplication_data
 
 
 #Section: Fixtures
-#Subsection: Constants for Test Conditions
-@pytest.fixture
-def sample_R4_COUNTER_reports():
-    """Creates a dataframe with the data from all the COUNTER R4 reports."""
-    yield COUNTER_reports.sample_R4_COUNTER_reports()
-
-
-@pytest.fixture
-def sample_R5_COUNTER_reports():
-    """Creates a dataframe with the data from all the COUNTER R5 reports."""
-    #yield COUNTER_reports.sample_R5_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
-
-
 @pytest.fixture
 def sample_COUNTER_reports():
     """Creates a dataframe with the data from all the COUNTER reports."""
-    #yield COUNTER_reports.sample_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
+    yield COUNTER_reports.sample_COUNTER_reports()
 
 
 @pytest.fixture
