@@ -19,3 +19,15 @@ def matches_to_manually_confirm():
     """The dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` with the test data."""
     #ToDo: return <dict>
     pass
+
+
+def matched_records_including_sample_normalized_resource_data():
+    """The set of record index matches not needing manual confirmation created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` with the test data."""
+    #ToDo: return <set>
+    pass
+
+
+def matches_to_manually_confirm_including_sample_normalized_resource_data():
+    """The dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` with the test data."""
+    #ToDo: return <dict>
+    pass
