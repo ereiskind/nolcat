@@ -71,19 +71,6 @@
             "mode": "row-based"
         },
         "columnName": "Usage_Date",
-        "expression": "grel:value.replace(\"-\",\"-20\").replace(\"Jan\",\"01-01\").replace(\"Feb\",\"02-01\").replace(\"Mar\",\"03-01\").replace(\"Apr\",\"04-01\").replace(\"May\",\"05-01\").replace(\"Jun\",\"06-01\").replace(\"Jul\",\"07-01\").replace(\"Aug\",\"08-01\").replace(\"Sep\",\"09-01\").replace(\"Oct\",\"10-01\").replace(\"Nov\",\"11-01\").replace(\"Dec\",\"12-01\")",
-        "onError": "keep-original",
-        "repeat": false,
-        "repeatCount": 10,
-        "description": "Change the values in column ``Usage_Date`` to strings that can become dates"
-    },
-    {
-        "op": "core/text-transform",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "columnName": "Usage_Date",
         "expression": "value.toDate()",
         "onError": "keep-original",
         "repeat": false,

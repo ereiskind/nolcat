@@ -88,7 +88,7 @@ Test Data Creation Procedure
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields, and add an ``index`` field with a sequential count.
-4. Split the above sheet into two CSVs: one without the usage data and one with just the usage data and the index.
+4. Split the above sheet into two CSVs: one without the usage data and one with just the usage data, with headers formatted as dates, and the index.
 5. Load the metadata and the usage data CSVs into OpenRefine to create projects "nolcat_test_metadata" and "nolcat_test_usage" respectively.
 6. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_metadata.json" to the "nolcat_test_metadata" project.
 7. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_usage.json" to the "nolcat_test_usage" project.
