@@ -297,4 +297,410 @@
         "repeatCount": 10,
         "description": "Add row number to null value placeholders in ``reorder_online_ISSN``"
     },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_resource_name",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_resource_name``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_resource_name",
+        "description": "Blank down cells in column ``reorder_resource_name``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_resource_name",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_name",
+        "columnInsertIndex": 6,
+        "description": "Create column ``temp_resource_ID_name`` with the record number for non-null values and `x` for null placeholder values"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_resource_name",
+        "description": "Remove column ``reorder_resource_name``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_name",
+                    "expression": "grel:and(facetCount(value, 'value', 'temp_resource_ID_name') > 1,isNumeric(value))",
+                    "columnName": "temp_resource_ID_name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change all values not representing matches in column ``temp_resource_ID_name`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_DOI",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_DOI``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_DOI",
+        "description": "Blank down cells in column ``reorder_DOI``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_DOI",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_DOI",
+        "columnInsertIndex": 6,
+        "description": "Create column ``temp_resource_ID_DOI`` with the record number for non-null values and `x` for null placeholder values"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_DOI",
+        "description": "Remove column ``reorder_DOI``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_DOI",
+                    "expression": "grel:and(facetCount(value, 'value', 'temp_resource_ID_DOI') > 1,isNumeric(value))",
+                    "columnName": "temp_resource_ID_DOI",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_DOI",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change all values not representing matches in column ``temp_resource_ID_DOI`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_ISBN",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_ISBN``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_ISBN",
+        "description": "Blank down cells in column ``reorder_ISBN``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_ISBN",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_ISBN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``temp_resource_ID_ISBN`` with the record number for non-null values and `x` for null placeholder values"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_ISBN",
+        "description": "Remove column ``reorder_ISBN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "grel:and(facetCount(value, 'value', 'temp_resource_ID_ISBN') > 1,isNumeric(value))",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change all values not representing matches in column ``temp_resource_ID_ISBN`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_print_ISSN",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_print_ISSN``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_print_ISSN",
+        "description": "Blank down cells in column ``reorder_print_ISSN``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_print_ISSN",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_ISSN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``temp_resource_ID_ISSN`` with the record number for non-null values and `x` for null placeholder values"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_print_ISSN",
+        "description": "Remove column ``reorder_print_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "grel:and(facetCount(value, 'value', 'temp_resource_ID_ISSN') > 1,isNumeric(value))",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_ISSN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change all values not representing matches in column ``temp_resource_ID_ISSN`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_online_ISSN",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_online_ISSN``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_online_ISSN",
+        "description": "Blank down cells in column ``reorder_online_ISSN``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_online_ISSN",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_eISSN",
+        "columnInsertIndex": 6,
+        "description": "Create column ``temp_resource_ID_eISSN`` with the record number for non-null values and `x` for null placeholder values"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_online_ISSN",
+        "description": "Remove column ``reorder_online_ISSN``"
+    }
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_eISSN",
+                    "expression": "grel:and(facetCount(value, 'value', 'temp_resource_ID_eISSN') > 1,isNumeric(value))",
+                    "columnName": "temp_resource_ID_eISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_eISSN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change all values not representing matches in column ``temp_resource_ID_eISSN`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "temp_resource_ID_DOI",
+            "temp_resource_ID_ISBN",
+            "temp_resource_ID_ISSN",
+            "temp_resource_ID_eISSN",
+            "temp_resource_ID_name",
+            "temp_resource_ID_all",
+            "resourceMetadata",
+            "usage_data_ID",
+            "usageData",
+            "resourcePlatforms"
+        ],
+        "description": "Reorder columns"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "temp_resource_ID_DOI",
+        "description": "Because there aren't any duplicates to be found, remove column ``temp_resource_ID_DOI``"
+    },
 ]
