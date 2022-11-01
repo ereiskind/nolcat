@@ -648,7 +648,7 @@
         "op": "core/column-removal",
         "columnName": "reorder_online_ISSN",
         "description": "Remove column ``reorder_online_ISSN``"
-    }
+    },
     {
         "op": "core/text-transform",
         "engineConfig": {
