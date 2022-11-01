@@ -61,4 +61,110 @@
         ],
         "description": "Reorder columns"
     },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:if(length(value.split(\"]|[\"))==length(filter(value.split(\"]|[\"),value,value==\"`None`\")),cells.resourcePlatforms.value.split(\"]|[\")[2],value)",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_resourceMetadata",
+        "columnInsertIndex": 0,
+        "description": "Create column ``reorder_resourceMetadata`` with the value of column ``resourceMetadata`` for non-platform resources and the name of the platform from platform resources"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "row-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "string",
+                    "column": "reorder_resourceMetadata",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``reorder_resourceMetadata``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_resourceMetadata",
+        "description": "Blank down cells in column ``reorder_resourceMetadata``"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourcePlatforms",
+        "keyColumnName": "reorder_resourceMetadata",
+        "separator": "}|{",
+        "description": "Combine all values in record in column ``resourcePlatforms`` in the first row of the record separated by `}|{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usageData",
+        "keyColumnName": "reorder_resourceMetadata",
+        "separator": "}|{",
+        "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}|{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usage_data_ID",
+        "keyColumnName": "reorder_resourceMetadata",
+        "separator": "}|{",
+        "description": "Combine all values in record in column ``usage_data_ID`` in the first row of the record separated by `}|{`"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "reorder_resourceMetadata",
+                    "expression": "isBlank(value)",
+                    "columnName": "reorder_resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no unique data"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "reorder_resourceMetadata",
+        "expression": "grel:row.record.index",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_resource_ID_all",
+        "columnInsertIndex": 1,
+        "description": "Create column ``temp_resource_ID_all`` with record number"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "reorder_resourceMetadata",
+        "description": "Remove column ``reorder_resourceMetadata``"
+    },
 ]
