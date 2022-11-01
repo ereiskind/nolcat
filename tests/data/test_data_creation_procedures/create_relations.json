@@ -1,0 +1,64 @@
+[
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Statistics_Source_ID",
+        "expression": "grel:row.record.index",
+        "onError": "set-to-blank",
+        "newColumnName": "usage_data_ID",
+        "columnInsertIndex": 0,
+        "description": "Create column ``usage_data_ID`` containing row number"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Metric_Type",
+        "expression": "join ([coalesce(cells['Metric_Type'].value,'`None`'),coalesce(cells['Usage_Date'].value,'`None`'),coalesce(cells['Usage_Count'].value,'`None`'),coalesce(cells['YOP'].value,'`None`'),coalesce(cells['Access_Type'].value,'`None`'),coalesce(cells['Access_Method'].value,'`None`'),coalesce(cells['Data_Type'].value,'`None`'),coalesce(cells['Section_Type'].value,'`None`')],']|[')",
+        "onError": "keep-original",
+        "newColumnName": "usageData",
+        "columnInsertIndex": 20,
+        "description": "Create column ``usageData`` combining the values of the following fields in the given order: ``Metric_Type``, ``Usage_Date``, ``Usage_Count``, ``YOP``, ``Access_Type``, ``Access_Method``, ``Data_Type``, ``Section_Type``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Statistics_Source_ID",
+        "expression": "join ([coalesce(cells['Publisher'].value,'`None`'),coalesce(cells['Publisher_ID'].value,'`None`'),coalesce(cells['Platform'].value,'`None`'),coalesce(cells['Proprietary_ID'].value,'`None`'),coalesce(cells['Publication_Date'].value,'`None`'),coalesce(cells['Article_Version'].value,'`None`'),coalesce(cells['Statistics_Source_ID'].value,'`None`')],']|[')",
+        "onError": "keep-original",
+        "newColumnName": "resourcePlatforms",
+        "columnInsertIndex": 1,
+        "description": "Create column ``resourcePlatforms`` combining the values of the following fields in the given order: ``Publisher``, ``Publisher_ID``, ``Platform``, ``Proprietary_ID``, ``Publication_Date``, ``Article_Version``, ``Statistics_Source_ID``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Resource_Name",
+        "expression": "join ([coalesce(cells['Resource_Name'].value,'`None`'),coalesce(cells['DOI'].value,'`None`'),coalesce(cells['ISBN'].value,'`None`'),coalesce(cells['Print_ISSN'].value,'`None`'),coalesce(cells['Online_ISSN'].value,'`None`'),coalesce(cells['Authors'].value,'`None`'),coalesce(cells['Parent_Title'].value,'`None`'),coalesce(cells['Parent_Authors'].value,'`None`'),coalesce(cells['Parent_Publication_Date'].value,'`None`'),coalesce(cells['Parent_Article_Version'].value,'`None`'),coalesce(cells['Parent_Data_Type'].value,'`None`'),coalesce(cells['Parent_DOI'].value,'`None`'),coalesce(cells['Parent_Proprietary_ID'].value,'`None`'),coalesce(cells['Parent_ISBN'].value,'`None`'),coalesce(cells['Parent_Print_ISSN'].value,'`None`'),coalesce(cells['Parent_Online_ISSN'].value,'`None`'),coalesce(cells['Parent_URI'].value,'`None`')],']|[')",
+        "onError": "keep-original",
+        "newColumnName": "resourceMetadata",
+        "columnInsertIndex": 3,
+        "description": "Create column ``resourcePlatforms`` combining the values of the following fields in the given order: ``Resource_Name``, ``DOI``, ``ISBN``, ``Print_ISSN``, ``Online_ISSN``, ``Authors``, ``Parent_Title``, ``Parent_Authors``, ``Parent_Publication_Date``, ``Parent_Article_Version``, ``Parent_Data_Type``, ``Parent_DOI``, ``Parent_Proprietary_ID``, ``Parent_ISBN``, ``Parent_Print_ISSN``, ``Parent_Online_ISSN``, ``Parent_URI``, "
+    },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "resourceMetadata",
+            "usage_data_ID",
+            "usageData",
+            "resourcePlatforms"
+        ],
+        "description": "Reorder columns"
+    },
+]
