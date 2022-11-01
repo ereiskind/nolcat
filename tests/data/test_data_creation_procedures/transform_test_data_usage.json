@@ -481,11 +481,6 @@
         "description": "Create column ``Statistics_Source_ID`` based on the column of the same name in the metadata project by matching the values in ``index``"
     },
     {
-        "op": "core/column-removal",
-        "columnName": "index",
-        "description": "Remove column ``index``"
-    },
-    {
         "op": "core/column-addition",
         "engineConfig": {
             "facets": [],
