@@ -167,4 +167,134 @@
         "columnName": "reorder_resourceMetadata",
         "description": "Remove column ``reorder_resourceMetadata``"
     },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:value.split(\"]|[\")[0]",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_resource_name",
+        "columnInsertIndex": 0,
+        "description": "Create column ``reorder_resource_name`` with resource name value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_resource_name",
+        "expression": "grel:if(value==\"`None`\",value+\"-\"+row.record.index,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Add row number to null value placeholders in ``reorder_resource_name``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:value.split(\"]|[\")[1]",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_DOI",
+        "columnInsertIndex": 1,
+        "description": "Create column ``reorder_DOI`` with DOI"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_DOI",
+        "expression": "grel:if(value==\"`None`\",value+\"-\"+row.record.index,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Add row number to null value placeholders in ``reorder_DOI``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:value.split(\"]|[\")[2]",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_ISBN",
+        "columnInsertIndex": 2,
+        "description": "Create column ``reorder_ISBN`` with ISBN"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_ISBN",
+        "expression": "grel:if(value==\"`None`\",value+\"-\"+row.record.index,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Add row number to null value placeholders in ``reorder_ISBN``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:value.split(\"]|[\")[3]",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_print_ISSN",
+        "columnInsertIndex": 3,
+        "description": "Create column ``reorder_print_ISSN`` with print ISSN"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_print_ISSN",
+        "expression": "grel:if(value==\"`None`\",value+\"-\"+row.record.index,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Add row number to null value placeholders in ``reorder_print_ISSN``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "resourceMetadata",
+        "expression": "grel:value.split(\"]|[\")[4]",
+        "onError": "set-to-blank",
+        "newColumnName": "reorder_online_ISSN",
+        "columnInsertIndex": 4,
+        "description": "Create column ``reorder_online_ISSN`` with online ISSN"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "reorder_online_ISSN",
+        "expression": "grel:if(value==\"`None`\",value+\"-\"+row.record.index,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Add row number to null value placeholders in ``reorder_online_ISSN``"
+    },
 ]
