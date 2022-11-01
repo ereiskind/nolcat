@@ -92,6 +92,9 @@ Test Data Creation Procedure
 5. Load the metadata and the usage data CSVs into OpenRefine to create projects "nolcat_test_metadata" and "nolcat_test_usage" respectively.
 6. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_metadata.json" to the "nolcat_test_metadata" project.
 7. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data_usage.json" to the "nolcat_test_usage" project.
+8. Download the "nolcat_test_usage" project in Excel, then use the ``df`` column for the data in "data.COUNTER_reports.sample_COUNTER_reports()".
+9. Undo the step creating the ``df`` column in the "nolcat_test_usage" project.
+10. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations.json" to the "nolcat_test_usage" project.
 
 SUSHI Variations
 ****************
