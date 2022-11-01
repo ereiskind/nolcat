@@ -703,4 +703,864 @@
         "columnName": "temp_resource_ID_DOI",
         "description": "Because there aren't any duplicates to be found, remove column ``temp_resource_ID_DOI``"
     },
+    {
+        "op": "core/row-reorder",
+        "mode": "row-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "number",
+                    "column": "temp_resource_ID_ISBN",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``temp_resource_ID_ISBN``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "description": "Blank down cells in column ``temp_resource_ID_ISBN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Encyclopedia of Philosophy 2nd ed. vol. 2]|[`None`]|[978-0-0286-6072-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Encyclopedia of Philosophy 2nd ed. vol. 2]|[`None`]|[978-0-0286-6072-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change value in column ``temp_resource_ID_ISBN`` that doesn't belong in match to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "value",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": 69028,
+                                "l": "69028"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 71547,
+                                "l": "71547"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 72956,
+                                "l": "72956"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 78060,
+                                "l": "78060"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 96364,
+                                "l": "96364"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 65227,
+                                "l": "65227"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 69706,
+                                "l": "69706"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 58475,
+                                "l": "58475"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 83239,
+                                "l": "83239"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 75084,
+                                "l": "75084"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 57929,
+                                "l": "57929"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 89628,
+                                "l": "89628"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 56728,
+                                "l": "56728"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": 76812,
+                                "l": "76812"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For mismatches, change column ``temp_resource_ID_ISBN`` to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISSN",
+        "expression": "grel:if(length(filter(row.record.cells[\"temp_resource_ID_ISSN\"].value,v,isNumeric(v)))>1,if(length(filter(row.record.cells[\"temp_resource_ID_ISSN\"].value,v,v==row.record.cells[\"temp_resource_ID_ISSN\"].value[0]))==length(row.record.cells[\"temp_resource_ID_ISSN\"].value),if(row.index-row.record.fromRowIndex==0,row.record.cells[\"temp_resource_ID_ISSN\"].value[0],cells.temp_resource_ID_all.value+\"-x\"),if(row.index-row.record.fromRowIndex==0,forEach(row.record.cells[\"temp_resource_ID_ISSN\"].value,v,v).join(\"|\"),cells.temp_resource_ID_all.value+\"-x\")),if(and(length(filter(row.record.cells[\"temp_resource_ID_ISSN\"].value,v,isNumeric(v)))==1,row.index-row.record.fromRowIndex==0),filter(row.record.cells[\"temp_resource_ID_ISSN\"].value,v,isNumeric(v))[0],cells.temp_resource_ID_all.value+\"-x\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_ISSN`` has numbers indicating a duplicate value, preserve them in the first row of the record; otherwise, change them to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_eISSN",
+        "expression": "grel:if(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v)))>1,if(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,v==row.record.cells[\"temp_resource_ID_eISSN\"].value[0]))==length(row.record.cells[\"temp_resource_ID_eISSN\"].value),if(row.index-row.record.fromRowIndex==0,row.record.cells[\"temp_resource_ID_eISSN\"].value[0],cells.temp_resource_ID_all.value+\"-x\"),if(row.index-row.record.fromRowIndex==0,forEach(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,v).join(\"|\"),cells.temp_resource_ID_all.value+\"-x\")),if(and(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v)))==1,row.index-row.record.fromRowIndex==0),filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v))[0],cells.temp_resource_ID_all.value+\"-x\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_eISSN`` has numbers indicating a duplicate value, preserve them in the first row of the record; otherwise, change them to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "expression": "grel:if(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v)))>1,if(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,v==row.record.cells[\"temp_resource_ID_name\"].value[0]))==length(row.record.cells[\"temp_resource_ID_name\"].value),if(row.index-row.record.fromRowIndex==0,row.record.cells[\"temp_resource_ID_name\"].value[0],cells.temp_resource_ID_all.value+\"-x\"),if(row.index-row.record.fromRowIndex==0,forEach(row.record.cells[\"temp_resource_ID_name\"].value,v,v).join(\"|\"),cells.temp_resource_ID_all.value+\"-x\")),if(and(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v)))==1,row.index-row.record.fromRowIndex==0),filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v))[0],cells.temp_resource_ID_all.value+\"-x\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_name`` has numbers indicating a duplicate value, preserve them in the first row of the record; otherwise, change them to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "temp_resource_ID_all",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``temp_resource_ID_all`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``resourceMetadata`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usage_data_ID",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``usage_data_ID`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usageData",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourcePlatforms",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``resourcePlatforms`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_eISSN",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_eISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_name",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no metadata"
+    },
+    {
+        "op": "core/multivalued-cell-split",
+        "columnName": "temp_resource_ID_ISSN",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "mode": "separator",
+        "separator": "|",
+        "regex": false,
+        "description": "Split values in column ``temp_resource_ID_ISSN`` into new rows at pipes"
+    },
+    {
+        "op": "core/multivalued-cell-split",
+        "columnName": "temp_resource_ID_eISSN",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "mode": "separator",
+        "separator": "|",
+        "regex": false,
+        "description": "Split values in column ``temp_resource_ID_eISSN`` into new rows at pipes"
+    },
+    {
+        "op": "core/multivalued-cell-split",
+        "columnName": "temp_resource_ID_name",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "mode": "separator",
+        "separator": "|",
+        "regex": false,
+        "description": "Split values in column ``temp_resource_ID_name`` into new rows at pipes"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISSN",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make recently split numbers in column ``temp_resource_ID_ISSN`` number data types"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_eISSN",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make recently split numbers in column ``temp_resource_ID_eISSN`` number data types"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "expression": "grel:if(isError(row.record.cells[\"temp_resource_ID_name\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"temp_resource_ID_name\"].value[0],row.record.cells[\"temp_resource_ID_name\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``temp_resource_ID_name`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make recently split numbers in column ``temp_resource_ID_name`` number data types"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_all",
+        "expression": "grel:if(isError(row.record.cells[\"temp_resource_ID_all\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"temp_resource_ID_all\"].value[0],row.record.cells[\"temp_resource_ID_all\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``temp_resource_ID_all`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_all",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make recently split numbers in column ``temp_resource_ID_all`` number data types"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "resourceMetadata",
+        "expression": "grel:if(isError(row.record.cells[\"resourceMetadata\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"resourceMetadata\"].value[0],row.record.cells[\"resourceMetadata\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``resourceMetadata`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "usage_data_ID",
+        "expression": "grel:if(isError(row.record.cells[\"usage_data_ID\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"usage_data_ID\"].value[0],row.record.cells[\"usage_data_ID\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``usage_data_ID`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "usageData",
+        "expression": "grel:if(isError(row.record.cells[\"usageData\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"usageData\"].value[0],row.record.cells[\"usageData\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``usageData`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "resourcePlatforms",
+        "expression": "grel:if(isError(row.record.cells[\"resourcePlatforms\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"resourcePlatforms\"].value[0],row.record.cells[\"resourcePlatforms\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``resourcePlatforms`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": true,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_ISBN`` doesn't have multiple records due to different ISSN, eISSN, or name IDs, change the value to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/fill-down",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISBN",
+        "description": "If column ``temp_resource_ID_ISBN`` has multiple records due to different ISSN, eISSN, or name IDs, fill down cells in column ``temp_resource_ID_ISBN``"
+    },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "temp_resource_ID_ISSN",
+            "temp_resource_ID_eISSN",
+            "temp_resource_ID_name",
+            "temp_resource_ID_ISBN",
+            "temp_resource_ID_all",
+            "resourceMetadata",
+            "usage_data_ID",
+            "usageData",
+            "resourcePlatforms"
+        ],
+        "description": "Reorder columns"
+    }
 ]
