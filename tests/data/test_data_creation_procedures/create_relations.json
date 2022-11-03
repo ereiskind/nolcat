@@ -5,30 +5,64 @@
             "facets": [],
             "mode": "row-based"
         },
-        "baseColumnName": "index",
-        "expression": "grel:cell.cross(\"nolcat_test_metadata\",\"index\").cells[\"Report\"].value[0]",
-        "onError": "set-to-blank",
-        "newColumnName": "Report_Type",
-        "columnInsertIndex": 1,
-        "description": "Create column ``Report_Type`` based on the column of the same name in the metadata project by matching the values in ``index``"
-    },
-    {
-        "op": "core/column-removal",
-        "columnName": "index",
-        "description": "Remove column ``index``"
-    },
-    {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
         "baseColumnName": "Statistics_Source_ID",
         "expression": "grel:row.record.index",
         "onError": "set-to-blank",
         "newColumnName": "usage_data_ID",
         "columnInsertIndex": 0,
         "description": "Create column ``usage_data_ID`` containing row number"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "ISBN",
+        "expression": "grel:if(value==cells.Parent_ISBN.value,null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``ISBN`` if they're the same as the row's value in ``Parent_ISBN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Print_ISSN",
+        "expression": "grel:if(value==cells.Parent_Print_ISSN.value,null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``Print_ISSN`` if they're the same as the row's value in ``Parent_Print_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Online_ISSN",
+        "expression": "grel:if(value==cells.Parent_Online_ISSN.value,null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``Online_ISSN`` if they're the same as the row's value in ``Parent_Online_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "URI",
+        "expression": "grel:if(value==cells.Parent_URI.value,null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``URI`` if they're the same as the row's value in ``Parent_URI``"
     },
     {
         "op": "core/column-addition",
