@@ -120,12 +120,12 @@
             "facets": [],
             "mode": "row-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:if(length(value.split(\"]|[\"))==length(filter(value.split(\"]|[\"),value,value==\"`None`\")),cells.resourcePlatforms.value.split(\"]|[\")[2],value)",
         "onError": "set-to-blank",
         "newColumnName": "reorder_resourceMetadata",
         "columnInsertIndex": 0,
-        "description": "Create column ``reorder_resourceMetadata`` with the value of column ``resourceMetadata`` for non-platform resources and the name of the platform from platform resources"
+        "description": "Create column ``reorder_resourceMetadata`` with the value of column ``dedupe_resourceMetadata`` for non-platform resources and the name of the platform from platform resources"
     },
     {
         "op": "core/row-reorder",
@@ -226,7 +226,7 @@
             "facets": [],
             "mode": "record-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:value.split(\"]|[\")[0]",
         "onError": "set-to-blank",
         "newColumnName": "reorder_resource_name",
@@ -252,7 +252,7 @@
             "facets": [],
             "mode": "record-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:value.split(\"]|[\")[1]",
         "onError": "set-to-blank",
         "newColumnName": "reorder_DOI",
@@ -278,7 +278,7 @@
             "facets": [],
             "mode": "record-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:value.split(\"]|[\")[2]",
         "onError": "set-to-blank",
         "newColumnName": "reorder_ISBN",
@@ -304,7 +304,7 @@
             "facets": [],
             "mode": "record-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:value.split(\"]|[\")[3]",
         "onError": "set-to-blank",
         "newColumnName": "reorder_print_ISSN",
@@ -330,7 +330,7 @@
             "facets": [],
             "mode": "record-based"
         },
-        "baseColumnName": "resourceMetadata",
+        "baseColumnName": "dedupe_resourceMetadata",
         "expression": "grel:value.split(\"]|[\")[4]",
         "onError": "set-to-blank",
         "newColumnName": "reorder_online_ISSN",
@@ -744,6 +744,7 @@
             "temp_resource_ID_eISSN",
             "temp_resource_ID_name",
             "temp_resource_ID_all",
+            "dedupe_resourceMetadata",
             "resourceMetadata",
             "usage_data_ID",
             "usageData",
@@ -1075,6 +1076,13 @@
         "keyColumnName": "temp_resource_ID_ISBN",
         "separator": "}||{",
         "description": "Combine all values in record in column ``resourceMetadata`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}||{`"
     },
     {
         "op": "core/multivalued-cell-join",
@@ -1466,6 +1474,39 @@
             ],
             "mode": "record-based"
         },
+        "columnName": "dedupe_resourceMetadata",
+        "expression": "grel:if(isError(row.record.cells[\"dedupe_resourceMetadata\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"dedupe_resourceMetadata\"].value[0],row.record.cells[\"dedupe_resourceMetadata\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Split values in column ``dedupe_resourceMetadata`` at `}||{`, which divides records with identical metadata, or fill down the record if no such split exists"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
         "columnName": "usage_data_ID",
         "expression": "grel:if(isError(row.record.cells[\"usage_data_ID\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex]),row.record.cells[\"usage_data_ID\"].value[0],row.record.cells[\"usage_data_ID\"].value[0].split(\"}||{\")[row.index-row.record.fromRowIndex])",
         "onError": "keep-original",
@@ -1610,6 +1651,7 @@
             "temp_resource_ID_ISBN",
             "temp_resource_ID_all",
             "resourceMetadata",
+            "dedupe_resourceMetadata",
             "usage_data_ID",
             "usageData",
             "resourcePlatforms"
