@@ -1053,6 +1053,13 @@
     },
     {
         "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISBN",
+        "separator": "}||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
         "columnName": "resourceMetadata",
         "keyColumnName": "temp_resource_ID_ISBN",
         "separator": "}||{",
