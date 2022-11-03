@@ -382,11 +382,11 @@
             "mode": "record-based"
         },
         "baseColumnName": "reorder_resource_name",
-        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),cells.temp_resource_ID_all.value+\"-x\",row.record.index)",
         "onError": "set-to-blank",
         "newColumnName": "temp_resource_ID_name",
         "columnInsertIndex": 6,
-        "description": "Create column ``temp_resource_ID_name`` with the record number for non-null values and `x` for null placeholder values"
+        "description": "Create column ``temp_resource_ID_name`` with the record number for non-null values and the row's ``temp_resource_ID_all`` value followed by `-x` for null placeholder values"
     },
     {
         "op": "core/column-removal",
@@ -459,11 +459,11 @@
             "mode": "record-based"
         },
         "baseColumnName": "reorder_DOI",
-        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),cells.temp_resource_ID_all.value+\"-x\",row.record.index)",
         "onError": "set-to-blank",
         "newColumnName": "temp_resource_ID_DOI",
         "columnInsertIndex": 6,
-        "description": "Create column ``temp_resource_ID_DOI`` with the record number for non-null values and `x` for null placeholder values"
+        "description": "Create column ``temp_resource_ID_DOI`` with the record number for non-null values and the row's ``temp_resource_ID_all`` value followed by `-x` for null placeholder values"
     },
     {
         "op": "core/column-removal",
@@ -536,11 +536,11 @@
             "mode": "record-based"
         },
         "baseColumnName": "reorder_ISBN",
-        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),cells.temp_resource_ID_all.value+\"-x\",row.record.index)",
         "onError": "set-to-blank",
         "newColumnName": "temp_resource_ID_ISBN",
         "columnInsertIndex": 6,
-        "description": "Create column ``temp_resource_ID_ISBN`` with the record number for non-null values and `x` for null placeholder values"
+        "description": "Create column ``temp_resource_ID_ISBN`` with the record number for non-null values and the row's ``temp_resource_ID_all`` value followed by `-x` for null placeholder values"
     },
     {
         "op": "core/column-removal",
@@ -613,11 +613,11 @@
             "mode": "record-based"
         },
         "baseColumnName": "reorder_print_ISSN",
-        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),cells.temp_resource_ID_all.value+\"-x\",row.record.index)",
         "onError": "set-to-blank",
         "newColumnName": "temp_resource_ID_ISSN",
         "columnInsertIndex": 6,
-        "description": "Create column ``temp_resource_ID_ISSN`` with the record number for non-null values and `x` for null placeholder values"
+        "description": "Create column ``temp_resource_ID_ISSN`` with the record number for non-null values and the row's ``temp_resource_ID_all`` value followed by `-x` for null placeholder values"
     },
     {
         "op": "core/column-removal",
@@ -690,11 +690,11 @@
             "mode": "record-based"
         },
         "baseColumnName": "reorder_online_ISSN",
-        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),\"x\",row.record.index)",
+        "expression": "grel:if(isNotNull(value.match(/(`None`\\-\\d*)/)[0]),cells.temp_resource_ID_all.value+\"-x\",row.record.index)",
         "onError": "set-to-blank",
         "newColumnName": "temp_resource_ID_eISSN",
         "columnInsertIndex": 6,
-        "description": "Create column ``temp_resource_ID_eISSN`` with the record number for non-null values and `x` for null placeholder values"
+        "description": "Create column ``temp_resource_ID_eISSN`` with the record number for non-null values and the row's ``temp_resource_ID_all`` value followed by `-x` for null placeholder values"
     },
     {
         "op": "core/column-removal",
