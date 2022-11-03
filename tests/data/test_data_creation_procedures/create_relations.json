@@ -1096,5 +1096,244 @@
             "resourcePlatforms"
         ],
         "description": "Reorder columns"
-    }
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "row-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "number",
+                    "column": "temp_resource_ID_ISSN",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``temp_resource_ID_ISSN``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_ISSN",
+        "description": "Blank down cells in column ``temp_resource_ID_ISSN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_eISSN",
+        "expression": "grel:if(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v)))>1,if(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,v==row.record.cells[\"temp_resource_ID_eISSN\"].value[0]))==length(row.record.cells[\"temp_resource_ID_eISSN\"].value),if(row.index-row.record.fromRowIndex==0,row.record.cells[\"temp_resource_ID_eISSN\"].value[0],cells.temp_resource_ID_all.value+\"-x\"),if(row.index-row.record.fromRowIndex==0,forEach(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,v).join(\"|\"),cells.temp_resource_ID_all.value+\"-x\")),if(and(length(filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v)))==1,row.index-row.record.fromRowIndex==0),filter(row.record.cells[\"temp_resource_ID_eISSN\"].value,v,isNumeric(v))[0],cells.temp_resource_ID_all.value+\"-x\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_eISSN`` has numbers indicating a duplicate value, preserve them in the first row of the record; otherwise, change them to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "expression": "grel:if(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v)))>1,if(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,v==row.record.cells[\"temp_resource_ID_name\"].value[0]))==length(row.record.cells[\"temp_resource_ID_name\"].value),if(row.index-row.record.fromRowIndex==0,row.record.cells[\"temp_resource_ID_name\"].value[0],cells.temp_resource_ID_all.value+\"-x\"),if(row.index-row.record.fromRowIndex==0,forEach(row.record.cells[\"temp_resource_ID_name\"].value,v,v).join(\"|\"),cells.temp_resource_ID_all.value+\"-x\")),if(and(length(filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v)))==1,row.index-row.record.fromRowIndex==0),filter(row.record.cells[\"temp_resource_ID_name\"].value,v,isNumeric(v))[0],cells.temp_resource_ID_all.value+\"-x\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_name`` has numbers indicating a duplicate value, preserve them in the first row of the record; otherwise, change them to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "temp_resource_ID_all",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``temp_resource_ID_all`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``resourceMetadata`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usage_data_ID",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``usage_data_ID`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usageData",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourcePlatforms",
+        "keyColumnName": "temp_resource_ID_ISSN",
+        "separator": "}|||{",
+        "description": "Combine all values in record in column ``resourcePlatforms`` in the first row of the record separated by `}|||{`"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_eISSN",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_eISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_name",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no metadata"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": true,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "temp_resource_ID_ISSN",
+        "expression": "grel:cells.temp_resource_ID_all.value+\"-x\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "If column ``temp_resource_ID_ISSN`` doesn't have multiple records due to different eISSN or name IDs, change the value to the row's ``temp_resource_ID_all`` value followed by `-x`"
+    },
 ]
