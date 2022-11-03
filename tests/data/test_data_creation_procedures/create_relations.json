@@ -1336,4 +1336,19 @@
         "repeatCount": 10,
         "description": "If column ``temp_resource_ID_ISSN`` doesn't have multiple records due to different eISSN or name IDs, change the value to the row's ``temp_resource_ID_all`` value followed by `-x`"
     },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "temp_resource_ID_name",
+            "temp_resource_ID_ISBN",
+            "temp_resource_ID_ISSN",
+            "temp_resource_ID_all",
+            "resourceMetadata",
+            "dedupe_resourceMetadata",
+            "usage_data_ID",
+            "usageData",
+            "resourcePlatforms"
+        ],
+        "description": "Because there aren't any duplicates to be found, remove column ``temp_resource_ID_eISSN`` as part of reordering columns"
+    },
 ]
