@@ -71,11 +71,11 @@
             "mode": "row-based"
         },
         "baseColumnName": "Statistics_Source_ID",
-        "expression": "join ([coalesce(cells['Publisher'].value,'`None`'),coalesce(cells['Publisher_ID'].value,'`None`'),coalesce(cells['Platform'].value,'`None`'),coalesce(cells['Proprietary_ID'].value,'`None`'),coalesce(cells['Publication_Date'].value,'`None`'),coalesce(cells['Article_Version'].value,'`None`'),coalesce(cells['Statistics_Source_ID'].value,'`None`')],']|[')",
+        "expression": "join ([coalesce(cells['Publisher'].value,'`None`'),coalesce(cells['Publisher_ID'].value,'`None`'),coalesce(cells['Platform'].value,'`None`'),coalesce(cells['Proprietary_ID'].value,'`None`'),coalesce(cells['URI'].value,'`None`'),coalesce(cells['Publication_Date'].value,'`None`'),coalesce(cells['Article_Version'].value,'`None`'),coalesce(cells['Statistics_Source_ID'].value,'`None`')],']|[')",
         "onError": "keep-original",
         "newColumnName": "resourcePlatforms",
         "columnInsertIndex": 1,
-        "description": "Create column ``resourcePlatforms`` combining the values of the following fields in the given order: ``Publisher``, ``Publisher_ID``, ``Platform``, ``Proprietary_ID``, ``Publication_Date``, ``Article_Version``, ``Statistics_Source_ID``"
+        "description": "Create column ``resourcePlatforms`` combining the values of the following fields in the given order: ``Publisher``, ``Publisher_ID``, ``Platform``, ``Proprietary_ID``, ``URI``, ``Publication_Date``, ``Article_Version``, ``Statistics_Source_ID``"
     },
     {
         "op": "core/column-addition",
