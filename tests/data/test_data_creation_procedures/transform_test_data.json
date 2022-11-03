@@ -78,6 +78,19 @@
         "description": "Change whitespace values to null in column ``Proprietary Identifier``"
     },
     {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Online_ISSN",
+        "expression": "grel:if(or(value==\"\",value==\" \"),null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change whitespace values to null in column ``Online_ISSN``"
+    },
+    {
         "op": "core/column-rename",
         "oldColumnName": "Proprietary Identifier",
         "newColumnName": "Proprietary_ID",
