@@ -1351,4 +1351,154 @@
         ],
         "description": "Because there aren't any duplicates to be found, remove column ``temp_resource_ID_eISSN`` as part of reordering columns"
     },
+    {
+        "op": "core/row-reorder",
+        "mode": "row-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "number",
+                    "column": "temp_resource_ID_name",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``temp_resource_ID_name``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "temp_resource_ID_name",
+        "description": "Blank down cells in column ``temp_resource_ID_name``"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "temp_resource_ID_all",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``temp_resource_ID_all`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourceMetadata",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``resourceMetadata`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "dedupe_resourceMetadata",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``dedupe_resourceMetadata`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usage_data_ID",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``usage_data_ID`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usageData",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourcePlatforms",
+        "keyColumnName": "temp_resource_ID_name",
+        "separator": "}||||{",
+        "description": "Combine all values in record in column ``resourcePlatforms`` in the first row of the record separated by `}||||{`"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_name",
+                    "expression": "isBlank(value)",
+                    "columnName": "temp_resource_ID_name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISSN",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                },
+                {
+                    "type": "list",
+                    "name": "temp_resource_ID_ISBN",
+                    "expression": "grel:value.endsWith(\"-x\")",
+                    "columnName": "temp_resource_ID_ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no metadata"
+    },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "usage_data_ID",
+            "resourceMetadata",
+            "resourcePlatforms",
+            "usageData"
+        ],
+        "description": "Reorder columns"
+    }
 ]
