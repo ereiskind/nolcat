@@ -788,25 +788,6 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "temp_resource_ID_ISBN",
-                    "expression": "isBlank(value)",
-                    "columnName": "temp_resource_ID_ISBN",
-                    "invert": false,
-                    "omitBlank": false,
-                    "omitError": false,
-                    "selection": [
-                        {
-                            "v": {
-                                "v": true,
-                                "l": "true"
-                            }
-                        }
-                    ],
-                    "selectBlank": false,
-                    "selectError": false
-                },
-                {
-                    "type": "list",
                     "name": "resourceMetadata",
                     "expression": "value",
                     "columnName": "resourceMetadata",
