@@ -88,7 +88,7 @@
         "onError": "keep-original",
         "newColumnName": "resourceMetadata",
         "columnInsertIndex": 3,
-        "description": "Create column ``resourcePlatforms`` combining the values of the following fields in the given order: ``Resource_Name``, ``DOI``, ``ISBN``, ``Print_ISSN``, ``Online_ISSN``, ``Authors``, ``Parent_Title``, ``Parent_Authors``, ``Parent_Publication_Date``, ``Parent_Article_Version``, ``Parent_Data_Type``, ``Parent_DOI``, ``Parent_Proprietary_ID``, ``Parent_ISBN``, ``Parent_Print_ISSN``, ``Parent_Online_ISSN``, ``Parent_URI``, "
+        "description": "Create column ``resourceMetadata`` combining the values of the following fields in the given order: ``Resource_Name``, ``DOI``, ``ISBN``, ``Print_ISSN``, ``Online_ISSN``, ``Authors``, ``Parent_Title``, ``Parent_Authors``, ``Parent_Publication_Date``, ``Parent_Article_Version``, ``Parent_Data_Type``, ``Parent_DOI``, ``Parent_Proprietary_ID``, ``Parent_ISBN``, ``Parent_Print_ISSN``, ``Parent_Online_ISSN``, ``Parent_URI``"
     },
     {
         "op": "core/column-addition",
@@ -101,7 +101,7 @@
         "onError": "keep-original",
         "newColumnName": "dedupe_resourceMetadata",
         "columnInsertIndex": 3,
-        "description": "Create column ``dedupe_resourcePlatforms`` combining the values of the following fields in the given order: ``Resource_Name``, ``DOI``, ``dedupe_ISBN``, ``dedupe_Print_ISSN``, ``dedupe_Online_ISSN``, ``Authors``, ``Parent_Title``, ``Parent_Authors``, ``Parent_Publication_Date``, ``Parent_Article_Version``, ``Parent_Data_Type``, ``Parent_DOI``, ``Parent_Proprietary_ID``, ``Parent_ISBN``, ``Parent_Print_ISSN``, ``Parent_Online_ISSN``, ``Parent_URI``, "
+        "description": "Create column ``dedupe_resourceMetadata`` combining the values of the following fields in the given order: ``Resource_Name``, ``DOI``, ``dedupe_ISBN``, ``dedupe_Print_ISSN``, ``dedupe_Online_ISSN``, ``Authors``, ``Parent_Title``, ``Parent_Authors``, ``Parent_Publication_Date``, ``Parent_Article_Version``, ``Parent_Data_Type``, ``Parent_DOI``, ``Parent_Proprietary_ID``, ``Parent_ISBN``, ``Parent_Print_ISSN``, ``Parent_Online_ISSN``, ``Parent_URI``"
     },
     {
         "op": "core/column-reorder",
