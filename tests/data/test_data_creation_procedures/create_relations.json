@@ -1817,11 +1817,12 @@
         "sorting": {
             "criteria": [
                 {
-                    "valueType": "number",
+                    "valueType": "string",
                     "column": "first_appearance",
                     "blankPosition": 2,
                     "errorPosition": 1,
-                    "reverse": false
+                    "reverse": false,
+                    "caseSensitive": false
                 }
             ]
         },
