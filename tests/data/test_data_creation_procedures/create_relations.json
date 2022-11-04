@@ -1500,5 +1500,368 @@
             "usageData"
         ],
         "description": "Reorder columns"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "usage_data_ID",
+        "expression": "grel:forEach(value.replace(/\\}\\|+\\{/,\"|\").split(\"|\"),x,x.toNumber()).sort()[0]",
+        "onError": "set-to-blank",
+        "newColumnName": "first_appearance",
+        "columnInsertIndex": 0,
+        "description": "Create column ``first_appearance`` with the first usage_data_ID value for each resource"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Early European Books->Collection 1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Early European Books->Collection 1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "Early European Books Collection 1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Early European Books Collection 1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"a\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing EEBO Collection 1, change the value in column ``first_appearance`` to `a`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Early European Books Collection 10]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Early European Books Collection 10]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "Early European Books->Collection 10]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Early European Books->Collection 10]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"b\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing EEBO Collection 10, change the value in column ``first_appearance`` to `b`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Social Science Premium Collection->Education Collection->ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Social Science Premium Collection->Education Collection->ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "ProQuest Social Sciences Premium Collection->ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "ProQuest Social Sciences Premium Collection->ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "ERIC (Module)]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "ERIC (Module)]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "ERIC]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"c\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing ERIC, change the value in column ``first_appearance`` to `c`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Library Calendar]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`",
+                                "l": "Library Calendar]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "LIBRARY CALENDAR]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`",
+                                "l": "LIBRARY CALENDAR]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"d\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing Library Calendar, change the value in column ``first_appearance`` to `d`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Library Journal]|[`None`]|[`None`]|[0363-0277]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`}||||{Library Journal]|[`None`]|[`None`]|[`None`]|[0363-0277]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Library Journal]|[`None`]|[`None`]|[0363-0277]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`}||||{Library Journal]|[`None`]|[`None`]|[`None`]|[0363-0277]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "Library journal]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Library journal]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"e\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing Library Journal, change the value in column ``first_appearance`` to `e`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "NATION IN BRIEF]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`",
+                                "l": "NATION IN BRIEF]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "NATION In Brief]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`",
+                                "l": "NATION In Brief]|[`None`]|[`None`]|[0190-8286]|[`None`]|[`None`]|[The Washington Post]|[`None`]|[`None`]|[`None`]|[Newspaper_or_Newsletter]|[`None`]|[ProQuest:10327]|[`None`]|[0190-8286]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"f\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing Nation in Brief, change the value in column ``first_appearance`` to `f`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resourceMetadata",
+                    "expression": "value",
+                    "columnName": "resourceMetadata",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "The Yellow Wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "The Yellow Wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "The yellow wallpaper]|[`None`]|[978-0-585-15016-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "The yellow wallpaper]|[`None`]|[978-0-585-15016-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "Yellow Wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`}||||{Yellow Wallpaper]|[`None`]|[978-1-77651-048-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "Yellow Wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`}||||{Yellow Wallpaper]|[`None`]|[978-1-77651-048-1]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        },
+                        {
+                            "v": {
+                                "v": "The yellow wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`",
+                                "l": "The yellow wallpaper]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`]|[`None`"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:\"g\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "For records representing Yellow Wallpaper, change the value in column ``first_appearance`` to `g`"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "number",
+                    "column": "first_appearance",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``first_appearance``"
+    },
+    {
+        "op": "core/blank-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "first_appearance",
+        "description": "Blank down cells in column ``first_appearance``"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usage_data_ID",
+        "keyColumnName": "first_appearance",
+        "separator": "}|||||{",
+        "description": "Combine all values in record in column ``usage_data_ID`` in the first row of the record separated by `}|||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourceMetadata",
+        "keyColumnName": "first_appearance",
+        "separator": "}|||||{",
+        "description": "Combine all values in record in column ``resourceMetadata`` in the first row of the record separated by `}|||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "resourcePlatforms",
+        "keyColumnName": "first_appearance",
+        "separator": "}|||||{",
+        "description": "Combine all values in record in column ``resourcePlatforms`` in the first row of the record separated by `}|||||{`"
+    },
+    {
+        "op": "core/multivalued-cell-join",
+        "columnName": "usageData",
+        "keyColumnName": "first_appearance",
+        "separator": "}|||||{",
+        "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}|||||{`"
     }
 ]
