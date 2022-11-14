@@ -1864,5 +1864,719 @@
         "keyColumnName": "first_appearance",
         "separator": "}|||||{",
         "description": "Combine all values in record in column ``usageData`` in the first row of the record separated by `}|||||{`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "first_appearance",
+        "expression": "grel:forEach(cells.usage_data_ID.value.replace(/\\}\\|+\\{/,\"|\").split(\"|\"),x,x.toNumber()).sort()[0]",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Update values in column ``first_appearance`` based on finalized groupings"
+    },
+    {
+        "op": "core/row-reorder",
+        "mode": "record-based",
+        "sorting": {
+            "criteria": [
+                {
+                    "valueType": "number",
+                    "column": "first_appearance",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false
+                }
+            ]
+        },
+        "description": "Reorder rows based on ``first_appearance``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "first_appearance",
+        "expression": "grel:row.record.index",
+        "onError": "set-to-blank",
+        "newColumnName": "resource_ID",
+        "columnInsertIndex": 0,
+        "description": "Create column ``resource_ID`` with the resource ID value"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "first_appearance",
+        "description": "Remove column ``first_appearance``"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "baseColumnName": "usage_data_ID",
+        "expression": "grel:value",
+        "onError": "set-to-blank",
+        "newColumnName": "temp_usage_data_ID",
+        "columnInsertIndex": 1,
+        "description": "Create column ``temp_usage_data_ID`` as duplicate of column ``usage_data_ID``"
+    },
+    {
+        "op": "core/multivalued-cell-split",
+        "columnName": "temp_usage_data_ID",
+        "keyColumnName": "resource_ID",
+        "mode": "separator",
+        "separator": "\\}\\|\\|+\\{",
+        "regex": true,
+        "description": "Divide values in column ``temp_usage_data_ID`` into new rows at inverted curly braces with multiple pipes between them"
+    },
+    {
+        "op": "core/multivalued-cell-split",
+        "columnName": "resourceMetadata",
+        "keyColumnName": "resource_ID",
+        "mode": "separator",
+        "separator": "\\}\\|\\|+\\{",
+        "regex": true,
+        "description": "Divide values in column ``resourceMetadata`` into new rows at inverted curly braces with multiple pipes between them"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "temp_usage_data_ID",
+        "expression": "grel:value.split(\"}|{\").length()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Get number of IDs in each cell of column ``temp_usage_data_ID``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "temp_usage_data_ID",
+        "newColumnName": "usage_data_record_count",
+        "description": "Rename column ``temp_usage_data_ID`` to ``usage_data_record_count``"
+    },
+    {
+        "op": "core/column-split",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "resourceMetadata",
+        "guessCellType": false,
+        "removeOriginalColumn": true,
+        "mode": "separator",
+        "separator": "]|[",
+        "regex": false,
+        "maxColumns": 0,
+        "description": "Split column ``resourceMetadata`` into new columns at each `]|[`"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 1",
+        "newColumnName": "Resource_Name",
+        "description": "Rename column ``resourceMetadata 1`` to ``Resource_Name``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 2",
+        "newColumnName": "DOI",
+        "description": "Rename column ``resourceMetadata 2`` to ``DOI``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 3",
+        "newColumnName": "ISBN",
+        "description": "Rename column ``resourceMetadata 3`` to ``ISBN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 4",
+        "newColumnName": "Print_ISSN",
+        "description": "Rename column ``resourceMetadata 4`` to ``Print_ISSN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 5",
+        "newColumnName": "Online_ISSN",
+        "description": "Rename column ``resourceMetadata 5`` to ``Online_ISSN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 6",
+        "newColumnName": "Authors",
+        "description": "Rename column ``resourceMetadata 6`` to ``Authors``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 7",
+        "newColumnName": "Parent_Title",
+        "description": "Rename column ``resourceMetadata 7`` to ``Parent_Title``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 8",
+        "newColumnName": "Parent_Authors",
+        "description": "Rename column ``resourceMetadata 8`` to ``Parent_Authors``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 9",
+        "newColumnName": "Parent_Publication_Date",
+        "description": "Rename column ``resourceMetadata 9`` to ``Parent_Publication_Date``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 10",
+        "newColumnName": "Parent_Article_Version",
+        "description": "Rename column ``resourceMetadata 10`` to ``Parent_Article_Version``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 11",
+        "newColumnName": "Parent_Data_Type",
+        "description": "Rename column ``resourceMetadata 11`` to ``Parent_Data_Type``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 12",
+        "newColumnName": "Parent_DOI",
+        "description": "Rename column ``resourceMetadata 12`` to ``Parent_DOI``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 13",
+        "newColumnName": "Parent_Proprietary_ID",
+        "description": "Rename column ``resourceMetadata 13`` to ``Parent_Proprietary_ID``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 14",
+        "newColumnName": "Parent_ISBN",
+        "description": "Rename column ``resourceMetadata 14`` to ``Parent_ISBN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 15",
+        "newColumnName": "Parent_Print_ISSN",
+        "description": "Rename column ``resourceMetadata 15`` to ``Parent_Print_ISSN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 16",
+        "newColumnName": "Parent_Online_ISSN",
+        "description": "Rename column ``resourceMetadata 16`` to ``Parent_Online_ISSN``"
+    },
+    {
+        "op": "core/column-rename",
+        "oldColumnName": "resourceMetadata 17",
+        "newColumnName": "Parent_URI",
+        "description": "Rename column ``resourceMetadata 17`` to ``Parent_URI``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:if(row.record.cells[\"Resource_Name\"].value.inArray(\"`None`\"),if(row.record.cells[\"Resource_Name\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Resource_Name\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Resource_Name\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Resource_Name\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Resource_Name\"].value.uniques().length()==1,forEach(row.record.cells[\"Resource_Name\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Resource_Name\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Resource_Name\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Resource_Name\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Resource_Name`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "DOI",
+        "expression": "grel:if(row.record.cells[\"DOI\"].value.inArray(\"`None`\"),if(row.record.cells[\"DOI\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"DOI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"DOI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"DOI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"DOI\"].value.uniques().length()==1,forEach(row.record.cells[\"DOI\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"DOI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"DOI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"DOI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``DOI`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "ISBN",
+        "expression": "grel:if(row.record.cells[\"ISBN\"].value.inArray(\"`None`\"),if(row.record.cells[\"ISBN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"ISBN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"ISBN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"ISBN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"ISBN\"].value.uniques().length()==1,forEach(row.record.cells[\"ISBN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"ISBN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"ISBN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"ISBN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``ISBN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Print_ISSN",
+        "expression": "grel:if(row.record.cells[\"Print_ISSN\"].value.inArray(\"`None`\"),if(row.record.cells[\"Print_ISSN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Print_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Print_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Print_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Print_ISSN\"].value.uniques().length()==1,forEach(row.record.cells[\"Print_ISSN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Print_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Print_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Print_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Print_ISSN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Online_ISSN",
+        "expression": "grel:if(row.record.cells[\"Online_ISSN\"].value.inArray(\"`None`\"),if(row.record.cells[\"Online_ISSN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Online_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Online_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Online_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Online_ISSN\"].value.uniques().length()==1,forEach(row.record.cells[\"Online_ISSN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Online_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Online_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Online_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Online_ISSN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Authors",
+        "expression": "grel:if(row.record.cells[\"Authors\"].value.inArray(\"`None`\"),if(row.record.cells[\"Authors\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Authors\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Authors\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Authors\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Authors\"].value.uniques().length()==1,forEach(row.record.cells[\"Authors\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Authors\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Authors\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Authors\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Authors`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Title",
+        "expression": "grel:if(row.record.cells[\"Parent_Title\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Title\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Title\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Title\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Title\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Title\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Title\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Title\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Title\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Title\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Title`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Authors",
+        "expression": "grel:if(row.record.cells[\"Parent_Authors\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Authors\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Authors\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Authors\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Authors\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Authors\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Authors\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Authors\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Authors\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Authors\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Authors`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Publication_Date",
+        "expression": "grel:if(row.record.cells[\"Parent_Publication_Date\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Publication_Date\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Publication_Date\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Publication_Date\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Publication_Date\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Publication_Date\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Publication_Date\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Publication_Date\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Publication_Date\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Publication_Date\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Publication_Date`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Article_Version",
+        "expression": "grel:if(row.record.cells[\"Parent_Article_Version\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Article_Version\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Article_Version\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Article_Version\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Article_Version\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Article_Version\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Article_Version\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Article_Version\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Article_Version\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Article_Version\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Article_Version`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Data_Type",
+        "expression": "grel:if(row.record.cells[\"Parent_Data_Type\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Data_Type\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Data_Type\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Data_Type\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Data_Type\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Data_Type\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Data_Type\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Data_Type\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Data_Type\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Data_Type\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Data_Type`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_DOI",
+        "expression": "grel:if(row.record.cells[\"Parent_DOI\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_DOI\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_DOI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_DOI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_DOI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_DOI\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_DOI\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_DOI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_DOI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_DOI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_DOI`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Proprietary_ID",
+        "expression": "grel:if(row.record.cells[\"Parent_Proprietary_ID\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Proprietary_ID\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Proprietary_ID\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Proprietary_ID\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Proprietary_ID\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Proprietary_ID\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Proprietary_ID\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Proprietary_ID\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Proprietary_ID\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Proprietary_ID\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Proprietary_ID`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_ISBN",
+        "expression": "grel:if(row.record.cells[\"Parent_ISBN\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_ISBN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_ISBN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_ISBN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_ISBN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_ISBN\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_ISBN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_ISBN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_ISBN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_ISBN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_ISBN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Print_ISSN",
+        "expression": "grel:if(row.record.cells[\"Parent_Print_ISSN\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Print_ISSN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Print_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Print_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Print_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Print_ISSN\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Print_ISSN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Print_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Print_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Print_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Print_ISSN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_Online_ISSN",
+        "expression": "grel:if(row.record.cells[\"Parent_Online_ISSN\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_Online_ISSN\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_Online_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Online_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Online_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_Online_ISSN\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_Online_ISSN\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_Online_ISSN\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_Online_ISSN\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_Online_ISSN\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_Online_ISSN`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "Parent_URI",
+        "expression": "grel:if(row.record.cells[\"Parent_URI\"].value.inArray(\"`None`\"),if(row.record.cells[\"Parent_URI\"].value.uniques().length()==1,null,if(filter(row.record.cells[\"Parent_URI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_URI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_URI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",if(value==\"`None`\",null,value)),value+\"*\")),if(row.record.cells[\"Parent_URI\"].value.uniques().length()==1,forEach(row.record.cells[\"Parent_URI\"].value,value,if(row.index-row.record.fromRowIndex==0,value+\"|default\",null))[0],if(filter(row.record.cells[\"Parent_URI\"].value,value,value!=\"`None`\").uniques().length()==filter(row.record.cells[\"Parent_URI\"].value,value,value!=\"`None`\").length(),if(forEach(filter(forEachIndex(row.record.cells[\"Parent_URI\"].value,i,inner_value,inner_value+\"|\"+row.record.cells[\"usage_data_record_count\"].value[i]),filter_value,filter_value.split(\"|\")[0]!=\"`None`\"),outer_value,outer_value.split(\"|\")[1].toNumber()).sort()[-1]==row.record.cells[\"usage_data_record_count\"].value[row.index-row.record.fromRowIndex],value+\"|default\",value),value+\"*\")))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Mark defaults and change null placeholders to null values in column ``Parent_URI`` in records that don't have multiple rows with the same metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Resource_Name",
+                    "expression": "grel:value.endsWith(\"*\")",
+                    "columnName": "Resource_Name",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "Resource_Name",
+        "expression": "grel:if(value.toUppercase()==\"LIBRARY JOURNAL*\",if(value==\"Library Journal*\",if(row.index-row.record.fromRowIndex==0,value.substring(0,-1)+\"|default\",null),value.substring(0,-1)),if(value.toUppercase()==\"LIBRARY CALENDAR*\",if(value==\"Library Calendar*\",value.substring(0,-1),if(row.index-row.record.fromRowIndex==0,value.substring(0,-1)+\"|default\",null)),if(row.index-row.record.fromRowIndex==0,value.substring(0,-1)+\"|default\",if(or(row.index-row.record.fromRowIndex==2,row.index-row.record.fromRowIndex==3),value.substring(0,-1),null))))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Manually mark defaults and change null placeholders to null for unadjusted records remaining in column ``Resource_Name``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "ISBN",
+                    "expression": "grel:value.endsWith(\"*\")",
+                    "columnName": "ISBN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "ISBN",
+        "expression": "grel:if(value==\"0254-8038*\",value.substring(0,-1),if(row.index-row.record.fromRowIndex==0,value.substring(0,-1)+\"|default\",null))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Manually mark defaults and change null placeholders to null for unadjusted records remaining in column ``ISBN``"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Print_ISSN",
+                    "expression": "grel:value.endsWith(\"*\")",
+                    "columnName": "Print_ISSN",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "record-based"
+        },
+        "columnName": "Print_ISSN",
+        "expression": "grel:if(row.index-row.record.fromRowIndex==0,row.record.cells[\"Print_ISSN\"].value[0].substring(0,-1)+\"|default\",null)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Manually mark defaults and change null placeholders to null for unadjusted records remaining in column ``Print_ISSN``"
+    },
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "resource_ID",
+            "Resource_Name",
+            "DOI",
+            "ISBN",
+            "Print_ISSN",
+            "Online_ISSN",
+            "Authors",
+            "Parent_Title",
+            "Parent_Authors",
+            "Parent_Publication_Date",
+            "Parent_Article_Version",
+            "Parent_Data_Type",
+            "Parent_DOI",
+            "Parent_Proprietary_ID",
+            "Parent_ISBN",
+            "Parent_Print_ISSN",
+            "Parent_Online_ISSN",
+            "Parent_URI",
+            "usage_data_ID",
+            "resourcePlatforms",
+            "usageData"
+        ],
+        "description": "Reorder columns"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "resource_ID",
+                    "expression": "grel:filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0",
+                    "columnName": "resource_ID",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove completely blank rows"
+    },
+    {
+        "op": "core/transpose-columns-into-rows",
+        "startColumnName": "Resource_Name",
+        "columnCount": 17,
+        "ignoreBlankCells": true,
+        "fillDown": false,
+        "separator": null,
+        "keyColumnName": "metadata_field",
+        "valueColumnName": "metadata_value",
+        "description": "Pivot all columns with resource metadata into two columns, one named ``metadata_field`` with the column name and the other named ``metadata_value`` with the data value"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "metadata_value",
+                    "expression": "grel:value.endsWith(\"|default\")",
+                    "columnName": "metadata_value",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "baseColumnName": "metadata_value",
+        "expression": "grel:true",
+        "onError": "set-to-blank",
+        "newColumnName": "default",
+        "columnInsertIndex": 3,
+        "description": "Create column ``default`` containing Boolean `true` in rows with a default metadata value"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "metadata_value",
+                    "expression": "grel:value.endsWith(\"|default\")",
+                    "columnName": "metadata_value",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "metadata_value",
+        "expression": "grel:value.substring(0,-1*length(\"|default\"))",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Remove the default tag from values in column ``metadata_value``"
+    },
+    {
+        "op": "core/fill-down",
+        "engineConfig": {
+            "facets": [],
+            "mode": "record-based"
+        },
+        "columnName": "resource_ID",
+        "description": "Fill down cells in column ``resource_ID``"
+    },
+    {
+        "op": "core/column-move",
+        "columnName": "resource_ID",
+        "index": 3,
+        "description": "Move column ``resource_ID`` after the resourceMetadata relation fields"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "metadata_field",
+                    "expression": "isBlank(value)",
+                    "columnName": "metadata_field",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": false,
+                                "l": "false"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "baseColumnName": "metadata_field",
+        "expression": "grel:row.record.index",
+        "onError": "set-to-blank",
+        "newColumnName": "resource_metadata_ID",
+        "columnInsertIndex": 0,
+        "description": "Create column resource_metadata_ID at index 1 based on column metadata_field using expression grel:row.record.index"
     }
 ]
