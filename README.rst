@@ -5,9 +5,10 @@ Use Pandas to Transform COUNTER Binary Files
 ********************************************
 Initially, the CSV, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
 
-1. Create COUNTER report transformation class
+1. Create `UploadCOUNTERReports` class
 2. Have `initialization` blueprint use the new class
 3. Have `ingest_usage` blueprint use the new class
+4. Try to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `UploadCOUNTERReports` test module
 
 To-Do List
 **********
@@ -21,10 +22,8 @@ High Priority
 
 Branch: Complete Initialization Process
 ---------------------------------------
-* In `RawCOUNTERReport` constructor for uploaded files, make all dates the first of the month
 * Figure out layout and form iteration for page where manual matches are confirmed
 * Finish creating routes, forms, and HTML pages for `nolcat.initialization`
-* Figure out how to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `RawCOUNTERReport` test module
 * Write test for `RawCOUNTERReport.load_data_into_database` method
 * Write tests for `RawCOUNTERReport`/`nolcat.initialization` blueprint
 

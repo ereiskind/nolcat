@@ -44,7 +44,7 @@ This folder contains all the Excel files, which are split into three subfolders:
 
 This module contains the functions:
 
-* ``sample_COUNTER_reports()``: A dataframe with the data from the `COUNTER_workbooks_for_tests` test data COUNTER reports formatted in preparation for normalization.
+* ``sample_COUNTER_reports()``: The dataframe returned by a ``UploadCOUNTERReports.create_dataframe()`` method using the "COUNTER_workbooks_for_tests" test data COUNTER reports.
 
 "\\tests\\data\\deduplication_data.py"
 ---------------------------------------

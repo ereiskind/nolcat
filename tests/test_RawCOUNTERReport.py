@@ -55,26 +55,7 @@ def sample_RawCOUNTERReport(sample_COUNTER_reports):
     pass
 
 
-@pytest.fixture
-def sample_ImmutableMultiDict():
-    """Creates a `werkzeug.datastructures.ImmutableMultiDict` object for testing how the constructor handles such an object."""
-    #ToDo: Multiple days of work, shown and documented with prior commits in this repo, were unable to come up with a solution here. This was before Flask and WTForms were set up, so an actual upload is a solution now, but it also introduces a larger number of variables.
-    # https://flask.palletsprojects.com/en/2.0.x/testing/#form-data
-    # https://stackoverflow.com/a/35712344
-    # https://stackoverflow.com/a/50018981
-    #ToDo: Files to be targeted are in `os.listdir(Path('tests', 'bin', 'COUNTER_workbooks_for_tests'))`
-    pass
-
-
 #Section: Tests
-#Subsection: Test `RawCOUNTERReport.__init__()`
-def test_constructor_with_ImmutableMultiDict(sample_ImmutableMultiDict):
-    """Tests turning the data in one or more binary files uploaded into Flask, which is within a ImmutableMultiDict object, into a RawCOUNTERReport object."""
-    #ToDo: raw_report = RawCOUNTERReport(sample_ImmutableMultiDict)
-    #ToDo: RawCOUNTERReport has a method recreating pandas `equals`, but asserting data run through a broken constructor is equal to the same data run through the same broken constructor will result in a passed test; would a comparison of the data in the dataframes and a check of the data type of the result of the constructor be a more accurate pass condition?
-    pass
-
-
 #Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument()`
 def test_create_normalized_resource_data_argument_with_R4():
     """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from only R4 reports."""

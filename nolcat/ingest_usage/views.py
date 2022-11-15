@@ -16,22 +16,20 @@ def ingest_usage_homepage():
     return render_template('index.html')
 
 
-#ToDo: Create route for uploading R4 reports
-    #ToDo: Upload TSV of transformed R4 report, getting StatisticsSource ID from file name
-    #ToDo: Make R4 a RawCOUNTERReport object
-    #ToDo: normalized_resources_in_database = a dataframe using the SQL in the class docstring
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching(normalized_resources_in_database)
-    #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    #ToDo: RawCOUNTERReport.load_data_into_database
-
-
-#ToDo: Create route for uploading R5 reports--JSON FOR TABULAR R5 DOES NOT EXIST YET--Create way to change PR, DR, TR, IR from tabular report into something RawCOUNTERReport can handle
-    #ToDo: Upload TSV of transformed R5 report, getting StatisticsSource ID from file name
-    #ToDo: Make R5 a RawCOUNTERReport object
-    #ToDo: normalized_resources_in_database = a dataframe using the SQL in the class docstring
-    #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = RawCOUNTERReport.perform_deduplication_matching(normalized_resources_in_database)
-    #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-    #ToDo: RawCOUNTERReport.load_data_into_database
+#ToDo: Create route for uploading COUNTER reports
+    #ToDo: form = class of form containing multi-file upload option
+    #ToDo: if request.method == 'GET':
+        #ToDo: return render_template('page-the-form-is-on.html', form=form)
+    #ToDo: elif form.validate_on_submit():
+        #ToDo: df = UploadCOUNTERReports.create_dataframe(data returned by form)
+        #ToDo: new_records = RawCOUNTERReport(df)
+        #ToDo: normalized_resources_in_database = RawCOUNTERReport._create_normalized_resource_data_argument()
+        #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = new_records.perform_deduplication_matching(normalized_resources_in_database)
+        #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
+        #ToDo: Load new_records with metadata matches into database
+        #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+    #ToDo: else:
+        #ToDo: return abort(404)
 
 
 @bp.route('/harvest')

@@ -228,6 +228,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         #ToDo: Make any other necessary additions or changes for data to be saved to the database
 
         #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
+        #ALERT: Subsection may need heavy revision
         #ToDo: Make sure that `RawCOUNTERReport.__init__` can handle an object of whatever type `form.COUNTER_TSVs.data` is--if said type is "<class 'werkzeug.datastructures.ImmutableMultiDict'>", then completing the existing to-dos should make the constructor below good to go
         #ToDo: historical_data = RawCOUNTERReport(form.COUNTER_TSVs.data)
         #ToDo: Save `historical_data` into a temp file

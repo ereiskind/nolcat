@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts COUNTER data--as a download of multiple Excel workbooks for R4 and as an API call response (or possibly Excel workbooks) for R5--and changes it into a normalized dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts COUNTER data in a dataframe prepared for normalization--achieved through either the `SUSHICallAndResponse.make_SUSHI_call()` or `UploadCOUNTERReports.make_dataframe()` methods--and adds methods facilitating the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
@@ -29,64 +29,8 @@ class RawCOUNTERReport:
     """
     # Constructor Method
     def __init__(self, df):
-        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
-        
-        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report TSV files with a `<Statistics_Source_ID>_<report type>_<calendar year assigned to fiscal year in "yyyy" format>.tsv` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
-        """
-        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
-            dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):  #ToDo: Ensure this can work wil all COUNTER upload requests, not just at initialization
-                try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
-                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
-                except:
-                    logging.error(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
-                    #ToDo: Return an error with a message like the above that exits the constructor method
-                dataframe = pd.read_csv(
-                    file,  # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
-                    sep='\t',
-                    encoding='utf-8',
-                    encoding_errors='backslashreplace',
-                    dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT"/`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
-                        'Resource_Name': 'string',
-                        'Publisher': 'string',
-                        'Platform': 'string',
-                        'DOI': 'string',
-                        'Proprietary_ID': 'string',
-                        'ISBN': 'string',
-                        'Print_ISSN': 'string',
-                        'Online_ISSN': 'string',
-                        'Data_Type': 'string',
-                        'Section_Type': 'string',
-                        'Metric_Type': 'string',
-                        # `parse_dates` and the flooring functions make data type of 'Usage_Date' datetime64[ns]
-                        'Usage_Count': 'int',  # Python default used because this is a non-null field
-                    },
-                    parse_dates=['Usage_Date'],
-                    infer_datetime_format=True,
-                    #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
-                )
-                logging.debug(f"Dataframe before modifications:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
-                dataframe['Statistics_Source_ID'] = statistics_source_ID
-                dataframe['Resource_Name'] = dataframe['Resource_Name'].encode('utf-8').decode('unicode-escape')
-                dataframe['Publisher'] = dataframe['Publisher'].encode('utf-8').decode('unicode-escape')
-                dataframe['Platform'] = dataframe['Platform'].encode('utf-8').decode('unicode-escape')
-                try:  # From https://stackoverflow.com/a/42285489
-                    dataframe['Usage_Date'] = dataframe['Usage_Date'].astype('datetime64[M]')
-                except:  # Handles if for some reason `parse_dates` doesn't turn 'Usage_Date' into datetime64[ns]
-                    dataframe['Usage_Date'] = pd.to_datetime(dataframe['Usage_Date'].astype('datetime64[M]'))
-                logging.debug(f"Dataframe info and dataframe:\n{dataframe.info(verbose=True)}\n{dataframe}\n")
-                dataframes_to_concatenate.append(dataframe)
-            self.report_dataframe = pd.concat(
-                dataframes_to_concatenate,
-                ignore_index=True
-            )
-            #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
-            logging.info(f"Final dataframe:\n{self.report_dataframe}")
-        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # SUSHI responses are converted from JSON to dataframes before being passed into this class
-            self.report_dataframe = df
-        else:
-            pass  #ToDo: Return an error message and quit the constructor
+        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from a dataframe of COUNTER data prepared for normalization."""
+        self.report_dataframe = df
 
 
     def __repr__(self):

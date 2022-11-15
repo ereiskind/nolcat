@@ -73,6 +73,7 @@ def flask_client():
     #ToDo: Confirm an object of the correct type ("<class 'werkzeug.datastructures.ImmutableMultiDict'>"?) is created
 
 
+#ALERT: `UploadCOUNTERReports.create_dataframe()` turns Excel workbooks into dataframes; revise tests in light of this and changes to module being tested
 #ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_file_upload'])
 #ToDo: @pytest.mark.dependency()
 #ToDo: Create test confirming the creation of the `RawCOUNTERReport` object from the uploaded COUNTER reports in `collect_AUCT_and_historical_COUNTER_data()`
