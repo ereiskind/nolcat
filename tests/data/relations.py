@@ -6094,7 +6094,7 @@ def resourcePlatforms_relation():
             ["George Mason University", None, "GOLD", None, None, 2, 5],
             ["Yale University School of Law", None, "GOLD", None, None, 2, 10],
         ],
-        columns=["publisher", "publisher_ID", "platform", "proprietary_ID", "URI", "interface", "resource_ID"]
+        columns=["publisher", "publisher_ID", "platform", "proprietary_ID", "URI", "publication_date", "article_version", "interface", "resource_ID"]
     )
     df.index.name = "resource_platform_ID"
     return df
