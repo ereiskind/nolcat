@@ -5,6 +5,7 @@ Use Pandas to Transform COUNTER Binary Files
 ********************************************
 Initially, the CSV, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
 
+0. Revise test data based on Excel workbooks with both R4 and R5 data--this branch
 1. Add R5 test data--this branch/pull request
 2. Create COUNTER report transformation class
 3. Have `initialization` blueprint use the new class
@@ -201,3 +202,11 @@ Branch: Configure Flask-User
 ----------------------------
 * Create route/page for login page with tests
 * Establish if there's going to be a single user login and a single admin login, or if everyone has their own login
+
+About This Repo
+***************
+
+Large File Support
+==================
+
+With Git alone, GitHub limits individual files to 100 MB (102,400 KB). To add larger files to the repository, up to 2 GB (2,097,152 KB) in GitHub's free service tier, Git Large File Storage (LFS) is required. For documentation on LFS in GitHub and links to relevant LFS documentation, go to https://docs.github.com/en/repositories/working-with-files/managing-large-files.

@@ -227,9 +227,8 @@ digraph erd_and_classes {
         ]
         proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
-        // Parent_Data_Type?
-        // Parent_DOI?
-        // Parent_Proprietary_ID?
+        __publication_date
+        __article_version
         interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
         resource_ID_in_resourcePlatforms [
             label="resource_ID"
@@ -273,7 +272,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
-        create_normalized_resource_data_argument [shape="Mrecord"]
+        _create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }

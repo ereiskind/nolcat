@@ -7,93 +7,62 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
-from data import COUNTER_reports
+from data import COUNTER_reports_LFS
+from data import deduplication_data
 
 
 #Section: Fixtures
-#Subsection: Constants for Test Conditions
-@pytest.fixture
-def sample_R4_COUNTER_reports():
-    """Creates a dataframe with the data from all the COUNTER R4 reports."""
-    yield COUNTER_reports.sample_R4_COUNTER_reports()
-
-
-@pytest.fixture
-def sample_R5_COUNTER_reports():
-    """Creates a dataframe with the data from all the COUNTER R5 reports."""
-    #yield COUNTER_reports.sample_R5_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
-
-
 @pytest.fixture
 def sample_COUNTER_reports():
     """Creates a dataframe with the data from all the COUNTER reports."""
-    #yield COUNTER_reports.sample_COUNTER_reports()
-    pass  #ToDo: Update when dataframe is created
-
-
-@pytest.fixture
-def sample_R4_normalized_resource_data():
-    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from only R4 reports."""
-    pass
+    yield COUNTER_reports_LFS.sample_COUNTER_reports()
 
 
 @pytest.fixture
 def sample_normalized_resource_data():
-    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method when the underlying dataframe has resource data from R4 and R5 reports."""
+    """The dataframe returned by a `RawCOUNTERReport.normalized_resource_data()` method, which returns a dataframe of resource data from the `COUNTER_workbooks_for_tests` test data COUNTER reports."""
+    yield deduplication_data.sample_normalized_resource_data()
+
+
+@pytest.fixture
+def matched_records():
+    """Creates the set of record index matches not needing manual confirmation created by ``RawCOUNTERReport.perform_deduplication_matching()`` with the test data."""
+    yield deduplication_data.matched_records()
+
+
+@pytest.fixture
+def matches_to_manually_confirm():
+    """Creates the dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` with the test data."""
+    yield deduplication_data.matches_to_manually_confirm()
+
+
+@pytest.fixture
+def matched_records_including_sample_normalized_resource_data():
+    """Creates the set of record index matches not needing manual confirmation created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` with the test data."""
+    yield deduplication_data.matched_records_including_sample_normalized_resource_data()
+
+
+@pytest.fixture
+def matches_to_manually_confirm_including_sample_normalized_resource_data():
+    """Creates the dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` with the test data."""
+    yield deduplication_data.matches_to_manually_confirm_including_sample_normalized_resource_data
+
+
+@pytest.fixture
+def sample_RawCOUNTERReport(sample_COUNTER_reports):
+    """A RawCOUNTERReport object with the data from the `COUNTER_workbooks_for_tests` test data COUNTER reports."""
+    #ToDo: yield RawCOUNTERReport(sample_COUNTER_reports)
     pass
 
 
-#Subsection: `RawCOUNTERReport` Input and Output Objects
 @pytest.fixture
 def sample_ImmutableMultiDict():
     """Creates a `werkzeug.datastructures.ImmutableMultiDict` object for testing how the constructor handles such an object."""
     #ToDo: Multiple days of work, shown and documented with prior commits in this repo, were unable to come up with a solution here. This was before Flask and WTForms were set up, so an actual upload is a solution now, but it also introduces a larger number of variables.
-    pass
-
-
-@pytest.fixture
-def sample_R4_RawCOUNTERReport():
-    """Creates a dataframe with all the data of the R4 COUNTER reports. 
-    
-    A function containing all the raw data and creating the dataframe is used so file import issues don't create problems.
-    """
-    df = COUNTER_reports.sample_R4_COUNTER_reports()
-    #ToDo: Set dtypes based on below:
-    # dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT".`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
-    #     'Resource_Name': 'string',
-    #     'Publisher': 'string',
-    #     'Platform': 'string',
-    #     'DOI': 'string',
-    #     'Proprietary_ID': 'string',
-    #     'ISBN': 'string',
-    #     'Print_ISSN': 'string',
-    #     'Online_ISSN': 'string',
-    #     'Data_Type': 'string',
-    #     'Section_Type': 'string',
-    #     'Metric_Type': 'string',
-    #     'Usage_Count': 'int',  # Python default used because this is a non-null field
-    #     'Statistics_Source_ID': 'int',
-    # },
-    raw_report = RawCOUNTERReport(df)
-    yield raw_report
-
-
-@pytest.fixture
-def sample_R5_RawCOUNTERReport():
-    """A RawCOUNTERReport object with the data of reformatted R5 COUNTER reports."""
-    #ToDo: Mock data in tabular R5 reports from same statistics sources with same resources as in R4
-    #ToDo: Include `Gale Business: Entrepreneurship` in resources (Gale's Small Business Resource Center -> Gale Business: Entrepreneurship in early 2020)
-    #ToDo: Set up R5 data like R4 data
-    #ToDo: Determine best way to get all of above data into single RawCOUNTERReport object
-    pass
-
-
-@pytest.fixture
-def sample_RawCOUNTERReport():
-    """A RawCOUNTERReport object with the data of reformatted R4 and R5 COUNTER reports."""
-    #ToDo: Get both R4 and R5 data
-    #ToDo: Combine above into RawCOUNTERReport
+    # https://flask.palletsprojects.com/en/2.0.x/testing/#form-data
+    # https://stackoverflow.com/a/35712344
+    # https://stackoverflow.com/a/50018981
+    #ToDo: Files to be targeted are in `os.listdir(Path('tests', 'bin', 'COUNTER_workbooks_for_tests'))`
     pass
 
 

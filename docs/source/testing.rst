@@ -24,12 +24,82 @@ The container was created because NoLCAT can only be used with Python versions 3
 
 Test Data
 *********
-All test data provided in this repository is based on the binary files in "\\tests\\bin", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+Since this application is about data--its collection, storage, organization, and retrieval--many parts of the application require sample data for testing. To that end, a set of sample test data is included in this repo, along with information about how it was constructed.
 
-For the purposes of the OpenRefine exports, the ``Statistics_Source_ID`` values are as follows
+Test Data Folders and Modules
+=============================
+
+"\\tests\\bin\\"
+----------------
+
+This folder contains all the Excel files, which are split into three subfolders:
+
+* "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
+* "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
+* "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
+
+
+"\\tests\\data\\COUNTER_reports_LFS.py"
+---------------------------------------
+
+This module contains the functions:
+
+* ``sample_COUNTER_reports()``: A dataframe with the data from the `COUNTER_workbooks_for_tests` test data COUNTER reports formatted in preparation for normalization.
+
+"\\tests\\data\\deduplication_data.py"
+---------------------------------------
+
+This module contains the functions:
+
+* ``sample_normalized_resource_data()``: The dataframe returned by a ``RawCOUNTERReport.normalized_resource_data()`` method when the underlying dataframe has resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports.
+* ``matched_records()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport``.
+* ``matches_to_manually_confirm()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
+* ``matched_records_including_sample_normalized_resource_data()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**.
+* ``matches_to_manually_confirm_including_sample_normalized_resource_data()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**; a dictionary which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
+
+"\\tests\\data\\relations.py"
+-----------------------------
+
+This module contains the functions:
+
+* ``fiscalYears_relation()``: The dataframe of test data for the `fiscalYears` relation.
+* ``vendors_relation()``: The dataframe of test data for the `vendors` relation.
+* ``statisticsSources_relation()``: The dataframe of test data for the `statisticsSources` relation.
+* ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
+* ``resourceSources_relation()``: The dataframe of test data for the `resourceSources` relation.
+* ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
+* ``resources_relation()``: The dataframe of test data for the `resources` relation.
+* ``resourceMetadata_relation()``: The dataframe of test data for the `resourceMetadata` relation.
+* ``resourcePlatforms_relation()``: The dataframe of test data for the `resourcePlatforms` relation.
+* ``usageData_relation()``: The dataframe of test data for the `usageData` relation.
+
+Creating the Test Data
+======================
+All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+
+In the test data, the ``Statistics_Source_ID`` values are as follows
 * EBSCO = 1
 * Gale = 2
 * ProQuest = 0
+
+Test Data Creation Procedure
+----------------------------
+
+1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
+2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
+3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields. (That worksheet is saved as "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx".)
+4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
+5. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data.json" to the "nolcat_test_data" project.
+6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.COUNTER_reports.sample_COUNTER_reports()".
+7. Undo the step creating the ``df`` column in the "nolcat_test_data" project.
+8.  Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_1.json" to the "nolcat_test_data" project.
+9.  Create a filter for blanks on the ``resourceMetadata`` column in the "nolcat_test_data" project and select ``false`` on that filter.
+10. Download the "nolcat_test_data" project in Excel, then use the ``resourceMetadata`` column for the data in "data.relations.resourceMetadata_relation()".
+11. For every value in the ``resource_ID`` column in the "nolcat_test_data" project, add a "None" or a note to the data of the "data.relations.resources_relation()" series.
+12. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_2.json" to the "nolcat_test_data" project.
+13. Download the "nolcat_test_data" project in Excel, then use the ``resourcePlatforms`` column for the data in "data.relations.resourcePlatforms_relation()".
+14. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_3.json" to the "nolcat_test_data" project.
+15. Download the "nolcat_test_data" project in Excel, then use the ``usageData`` column for the data in "data.relations.usageData_relation()".
 
 SUSHI Variations
 ****************
