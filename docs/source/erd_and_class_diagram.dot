@@ -294,6 +294,17 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_UploadCOUNTERReports {
+        label="CLASS: UploadCOUNTERReports"
+
+        // Attributes
+        COUNTER_report_files
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
+    }
+
+
     subgraph cluster_Blueprints {
         label="CLASS: Blueprints"
 
