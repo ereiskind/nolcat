@@ -258,7 +258,7 @@ def determine_if_resources_match():
         pass
     
     #Section: After Form Submission
-    elif form.validate_on_submit():
+    #ToDo: elif form.validate_on_submit():
         #ToDo: things related to saving and transforming form data
         #ToDo: return redirect(url_for('the_next_route_function'))
         pass
