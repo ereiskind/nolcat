@@ -34,7 +34,7 @@ def create_app():
     db.init_app(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
+    app.config['UPLOAD_FOLDER'] = './data'
 
     #Section: Create Command to Build Schema
     # Documentation at https://flask.palletsprojects.com/en/2.1.x/appcontext/
