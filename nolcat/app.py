@@ -26,10 +26,16 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
+def internal_server_error(error):
+    """Returns the 500 page when a HTTP 500 error is raised."""
+    return render_template('500.html', error=error), 500
+
+
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_server_error)
     csrf.init_app(app)
     db.init_app(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
