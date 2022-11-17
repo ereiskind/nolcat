@@ -41,7 +41,7 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
-@bp.route('/')
+@bp.route('/', methods=["GET","POST"])
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
