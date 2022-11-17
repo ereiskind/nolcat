@@ -60,7 +60,7 @@ def collect_initial_relation_data():
         fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
         fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
 
-        vendors_dataframe = pd.read_csv(
+        '''vendors_dataframe = pd.read_csv(
             form.vendors_TSV.data,
             sep='\t',
             encoding='utf-8',
@@ -113,11 +113,11 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')'''
 
         #Section: Load Data into Database
         #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
-        fiscalYears_dataframe.to_sql(
+        '''fiscalYears_dataframe.to_sql(
             'fiscalYears',
             con=db.engine,
             if_exists='replace',
@@ -157,7 +157,7 @@ def collect_initial_relation_data():
             con=db.engine,
             if_exists='replace',
         )
-        db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
+        db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary'''
         return redirect(url_for('collect_annualUsageCollectionTracking_data'))
 
     return render_template('initialization/index.html', form=form)
