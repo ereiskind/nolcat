@@ -23,7 +23,7 @@ from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
 form = FormClass()
 if request.method == 'GET':
     #ToDo: Anything that's needed before the page the form is on renders
-    return render_template('page-the-form-is-on.html', form=form)
+    return render_template('blueprint_name/page-the-form-is-on.html', form=form)
 elif form.validate_on_submit():
     #ToDo: Process data from `form`
     return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
@@ -160,7 +160,7 @@ def collect_initial_relation_data():
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
         return redirect(url_for('collect_annualUsageCollectionTracking_data'))
 
-    return render_template('index.html', form=form)
+    return render_template('initialization/index.html', form=form)
 
 
 @bp.route('/initialization-page-2', methods=["GET","POST"])
@@ -207,7 +207,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 #ToDo: })
                 continue  # To close the block at runtime
         #ToDo: TSV_file.close()
-        return render_template('initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-2.html', form=form)
     
     #Section: After Form Submission
     elif form.validate_on_submit():
@@ -254,7 +254,7 @@ def determine_if_resources_match():
         #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching()
         #ToDo: for metadata_pair in dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata.keys():  #ToDo: May need to change depending on connections via network library
             #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")] where the display value comes from `metadata_pair`
-        #ToDo: return render_template('select-matches.html', form=form)
+        #ToDo: return render_template('initialization/select-matches.html', form=form)
         pass
     
     #Section: After Form Submission
@@ -278,7 +278,7 @@ def determine_if_resources_match():
         #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
         #ToDo: Create an iterable to pass all the records returned by the above to a form
         #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        #ToDo: return render_template('page-the-form-is-on.html', form=form)
+        #ToDo: return render_template('initialization/page-the-form-is-on.html', form=form)
     #ToDo: elif form.validate_on_submit():
         #ToDo: For each file uploaded in the form
             #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
@@ -296,4 +296,4 @@ def data_load_complete():
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
-    return render_template('show-loaded-data.html')
+    return render_template('initialization/show-loaded-data.html')

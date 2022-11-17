@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 @bp.route('/')
 def view_vendors_homepage():
     """Returns the homepage for the `view_vendors` blueprint, which lists the records in `vendors`."""
-    return render_template('index.html')
+    return render_template('view_vendors/index.html')
 
 
 #ToDo: Create route to add a new vendor or edit a vendor

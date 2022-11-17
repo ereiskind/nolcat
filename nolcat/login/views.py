@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 def login_homepage():
     """Returns the homepage for the `login` blueprint."""
     #ToDo: Should this be the page for logging in (entering existing credentials) with Flask-User?
-    return render_template('index.html')
+    return render_template('login/index.html')
 
 
 #ToDo: If individual accounts are to be used, create route to account creation page with Flask-User

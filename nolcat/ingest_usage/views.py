@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 @bp.route('/')
 def ingest_usage_homepage():
     """Returns the homepage for the `ingest_usage` blueprint, which has links to the different usage upload options."""
-    return render_template('index.html')
+    return render_template('ingest_usage/index.html')
 
 
 #ToDo: Create route for uploading COUNTER reports
@@ -45,4 +45,4 @@ def harvest_SUSHI_statistics():
 #ToDo: Create route to and page for adding non-COUNTER compliant usage
     #ToDo: How should non-COUNTER usage be stored? As BLOB in MySQL, as files in the container, as a Docker volume, in some other manner?
     #ToDo: Find all resources to which this applies with `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
-    # render_template('upload-historical-non-COUNTER-data.html')
+    # render_template('ingest_usage/upload-historical-non-COUNTER-data.html')
