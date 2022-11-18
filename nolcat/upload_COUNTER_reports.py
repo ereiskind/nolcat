@@ -362,4 +362,101 @@ class UploadCOUNTERReports:
                 
                 logging.info(f"Dataframe being used in concatenation:\n{df}")
                 all_dataframes_to_concatenate.append(df)
-        pass
+        
+        
+        #Section: Create Final Combined Dataframe
+        #Subsection: Combine Dataframes
+        combined_df = pd.concat(
+            all_dataframes_to_concatenate,
+            ignore_index=True,  # Resets index
+        )
+        logging.info(f"Combined dataframe:\n{df}")
+
+        #Subsection: Set Data Types
+        combined_df_field_names = combined_df.columns.values.tolist()
+
+        combined_df_dtypes = {
+            'Platform': 'string',
+            # Usage_Date retains datetime64[ns] type from heading conversion
+            # Usage_Count is a numpy int type, let the program determine the number of bits used for storage
+            'Statistics_Source_ID': 'int',
+        }
+        if "Resource_Name" in combined_df_field_names:
+            combined_df_dtypes['Resource_Name'] = 'string'
+        if "Publisher" in combined_df_field_names:
+            combined_df_dtypes['Publisher'] = 'string'
+        if "Publisher_ID" in combined_df_field_names:
+            combined_df_dtypes['Publisher_ID'] = 'string'
+        if "DOI" in combined_df_field_names:
+            combined_df_dtypes['DOI'] = 'string'
+        if "Proprietary_ID" in combined_df_field_names:
+            combined_df_dtypes['Proprietary_ID'] = 'string'
+        if "ISBN" in combined_df_field_names:
+            combined_df_dtypes['ISBN'] = 'string'
+        if "Print_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Print_ISSN'] = 'string'
+        if "Online_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Online_ISSN'] = 'string'
+        if "Authors" in combined_df_field_names:
+            combined_df_dtypes['Authors'] = 'string'
+        if "Publication_Date" in combined_df_field_names:
+            combined_df_dtypes['Publication_Date'] = 'datetime64[ns]'
+        if "Article_Version" in combined_df_field_names:
+            combined_df_dtypes['Article_Version'] = 'string'
+        if "Data_Type" in combined_df_field_names:
+            combined_df_dtypes['Data_Type'] = 'string'
+        if "Section_Type" in combined_df_field_names:
+            combined_df_dtypes['Section_Type'] = 'string'
+        if "YOP" in combined_df_field_names:
+            combined_df_dtypes['YOP'] = 'int'  # `smallint` in database
+        if "Access_Type" in combined_df_field_names:
+            combined_df_dtypes['Access_Type'] = 'string'
+        if "Parent_Title" in combined_df_field_names:
+            combined_df_dtypes['Parent_Title'] = 'string'
+        if "Parent_Authors" in combined_df_field_names:
+            combined_df_dtypes['Parent_Authors'] = 'string'
+        if "Parent_Publication_Date" in combined_df_field_names:
+            combined_df_dtypes['Parent_Publication_Date'] = 'datetime64[ns]'
+        if "Parent_Article_Version" in combined_df_field_names:
+            combined_df_dtypes['Parent_Article_Version'] = 'string'
+        if "Parent_Data_Type" in combined_df_field_names:
+            combined_df_dtypes['Parent_Data_Type'] = 'string'
+        if "Parent_DOI" in combined_df_field_names:
+            combined_df_dtypes['Parent_DOI'] = 'string'
+        if "Parent_Proprietary_ID" in combined_df_field_names:
+            combined_df_dtypes['Parent_Proprietary_ID'] = 'string'
+        if "Parent_ISBN" in combined_df_field_names:
+            combined_df_dtypes['Parent_ISBN'] = 'string'
+        if "Parent_Print_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Parent_Print_ISSN'] = 'string'
+        if "Parent_Online_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Parent_Online_ISSN'] = 'string'
+        if "Parent_URI" in combined_df_field_names:
+            combined_df_dtypes['Parent_URI'] = 'string'
+        if "Component_Title" in combined_df_field_names:
+            combined_df_dtypes['Component_Title'] = 'string'
+        if "Component_Authors" in combined_df_field_names:
+            combined_df_dtypes['Component_Authors'] = 'string'
+        if "Component_Publication_Date" in combined_df_field_names:
+            combined_df_dtypes['Component_Publication_Date'] = 'string'
+        if "Component_Data_Type" in combined_df_field_names:
+            combined_df_dtypes['Component_Data_Type'] = 'string'
+        if "Component_DOI" in combined_df_field_names:
+            combined_df_dtypes['Component_DOI'] = 'string'
+        if "Component_Proprietary_ID" in combined_df_field_names:
+            combined_df_dtypes['Component_Proprietary_ID'] = 'string'
+        if "Component_ISBN" in combined_df_field_names:
+            combined_df_dtypes['Component_ISBN'] = 'string'
+        if "Component_Print_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Component_Print_ISSN'] = 'string'
+        if "Component_Online_ISSN" in combined_df_field_names:
+            combined_df_dtypes['Component_Online_ISSN'] = 'string'
+        if "Component_URI" in combined_df_field_names:
+            combined_df_dtypes['Component_URI'] = 'string'
+        if "Metric_Type" in combined_df_field_names:
+            combined_df_dtypes['Metric_Type'] = 'string'
+        
+
+        #Section: Return Dataframe
+        logging.info(f"Final dataframe and its dtypes:\n{df}\n{df.dtypes}")
+        return df
