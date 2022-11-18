@@ -276,4 +276,34 @@ class UploadCOUNTERReports:
                 )
 
                 logging.info(f"Dataframe with pre-stacking changes:\n{df}")
+
+
+                #Section: Stack Dataframe
+                #Subsection: Create Temp Index Field with All Metadata Values
+                list_of_field_names_from_df = df.columns.values.tolist()
+                df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
+                boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
+                df['temp_index'] = df[df.columns[boolean_identifying_metadata_fields]].apply(
+                    lambda cell_value: '~'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied; `~` is used as the delimiter because pandas 1.3 doesn't seem to handle multi-character literal string delimiters
+                    axis='columns'
+                )
+                df = df.drop(columns=df_non_date_field_names)
+                logging.debug(f"Dataframe with without metadata columns:\n{df}")
+                df = df.set_index('temp_index')
+                logging.debug(f"Dataframe with new index column:\n{df}")
+
+                #Subsection: Reshape with Stacking
+                df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
+                logging.debug(f"Dataframe immediately after stacking:\n{df}")
+                df = df.reset_index()
+                df = df.rename(columns={
+                    'level_1': 'Usage_Date',
+                    0: 'Usage_Count',
+                })
+                logging.debug(f"Dataframe with reset index:\n{df}")
+
+                #Subsection: Recreate Metadata Fields
+                df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
+                df = df.drop(columns='temp_index')
+                logging.info(f"Fully transposed dataframe:\n{df}")
         pass
