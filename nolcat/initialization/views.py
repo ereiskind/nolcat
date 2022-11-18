@@ -45,9 +45,8 @@ def download_file(filename):
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_annualUsageCollectionTracking_data` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
-    #ALERT: Refactored form hasn't been tested
     form = InitialRelationDataForm()
     if form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
@@ -158,7 +157,7 @@ def collect_initial_relation_data():
             if_exists='replace',
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary'''
-        return redirect(url_for('collect_annualUsageCollectionTracking_data'))
+        return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
 
     return render_template('initialization/index.html', form=form)
 
@@ -174,6 +173,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
+        return "initialization page 2"
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: TSV_file = open('initialize_annualUsageCollectionTracking.tsv', 'w', newline='')
         #ToDo: dict_writer = csv.DictWriter(TSV_file, delimiter="\t", [
