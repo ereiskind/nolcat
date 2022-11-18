@@ -51,4 +51,24 @@ class UploadCOUNTERReports:
 
             for sheetname in file.sheetnames:  # `sheetname` is the name of the sheet as a string for use as an index operator
                 sheet = file[sheetname]
+
+
+                #Section: Identify the Header Row
+                # To handle both R4 and R5 reports, as well as noncompliance with the standard in regards to empty rows in and after the header, the header row of the table is searched for instead of using any presets
+                looking_for_header_row = True
+                header_row_number = 1
+
+                while looking_for_header_row:
+                    count_of_month_labels = 0
+                    for cell in sheet[header_row_number]:
+                        if cell.value is None or repr(type(cell.value)) == "<class 'int'>":
+                            continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
+                        elif repr(type(cell.value)) == "<class 'datetime.datetime'>" or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
+                            count_of_month_labels += 1
+                    if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
+                        number_of_fields = len(sheet[header_row_number])
+                        looking_for_header_row = False
+                        break
+                    else:
+                        header_row_number += 1
         pass
