@@ -7,7 +7,7 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.raw_COUNTER_report import RawCOUNTERReport
-from data import COUNTER_reports_LFS
+from data import COUNTER_reports
 from data import deduplication_data
 
 
@@ -15,7 +15,7 @@ from data import deduplication_data
 @pytest.fixture
 def sample_COUNTER_reports():
     """Creates a dataframe with the data from all the COUNTER reports."""
-    yield COUNTER_reports_LFS.sample_COUNTER_reports()
+    yield COUNTER_reports.sample_COUNTER_reports()
 
 
 @pytest.fixture

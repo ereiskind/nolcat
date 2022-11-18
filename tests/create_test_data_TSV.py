@@ -6,7 +6,7 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
-from data import COUNTER_reports_LFS
+from data import COUNTER_reports
 from data import deduplication_data
 
 relation_name = pyip.inputMenu(
@@ -65,7 +65,7 @@ elif relation_name == "resourcePlatforms_relation":
 elif relation_name == "usageData_relation":
     relation_data = relations.usageData_relation()
 elif relation_name == "sample_COUNTER_reports":
-    relation_data = COUNTER_reports_LFS.sample_COUNTER_reports()
+    relation_data = COUNTER_reports.sample_COUNTER_reports()
 elif relation_name == "sample_normalized_resource_data":
     relation_data = deduplication_data.sample_normalized_resource_data()
 elif relation_name == "matched_records":
