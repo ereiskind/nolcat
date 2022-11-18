@@ -37,6 +37,7 @@ class UploadCOUNTERReports:
             dataframe: COUNTER data ready for normalization
         """
         all_dataframes_to_concatenate = []
+        valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
@@ -49,8 +50,11 @@ class UploadCOUNTERReports:
                 logging.warning(f"The workbook {file_name} couldn't be loaded. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
                 continue
 
-            for sheetname in file.sheetnames:  # `sheetname` is the name of the sheet as a string for use as an index operator
-                sheet = file[sheetname]
+            for report_type in file.sheetnames:
+                if report_type not in valid_report_types:
+                    logging.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
+                    continue
+                sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
 
 
                 #Section: Identify the Header Row
