@@ -1,3 +1,11 @@
+import logging
+import re
+from flask import request
+from openpyxl import load_workbook
+
+logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
+
+
 class UploadCOUNTERReports:
     """A class for transforming uploaded Excel workbook(s) with COUNTER data into dataframes ready for normalization.
 
@@ -28,4 +36,19 @@ class UploadCOUNTERReports:
         Returns:
             dataframe: COUNTER data ready for normalization
         """
+        all_dataframes_to_concatenate = []
+
+
+        #Section: Load the Workbook(s)
+        list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
+        for file_name in list_of_file_names:
+            try:
+                statistics_source_ID = int(re.findall(r'(\d*).xlsx', string=file_name)[0])  # `findall` always produces a list
+                file = load_workbook(filename=file_name, read_only=True)
+            except:
+                logging.warning(f"The workbook {file_name} couldn't be loaded. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
+                continue
+
+            for sheetname in file.sheetnames:  # `sheetname` is the name of the sheet as a string for use as an index operator
+                sheet = file[sheetname]
         pass
