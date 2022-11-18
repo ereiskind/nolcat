@@ -55,6 +55,7 @@ class UploadCOUNTERReports:
                     logging.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
+                logging.info(f"Loading data from sheet {report_type} from workbook {file_name}.")
 
 
                 #Section: Identify the Header Row
@@ -71,6 +72,7 @@ class UploadCOUNTERReports:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
+                        logging.debug(f"The table's header is at row {header_row_number}.")
                         looking_for_header_row = False
                         break
                     else:
