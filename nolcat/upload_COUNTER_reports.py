@@ -176,4 +176,28 @@ class UploadCOUNTERReports:
                             df_field_names.append(field_name)
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # List comprehension used to preserve order
                 logging.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")
+
+
+                #Section: Ensure String Data Type for Metadata
+                df_dtypes = {'Platform': 'string'}
+                if "Resource_Name" in df_field_names:
+                    df_dtypes['Resource_Name'] = 'string'
+                if "Publisher" in df_field_names:
+                    df_dtypes['Publisher'] = 'string'
+                if "DOI" in df_field_names:
+                    df_dtypes['DOI'] = 'string'
+                if "Proprietary_ID" in df_field_names:
+                    df_dtypes['Proprietary_ID'] = 'string'
+                if "ISBN" in df_field_names:
+                    df_dtypes['ISBN'] = 'string'
+                if "Print_ISSN" in df_field_names:
+                    df_dtypes['Print_ISSN'] = 'string'
+                if "Online_ISSN" in df_field_names:
+                    df_dtypes['Online_ISSN'] = 'string'
+                if "Data_Type" in df_field_names:
+                    df_dtypes['Data_Type'] = 'string'
+                if "Section_Type" in df_field_names:
+                    df_dtypes['Section_Type'] = 'string'
+                if "Metric_Type" in df_field_names:
+                    df_dtypes['Metric_Type'] = 'string'
         pass
