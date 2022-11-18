@@ -306,4 +306,60 @@ class UploadCOUNTERReports:
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 df = df.drop(columns='temp_index')
                 logging.info(f"Fully transposed dataframe:\n{df}")
+
+
+                #Section: Adjust Data in Dataframe
+                #Subsection: Remove Rows with No Usage
+                df = df[df['Usage_Count'] != 0]
+                df = df[df['Usage_Count'] != "`None`"]  # Some zero `Usage_Count` values may have been null values replaced by the null placeholder; retaining them interferes with correcting data types
+                df = df.reset_index(drop=True)
+
+                #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
+                non_string_fields = ["index", "Usage_Date", "Usage_Count"]  # Unable to combine not equal to clauses in list comprehension below
+                fields_to_convert_to_string_dtype = [field_name for field_name in df.columns.values.tolist() if field_name not in non_string_fields]
+                string_dtype_conversion_dict = {'Usage_Count': 'int'}
+                for field_name in fields_to_convert_to_string_dtype:
+                    string_dtype_conversion_dict[field_name] = 'string'
+                df = df.astype(string_dtype_conversion_dict)
+
+                # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
+                df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
+
+                df['Usage_Date'] = pd.to_datetime(df['Usage_Date'])
+                logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
+
+                #Subsection: Add Fields Missing from R4 Reports
+                if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
+                    df['Data_Type'] = "Book"
+                elif report_type == 'DB1' or report_type == 'DB2':
+                    df['Data_Type'] = "Database"
+                elif report_type == 'JR1' or report_type == 'JR2':
+                    df['Data_Type'] = "Journal"
+                elif report_type == 'MR1':
+                    df['Data_Type'] = "Multimedia"
+                elif report_type == 'PR1':
+                    df['Data_Type'] = "Platform"
+
+                if report_type == 'BR1' or report_type == 'BR3' or report_type == 'BR5':
+                    df['Section_Type'] = "Book"
+                elif report_type =='BR2':
+                    df['Section_Type'] = "Book_Segment"
+                elif report_type == 'JR1' or report_type == 'JR2':
+                    df['Section_Type'] = "Article"
+                elif report_type == 'TR1' or report_type == 'TR2':
+                    df.loc[df['Data_Type'] == "Journal", 'Section_Type'] = "Article"
+                    df.loc[df['Data_Type'] == "Book", 'Section_Type'] = "Book_Segment"
+                    # Any data types besides `Book` or `Journal` won't have a section type
+
+                if report_type =='BR1' or report_type == 'TR1':
+                    df['Metric_Type'] = "Successful Title Requests"
+                elif report_type =='BR2':
+                    df['Metric_Type'] = "Successful Section Requests"
+                elif report_type =='JR1':
+                    df['Metric_Type'] = "Successful Full-text Article Requests"
+                elif report_type =='MR1':
+                    df['Metric_Type'] = "Successful Content Unit Requests"
+                
+                logging.info(f"Dataframe being used in concatenation:\n{df}")
+                all_dataframes_to_concatenate.append(df)
         pass
