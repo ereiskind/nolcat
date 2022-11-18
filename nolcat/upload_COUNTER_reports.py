@@ -3,6 +3,7 @@ import re
 import datetime
 from flask import request
 from openpyxl import load_workbook
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
@@ -200,4 +201,16 @@ class UploadCOUNTERReports:
                     df_dtypes['Section_Type'] = 'string'
                 if "Metric_Type" in df_field_names:
                     df_dtypes['Metric_Type'] = 'string'
+                
+
+                #Section: Create Dataframe
+                df = pd.read_excel(
+                    file_name,
+                    sheet_name=report_type,
+                    engine='openpyxl',
+                    header=header_row_number-1,  # This gives the row number with the headings in Excel, which is also the row above where the data starts
+                    names=df_field_names,
+                    dtype=df_dtypes,
+                )
+                logging.info(f"Dataframe immediately after creation:\n{df}")
         pass
