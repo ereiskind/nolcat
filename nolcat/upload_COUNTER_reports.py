@@ -213,4 +213,67 @@ class UploadCOUNTERReports:
                     dtype=df_dtypes,
                 )
                 logging.info(f"Dataframe immediately after creation:\n{df}")
+
+
+                #Section: Make Pre-Stacking Updates
+                df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
+                df = df.replace("licence", "license")  # "Have `license` always use American English spelling
+
+                #Subsection: Add `Statistics_Source_ID` Field
+                df['Statistics_Source_ID'] = statistics_source_ID
+                # Adding the name of the field any earlier would make the list of field names longer than the number of fields in the spreadsheet being imported
+                df_field_names.append("Statistics_Source_ID")
+                df_non_date_field_names.append("Statistics_Source_ID")
+
+                #Subsection: Remove `Reporting Period` Field
+                df_field_names_sans_reporting_period_fields = [field_name for field_name in df_non_date_field_names if not re.search(r'[Rr]eporting[\s_][Pp]eriod', field_name)]
+                reporting_period_field_names = [field_name for field_name in df_non_date_field_names if field_name not in df_field_names_sans_reporting_period_fields]  # List comprehension used to preserve list order
+                df = df.drop(columns=reporting_period_field_names)
+                df_field_names = df_field_names_sans_reporting_period_fields + df_date_field_names
+                logging.info(f"`df_field_names` with statistics source ID and without reporting period: {df_field_names}")
+
+                #Subsection: Remove Total Rows
+                if re.match(r'PR1?', string=report_type) is None:  # `re.match` returns `None` if there isn't a match, so this selects everything but platform reports in both R4 and R5
+                    common_summary_rows = df['Resource_Name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
+                    uncommon_summary_rows = df['Resource_Name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
+                    summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
+                    df = df[summary_rows_are_false]
+
+                #Subsection: Split ISBNs and ISSNs in TR
+                if re.match(r'TR[1|2]', string=report_type) is not None:  # `re.match` returns `None` if there isn't a match, so this selects all title reports
+                    # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
+                    df['Print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
+                    df['Online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
+                    # Returns `True` if the values of `Print_ISSN` and `Online_ISSN` are `True`, otherwise, returns `False`
+                    df['ISBN'] = df['Print_ISSN'] & df['Online_ISSN']
+
+                    # Replaces Booleans signaling value with values from `Print ID` and `Online ID`
+                    df.loc[df['Print_ISSN'] == True, 'Print_ISSN'] = df['Print ID']
+                    df.loc[df['Online_ISSN'] == True, 'Online_ISSN'] = df['Online ID']
+                    df.loc[df['Print_ISSN'] == False, 'ISBN'] = df['Print ID']
+                    df.loc[df['Online_ISSN'] == False, 'ISBN'] = df['Online ID']
+                    # Replace Booleans not signaling value with null placeholder string (replacing with `None` causes the values to fill down instead of the desired replacement)
+                    df['Print_ISSN'] = df['Print_ISSN'].replace(False, "`None`")  
+                    df['Online_ISSN'] = df['Online_ISSN'].replace(False, "`None`")
+                    df['ISBN'] = df['ISBN'].replace(True, "`None`")
+                    df['ISBN'] = df['ISBN'].replace(False, "`None`")  # These cells occur when the ID columns have a null value and an ISSN
+
+                    # Update field names and order in `df_field_names` and dataframe
+                    df = df.drop(columns=['Print ID', 'Online ID'])
+                    df_field_names.remove("Print ID")
+                    df_field_names.remove("Online ID")
+                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "ISBN")
+                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "Print_ISSN")
+                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "Online_ISSN")
+                    df = df[df_field_names]
+
+                #Subsection: Put Placeholder in for Null Values
+                df = df.fillna("`None`")
+                df = df.replace(
+                    to_replace='^\s*$',  # The anchors ensure this is only applied to whitespace-only cells; without them, this is applied to all spaces, even the ones between letters
+                    value="`None`",
+                    regex=True
+                )
+
+                logging.info(f"Dataframe with pre-stacking changes:\n{df}")
         pass
