@@ -118,24 +118,23 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
     """
-    form = AUCTAndCOUNTERForm()
+    '''form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #ToDo: #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: #Subsection: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
         #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
-        return "initialization page 2"
 
     #Section: After Form Submission
     elif form.validate_on_submit():
         #ToDo: #Subsection: Load `annualUsageCollectionTracking` into Database
         #ToDo: #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
         #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-        return "initialization page 2 after form submission"
 
     else:
-        return abort(404)
+        return abort(404)'''
+    return "initialization-page-2"
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
