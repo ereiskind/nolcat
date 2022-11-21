@@ -62,22 +62,8 @@ def another_sample_RawCOUNTERReport():
 
 
 #Section: Tests
-#Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument()`
-def test_create_normalized_resource_data_argument_with_R4():
-    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from only R4 reports."""
-    #ToDo: Establish database fixture with data from only R4 resources
-    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_R4_normalized_resource_data
-    pass
-
-
-def test_create_normalized_resource_data_argument_with_R4_and_R5():
-    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from R4 and R5 reports."""
-    #ToDo: Establish database fixture with data from R4 and R5 resources
-    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_normalized_resource_data
-    pass
-
-
-#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()`
+# Some tests have preconditions that can be filled by other tests; the tests are ordered to utilize that fact instead of the order in which they appear in the class
+#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()` Without Preexisting Data
 #ALERT: On a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
 #ToDo: Review the amount of variance between the method outputs depending on their inputs and ensure constants exist for confirming all test results
 def test_perform_deduplication_matching_with_R4(sample_R4_RawCOUNTERReport):
@@ -89,42 +75,6 @@ def test_perform_deduplication_matching_with_R4(sample_R4_RawCOUNTERReport):
 def test_perform_deduplication_matching_with_R4_and_R5(sample_RawCOUNTERReport):
     """Tests the `perform_deduplication_matching()` method when a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports is the sole argument."""
     #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching() == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4(sample_R4_RawCOUNTERReport, sample_R4_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_R4_normalized_resource_data` fixture."""
-    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4_and_R5(sample_R4_RawCOUNTERReport, sample_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_normalized_resource_data` fixture."""
-    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4(sample_RawCOUNTERReport, sample_R4_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_R4_normalized_resource_data` fixture."""
-    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4_and_R5(sample_RawCOUNTERReport, sample_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_normalized_resource_data` fixture."""
-    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4(sample_R5_RawCOUNTERReport, sample_R4_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_R4_normalized_resource_data` fixture."""
-    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
-    pass
-
-
-def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4_and_R5(sample_R5_RawCOUNTERReport, sample_normalized_resource_data):
-    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_normalized_resource_data` fixture."""
-    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
     pass
 
 
@@ -175,4 +125,56 @@ def test_load_data_into_database_from_R5_and_normalized_resource_data_from_R4():
 def test_load_data_into_database_from_R5_and_normalized_resource_data_from_R4_and_R5():
     #ToDo: Test method based on results from `test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4_and_R5` after manual matching
     #ToDo: The database fixture from conftest should be able to serve as the constant for checking the results
+    pass
+
+
+#Subsection: Test `RawCOUNTERReport.create_normalized_resource_data_argument()`
+def test_create_normalized_resource_data_argument_with_R4():
+    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from only R4 reports."""
+    #ToDo: Establish database fixture with data from only R4 resources
+    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_R4_normalized_resource_data
+    pass
+
+
+def test_create_normalized_resource_data_argument_with_R4_and_R5():
+    """Tests the `create_normalized_resource_data_argument()` method when pulling from a database with resource data from R4 and R5 reports."""
+    #ToDo: Establish database fixture with data from R4 and R5 resources
+    #ToDo: assert RawCOUNTERReport.create_normalized_resource_data_argument = sample_normalized_resource_data
+    pass
+
+
+#Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()` With Preexisting Data
+def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4(sample_R4_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_normalized_resource_data_from_R4_and_R5(sample_R4_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R4_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4(sample_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R4_and_R5_and_normalized_resource_data_from_R4_and_R5(sample_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R4 and R5 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4(sample_R5_RawCOUNTERReport, sample_R4_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_R4_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_R4_normalized_resource_data) == 
+    pass
+
+
+def test_perform_deduplication_matching_with_R5_and_normalized_resource_data_from_R4_and_R5(sample_R5_RawCOUNTERReport, sample_normalized_resource_data):
+    """Tests the `perform_deduplication_matching()` method with a RawCOUNTERReport object instantiated from reformatted R5 reports and a `sample_normalized_resource_data` fixture."""
+    #ToDo: assert sample_R5_RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data) == 
     pass
