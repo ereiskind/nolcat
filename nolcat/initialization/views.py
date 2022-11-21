@@ -40,6 +40,7 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
+        #ToDo: `.encode('utf-8').decode('unicode-escape')` statements cause HTTP 500 error in Flask--figure out another way to ensure Unicode characters are properly encoded
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_TSV.data,
             sep='\t',
@@ -106,10 +107,7 @@ def collect_initial_relation_data():
 
         #Section: Load Data into Database
         #ToDo: Statements to load dataframes into database
-        #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
-        return render_template('initialization/df.html',  tables=[resourceSources_dataframe.to_html(classes='data', header="true")])
-    elif request.method == 'POST':  # If the code gets here, it meas the form data was submitted, meaning a `POST` HTTP method was used, but the input wasn't valid, because `validate_on_submit` wasn't true
-        return form.error
+        return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
     else:
         return abort(404)
 
