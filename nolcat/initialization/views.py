@@ -46,6 +46,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
 
         #Section: Load Data into Database
         #ToDo: Statements to load dataframes into database
