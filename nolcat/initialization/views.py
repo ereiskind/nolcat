@@ -40,6 +40,12 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
+        fiscalYears_dataframe = pd.read_csv(
+            form.fiscalYears_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
 
         #Section: Load Data into Database
         #ToDo: Statements to load dataframes into database
