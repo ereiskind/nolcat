@@ -35,18 +35,83 @@ def collect_initial_relation_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
-    '''
-    form = FormClass()
+    form = InitialRelationDataForm()
     if request.method == 'GET':
-        #ToDo: Anything that's needed before the page the form is on renders
-        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
+        return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Process data from `form`
-        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+        #Section: Ingest Data from Uploaded TSVs
+        fiscalYears_dataframe = pd.read_csv(
+            form.fiscalYears_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
+
+        vendors_dataframe = pd.read_csv(
+            form.vendors_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+
+        vendorNotes_dataframe = pd.read_csv(
+            form.vendorNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSources_dataframe = pd.read_csv(
+            form.statisticsSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        statisticsSourceNotes_dataframe = pd.read_csv(
+            form.statisticsSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form.statisticsResourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+
+        resourceSources_dataframe = pd.read_csv(
+            form.resourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+
+        resourceSourceNotes_dataframe = pd.read_csv(
+            form.resourceSourceNotes_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        #Section: Load Data into Database
+        #ToDo: Statements to load dataframes into database
+        #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
+        return "data submitted successfully"
+    elif request.method == 'POST':  # If the code gets here, it meas the form data was submitted, meaning a `POST` HTTP method was used, but the input wasn't valid, because `validate_on_submit` wasn't true
+        return form.error
     else:
         return abort(404)
-    '''
-    pass
 
 
 @bp.route('/initialization-page-2', methods=["GET","POST"])
