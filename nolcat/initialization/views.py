@@ -40,69 +40,6 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
-        fiscalYears_dataframe = pd.read_csv(
-            form.fiscalYears_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
-        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
-
-        vendors_dataframe = pd.read_csv(
-            form.vendors_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
-
-        vendorNotes_dataframe = pd.read_csv(
-            form.vendorNotes_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
-
-        statisticsSources_dataframe = pd.read_csv(
-            form.statisticsSources_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
-
-        statisticsSourceNotes_dataframe = pd.read_csv(
-            form.statisticsSourceNotes_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
-
-        statisticsResourceSources_dataframe = pd.read_csv(
-            form.statisticsResourceSources_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-
-        resourceSources_dataframe = pd.read_csv(
-            form.resourceSources_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
-
-        resourceSourceNotes_dataframe = pd.read_csv(
-            form.resourceSourceNotes_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
 
         #Section: Load Data into Database
         #ToDo: Statements to load dataframes into database
