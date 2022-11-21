@@ -106,11 +106,6 @@ def collect_initial_relation_data():
         #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
 
         #Section: Load Data into Database
-        fiscalYears_dataframe.to_sql(
-            'fiscalYears',
-            con=db.engine,
-            if_exists='replace',
-        )
         
         #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         return "ready for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
