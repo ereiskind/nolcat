@@ -6,9 +6,18 @@ from flask_wtf.csrf import CSRFProtect
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
-The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. The file is added to this directory since adding it to the to-level directory led to problems with the import.
+The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multipl possible import statements in try-except blocks are used to handle the problem.
 """
-import nolcat_secrets as secrets
+try:
+    import nolcat_secrets as secrets
+except:
+    try:
+        from . import nolcat_secrets as secrets
+    except:
+        try:
+            from nolcat import nolcat_secrets as secrets
+        except:
+            print("None of the provided import statements for `nolcat\\nolcat_secrets.py` worked.")
 
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
