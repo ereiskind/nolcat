@@ -45,13 +45,19 @@ def matched_records_including_sample_normalized_resource_data():
 @pytest.fixture
 def matches_to_manually_confirm_including_sample_normalized_resource_data():
     """Creates the dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` with the test data."""
-    yield deduplication_data.matches_to_manually_confirm_including_sample_normalized_resource_data
+    yield deduplication_data.matches_to_manually_confirm_including_sample_normalized_resource_data()
 
 
 @pytest.fixture
 def sample_RawCOUNTERReport(sample_COUNTER_reports):
     """A RawCOUNTERReport object with the data from the `COUNTER_workbooks_for_tests` test data COUNTER reports."""
-    #ToDo: yield RawCOUNTERReport(sample_COUNTER_reports)
+    yield RawCOUNTERReport(sample_COUNTER_reports)
+
+
+@pytest.fixture
+def another_sample_RawCOUNTERReport():
+    """A RawCOUNTERReport object with different data than is in the `COUNTER_workbooks_for_tests` test data for loading into the database when the latter data set is already loaded."""
+    #ToDo: Create small second set of COUNTER R5 data with some overlapping resources
     pass
 
 
