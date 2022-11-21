@@ -39,7 +39,7 @@ This folder contains all the Excel files, which are split into three subfolders:
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 
 
-"\\tests\\data\\COUNTER_reports_LFS.py"
+"\\tests\\data\\COUNTER_reports.py"
 ---------------------------------------
 
 This module contains the functions:
