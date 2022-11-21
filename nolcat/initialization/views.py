@@ -107,7 +107,8 @@ def collect_initial_relation_data():
 
         #Section: Load Data into Database
         
-        return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
+        #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
+        return "ready for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
     else:
         return abort(404)
 
