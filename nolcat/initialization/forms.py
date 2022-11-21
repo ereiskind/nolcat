@@ -8,14 +8,7 @@ from wtforms.validators import DataRequired
 class InitialRelationDataForm(FlaskForm):
     """Creates a form for uploading the non-usage database initialization data."""
     fiscalYears_TSV = FileField("Select the filled out \"initialize_fiscalYears.tsv\" file here.", validators=[DataRequired()])
-    vendors_TSV = FileField("Select the filled out \"initialize_vendors.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    vendorNotes_TSV = FileField("Select the filled out \"initialize_vendorNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    statisticsSources_TSV = FileField("Select the filled out \"initialize_statisticsSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    statisticsSourceNotes_TSV = FileField("Select the filled out \"initialize_statisticsSourceNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    statisticsResourceSources_TSV = FileField("Select the filled out \"initialize_statisticsResourceSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    resourceSources_TSV = FileField("Select the filled out \"initialize_resourceSources.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-    resourceSourceNotes_TSV = FileField("Select the filled out \"initialize_resourceSourceNotes.tsv\" file here.", validators=[FileRequired(), DataRequired()])
-
+    
 
 class AUCTAndCOUNTERForm(FlaskForm):
     """Creates a form for uploading the `annualUsageCollectionTracking` relation data and the reformatted COUNTER R4 TSV files."""
