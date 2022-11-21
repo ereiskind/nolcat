@@ -158,8 +158,10 @@ def collect_initial_relation_data():
         )
         db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary'''
         return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
-
-    return render_template('initialization/index.html', form=form)
+    elif request.method == 'POST':
+        return form.errors
+    else:
+        return render_template('initialization/index.html', form=form)
 
 
 @bp.route('/initialization-page-2', methods=["GET","POST"])
