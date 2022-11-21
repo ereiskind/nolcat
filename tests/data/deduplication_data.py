@@ -11,14 +11,12 @@ def sample_normalized_resource_data():
 
 def matched_records():
     """The set of record index matches not needing manual confirmation created by ``RawCOUNTERReport.perform_deduplication_matching()`` with the test data."""
-    #ToDo: return <set>
-    pass
+    return "placeholder for a set"
 
 
 def matches_to_manually_confirm():
     """The dictionary of metadata pairs and record index pair sets for manually confirming matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` with the test data."""
-    #ToDo: return <dict>
-    pass
+    return "placeholder for a dict"
 
 
 def matched_records_including_sample_normalized_resource_data():
