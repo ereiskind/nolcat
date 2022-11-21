@@ -107,7 +107,7 @@ def collect_initial_relation_data():
         #Section: Load Data into Database
         #ToDo: Statements to load dataframes into database
         #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
-        return f"{fiscalYears_dataframe}\n{vendors_dataframe}\n{vendorNotes_dataframe}\n{statisticsSources_dataframe}\n{statisticsSourceNotes_dataframe}\n{resourceSources_dataframe}\n{resourceSourceNotes_dataframe}"
+        return render_template('initialization/df.html',  tables=[resourceSources_dataframe.to_html(classes='data', header="true")])
     elif request.method == 'POST':  # If the code gets here, it meas the form data was submitted, meaning a `POST` HTTP method was used, but the input wasn't valid, because `validate_on_submit` wasn't true
         return form.error
     else:
