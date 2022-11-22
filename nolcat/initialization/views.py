@@ -159,12 +159,53 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
     """
-    '''form = AUCTAndCOUNTERForm()
+    form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
-        #ToDo: #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: #Subsection: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
+        #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
+        SELECT_statement = text('SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;')
+        #ToDo: AUCT_values = db.engine.execute(SELECT_statement).values()  # Unable to determine exactly what is in the lists output by each method of https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy
+        #ToDo: From `AUCT_values`, generate the below
+        #ToDo: AUCT_index_array = [
+        #    [record1 statisticsSources.statistics_source_ID, record1 fiscalYears.fiscal_year_ID],
+        #    [record2 statisticsSources.statistics_source_ID, record2 fiscalYears.fiscal_year_ID],
+        #    ...
+        #]
+        #ToDo: AUCT_value_array = [
+        #    [record1 statisticsSources.statistics_source_name, record1 fiscalYears.fiscal_year],
+        #    [record2 statisticsSources.statistics_source_name, record2 fiscalYears.fiscal_year],
+        #    ...
+        #]
+
+        #Subsection: Create `annualUsageConnectionTracking` Relation Template File
+        #ToDo: multiindex = pd.DataFrame(
+        #    AUCT_index_array,
+        #    columns=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        #)
+        #ToDo: multiindex = pd.MultiIndex.from_frame(multiindex)
+        #ToDo: df = pd.DataFrame(
+        #    AUCT_value_array,
+        #    index=multiindex,
+        #    columns=["Statistics Source", "Fiscal Year"],
+        #)
+
+        #ToDo: df['usage_is_being_collected'] = None
+        #ToDo: df['manual_collection_required'] = None
+        #ToDo: df['collection_via_email'] = None
+        #ToDo: df['is_COUNTER_compliant'] = None
+        #ToDo: df['collection_status'] = None
+        #ToDo: df['usage_file_path'] = None
+        #ToDo: df['notes'] = None
+
+        #ToDo: df.to_csv(
+        #    'initialize_annualUsageCollectionTracking.tsv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
+        #    sep="\t",
+        #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        #    encoding='utf-8',
+        #    errors='backslashreplace',  # For encoding errors
+        #)
+        #ToDo: Confirm above downloads successfully
         #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
 
     #Section: After Form Submission
