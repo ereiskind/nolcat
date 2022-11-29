@@ -28,4 +28,8 @@ class UploadCOUNTERReports:
         Returns:
             dataframe: COUNTER data ready for normalization
         """
+        '''Known issues with specific stats sources (taken from webpage instructions):
+            * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
+            * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
+        '''
         pass
