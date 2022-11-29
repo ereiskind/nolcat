@@ -64,7 +64,7 @@ def another_sample_RawCOUNTERReport():
 #Section: Tests
 # Some tests have preconditions that can be filled by other tests; the tests are ordered to utilize that fact instead of the order in which they appear in the class
 #Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()` Without Preexisting Data
-#ALERT: On a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
+#ALERT: When using the R4 only test data: on a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
 #ToDo: Review the amount of variance between the method outputs depending on their inputs and ensure constants exist for confirming all test results
 def test_perform_deduplication_matching(sample_RawCOUNTERReport, matched_records, matches_to_manually_confirm):
     """Tests the `perform_deduplication_matching()` method when a RawCOUNTERReport object instantiated from ingested COUNTER reports is loaded into an empty database."""
