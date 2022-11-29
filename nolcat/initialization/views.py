@@ -30,7 +30,7 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
-@bp.route('/', methods=["GET","POST"])
+@bp.route('/', methods=['GET', 'POST'])
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
@@ -154,7 +154,7 @@ def collect_initial_relation_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-2', methods=["GET","POST"])
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports so the former is loaded into the database and the latter is divided and deduped.
 
