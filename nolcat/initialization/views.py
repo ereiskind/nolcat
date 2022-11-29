@@ -15,6 +15,7 @@ import csv
 from . import bp
 from ..app import db
 from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -210,13 +211,38 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
-        #ToDo: #Subsection: Load `annualUsageCollectionTracking` into Database
-        #ToDo: #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
-        #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+        #Subsection: Load `annualUsageCollectionTracking` into Database
+        AUCT_dataframe = pd.read_csv(
+            form.annualUsageCollectionTracking_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        #AUCT_dataframe['notes'] = AUCT_dataframe['notes'].encode('utf-8').decode('unicode-escape')
+
+        ''' #ToDo: See above on HTTP error raised by `to_sql` method
+        AUCT_dataframe.to_sql(
+            'annualUsageCollectionTracking',
+            con=db.engine,
+            if_exists='replace',
+        )
+        '''
+
+        #Subsection: Save COUNTER Reports in a Single Temp Tabular File
+        COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        COUNTER_reports_df.to_csv(
+            'str of a file path',  #ToDo: Determine where to save file
+            na_rep='`None`',
+            index_label='index',
+            encoding='utf-8',
+            date_format='%Y-%m-%d',  #ToDo: Double check this is correct for setting ISO format
+            errors='backslashreplace',
+        )
+
+        return redirect(url_for('determine_if_resources_match'))
 
     else:
-        return abort(404)'''
-    return "initialization-page-2"
+        return abort(404)
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
