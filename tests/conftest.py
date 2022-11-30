@@ -95,8 +95,7 @@ def resourceSources_relation():
 @pytest.fixture
 def resourceSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation."""
-    # yield relations.resourceSourceNotes_relation()
-    pass
+    yield relations.resourceSourceNotes_relation()
 
 
 @pytest.fixture
