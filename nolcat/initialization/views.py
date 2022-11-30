@@ -132,11 +132,6 @@ def collect_initial_relation_data():
             con=db.engine,
             if_exists='replace',
         )
-        statisticsResourceSources_dataframe.to_sql(
-            'statisticsResourceSources',
-            con=db.engine,
-            if_exists='replace',
-        )
         resourceSources_dataframe.to_sql(
             'resourceSources',
             con=db.engine,
@@ -144,6 +139,12 @@ def collect_initial_relation_data():
         )
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
+            con=db.engine,
+            if_exists='replace',
+        )
+        # Since `statisticsResourceSources` has a foreign key from `resourceSources`, it must be loaded into the database after `resourceSources`
+        statisticsResourceSources_dataframe.to_sql(
+            'statisticsResourceSources',
             con=db.engine,
             if_exists='replace',
         )
