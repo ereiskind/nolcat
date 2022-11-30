@@ -65,8 +65,7 @@ def vendors_relation():
 @pytest.fixture
 def vendorNotes_relation():
     """Creates a dataframe that can be loaded into the `vendorNotes` relation."""
-    # yield relations.vendorNotes_relation()
-    pass
+    yield relations.vendorNotes_relation()
 
 
 @pytest.fixture
