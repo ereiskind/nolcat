@@ -106,7 +106,47 @@ def collect_initial_relation_data():
         #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
 
         #Section: Load Data into Database
-        
+        #ToDo: The pandas `to_sql` method with a `con=db.engine` argument that load the dataframes created above into the database cause a HTTP 500 error--how can this be solved?
+        fiscalYears_dataframe.to_sql(
+            'fiscalYears',
+            con=db.engine,
+            if_exists='replace',
+        )
+        vendors_dataframe.to_sql(
+            'vendors',
+            con=db.engine,
+            if_exists='replace',
+        )
+        vendorNotes_dataframe.to_sql(
+            'vendorNotes',
+            con=db.engine,
+            if_exists='replace',
+        )
+        statisticsSources_dataframe.to_sql(
+            'statisticsSources',
+            con=db.engine,
+            if_exists='replace',
+        )
+        statisticsSourceNotes_dataframe.to_sql(
+            'statisticsSourceNotes',
+            con=db.engine,
+            if_exists='replace',
+        )
+        statisticsResourceSources_dataframe.to_sql(
+            'statisticsResourceSources',
+            con=db.engine,
+            if_exists='replace',
+        )
+        resourceSources_dataframe.to_sql(
+            'resourceSources',
+            con=db.engine,
+            if_exists='replace',
+        )
+        resourceSourceNotes_dataframe.to_sql(
+            'resourceSourceNotes',
+            con=db.engine,
+            if_exists='replace',
+        )
         #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         return "ready for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
     else:
