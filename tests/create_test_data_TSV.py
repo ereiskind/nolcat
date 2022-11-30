@@ -18,7 +18,7 @@ relation_name = pyip.inputMenu(
         "statisticsSources_relation",
         "statisticsSourceNotes_relation",
         "resourceSources_relation",
-        #"resourceSourceNotes_relation",  #ToDo: Uncomment when dataframe is created
+        "resourceSourceNotes_relation",
         "statisticsResourceSources_relation",
         "annualUsageCollectionTracking_relation",
         "resources_relation",
@@ -48,8 +48,7 @@ elif relation_name == "statisticsSourceNotes_relation":
 elif relation_name == "resourceSources_relation":
     relation_data = relations.resourceSources_relation()
 elif relation_name == "resourceSourceNotes_relation":
-    #relation_data = relations.resourceSourceNotes_relation()
-    pass  #ToDo: Update when dataframe is created
+    relation_data = relations.resourceSourceNotes_relation()
 elif relation_name == "statisticsResourceSources_relation":
     relation_data = relations.statisticsResourceSources_relation()
 elif relation_name == "annualUsageCollectionTracking_relation":

@@ -68,6 +68,7 @@ This module contains the functions:
 * ``statisticsSources_relation()``: The dataframe of test data for the `statisticsSources` relation.
 * ``statisticsSourceNotes_relation()``: The dataframe of test data for the `statisticsSourceNotes` relation.
 * ``resourceSources_relation()``: The dataframe of test data for the `resourceSources` relation.
+* ``resourceSourceNotes_relation()``: The dataframe of test data for the `resourceSourceNotes` relation.
 * ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
 * ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
 * ``resources_relation()``: The dataframe of test data for the `resources` relation.

@@ -116,7 +116,18 @@ def resourceSources_relation():
     return df
 
 
-#ToDo: Create dataframe for resourceSourceNotes
+def resourceSourceNotes_relation():
+    """Creates a dataframe of test data for the `resourceSourceNotes` relation."""
+    df = pd.DataFrame(
+        [
+            ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 12],
+            ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 13],
+            ["Content migrated to Ebook Central", "Jane Doe", "2022-11-30", 17],
+        ],
+        columns=["note", "written_by", "date_written", "resource_source_ID"]
+    )
+    df.index.name = "resource_source_notes_ID"
+    return df
 
 
 def statisticsResourceSources_relation():
