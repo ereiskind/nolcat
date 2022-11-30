@@ -74,7 +74,17 @@ def statisticsSources_relation():
     return df
 
 
-#ToDo: Create dataframe for statisticsSourceNotes
+def statisticsSourceNotes_relation():
+    """Creates a dataframe of test data for the `statisticsSourceNotes` relation."""
+    df = pd.DataFrame(
+        [
+            ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 6],
+            ["Replaced by Peterson's Prep", "Jane Doe", "2022-11-30", 7],
+        ],
+        columns=["note", "written_by", "date_written", "statistics_source_ID"]
+    )
+    df.index.name = "statistics_source_notes_ID"
+    return df
 
 
 def resourceSources_relation():

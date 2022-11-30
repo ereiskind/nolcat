@@ -77,8 +77,7 @@ def statisticsSources_relation():
 @pytest.fixture
 def statisticsSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation."""
-    # yield relations.statisticsSourceNotes_relation()
-    pass
+    yield relations.statisticsSourceNotes_relation()
 
 
 @pytest.fixture

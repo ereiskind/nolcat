@@ -66,6 +66,7 @@ This module contains the functions:
 * ``vendors_relation()``: The dataframe of test data for the `vendors` relation.
 * ``vendorNotes_relation()``: The dataframe of test data for the `vendorNotes` relation.
 * ``statisticsSources_relation()``: The dataframe of test data for the `statisticsSources` relation.
+* ``statisticsSourceNotes_relation()``: The dataframe of test data for the `statisticsSourceNotes` relation.
 * ``resourceSources_relation()``: The dataframe of test data for the `resourceSources` relation.
 * ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
 * ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
