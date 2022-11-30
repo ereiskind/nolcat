@@ -110,43 +110,43 @@ def collect_initial_relation_data():
         fiscalYears_dataframe.to_sql(
             'fiscalYears',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         vendors_dataframe.to_sql(
             'vendors',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         vendorNotes_dataframe.to_sql(
             'vendorNotes',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         statisticsSources_dataframe.to_sql(
             'statisticsSources',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         statisticsSourceNotes_dataframe.to_sql(
             'statisticsSourceNotes',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         resourceSources_dataframe.to_sql(
             'resourceSources',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         # Since `statisticsResourceSources` has a foreign key from `resourceSources`, it must be loaded into the database after `resourceSources`
         statisticsResourceSources_dataframe.to_sql(
             'statisticsResourceSources',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
         #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         return "ready for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
