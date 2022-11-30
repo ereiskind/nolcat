@@ -38,7 +38,18 @@ def vendors_relation():
     return df
 
 
-#ToDo: Create dataframe for vendorNotes
+def vendorNotes_relation():
+    """Creates a dataframe of test data for the `vendorNotes` relation."""
+    df = pd.DataFrame(
+        [
+            ["No longer exists", "Jane Doe", "2022-11-30", 4],
+            ["No longer exists", "Jane Doe", "2022-11-30", 5],
+            ["No longer exists", "Jane Doe", "2022-11-30", 6],
+        ],
+        columns=["note", "written_by", "date_written", "vendor_ID"]
+    )
+    df.index.name = "vendor_notes_ID"
+    return df
 
 
 def statisticsSources_relation():
