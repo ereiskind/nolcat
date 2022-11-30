@@ -31,7 +31,7 @@ def flask_client():
 #ToDo: Create test for loading data collected via TSV into database in `collect_initial_relation_data()`
     #ToDo: Create files with same data that's in `tests\bin\fixture_data.xlsx` aka the data in `conftest.py`
     #ToDo: Submit the files to the forms on the page (via Selenium?)
-    #ToDo: At return statement for function/redirect to new page, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations and ensure results match files used for submitting data and/or `conftest.py`
+    #ToDo: At return statement for function/redirect to new page, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
 
 
 #ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_TSV_upload'])--if moved to a different module, could this test be preceded by populating the database with known values?

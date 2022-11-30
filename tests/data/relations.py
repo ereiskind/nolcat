@@ -66,6 +66,38 @@ def statisticsSources_relation():
 #ToDo: Create dataframe for statisticsSourceNotes
 
 
+def resourceSources_relation():
+    """Creates a dataframe of test data for the `resourceSources` relation."""
+    df = pd.DataFrame(
+        [
+            ["ProQuest Congressional", True, None, 0],
+            ["ProQuest Databases", True, None, 0],
+            ["ProQuest History Vault", True, None, 0],
+            ["ProQuest Statistical Insight", True, None, 0],
+            ["ProQuest U.K. Parliamentary Papers", True, None, 0],
+            ["Statistical Abstract of the US", True, None, 0],
+            ["Ulrichsweb", True, None, 0],
+            ["Peterson's Career Prep", True, None, 2],
+            ["Peterson's Test Prep", True, None, 2],
+            ["Pivot", True, None, 0],
+            ["DemographicsNow", True, None, 2],
+            ["Ebook Central", True, None, 0],
+            ["Ebook Library", False, "2019-06-30", 4],
+            ["Ebrary", False, "2017-12-31", 5],
+            ["EBSCOhost", True, None, 1],
+            ["Gale Cengage Learning", True, None, 2],
+            ["iG Library/Business Expert Press (BEP)", True, None, 3],
+            ["MyiLibrary", False, "2019-06-30", 6],
+        ],
+        columns=["resource_source_name", "source_in_use", "use_stop_date", "vendor_ID"]
+    )
+    df.index.name = "resource_source_ID"
+    return df
+
+
+#ToDo: Create dataframe for resourceSourceNotes
+
+
 def statisticsResourceSources_relation():
     """Creates a series of test data for the `statisticsResourceSources` relation.
     
@@ -124,38 +156,6 @@ def statisticsResourceSources_relation():
         name="current_statistics_source"
     )
     return series
-
-
-def resourceSources_relation():
-    """Creates a dataframe of test data for the `resourceSources` relation."""
-    df = pd.DataFrame(
-        [
-            ["ProQuest Congressional", True, None, 0],
-            ["ProQuest Databases", True, None, 0],
-            ["ProQuest History Vault", True, None, 0],
-            ["ProQuest Statistical Insight", True, None, 0],
-            ["ProQuest U.K. Parliamentary Papers", True, None, 0],
-            ["Statistical Abstract of the US", True, None, 0],
-            ["Ulrichsweb", True, None, 0],
-            ["Peterson's Career Prep", True, None, 2],
-            ["Peterson's Test Prep", True, None, 2],
-            ["Pivot", True, None, 0],
-            ["DemographicsNow", True, None, 2],
-            ["Ebook Central", True, None, 0],
-            ["Ebook Library", False, "2019-06-30", 4],
-            ["Ebrary", False, "2017-12-31", 5],
-            ["EBSCOhost", True, None, 1],
-            ["Gale Cengage Learning", True, None, 2],
-            ["iG Library/Business Expert Press (BEP)", True, None, 3],
-            ["MyiLibrary", False, "2019-06-30", 6],
-        ],
-        columns=["resource_source_name", "source_in_use", "use_stop_date", "vendor_ID"]
-    )
-    df.index.name = "resource_source_ID"
-    return df
-
-
-#ToDo: Create dataframe for resourceSourceNotes
 
 
 def annualUsageCollectionTracking_relation():

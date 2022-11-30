@@ -34,7 +34,7 @@ def download_file(filename):
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
     form = InitialRelationDataForm()
     if request.method == 'GET':
@@ -83,13 +83,6 @@ def collect_initial_relation_data():
         )
         #statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
 
-        statisticsResourceSources_dataframe = pd.read_csv(
-            form.statisticsResourceSources_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
@@ -105,6 +98,13 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form.statisticsResourceSources_TSV.data,
+            sep='\t',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
 
         #Section: Load Data into Database
         #ToDo: The pandas `to_sql` method with a `con=db.engine` argument that load the dataframes created above into the database cause a HTTP 500 error--how can this be solved?
@@ -133,11 +133,6 @@ def collect_initial_relation_data():
             con=db.engine,
             if_exists='replace',
         )
-        statisticsResourceSources_dataframe.to_sql(
-            'statisticsResourceSources',
-            con=db.engine,
-            if_exists='replace',
-        )
         resourceSources_dataframe.to_sql(
             'resourceSources',
             con=db.engine,
@@ -145,6 +140,11 @@ def collect_initial_relation_data():
         )
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
+            con=db.engine,
+            if_exists='replace',
+        )
+        statisticsResourceSources_dataframe.to_sql(
+            'statisticsResourceSources',
             con=db.engine,
             if_exists='replace',
         )'''

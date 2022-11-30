@@ -61,9 +61,9 @@ def create_app():
             from .models import VendorNotes
             from .models import StatisticsSources
             from .models import StatisticsSourceNotes
-            from .models import StatisticsResourceSources
             from .models import ResourceSources
             from .models import ResourceSourceNotes
+            from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
             from .models import Resources
             from .models import ResourceMetadata
