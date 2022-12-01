@@ -500,7 +500,7 @@ class ResourceSources(db.Model):
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
@@ -668,7 +668,7 @@ class ResourceMetadata(db.Model):
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
     default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
     
 
     def __repr__(self):
@@ -735,7 +735,7 @@ class UsageData(db.Model):
     __tablename__ = 'usageData'
 
     usage_data_ID = db.Column(db.Integer, primary_key=True)
-    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
+    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
