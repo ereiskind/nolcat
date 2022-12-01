@@ -49,6 +49,8 @@ def collect_initial_relation_data():
         )
         #fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
         #fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
+        print(f"print function: {fiscalYears_dataframe}")
+        logging.info(f"logging statement: {fiscalYears_dataframe}")
 
         vendors_dataframe = pd.read_csv(
             form.vendors_TSV.data,
