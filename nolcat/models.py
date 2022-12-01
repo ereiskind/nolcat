@@ -119,7 +119,7 @@ class FiscalYears(db.Model):
     def create_usage_tracking_records_for_fiscal_year(self):
         #ToDo: For every record in statisticsSources
             #ToDo: For all of its statisticsResourceSources records
-                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_id of the instance this method is being run on
+                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
         pass
 
 
@@ -233,7 +233,7 @@ class StatisticsSources(db.Model):
     statistics_source_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
 
@@ -241,7 +241,7 @@ class StatisticsSources(db.Model):
     def __repr__(self):
         """The printable representation of the record."""
         #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
-        return f"<'statistics_source_id': '{self.statistics_source_id}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_id': '{self.vendor_id}'>"
+        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
     @hybrid_method
@@ -355,7 +355,7 @@ class StatisticsSources(db.Model):
 
             #Subsection: Check if Usage Is Already in Database
             #ToDo: for month in <the range of months the usage time span represents>
-                #ToDo: Get number of records in usage data relation with self.statistics_source_id, the month, and master_report
+                #ToDo: Get number of records in usage data relation with self.statistics_source_ID, the month, and master_report
                 #ToDo: If the above returns data
                     #ToDo: Ask if data should be loaded
             #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
@@ -446,7 +446,7 @@ class StatisticsSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     
 
     def __repr__(self):
@@ -478,7 +478,7 @@ class ResourceSources(db.Model):
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
@@ -522,7 +522,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
     
 
     def __repr__(self):
@@ -543,8 +543,8 @@ class StatisticsResourceSources(db.Model):
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -573,8 +573,8 @@ class AnnualUsageCollectionTracking(db.Model):
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_id'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -668,7 +668,7 @@ class ResourceMetadata(db.Model):
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
     default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
     
 
     def __repr__(self):
@@ -702,8 +702,8 @@ class ResourcePlatforms(db.Model):
     URI = db.Column(db.String(200))
     publication_date = db.Column(db.String(200))
     article_version = db.Column(db.String(50))
-    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
 
     resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
 
@@ -735,7 +735,7 @@ class UsageData(db.Model):
     __tablename__ = 'usageData'
 
     usage_data_ID = db.Column(db.Integer, primary_key=True)
-    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
+    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
