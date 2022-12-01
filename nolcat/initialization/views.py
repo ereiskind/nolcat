@@ -19,7 +19,7 @@ from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
 #Section: Uploads and Downloads
@@ -41,7 +41,9 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
+        #ALERT: Currently, loading in with pandas record index label `\xff\xfef`, every field name is `Unnamed`, and all values are `NaN`--what's the fix?
         #ToDo: `.encode('utf-8').decode('unicode-escape')` statements cause HTTP 500 error in Flask--figure out another way to ensure Unicode characters are properly encoded
+        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_TSV.data,
             sep='\t',
@@ -52,6 +54,7 @@ def collect_initial_relation_data():
         #fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
+        logging.debug(f"`vendors` data:\n{form.vendors_TSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_TSV.data,
             sep='\t',
@@ -61,6 +64,7 @@ def collect_initial_relation_data():
         #vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
+        logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_TSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_TSV.data,
             sep='\t',
@@ -70,6 +74,7 @@ def collect_initial_relation_data():
         #vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
+        logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_TSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_TSV.data,
             sep='\t',
@@ -79,6 +84,7 @@ def collect_initial_relation_data():
         #statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
+        logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_TSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_TSV.data,
             sep='\t',
@@ -88,6 +94,7 @@ def collect_initial_relation_data():
         #statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
+        logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
@@ -97,6 +104,7 @@ def collect_initial_relation_data():
         #resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
+        logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_TSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_TSV.data,
             sep='\t',
@@ -106,6 +114,7 @@ def collect_initial_relation_data():
         #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
+        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_TSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_TSV.data,
             sep='\t',
