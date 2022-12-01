@@ -59,7 +59,8 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     vendors_relation.to_sql(
         name='vendors',
         con=session,
-        if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
+        #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
+        if_exists='append',
         chunksize=1000,
         index=True,
         index_label='vendor_ID',
@@ -84,7 +85,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=session,
-        if_exists='replace',
+        if_exists='append',  #ToDo: See above about handling databases and fixtures
         chunksize=1000,
         index=True,
         index_label='statistics_source_ID',
