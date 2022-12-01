@@ -446,7 +446,7 @@ class StatisticsSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     
 
     def __repr__(self):
