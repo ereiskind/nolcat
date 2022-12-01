@@ -282,7 +282,7 @@ def determine_if_resources_match():
     '''
 
 
-@bp.route('/database-creation-complete', methods=['GET','POST'])
+@bp.route('/database-creation-complete', methods=['GET', 'POST'])
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
     #ToDo: Write actual docstring
