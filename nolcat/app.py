@@ -52,10 +52,11 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
 
     #Section: Create Command to Build Schema
-    # Documentation at https://flask.palletsprojects.com/en/2.1.x/appcontext/
+    # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
     @app.cli.command('create-db')
     def create_db():
-        with create_app().app_context():
+        with create_app().app_context():  # Creates an app context using the Flask factory pattern
+            # Per instructions at https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/: "To create the initial database, just import the db object[s]...and run the `SQLAlchemy.create_all()` method"
             from .models import FiscalYears
             from .models import Vendors
             from .models import VendorNotes
