@@ -50,6 +50,7 @@ def collect_initial_relation_data():
         )
         #fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
         #fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         vendors_dataframe = pd.read_csv(
             form.vendors_TSV.data,
@@ -58,6 +59,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_TSV.data,
@@ -66,6 +68,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_TSV.data,
@@ -74,6 +77,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_TSV.data,
@@ -82,6 +86,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
@@ -90,6 +95,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_TSV.data,
@@ -98,6 +104,7 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_TSV.data,
@@ -105,6 +112,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`statisticsResourceSources` dataframe:\n{statisticsResourceSources_dataframe}\n")
 
         #Section: Load Data into Database
         fiscalYears_dataframe.to_sql(
@@ -112,41 +120,50 @@ def collect_initial_relation_data():
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `fiscalYears` loaded into the database")
         vendors_dataframe.to_sql(
             'vendors',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `vendors` loaded into the database")
         vendorNotes_dataframe.to_sql(
             'vendorNotes',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `vendorNotes` loaded into the database")
         statisticsSources_dataframe.to_sql(
             'statisticsSources',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `statisticsSources` loaded into the database")
         statisticsSourceNotes_dataframe.to_sql(
             'statisticsSourceNotes',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `statisticsSourceNotes` loaded into the database")
         resourceSources_dataframe.to_sql(
             'resourceSources',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `resourceSources` loaded into the database")
         resourceSourceNotes_dataframe.to_sql(
             'resourceSourceNotes',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `resourceSourceNotes` loaded into the database")
         statisticsResourceSources_dataframe.to_sql(
             'statisticsResourceSources',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `statisticsResourceSources` loaded into the database")
+        logging.info("All relations loaded into the database")
         #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
     else:
