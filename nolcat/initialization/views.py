@@ -7,10 +7,8 @@ from flask import abort
 from flask import current_app
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
-import xlrd
 import pandas as pd
 from sqlalchemy.sql import text
-import csv
 
 from . import bp
 from ..app import db
