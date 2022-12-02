@@ -51,8 +51,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
-        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
+        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         logging.debug(f"`vendors` data:\n{form.vendors_TSV.data}\n")
@@ -63,7 +63,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_TSV.data}\n")
@@ -73,7 +73,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_TSV.data}\n")
@@ -84,7 +84,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_TSV.data}\n")
@@ -94,7 +94,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
@@ -105,7 +105,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_TSV.data}\n")
@@ -115,7 +115,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda str: str.encode('utf-8').decode('unicode-escape'))
+        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_TSV.data}\n")
