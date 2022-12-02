@@ -9,6 +9,7 @@ from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import pandas as pd
 from sqlalchemy.sql import text
+from sqlalchemy import exc
 
 from . import bp
 from ..app import db
@@ -159,57 +160,62 @@ def collect_initial_relation_data():
 
 
         #Section: Load Data into Database
-        fiscalYears_dataframe.to_sql(
-            'fiscalYears',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `fiscalYears` loaded into the database")
-        vendors_dataframe.to_sql(
-            'vendors',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `vendors` loaded into the database")
-        vendorNotes_dataframe.to_sql(
-            'vendorNotes',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `vendorNotes` loaded into the database")
-        statisticsSources_dataframe.to_sql(
-            'statisticsSources',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `statisticsSources` loaded into the database")
-        statisticsSourceNotes_dataframe.to_sql(
-            'statisticsSourceNotes',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `statisticsSourceNotes` loaded into the database")
-        resourceSources_dataframe.to_sql(
-            'resourceSources',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `resourceSources` loaded into the database")
-        resourceSourceNotes_dataframe.to_sql(
-            'resourceSourceNotes',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `resourceSourceNotes` loaded into the database")
-        statisticsResourceSources_dataframe.to_sql(
-            'statisticsResourceSources',
-            con=db.engine,
-            if_exists='append',
-        )
-        logging.debug("Relation `statisticsResourceSources` loaded into the database")
-        logging.info("All relations loaded into the database")
-        #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
-        return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
+        try:
+            fiscalYears_dataframe.to_sql(
+                'fiscalYears',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `fiscalYears` loaded into the database")
+            vendors_dataframe.to_sql(
+                'vendors',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendors` loaded into the database")
+            vendorNotes_dataframe.to_sql(
+                'vendorNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendorNotes` loaded into the database")
+            statisticsSources_dataframe.to_sql(
+                'statisticsSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsSources` loaded into the database")
+            statisticsSourceNotes_dataframe.to_sql(
+                'statisticsSourceNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsSourceNotes` loaded into the database")
+            resourceSources_dataframe.to_sql(
+                'resourceSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `resourceSources` loaded into the database")
+            resourceSourceNotes_dataframe.to_sql(
+                'resourceSourceNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `resourceSourceNotes` loaded into the database")
+            statisticsResourceSources_dataframe.to_sql(
+                'statisticsResourceSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsResourceSources` loaded into the database")
+            logging.info("All relations loaded into the database")
+            #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
+            return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
+        except exc.IntegrityError as error:
+            logging.warning(f"The `to_sql` methods prompted an IntegrityError: {error.orig.args}")  # https://stackoverflow.com/a/55581428
+            # https://stackoverflow.com/a/29614207 uses temp table
+            # https://stackoverflow.com/q/24522290 talks about using `session.flush()`
     else:
         return abort(404)
 
