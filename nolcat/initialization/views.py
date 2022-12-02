@@ -43,7 +43,6 @@ def collect_initial_relation_data():
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database. 
-        #ToDo: `.encode('utf-8').decode('unicode-escape')` statements cause HTTP 500 error in Flask--figure out another way to ensure Unicode characters are properly encoded
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_TSV.data,
@@ -52,8 +51,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
-        #fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
+        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         logging.debug(f"`vendors` data:\n{form.vendors_TSV.data}\n")
@@ -64,7 +63,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_TSV.data}\n")
@@ -74,7 +73,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_TSV.data}\n")
@@ -85,7 +84,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_TSV.data}\n")
@@ -95,7 +94,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
@@ -106,7 +105,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_TSV.data}\n")
@@ -116,7 +115,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_TSV.data}\n")
