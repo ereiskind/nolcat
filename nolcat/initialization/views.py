@@ -41,12 +41,14 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
+        # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database. 
         #ALERT: Currently, loading in with pandas record index label `\xff\xfef`, every field name is `Unnamed`, and all values are `NaN`--what's the fix?
         #ToDo: `.encode('utf-8').decode('unicode-escape')` statements cause HTTP 500 error in Flask--figure out another way to ensure Unicode characters are properly encoded
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_TSV.data,
             sep='\t',
+            index_col='fiscal_year_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -58,6 +60,7 @@ def collect_initial_relation_data():
         vendors_dataframe = pd.read_csv(
             form.vendors_TSV.data,
             sep='\t',
+            index_col='vendor_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -78,6 +81,7 @@ def collect_initial_relation_data():
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_TSV.data,
             sep='\t',
+            index_col='statistics_source_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -98,6 +102,7 @@ def collect_initial_relation_data():
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
+            index_col='resource_source_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -118,6 +123,7 @@ def collect_initial_relation_data():
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_TSV.data,
             sep='\t',
+            index_col=['SRS_statistics_source', 'SRS_resource_source'],
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
