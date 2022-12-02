@@ -41,8 +41,8 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded TSVs
+        #Subsection: Upload TSV Files
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database. 
-        #ALERT: Currently, loading in with pandas record index label `\xff\xfef`, every field name is `Unnamed`, and all values are `NaN`--what's the fix?
         #ToDo: `.encode('utf-8').decode('unicode-escape')` statements cause HTTP 500 error in Flask--figure out another way to ensure Unicode characters are properly encoded
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
@@ -128,6 +128,37 @@ def collect_initial_relation_data():
             encoding_errors='backslashreplace',
         )
         logging.info(f"`statisticsResourceSources` dataframe:\n{statisticsResourceSources_dataframe}\n")
+
+        #Subsection: Confirm Dataframes Contain Data
+        # At one point during testing, the data from the TSVs wasn't being read in; copying the data and pasting it as text into new files (which initially were saved as tab delimited but with a ".txt" extension) fixed the issue. This subsection includes a check for the above issue and instructions on how to perform the fix.
+        empty_dataframes = []
+        if fiscalYears_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`fiscalYears`")
+        if vendors_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`vendors`")
+        if vendorNotes_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`vendorNotes`")
+        if statisticsSources_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`statisticsSources`")
+        if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`statisticsSourceNotes`")
+        if resourceSources_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`resourceSources`")
+        if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`resourceSourceNotes`")
+        if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
+            empty_dataframes.append("`statisticsResourceSources`")
+        
+        if len(empty_dataframes) > 0:
+            if len(empty_dataframes) == 1:
+                logging.error(f"The {empty_dataframes[0]} relation dataframe contains no data.")
+            elif len(empty_dataframes) == 2:
+                logging.error(f"The {empty_dataframes[0]} and {empty_dataframes[1]} relation dataframes contain no data.")
+            else:
+                sequence = ", ".join(empty_dataframes[0:-1])
+                logging.error(f"The {sequence}, and {empty_dataframes[-1]} relation dataframes contain no data.")
+            return render_template('initialization/empty_dataframes_warning.html', list=empty_dataframes)
+
 
         #Section: Load Data into Database
         fiscalYears_dataframe.to_sql(
