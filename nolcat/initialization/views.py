@@ -39,7 +39,6 @@ def collect_initial_relation_data():
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
-        logging.info("This commit uses the `astype` method with the argument `\"string\"` applied to individual series.")
         #Section: Ingest Data from Uploaded TSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
@@ -49,19 +48,6 @@ def collect_initial_relation_data():
             form.fiscalYears_TSV.data,
             sep='\t',
             index_col='fiscal_year_ID',
-            #dtype={
-            #    #fiscal_year_ID: let pandas choose the int type
-            #    'fiscal_year': pd.StringDtype,
-            #    #start_date: date
-            #    #end_date: date
-            #    #ACRL_60b: let pandas choose the int type
-            #    #ACRL_63: let pandas choose the int type
-            #    #ARL_18: let pandas choose the int type
-            #    #ARL_19: let pandas choose the int type
-            #    #ARL_20: let pandas choose the int type
-            #    'notes_on_statisticsSources_used': pd.StringDtype,
-            #    'notes_on_corrections_after_submission': pd.StringDtype,
-            #},
             parse_dates=['start_date', 'end_date'],
             infer_datetime_format=True,
             encoding='utf-8',
@@ -80,11 +66,6 @@ def collect_initial_relation_data():
             form.vendors_TSV.data,
             sep='\t',
             index_col='vendor_ID',
-            #dtype={
-            #    #vendor_ID: let pandas choose the int type
-            #    'vendor_name': pd.StringDtype,
-            #    'alma_vendor_code': pd.StringDtype,
-            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -98,13 +79,6 @@ def collect_initial_relation_data():
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_TSV.data,
             sep='\t',
-            #dtype={
-            #    #vendor_notes_ID: let pandas choose the int type
-            #    'note': pd.StringDtype,
-            #    'written_by': pd.StringDtype,
-            #    #date_written: date
-            #    #vendor_ID: let pandas choose the int type
-            #},
             parse_dates=['date_written'],
             infer_datetime_format=True,
             encoding='utf-8',
@@ -121,12 +95,6 @@ def collect_initial_relation_data():
             form.statisticsSources_TSV.data,
             sep='\t',
             index_col='statistics_source_ID',
-            #dtype={
-            #    #statistics_source_ID: let pandas choose the int type
-            #    'statistics_source_name': pd.StringDtype,
-            #    'statistics_source_retrieval_code': pd.StringDtype,
-            #    #vendor_ID: let pandas choose the int type
-            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -140,13 +108,6 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_TSV.data,
             sep='\t',
-            #dtype={
-            #    #statistics_source_notes_ID: let pandas choose the int type
-            #    'note': pd.StringDtype,
-            #    'written_by': pd.StringDtype,
-            #    #date_written: date
-            #    #statistics_source_ID: let pandas choose the int type
-            #},
             encoding='utf-8',
             parse_dates=['date_written'],
             infer_datetime_format=True,
@@ -163,13 +124,6 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            #dtype={
-            #    #resource_source_ID: let pandas choose the int type
-            #    'resource_source_name': pd.StringDtype,
-            #    'source_in_use': bool,  # The Python default type can be used here because null values aren't allowed
-            #    #use_stop_date: date
-            #    #vendor_ID: let pandas choose the int type
-            #},
             parse_dates=['use_stop_date'],
             infer_datetime_format=True,
             encoding='utf-8',
@@ -184,13 +138,6 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_TSV.data,
             sep='\t',
-            #dtype={
-            #    #resource_source_notes_ID: let pandas choose the int type
-            #    'note': pd.StringDtype,
-            #    'written_by': pd.StringDtype,
-            #    #date_written: date
-            #    #resource_source_ID: let pandas choose the int type
-            #},
             parse_dates=['date_written'],
             infer_datetime_format=True,
             encoding='utf-8',
@@ -207,11 +154,6 @@ def collect_initial_relation_data():
             form.statisticsResourceSources_TSV.data,
             sep='\t',
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
-            #dtype={
-            #    #SRS_statistics_source: let pandas choose the int type
-            #    #SRS_resource_source: let pandas choose the int type
-            #    'current_statistics_source': bool,  # The Python default type can be used here because null values aren't allowed
-            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
