@@ -62,12 +62,11 @@ def collect_initial_relation_data():
             #    'notes_on_statisticsSources_used': pd.StringDtype,
             #    'notes_on_corrections_after_submission': pd.StringDtype,
             #},
+            parse_dates=['start_date', 'end_date'],
+            infer_datetime_format=True,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        fiscalYears_dataframe['start_date'] = pd.to_datetime(fiscalYears_dataframe['start_date'], format='%Y-%m-%d')
-        fiscalYears_dataframe['end_date'] = pd.to_datetime(fiscalYears_dataframe['end_date'], format='%Y-%m-%d')
-        #ToDo: Adding above lines caused `TypeError: construct_array_type() missing 1 required positional argument: 'self'` with `read_csv` method as only line from repo in stack trace
         logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))  #ToDo: Determine how this expression raised `AttributeError: 'float' object has no attribute 'isnull'` when all the values in the referenced series are blank--why does this series seem to have a float data type?
         #fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
@@ -101,10 +100,11 @@ def collect_initial_relation_data():
             #    #date_written: date
             #    #vendor_ID: let pandas choose the int type
             #},
+            parse_dates=['date_written'],
+            infer_datetime_format=True,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         #vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -139,9 +139,10 @@ def collect_initial_relation_data():
             #    #statistics_source_ID: let pandas choose the int type
             #},
             encoding='utf-8',
+            parse_dates=['date_written'],
+            infer_datetime_format=True,
             encoding_errors='backslashreplace',
         )
-        statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -158,10 +159,11 @@ def collect_initial_relation_data():
             #    #use_stop_date: date
             #    #vendor_ID: let pandas choose the int type
             #},
+            parse_dates=['use_stop_date'],
+            infer_datetime_format=True,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSources_dataframe['use_stop_date'] = pd.to_datetime(resourceSources_dataframe['use_stop_date'], format='%Y-%m-%d')
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         #resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -177,10 +179,11 @@ def collect_initial_relation_data():
             #    #date_written: date
             #    #resource_source_ID: let pandas choose the int type
             #},
+            parse_dates=['date_written'],
+            infer_datetime_format=True,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
