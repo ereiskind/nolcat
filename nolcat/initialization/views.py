@@ -103,7 +103,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], format='%Y-%m-%d')
+        #vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         #vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -140,7 +140,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
+        #statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -160,7 +160,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSources_dataframe['use_stop_date'] = pd.to_datetime(resourceSources_dataframe['use_stop_date'], format='%Y-%m-%d')
+        #resourceSources_dataframe['use_stop_date'] = pd.to_datetime(resourceSources_dataframe['use_stop_date'], format='%Y-%m-%d')
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         #resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -179,7 +179,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
+        #resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
