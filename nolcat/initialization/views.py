@@ -51,7 +51,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        logging.warning(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        print(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # Info logging statement didn't appear, so retrying with elevated logging level and print statement
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))  #ToDo: Determine how this expression raised `AttributeError: 'float' object has no attribute 'isnull'` when all the values in the referenced series are blank--why does this series seem to have a float data type?
         # No data loaded into database, so relations not truncated in SQL command line
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
