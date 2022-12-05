@@ -39,7 +39,7 @@ def collect_initial_relation_data():
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
-        logging.info("This commit features all modifications related to data types or encodings commented out.")
+        logging.info("This commit comments out the `dtype` arguments but does feature the `to_datetime` methods.")
         #Section: Ingest Data from Uploaded TSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
@@ -49,24 +49,24 @@ def collect_initial_relation_data():
             form.fiscalYears_TSV.data,
             sep='\t',
             index_col='fiscal_year_ID',
-            dtype={
-                #fiscal_year_ID: let pandas choose the int type
-                'fiscal_year': pd.StringDtype,
-                #start_date: date
-                #end_date: date
-                #ACRL_60b: let pandas choose the int type
-                #ACRL_63: let pandas choose the int type
-                #ARL_18: let pandas choose the int type
-                #ARL_19: let pandas choose the int type
-                #ARL_20: let pandas choose the int type
-                'notes_on_statisticsSources_used': pd.StringDtype,
-                'notes_on_corrections_after_submission': pd.StringDtype,
-            },
+            #dtype={
+            #    #fiscal_year_ID: let pandas choose the int type
+            #    'fiscal_year': pd.StringDtype,
+            #    #start_date: date
+            #    #end_date: date
+            #    #ACRL_60b: let pandas choose the int type
+            #    #ACRL_63: let pandas choose the int type
+            #    #ARL_18: let pandas choose the int type
+            #    #ARL_19: let pandas choose the int type
+            #    #ARL_20: let pandas choose the int type
+            #    'notes_on_statisticsSources_used': pd.StringDtype,
+            #    'notes_on_corrections_after_submission': pd.StringDtype,
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #fiscalYears_dataframe['start_date'] = pd.to_datetime(fiscalYears_dataframe['start_date'], format='%Y-%m-%d')
-        #fiscalYears_dataframe['end_date'] = pd.to_datetime(fiscalYears_dataframe['end_date'], format='%Y-%m-%d')
+        fiscalYears_dataframe['start_date'] = pd.to_datetime(fiscalYears_dataframe['start_date'], format='%Y-%m-%d')
+        fiscalYears_dataframe['end_date'] = pd.to_datetime(fiscalYears_dataframe['end_date'], format='%Y-%m-%d')
         #ToDo: Adding above lines caused `TypeError: construct_array_type() missing 1 required positional argument: 'self'` with `read_csv` method as only line from repo in stack trace
         logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))  #ToDo: Determine how this expression raised `AttributeError: 'float' object has no attribute 'isnull'` when all the values in the referenced series are blank--why does this series seem to have a float data type?
@@ -78,11 +78,11 @@ def collect_initial_relation_data():
             form.vendors_TSV.data,
             sep='\t',
             index_col='vendor_ID',
-            dtype={
-                #vendor_ID: let pandas choose the int type
-                'vendor_name': pd.StringDtype,
-                'alma_vendor_code': pd.StringDtype,
-            },
+            #dtype={
+            #    #vendor_ID: let pandas choose the int type
+            #    'vendor_name': pd.StringDtype,
+            #    'alma_vendor_code': pd.StringDtype,
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -94,17 +94,17 @@ def collect_initial_relation_data():
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_TSV.data,
             sep='\t',
-            dtype={
-                #vendor_notes_ID: let pandas choose the int type
-                'note': pd.StringDtype,
-                'written_by': pd.StringDtype,
-                #date_written: date
-                #vendor_ID: let pandas choose the int type
-            },
+            #dtype={
+            #    #vendor_notes_ID: let pandas choose the int type
+            #    'note': pd.StringDtype,
+            #    'written_by': pd.StringDtype,
+            #    #date_written: date
+            #    #vendor_ID: let pandas choose the int type
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], format='%Y-%m-%d')
+        vendorNotes_dataframe['date_written'] = pd.to_datetime(vendorNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         #vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -114,12 +114,12 @@ def collect_initial_relation_data():
             form.statisticsSources_TSV.data,
             sep='\t',
             index_col='statistics_source_ID',
-            dtype={
-                #statistics_source_ID: let pandas choose the int type
-                'statistics_source_name': pd.StringDtype,
-                'statistics_source_retrieval_code': pd.StringDtype,
-                #vendor_ID: let pandas choose the int type
-            },
+            #dtype={
+            #    #statistics_source_ID: let pandas choose the int type
+            #    'statistics_source_name': pd.StringDtype,
+            #    'statistics_source_retrieval_code': pd.StringDtype,
+            #    #vendor_ID: let pandas choose the int type
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -131,17 +131,17 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_TSV.data,
             sep='\t',
-            dtype={
-                #statistics_source_notes_ID: let pandas choose the int type
-                'note': pd.StringDtype,
-                'written_by': pd.StringDtype,
-                #date_written: date
-                #statistics_source_ID: let pandas choose the int type
-            },
+            #dtype={
+            #    #statistics_source_notes_ID: let pandas choose the int type
+            #    'note': pd.StringDtype,
+            #    'written_by': pd.StringDtype,
+            #    #date_written: date
+            #    #statistics_source_ID: let pandas choose the int type
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
+        statisticsSourceNotes_dataframe['date_written'] = pd.to_datetime(statisticsSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -151,17 +151,17 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            dtype={
-                #resource_source_ID: let pandas choose the int type
-                'resource_source_name': pd.StringDtype,
-                'source_in_use': bool,  # The Python default type can be used here because null values aren't allowed
-                #use_stop_date: date
-                #vendor_ID: let pandas choose the int type
-            },
+            #dtype={
+            #    #resource_source_ID: let pandas choose the int type
+            #    'resource_source_name': pd.StringDtype,
+            #    'source_in_use': bool,  # The Python default type can be used here because null values aren't allowed
+            #    #use_stop_date: date
+            #    #vendor_ID: let pandas choose the int type
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #resourceSources_dataframe['use_stop_date'] = pd.to_datetime(resourceSources_dataframe['use_stop_date'], format='%Y-%m-%d')
+        resourceSources_dataframe['use_stop_date'] = pd.to_datetime(resourceSources_dataframe['use_stop_date'], format='%Y-%m-%d')
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         #resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -170,17 +170,17 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_TSV.data,
             sep='\t',
-            dtype={
-                #resource_source_notes_ID: let pandas choose the int type
-                'note': pd.StringDtype,
-                'written_by': pd.StringDtype,
-                #date_written: date
-                #resource_source_ID: let pandas choose the int type
-            },
+            #dtype={
+            #    #resource_source_notes_ID: let pandas choose the int type
+            #    'note': pd.StringDtype,
+            #    'written_by': pd.StringDtype,
+            #    #date_written: date
+            #    #resource_source_ID: let pandas choose the int type
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
+        resourceSourceNotes_dataframe['date_written'] = pd.to_datetime(resourceSourceNotes_dataframe['date_written'], format='%Y-%m-%d')
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
@@ -190,11 +190,11 @@ def collect_initial_relation_data():
             form.statisticsResourceSources_TSV.data,
             sep='\t',
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
-            dtype={
-                #SRS_statistics_source: let pandas choose the int type
-                #SRS_resource_source: let pandas choose the int type
-                'current_statistics_source': bool,  # The Python default type can be used here because null values aren't allowed
-            },
+            #dtype={
+            #    #SRS_statistics_source: let pandas choose the int type
+            #    #SRS_resource_source: let pandas choose the int type
+            #    'current_statistics_source': bool,  # The Python default type can be used here because null values aren't allowed
+            #},
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
