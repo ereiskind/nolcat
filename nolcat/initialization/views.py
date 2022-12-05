@@ -39,11 +39,13 @@ def collect_initial_relation_data():
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
+        logging.info("This log statement uses content that changes with every commit to confirm that the most recent commit is being used.")
+        return "next page"
         #Section: Ingest Data from Uploaded TSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database. 
-        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
+        '''logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_TSV.data,
             sep='\t',
@@ -285,7 +287,7 @@ def collect_initial_relation_data():
             #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
             return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
         except exc.IntegrityError as error:
-            logging.warning(f"The `to_sql` methods prompted an IntegrityError: {error.orig.args}")  # https://stackoverflow.com/a/55581428
+            logging.warning(f"The `to_sql` methods prompted an IntegrityError: {error.orig.args}")'''  # https://stackoverflow.com/a/55581428
             # https://stackoverflow.com/a/29614207 uses temp table
             # https://stackoverflow.com/q/24522290 talks about using `session.flush()`
     else:
