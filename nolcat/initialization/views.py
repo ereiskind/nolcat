@@ -39,7 +39,7 @@ def collect_initial_relation_data():
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
-        logging.info("This commit uses the `parse_dates` argument for setting date data types and the `infer_objects` method for setting the data type of strings.")
+        logging.info("This commit uses the `astype` method with the argument `\"string\"` applied to individual series.")
         #Section: Ingest Data from Uploaded TSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
@@ -67,11 +67,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        fiscalYears_dataframe = fiscalYears_dataframe.astype({
-            'fiscal_year': pd.StringDtype,
-            'notes_on_statisticsSources_used': pd.StringDtype,
-            'notes_on_corrections_after_submission': pd.StringDtype,
-        })
+        fiscalYears_dataframe['fiscal_year'] = fiscalYears_dataframe['fiscal_year'].astype("string")
+        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].astype("string")
+        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].astype("string")
         logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))  #ToDo: Determine how this expression raised `AttributeError: 'float' object has no attribute 'isnull'` when all the values in the referenced series are blank--why does this series seem to have a float data type?
         #fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
@@ -90,10 +88,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendors_dataframe = vendors_dataframe.astype({
-            'vendor_name': pd.StringDtype,
-            'alma_vendor_code': pd.StringDtype,
-        })
+        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].astype("string")
+        vendors_dataframe['alma_vendor_code'] = vendors_dataframe['alma_vendor_code'].astype("string")
         logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
         #vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
@@ -114,10 +110,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendorNotes_dataframe = vendorNotes_dataframe.astype({
-            'note': pd.StringDtype,
-            'written_by': pd.StringDtype,
-        })
+        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].astype("string")
+        vendorNotes_dataframe['written_by'] = vendorNotes_dataframe['written_by'].astype("string")
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         #vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -136,10 +130,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        statisticsSources_dataframe = statisticsSources_dataframe.astype({
-            'statistics_source_name': pd.StringDtype,
-            'statistics_source_retrieval_code': pd.StringDtype,
-        })
+        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].astype("string")
+        statisticsSources_dataframe['statistics_source_retrieval_code'] = statisticsSources_dataframe['statistics_source_retrieval_code'].astype("string")
         logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
         #statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
@@ -160,10 +152,8 @@ def collect_initial_relation_data():
             infer_datetime_format=True,
             encoding_errors='backslashreplace',
         )
-        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({
-            'note': pd.StringDtype,
-            'written_by': pd.StringDtype,
-        })
+        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
+        statisticsSourceNotes_dataframe['written_by'] = statisticsSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -185,9 +175,7 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSources_dataframe = resourceSources_dataframe.astype({
-            'resource_source_name': pd.StringDtype,
-        })
+        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         #resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -208,10 +196,8 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({
-            'note': pd.StringDtype,
-            'written_by': pd.StringDtype,
-        })
+        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].astype("string")
+        resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
