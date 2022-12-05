@@ -1,4 +1,5 @@
 import logging
+import datetime
 from flask import render_template
 from flask import redirect
 from flask import url_for
@@ -48,11 +49,23 @@ def collect_initial_relation_data():
             form.fiscalYears_TSV.data,
             sep='\t',
             index_col='fiscal_year_ID',
+            dtype={
+                #fiscal_year_ID: let pandas choose the int type
+                'fiscal_year': pd.StringDtype,
+                'start_date': datetime.date,
+                'end_date': datetime.date,
+                #ACRL_60b: let pandas choose the int type
+                #ACRL_63: let pandas choose the int type
+                #ARL_18: let pandas choose the int type
+                #ARL_19: let pandas choose the int type
+                #ARL_20: let pandas choose the int type
+                'notes_on_statisticsSources_used': pd.StringDtype,
+                'notes_on_corrections_after_submission': pd.StringDtype,
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.warning(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
-        print(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # Info logging statement didn't appear, so retrying with elevated logging level and print statement
+        logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))  #ToDo: Determine how this expression raised `AttributeError: 'float' object has no attribute 'isnull'` when all the values in the referenced series are blank--why does this series seem to have a float data type?
         #fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
@@ -62,9 +75,15 @@ def collect_initial_relation_data():
             form.vendors_TSV.data,
             sep='\t',
             index_col='vendor_ID',
+            dtype={
+                #vendor_ID: let pandas choose the int type
+                'vendor_name': pd.StringDtype,
+                'alma_vendor_code': pd.StringDtype,
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
         #vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
@@ -72,9 +91,17 @@ def collect_initial_relation_data():
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_TSV.data,
             sep='\t',
+            dtype={
+                #vendor_notes_ID: let pandas choose the int type
+                'note': pd.StringDtype,
+                'written_by': pd.StringDtype,
+                'date_written': datetime.date,
+                #vendor_ID: let pandas choose the int type
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         #vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
@@ -83,9 +110,16 @@ def collect_initial_relation_data():
             form.statisticsSources_TSV.data,
             sep='\t',
             index_col='statistics_source_ID',
+            dtype={
+                #statistics_source_ID: let pandas choose the int type
+                'statistics_source_name': pd.StringDtype,
+                'statistics_source_retrieval_code': pd.StringDtype,
+                #vendor_ID: let pandas choose the int type
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
         #statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
@@ -93,9 +127,17 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_TSV.data,
             sep='\t',
+            dtype={
+                #statistics_source_notes_ID: let pandas choose the int type
+                'note': pd.StringDtype,
+                'written_by': pd.StringDtype,
+                'date_written': datetime.date,
+                #statistics_source_ID: let pandas choose the int type
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
@@ -104,9 +146,17 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
+            dtype={
+                #resource_source_ID: let pandas choose the int type
+                'resource_source_name': pd.StringDtype,
+                'source_in_use': bool,  # The Python default type can be used here because null values aren't allowed
+                'use_stop_date': datetime.date,
+                #vendor_ID: let pandas choose the int type
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         #resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
@@ -114,9 +164,17 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_TSV.data,
             sep='\t',
+            dtype={
+                #resource_source_notes_ID: let pandas choose the int type
+                'note': pd.StringDtype,
+                'written_by': pd.StringDtype,
+                'date_written': datetime.date,
+                #resource_source_ID: let pandas choose the int type
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")  # When the statement below raises an error, this logging statement doesn't appear
         #resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if value.isnull() == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
@@ -125,10 +183,16 @@ def collect_initial_relation_data():
             form.statisticsResourceSources_TSV.data,
             sep='\t',
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
+            dtype={
+                #SRS_statistics_source: let pandas choose the int type
+                #SRS_resource_source: let pandas choose the int type
+                'current_statistics_source': bool,  # The Python default type can be used here because null values aren't allowed
+            },
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.info(f"`statisticsResourceSources` dataframe:\n{statisticsResourceSources_dataframe}\n")
+        # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
+        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
 
         #Subsection: Confirm Dataframes Contain Data
         # At one point during testing, the data from the TSVs wasn't being read in; copying the data and pasting it as text into new files (which initially were saved as tab delimited but with a ".txt" extension) fixed the issue. This subsection includes a check for the above issue and instructions on how to perform the fix.
