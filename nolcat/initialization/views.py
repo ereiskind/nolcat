@@ -150,8 +150,8 @@ def collect_initial_relation_data():
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
-            #index_col='resource_source_ID',
-            parse_dates=[3],  #['use_stop_date'], --Using field index number per https://stackoverflow.com/a/64515876
+            index_col='resource_source_ID',
+            parse_dates=['use_stop_date'],
             date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
@@ -161,8 +161,6 @@ def collect_initial_relation_data():
             return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSources`")
         
         logging.info(f"`resourceSources` dtypes and dataframe before any changes:\n{resourceSources_dataframe.dtypes}\n{resourceSources_dataframe}\n")
-        resourceSources_dataframe = resourceSources_dataframe.set_index('resource_source_ID', verify_integrity=True)
-        logging.info(f"Check `resourceSources` index:\n{resourceSources_dataframe}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
