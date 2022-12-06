@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+import pandas as pd
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -104,3 +105,11 @@ def create_app():
     
     
     return app
+
+
+def date_parser(dates):
+    """The function for parsing dates as part of converting ingested data into a dataframe.
+    
+    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option.
+    """
+    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type

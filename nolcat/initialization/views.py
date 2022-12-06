@@ -12,7 +12,7 @@ from sqlalchemy.sql import text
 from sqlalchemy import exc
 
 from . import bp
-from ..app import db
+from ..app import db, date_parser
 from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
