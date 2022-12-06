@@ -120,12 +120,12 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
-        logging.info(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
+        logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            parse_dates=['use_stop_date'],
+            parse_dates=3,  #['use_stop_date'], --Using field index number per https://stackoverflow.com/a/64515876
             date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
