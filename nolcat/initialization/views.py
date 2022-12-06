@@ -120,7 +120,7 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
-        logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
+        logging.info(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_TSV.data,
             sep='\t',
