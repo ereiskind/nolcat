@@ -125,7 +125,7 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            parse_dates=3,  #['use_stop_date'], --Using field index number per https://stackoverflow.com/a/64515876
+            parse_dates=[3],  #['use_stop_date'], --Using field index number per https://stackoverflow.com/a/64515876
             date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
