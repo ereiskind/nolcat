@@ -151,8 +151,8 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            parse_dates=['use_stop_date'],
-            date_parser=date_parser,
+            #parse_dates=['use_stop_date'],
+            #date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
