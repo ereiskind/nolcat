@@ -50,7 +50,7 @@ def collect_initial_relation_data():
             sep='\t',
             index_col='fiscal_year_ID',
             parse_dates=['start_date', 'end_date'],
-            infer_datetime_format=True,
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -81,7 +81,7 @@ def collect_initial_relation_data():
             form.vendorNotes_TSV.data,
             sep='\t',
             parse_dates=['date_written'],
-            infer_datetime_format=True,
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -111,7 +111,7 @@ def collect_initial_relation_data():
             sep='\t',
             encoding='utf-8',
             parse_dates=['date_written'],
-            infer_datetime_format=True,
+            date_parser=date_parser,
             encoding_errors='backslashreplace',
         )
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
@@ -126,7 +126,7 @@ def collect_initial_relation_data():
             sep='\t',
             index_col='resource_source_ID',
             parse_dates=['use_stop_date'],
-            infer_datetime_format=True,
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -140,7 +140,7 @@ def collect_initial_relation_data():
             form.resourceSourceNotes_TSV.data,
             sep='\t',
             parse_dates=['date_written'],
-            infer_datetime_format=True,
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
