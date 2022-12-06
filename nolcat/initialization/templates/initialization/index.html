@@ -17,6 +17,7 @@
                 <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.tsv') }}">"initialize_fiscalYear.tsv"</a>.</li>
                 <li>For all previous fiscal years for which there is usage data, fill out a row in the TSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required).</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Fiscal_Year_ID` field.</li>
+                <li>Save the TSV as "Unicode Text" with tab delimiters, renaming the file to change the file extension from ".txt" to ".tsv" if necessary.</li>
             </ol>
         </li>
 
@@ -31,6 +32,7 @@
                 <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation, then fill out the `Note`, `Written_By`, and `Date_Written` fields.</li>
                 <li>Copy <code>=VLOOKUP(A2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
                 <li>Delete column A with the field `REFERENCE Vendor_ID`.</li>
+                <li>Save the TSVs as "Unicode Text" with tab delimiters, renaming the files to change the file extensions from ".txt" to ".tsv" if necessary.</li>
             </ol>
         </li>
 
@@ -63,9 +65,11 @@
                 <li>Remove duplicate records in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", then double check that there are no duplicated values in `Resource_Source_ID` or `Statistics_Source_ID`; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.</li>
                 <li>In "initialize_resourceSources.tsv", copy <code>=VLOOKUP(D2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field `REFERENCE Vendor_ID`).</li>
                 <li>In "initialize_statisticsSources.tsv", copy <code>=VLOOKUP(C2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
-                <li>Create a new TSV file and name it "initialize_statisticsResourceSources.tsv".</li>
-                <li>Copy the `Statistics_Source_ID`, `Resource_Source_ID`, and `Current_Statistics_Source` columns from the spreadsheet into "initialize_statisticsResourceSources.tsv".</li>
-                <li>In "initialize_statisticsResourceSources.tsv", change `Statistics_Source_ID` to `SRS_Statistics_Source` and `Resource_Source_ID` to `SRS_Resource_Source`.</li>
+                <li>Save all four TSVs as "Unicode Text" with tab delimiters, renaming the files to change the file extensions from ".txt" to ".tsv" if necessary.</li>
+                <li>Create a new TSV file of the "Unicode Text" file type and name it "initialize_statisticsResourceSources.txt".</li>
+                <li>Copy the `Statistics_Source_ID`, `Resource_Source_ID`, and `Current_Statistics_Source` columns from the spreadsheet into "initialize_statisticsResourceSources.txt".</li>
+                <li>In "initialize_statisticsResourceSources.txt", change `Statistics_Source_ID` to `SRS_Statistics_Source` and `Resource_Source_ID` to `SRS_Resource_Source`.</li>
+                <li>Save "initialize_statisticsResourceSources.txt", renaming the file to change the file extension from ".txt" to ".tsv" if necessary.</li>
             </ol>
         </li>
 
