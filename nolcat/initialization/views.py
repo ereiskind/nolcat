@@ -42,6 +42,7 @@ def collect_initial_relation_data():
         #Section: Ingest Data from Uploaded TSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
+        #ToDo: The "Unicode Text" file format that preserves non-Latin script letter characters raises the errors `ValueError: Missing column provided to 'parse_dates': 'use_stop_date'` or `ValueError: Index resource_source_ID invalid` for no discernable reason with both the ".txt" and ".tsv" file extensions; a file saved as a standard text file with its extension changed from ".txt" to ".tsv" doesn't raise any errors, but all characters from scripts other than Latin become question marks. How can a file that saves the full scope of Unicode characters also be read into a dataframe?
         # TSV files containing data may be read in as completely null for no discernable reason; copying the data, pasting it into a new file, and saving the file according to the established instructions will fix the problem. Each `read_csv` method is followed by a check to confirm that the dataframe does contain data and instructions on how to perform the fix if it doesn't. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` TSV File
@@ -151,8 +152,8 @@ def collect_initial_relation_data():
             form.resourceSources_TSV.data,
             sep='\t',
             index_col='resource_source_ID',
-            #parse_dates=['use_stop_date'],
-            #date_parser=date_parser,
+            parse_dates=['use_stop_date'],
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
@@ -160,7 +161,6 @@ def collect_initial_relation_data():
             logging.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSources`")
         
-        logging.info(f"`resourceSources` dtypes and dataframe before any changes:\n{resourceSources_dataframe.dtypes}\n{resourceSources_dataframe}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
