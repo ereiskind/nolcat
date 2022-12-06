@@ -43,6 +43,7 @@ def collect_initial_relation_data():
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         #Subsection: Upload TSV Files
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
+        # TSV files containing data may be read in as completely null for no discernable reason; copying the data, pasting it into a new file, and saving the file according to the established instructions will fix the problem. Each `read_csv` method is followed by a check to confirm that the dataframe does contain data and instructions on how to perform the fix if it doesn't. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
@@ -54,6 +55,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if fiscalYears_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `fiscalYears` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`fiscalYears`")
         fiscalYears_dataframe['fiscal_year'] = fiscalYears_dataframe['fiscal_year'].astype("string")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].astype("string")
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].astype("string")
@@ -70,6 +74,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if vendors_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `vendors` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`vendors`")
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].astype("string")
         vendors_dataframe['alma_vendor_code'] = vendors_dataframe['alma_vendor_code'].astype("string")
         logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
@@ -85,6 +92,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if vendorNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `vendorNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`vendorNotes`")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].astype("string")
         vendorNotes_dataframe['written_by'] = vendorNotes_dataframe['written_by'].astype("string")
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
@@ -99,6 +109,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if statisticsSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSources`")
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].astype("string")
         statisticsSources_dataframe['statistics_source_retrieval_code'] = statisticsSources_dataframe['statistics_source_retrieval_code'].astype("string")
         logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
@@ -114,6 +127,9 @@ def collect_initial_relation_data():
             date_parser=date_parser,
             encoding_errors='backslashreplace',
         )
+        if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsSourceNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSourceNotes`")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
         statisticsSourceNotes_dataframe['written_by'] = statisticsSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
@@ -130,6 +146,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if resourceSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `resourceSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSources`")
         logging.info(f"`resourceSources` dtypes and dataframe before any changes:\n{resourceSources_dataframe.dtypes}\n{resourceSources_dataframe}\n")
         resourceSources_dataframe = resourceSources_dataframe.set_index('resource_source_ID', verify_integrity=True)
         logging.info(f"Check `resourceSources` index:\n{resourceSources_dataframe}\n")
@@ -147,6 +166,9 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `resourceSourceNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSourceNotes`")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].astype("string")
         resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
@@ -161,38 +183,11 @@ def collect_initial_relation_data():
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsResourceSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsResourceSources`")
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
         logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
-
-        #Subsection: Confirm Dataframes Contain Data
-        # At one point during testing, the data from the TSVs wasn't being read in; copying the data and pasting it as text into new files (which initially were saved as tab delimited but with a ".txt" extension) fixed the issue. This subsection includes a check for the above issue and instructions on how to perform the fix.
-        empty_dataframes = []
-        if fiscalYears_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`fiscalYears`")
-        if vendors_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`vendors`")
-        if vendorNotes_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`vendorNotes`")
-        if statisticsSources_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`statisticsSources`")
-        if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`statisticsSourceNotes`")
-        if resourceSources_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`resourceSources`")
-        if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`resourceSourceNotes`")
-        if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
-            empty_dataframes.append("`statisticsResourceSources`")
-        
-        if len(empty_dataframes) > 0:
-            if len(empty_dataframes) == 1:
-                logging.error(f"The {empty_dataframes[0]} relation dataframe contains no data.")
-            elif len(empty_dataframes) == 2:
-                logging.error(f"The {empty_dataframes[0]} and {empty_dataframes[1]} relation dataframes contain no data.")
-            else:
-                sequence = ", ".join(empty_dataframes[0:-1])
-                logging.error(f"The {sequence}, and {empty_dataframes[-1]} relation dataframes contain no data.")
-            return render_template('initialization/empty_dataframes_warning.html', list=empty_dataframes)
 
 
         #Section: Load Data into Database
