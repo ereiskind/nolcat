@@ -12,7 +12,7 @@ class InitialRelationDataForm(FlaskForm):
     statisticsSources_CSV = FileField("Select the filled out \"initialize_statisticsSources.csv\" file here.", validators=[DataRequired()])
     statisticsSourceNotes_CSV = FileField("Select the filled out \"initialize_statisticsSourceNotes.csv\" file here.", validators=[DataRequired()])
     resourceSources_CSV = FileField("Select the filled out \"initialize_resourceSources.csv\" file here.", validators=[DataRequired()])
-    resourceSourceNotes_TSV = FileField("Select the filled out \"initialize_resourceSourceNotes.tsv\" file here.", validators=[DataRequired()])
+    resourceSourceNotes_CSV = FileField("Select the filled out \"initialize_resourceSourceNotes.csv\" file here.", validators=[DataRequired()])
     statisticsResourceSources_CSV = FileField("Select the filled out \"initialize_statisticsResourceSources.csv\" file here.", validators=[DataRequired()])
 
 
