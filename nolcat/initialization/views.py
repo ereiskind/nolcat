@@ -310,7 +310,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         #ToDo: df['notes'] = None
 
         #ToDo: df.to_csv(
-        #    'initialize_annualUsageCollectionTracking.tsv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
+        #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
         #    sep="\t",
         #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
         #    encoding='utf-8',
@@ -323,7 +323,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     elif form.validate_on_submit():
         #Subsection: Load `annualUsageCollectionTracking` into Database
         AUCT_dataframe = pd.read_csv(
-            form.annualUsageCollectionTracking_TSV.data,
+            form.annualUsageCollectionTracking_CSV.data,
             sep='\t',
             encoding='utf-8',
             encoding_errors='backslashreplace',
