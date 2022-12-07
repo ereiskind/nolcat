@@ -202,3 +202,8 @@ Branch: Configure Flask-User
 
 About This Repo
 ***************
+
+Encodings and File Types
+========================
+
+E-resources involves working with scholarly content in a wide variety of languages, requiring the use of Unicode to accommodate multiple alphabets/character sets. NoLCAT uses the UTF-8 encoding for a variety of reasions, including its ubiquity, backwards compatability, and inclusion as a requirement of the COUNTER 5 Code of Practice. Since Microsoft Excel can explicitly save files as CSV files with an UTF-8 encoding, NoLCAT will use the CSV format for plain text file uploads and downloads.
