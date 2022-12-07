@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired
 class InitialRelationDataForm(FlaskForm):
     """Creates a form for uploading the non-usage database initialization data."""
     fiscalYears_CSV = FileField("Select the filled out \"initialize_fiscalYears.csv\" file here.", validators=[DataRequired()])
-    vendors_TSV = FileField("Select the filled out \"initialize_vendors.tsv\" file here.", validators=[DataRequired()])
+    vendors_CSV = FileField("Select the filled out \"initialize_vendors.csv\" file here.", validators=[DataRequired()])
     vendorNotes_TSV = FileField("Select the filled out \"initialize_vendorNotes.tsv\" file here.", validators=[DataRequired()])
     statisticsSources_TSV = FileField("Select the filled out \"initialize_statisticsSources.tsv\" file here.", validators=[DataRequired()])
     statisticsSourceNotes_TSV = FileField("Select the filled out \"initialize_statisticsSourceNotes.tsv\" file here.", validators=[DataRequired()])

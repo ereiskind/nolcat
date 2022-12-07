@@ -69,9 +69,9 @@ def collect_initial_relation_data():
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         #Subsection: Upload `vendors` TSV File
-        logging.debug(f"`vendors` data:\n{form.vendors_TSV.data}\n")
+        logging.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
-            form.vendors_TSV.data,
+            form.vendors_CSV.data,
             sep='\t',
             index_col='vendor_ID',
             encoding='utf-8',

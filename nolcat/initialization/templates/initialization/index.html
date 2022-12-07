@@ -23,14 +23,14 @@
 
         <li><h2>Create the `vendors` and `vendorNotes` Relations</h2>
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.tsv') }}">"initialize_vendors.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.csv') }}">"initialize_vendors.csv"</a>.</li>
                 <li>In the `Vendor_Name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
                 <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field.</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Vendor_ID` field.</li>
                 <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.tsv') }}">"initialize_vendorNotes.tsv"</a>.</li>
                 <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
                 <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation, then fill out the `Note`, `Written_By`, and `Date_Written` fields.</li>
-                <li>Copy <code>=VLOOKUP(A2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
+                <li>Copy <code>=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
                 <li>Delete column A with the field `REFERENCE Vendor_ID`.</li>
                 <li>Save the TSVs as "Unicode Text" with tab delimiters, renaming the files to change the file extensions from ".txt" to ".tsv" if necessary.</li>
             </ol>
@@ -63,8 +63,8 @@
                 <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
                 <li>Copy the values in the spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `REFERENCE Vendor_ID` fields in the appropriate TSV.</li>
                 <li>Remove duplicate records in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", then double check that there are no duplicated values in `Resource_Source_ID` or `Statistics_Source_ID`; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.</li>
-                <li>In "initialize_resourceSources.tsv", copy <code>=VLOOKUP(D2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field `REFERENCE Vendor_ID`).</li>
-                <li>In "initialize_statisticsSources.tsv", copy <code>=VLOOKUP(C2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
+                <li>In "initialize_resourceSources.tsv", copy <code>=VLOOKUP(D2,initialize_vendors.csv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field `REFERENCE Vendor_ID`).</li>
+                <li>In "initialize_statisticsSources.tsv", copy <code>=VLOOKUP(C2,initialize_vendors.csv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
                 <li>Save all four TSVs as "Unicode Text" with tab delimiters, renaming the files to change the file extensions from ".txt" to ".tsv" if necessary.</li>
                 <li>Create a new TSV file of the "Unicode Text" file type and name it "initialize_statisticsResourceSources.txt".</li>
                 <li>Copy the `Statistics_Source_ID`, `Resource_Source_ID`, and `Current_Statistics_Source` columns from the spreadsheet into "initialize_statisticsResourceSources.txt".</li>
@@ -82,8 +82,8 @@
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.vendors_TSV.label }}
-                    {{ form.vendors_TSV }}
+                    {{ form.vendors_CSV.label }}
+                    {{ form.vendors_CSV }}
                 </label></li>
                 <br>
                 <li><label>
