@@ -108,9 +108,9 @@ def collect_initial_relation_data():
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsSources` TSV File
-        logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_TSV.data}\n")
+        logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
-            form.statisticsSources_TSV.data,
+            form.statisticsSources_CSV.data,
             sep='\t',
             index_col='statistics_source_ID',
             encoding='utf-8',

@@ -49,7 +49,7 @@
             To handle this complexity, three relations in a junction table-like relationship are employed: the `resourceSources` relation contains records for sources of e-resource content, including if that content is still available to patrons; the `statisticsSources` relation contains records for all the different usage statistics sources and a field for linking to externally stored SUSHI R5 credentials; and the `statisticsResourceSources` relation is a junction table for the other two relations with an additional field to indicate if the given statistics source currently provides usage for the given resource source. This model can integrate with other e-resource management tools through the `resourceSources` relation and track changes to system backends that don't cause frontend changes.</p>
             
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.tsv') }}">"initialize_resourceSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.tsv') }}">"initialize_statisticsSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.tsv') }}">"initialize_resourceSourceNotes.tsv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.tsv') }}">"initialize_statisticsSourceNotes.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.tsv') }}">"initialize_resourceSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.csv') }}">"initialize_statisticsSources.csv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.tsv') }}">"initialize_resourceSourceNotes.tsv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.tsv') }}">"initialize_statisticsSourceNotes.tsv"</a>.</li>
                 <li>Create a spreadsheet with all the field names from the resourceSources and statisticsSources TSVs, replacing `Vendor_ID` in any field names with `Resource Vendor` or `Stats Vendor` depending on the source of the field name and adding the field name `Current_Statistics_Source`.</li>
                 <li>Create the list of statistics sources and resource sources pairings in the above spreadsheet, adding to the notes TSVs whenever appropriate. This is a comprehensive listing, so the best methods to use will depend on how much data is already gathered and what form it is in. Below are some ideas that form a potential procedure.
                     <ul>
@@ -61,10 +61,10 @@
                 </li>
                 <li>If numbers weren't added to `Statistics_Source_ID` and `Resource_Source_ID` in all records as the spreadsheet was being filled in, finish adding sequential numbering to those fields (any records that have duplicates or a note should already have an ID number). Remember that the numbering should start at `0`.</li>
                 <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
-                <li>Copy the values in the spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `REFERENCE Vendor_ID` fields in the appropriate TSV.</li>
-                <li>Remove duplicate records in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", then double check that there are no duplicated values in `Resource_Source_ID` or `Statistics_Source_ID`; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.</li>
+                <li>Copy the values in the spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.tsv" and "initialize_statisticsSources.csv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `REFERENCE Vendor_ID` fields in the appropriate TSV.</li>
+                <li>Remove duplicate records in "initialize_resourceSources.tsv" and "initialize_statisticsSources.csv", then double check that there are no duplicated values in `Resource_Source_ID` or `Statistics_Source_ID`; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.</li>
                 <li>In "initialize_resourceSources.tsv", copy <code>=VLOOKUP(D2,initialize_vendors.csv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field `REFERENCE Vendor_ID`).</li>
-                <li>In "initialize_statisticsSources.tsv", copy <code>=VLOOKUP(C2,initialize_vendors.csv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
+                <li>In "initialize_statisticsSources.csv", copy <code>=VLOOKUP(C2,initialize_vendors.csv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
                 <li>Save all four TSVs as "Unicode Text" with tab delimiters, renaming the files to change the file extensions from ".txt" to ".tsv" if necessary.</li>
                 <li>Create a new TSV file of the "Unicode Text" file type and name it "initialize_statisticsResourceSources.txt".</li>
                 <li>Copy the `Statistics_Source_ID`, `Resource_Source_ID`, and `Current_Statistics_Source` columns from the spreadsheet into "initialize_statisticsResourceSources.txt".</li>
@@ -92,8 +92,8 @@
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.statisticsSources_TSV.label }}
-                    {{ form.statisticsSources_TSV }}
+                    {{ form.statisticsSources_CSV.label }}
+                    {{ form.statisticsSources_CSV }}
                 </label></li>
                 <br>
                 <li><label>
