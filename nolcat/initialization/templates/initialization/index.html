@@ -14,7 +14,7 @@
     <ol>
         <li><h2>Create the `fiscalYears` Relation with Historical Years</h2>
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYear.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYears.csv"</a>.</li>
                 <li>For all previous fiscal years for which there is usage data, fill out a row in the TSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required).</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Fiscal_Year_ID` field.</li>
                 <li>Save the TSV as "Unicode Text" with tab delimiters, renaming the file to change the file extension from ".txt" to ".tsv" if necessary.</li>
