@@ -187,9 +187,9 @@ def collect_initial_relation_data():
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsResourceSources` TSV File
-        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_TSV.data}\n")
+        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
-            form.statisticsResourceSources_TSV.data,
+            form.statisticsResourceSources_CSV.data,
             sep='\t',
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
             encoding='utf-8',
