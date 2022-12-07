@@ -49,7 +49,6 @@ def collect_initial_relation_data():
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
-            sep='\t',
             index_col='fiscal_year_ID',
             parse_dates=['start_date', 'end_date'],
             date_parser=date_parser,
@@ -72,7 +71,6 @@ def collect_initial_relation_data():
         logging.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_CSV.data,
-            sep='\t',
             index_col='vendor_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
@@ -91,7 +89,6 @@ def collect_initial_relation_data():
         logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
-            sep='\t',
             parse_dates=['date_written'],
             date_parser=date_parser,
             encoding='utf-8',
@@ -111,7 +108,6 @@ def collect_initial_relation_data():
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_CSV.data,
-            sep='\t',
             index_col='statistics_source_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
@@ -130,7 +126,6 @@ def collect_initial_relation_data():
         logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
-            sep='\t',
             encoding='utf-8',
             parse_dates=['date_written'],
             date_parser=date_parser,
@@ -150,7 +145,6 @@ def collect_initial_relation_data():
         logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
-            sep='\t',
             index_col='resource_source_ID',
             parse_dates=['use_stop_date'],
             date_parser=date_parser,
@@ -170,7 +164,6 @@ def collect_initial_relation_data():
         logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
-            sep='\t',
             parse_dates=['date_written'],
             date_parser=date_parser,
             encoding='utf-8',
@@ -190,7 +183,6 @@ def collect_initial_relation_data():
         logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
-            sep='\t',
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
             encoding='utf-8',
             encoding_errors='backslashreplace',
@@ -311,7 +303,6 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #ToDo: df.to_csv(
         #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
-        #    sep="\t",
         #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
         #    encoding='utf-8',
         #    errors='backslashreplace',  # For encoding errors
@@ -324,7 +315,6 @@ def collect_AUCT_and_historical_COUNTER_data():
         #Subsection: Load `annualUsageCollectionTracking` into Database
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
-            sep='\t',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
