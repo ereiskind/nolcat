@@ -46,9 +46,9 @@ def collect_initial_relation_data():
         # TSV files containing data may be read in as completely null for no discernable reason; copying the data, pasting it into a new file, and saving the file according to the established instructions will fix the problem. Each `read_csv` method is followed by a check to confirm that the dataframe does contain data and instructions on how to perform the fix if it doesn't. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` TSV File
-        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_TSV.data}\n")
+        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
-            form.fiscalYears_TSV.data,
+            form.fiscalYears_CSV.data,
             sep='\t',
             index_col='fiscal_year_ID',
             parse_dates=['start_date', 'end_date'],
