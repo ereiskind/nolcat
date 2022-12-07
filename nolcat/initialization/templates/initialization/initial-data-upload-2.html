@@ -14,25 +14,25 @@
         <li><h2>Create the `annualUsageCollectionTracking` Relation <small>(cont'd)</small></h2>  <!--Using the nested lists means heading numbering restarts on each page, is this OK?-->
             <ol>
                 <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
-                <li>Fill out the TSV from existing documentation:
+                <li>Fill out the CSV from existing documentation:
                     <ul>
-                        <li>For statistics source and year combinations not requiring usage collection, set `Usage_Is_Being_Collected` to false and choose the appropriate `Collection_Status`</li>
-                        <li>For statistics source and year combinations which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `Usage_Is_Being_Collected` and `Manual_Collection_Required` to true, `Is_COUNTER_Compliant` to false, choose the appropriate `Collection_Status`, and if a file with the usage exists, put "true" in `Usage_File_Path`</li>
-                        <li>For statistics source and year combinations with R5 SUSHI, set `Usage_Is_Being_Collected` and `Is_COUNTER_Compliant` to true and `Collection_Status` to "Collection not started"</li>
-                        <li>For statistics source and year combinations with manually collected COUNTER reports, set `Usage_Is_Being_Collected`, `Manual_Collection_Required`, and `Is_COUNTER_Compliant` to true, choose the appropriate `Collection_Status`, then prepare the R4 reports:
+                        <li>For statistics source and year combinations not requiring usage collection, set `usage_is_being_collected` to false and choose the appropriate `collection_status`</li>
+                        <li>For statistics source and year combinations which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `usage_is_being_collected` and `manual_collection_required` to true, `is_COUNTER_compliant` to false, choose the appropriate `collection_status`, and if a file with the usage exists, put "true" in `usage_file_path`</li>
+                        <li>For statistics source and year combinations with R5 SUSHI, set `usage_is_being_collected` and `is_COUNTER_compliant` to true and `collection_status` to "Collection not started"</li>
+                        <li>For statistics source and year combinations with manually collected COUNTER reports, set `usage_is_being_collected`, `manual_collection_required`, and `is_COUNTER_compliant` to true, choose the appropriate `collection_status`, then prepare the R4 reports:
                             <ol>
                                 <li>Save the reports in an Excel workbook where each sheet name is the abbreviation of the name of the report in that sheet</li>
-                                <li>Give the workbooks names that begin with the `Statistics_Source_ID` of the report followed by an underscore</li>
+                                <li>Give the workbooks names that begin with the `statistics_source_ID` of the report followed by an underscore</li>
                                 <li>Place all the workbooks in a folder that contains nothing but these workbooks</li>
                             </ol>
                         </li>
                         <li>For statistics source and year combinations not falling into any of the above categories, make selections as appropriate</li>
                     </ul>
                 </li>
-                <li>Delete the columns with the `statisticsSources.Statistics_Source_Name` and `fiscalYears.Year` fields</li>
+                <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
             </ol>
         </li>
-        <li><h2>Submit the `annualUsageCollectionTracking` Relation TSV and COUNTER Workbooks</h2>
+        <li><h2>Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
             <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <li><label>
