@@ -147,9 +147,9 @@ def collect_initial_relation_data():
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` TSV File
-        logging.debug(f"`resourceSources` data:\n{form.resourceSources_TSV.data}\n")
+        logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
-            form.resourceSources_TSV.data,
+            form.resourceSources_CSV.data,
             sep='\t',
             index_col='resource_source_ID',
             parse_dates=['use_stop_date'],
