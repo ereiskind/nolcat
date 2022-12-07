@@ -33,19 +33,19 @@ def download_file(filename):
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
     form = InitialRelationDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
-        #Section: Ingest Data from Uploaded TSVs
+        #Section: Ingest Data from Uploaded CSVs
         #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
         #ToDo: Excel is using UTF-16 encoding when saving as "Unicode Text" file format; reading those files in with UTF-8 encoding seems to be the cause of various `ValueError` errors with messages unrelated to encoding. The instructions for saving files with UTF-8 encoding at https://answers.microsoft.com/en-us/msoffice/forum/all/how-to-enable-save-as-csv-utf-8-encoding-in-excel/cf7c54f7-a067-4337-9ed9-00b93a591831, which match the instructions on multiple other sites, aren't working on the primary workstation--when opened in Notepad++, files saved with the method described in the link use ASCII encoding.
-        # TSV files containing data may be read in as completely null for no discernable reason; copying the data, pasting it into a new file, and saving the file according to the established instructions will fix the problem. Each `read_csv` method is followed by a check to confirm that the dataframe does contain data and instructions on how to perform the fix if it doesn't. 
+        # CSV files containing data may be read in as completely null for no discernable reason; copying the data, pasting it into a new file, and saving the file according to the established instructions will fix the problem. Each `read_csv` method is followed by a check to confirm that the dataframe does contain data and instructions on how to perform the fix if it doesn't. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
-        #Subsection: Upload `fiscalYears` TSV File
+        #Subsection: Upload `fiscalYears` CSV File
         logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
@@ -67,7 +67,7 @@ def collect_initial_relation_data():
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
-        #Subsection: Upload `vendors` TSV File
+        #Subsection: Upload `vendors` CSV File
         logging.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_CSV.data,
@@ -85,7 +85,7 @@ def collect_initial_relation_data():
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
-        #Subsection: Upload `vendorNotes` TSV File
+        #Subsection: Upload `vendorNotes` CSV File
         logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
@@ -104,7 +104,7 @@ def collect_initial_relation_data():
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
-        #Subsection: Upload `statisticsSources` TSV File
+        #Subsection: Upload `statisticsSources` CSV File
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_CSV.data,
@@ -122,7 +122,7 @@ def collect_initial_relation_data():
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
-        #Subsection: Upload `statisticsSourceNotes` TSV File
+        #Subsection: Upload `statisticsSourceNotes` CSV File
         logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
@@ -141,7 +141,7 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
-        #Subsection: Upload `resourceSources` TSV File
+        #Subsection: Upload `resourceSources` CSV File
         logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
@@ -160,7 +160,7 @@ def collect_initial_relation_data():
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
-        #Subsection: Upload `resourceSourceNotes` TSV File
+        #Subsection: Upload `resourceSourceNotes` CSV File
         logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
@@ -179,7 +179,7 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
-        #Subsection: Upload `statisticsResourceSources` TSV File
+        #Subsection: Upload `statisticsResourceSources` CSV File
         logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
