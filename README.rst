@@ -202,8 +202,3 @@ Branch: Configure Flask-User
 
 About This Repo
 ***************
-
-Large File Support
-==================
-
-With Git alone, GitHub limits individual files to 100 MB (102,400 KB). To add larger files to the repository, up to 2 GB (2,097,152 KB) in GitHub's free service tier, Git Large File Storage (LFS) is required. For documentation on LFS in GitHub and links to relevant LFS documentation, go to https://docs.github.com/en/repositories/working-with-files/managing-large-files.
