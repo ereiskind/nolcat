@@ -27,7 +27,7 @@
                 <li>In the `Vendor_Name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
                 <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field.</li>
                 <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Vendor_ID` field.</li>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.tsv') }}">"initialize_vendorNotes.tsv"</a>.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.csv') }}">"initialize_vendorNotes.csv"</a>.</li>
                 <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
                 <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation, then fill out the `Note`, `Written_By`, and `Date_Written` fields.</li>
                 <li>Copy <code>=VLOOKUP(A2,initialize_vendors.csv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
@@ -87,8 +87,8 @@
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.vendorNotes_TSV.label }}
-                    {{ form.vendorNotes_TSV }}
+                    {{ form.vendorNotes_CSV.label }}
+                    {{ form.vendorNotes_CSV }}
                 </label></li>
                 <br>
                 <li><label>

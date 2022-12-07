@@ -88,9 +88,9 @@ def collect_initial_relation_data():
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         #Subsection: Upload `vendorNotes` TSV File
-        logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_TSV.data}\n")
+        logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
-            form.vendorNotes_TSV.data,
+            form.vendorNotes_CSV.data,
             sep='\t',
             parse_dates=['date_written'],
             date_parser=date_parser,
