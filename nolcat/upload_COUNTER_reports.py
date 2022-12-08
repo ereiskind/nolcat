@@ -105,6 +105,9 @@ class UploadCOUNTERReports:
                         if field_name == "ISSN" and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
                             df_field_names.append("Online_ISSN")  # This is the first name replacement because assigning a certain type of ISSN changes the meaning slightly
                         
+                        elif re.match(r'^[Cc]omponent'):
+                            continue  # The rarely used `Component` subtype fields aren't captured by this program
+                        
                         elif date_as_string:
                             date_tuple = date_as_string[0]
                             if date_tuple[0] == "Jan":
@@ -437,26 +440,6 @@ class UploadCOUNTERReports:
             combined_df_dtypes['Parent_Online_ISSN'] = 'string'
         if "Parent_URI" in combined_df_field_names:
             combined_df_dtypes['Parent_URI'] = 'string'
-        if "Component_Title" in combined_df_field_names:
-            combined_df_dtypes['Component_Title'] = 'string'
-        if "Component_Authors" in combined_df_field_names:
-            combined_df_dtypes['Component_Authors'] = 'string'
-        if "Component_Publication_Date" in combined_df_field_names:
-            combined_df_dtypes['Component_Publication_Date'] = 'string'
-        if "Component_Data_Type" in combined_df_field_names:
-            combined_df_dtypes['Component_Data_Type'] = 'string'
-        if "Component_DOI" in combined_df_field_names:
-            combined_df_dtypes['Component_DOI'] = 'string'
-        if "Component_Proprietary_ID" in combined_df_field_names:
-            combined_df_dtypes['Component_Proprietary_ID'] = 'string'
-        if "Component_ISBN" in combined_df_field_names:
-            combined_df_dtypes['Component_ISBN'] = 'string'
-        if "Component_Print_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Component_Print_ISSN'] = 'string'
-        if "Component_Online_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Component_Online_ISSN'] = 'string'
-        if "Component_URI" in combined_df_field_names:
-            combined_df_dtypes['Component_URI'] = 'string'
         if "Metric_Type" in combined_df_field_names:
             combined_df_dtypes['Metric_Type'] = 'string'
         

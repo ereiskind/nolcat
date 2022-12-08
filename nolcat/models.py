@@ -365,21 +365,17 @@ class StatisticsSources(db.Model):
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
                 #ToDo: try:
                     #ToDo: del SUSHI_parameters["include_parent_details"]
-                    #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "DR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
                     #ToDo: try:
                         #ToDo: del SUSHI_parameters["include_parent_details"]
-                        #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "TR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
                 #ToDo: try:
                     #ToDo: del SUSHI_parameters["include_parent_details"]
-                    #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "IR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
                 #ToDo: SUSHI_parameters["include_parent_details"] = "True"
-                #ToDo: SUSHI_parameters["include_component_details"] = "True"
             
             #Subsection: Make Master Report API Call
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
