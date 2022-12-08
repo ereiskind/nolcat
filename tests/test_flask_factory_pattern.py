@@ -85,7 +85,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=session,
-        if_exists='append',
+        if_exists='append',  #ToDo: See above about handling databases and fixtures
         chunksize=1000,
         index=True,
         index_label='statistics_source_ID',

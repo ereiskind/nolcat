@@ -203,7 +203,7 @@ Branch: Configure Flask-User
 About This Repo
 ***************
 
-Large File Support
-==================
+Encodings and File Types
+========================
 
-With Git alone, GitHub limits individual files to 100 MB (102,400 KB). To add larger files to the repository, up to 2 GB (2,097,152 KB) in GitHub's free service tier, Git Large File Storage (LFS) is required. For documentation on LFS in GitHub and links to relevant LFS documentation, go to https://docs.github.com/en/repositories/working-with-files/managing-large-files.
+E-resources involves working with scholarly content in a wide variety of languages, requiring the use of Unicode to accommodate multiple alphabets/character sets. NoLCAT uses the UTF-8 encoding for a variety of reasions, including its ubiquity, backwards compatability, and inclusion as a requirement of the COUNTER 5 Code of Practice. Since Microsoft Excel can explicitly save files as CSV files with an UTF-8 encoding, NoLCAT will use the CSV format for plain text file uploads and downloads.

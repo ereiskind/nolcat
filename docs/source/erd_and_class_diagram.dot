@@ -112,18 +112,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_statisticsResourceSources {
-        label="statisticsResourceSources"
-
-        // Attributes
-        SRS_statistics_source [shape="component"]
-        SRS_resource_source [shape="component"]
-        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
-
-        // Methods
-    }
-
-
     subgraph cluster_resourceSources {
         label="resourceSources"
 
@@ -158,6 +146,18 @@ digraph erd_and_classes {
         ]
 
         //Methods
+    }
+
+
+    subgraph cluster_statisticsResourceSources {
+        label="statisticsResourceSources"
+
+        // Attributes
+        SRS_statistics_source [shape="component"]
+        SRS_resource_source [shape="component"]
+        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
+
+        // Methods
     }
 
 

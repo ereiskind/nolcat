@@ -14,23 +14,22 @@
     <ol>
         <li><h2>Create the `fiscalYears` Relation with Historical Years</h2>
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.tsv') }}">"initialize_fiscalYear.tsv"</a>.</li>
-                <li>For all previous fiscal years for which there is usage data, fill out a row in the TSV with the appropriate data (only the `Year`, `Start_Date`, and `End_Date` fields are required).</li>
-                <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Fiscal_Year_ID` field.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYears.csv"</a>.</li>
+                <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `year`, `start_date`, and `end_date` fields are required).</li>
+                <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `fiscal_year_ID` field.</li>
+                <li>Save the CSV, ensuring the encoding is UTF-8.</li>
             </ol>
         </li>
 
         <li><h2>Create the `vendors` and `vendorNotes` Relations</h2>
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.tsv') }}">"initialize_vendors.tsv"</a>.</li>
-                <li>In the `Vendor_Name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
-                <li>For all of the above values that have vendor codes in Alma, add those codes to the `Alma_Vendor_Code` field.</li>
-                <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `Vendor_ID` field.</li>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.tsv') }}">"initialize_vendorNotes.tsv"</a>.</li>
-                <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
-                <li>For every note on a vendor that needs to be added, in the `REFERENCE Vendor_ID` field, put the name of the vendor exactly how it appears in the `vendors` relation, then fill out the `Note`, `Written_By`, and `Date_Written` fields.</li>
-                <li>Copy <code>=VLOOKUP(A2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula to all records, then save the results in place as values.</li>
-                <li>Delete column A with the field `REFERENCE Vendor_ID`.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.csv') }}">"initialize_vendors.csv"</a>.</li>
+                <li>In the `vendor_name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
+                <li>For all of the above values that have vendor codes in Alma, add those codes to the `alma_vendor_code` field.</li>
+                <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `vendor_ID` field.</li>
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.csv') }}">"initialize_vendorNotes.csv"</a>.</li>
+                <li>For every note on a vendor that needs to be added, in the `vendor_ID` field, put the `vendor_ID` value for the vendor from the "initialize_vendors.csv" file, then fill out the `note`, `written_by`, and `date_written` fields.</li>
+                <li>Save the CSV, ensuring the encoding is UTF-8.</li>
             </ol>
         </li>
 
@@ -47,71 +46,68 @@
             To handle this complexity, three relations in a junction table-like relationship are employed: the `resourceSources` relation contains records for sources of e-resource content, including if that content is still available to patrons; the `statisticsSources` relation contains records for all the different usage statistics sources and a field for linking to externally stored SUSHI R5 credentials; and the `statisticsResourceSources` relation is a junction table for the other two relations with an additional field to indicate if the given statistics source currently provides usage for the given resource source. This model can integrate with other e-resource management tools through the `resourceSources` relation and track changes to system backends that don't cause frontend changes.</p>
             
             <ol>
-                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.tsv') }}">"initialize_resourceSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.tsv') }}">"initialize_statisticsSources.tsv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.tsv') }}">"initialize_resourceSourceNotes.tsv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.tsv') }}">"initialize_statisticsSourceNotes.tsv"</a>.</li>
-                <li>Create a spreadsheet with all the field names from the resourceSources and statisticsSources TSVs, replacing `Vendor_ID` in any field names with `Resource Vendor` or `Stats Vendor` depending on the source of the field name and adding the field name `Current_Statistics_Source`.</li>
-                <li>Create the list of statistics sources and resource sources pairings in the above spreadsheet, adding to the notes TSVs whenever appropriate. This is a comprehensive listing, so the best methods to use will depend on how much data is already gathered and what form it is in. Below are some ideas that form a potential procedure.
+                <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSources.csv') }}">"initialize_resourceSources.csv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSources.csv') }}">"initialize_statisticsSources.csv"</a>, <a href="{{ url_for('initialization.download_file', filename='initialize_resourceSourceNotes.csv') }}">"initialize_resourceSourceNotes.csv"</a>, and <a href="{{ url_for('initialization.download_file', filename='initialize_statisticsSourceNotes.csv') }}">"initialize_statisticsSourceNotes.csv"</a>.</li>
+                <li>Open a spreadsheet program and create a spreadsheet named "temp" with all the field names from "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", then adding the field name `current_statistics_source`.</li>
+                <li>In the "temp" spreadsheet, replace the two `vendor_ID` fields with `Resource Vendor` and `Stats Vendor`.</li>
+                <li>In the "temp" spreadsheet, create the list of statistics sources and resource sources pairings, adding to the notes CSVs whenever appropriate. This is a comprehensive listing, so the best methods to use will depend on how much data is already gathered and what form it is in. Below are some ideas that form a potential procedure.
                     <ul>
-                        <li>For all securely stored R5 SUSHI credentials, give the credentials a name in the `Statistics_Source_Name` field and put either the Alma interface name or the secure JSON file ID for the credentials in the `Statistics_Source_Retrieval_Code` field, then fill in the `Resource Vendor` field, the fields for the resource source, and the `Current_Statistics_Source` field; repeat for each resource source the SUSHI credentials serve, using the same `Statistics_Source_ID` for all the records.</li>
-                        <li>For all the administrator portals not providing SUSHI, give the credentials a name in the `Statistics_Source_Name` field, then fill in the `Stats Vendor` field, the fields for the resource source, and the `Current_Statistics_Source` field; repeat for each resource source which has its usage provided by the given administrator portal, using the same `Statistics_Source_ID` for all the records.</li>
-                        <li>For resource sources that have changed statistics sources at any point since the beginning of the desired collection period, fill out all the resource source fields identically in as many records as there are statistics sources, then fill each record's  `Statistics_Source_Name` and `Stats Vendor` field for the different statistics sources, putting `True` in `Current_Statistics_Source` for the current statistics source for the given resource source and filling that field in with `False` for all other records.</li>
+                        <li>For all securely stored R5 SUSHI credentials, give the credentials a name in the `statistics_source_name` field and put either the Alma interface name or the secure JSON file ID for the credentials in the `statistics_source_retrieval_code` field, then fill in the `Resource Vendor` field, the fields for the resource source, and the `current_statistics_source` field; repeat for each resource source the SUSHI credentials serve, using the same `statistics_source_ID` for all the records.</li>
+                        <li>For all the administrator portals not providing SUSHI, give the credentials a name in the `statistics_source_name` field, then fill in the `Stats Vendor` field, the fields for the resource source, and the `current_statistics_source` field; repeat for each resource source which has its usage provided by the given administrator portal, using the same `Statistics_Source_ID` for all the records.</li>
+                        <li>For resource sources that have changed statistics sources at any point since the beginning of the desired collection period, fill out all the resource source fields identically in as many records as there are statistics sources, then fill each record's  `statistics_source_name` and `Stats Vendor` field for the different statistics sources, putting `True` in `current_statistics_source` for the current statistics source for the given resource source and filling that field in with `False` for all other records.</li>
                         <li>For all vendors in the list of vendors not connected to a statistics source or resource source, determine what statistics source(s) and/or resource source(s) come from the vendor and add the relevant record(s).</li>
                     </ul>
                 </li>
-                <li>If numbers weren't added to `Statistics_Source_ID` and `Resource_Source_ID` in all records as the spreadsheet was being filled in, finish adding sequential numbering to those fields (any records that have duplicates or a note should already have an ID number). Remember that the numbering should start at `0`.</li>
-                <!--ToDo: Is the REFERENCE field necessary, or would using the IDs directly be better?-->
-                <li>Copy the values in the spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `REFERENCE Vendor_ID` fields in the appropriate TSV.</li>
-                <li>Remove duplicate records in "initialize_resourceSources.tsv" and "initialize_statisticsSources.tsv", then double check that there are no duplicated values in `Resource_Source_ID` or `Statistics_Source_ID`; if there are duplicates, return to the spreadsheet and determine where the error is, then redo steps five and six.</li>
-                <li>In "initialize_resourceSources.tsv", copy <code>=VLOOKUP(D2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell E2, use autofill to copy the formula in all records, save the results in place as values, and delete column D (field `REFERENCE Vendor_ID`).</li>
-                <li>In "initialize_statisticsSources.tsv", copy <code>=VLOOKUP(C2,initialize_vendors.tsv!$A:$C,3,0)</code> into cell D2, use autofill to copy the formula in all records, save the results in place as values, and delete column C (field `REFERENCE Vendor_ID`).</li>
-                <li>Create a new TSV file and name it "initialize_statisticsResourceSources.tsv".</li>
-                <li>Copy the `Statistics_Source_ID`, `Resource_Source_ID`, and `Current_Statistics_Source` columns from the spreadsheet into "initialize_statisticsResourceSources.tsv".</li>
-                <li>In "initialize_statisticsResourceSources.tsv", change `Statistics_Source_ID` to `SRS_Statistics_Source` and `Resource_Source_ID` to `SRS_Resource_Source`.</li>
+                <li>If numbers weren't added to `statistics_source_ID` and `resource_source_ID` in all records as the "temp" spreadsheet was being filled in, finish adding sequential numbering to those fields (any records that have duplicates or a note should already have an ID number). Remember that the numbering should start at `0`.</li>
+                <li>Copy values from the fields in the "temp" spreadsheet columns into the columns with the same field labels in "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", including copying the `Resource Vendor` and `Stats Vendor` columns into the `vendor_ID` fields in the appropriate CSV.</li>
+                <li>Remove duplicate records (meaning all values in the record match) from "initialize_resourceSources.csv" and "initialize_statisticsSources.csv", then double check that there are no duplicated values in `resource_source_ID` or `statistics_source_ID`; if there are duplicates, return to the "temp" spreadsheet, find and fix the error, and start again at the previous step.</li>
+                <li>Save all four CSVs, ensuring the encodings are UTF-8.</li>
+                <li>Delete all fields but `resource_source_ID`, `statistics_source_ID`, and `current_statistics_source` from the "temp" spreadsheet, then save it as a CSV with UTF-8 encoding named "initialize_statisticsResourceSources.csv".</li>
+                <li>In "initialize_statisticsResourceSources.csv", change `statistics_source_ID` to `SRS_statistics_source` and `resource_source_ID` to `SRS_resource_source`, then save the CSV again.</li>
             </ol>
         </li>
 
-        <li><h2>Upload the Relation TSVs</h2>
+        <li><h2>Upload the Relation CSVs</h2>
             <ol><form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <li><label>
-                    {{ form.fiscalYears_TSV.label }}
-                    {{ form.fiscalYears_TSV }}
+                    {{ form.fiscalYears_CSV.label }}
+                    {{ form.fiscalYears_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.vendors_TSV.label }}
-                    {{ form.vendors_TSV }}
+                    {{ form.vendors_CSV.label }}
+                    {{ form.vendors_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.vendorNotes_TSV.label }}
-                    {{ form.vendorNotes_TSV }}
+                    {{ form.vendorNotes_CSV.label }}
+                    {{ form.vendorNotes_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.statisticsSources_TSV.label }}
-                    {{ form.statisticsSources_TSV }}
+                    {{ form.statisticsSources_CSV.label }}
+                    {{ form.statisticsSources_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.statisticsSourceNotes_TSV.label }}
-                    {{ form.statisticsSourceNotes_TSV }}
+                    {{ form.statisticsSourceNotes_CSV.label }}
+                    {{ form.statisticsSourceNotes_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.statisticsResourceSources_TSV.label }}
-                    {{ form.statisticsResourceSources_TSV }}
+                    {{ form.resourceSources_CSV.label }}
+                    {{ form.resourceSources_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.resourceSources_TSV.label }}
-                    {{ form.resourceSources_TSV }}
+                    {{ form.resourceSourceNotes_CSV.label }}
+                    {{ form.resourceSourceNotes_CSV }}
                 </label></li>
                 <br>
                 <li><label>
-                    {{ form.resourceSourceNotes_TSV.label }}
-                    {{ form.resourceSourceNotes_TSV }}
+                    {{ form.statisticsResourceSources_CSV.label }}
+                    {{ form.statisticsResourceSources_CSV }}
                 </label></li>
-                <br>
                 <input type="submit" value="Submit">
             </form></ol>
         </li>

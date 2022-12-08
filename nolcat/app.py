@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+import pandas as pd
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -52,18 +53,19 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
 
     #Section: Create Command to Build Schema
-    # Documentation at https://flask.palletsprojects.com/en/2.1.x/appcontext/
+    # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
     @app.cli.command('create-db')
     def create_db():
-        with create_app().app_context():
+        with create_app().app_context():  # Creates an app context using the Flask factory pattern
+            # Per instructions at https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/: "To create the initial database, just import the db object[s]...and run the `SQLAlchemy.create_all()` method"
             from .models import FiscalYears
             from .models import Vendors
             from .models import VendorNotes
             from .models import StatisticsSources
             from .models import StatisticsSourceNotes
-            from .models import StatisticsResourceSources
             from .models import ResourceSources
             from .models import ResourceSourceNotes
+            from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
             from .models import Resources
             from .models import ResourceMetadata
@@ -103,3 +105,11 @@ def create_app():
     
     
     return app
+
+
+def date_parser(dates):
+    """The function for parsing dates as part of converting ingested data into a dataframe.
+    
+    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
+    """
+    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
