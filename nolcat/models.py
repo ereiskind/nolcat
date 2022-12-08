@@ -648,7 +648,24 @@ class Resources(db.Model):
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
     
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for metadata type (titles, DOI, ISBN, ISSN, and eISSN) fields would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+        Resource_Name
+        DOI
+        ISBN
+        Print_ISSN
+        Online_ISSN
+        Authors
+        Parent_Title
+        Parent_Authors
+        Parent_Publication_Date
+        Parent_Article_Version
+        Parent_Data_Type
+        Parent_DOI
+        Parent_Proprietary_ID
+        Parent_ISBN
+        Parent_Print_ISSN
+        Parent_Online_ISSN
+        Parent_URI
     
     Attributes:
         self.resource_metadata_ID (int): the primary key
