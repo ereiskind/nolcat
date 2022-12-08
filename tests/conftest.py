@@ -65,8 +65,7 @@ def vendors_relation():
 @pytest.fixture
 def vendorNotes_relation():
     """Creates a dataframe that can be loaded into the `vendorNotes` relation."""
-    # yield relations.vendorNotes_relation()
-    pass
+    yield relations.vendorNotes_relation()
 
 
 @pytest.fixture
@@ -78,14 +77,7 @@ def statisticsSources_relation():
 @pytest.fixture
 def statisticsSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation."""
-    # yield relations.statisticsSourceNotes_relation()
-    pass
-
-
-@pytest.fixture
-def statisticsResourceSources_relation():
-    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
-    yield relations.statisticsResourceSources_relation()
+    yield relations.statisticsSourceNotes_relation()
 
 
 @pytest.fixture
@@ -97,8 +89,13 @@ def resourceSources_relation():
 @pytest.fixture
 def resourceSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation."""
-    # yield relations.resourceSourceNotes_relation()
-    pass
+    yield relations.resourceSourceNotes_relation()
+
+
+@pytest.fixture
+def statisticsResourceSources_relation():
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
+    yield relations.statisticsResourceSources_relation()
 
 
 @pytest.fixture

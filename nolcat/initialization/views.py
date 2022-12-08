@@ -7,30 +7,18 @@ from flask import abort
 from flask import current_app
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
-import xlrd
 import pandas as pd
 from sqlalchemy.sql import text
-import csv
+from sqlalchemy import exc
 
 from . import bp
-from ..app import db
+from ..app import db, date_parser
 from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
-#ToDo: Reconfigure all routes based on the structure below
-'''
-form = FormClass()
-if request.method == 'GET':
-    #ToDo: Anything that's needed before the page the form is on renders
-    return render_template('blueprint_name/page-the-form-is-on.html', form=form)
-elif form.validate_on_submit():
-    #ToDo: Process data from `form`
-    return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-else:
-    return abort(404)
-'''
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
 #Section: Uploads and Downloads
@@ -41,201 +29,317 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 #ToDo: After creating the first account with ingest permissions, come here
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations as well as the form for submitting the completed templates. When the TSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_annualUsageCollectionTracking_data` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
-    #ALERT: Refactored form hasn't been tested
     form = InitialRelationDataForm()
-    if form.validate_on_submit():
-        #Section: Ingest Data from Uploaded TSVs
+    if request.method == 'GET':
+        return render_template('initialization/index.html', form=form)
+    elif form.validate_on_submit():
+        #Section: Ingest Data from Uploaded CSVs
+        #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
+        # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
+        # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
+        #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
+        #Subsection: Upload `fiscalYears` CSV File
+        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
-            form.fiscalYears_TSV.data,
-            sep='\t',
+            form.fiscalYears_CSV.data,
+            index_col='fiscal_year_ID',
+            parse_dates=['start_date', 'end_date'],
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        fiscalYears_dataframe['Notes_on_statisticsSources_Used'] = fiscalYears_dataframe['Notes_on_statisticsSources_Used'].encode('utf-8').decode('unicode-escape')
-        fiscalYears_dataframe['Notes_on_Corrections_After_Submission'] = fiscalYears_dataframe['Notes_on_Corrections_After_Submission'].encode('utf-8').decode('unicode-escape')
+        if fiscalYears_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `fiscalYears` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`fiscalYears`")
+        
+        fiscalYears_dataframe['fiscal_year'] = fiscalYears_dataframe['fiscal_year'].astype("string")
+        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].astype("string")
+        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].astype("string")
+        logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
+        #Subsection: Upload `vendors` CSV File
+        logging.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
-            form.vendors_TSV.data,
-            sep='\t',
+            form.vendors_CSV.data,
+            index_col='vendor_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendors_dataframe['Vendor_Name'] = vendors_dataframe['Vendor_Name'].encode('utf-8').decode('unicode-escape')
+        if vendors_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `vendors` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`vendors`")
+        
+        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].astype("string")
+        vendors_dataframe['alma_vendor_code'] = vendors_dataframe['alma_vendor_code'].astype("string")
+        logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
+        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
+        #Subsection: Upload `vendorNotes` CSV File
+        logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
-            form.vendorNotes_TSV.data,
-            sep='\t',
+            form.vendorNotes_CSV.data,
+            parse_dates=['date_written'],
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        vendorNotes_dataframe['Note'] = vendorNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        if vendorNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `vendorNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`vendorNotes`")
+        
+        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].astype("string")
+        vendorNotes_dataframe['written_by'] = vendorNotes_dataframe['written_by'].astype("string")
+        logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
+        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
+        #Subsection: Upload `statisticsSources` CSV File
+        logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
-            form.statisticsSources_TSV.data,
-            sep='\t',
+            form.statisticsSources_CSV.data,
+            index_col='statistics_source_ID',
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        statisticsSources_dataframe['Statistics_Source_Name'] = statisticsSources_dataframe['Statistics_Source_Name'].encode('utf-8').decode('unicode-escape')
+        if statisticsSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSources`")
+        
+        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].astype("string")
+        statisticsSources_dataframe['statistics_source_retrieval_code'] = statisticsSources_dataframe['statistics_source_retrieval_code'].astype("string")
+        logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
+        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
+        #Subsection: Upload `statisticsSourceNotes` CSV File
+        logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
-            form.statisticsSourceNotes_TSV.data,
-            sep='\t',
+            form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
+            parse_dates=['date_written'],
+            date_parser=date_parser,
             encoding_errors='backslashreplace',
         )
-        statisticsSourceNotes_dataframe['Note'] = statisticsSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsSourceNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSourceNotes`")
+        
+        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
+        statisticsSourceNotes_dataframe['written_by'] = statisticsSourceNotes_dataframe['written_by'].astype("string")
+        logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
+        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
-        statisticsResourceSources_dataframe = pd.read_csv(
-            form.statisticsResourceSources_TSV.data,
-            sep='\t',
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
-
+        #Subsection: Upload `resourceSources` CSV File
+        logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
-            form.resourceSources_TSV.data,
-            sep='\t',
+            form.resourceSources_CSV.data,
+            index_col='resource_source_ID',
+            parse_dates=['use_stop_date'],
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSources_dataframe['Resource_Source_Name'] = resourceSources_dataframe['Resource_Source_Name'].encode('utf-8').decode('unicode-escape')
+        if resourceSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `resourceSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSources`")
+        
+        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
+        logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
+        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
+        #Subsection: Upload `resourceSourceNotes` CSV File
+        logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
-            form.resourceSourceNotes_TSV.data,
-            sep='\t',
+            form.resourceSourceNotes_CSV.data,
+            parse_dates=['date_written'],
+            date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        resourceSourceNotes_dataframe['Note'] = resourceSourceNotes_dataframe['Note'].encode('utf-8').decode('unicode-escape')
+        if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `resourceSourceNotes` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSourceNotes`")
+        
+        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].astype("string")
+        resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
+        logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
+        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
+
+        #Subsection: Upload `statisticsResourceSources` CSV File
+        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
+        statisticsResourceSources_dataframe = pd.read_csv(
+            form.statisticsResourceSources_CSV.data,
+            index_col=['SRS_statistics_source', 'SRS_resource_source'],
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `statisticsResourceSources` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsResourceSources`")
+        
+        # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
+        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
+
 
         #Section: Load Data into Database
-        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
-        fiscalYears_dataframe.to_sql(
-            'fiscalYears',
-            con=db.engine,
-            if_exists='replace',
-        )
-        vendors_dataframe.to_sql(
-            'vendors',
-            con=db.engine,
-            if_exists='replace',
-        )
-        vendorNotes_dataframe.to_sql(
-            'vendorNotes',
-            con=db.engine,
-            if_exists='replace',
-        )
-        statisticsSources_dataframe.to_sql(
-            'statisticsSources',
-            con=db.engine,
-            if_exists='replace',
-        )
-        statisticsSourceNotes_dataframe.to_sql(
-            'statisticsSourceNotes',
-            con=db.engine,
-            if_exists='replace',
-        )
-        statisticsResourceSources_dataframe.to_sql(
-            'statisticsResourceSources',
-            con=db.engine,
-            if_exists='replace',
-        )
-        resourceSources_dataframe.to_sql(
-            'resourceSources',
-            con=db.engine,
-            if_exists='replace',
-        )
-        resourceSourceNotes_dataframe.to_sql(
-            'resourceSourceNotes',
-            con=db.engine,
-            if_exists='replace',
-        )
-        db.engine.close()  #ToDo: Confirm that this is appropriate and/or necessary
-        return redirect(url_for('collect_annualUsageCollectionTracking_data'))
+        try:
+            fiscalYears_dataframe.to_sql(
+                'fiscalYears',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `fiscalYears` loaded into the database")
+            vendors_dataframe.to_sql(
+                'vendors',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendors` loaded into the database")
+            vendorNotes_dataframe.to_sql(
+                'vendorNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendorNotes` loaded into the database")
+            statisticsSources_dataframe.to_sql(
+                'statisticsSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsSources` loaded into the database")
+            statisticsSourceNotes_dataframe.to_sql(
+                'statisticsSourceNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsSourceNotes` loaded into the database")
+            resourceSources_dataframe.to_sql(
+                'resourceSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `resourceSources` loaded into the database")
+            resourceSourceNotes_dataframe.to_sql(
+                'resourceSourceNotes',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `resourceSourceNotes` loaded into the database")
+            statisticsResourceSources_dataframe.to_sql(
+                'statisticsResourceSources',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `statisticsResourceSources` loaded into the database")
+            logging.info("All relations loaded into the database")
+            #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
+            return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
+        except exc.IntegrityError as error:
+            logging.warning(f"The `to_sql` methods prompted an IntegrityError: {error.orig.args}")  # https://stackoverflow.com/a/55581428
+            # https://stackoverflow.com/a/29614207 uses temp table
+            # https://stackoverflow.com/q/24522290 talks about using `session.flush()`
+    else:
+        return abort(404)
 
-    return render_template('initialization/index.html', form=form)
 
-
-@bp.route('/initialization-page-2', methods=["GET","POST"])
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
-    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports sot he former is loaded into the database and the latter is divided and deduped.
+    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports so the former is loaded into the database and the latter is divided and deduped.
 
     Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
     """
-    #ALERT: Due to database unavailability, code from this point forward is entirely untested
     form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
-        #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: TSV_file = open('initialize_annualUsageCollectionTracking.tsv', 'w', newline='')
-        #ToDo: dict_writer = csv.DictWriter(TSV_file, delimiter="\t", [
-            #ToDo: "AUCT_statistics_source",
-            #ToDo: "AUCT_fiscal_year",
-            #ToDo: "Statistics Source",
-            #ToDo: "Fiscal Year",
-            #ToDo: "usage_is_being_collected",
-            #ToDo: "manual_collection_required",
-            #ToDo: "collection_via_email",
-            #ToDo: "is_COUNTER_compliant",
-            #ToDo: "collection_status",
-            #ToDo: "usage_file_path",
-            #ToDo: "notes",
-        #ToDo: ])
-        #ToDo: dict_writer.writeheader()
+        #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
+        SELECT_statement = text('SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;')
+        #ToDo: AUCT_values = db.engine.execute(SELECT_statement).values()  # Unable to determine exactly what is in the lists output by each method of https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy
+        #ToDo: From `AUCT_values`, generate the below
+        #ToDo: AUCT_index_array = [
+        #    [record1 statisticsSources.statistics_source_ID, record1 fiscalYears.fiscal_year_ID],
+        #    [record2 statisticsSources.statistics_source_ID, record2 fiscalYears.fiscal_year_ID],
+        #    ...
+        #]
+        #ToDo: AUCT_value_array = [
+        #    [record1 statisticsSources.statistics_source_name, record1 fiscalYears.fiscal_year],
+        #    [record2 statisticsSources.statistics_source_name, record2 fiscalYears.fiscal_year],
+        #    ...
+        #]
 
-        #Subsection: Add Cartesian Product of `fiscalYears` and `statisticsSources` to Template
-        with db.engine.connect() as connection:  # Code based on https://stackoverflow.com/a/67420458
-            #ToDo: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.from_product.html creates a multiindex from the cartesian product of lists--is changing fiscalYears_dataframe['Fiscal_Year_ID'] and statisticsSources_dataframe['Statistics_Source_ID'] to lists then using those lists in this method faster than a cartesian product query?
-            AUCT_records = connection.execute(text("SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;"))
-            for record in AUCT_records:
-                print(repr(type(record)))
-                print(record)
-                #ToDo: Determine how to break up instance of `record` to get the individual fields returned
-                #ToDo: dict_writer.writerow({
-                    #ToDo: "AUCT_statistics_source": statisticsSources.statistics_source_ID,
-                    #ToDo: "AUCT_fiscal_year": fiscalYears.fiscal_year_ID,
-                    #ToDo: "Statistics Source": statisticsSources.statistics_source_name,
-                    #ToDo: "Fiscal Year": fiscalYears.fiscal_year,
-                #ToDo: })
-                continue  # To close the block at runtime
-        #ToDo: TSV_file.close()
-        return render_template('initialization/initial-data-upload-2.html', form=form)
-    
+        #Subsection: Create `annualUsageConnectionTracking` Relation Template File
+        #ToDo: multiindex = pd.DataFrame(
+        #    AUCT_index_array,
+        #    columns=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        #)
+        #ToDo: multiindex = pd.MultiIndex.from_frame(multiindex)
+        #ToDo: df = pd.DataFrame(
+        #    AUCT_value_array,
+        #    index=multiindex,
+        #    columns=["Statistics Source", "Fiscal Year"],
+        #)
+
+        #ToDo: df['usage_is_being_collected'] = None
+        #ToDo: df['manual_collection_required'] = None
+        #ToDo: df['collection_via_email'] = None
+        #ToDo: df['is_COUNTER_compliant'] = None
+        #ToDo: df['collection_status'] = None
+        #ToDo: df['usage_file_path'] = None
+        #ToDo: df['notes'] = None
+
+        #ToDo: df.to_csv(
+        #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
+        #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        #    encoding='utf-8',
+        #    errors='backslashreplace',  # For encoding errors
+        #)
+        #ToDo: Confirm above downloads successfully
+        #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
+
     #Section: After Form Submission
     elif form.validate_on_submit():
         #Subsection: Load `annualUsageCollectionTracking` into Database
-        annualUsageCollectionTracking_dataframe = pd.read_csv(
-            form.annualUsageCollectionTracking_TSV.data,
-            sep='\t',
+        AUCT_dataframe = pd.read_csv(
+            form.annualUsageCollectionTracking_CSV.data,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        annualUsageCollectionTracking_dataframe['Notes'] = annualUsageCollectionTracking_dataframe['Notes'].encode('utf-8').decode('unicode-escape')
-        #ToDo: Does a Flask-SQLAlchemy engine connection object corresponding to SQLAlchemy's `engine.connect()` and pairing with `db.engine.close()`?
-        annualUsageCollectionTracking_dataframe.to_sql(
+        #AUCT_dataframe['notes'] = AUCT_dataframe['notes'].encode('utf-8').decode('unicode-escape')
+
+        AUCT_dataframe.to_sql(
             'annualUsageCollectionTracking',
             con=db.engine,
-            if_exists='replace',
+            if_exists='append',
         )
-        #ToDo: Make any other necessary additions or changes for data to be saved to the database
 
-        #Subsection: Change Uploaded TSV Files into Single RawCOUNTERReport Object
-        #ALERT: Subsection may need heavy revision
-        #ToDo: Make sure that `RawCOUNTERReport.__init__` can handle an object of whatever type `form.COUNTER_TSVs.data` is--if said type is "<class 'werkzeug.datastructures.ImmutableMultiDict'>", then completing the existing to-dos should make the constructor below good to go
-        #ToDo: historical_data = RawCOUNTERReport(form.COUNTER_TSVs.data)
-        #ToDo: Save `historical_data` into a temp file
-        #ToDo: return redirect(url_for('determine_if_resources_match'))
-    
+        #Subsection: Save COUNTER Reports in a Single Temp Tabular File
+        COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        COUNTER_reports_df.to_csv(
+            'str of a file path',  #ToDo: Determine where to save file
+            na_rep='`None`',
+            index_label='index',
+            encoding='utf-8',
+            date_format='%Y-%m-%d',  #ToDo: Double check this is correct for setting ISO format
+            errors='backslashreplace',
+        )
+
+        return redirect(url_for('determine_if_resources_match'))
+
     else:
-        return abort(404)  # References the `page_not_found` function referenced in the Flask factory pattern
+        return abort(404)
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
@@ -245,26 +349,18 @@ def determine_if_resources_match():
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
-    #ToDo: form = imported_form_class()
-
-    #Section: Before Page Renders
-    if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
-        #ToDo: import temp file containing `historical_data` from `collect_AUCT_and_historical_COUNTER_data`
-        #ToDo: historical_data = contents of file containing `historical_data` (in other words, recreate the variable)
-        #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = historical_data.perform_deduplication_matching()
-        #ToDo: for metadata_pair in dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata.keys():  #ToDo: May need to change depending on connections via network library
-            #ToDo: form.<name of field in form class>.choices = [a list comprehension creating a list of tuples ("the value passed on if the option is selected", "the value displayed as the label attribute in the form")] where the display value comes from `metadata_pair`
-        #ToDo: return render_template('initialization/select-matches.html', form=form)
-        pass
-    
-    #Section: After Form Submission
+    '''
+    form = FormClass()
+    if request.method == 'GET':
+        #ToDo: Anything that's needed before the page the form is on renders
+        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: things related to saving and transforming form data
-        #ToDo: return redirect(url_for('the_next_route_function'))
-        pass
-    
+        #ToDo: Process data from `form`
+        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
     else:
-        return abort(404)  # The file to be imported above, which is created directly before the redirect to this route function, couldn't be imported if the code gets here, hence an error is raised--404 isn't the most accurate HTTP error for the situation, but it's the one with an existing page
+        return abort(404)
+    '''
+    pass
 
 
 #ToDo: Create a route and page for picking default metadata values
@@ -273,22 +369,20 @@ def determine_if_resources_match():
 #ToDo: @bp.route('/historical-non-COUNTER-data')
 #ToDo: def upload_historical_non_COUNTER_usage():
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
-    #ToDo: form = FileUploadForNon-COUNTERResources()
-    #ToDo: if request.method == 'GET':
-        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
-        #ToDo: Create an iterable to pass all the records returned by the above to a form
-        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        #ToDo: return render_template('initialization/page-the-form-is-on.html', form=form)
-    #ToDo: elif form.validate_on_submit():
-        #ToDo: For each file uploaded in the form
-            #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
-            #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
-        #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-    #ToDo: else:
-        #ToDo: return abort(404)
+    '''
+    form = FormClass()
+    if request.method == 'GET':
+        #ToDo: Anything that's needed before the page the form is on renders
+        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: Process data from `form`
+        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+    else:
+        return abort(404)
+    '''
 
 
-@bp.route('/database-creation-complete', methods=['GET','POST'])
+@bp.route('/database-creation-complete', methods=['GET', 'POST'])
 def data_load_complete():
     """Returns a page showing data just added to the database upon its successful loading into the database."""
     #ToDo: Write actual docstring
@@ -296,4 +390,15 @@ def data_load_complete():
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
-    return render_template('initialization/show-loaded-data.html')
+    '''
+    form = FormClass()
+    if request.method == 'GET':
+        #ToDo: Anything that's needed before the page the form is on renders
+        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: Process data from `form`
+        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+    else:
+        return abort(404)
+    '''
+    pass

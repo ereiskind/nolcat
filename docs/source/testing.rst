@@ -64,9 +64,12 @@ This module contains the functions:
 
 * ``fiscalYears_relation()``: The dataframe of test data for the `fiscalYears` relation.
 * ``vendors_relation()``: The dataframe of test data for the `vendors` relation.
+* ``vendorNotes_relation()``: The dataframe of test data for the `vendorNotes` relation.
 * ``statisticsSources_relation()``: The dataframe of test data for the `statisticsSources` relation.
-* ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
+* ``statisticsSourceNotes_relation()``: The dataframe of test data for the `statisticsSourceNotes` relation.
 * ``resourceSources_relation()``: The dataframe of test data for the `resourceSources` relation.
+* ``resourceSourceNotes_relation()``: The dataframe of test data for the `resourceSourceNotes` relation.
+* ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
 * ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
 * ``resources_relation()``: The dataframe of test data for the `resources` relation.
 * ``resourceMetadata_relation()``: The dataframe of test data for the `resourceMetadata` relation.

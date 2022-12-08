@@ -691,7 +691,7 @@ class RawCOUNTERReport:
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
         compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
-        # This comparison will take about an hour on a 16GB RAM 1.61GHz workstation
+        #Alert: On a 16GB RAM 1.61GHz workstation, with the combined R4 and R5 test data, it takes nearly four hours to get to this point in the program, at which point, the Command Prompt window closes without showing any sort of error message. Opening task manager shortly afterwords shows the `Python 3.8` process still working, using the vast majority of the workstation's memory for some 15 minutes after. At the end of that time, the program seemed to stop, leaving no evidence the test had been run despite the command line instruction including arguments for writing the logging statements to a log file.
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Resource Name String Matching Threshold
         if normalized_resource_data:

@@ -14,7 +14,7 @@
         <li><h2>Upload Historical R4 Usage</h2>
             <p>Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.</p>
             <ol>
-                <li>Create a folder containing nothing but the reformatted R4 report TSVs with every file named using the naming convention `{Statistics_Source_ID}_{R4 report type abbreviation}_{calendar year assigned to fiscal year in "yyyy" format}.tsv`</li>
+                <li>Create a folder containing nothing but the reformatted R4 report CSVs with every file named using the naming convention `{Statistics_Source_ID}_{R4 report type abbreviation}_{calendar year assigned to fiscal year in "yyyy" format}.csv`</li>
                 <li>Click on the "Open" button below to get to the file navigation window, navigate to the folder created above, then use `Ctrl + a` to select all the files in the folder</li>
                 <li><form action="{{ url_for('ingest.wizard_page_4') }}" method="POST" enctype="multipart/form-data">
                     <label>
