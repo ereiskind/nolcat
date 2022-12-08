@@ -681,10 +681,10 @@ class ResourcePlatforms(db.Model):
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
         self.platform (str): the name of the resource's platform in the COUNTER report
-        self.proprietary_ID (str): the statistics source's ID for the resource
-        self.URI (str): the statistics source's permalink to the resource
         self.publication_date (str): the publisher's resource release date in the COUNTER IR  #ToDo: If this is always a date data type in the IR, it can be changed to a datetime in the database
         self.article_version (str): version of article within the publication life cycle from the COUNTER IR
+        self.proprietary_ID (str): the statistics source's ID for the resource
+        self.URI (str): the statistics source's permalink to the resource
         self.interface (int): the foreign key for `statisticsSources`
         self.resource_ID (int): the foreign key for `resources`
     """
@@ -694,10 +694,10 @@ class ResourcePlatforms(db.Model):
     publisher = db.Column(db.String(225))
     publisher_ID = db.Column(db.String(50))
     platform = db.Column(db.String(75))
-    proprietary_ID = db.Column(db.String(100))
-    URI = db.Column(db.String(200))
     publication_date = db.Column(db.String(200))
     article_version = db.Column(db.String(50))
+    proprietary_ID = db.Column(db.String(100))
+    URI = db.Column(db.String(200))
     interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
 

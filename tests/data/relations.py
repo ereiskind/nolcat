@@ -7233,6 +7233,7 @@ def resourcePlatforms_relation():
             ["Gale, a Cengage Company", None, "Gale", "Gale:2NLD", None, None, None, 2, 880],
             ["Gale", None, "Gale", "Gale:5BNN", None, None, None, 2, 882],
         ],
+        # The order of the fields no longer matches the order of fields being used throughout the rest of the repo
         columns=["publisher", "publisher_ID", "platform", "proprietary_ID", "URI", "publication_date", "article_version", "interface", "resource_ID"]
     )
     df.index.name = "resource_platform_ID"

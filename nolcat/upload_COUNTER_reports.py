@@ -394,6 +394,12 @@ class UploadCOUNTERReports:
             combined_df_dtypes['Publisher'] = 'string'
         if "Publisher_ID" in combined_df_field_names:
             combined_df_dtypes['Publisher_ID'] = 'string'
+        if "Authors" in combined_df_field_names:
+            combined_df_dtypes['Authors'] = 'string'
+        if "Publication_Date" in combined_df_field_names:
+            combined_df_dtypes['Publication_Date'] = 'datetime64[ns]'
+        if "Article_Version" in combined_df_field_names:
+            combined_df_dtypes['Article_Version'] = 'string'
         if "DOI" in combined_df_field_names:
             combined_df_dtypes['DOI'] = 'string'
         if "Proprietary_ID" in combined_df_field_names:
@@ -406,8 +412,6 @@ class UploadCOUNTERReports:
             combined_df_dtypes['Online_ISSN'] = 'string'
         if "Authors" in combined_df_field_names:
             combined_df_dtypes['Authors'] = 'string'
-        if "Publication_Date" in combined_df_field_names:
-            combined_df_dtypes['Publication_Date'] = 'datetime64[ns]'
         if "Article_Version" in combined_df_field_names:
             combined_df_dtypes['Article_Version'] = 'string'
         if "Data_Type" in combined_df_field_names:
@@ -422,8 +426,6 @@ class UploadCOUNTERReports:
             combined_df_dtypes['Parent_Title'] = 'string'
         if "Parent_Authors" in combined_df_field_names:
             combined_df_dtypes['Parent_Authors'] = 'string'
-        if "Parent_Publication_Date" in combined_df_field_names:
-            combined_df_dtypes['Parent_Publication_Date'] = 'datetime64[ns]'
         if "Parent_Article_Version" in combined_df_field_names:
             combined_df_dtypes['Parent_Article_Version'] = 'string'
         if "Parent_Data_Type" in combined_df_field_names:
