@@ -427,6 +427,8 @@ class UploadCOUNTERReports:
             combined_df_dtypes['print_ISSN'] = 'string'
         if "online_ISSN" in combined_df_field_names:
             combined_df_dtypes['online_ISSN'] = 'string'
+        if "URI" in combined_df_field_names:
+            combined_df_dtypes['URI'] = 'string'
         if "data_type" in combined_df_field_names:
             combined_df_dtypes['data_type'] = 'string'
         if "section_type" in combined_df_field_names:
