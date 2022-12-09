@@ -418,8 +418,6 @@ class UploadCOUNTERReports:
             combined_df_dtypes['publisher_ID'] = 'string'
         if "authors" in combined_df_field_names:
             combined_df_dtypes['authors'] = 'string'
-        if "publication_date" in combined_df_field_names:
-            combined_df_dtypes['publication_date'] = 'datetime64[ns]'
         if "article_version" in combined_df_field_names:
             combined_df_dtypes['article_version'] = 'string'
         if "DOI" in combined_df_field_names:
@@ -440,12 +438,12 @@ class UploadCOUNTERReports:
             combined_df_dtypes['YOP'] = 'int'  # `smallint` in database
         if "access_type" in combined_df_field_names:
             combined_df_dtypes['access_type'] = 'string'
-        #ToDo: access_method
+        if "access_method" in combined_df_field_names:
+            combined_df_dtypes['access_method'] = 'string'
         if "parent_title" in combined_df_field_names:
             combined_df_dtypes['parent_title'] = 'string'
         if "parent_authors" in combined_df_field_names:
             combined_df_dtypes['parent_authors'] = 'string'
-        #ToDo: parent_publication_date
         if "parent_article_version" in combined_df_field_names:
             combined_df_dtypes['parent_article_version'] = 'string'
         if "parent_data_Type" in combined_df_field_names:
@@ -465,6 +463,12 @@ class UploadCOUNTERReports:
         if "metric_type" in combined_df_field_names:
             combined_df_dtypes['metric_type'] = 'string'
         
+        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
+        if "publication_date" in combined_df_field_names:
+            combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
+        if "parent_publication_date" in combined_df_field_names:
+            combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
+
 
         #Section: Return Dataframe
         logging.info(f"Final dataframe and its dtypes:\n{df}\n{df.dtypes}")
