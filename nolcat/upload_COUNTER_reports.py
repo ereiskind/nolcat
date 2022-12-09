@@ -195,13 +195,14 @@ class UploadCOUNTERReports:
                 logging.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")
 
 
-                #Section: Ensure String Data Type for Potentially Numeric Metadata Fields
-                # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be switched to strings right away to head off problems.
-                #ToDo: Should this be reserved for only the fields likely to have issues (fixed text fields not included)?
+                #Section: Create Dataframe
+                #Subsection: Ensure String Data Type for Potentially Numeric Metadata Fields
+                # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be set as strings at the creation of the dataframe to head off problems.
                 df_dtypes = dict()
                 if "resource_name" in df_field_names:  # Dates and numbers, especially years, can be used as titles
                     df_dtypes['resource_name'] = 'string'
-                #ToDo: publisher_ID
+                if "publisher_ID" in df_field_names:
+                    df_dtypes['publisher_ID'] = 'string'
                 if "DOI" in df_field_names:
                     df_dtypes['DOI'] = 'string'
                 if "proprietary_ID" in df_field_names:
@@ -212,15 +213,18 @@ class UploadCOUNTERReports:
                     df_dtypes['print_ISSN'] = 'string'
                 if "online_ISSN" in df_field_names:
                     df_dtypes['online_ISSN'] = 'string'
-                #ToDo: parent_publication_date???
-                #ToDo: parent_DOI
-                #ToDo: parent_proprietary_ID
-                #ToDo: parent_ISBN
-                #ToDo: parent_print_ISSN
-                #ToDo: parent_online_ISSN
+                if "parent_DOI" in df_field_names:
+                    df_dtypes['parent_DOI'] = 'string'
+                if "parent_proprietary_ID" in df_field_names:
+                    df_dtypes['parent_proprietary_ID'] = 'string'
+                if "parent_ISBN" in df_field_names:
+                    df_dtypes['parent_ISBN'] = 'string'
+                if "parent_print_ISSN" in df_field_names:
+                    df_dtypes['parent_print_ISSN'] = 'string'
+                if "parent_online_ISSN" in df_field_names:
+                    df_dtypes['parent_online_ISSN'] = 'string'
                 
-
-                #Section: Create Dataframe
+                #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
                     file_name,
                     sheet_name=report_type,
@@ -229,7 +233,7 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype=df_dtypes,
                 )
-                logging.info(f"Dataframe immediately after creation:\n{df}")
+                logging.info(f"Dataframe immediately after creation:\n{df}\n{df.info()}")
 
 
                 #Section: Make Pre-Stacking Updates
