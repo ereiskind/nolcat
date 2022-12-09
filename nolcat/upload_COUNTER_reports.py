@@ -410,10 +410,6 @@ class UploadCOUNTERReports:
             combined_df_dtypes['Print_ISSN'] = 'string'
         if "Online_ISSN" in combined_df_field_names:
             combined_df_dtypes['Online_ISSN'] = 'string'
-        if "Authors" in combined_df_field_names:
-            combined_df_dtypes['Authors'] = 'string'
-        if "Article_Version" in combined_df_field_names:
-            combined_df_dtypes['Article_Version'] = 'string'
         if "Data_Type" in combined_df_field_names:
             combined_df_dtypes['Data_Type'] = 'string'
         if "Section_Type" in combined_df_field_names:
