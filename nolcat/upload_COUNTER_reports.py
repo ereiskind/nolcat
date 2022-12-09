@@ -98,16 +98,21 @@ class UploadCOUNTERReports:
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
                         logging.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)})")
+
+                        # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
-                            date_as_string = re.findall(r'([A-Z][a-z]{2})\-(\d{4})', string=field_name)  # `None` in `findall` raises an error, so it needs to be in a `try-except` block
-                        except:
+                            if re.match(r'^[Cc]omponent', field_name):
+                                continue  # The rarely used `Component` subtype fields aren't captured by this program
+                        except TypeError:
+                            pass
+
+                        try:  
+                            date_as_string = re.findall(r'([A-Z][a-z]{2})\-(\d{4})', string=field_name)
+                        except TypeError:
                             date_as_string = False
                         
                         if field_name == "ISSN" and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
                             df_field_names.append("online_ISSN")  # This is the first name replacement because assigning a certain type of ISSN changes the meaning slightly
-                        
-                        elif re.match(r'^[Cc]omponent'):
-                            continue  # The rarely used `Component` subtype fields aren't captured by this program
                         
                         elif date_as_string:
                             date_tuple = date_as_string[0]
@@ -181,29 +186,11 @@ class UploadCOUNTERReports:
                         elif field_name is None:
                             continue  # Deleted data and merged cells for header values can make Excel think null columns are in use; when read, these columns add `None` to `df_field_names`, causing a `ValueError: Number of passed names did not patch number of header fields in the file` when reading the worksheet contents into a dataframe
                         
+                        elif re.search(r'_((ID)|(DOI)|(URI)|(IS[SB]N))$', field_name):  # The regex captures strings ending with `ID`, `DOI`, `URI`, `ISSN`, and `ISBN` after an underscore; no try-except block is needed because `None` values were filtered out above
+                            df_field_names.append("_".join(field_name.split("_")[0:-1]).lower() + "_" + field_name.split("_")[-1])
+                        
                         else:
-                            df_field_names.append(field_name)
-                            #ToDo: Fix capitalization for:
-                                # Publisher_ID
-                                # Platform
-                                # Authors
-                                # Publication_Date
-                                # Article_Version
-                                # Parent_Title
-                                # Parent_Authors
-                                # Parent_Publication_Date
-                                # Parent_Article_Version
-                                # Parent_Data_Type
-                                # Parent_DOI
-                                # Parent_Proprietary_ID
-                                # Parent_ISBN
-                                # Parent_Print_ISSN
-                                # Parent_Online_ISSN
-                                # Parent_URI
-                                # Section_Type
-                                # Access_Type
-                                # Access_Method
-                                # Metric_Type
+                            df_field_names.append(field_name.lower())
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # List comprehension used to preserve order
                 logging.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")
 
