@@ -52,6 +52,7 @@ class UploadCOUNTERReports:
             try:
                 statistics_source_ID = int(re.findall(r'(\d*).xlsx', string=file_name)[0])  # `findall` always produces a list
                 file = load_workbook(filename=file_name, read_only=True)
+                logging.debug(f"Loading data from workbook {file_name}")
             except:
                 logging.warning(f"The workbook {file_name} couldn't be loaded. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
                 continue
@@ -253,20 +254,23 @@ class UploadCOUNTERReports:
                 # Adding the name of the field any earlier would make the list of field names longer than the number of fields in the spreadsheet being imported
                 df_field_names.append("Statistics_Source_ID")
                 df_non_date_field_names.append("Statistics_Source_ID")
+                logging.debug(f"Dataframe field names: {df_field_names}")
 
                 #Subsection: Remove `Reporting Period` Field
                 df_field_names_sans_reporting_period_fields = [field_name for field_name in df_non_date_field_names if not re.search(r'[Rr]eporting[\s_][Pp]eriod', field_name)]
                 reporting_period_field_names = [field_name for field_name in df_non_date_field_names if field_name not in df_field_names_sans_reporting_period_fields]  # List comprehension used to preserve list order
                 df = df.drop(columns=reporting_period_field_names)
                 df_field_names = df_field_names_sans_reporting_period_fields + df_date_field_names
-                logging.info(f"`df_field_names` with statistics source ID and without reporting period: {df_field_names}")
+                logging.debug(f"`df_field_names` with statistics source ID and without reporting period: {df_field_names}")
 
                 #Subsection: Remove Total Rows
                 if re.match(r'PR1?', string=report_type) is None:  # `re.match` returns `None` if there isn't a match, so this selects everything but platform reports in both R4 and R5
+                    number_of_rows_with_totals = df.shape[1]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
                     summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
                     df = df[summary_rows_are_false]
+                    logging.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.match(r'TR[1|2]', string=report_type) is not None:  # `re.match` returns `None` if there isn't a match, so this selects all title reports
@@ -295,6 +299,7 @@ class UploadCOUNTERReports:
                     df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "print_ISSN")
                     df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "online_ISSN")
                     df = df[df_field_names]
+                    logging.debug(f"Dataframe with identifiers in standardized fields:\n{df}")
 
                 #Subsection: Put Placeholder in for Null Values
                 df = df.fillna("`None`")
@@ -342,6 +347,7 @@ class UploadCOUNTERReports:
                 df = df[df['Usage_Count'] != 0]
                 df = df[df['Usage_Count'] != "`None`"]  # Some zero `Usage_Count` values may have been null values replaced by the null placeholder; retaining them interferes with correcting data types
                 df = df.reset_index(drop=True)
+                logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 non_string_fields = ["index", "Usage_Date", "Usage_Count"]  # Unable to combine not equal to clauses in list comprehension below
@@ -399,7 +405,7 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        logging.info(f"Combined dataframe:\n{df}")
+        logging.info(f"Combined dataframe:\n{combined_df}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
@@ -471,5 +477,5 @@ class UploadCOUNTERReports:
 
 
         #Section: Return Dataframe
-        logging.info(f"Final dataframe and its dtypes:\n{df}\n{df.dtypes}")
+        logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.dtypes}")
         return df
