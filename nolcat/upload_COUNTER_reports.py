@@ -250,10 +250,10 @@ class UploadCOUNTERReports:
                 df = df.replace("licence", "license")  # "Have `license` always use American English spelling
 
                 #Subsection: Add `Statistics_Source_ID` Field
-                df['Statistics_Source_ID'] = statistics_source_ID
+                df['statistics_source_ID'] = statistics_source_ID
                 # Adding the name of the field any earlier would make the list of field names longer than the number of fields in the spreadsheet being imported
-                df_field_names.append("Statistics_Source_ID")
-                df_non_date_field_names.append("Statistics_Source_ID")
+                df_field_names.append("statistics_source_ID")
+                df_non_date_field_names.append("statistics_source_ID")
                 logging.debug(f"Dataframe field names: {df_field_names}")
 
                 #Subsection: Remove `Reporting Period` Field
@@ -331,8 +331,8 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe immediately after stacking:\n{df}")
                 df = df.reset_index()
                 df = df.rename(columns={
-                    'level_1': 'Usage_Date',
-                    0: 'Usage_Count',
+                    'level_1': 'usage_date',
+                    0: 'usage_count',
                 })
                 logging.debug(f"Dataframe with reset index:\n{df}")
 
@@ -344,15 +344,15 @@ class UploadCOUNTERReports:
 
                 #Section: Adjust Data in Dataframe
                 #Subsection: Remove Rows with No Usage
-                df = df[df['Usage_Count'] != 0]
-                df = df[df['Usage_Count'] != "`None`"]  # Some zero `Usage_Count` values may have been null values replaced by the null placeholder; retaining them interferes with correcting data types
+                df = df[df['usage_count'] != 0]
+                df = df[df['usage_count'] != "`None`"]  # Some zero `usage_count` values may have been null values replaced by the null placeholder; retaining them interferes with correcting data types
                 df = df.reset_index(drop=True)
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                non_string_fields = ["index", "Usage_Date", "Usage_Count"]  # Unable to combine not equal to clauses in list comprehension below
+                non_string_fields = ["index", "usage_date", "usage_count"]  # Unable to combine not equal to clauses in list comprehension below
                 fields_to_convert_to_string_dtype = [field_name for field_name in df.columns.values.tolist() if field_name not in non_string_fields]
-                string_dtype_conversion_dict = {'Usage_Count': 'int'}
+                string_dtype_conversion_dict = {'usage_count': 'int'}
                 for field_name in fields_to_convert_to_string_dtype:
                     string_dtype_conversion_dict[field_name] = 'string'
                 df = df.astype(string_dtype_conversion_dict)
@@ -360,7 +360,7 @@ class UploadCOUNTERReports:
                 # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
                 df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
 
-                df['Usage_Date'] = pd.to_datetime(df['Usage_Date'])
+                df['usage_date'] = pd.to_datetime(df['usage_date'])
                 logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
 
                 #Subsection: Add Fields Missing from R4 Reports
@@ -412,9 +412,9 @@ class UploadCOUNTERReports:
 
         combined_df_dtypes = {
             'platform': 'string',
-            # Usage_Date retains datetime64[ns] type from heading conversion
-            # Usage_Count is a numpy int type, let the program determine the number of bits used for storage
-            'Statistics_Source_ID': 'int',
+            # usage_date retains datetime64[ns] type from heading conversion
+            # usage_count is a numpy int type, let the program determine the number of bits used for storage
+            'statistics_source_ID': 'int',
         }
         if "resource_name" in combined_df_field_names:
             combined_df_dtypes['resource_name'] = 'string'
