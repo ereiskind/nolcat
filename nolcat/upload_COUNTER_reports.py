@@ -103,7 +103,7 @@ class UploadCOUNTERReports:
                             date_as_string = False
                         
                         if field_name == "ISSN" and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
-                            df_field_names.append("Online_ISSN")  # This is the first name replacement because assigning a certain type of ISSN changes the meaning slightly
+                            df_field_names.append("online_ISSN")  # This is the first name replacement because assigning a certain type of ISSN changes the meaning slightly
                         
                         elif re.match(r'^[Cc]omponent'):
                             continue  # The rarely used `Component` subtype fields aren't captured by this program
@@ -141,73 +141,95 @@ class UploadCOUNTERReports:
                             df_date_field_names.append(datetime.date(field_name.year, field_name.month, 1))
                         
                         elif field_name is None and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Collection" and report_type == 'MR1':
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Database" and (report_type == 'DB1' or report_type == 'DB2'):
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         
                         elif field_name == "Journal" and (report_type == 'JR1' or report_type == 'JR2'):
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Title" and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5' or report_type == 'TR1' or report_type == 'TR2'):
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Database" and report_type == 'DR':
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Title" and report_type == 'TR':
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         elif field_name == "Item" and report_type == 'IR':
-                            df_field_names.append("Resource_Name")
+                            df_field_names.append("resource_name")
                         
                         elif field_name == "Content Provider" and report_type == 'MR1':
-                            df_field_names.append("Publisher")
+                            df_field_names.append("publisher")
                         elif field_name == "User Activity" and (report_type == 'BR5' or report_type == 'DB1'or report_type == 'PR1'):
-                            df_field_names.append("Metric_Type")
+                            df_field_names.append("metric_type")
                         elif (field_name == "Access Denied Category" or field_name == "Access denied category") and (report_type == 'BR3' or report_type == 'DB2' or report_type == 'JR2' or report_type == 'TR2'):
-                            df_field_names.append("Metric_Type")
+                            df_field_names.append("metric_type")
                         
-                        # These changes are for bringing R4 reports in line with R5 naming conventions, so they don't need to be limited to certain reports
-                        elif field_name == "Proprietary Identifier":
-                            df_field_names.append("Proprietary_ID")
+                        # These change field names from R4 and R5 reports to use R5 naming conventions with lowercase letters, so they don't need to be limited to certain reports
+                        elif field_name == "Proprietary Identifier" or field_name == "Proprietary_ID":
+                            df_field_names.append("proprietary_ID")
                         elif field_name == "Book DOI" or field_name == "Journal DOI" or field_name == "Title DOI":
                             df_field_names.append("DOI")
-                        elif field_name == "Data type" or field_name == "Data Type":
-                            df_field_names.append("Data_Type")
-                        elif field_name == "Online ISSN":
-                            df_field_names.append("Online_ISSN")
-                        elif field_name == "Print ISSN":
-                            df_field_names.append("Print_ISSN")
+                        elif field_name == "Data type" or field_name == "Data Type" or field_name == "Data_Type":
+                            df_field_names.append("data_type")
+                        elif field_name == "Online ISSN" or field_name == "Online_ISSN":
+                            df_field_names.append("online_ISSN")
+                        elif field_name == "Print ISSN" or field_name == "Print_ISSN":
+                            df_field_names.append("print_ISSN")
 
                         elif field_name is None:
                             continue  # Deleted data and merged cells for header values can make Excel think null columns are in use; when read, these columns add `None` to `df_field_names`, causing a `ValueError: Number of passed names did not patch number of header fields in the file` when reading the worksheet contents into a dataframe
                         
                         else:
                             df_field_names.append(field_name)
+                            #ToDo: Fix capitalization for:
+                                # Publisher_ID
+                                # Platform
+                                # Authors
+                                # Publication_Date
+                                # Article_Version
+                                # Parent_Title
+                                # Parent_Authors
+                                # Parent_Publication_Date
+                                # Parent_Article_Version
+                                # Parent_Data_Type
+                                # Parent_DOI
+                                # Parent_Proprietary_ID
+                                # Parent_ISBN
+                                # Parent_Print_ISSN
+                                # Parent_Online_ISSN
+                                # Parent_URI
+                                # Section_Type
+                                # Access_Type
+                                # Access_Method
+                                # Metric_Type
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # List comprehension used to preserve order
                 logging.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")
 
 
-                #Section: Ensure String Data Type for Metadata
-                df_dtypes = {'Platform': 'string'}
-                if "Resource_Name" in df_field_names:
-                    df_dtypes['Resource_Name'] = 'string'
-                if "Publisher" in df_field_names:
-                    df_dtypes['Publisher'] = 'string'
+                #Section: Ensure String Data Type for Potentially Numeric Metadata Fields
+                # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be switched to strings right away to head off problems.
+                #ToDo: Should this be reserved for only the fields likely to have issues (fixed text fields not included)?
+                df_dtypes = dict()
+                if "resource_name" in df_field_names:  # Dates and numbers, especially years, can be used as titles
+                    df_dtypes['resource_name'] = 'string'
+                #ToDo: publisher_ID
                 if "DOI" in df_field_names:
                     df_dtypes['DOI'] = 'string'
-                if "Proprietary_ID" in df_field_names:
-                    df_dtypes['Proprietary_ID'] = 'string'
+                if "proprietary_ID" in df_field_names:
+                    df_dtypes['proprietary_ID'] = 'string'
                 if "ISBN" in df_field_names:
                     df_dtypes['ISBN'] = 'string'
-                if "Print_ISSN" in df_field_names:
-                    df_dtypes['Print_ISSN'] = 'string'
-                if "Online_ISSN" in df_field_names:
-                    df_dtypes['Online_ISSN'] = 'string'
-                if "Data_Type" in df_field_names:
-                    df_dtypes['Data_Type'] = 'string'
-                if "Section_Type" in df_field_names:
-                    df_dtypes['Section_Type'] = 'string'
-                if "Metric_Type" in df_field_names:
-                    df_dtypes['Metric_Type'] = 'string'
+                if "print_ISSN" in df_field_names:
+                    df_dtypes['print_ISSN'] = 'string'
+                if "online_ISSN" in df_field_names:
+                    df_dtypes['online_ISSN'] = 'string'
+                #ToDo: parent_publication_date???
+                #ToDo: parent_DOI
+                #ToDo: parent_proprietary_ID
+                #ToDo: parent_ISBN
+                #ToDo: parent_print_ISSN
+                #ToDo: parent_online_ISSN
                 
 
                 #Section: Create Dataframe
@@ -241,27 +263,27 @@ class UploadCOUNTERReports:
 
                 #Subsection: Remove Total Rows
                 if re.match(r'PR1?', string=report_type) is None:  # `re.match` returns `None` if there isn't a match, so this selects everything but platform reports in both R4 and R5
-                    common_summary_rows = df['Resource_Name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
-                    uncommon_summary_rows = df['Resource_Name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
+                    common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
+                    uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
                     summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
                     df = df[summary_rows_are_false]
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.match(r'TR[1|2]', string=report_type) is not None:  # `re.match` returns `None` if there isn't a match, so this selects all title reports
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
-                    df['Print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
-                    df['Online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
-                    # Returns `True` if the values of `Print_ISSN` and `Online_ISSN` are `True`, otherwise, returns `False`
-                    df['ISBN'] = df['Print_ISSN'] & df['Online_ISSN']
+                    df['print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
+                    df['online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
+                    # Returns `True` if the values of `print_ISSN` and `online_ISSN` are `True`, otherwise, returns `False`
+                    df['ISBN'] = df['print_ISSN'] & df['online_ISSN']
 
                     # Replaces Booleans signaling value with values from `Print ID` and `Online ID`
-                    df.loc[df['Print_ISSN'] == True, 'Print_ISSN'] = df['Print ID']
-                    df.loc[df['Online_ISSN'] == True, 'Online_ISSN'] = df['Online ID']
-                    df.loc[df['Print_ISSN'] == False, 'ISBN'] = df['Print ID']
-                    df.loc[df['Online_ISSN'] == False, 'ISBN'] = df['Online ID']
+                    df.loc[df['print_ISSN'] == True, 'print_ISSN'] = df['Print ID']
+                    df.loc[df['online_ISSN'] == True, 'online_ISSN'] = df['Online ID']
+                    df.loc[df['print_ISSN'] == False, 'ISBN'] = df['Print ID']
+                    df.loc[df['online_ISSN'] == False, 'ISBN'] = df['Online ID']
                     # Replace Booleans not signaling value with null placeholder string (replacing with `None` causes the values to fill down instead of the desired replacement)
-                    df['Print_ISSN'] = df['Print_ISSN'].replace(False, "`None`")  
-                    df['Online_ISSN'] = df['Online_ISSN'].replace(False, "`None`")
+                    df['print_ISSN'] = df['print_ISSN'].replace(False, "`None`")  
+                    df['online_ISSN'] = df['online_ISSN'].replace(False, "`None`")
                     df['ISBN'] = df['ISBN'].replace(True, "`None`")
                     df['ISBN'] = df['ISBN'].replace(False, "`None`")  # These cells occur when the ID columns have a null value and an ISSN
 
@@ -270,8 +292,8 @@ class UploadCOUNTERReports:
                     df_field_names.remove("Print ID")
                     df_field_names.remove("Online ID")
                     df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "ISBN")
-                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "Print_ISSN")
-                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "Online_ISSN")
+                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "print_ISSN")
+                    df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "online_ISSN")
                     df = df[df_field_names]
 
                 #Subsection: Put Placeholder in for Null Values
@@ -337,35 +359,35 @@ class UploadCOUNTERReports:
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
-                    df['Data_Type'] = "Book"
+                    df['data_type'] = "Book"
                 elif report_type == 'DB1' or report_type == 'DB2':
-                    df['Data_Type'] = "Database"
+                    df['data_type'] = "Database"
                 elif report_type == 'JR1' or report_type == 'JR2':
-                    df['Data_Type'] = "Journal"
+                    df['data_type'] = "Journal"
                 elif report_type == 'MR1':
-                    df['Data_Type'] = "Multimedia"
+                    df['data_type'] = "Multimedia"
                 elif report_type == 'PR1':
-                    df['Data_Type'] = "Platform"
+                    df['data_type'] = "Platform"
 
                 if report_type == 'BR1' or report_type == 'BR3' or report_type == 'BR5':
-                    df['Section_Type'] = "Book"
+                    df['section_type'] = "Book"
                 elif report_type =='BR2':
-                    df['Section_Type'] = "Book_Segment"
+                    df['section_type'] = "Book_Segment"
                 elif report_type == 'JR1' or report_type == 'JR2':
-                    df['Section_Type'] = "Article"
+                    df['section_type'] = "Article"
                 elif report_type == 'TR1' or report_type == 'TR2':
-                    df.loc[df['Data_Type'] == "Journal", 'Section_Type'] = "Article"
-                    df.loc[df['Data_Type'] == "Book", 'Section_Type'] = "Book_Segment"
+                    df.loc[df['data_type'] == "Journal", 'section_type'] = "Article"
+                    df.loc[df['data_type'] == "Book", 'section_type'] = "Book_Segment"
                     # Any data types besides `Book` or `Journal` won't have a section type
 
                 if report_type =='BR1' or report_type == 'TR1':
-                    df['Metric_Type'] = "Successful Title Requests"
+                    df['metric_type'] = "Successful Title Requests"
                 elif report_type =='BR2':
-                    df['Metric_Type'] = "Successful Section Requests"
+                    df['metric_type'] = "Successful Section Requests"
                 elif report_type =='JR1':
-                    df['Metric_Type'] = "Successful Full-text Article Requests"
+                    df['metric_type'] = "Successful Full-text Article Requests"
                 elif report_type =='MR1':
-                    df['Metric_Type'] = "Successful Content Unit Requests"
+                    df['metric_type'] = "Successful Content Unit Requests"
                 
                 logging.info(f"Dataframe being used in concatenation:\n{df}")
                 all_dataframes_to_concatenate.append(df)
@@ -383,63 +405,65 @@ class UploadCOUNTERReports:
         combined_df_field_names = combined_df.columns.values.tolist()
 
         combined_df_dtypes = {
-            'Platform': 'string',
+            'platform': 'string',
             # Usage_Date retains datetime64[ns] type from heading conversion
             # Usage_Count is a numpy int type, let the program determine the number of bits used for storage
             'Statistics_Source_ID': 'int',
         }
-        if "Resource_Name" in combined_df_field_names:
-            combined_df_dtypes['Resource_Name'] = 'string'
-        if "Publisher" in combined_df_field_names:
-            combined_df_dtypes['Publisher'] = 'string'
-        if "Publisher_ID" in combined_df_field_names:
-            combined_df_dtypes['Publisher_ID'] = 'string'
-        if "Authors" in combined_df_field_names:
-            combined_df_dtypes['Authors'] = 'string'
-        if "Publication_Date" in combined_df_field_names:
-            combined_df_dtypes['Publication_Date'] = 'datetime64[ns]'
-        if "Article_Version" in combined_df_field_names:
-            combined_df_dtypes['Article_Version'] = 'string'
+        if "resource_name" in combined_df_field_names:
+            combined_df_dtypes['resource_name'] = 'string'
+        if "publisher" in combined_df_field_names:
+            combined_df_dtypes['publisher'] = 'string'
+        if "publisher_ID" in combined_df_field_names:
+            combined_df_dtypes['publisher_ID'] = 'string'
+        if "authors" in combined_df_field_names:
+            combined_df_dtypes['authors'] = 'string'
+        if "publication_date" in combined_df_field_names:
+            combined_df_dtypes['publication_date'] = 'datetime64[ns]'
+        if "article_version" in combined_df_field_names:
+            combined_df_dtypes['article_version'] = 'string'
         if "DOI" in combined_df_field_names:
             combined_df_dtypes['DOI'] = 'string'
-        if "Proprietary_ID" in combined_df_field_names:
-            combined_df_dtypes['Proprietary_ID'] = 'string'
+        if "proprietary_ID" in combined_df_field_names:
+            combined_df_dtypes['proprietary_ID'] = 'string'
         if "ISBN" in combined_df_field_names:
             combined_df_dtypes['ISBN'] = 'string'
-        if "Print_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Print_ISSN'] = 'string'
-        if "Online_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Online_ISSN'] = 'string'
-        if "Data_Type" in combined_df_field_names:
-            combined_df_dtypes['Data_Type'] = 'string'
-        if "Section_Type" in combined_df_field_names:
-            combined_df_dtypes['Section_Type'] = 'string'
+        if "print_ISSN" in combined_df_field_names:
+            combined_df_dtypes['print_ISSN'] = 'string'
+        if "online_ISSN" in combined_df_field_names:
+            combined_df_dtypes['online_ISSN'] = 'string'
+        if "data_type" in combined_df_field_names:
+            combined_df_dtypes['data_type'] = 'string'
+        if "section_type" in combined_df_field_names:
+            combined_df_dtypes['section_type'] = 'string'
         if "YOP" in combined_df_field_names:
             combined_df_dtypes['YOP'] = 'int'  # `smallint` in database
-        if "Access_Type" in combined_df_field_names:
-            combined_df_dtypes['Access_Type'] = 'string'
-        if "Parent_Title" in combined_df_field_names:
-            combined_df_dtypes['Parent_Title'] = 'string'
-        if "Parent_Authors" in combined_df_field_names:
-            combined_df_dtypes['Parent_Authors'] = 'string'
-        if "Parent_Article_Version" in combined_df_field_names:
-            combined_df_dtypes['Parent_Article_Version'] = 'string'
-        if "Parent_Data_Type" in combined_df_field_names:
-            combined_df_dtypes['Parent_Data_Type'] = 'string'
-        if "Parent_DOI" in combined_df_field_names:
-            combined_df_dtypes['Parent_DOI'] = 'string'
-        if "Parent_Proprietary_ID" in combined_df_field_names:
-            combined_df_dtypes['Parent_Proprietary_ID'] = 'string'
-        if "Parent_ISBN" in combined_df_field_names:
-            combined_df_dtypes['Parent_ISBN'] = 'string'
-        if "Parent_Print_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Parent_Print_ISSN'] = 'string'
-        if "Parent_Online_ISSN" in combined_df_field_names:
-            combined_df_dtypes['Parent_Online_ISSN'] = 'string'
-        if "Parent_URI" in combined_df_field_names:
-            combined_df_dtypes['Parent_URI'] = 'string'
-        if "Metric_Type" in combined_df_field_names:
-            combined_df_dtypes['Metric_Type'] = 'string'
+        if "access_type" in combined_df_field_names:
+            combined_df_dtypes['access_type'] = 'string'
+        #ToDo: access_method
+        if "parent_title" in combined_df_field_names:
+            combined_df_dtypes['parent_title'] = 'string'
+        if "parent_authors" in combined_df_field_names:
+            combined_df_dtypes['parent_authors'] = 'string'
+        #ToDo: parent_publication_date
+        if "parent_article_version" in combined_df_field_names:
+            combined_df_dtypes['parent_article_version'] = 'string'
+        if "parent_data_Type" in combined_df_field_names:
+            combined_df_dtypes['parent_data_Type'] = 'string'
+        if "parent_DOI" in combined_df_field_names:
+            combined_df_dtypes['parent_DOI'] = 'string'
+        if "parent_proprietary_ID" in combined_df_field_names:
+            combined_df_dtypes['parent_proprietary_ID'] = 'string'
+        if "parent_ISBN" in combined_df_field_names:
+            combined_df_dtypes['parent_ISBN'] = 'string'
+        if "parent_print_ISSN" in combined_df_field_names:
+            combined_df_dtypes['parent_print_ISSN'] = 'string'
+        if "parent_online_ISSN" in combined_df_field_names:
+            combined_df_dtypes['parent_online_ISSN'] = 'string'
+        if "parent_URI" in combined_df_field_names:
+            combined_df_dtypes['parent_URI'] = 'string'
+        if "metric_type" in combined_df_field_names:
+            combined_df_dtypes['metric_type'] = 'string'
         
 
         #Section: Return Dataframe

@@ -9366,7 +9366,7 @@ def sample_COUNTER_reports():
             [2, "Encyclopedia of Philosophy,Vol.1,Ed.2", "Gale", None, "Gale", None, "Gale:5BNN", "978-0-0286-6072-1", None, None, None, "Book", "Article", 1, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2019-12-01", 4],
         ],
         # The order of the fields no longer matches the order of fields being used throughout the rest of the repo
-        columns=["Statistics_Source_ID", "Resource_Name", "Publisher", "Publisher_ID", "Platform", "DOI", "Proprietary_ID", "ISBN", "Print_ISSN", "Online_ISSN", "URI", "Data_Type", "Section_Type", "YOP", "Access_Type", "Access_Method", "Authors", "Publication_Date", "Article_Version", "Parent_Title", "Parent_Authors", "Parent_Publication_Date", "Parent_Article_Version", "Parent_Data_Type", "Parent_DOI", "Parent_Proprietary_ID", "Parent_ISBN", "Parent_Print_ISSN", "Parent_Online_ISSN", "Parent_URI", "Metric_Type", "Usage_Date", "Usage_Count"],
+        columns=["statistics_source_ID", "resource_name", "publisher", "publisher_ID", "platform", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method", "authors", "publication_date", "article_version", "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count"],
     )
     #ToDo: df.index.name = ""
     return df
