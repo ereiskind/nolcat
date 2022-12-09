@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 from wtforms import MultipleFileField
 from wtforms.validators import DataRequired
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
@@ -42,3 +43,7 @@ def sample_COUNTER_reports():
 
 
 #Section: Tests
+def test_create_dataframe(sample_COUNTER_report_workbooks, sample_COUNTER_reports):
+    """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe ready for the RawCOUNTERReport class."""
+    df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
+    assert assert_frame_equal(df, sample_COUNTER_reports)
