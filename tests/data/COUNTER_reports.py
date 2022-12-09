@@ -9368,4 +9368,38 @@ def sample_COUNTER_reports():
         columns=["statistics_source_ID", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count"],
     )
     #ToDo: df.index.name = ""
+    df = df.astype({
+        "statistics_source_ID": 'int',
+        "resource_name": 'string',
+        "publisher": 'string',
+        "publisher_ID": 'string',
+        "platform": 'string',
+        "authors": 'string',
+        "article_version": 'string',
+        "DOI": 'string',
+        "proprietary_ID": 'string',
+        "ISBN": 'string',
+        "print_ISSN": 'string',
+        "online_ISSN": 'string',
+        "URI": 'string',
+        "data_type": 'string',
+        "section_type": 'string',
+        "YOP": 'int',
+        "access_type": 'string',
+        "access_method": 'string',
+        "parent_title": 'string',
+        "parent_authors": 'string',
+        "parent_article_version": 'string',
+        "parent_data_type": 'string',
+        "parent_DOI": 'string',
+        "parent_proprietary_ID": 'string',
+        "parent_ISBN": 'string',
+        "parent_print_ISSN": 'string',
+        "parent_online_ISSN": 'string',
+        "parent_URI": 'string',
+        # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
+    })
+    df['publication_date'] = pd.to_datetime(df['publication_date'])
+    df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
+    df['usage_date'] = pd.to_datetime(df['usage_date'])
     return df
