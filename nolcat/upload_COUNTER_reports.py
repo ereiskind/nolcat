@@ -434,7 +434,7 @@ class UploadCOUNTERReports:
         if "section_type" in combined_df_field_names:
             combined_df_dtypes['section_type'] = 'string'
         if "YOP" in combined_df_field_names:
-            combined_df_dtypes['YOP'] = 'int'  # `smallint` in database
+            combined_df_dtypes['YOP'] = 'Int64'  # `smallint` in database; using the pandas data type here because it allows null values
         if "access_type" in combined_df_field_names:
             combined_df_dtypes['access_type'] = 'string'
         if "access_method" in combined_df_field_names:
@@ -467,6 +467,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
+        combined_df = combined_df.fillna(None)  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself)
 
 
         #Section: Return Dataframe
