@@ -37,6 +37,55 @@ R5 Metric Types
 * No_License
 * Limit_Exceeded
 
+Elements in R5
+==============
+
+COUNTER refers to the fields in their reports as "elements." Not all elements are used in all reports, and in some cases, different elements from different reports have been consolidated into a single field in NoLCAT.
+
+* Database (DR) -- Part of `resource_name` in NoLCAT
+* Title (TR) -- Part of `resource_name` in NoLCAT
+* Item (IR) -- Part of `resource_name` in NoLCAT
+* Publisher (DR, TR, IR)
+* Publisher_ID (DR, TR, IR)
+* Platform (PR, DR, TR, IR)
+* Authors (IR)
+* Publication_Date (IR)
+* Article_Version (IR)
+* DOI (TR, IR)
+* Proprietary_ID (DR, TR, IR)
+* ISBN (TR, IR)
+* Print_ISSN (TR, IR)
+* Online_ISSN (TR, IR)
+* URI (TR, IR)
+* Parent_Title (IR)
+* Parent_Authors (IR)
+* Parent_Publication_Date (IR)
+* Parent_Article_Version (IR)
+* Parent_Data_Type (IR)
+* Parent_DOI (IR)
+* Parent_Proprietary_ID (IR)
+* Parent_ISBN (IR)
+* Parent_Print_ISSN (IR)
+* Parent_Online_ISSN (IR)
+* Parent_URI (IR)
+* Component_Title (IR) -- Not preserved in NoLCAT
+* Component_Authors (IR) -- Not preserved in NoLCAT
+* Component_Publication_Date (IR) -- Not preserved in NoLCAT
+* Component_Data_Type (IR) -- Not preserved in NoLCAT
+* Component_DOI (IR) -- Not preserved in NoLCAT
+* Component_Proprietary_ID (IR) -- Not preserved in NoLCAT
+* Component_ISBN (IR) -- Not preserved in NoLCAT
+* Component_Print_ISSN (IR) -- Not preserved in NoLCAT
+* Component_Online_ISSN (IR) -- Not preserved in NoLCAT
+* Component_URI (IR) -- Not preserved in NoLCAT
+* Data_Type (PR, DR, TR, IR)
+* Section_Type (TR)
+* YOP (TR, IR)
+* Access_Type (TR, IR)
+* Access_Method (PR, DR, TR, IR)
+* Metric_Type (PR, DR, TR, IR)
+* Reporting_Period_Total (PR, DR, TR, IR) -- Not preserved in NoLCAT
+
 COUNTER 5.1 Proposals
 *********************
 

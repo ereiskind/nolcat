@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 
 @bp.route('/')  #ToDo: Update to include variable route to determine if viewing resourceSources or statisticsSources
-def homepage():
+def view_sources_homepage():
     """Returns the homepage for the `view_sources` blueprint, which shows the list of resourceSources or statisticsSources records depending on the variable route value."""
-    return render_template('index.html')
+    return render_template('view_sources/index.html')
 
 
 #ToDo: Create route to view source details

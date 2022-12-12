@@ -5,10 +5,10 @@ Use Pandas to Transform COUNTER Binary Files
 ********************************************
 Initially, the CSV, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
 
-1. Add R5 test data--this branch/pull request
-2. Create COUNTER report transformation class
-3. Have `initialization` blueprint use the new class
-4. Have `ingest_usage` blueprint use the new class
+1. Create `UploadCOUNTERReports` class
+2. Have `initialization` blueprint use the new class
+3. Have `ingest_usage` blueprint use the new class
+4. Try to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `UploadCOUNTERReports` test module
 
 To-Do List
 **********
@@ -22,10 +22,8 @@ High Priority
 
 Branch: Complete Initialization Process
 ---------------------------------------
-* In `RawCOUNTERReport` constructor for uploaded files, make all dates the first of the month
 * Figure out layout and form iteration for page where manual matches are confirmed
 * Finish creating routes, forms, and HTML pages for `nolcat.initialization`
-* Figure out how to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `RawCOUNTERReport` test module
 * Write test for `RawCOUNTERReport.load_data_into_database` method
 * Write tests for `RawCOUNTERReport`/`nolcat.initialization` blueprint
 
@@ -201,3 +199,11 @@ Branch: Configure Flask-User
 ----------------------------
 * Create route/page for login page with tests
 * Establish if there's going to be a single user login and a single admin login, or if everyone has their own login
+
+About This Repo
+***************
+
+Encodings and File Types
+========================
+
+E-resources involves working with scholarly content in a wide variety of languages, requiring the use of Unicode to accommodate multiple alphabets/character sets. NoLCAT uses the UTF-8 encoding for a variety of reasions, including its ubiquity, backwards compatability, and inclusion as a requirement of the COUNTER 5 Code of Practice. Since Microsoft Excel can explicitly save files as CSV files with an UTF-8 encoding, NoLCAT will use the CSV format for plain text file uploads and downloads.

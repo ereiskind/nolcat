@@ -119,7 +119,7 @@ class FiscalYears(db.Model):
     def create_usage_tracking_records_for_fiscal_year(self):
         #ToDo: For every record in statisticsSources
             #ToDo: For all of its statisticsResourceSources records
-                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_id of the instance this method is being run on
+                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
         pass
 
 
@@ -233,7 +233,7 @@ class StatisticsSources(db.Model):
     statistics_source_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
 
@@ -241,7 +241,7 @@ class StatisticsSources(db.Model):
     def __repr__(self):
         """The printable representation of the record."""
         #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
-        return f"<'statistics_source_id': '{self.statistics_source_id}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_id': '{self.vendor_id}'>"
+        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
     @hybrid_method
@@ -355,7 +355,7 @@ class StatisticsSources(db.Model):
 
             #Subsection: Check if Usage Is Already in Database
             #ToDo: for month in <the range of months the usage time span represents>
-                #ToDo: Get number of records in usage data relation with self.statistics_source_id, the month, and master_report
+                #ToDo: Get number of records in usage data relation with self.statistics_source_ID, the month, and master_report
                 #ToDo: If the above returns data
                     #ToDo: Ask if data should be loaded
             #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
@@ -365,27 +365,23 @@ class StatisticsSources(db.Model):
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
                 #ToDo: try:
                     #ToDo: del SUSHI_parameters["include_parent_details"]
-                    #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "DR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
                     #ToDo: try:
                         #ToDo: del SUSHI_parameters["include_parent_details"]
-                        #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "TR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
                 #ToDo: try:
                     #ToDo: del SUSHI_parameters["include_parent_details"]
-                    #ToDo: del SUSHI_parameters["include_component_details"]
             #ToDo: if master_report_name == "IR":
                 #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
                 #ToDo: SUSHI_parameters["include_parent_details"] = "True"
-                #ToDo: SUSHI_parameters["include_component_details"] = "True"
             
             #Subsection: Make Master Report API Call
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-            #ALERT: JSON from API to dataframe is required for `RawCOUNTERReport` to be used
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
+            #ALERT: `RawCOUNTERReport` requires the JSON (from the API) be converted into a dataframe
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
@@ -446,33 +442,11 @@ class StatisticsSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-class StatisticsResourceSources(db.Model):
-    """The class representation of the `statisticsResourceSources` relation, which functions as the junction table between `statisticsSources` and `resourceSources`.
-
-    The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
-    
-    Attributes:
-        self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
-        self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
-    """
-    __tablename__ = 'statisticsResourceSources'
-
-    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'), primary_key=True)
-    current_statistics_source = db.Column(db.Boolean)
-
-
-    def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -500,7 +474,7 @@ class ResourceSources(db.Model):
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_id'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
@@ -544,11 +518,33 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_id'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
     
 
     def __repr__(self):
         """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
+class StatisticsResourceSources(db.Model):
+    """The class representation of the `statisticsResourceSources` relation, which functions as the junction table between `statisticsSources` and `resourceSources`.
+
+    The relationship between resource sources and statistics sources can be complex. A single vendor can have multiple platforms, each with their own statistics source (e.g. Taylor & Francis); a single statistics source can provide usage for multiple separate platforms/domains from a single vendor (e.g. Oxford) or from different vendors (e.g. HighWire); statistics sources can be combined (e.g. Peterson's Prep) or split apart (e.g. UN/OECD iLibrary); changes in publisher (e.g. Nature) or platform hosting service (e.g. Company of Biologists) can change where to get the usage for a given resource. This complexity creates a many-to-many relationship between resource sources and statistics sources, which relational databases implement through a junction table such as this one. The third field in this relation, `Current_Statistics_Source`, indicates if the given statistics source is the current source of usage for the resource source.
+    
+    Attributes:
+        self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
+        self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
+        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
+    """
+    __tablename__ = 'statisticsResourceSources'
+
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True)
+    current_statistics_source = db.Column(db.Boolean)
+
+
+    def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
 
@@ -573,8 +569,8 @@ class AnnualUsageCollectionTracking(db.Model):
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'), primary_key=True)
-    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_id'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -652,7 +648,24 @@ class Resources(db.Model):
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
     
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for metadata type (titles, DOI, ISBN, ISSN, and eISSN) fields would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+        Resource_Name
+        DOI
+        ISBN
+        Print_ISSN
+        Online_ISSN
+        Authors
+        Parent_Title
+        Parent_Authors
+        Parent_Publication_Date
+        Parent_Article_Version
+        Parent_Data_Type
+        Parent_DOI
+        Parent_Proprietary_ID
+        Parent_ISBN
+        Parent_Print_ISSN
+        Parent_Online_ISSN
+        Parent_URI
     
     Attributes:
         self.resource_metadata_ID (int): the primary key
@@ -668,7 +681,7 @@ class ResourceMetadata(db.Model):
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
     default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
     
 
     def __repr__(self):
@@ -685,6 +698,8 @@ class ResourcePlatforms(db.Model):
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
         self.platform (str): the name of the resource's platform in the COUNTER report
+        self.publication_date (str): the publisher's resource release date in the COUNTER IR  #ToDo: If this is always a date data type in the IR, it can be changed to a datetime in the database
+        self.article_version (str): version of article within the publication life cycle from the COUNTER IR
         self.proprietary_ID (str): the statistics source's ID for the resource
         self.URI (str): the statistics source's permalink to the resource
         self.interface (int): the foreign key for `statisticsSources`
@@ -696,10 +711,12 @@ class ResourcePlatforms(db.Model):
     publisher = db.Column(db.String(225))
     publisher_ID = db.Column(db.String(50))
     platform = db.Column(db.String(75))
+    publication_date = db.Column(db.String(200))
+    article_version = db.Column(db.String(50))
     proprietary_ID = db.Column(db.String(100))
     URI = db.Column(db.String(200))
-    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_id'))
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_id'))
+    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
 
     resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
 
@@ -731,7 +748,7 @@ class UsageData(db.Model):
     __tablename__ = 'usageData'
 
     usage_data_ID = db.Column(db.Integer, primary_key=True)
-    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_id'))
+    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
