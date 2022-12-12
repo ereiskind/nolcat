@@ -92,15 +92,26 @@ def create_app():
         from ..nolcat import view_vendors
         logging.debug("Blueprints imported from `..nolcat`")
     except ValueError:  # `ValueError: attempted relative import beyond top-level package`
-        from .nolcat import annual_stats
-        from .nolcat import ingest_usage
-        from .nolcat import initialization
-        from .nolcat import login
-        from .nolcat import view_resources
-        from .nolcat import view_sources
-        from .nolcat import view_usage
-        from .nolcat import view_vendors
-        logging.debug("Blueprints imported from `.nolcat`")
+        try:
+            from .nolcat import annual_stats
+            from .nolcat import ingest_usage
+            from .nolcat import initialization
+            from .nolcat import login
+            from .nolcat import view_resources
+            from .nolcat import view_sources
+            from .nolcat import view_usage
+            from .nolcat import view_vendors
+            logging.debug("Blueprints imported from `.nolcat`")
+        except ModuleNotFoundError:  #`ModuleNotFoundError: No module named 'nolcat.nolcat'`
+            from nolcat import annual_stats
+            from nolcat import ingest_usage
+            from nolcat import initialization
+            from nolcat import login
+            from nolcat import view_resources
+            from nolcat import view_sources
+            from nolcat import view_usage
+            from nolcat import view_vendors
+            logging.debug("Blueprints imported from `nolcat`")
 
     #Subsection: Register Blueprints
     app.register_blueprint(annual_stats.bp)
