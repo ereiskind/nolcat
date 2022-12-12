@@ -37,7 +37,7 @@ def session():
     The scope of the fixture is set to module because setting the scope to `function` would prevent tests from building upon one another--for example, to test loading data with foreign keys in an environment whereCRUD operations were rolled back after every test function, the function would need to load the data from which the foreign keys derive and then the data containing the foreign keys; when the session covers the entire module, the data in the database from a previous test for loading data can be used as the reference for the foreign keys.
     """
     #ToDo: Even with `-s` flag, neither `print` nor `sys.stdout.write` output f-strings to the console, so the exact nature and types of the variables invoked below are unknown
-    engine = db.engine
+    engine = db.engine  #ALERT: `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` upon running test_flask_factory_pattern.test_loading_data_into_relation and test_flask_factory_pattern.test_loading_connected_data_into_other_relation
     connection = engine.connect()  # Creates a connection to the database
     transaction = connection.begin()  # Begins a transaction
     options = dict(bind=connection, binds={})  #ToDo: What does this do?
