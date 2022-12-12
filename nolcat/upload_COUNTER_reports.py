@@ -295,7 +295,8 @@ class UploadCOUNTERReports:
                 #Subsection: Put Placeholder in for Null Values
                 df = df.fillna("`None`")
                 df = df.replace(
-                    to_replace='^\s*$',  # The anchors ensure this is only applied to whitespace-only cells; without them, this is applied to all spaces, even the ones between letters
+                    to_replace='^\s*$',
+                    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
                     value="`None`",
                     regex=True
                 )
