@@ -9402,5 +9402,5 @@ def sample_COUNTER_reports():
     df['publication_date'] = pd.to_datetime(df['publication_date'])
     df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
     df['usage_date'] = pd.to_datetime(df['usage_date'])
-    df = df.fillna(None)  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself)
+    df = df.fillna([None])  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); the method takes a list
     return df

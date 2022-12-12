@@ -467,7 +467,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
-        combined_df = combined_df.fillna(None)  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself)
+        combined_df = combined_df.fillna([None])  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); the method takes a list
 
 
         #Section: Return Dataframe
