@@ -1,6 +1,7 @@
 """This module contains the dataframe with all the test data COUNTER reports formatted for normalization. A dataframe constructor is used instead of any tabular file to prevent file format change problems, especially encoding problems, from adding complications to the tests. From these separate modules, this partially transformed test data can become fixtures for use in assert statements or be output to tabular data formats."""
 
 import pandas as pd
+import numpy as np
 
 
 def sample_COUNTER_reports():
@@ -9402,5 +9403,5 @@ def sample_COUNTER_reports():
     df['publication_date'] = pd.to_datetime(df['publication_date'])
     df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
     df['usage_date'] = pd.to_datetime(df['usage_date'])
-    df = df.fillna("`None`").replace(["`None`"], [None])  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); using `None` in the `fillna` method raises errors
+    df = df.replace(np.nan, None)  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); https://stackoverflow.com/a/54403705
     return df

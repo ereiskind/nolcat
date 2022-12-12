@@ -4,6 +4,7 @@ import datetime
 from flask import request
 from openpyxl import load_workbook
 import pandas as pd
+import numpy as np
 
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
@@ -468,7 +469,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
-        combined_df = combined_df.fillna("`None`").replace(["`None`"], [None])  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); using `None` in the `fillna` method raises errors
+        combined_df = combined_df.replace(np.nan, None)  # This makes all the null values the Python null type (which, unlike the pandas null types, returns Boolean true when compared to itself); https://stackoverflow.com/a/54403705
 
 
         #Section: Return Dataframe
