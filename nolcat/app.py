@@ -80,39 +80,15 @@ def create_app():
 
     #Section: Create Homepage and Register Other Blueprints
     #Subsection: Import Blueprints
-    # Various environments seem to want different paths to the blueprints. AWS prefers `nolcat`, throwing a `ValueError: attempted relative import beyond top-level package` at `..nolcat` and `ModuleNotFoundError: No module named 'nolcat.nolcat'` at `.nolcat`, but all three are kept for ease of deployment.
-    try:
-        from nolcat import annual_stats
-        from nolcat import ingest_usage
-        from nolcat import initialization
-        from nolcat import login
-        from nolcat import view_resources
-        from nolcat import view_sources
-        from nolcat import view_usage
-        from nolcat import view_vendors
-        logging.debug("Blueprints imported from `nolcat`")
-    except (ValueError, ModuleNotFoundError):
-        try:
-            from .nolcat import annual_stats
-            from .nolcat import ingest_usage
-            from .nolcat import initialization
-            from .nolcat import login
-            from .nolcat import view_resources
-            from .nolcat import view_sources
-            from .nolcat import view_usage
-            from .nolcat import view_vendors
-            logging.debug("Blueprints imported from `.nolcat`")
-        except (ValueError, ModuleNotFoundError):
-            from ..nolcat import annual_stats
-            from ..nolcat import ingest_usage
-            from ..nolcat import initialization
-            from ..nolcat import login
-            from ..nolcat import view_resources
-            from ..nolcat import view_sources
-            from ..nolcat import view_usage
-            from ..nolcat import view_vendors
-            logging.debug("Blueprints imported from `..nolcat`")
-            # The program would need to exit here no matter what; letting it crash provides a full stack trace
+    from nolcat import annual_stats
+    from nolcat import ingest_usage
+    from nolcat import initialization
+    from nolcat import login
+    from nolcat import view_resources
+    from nolcat import view_sources
+    from nolcat import view_usage
+    from nolcat import view_vendors
+    logging.debug("Blueprints imported from `nolcat`")
 
     #Subsection: Register Blueprints
     app.register_blueprint(annual_stats.bp)
