@@ -107,7 +107,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'(Silverchair:CR_)?[PDTI]R(_\w\d)?', report["Report_ID"]):
+            if re.fullmatch(r'(Silverchair:CR_)?[PpDdTtIi][Rr](_\w\d)?', report["Report_ID"]):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
@@ -120,12 +120,12 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
     has_PR = False
     list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
-        if report["Report_ID"] == "PR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+        if report["Report_ID"] == "PR" or report["Report_ID"] == "pr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_PR = True
     if has_PR == False:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "PR"
+    assert response['Report_Header']['Report_ID'] == "PR" or response['Report_Header']['Report_ID'] == "pr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -136,12 +136,12 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
     has_DR = False
     list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
-        if report["Report_ID"] == "DR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+        if report["Report_ID"] == "DR" or report["Report_ID"] == "dr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_DR = True
     if has_DR == False:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "DR"
+    assert response['Report_Header']['Report_ID'] == "DR" or response['Report_Header']['Report_ID'] == "dr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -152,12 +152,12 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
     has_TR = False
     list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
-        if report["Report_ID"] == "TR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+        if report["Report_ID"] == "TR" or report["Report_ID"] == "tr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_TR = True
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "TR"
+    assert response['Report_Header']['Report_ID'] == "TR" or response['Report_Header']['Report_ID'] == "tr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -168,9 +168,9 @@ def test_IR_call_validity(SUSHI_credentials_fixture):
     has_IR = False
     list_of_reports = [report for report in list(check_for_report.values())[0]]
     for report in list_of_reports:
-        if report["Report_ID"] == "IR":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
+        if report["Report_ID"] == "IR" or report["Report_ID"] == "ir":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_IR = True
     if has_IR == False:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "IR"
+    assert response['Report_Header']['Report_ID'] == "IR" or response['Report_Header']['Report_ID'] == "ir"
