@@ -78,30 +78,33 @@ def create_app():
             from .models import UsageData
             db.create_all()
 
-    #Section: Create Homepage and Register Other Blueprints
-    #Subsection: Import Blueprints
+    #Section: Register Blueprints
     from nolcat import annual_stats
-    from nolcat import ingest_usage
-    from nolcat import initialization
-    from nolcat import login
-    from nolcat import view_resources
-    from nolcat import view_sources
-    from nolcat import view_usage
-    from nolcat import view_vendors
-    logging.debug("Blueprints imported from `nolcat`")
-
-    #Subsection: Register Blueprints
     app.register_blueprint(annual_stats.bp)
-    app.register_blueprint(ingest_usage.bp)
-    app.register_blueprint(initialization.bp)
-    app.register_blueprint(login.bp)
-    app.register_blueprint(view_resources.bp)
-    app.register_blueprint(view_sources.bp)
-    app.register_blueprint(view_usage.bp)
-    app.register_blueprint(view_vendors.bp)
-    logging.debug("Blueprints registered")
 
-    #Subsection: Create Homepage Route
+    from nolcat import ingest_usage
+    app.register_blueprint(ingest_usage.bp)
+
+    from nolcat import initialization
+    app.register_blueprint(initialization.bp)
+
+    from nolcat import login
+    app.register_blueprint(login.bp)
+
+    from nolcat import view_resources
+    app.register_blueprint(view_resources.bp)
+
+    from nolcat import view_sources
+    app.register_blueprint(view_sources.bp)
+
+    from nolcat import view_usage
+    app.register_blueprint(view_usage.bp)
+
+    from nolcat import view_vendors
+    app.register_blueprint(view_vendors.bp)
+    logging.debug("Blueprints imported and registered")
+
+    #Section: Create Homepage Route
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
