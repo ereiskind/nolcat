@@ -201,6 +201,19 @@ Branch: Configure Flask-User
 About This Repo
 ***************
 
+The Hosting Instance
+====================
+NoLCAT is a containerized application: it exists within a Docker container which is built on an AWS EC2 instance. The instance, a t3.2xlarge containing a virtual Linux server, contains files with Docker build instructions and private information that cannot be committed to GitHub.
+
+Working with the Web Server
+---------------------------
+NoLCAT is a web application, meaning the program is accessed through the internet and controlled through a web browser. It uses Flask as the web framework, Gunicorn as the WSGI (web service gateway interface), and nginx as the web server. Gunicorn and nginx are added to the instance as part of the Docker build process and connect to the overall codebase through the "nolcat/wsgi.py" file, which contains an instantiated Flask object.
+The public IP address used to access the web app is ultimately that of the instance.
+
+Working with MySQL
+------------------
+The MySQL program used by NoLCAT is in the instance; as a result, the MySQL command line can be accessed from the instance command line.
+
 Encodings and File Types
 ========================
 
