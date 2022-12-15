@@ -1,10 +1,7 @@
-"""This module contains the fixtures and configurations for testing."""
-# https://github.com/jeancochrane/pytest-flask-sqlalchemy
-# https://xvrdm.github.io/2017/07/03/testing-flask-sqlalchemy-database-with-pytest/
-# https://flask.palletsprojects.com/en/2.1.x/tutorial/tests/
-# https://stackoverflow.com/a/49215772
-# https://stackoverflow.com/questions/29706278/python-pandas-to-sql-with-sqlalchemy-how-to-speed-up-exporting-to-ms-sql
-# https://pypi.org/project/memory-profiler/
+"""This module contains the fixtures and configurations for testing.
+
+The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
+"""
 
 import pytest
 
@@ -13,6 +10,7 @@ from nolcat.app import create_app
 from data import relations
 
 
+#Section: Fixtures for Connecting to the Database
 @pytest.fixture(scope='session')
 def app():
     """Creates an instance of the Flask object."""
