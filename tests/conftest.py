@@ -13,10 +13,16 @@ from data import relations
 #Section: Fixtures for Connecting to the Database
 @pytest.fixture(scope='session')
 def app():
-    """Creates an instance of the Flask object."""
+    """Creates an instance of the Flask object for the test session.
+    
+    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
+    """
     app = create_app()
     app.testing = True  # Lets exceptions come through to test client
+    context = app.app_context()  # Creates an application context
+    context.push()  # Binds the application context to the current context/Flask application
     yield app
+    context.pop()  # Removes and deletes the application context; placement after the yield statement means the action occurs at the end of the session
 
 
 @pytest.fixture(scope='session')
