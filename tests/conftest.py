@@ -47,22 +47,32 @@ def db(app):
 
 
 @pytest.fixture(scope='module')
-def session():
-    """A fixture creating a session for a module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
+def session(db):
+    """Creates a database session for each test module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
     
-    The scope of the fixture is set to module because setting the scope to `function` would prevent tests from building upon one another--for example, to test loading data with foreign keys in an environment whereCRUD operations were rolled back after every test function, the function would need to load the data from which the foreign keys derive and then the data containing the foreign keys; when the session covers the entire module, the data in the database from a previous test for loading data can be used as the reference for the foreign keys.
+    First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object.
     """
-    #ToDo: Even with `-s` flag, neither `print` nor `sys.stdout.write` output f-strings to the console, so the exact nature and types of the variables invoked below are unknown
-    engine = db.engine  #ALERT: `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` upon running test_flask_factory_pattern.test_loading_data_into_relation and test_flask_factory_pattern.test_loading_connected_data_into_other_relation
-    connection = engine.connect()  # Creates a connection to the database
-    transaction = connection.begin()  # Begins a transaction
-    options = dict(bind=connection, binds={})  #ToDo: What does this do?
-    session = db.create_scoped_session(options=options)  # Creates the scoped session; `session = sessionmaker(bind=connection)` in SQLAlchemy alone
-    # db.session = session  #ToDo: What does this do?
+    #ToDo: Before revision, got `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` upon running test_flask_factory_pattern.test_loading_data_into_relation and test_flask_factory_pattern.test_loading_connected_data_into_other_relation
+    #Section: Create Connections
+    #Subsection: Create Connection Object (SQLAlchemy Core Connection)
+    connection = db.engine.connect()
+
+    #Subsection: Create Session Object (SQLAlchemy ORM Connection)
+    options = {
+        'bind': connection,
+        'binds': {},  # This explicitly empty value seems to exist to force everything in the session object to use the connection object specified in `bind`
+    }
+    session = db.create_scoped_session(options=options)
+
+    #Subsection: Yield Fixture
+    transaction = connection.begin()
+    db.session = session  # Sets the scoped session object created above equal to the Flask-SQLAlchemy integration's attribute for creating scoped sessions
     yield session
+
+    #Section: Close and Remove Connections
     transaction.rollback()
     connection.close()
-    session.remove()  # `session.close()` in SQLAlchemy alone
+    session.remove()
 
 
 #Section: Data for Sources of Resources and Statistics
