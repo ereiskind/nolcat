@@ -5,7 +5,7 @@ The fixtures for connecting to the database are primarily based upon the fixture
 
 import pytest
 
-from nolcat.app import db
+from nolcat.app import db as _db
 from nolcat.app import create_app
 from data import relations
 
@@ -32,6 +32,18 @@ def client(app):
     The Flask test client lets tests make HTTP requests without running the server.
     """
     yield app.test_client()
+
+
+@pytest.fixture(scope="session")
+def db(app):
+    """Creates a temporary copy of the database for testing.
+    
+    The variable of the first statement, `_db.app`, is the Flask-SQLAlchemy integration's attribute for the Flask application (context). As a result, the fixture's first statement connects the Flask-SQLAlchemy integration to the Flask application (context) being used for testing.
+    """
+    _db.app = app
+    _db.create_all()
+    yield _db
+    _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
 
 
 @pytest.fixture(scope='module')
