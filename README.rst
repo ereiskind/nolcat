@@ -203,7 +203,7 @@ About This Repo
 
 The Hosting Instance
 ====================
-NoLCAT is a containerized application: it exists within a Docker container which is built on an AWS EC2 instance. The instance, a t3.2xlarge containing a virtual Linux server, contains files with Docker build instructions and private information that cannot be committed to GitHub.
+NoLCAT is a containerized application: it exists within a Docker container which is built on an AWS EC2 instance. The host instance, a Linux-based t3.2xlarge, contains files with Docker build instructions and private information that cannot be committed to GitHub.
 
 Working with the Web Server
 ---------------------------
@@ -212,7 +212,7 @@ The public IP address used to access the web app is ultimately that of the insta
 
 Working with MySQL
 ------------------
-The MySQL program used by NoLCAT is in the instance; as a result, the MySQL command line can be accessed from the instance command line.
+The instance can access the external MySQL database server, which serves as the RDBMS for NoLCAT. The MySQL command line can be accessed from the instance command line.
 
 Encodings and File Types
 ========================
