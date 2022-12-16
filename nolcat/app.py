@@ -1,5 +1,4 @@
 from pathlib import Path
-import logging
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -29,9 +28,6 @@ DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
 
-logging.basicConfig(level=logging.DEBUG, format="Flask Factory Pattern - - [%(asctime)s] %(message)s")
-
-
 csrf = CSRFProtect()
 db = SQLAlchemy()
 
@@ -55,7 +51,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
-    logging.debug("Flask app created!")
 
     #Section: Create Command to Build Schema
     # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
@@ -102,7 +97,6 @@ def create_app():
 
     from nolcat import view_vendors
     app.register_blueprint(view_vendors.bp)
-    logging.debug("Blueprints imported and registered")
 
     #Section: Create Homepage Route
     @app.route('/')
@@ -111,7 +105,6 @@ def create_app():
         return render_template('index.html')
     
     
-    logging.debug("Flask factory pattern complete")
     return app
 
 
