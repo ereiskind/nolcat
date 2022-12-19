@@ -4,9 +4,11 @@ The fixtures for connecting to the database are primarily based upon the fixture
 """
 
 import pytest
+from sqlalchemy import create_engine
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations
 
 
@@ -46,15 +48,24 @@ def db(app):
     _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
 
 
+@pytest.fixture(scope="session")
+def engine(DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME):
+    """Creates a SQLAlchemy engine for testing.
+    
+    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
+    """
+    yield create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+
+
 @pytest.fixture(scope='module')
-def session(db):
+def session(engine, db):
     """Creates a database session for each test module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
     
     First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object.
     """
     #Section: Create Connections
     #Subsection: Create Connection Object (SQLAlchemy Core Connection)
-    connection = db.engine.connect()
+    connection = engine.connect()  # Previously `connection = db.engine.connect()`
 
     #Subsection: Create Session Object (SQLAlchemy ORM Connection)
     options = {
