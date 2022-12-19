@@ -49,7 +49,7 @@ def db(app):
 
 
 @pytest.fixture(scope="session")
-def engine(DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME):
+def engine():
     """Creates a SQLAlchemy engine for testing.
     
     The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
