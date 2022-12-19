@@ -17,7 +17,7 @@ def app():
     
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
     """
-    app = create_app()
+    app = create_app()  #ToDo: Warnings at end of pytest include `serWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".` even though the SQLALCHEMY_DATABASE_URI config is set in the `create_app()` function imported from "nolcat/app.py"; is this a problem?
     app.testing = True  # Lets exceptions come through to test client
     context = app.app_context()  # Creates an application context
     context.push()  # Binds the application context to the current context/Flask application
@@ -52,7 +52,6 @@ def session(db):
     
     First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object.
     """
-    #ToDo: Before revision, got `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` upon running test_flask_factory_pattern.test_loading_data_into_relation and test_flask_factory_pattern.test_loading_connected_data_into_other_relation
     #Section: Create Connections
     #Subsection: Create Connection Object (SQLAlchemy Core Connection)
     connection = db.engine.connect()

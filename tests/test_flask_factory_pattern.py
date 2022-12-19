@@ -11,7 +11,6 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
-#ALERT: Warning `UserWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set.` included in pytest output 2022-12-12. The setup for testing with Flask doesn't seem to be working.
 
 
 def test_flask_app_creation(app):
@@ -57,7 +56,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
     print(f"`vendors_relation`:\n{vendors_relation}")
-    vendors_relation.to_sql(
+    vendors_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
         name='vendors',
         con=session,
         #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
@@ -83,7 +82,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
     print(f"`statisticsSources_relation`:\n{statisticsSources_relation}")
-    statisticsSources_relation.to_sql(
+    statisticsSources_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
         name='statisticsSources',
         con=session,
         if_exists='append',  #ToDo: See above about handling databases and fixtures
