@@ -50,7 +50,7 @@ def test_404_page(client):
     assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
 
 
-def test_loading_data_into_relation(app, session, vendors_relation):
+def test_loading_data_into_relation(app, engine, vendors_relation):
     """Tests loading data into and querying data from a relation.
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
@@ -58,7 +58,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
     print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
     vendors_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
         name='vendors',
-        con=session,
+        con=engine,
         #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
         if_exists='append',
         chunksize=1000,
@@ -68,7 +68,7 @@ def test_loading_data_into_relation(app, session, vendors_relation):
 
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
-        con=session,
+        con=engine,
         index_col='vendor_ID',
     )
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
