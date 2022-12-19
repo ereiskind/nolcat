@@ -512,6 +512,7 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Based on High Platform Name String Matching Threshold
         compare_platform_names = recordlinkage.Compare()
         compare_platform_names.string('platform', 'platform', threshold=0.925, label='Platform')
+        #ALERT: The AWS t3.2xlarge instance ends the test of this method here with the word `Killed` in lieu of a standard error message
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Platform Name String Matching Threshold
         if normalized_resource_data:
