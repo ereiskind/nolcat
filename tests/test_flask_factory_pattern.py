@@ -55,12 +55,12 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    check = pd.read_sql(
+    '''check = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_id',  # Changed to lowercase to match what's currently in the database
     )
-    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
+    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")'''
 
     print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
     vendors_relation.to_sql(  #ALERT: Upon test, has `sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1062, "Duplicate entry '1' for key 'PRIMARY'")`
