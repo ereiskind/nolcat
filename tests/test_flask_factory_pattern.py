@@ -58,7 +58,7 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     check = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
-        index_col='vendor_ID',
+        index_col='vendor_id',  # Changed to lowercase to match what's currently in the database
     )
     print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
 
@@ -76,7 +76,7 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
-        index_col='vendor_ID',
+        index_col='vendor_ID',  #ALERT: In MySQL as `vendor_id`
     )
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
@@ -101,7 +101,8 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_vendor_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
         con=session,
-        index_col='statisticsSources.statistics_source_ID'  # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+        index_col='statisticsSources.statistics_source_ID'  #ALERT: In MySQL as `statistics_source_id`
+        # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
