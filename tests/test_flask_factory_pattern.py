@@ -55,8 +55,15 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
+    check = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=engine,
+        index_col='vendor_ID',
+    )
+    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
+
     print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
-    vendors_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
+    vendors_relation.to_sql(  #ALERT: Upon test, has `sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1062, "Duplicate entry '1' for key 'PRIMARY'")`
         name='vendors',
         con=engine,
         #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
