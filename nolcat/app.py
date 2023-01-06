@@ -4,6 +4,7 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
+from numpy import datetime64
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -120,3 +121,19 @@ def date_parser(dates):
         datetime64[ns]: a datetime value pandas inherits from numpy
     """
     return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
+
+
+def last_day_of_month(first_day_of_month):
+    """The function for returning the last day of a given month.
+
+    When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
+
+    Args:
+        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[n] data type, but within this function, the data type is Timestamp
+    
+    Returns:
+        datetime64: the last day of the given month in pandas' preferred datetime data type
+    """
+    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
+    last_day_of_month_string = year_and_month_string + str(first_day_of_month.days_in_month)  # The datetime64 constructor takes a string with the date in ISO format
+    return datetime64(last_day_of_month_string)
