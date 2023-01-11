@@ -132,8 +132,7 @@ def last_day_of_month(first_day_of_month):
         first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[n] data type, but within this function, the data type is Timestamp
     
     Returns:
-        datetime64: the last day of the given month in pandas' preferred datetime data type
+        str: the last day of the given month in ISO format
     """
     year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
-    last_day_of_month_string = year_and_month_string + str(first_day_of_month.days_in_month)  # The datetime64 constructor takes a string with the date in ISO format
-    return datetime64(last_day_of_month_string)
+    return year_and_month_string + str(first_day_of_month.days_in_month)
