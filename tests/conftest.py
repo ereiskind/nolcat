@@ -33,7 +33,6 @@ def client(app):
     
     The Flask test client lets tests make HTTP requests without running the server.
     """
-    print("this is the client fixture")
     yield app.test_client()
 
 
@@ -46,6 +45,7 @@ def db(app):
     _db.app = app
     _db.create_all()
     yield _db
+    print("\nFocus on `_db.drop_all()`")
     _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
 
 
@@ -81,6 +81,7 @@ def session(engine, db):
     yield session
 
     #Section: Close and Remove Connections
+    print("\nFocus on `transaction.rollback()`, `connection.close()`, and ``session.remove()")
     transaction.rollback()
     connection.close()
     session.remove()
