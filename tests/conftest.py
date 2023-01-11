@@ -33,6 +33,7 @@ def client(app):
     
     The Flask test client lets tests make HTTP requests without running the server.
     """
+    print("this is the client fixture")
     yield app.test_client()
 
 
