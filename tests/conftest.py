@@ -1,6 +1,6 @@
 """This module contains the fixtures and configurations for testing.
 
-The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
+The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
 """
 
 import pytest
@@ -20,7 +20,11 @@ def app():
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
     """
     app = create_app()  #ToDo: Warnings at end of pytest include `serWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".` even though the SQLALCHEMY_DATABASE_URI config is set in the `create_app()` function imported from "nolcat/app.py"; is this a problem?
+    app.debug = True
     app.testing = True  # Lets exceptions come through to test client
+    app.env = 'test'
+    app.testing = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     context = app.app_context()  # Creates an application context
     context.push()  # Binds the application context to the current context/Flask application
     yield app
@@ -45,7 +49,7 @@ def db(app):
     _db.app = app
     _db.create_all()
     yield _db
-    print("\nFocus on `_db.drop_all()`")
+    print(f"\nAbout to run `_db.drop_all()` on {_db}.")  # The statement appears in stdout after all the tests in the module, but the database isn't being rolled back
     _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
 
 
@@ -66,11 +70,11 @@ def session(engine, db):
     """
     #Section: Create Connections
     #Subsection: Create Connection Object (SQLAlchemy Core Connection)
-    connection = engine.connect()  # Previously `connection = db.engine.connect()`
+    connection = db.engine.connect()  # Tutorials vary between `engine.connect()` or `db.engine.connect()`
 
     #Subsection: Create Session Object (SQLAlchemy ORM Connection)
     options = {
-        'bind': connection,
+        'bind': connection,  # Tutorials vary between `'bind': connection,` and `'bind': engine,`
         'binds': {},  # This explicitly empty value seems to exist to force everything in the session object to use the connection object specified in `bind`
     }
     session = db.create_scoped_session(options=options)
@@ -81,7 +85,9 @@ def session(engine, db):
     yield session
 
     #Section: Close and Remove Connections
+    print(f"\nAbout to close/rollback/remove session {session}, transaction {transaction}, and connection {connection}.")  # The statement appears in stdout after all the tests in the module, but the database isn't being rolled back
     print("\nFocus on `transaction.rollback()`, `connection.close()`, and ``session.remove()")
+    session.close()
     transaction.rollback()
     connection.close()
     session.remove()
