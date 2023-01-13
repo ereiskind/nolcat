@@ -1,10 +1,10 @@
 from pathlib import Path
-import logging
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
+from numpy import datetime64
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -27,9 +27,6 @@ DATABASE_HOST = secrets.Host
 DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
-
-
-logging.basicConfig(level=logging.DEBUG, format="Flask Factory Pattern - - [%(asctime)s] %(message)s")
 
 
 csrf = CSRFProtect()
@@ -55,7 +52,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
-    logging.debug("Flask app created!")
 
     #Section: Create Command to Build Schema
     # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
@@ -78,60 +74,38 @@ def create_app():
             from .models import UsageData
             db.create_all()
 
-    #Section: Create Homepage and Register Other Blueprints
-    #Subsection: Import Blueprints
-    # The appropriate level for the relative import has changed due to currently unknown factors; to ensure the imports always work, the imports are grouped together in a try-except block
-    try:
-        from ..nolcat import annual_stats
-        from ..nolcat import ingest_usage
-        from ..nolcat import initialization
-        from ..nolcat import login
-        from ..nolcat import view_resources
-        from ..nolcat import view_sources
-        from ..nolcat import view_usage
-        from ..nolcat import view_vendors
-        logging.debug("Blueprints imported from `..nolcat`")
-    except ValueError:  # `ValueError: attempted relative import beyond top-level package`
-        try:
-            from .nolcat import annual_stats
-            from .nolcat import ingest_usage
-            from .nolcat import initialization
-            from .nolcat import login
-            from .nolcat import view_resources
-            from .nolcat import view_sources
-            from .nolcat import view_usage
-            from .nolcat import view_vendors
-            logging.debug("Blueprints imported from `.nolcat`")
-        except ModuleNotFoundError:  #`ModuleNotFoundError: No module named 'nolcat.nolcat'`
-            from nolcat import annual_stats
-            from nolcat import ingest_usage
-            from nolcat import initialization
-            from nolcat import login
-            from nolcat import view_resources
-            from nolcat import view_sources
-            from nolcat import view_usage
-            from nolcat import view_vendors
-            logging.debug("Blueprints imported from `nolcat`")
-
-    #Subsection: Register Blueprints
+    #Section: Register Blueprints
+    from nolcat import annual_stats
     app.register_blueprint(annual_stats.bp)
-    app.register_blueprint(ingest_usage.bp)
-    app.register_blueprint(initialization.bp)
-    app.register_blueprint(login.bp)
-    app.register_blueprint(view_resources.bp)
-    app.register_blueprint(view_sources.bp)
-    app.register_blueprint(view_usage.bp)
-    app.register_blueprint(view_vendors.bp)
-    logging.debug("Blueprints registered")
 
-    #Subsection: Create Homepage Route
+    from nolcat import ingest_usage
+    app.register_blueprint(ingest_usage.bp)
+
+    from nolcat import initialization
+    app.register_blueprint(initialization.bp)
+
+    from nolcat import login
+    app.register_blueprint(login.bp)
+
+    from nolcat import view_resources
+    app.register_blueprint(view_resources.bp)
+
+    from nolcat import view_sources
+    app.register_blueprint(view_sources.bp)
+
+    from nolcat import view_usage
+    app.register_blueprint(view_usage.bp)
+
+    from nolcat import view_vendors
+    app.register_blueprint(view_vendors.bp)
+
+    #Section: Create Homepage Route
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
         return render_template('index.html')
     
     
-    logging.debug("Flask factory pattern complete")
     return app
 
 
@@ -139,5 +113,26 @@ def date_parser(dates):
     """The function for parsing dates as part of converting ingested data into a dataframe.
     
     The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
+
+    Args:
+        dates (date, datetime, string): a value in a data file being read into a pandas dataframe being interpreted as a date
+
+    Returns:
+        datetime64[ns]: a datetime value pandas inherits from numpy
     """
     return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
+
+
+def last_day_of_month(first_day_of_month):
+    """The function for returning the last day of a given month.
+
+    When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
+
+    Args:
+        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[n] data type, but within this function, the data type is Timestamp
+    
+    Returns:
+        str: the last day of the given month in ISO format
+    """
+    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
+    return year_and_month_string + str(first_day_of_month.days_in_month)

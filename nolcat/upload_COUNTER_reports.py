@@ -47,7 +47,7 @@ class UploadCOUNTERReports:
 
 
         #Section: Load the Workbook(s)
-        list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
+        list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)  #ToDo: `RuntimeError: Working outside of request context.` traces back to here before going to werkzeug
         for file_name in list_of_file_names:
             try:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name)[0])  # `findall` always produces a list

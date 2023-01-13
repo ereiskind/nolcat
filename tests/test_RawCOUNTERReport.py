@@ -64,10 +64,10 @@ def another_sample_RawCOUNTERReport():
 #Section: Tests
 # Some tests have preconditions that can be filled by other tests; the tests are ordered to utilize that fact instead of the order in which they appear in the class
 #Subsection: Test `RawCOUNTERReport.perform_deduplication_matching()` Without Preexisting Data
-#ALERT: When using the R4 only test data: on a workstation with 8GB RAM, these tests fail with a `MemoryError` error; a workstation with 16GB RAM seems capable of running the tests successfully
-#ToDo: Review the amount of variance between the method outputs depending on their inputs and ensure constants exist for confirming all test results
+#ToDo: Confirm constants exist for confirming all test results, then save those constants as dataframes in "tests/data/deduplication_data.py"
 def test_perform_deduplication_matching(sample_RawCOUNTERReport, matched_records, matches_to_manually_confirm):
     """Tests the `perform_deduplication_matching()` method when a RawCOUNTERReport object instantiated from ingested COUNTER reports is loaded into an empty database."""
+    #ToDo: As of 2022-12-19 with a t3.2xlarge instance, the test ended for no clear programmatic reason just after starting the "High Platform Name String Matching Threshold" section
     # Resources where an ISSN appears in both the Print_ISSN and Online_ISSN fields and/or is paired with different ISSNs still need to be paired
     assert sample_RawCOUNTERReport.perform_deduplication_matching() == (matched_records, matches_to_manually_confirm)
 

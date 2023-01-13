@@ -380,8 +380,9 @@ class StatisticsSources(db.Model):
             #Subsection: Make Master Report API Call
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe
+            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
             #ALERT: `RawCOUNTERReport` requires the JSON (from the API) be converted into a dataframe
+                #ToDo: Old note says "TR can contain item listed with Section_Type value and without, creating duplication issue"--does the JSON to dataframe conversion need to include a check for this?
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
@@ -518,7 +519,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))  #ALERT: In MySQL as `resource_source_id`
     
 
     def __repr__(self):
@@ -648,7 +649,7 @@ class Resources(db.Model):
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
     
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation.
+    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation. Additionally, including parent metadata from IR reports can be a potential starting point for matching parent and child resources.
         Resource_Name
         DOI
         ISBN
