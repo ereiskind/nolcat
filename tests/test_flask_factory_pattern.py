@@ -56,15 +56,15 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    '''check = pd.read_sql(
+    check = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_id',  # Changed to lowercase to match what's currently in the database
     )
-    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")'''
+    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
 
     print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
-    vendors_relation.to_sql(  #ALERT: Upon test, has `sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1062, "Duplicate entry '1' for key 'PRIMARY'")`
+    vendors_relation.to_sql(  #ALERT: If the database has content in it, a `sqlalchemy.exc.IntegrityError:` error is returned because of the duplicate primary keys
         name='vendors',
         con=engine,
         #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
@@ -91,7 +91,7 @@ def test_loading_connected_data_into_other_relation(app, engine, statisticsSourc
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
     print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
-    statisticsSources_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
+    statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=engine,
         if_exists='append',  #ToDo: See above about handling databases and fixtures
