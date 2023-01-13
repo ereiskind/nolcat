@@ -8,6 +8,7 @@ import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
@@ -81,7 +82,7 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     )
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
-    pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
+    assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
 def test_loading_connected_data_into_other_relation(app, engine, statisticsSources_relation):
