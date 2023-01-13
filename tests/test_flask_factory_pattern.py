@@ -76,7 +76,8 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
-        index_col='vendor_ID',  #ALERT: In MySQL as `vendor_id`
+        #index_col='vendor_ID',  #ALERT: In MySQL as `vendor_id`, so `KeyError: "None of ['vendor_ID'] are in the columns"` raised
+        index_col='vendor_id',
     )
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
