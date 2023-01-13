@@ -69,7 +69,7 @@ class FiscalYears(db.Model):
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
-    fiscal_year_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `fiscal_year_id`
+    fiscal_year_ID = db.Column(db.Integer, primary_key=True)
     fiscal_year = db.Column(db.String(4))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
@@ -157,7 +157,7 @@ class Vendors(db.Model):
     """
     __tablename__ = 'vendors'
 
-    vendor_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `vendor_id`
+    vendor_ID = db.Column(db.Integer, primary_key=True)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
@@ -198,11 +198,11 @@ class VendorNotes(db.Model):
     """
     __tablename__ = 'vendorNotes'
 
-    vendor_notes_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `vendor_notes_id`
+    vendor_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))  #ALERT: In MySQL as `vendor_id`
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
 
     def __repr__(self):
@@ -230,10 +230,10 @@ class StatisticsSources(db.Model):
     """
     __tablename__ = 'statisticsSources'
 
-    statistics_source_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `statistics_source_id`
+    statistics_source_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))  #ALERT: In MySQL as `vendor_id`
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
 
@@ -439,11 +439,11 @@ class StatisticsSourceNotes(db.Model):
     """
     __tablename__ = 'statisticsSourceNotes'
 
-    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `statistics_source_notes_id`
+    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))  #ALERT: In MySQL as `statistics_source_id`
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     
 
     def __repr__(self):
@@ -471,11 +471,11 @@ class ResourceSources(db.Model):
     """
     __tablename__ = 'resourceSources'
 
-    resource_source_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `resource_source_id`
+    resource_source_ID = db.Column(db.Integer, primary_key=True)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))  #ALERT: In MySQL as `vendor_id`
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
     resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
 
@@ -515,7 +515,7 @@ class ResourceSourceNotes(db.Model):
     """
     __tablename__ = 'resourceSourceNotes'
 
-    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `resource_source_notes_id`
+    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -634,7 +634,7 @@ class Resources(db.Model):
     """
     __tablename__ = 'resources'
 
-    resource_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `resource_id`
+    resource_ID = db.Column(db.Integer, primary_key=True)
     note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
 
     resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
@@ -678,11 +678,11 @@ class ResourceMetadata(db.Model):
     """
     __tablename__ = 'resourceMetadata'
 
-    resource_metadata_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `resource_metadata_id`
+    resource_metadata_ID = db.Column(db.Integer, primary_key=True)
     metadata_field = db.Column(db.String(35))
     metadata_value = db.Column(db.String(2000))
     default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))  #ALERT: In MySQL as `resource_id`
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
     
 
     def __repr__(self):
@@ -708,16 +708,16 @@ class ResourcePlatforms(db.Model):
     """
     __tablename__ = 'resourcePlatforms'
 
-    resource_platform_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `resource-platform_id`
+    resource_platform_ID = db.Column(db.Integer, primary_key=True)
     publisher = db.Column(db.String(225))
-    publisher_ID = db.Column(db.String(50))  #ALERT: In MySQL as `publisher_id`
+    publisher_ID = db.Column(db.String(50))
     platform = db.Column(db.String(75))
-    publication_date = db.Column(db.String(200))  #ALERT: Not in MySQL
-    article_version = db.Column(db.String(50))  #ALERT: Not in MySQL
-    proprietary_ID = db.Column(db.String(100))  #ALERT: In MySQL as `proprietary_id`
+    publication_date = db.Column(db.String(200))
+    article_version = db.Column(db.String(50))
+    proprietary_ID = db.Column(db.String(100))
     URI = db.Column(db.String(200))
     interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))  #ALERT: In MySQL as `resource_id`
+    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
 
     resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
 
@@ -748,8 +748,8 @@ class UsageData(db.Model):
     """
     __tablename__ = 'usageData'
 
-    usage_data_ID = db.Column(db.Integer, primary_key=True)  #ALERT: In MySQL as `usage_data_id`
-    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))  #ALERT: In MySQL as `resource_platform_id`
+    usage_data_ID = db.Column(db.Integer, primary_key=True)
+    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
