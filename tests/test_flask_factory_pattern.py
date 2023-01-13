@@ -84,7 +84,7 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-def test_loading_connected_data_into_other_relation(app, session, statisticsSources_relation):
+def test_loading_connected_data_into_other_relation(app, engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
@@ -92,7 +92,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
     print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
     statisticsSources_relation.to_sql(  #ALERT: Upon test, has `AttributeError: 'scoped_session' object has no attribute 'cursor'`
         name='statisticsSources',
-        con=session,
+        con=engine,
         if_exists='append',  #ToDo: See above about handling databases and fixtures
         chunksize=1000,
         index=True,
@@ -101,7 +101,7 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
 
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_vendor_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
-        con=session,
+        con=engine,
         index_col='statisticsSources.statistics_source_ID'  #ALERT: In MySQL as `statistics_source_id`
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
