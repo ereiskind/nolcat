@@ -47,7 +47,10 @@ class UploadCOUNTERReports:
 
 
         #Section: Load the Workbook(s)
-        list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)  #ToDo: `RuntimeError: Working outside of request context.` traces back to here before going to werkzeug
+        try:
+            list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)  #ToDo: `RuntimeError: Working outside of request context.` traces back to here before going to werkzeug
+        except:
+            list_of_file_names = self.COUNTER_report_files.name  # This eliminates the object from the Flask library, which was causing an `RuntimeError: Working outside of request context.` error when running tests
         for file_name in list_of_file_names:
             try:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name)[0])  # `findall` always produces a list
