@@ -481,9 +481,9 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
+        combined_df = combined_df.fillna(None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
 
 
         #Section: Return Dataframe
-        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-            logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.info()}")
+        logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.info()}")
         return df
