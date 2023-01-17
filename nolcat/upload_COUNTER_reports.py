@@ -201,6 +201,8 @@ class UploadCOUNTERReports:
                         
                         elif re.search(r'_((ID)|(DOI)|(URI)|(IS[SB]N))$', field_name):  # The regex captures strings ending with `ID`, `DOI`, `URI`, `ISSN`, and `ISBN` after an underscore; no try-except block is needed because `None` values were filtered out above
                             df_field_names.append("_".join(field_name.split("_")[0:-1]).lower() + "_" + field_name.split("_")[-1])
+                        elif field_name == "DOI" or field_name == "URI":  # The regex features an underscore, but these two field names don't, so they must be handled separately
+                            df_field_names.append(field_name)
                         
                         else:
                             df_field_names.append(field_name.lower())
