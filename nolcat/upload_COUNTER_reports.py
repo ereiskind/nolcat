@@ -55,7 +55,7 @@ class UploadCOUNTERReports:
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
             for workbook in os.listdir(folder_path):
-                list_of_file_names.append(folder_path / workbook)
+                list_of_file_names.append(str(folder_path / workbook))
             logging.debug(f"File names: {list_of_file_names}")
         else:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
