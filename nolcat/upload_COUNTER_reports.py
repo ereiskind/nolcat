@@ -56,6 +56,7 @@ class UploadCOUNTERReports:
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
             for workbook in os.listdir(folder_path):
                 list_of_file_names.append(str(folder_path / workbook))
+            list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order
             logging.debug(f"File names: {list_of_file_names}")
         else:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
