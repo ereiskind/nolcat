@@ -316,7 +316,7 @@ class UploadCOUNTERReports:
                     regex=True
                 )
 
-                logging.info(f"Dataframe with pre-stacking changes:\n{df}")
+                logging.debug(f"Dataframe with pre-stacking changes:\n{df}")
 
 
                 #Section: Stack Dataframe
