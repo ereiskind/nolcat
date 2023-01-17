@@ -52,7 +52,10 @@ class UploadCOUNTERReports:
         #Section: Load the Workbook(s)
         if repr(type(self.COUNTER_report_files)) == "<class 'wtforms.fields.core.UnboundField'>":
             # The MultipleFileField fixture created for testing is an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. While that fixture would ideally be an actual MultipleFileField object, without appropriate values for the above parameters, the test will feature the rarely-occurring UnboundField instead, at which point, the list of file names will be reconstructed through reuse of the loop found in the fixture.
-            list_of_file_names = os.listdir(Path('tests', 'bin', 'COUNTER_workbooks_for_tests'))
+            list_of_file_names = []
+            folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+            for workbook in os.listdir(folder_path):
+                list_of_file_names.append(folder_path / workbook)
             logging.debug(f"File names: {list_of_file_names}")
         else:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
