@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 import re
+import sys
 import datetime
 from flask import request
 from openpyxl import load_workbook
@@ -62,8 +63,8 @@ class UploadCOUNTERReports:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name)[0])  # `findall` always produces a list
                 file = load_workbook(filename=file_name, read_only=True)
                 logging.debug(f"Loading data from workbook {file_name}")
-            except:
-                logging.warning(f"The workbook {file_name} couldn't be loaded. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
+            except Exception:
+                logging.warning(f"The workbook {file_name} couldn't be loaded because of a(n) {sys.exc_info()[0]} error: {sys.exc_info()[1]}. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
                 continue
 
             for report_type in file.sheetnames:
