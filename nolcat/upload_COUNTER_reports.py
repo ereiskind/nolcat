@@ -63,7 +63,7 @@ class UploadCOUNTERReports:
         
         for file_name in list_of_file_names:
             try:
-                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name)[0])  # `findall` always produces a list
+                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=Path(file_name).name)[0])  # `findall` always produces a list
                 file = load_workbook(filename=file_name, read_only=True)
                 logging.debug(f"Loading data from workbook {file_name}")
             except Exception:
