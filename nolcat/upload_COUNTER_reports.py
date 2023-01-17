@@ -346,7 +346,7 @@ class UploadCOUNTERReports:
                 #Subsection: Recreate Metadata Fields
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 df = df.drop(columns='temp_index')
-                logging.info(f"Fully transposed dataframe:\n{df}")
+                logging.debug(f"Fully transposed dataframe:\n{df}")
 
 
                 #Section: Adjust Data in Dataframe
