@@ -480,7 +480,7 @@ class UploadCOUNTERReports:
         
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
         if "publication_date" in combined_df_field_names:
-            combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])  #ToDo: Figure out why this field remain an object type in the final dataframe
+            combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'], errors='coerce')  # The `errors` argument means values that can't be turned into dates will become the date dtype's null value `NaT`
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
