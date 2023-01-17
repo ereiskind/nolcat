@@ -486,4 +486,4 @@ class UploadCOUNTERReports:
 
         #Section: Return Dataframe
         logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.info()}")
-        return df
+        return combined_df
