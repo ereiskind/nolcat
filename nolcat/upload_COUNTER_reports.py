@@ -67,7 +67,7 @@ class UploadCOUNTERReports:
                 file = load_workbook(filename=file_name, read_only=True)
                 logging.debug(f"Loading data from workbook {file_name}")
             except Exception:
-                logging.warning(f"The workbook {file_name} couldn't be loaded because of a(n) {sys.exc_info()[0]} error: {sys.exc_info()[1]}. Please confirm that it is an Excel workbook with a name that begins with the statistics source ID followed by an underscore.")
+                logging.warning(f"The workbook {file_name} couldn't be loaded because of a {sys.exc_info()[0]} error: {sys.exc_info()[1]}. Remember the program is looking for a file name beginning with the statistics source ID followed by an underscore and ending with the Excel file extension.")
                 continue
 
             for report_type in file.sheetnames:
