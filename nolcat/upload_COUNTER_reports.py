@@ -484,5 +484,6 @@ class UploadCOUNTERReports:
 
 
         #Section: Return Dataframe
-        logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.dtypes}")
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            logging.info(f"Final dataframe:\n{combined_df}\n{combined_df.info()}")
         return df
