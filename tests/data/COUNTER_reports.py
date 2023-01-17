@@ -9397,6 +9397,7 @@ def sample_COUNTER_reports():
         "parent_print_ISSN": 'string',
         "parent_online_ISSN": 'string',
         "parent_URI": 'string',
+        "metric_type": 'string',
         # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
     })
     df['publication_date'] = pd.to_datetime(df['publication_date'])
