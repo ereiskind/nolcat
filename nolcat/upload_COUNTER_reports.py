@@ -410,7 +410,7 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        logging.info(f"Combined dataframe:\n{combined_df}")
+        logging.info(f"Combined dataframe:\n{combined_df}\n{combined_df.info()}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
@@ -481,7 +481,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(combined_df['publication_date'])
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
-        combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
+        #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
 
 
         #Section: Return Dataframe
