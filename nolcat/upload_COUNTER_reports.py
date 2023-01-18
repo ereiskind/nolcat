@@ -255,7 +255,6 @@ class UploadCOUNTERReports:
 
                 #Section: Make Pre-Stacking Updates
                 df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
-                df = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license").replace("denied.", "denied:") if isinstance(cell_value, str) else cell_value)  # Have R4 turnaway metrics always use colons as separators and the American English spelling of `license`
                 df = df.applymap(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
 
                 #Subsection: Add `Statistics_Source_ID` Field
@@ -372,6 +371,10 @@ class UploadCOUNTERReports:
 
                 df['usage_date'] = pd.to_datetime(df['usage_date'])
                 logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
+
+                #Subsection: Standardize R4 Turnaway Metric Values
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
