@@ -491,6 +491,8 @@ class UploadCOUNTERReports:
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 format='%Y-%m-%dT%H:%M-%z',
             )
+            logging.info(f"`combined_df['publication_date']` dtype is {combined_df['publication_date'].dtype}")
+            logging.info(f"`combined_df['publication_date']` values are\n{combined_df['publication_date']}")
             combined_df['publication_date'] = combined_df['publication_date'].dt.tz_localize(None)
             combined_df['publication_date'] = combined_df['publication_date'].dt.date
         if "parent_publication_date" in combined_df_field_names:
