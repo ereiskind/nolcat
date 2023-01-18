@@ -489,7 +489,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df.loc[combined_df.columns.tolist().index("publication_date")],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                infer_datetime_format=True,
+                format='%Y-%m-%dT%H:%M-%z',
             )
             combined_df['publication_date'] = combined_df['publication_date'].dt.tz_localize(None)
             combined_df['publication_date'] = combined_df['publication_date'].dt.date
