@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import sys
 import datetime
+import html
 from flask import request
 from openpyxl import load_workbook
 import pandas as pd
@@ -255,6 +256,7 @@ class UploadCOUNTERReports:
                 #Section: Make Pre-Stacking Updates
                 df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
                 df = df.replace("licence", "license")  # "Have `license` always use American English spelling
+                df = df.applymap(lambda cell_value: html.unescape(cell_value))  # Reverts all HTML escaped values
 
                 #Subsection: Add `Statistics_Source_ID` Field
                 df['statistics_source_ID'] = statistics_source_ID
