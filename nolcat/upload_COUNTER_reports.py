@@ -372,10 +372,6 @@ class UploadCOUNTERReports:
                 df['usage_date'] = pd.to_datetime(df['usage_date'])
                 logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
 
-                #Subsection: Standardize R4 Turnaway Metric Values
-                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
-                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
-
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
                     df['data_type'] = "Book"
@@ -407,6 +403,10 @@ class UploadCOUNTERReports:
                     df['metric_type'] = "Successful Full-text Article Requests"
                 elif report_type =='MR1':
                     df['metric_type'] = "Successful Content Unit Requests"
+                
+                #Subsection: Standardize R4 Turnaway Metric Values
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
+                df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
                 
                 logging.info(f"Dataframe being used in concatenation:\n{df}")
                 all_dataframes_to_concatenate.append(df)
