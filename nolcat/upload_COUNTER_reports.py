@@ -487,11 +487,10 @@ class UploadCOUNTERReports:
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
-                combined_df.loc[combined_df.columns.tolist().index("publication_date")],  # Per a comment on https://stackoverflow.com/a/49756813
+                combined_df.loc[combined_df.columns.tolist().index("publication_date")],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-            logging.info(f"`combined_df['publication_date']` has a dtype of {combined_df['publication_date'].dtype}")
             combined_df['publication_date'] = combined_df['publication_date'].dt.tz_localize(None)
             combined_df['publication_date'] = combined_df['publication_date'].dt.date
         if "parent_publication_date" in combined_df_field_names:
