@@ -489,7 +489,7 @@ class UploadCOUNTERReports:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],  # Or `combined_df.loc[combined_df.columns.tolist().index("publication_date")]` per a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%dT%H:%M-%z',
+                infer_datetime_format=True,
             )
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
