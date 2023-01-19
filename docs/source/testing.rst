@@ -94,7 +94,7 @@ Test Data Creation Procedure
 4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
 5. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data.json" to the "nolcat_test_data" project.
 6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.COUNTER_reports.sample_COUNTER_reports()".
-7. Undo the step creating the ``df`` column in the "nolcat_test_data" project.
+7. Undo the steps reordering the columns and creating the ``df`` column in the "nolcat_test_data" project.
 8.  Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_1.json" to the "nolcat_test_data" project.
 9.  Create a filter for blanks on the ``resourceMetadata`` column in the "nolcat_test_data" project and select ``false`` on that filter.
 10. Download the "nolcat_test_data" project in Excel, then use the ``resourceMetadata`` column for the data in "data.relations.resourceMetadata_relation()".
