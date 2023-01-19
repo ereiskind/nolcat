@@ -261,7 +261,7 @@ class UploadCOUNTERReports:
                 # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier
                 if "publication_date" in df_field_names:
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
-                if "parent_publication_date" in combined_df_field_names:
+                if "parent_publication_date" in df_field_names:
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
 
                 #Subsection: Add `Statistics_Source_ID` Field
