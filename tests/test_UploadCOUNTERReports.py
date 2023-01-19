@@ -50,6 +50,6 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, sample_COUNTER_report
     """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe ready for the RawCOUNTERReport class."""
     df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
     field_order = df.columns.tolist()
-    print(f"The fields are set up the same: {df[field_order].columns.tolist() == sample_COUNTER_reports[field_order].columns.tolist()}")
+    print(df[field_order].compare(sample_COUNTER_reports[field_order]))
     print(df[field_order].set_index('resource_name').compare(sample_COUNTER_reports[field_order].set_index('resource_name')))
     assert assert_frame_equal(df, sample_COUNTER_reports, check_like=True)  # Keyword argument allows test to pass if fields aren't in the same order
