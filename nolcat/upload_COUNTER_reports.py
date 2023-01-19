@@ -509,7 +509,7 @@ class UploadCOUNTERReports:
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-            logging.info(f"Option C: `combined_df['publication_date']` (dtype {combined_df['c'].dtype}) has {combined_df['c'].isnull().sum()} nulls and values\n{combined_df['c'].dropna()}")
+            logging.info(f"Option C: `combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
 
 
             '''combined_df['e'] = pd.to_datetime(
