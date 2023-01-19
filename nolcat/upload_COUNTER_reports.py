@@ -497,11 +497,11 @@ class UploadCOUNTERReports:
         logging.info(f"`combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
         if "publication_date" in combined_df_field_names:
             
-            combined_df['a'] = pd.to_datetime(
+            '''combined_df['a'] = pd.to_datetime(
                 combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
             )
-            logging.info(f"Option A: `combined_df['publication_date']` (dtype {combined_df['a'].dtype}) has {combined_df['a'].isnull().sum()} nulls and values\n{combined_df['a'].dropna()}")
+            logging.info(f"Option A: `combined_df['publication_date']` (dtype {combined_df['a'].dtype}) has {combined_df['a'].isnull().sum()} nulls and values\n{combined_df['a'].dropna()}")'''
 
 
             combined_df['c'] = pd.to_datetime(
@@ -512,7 +512,7 @@ class UploadCOUNTERReports:
             logging.info(f"Option C: `combined_df['publication_date']` (dtype {combined_df['c'].dtype}) has {combined_df['c'].isnull().sum()} nulls and values\n{combined_df['c'].dropna()}")
 
 
-            combined_df['e'] = pd.to_datetime(
+            '''combined_df['e'] = pd.to_datetime(
                 combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 format='%Y-%m-%d',
@@ -579,7 +579,7 @@ class UploadCOUNTERReports:
                 yearfirst=True,
                 infer_datetime_format=True,
             )
-            logging.info(f"Option S: `combined_df['publication_date']` (dtype {combined_df['s'].dtype}) has {combined_df['s'].isnull().sum()} nulls and values\n{combined_df['s'].dropna()}")
+            logging.info(f"Option S: `combined_df['publication_date']` (dtype {combined_df['s'].dtype}) has {combined_df['s'].isnull().sum()} nulls and values\n{combined_df['s'].dropna()}")'''
 
 
         if "parent_publication_date" in combined_df_field_names:
