@@ -260,9 +260,7 @@ class UploadCOUNTERReports:
                 #Subsection: Remove Time and Timezome Data from Dates
                 # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier; because this values is combined into a larger string as part of the unstacking process, changing its dtype now will not help
                 if "publication_date" in df_field_names:
-                    logging.info(f"`df['publication_date']` ( dtype {df['publication_date'].dtype}) has {df['publication_date'].isnull().sum()} nulls and values\n{df['publication_date'].dropna()}")
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
-                    logging.info(f"After `apply(lambda cell_value: str(cell_value).split(\"T\")[0] if isinstance(cell_value, str) else cell_value)`, `df['publication_date']` ( dtype {df['publication_date'].dtype}) has {df['publication_date'].isnull().sum()} nulls and values\n{df['publication_date'].dropna()}")
                 if "parent_publication_date" in df_field_names:
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
 
@@ -494,14 +492,12 @@ class UploadCOUNTERReports:
             combined_df_dtypes['metric_type'] = 'string'
         
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
-        logging.info(f"`combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
+                combined_df["publication_date"],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-            logging.info(f"Option C: `combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
