@@ -494,7 +494,7 @@ class UploadCOUNTERReports:
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
-                combined_df["publication_date"],
+                combined_df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
