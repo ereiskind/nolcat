@@ -496,92 +496,12 @@ class UploadCOUNTERReports:
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
         logging.info(f"`combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
         if "publication_date" in combined_df_field_names:
-            
-            '''combined_df['a'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            )
-            logging.info(f"Option A: `combined_df['publication_date']` (dtype {combined_df['a'].dtype}) has {combined_df['a'].isnull().sum()} nulls and values\n{combined_df['a'].dropna()}")'''
-
-
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
             logging.info(f"Option C: `combined_df['publication_date']` (dtype {combined_df['publication_date'].dtype}) has {combined_df['publication_date'].isnull().sum()} nulls and values\n{combined_df['publication_date'].dropna()}")
-
-
-            '''combined_df['e'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-            )
-            logging.info(f"Option E: `combined_df['publication_date']` (dtype {combined_df['e'].dtype}) has {combined_df['e'].isnull().sum()} nulls and values\n{combined_df['e'].dropna()}")
-
-
-            combined_df['g'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-                infer_datetime_format=True,
-            )
-            logging.info(f"Option G: `combined_df['publication_date']` (dtype {combined_df['g'].dtype}) has {combined_df['g'].isnull().sum()} nulls and values\n{combined_df['g'].dropna()}")
-
-            combined_df['i'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-                exact=False,
-            )
-            logging.info(f"Option I: `combined_df['publication_date']` (dtype {combined_df['i'].dtype}) has {combined_df['i'].isnull().sum()} nulls and values\n{combined_df['i'].dropna()}")
-
-            combined_df['k'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-                exact=False,
-                infer_datetime_format=True,
-            )
-            logging.info(f"Option K: `combined_df['publication_date']` (dtype {combined_df['k'].dtype}) has {combined_df['k'].isnull().sum()} nulls and values\n{combined_df['k'].dropna()}")
-
-
-            combined_df['m'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                yearfirst=True,
-            )
-            logging.info(f"Option M: `combined_df['publication_date']` (dtype {combined_df['m'].dtype}) has {combined_df['m'].isnull().sum()} nulls and values\n{combined_df['m'].dropna()}")
-
-
-            combined_df['o'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                yearfirst=True,
-                infer_datetime_format=True,
-            )
-            logging.info(f"Option O: `combined_df['publication_date']` (dtype {combined_df['o'].dtype}) has {combined_df['o'].isnull().sum()} nulls and values\n{combined_df['o'].dropna()}")
-
-
-            combined_df['q'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-                yearfirst=True,
-            )
-            logging.info(f"Option Q: `combined_df['publication_date']` (dtype {combined_df['q'].dtype}) has {combined_df['q'].isnull().sum()} nulls and values\n{combined_df['q'].dropna()}")
-
-
-            combined_df['s'] = pd.to_datetime(
-                combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
-                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%d',
-                yearfirst=True,
-                infer_datetime_format=True,
-            )
-            logging.info(f"Option S: `combined_df['publication_date']` (dtype {combined_df['s'].dtype}) has {combined_df['s'].isnull().sum()} nulls and values\n{combined_df['s'].dropna()}")'''
-
-
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
