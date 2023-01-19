@@ -484,7 +484,9 @@ class UploadCOUNTERReports:
         if "metric_type" in combined_df_field_names:
             combined_df_dtypes['metric_type'] = 'string'
         
+        logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
+        logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df.loc[combined_df.columns.tolist().index("publication_date")],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
@@ -492,7 +494,7 @@ class UploadCOUNTERReports:
                 format='%Y-%m-%dT%H:%M-%z',
             )
             logging.info(f"`combined_df['publication_date']` dtype is {combined_df['publication_date'].dtype}")
-            logging.info(f"`combined_df['publication_date']` values are\n{combined_df['publication_date']}")
+            logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
             combined_df['publication_date'] = combined_df['publication_date'].dt.tz_localize(None)
             combined_df['publication_date'] = combined_df['publication_date'].dt.date
         if "parent_publication_date" in combined_df_field_names:
