@@ -504,7 +504,7 @@ class UploadCOUNTERReports:
             logging.info(f"Option A: `combined_df['publication_date']` (dtype {combined_df['a'].dtype}) has {combined_df['a'].isnull().sum()} nulls and values\n{combined_df['a'].dropna()}")'''
 
 
-            combined_df['c'] = pd.to_datetime(
+            combined_df['publication_date'] = pd.to_datetime(
                 combined_df["publication_date"],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
