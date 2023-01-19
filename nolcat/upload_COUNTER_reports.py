@@ -257,6 +257,13 @@ class UploadCOUNTERReports:
                 df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
                 df = df.applymap(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
 
+                #Subsection: Remove Time and Timezome Data from Dates
+                # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier
+                if "publication_date" in df_field_names:
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                if "parent_publication_date" in combined_df_field_names:
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+
                 #Subsection: Add `Statistics_Source_ID` Field
                 df['statistics_source_ID'] = statistics_source_ID
                 # Adding the name of the field any earlier would make the list of field names longer than the number of fields in the spreadsheet being imported
@@ -484,19 +491,16 @@ class UploadCOUNTERReports:
         if "metric_type" in combined_df_field_names:
             combined_df_dtypes['metric_type'] = 'string'
         
-        logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
         combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
         logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df.loc[combined_df.columns.tolist().index("publication_date")],  # Found as a viable alternative to using the field name in the index operator, which returns an object dtype series, through a comment on https://stackoverflow.com/a/49756813
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-                format='%Y-%m-%dT%H:%M-%z',
+                infer_datetime_format=True,
             )
             logging.info(f"`combined_df['publication_date']` dtype is {combined_df['publication_date'].dtype}")
             logging.info(f"`combined_df['publication_date']` non-null values are\n{combined_df['publication_date'].dropna()}")
-            combined_df['publication_date'] = combined_df['publication_date'].dt.tz_localize(None)
-            combined_df['publication_date'] = combined_df['publication_date'].dt.date
         if "parent_publication_date" in combined_df_field_names:
             combined_df['parent_publication_date'] = pd.to_datetime(combined_df['parent_publication_date'])
         #combined_df = combined_df.fillna(value=None)  # Replacing the pandas and numpy specialized null values with the standard Python null value
