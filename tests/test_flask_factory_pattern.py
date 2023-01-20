@@ -8,6 +8,7 @@ import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
@@ -50,16 +51,24 @@ def test_404_page(client):
     assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
 
 
-def test_loading_data_into_relation(app, session, vendors_relation):
+def test_loading_data_into_relation(app, engine, vendors_relation):
     """Tests loading data into and querying data from a relation.
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    print(f"`vendors_relation`:\n{vendors_relation}")
-    vendors_relation.to_sql(
+    check = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=engine,
+        index_col='vendor_ID',
+    )
+    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
+
+    print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
+    vendors_relation.to_sql(  #ALERT: If the database has content in it, a `sqlalchemy.exc.IntegrityError:` error is returned because of the duplicate primary keys
         name='vendors',
-        con=session,
-        if_exists='replace',  # This removes the existing data and replaces it with the data from the fixture, ensuring that PK duplication and PK-FK matching problems don't arise; the rollback at the end of the test restores the original data
+        con=engine,
+        #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
+        if_exists='append',
         chunksize=1000,
         index=True,
         index_label='vendor_ID',
@@ -67,24 +76,24 @@ def test_loading_data_into_relation(app, session, vendors_relation):
 
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
-        con=session,
+        con=engine,
         index_col='vendor_ID',
     )
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
-    pd.assert_frame_equal(vendors_relation, retrieved_vendors_data)
+    assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-def test_loading_connected_data_into_other_relation(app, session, statisticsSources_relation):
+def test_loading_connected_data_into_other_relation(app, engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
-    print(f"`statisticsSources_relation`:\n{statisticsSources_relation}")
+    print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
     statisticsSources_relation.to_sql(
         name='statisticsSources',
-        con=session,
-        if_exists='replace',
+        con=engine,
+        if_exists='append',  #ToDo: See above about handling databases and fixtures
         chunksize=1000,
         index=True,
         index_label='statistics_source_ID',
@@ -92,8 +101,9 @@ def test_loading_connected_data_into_other_relation(app, session, statisticsSour
 
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_vendor_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
-        con=session,
-        index_col='statisticsSources.statistics_source_ID'  # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
+        con=engine,
+        index_col='statisticsSources.statistics_source_ID'
+        # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 

@@ -14,13 +14,13 @@ logging.basicConfig(level=logging.INFO, format="RawCOUNTERReport - - [%(asctime)
 class RawCOUNTERReport:
     """A class for holding and processing raw COUNTER reports.
     
-    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts the data types by which COUNTER data is added to this web app--as a download of multiple TSV files for R4 and as an API call response (or possibly a TSV) for R5--and changes it into a dataframe. The methods facilitate the deduplication and division of the data into the appropriate relations.
+    This class effectively extends the pandas dataframe class by adding methods for working with COUNTER reports. The constructor method accepts COUNTER data in a dataframe prepared for normalization--achieved through either the `SUSHICallAndResponse.make_SUSHI_call()` or `UploadCOUNTERReports.make_dataframe()` methods--and adds methods facilitating the deduplication and division of the data into the appropriate relations.
     
     Attributes:
         self.report_dataframe (dataframe): the raw COUNTER report as a pandas dataframe
     
     Methods:
-        create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from resourceMetadata, the resourcePlatforms.platform value, and the usageData.data_type value.
+        _create_normalized_resource_data_argument: Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, `resourcePlatforms.platform`, and `usageData.data_type`.
         perform_deduplication_matching: Matches the line items in a COUNTER report for the same resource.
         load_data_into_database: Add the COUNTER report to the database by adding records to the `resource`, `resourceMetadata`, `resourcePlatforms`, and `usageData` relations.
     
@@ -29,64 +29,8 @@ class RawCOUNTERReport:
     """
     # Constructor Method
     def __init__(self, df):
-        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from some external COUNTER data.
-        
-        Creates a RawCOUNTERReport object by loading either multiple reformatted R4 report TSV files with a `<Statistics_Source_ID>_<report type>_<calendar year assigned to fiscal year in "yyyy" format>.tsv` naming convention or a R5 SUSHI API response object with its statisticsSources PK value into a dataframe.
-        """
-        if repr(type(df)) == "<class 'werkzeug.datastructures.ImmutableMultiDict'>":  #ToDo: Confirm that R5 works as well
-            dataframes_to_concatenate = []
-            for file in df.getlist('R4_files'):  #ToDo: Ensure this can work wil all COUNTER upload requests, not just at initialization
-                try:
-                    statistics_source_ID = re.findall(r'(\d*)_\w{2}\d?_\d{4}.tsv', string=Path(file.filename).parts[-1])[0]
-                    logging.info(f"Adding statisticsSources PK {statistics_source_ID} to {Path(file.filename).parts[-1]}")
-                except:
-                    logging.error(f"The name of the file {Path(file.filename).parts[-1]} doesn't follow the naming convention, so a statisticsSources PK can't be derived from it. Please rename this file and try again.")
-                    #ToDo: Return an error with a message like the above that exits the constructor method
-                dataframe = pd.read_csv(
-                    file,  # `file` is a FileStorage object; `file.stream` is a tempfile.SpooledTemporaryFile with content accessed via read() method
-                    sep='\t',
-                    encoding='utf-8',
-                    encoding_errors='backslashreplace',
-                    dtype={  # Null values represented by "NaN"/`numpy.nan` in number fields, "NaT"/`pd.nat` in datetime fields, and "<NA>"/`pd.NA` in string fields
-                        'Resource_Name': 'string',
-                        'Publisher': 'string',
-                        'Platform': 'string',
-                        'DOI': 'string',
-                        'Proprietary_ID': 'string',
-                        'ISBN': 'string',
-                        'Print_ISSN': 'string',
-                        'Online_ISSN': 'string',
-                        'Data_Type': 'string',
-                        'Section_Type': 'string',
-                        'Metric_Type': 'string',
-                        # `parse_dates` and the flooring functions make data type of 'Usage_Date' datetime64[ns]
-                        'Usage_Count': 'int',  # Python default used because this is a non-null field
-                    },
-                    parse_dates=['Usage_Date'],
-                    infer_datetime_format=True,
-                    #ToDo: Is iterating through the file (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#iterating-through-files-chunk-by-chunk) a good idea?
-                )
-                logging.debug(f"Dataframe before modifications:\n{dataframe}\n")  # `dataframe` prints the entire dataframe to the command line
-                dataframe['Statistics_Source_ID'] = statistics_source_ID
-                dataframe['Resource_Name'] = dataframe['Resource_Name'].encode('utf-8').decode('unicode-escape')
-                dataframe['Publisher'] = dataframe['Publisher'].encode('utf-8').decode('unicode-escape')
-                dataframe['Platform'] = dataframe['Platform'].encode('utf-8').decode('unicode-escape')
-                try:  # From https://stackoverflow.com/a/42285489
-                    dataframe['Usage_Date'] = dataframe['Usage_Date'].astype('datetime64[M]')
-                except:  # Handles if for some reason `parse_dates` doesn't turn 'Usage_Date' into datetime64[ns]
-                    dataframe['Usage_Date'] = pd.to_datetime(dataframe['Usage_Date'].astype('datetime64[M]'))
-                logging.debug(f"Dataframe info and dataframe:\n{dataframe.info(verbose=True)}\n{dataframe}\n")
-                dataframes_to_concatenate.append(dataframe)
-            self.report_dataframe = pd.concat(
-                dataframes_to_concatenate,
-                ignore_index=True
-            )
-            #ToDo: Set all dates to first of month (https://stackoverflow.com/questions/42285130/how-floor-a-date-to-the-first-date-of-that-month)
-            logging.info(f"Final dataframe:\n{self.report_dataframe}")
-        elif repr(type(df)) == "<class 'pandas.core.frame.DataFrame'>":  # SUSHI responses are converted from JSON to dataframes before being passed into this class
-            self.report_dataframe = df
-        else:
-            pass  #ToDo: Return an error message and quit the constructor
+        """Creates a RawCOUNTERReport object, a dataframe with extra methods, from a dataframe of COUNTER data prepared for normalization."""
+        self.report_dataframe = df
 
 
     def __repr__(self):
@@ -99,8 +43,8 @@ class RawCOUNTERReport:
         return self.report_dataframe.equals(other.report_dataframe)
     
 
-    def create_normalized_resource_data_argument(self):
-        """Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, the `resourcePlatforms.platform` value, and the `usageData.data_type` value.
+    def _create_normalized_resource_data_argument(self):
+        """Creates a dataframe with a record for each resource containing the default metadata values from `resourceMetadata`, `resourcePlatforms.platform`, and `usageData.data_type`.
 
         The structure of the database doesn't readily allow for the comparison of metadata elements among different resources. This function creates the dataframe enabling comparisons: all the resource IDs are collected, and for each resource, the data required for deduplication is pulled from the database and assigned to the appropriate fields. 
 
@@ -110,13 +54,13 @@ class RawCOUNTERReport:
         #Section: Set Up the Dataframe
         #ToDo: Get list of resources.resource_ID
         #ToDo: fields_and_data = {
-            # 'Resource_Name': None,
+            # 'resource_name': None,
             # 'DOI': None,
             # 'ISBN': None,
-            # 'Print_ISSN': None,
-            # 'Online_ISSN': None,
-            # 'Data_Type': None,
-            # 'Platform': None,
+            # 'print_ISSN': None,
+            # 'online_ISSN': None,
+            # 'data_type': None,
+            # 'platform': None,
         #ToDo: }
         #ToDo: df_content = dict()
         #ToDo: for ID in resources.resource_ID:
@@ -134,7 +78,7 @@ class RawCOUNTERReport:
         #Section: Get the Platforms
         #ToDo: for ID in resources.resource_ID:
             #ToDo: `SELECT platform FROM resourcePlatforms WHERE resource_ID={resource_ID}`
-            #ToDo: df[ID]['Platform'] = above
+            #ToDo: df[ID]['platform'] = above
 
 
         #Section: Get the Data Types
@@ -178,7 +122,7 @@ class RawCOUNTERReport:
 
         #Section: Create Dataframe from New COUNTER Report with Metadata and Same Record Index
         # For deduplication, only the resource name, DOI, ISBN, print ISSN, online ISSN, data type, and platform values are needed, so, to make this method more efficient, all other fields are removed. The OpenRefine JSONs used to transform the tabular COUNTER reports into a database-friendly structure standardize the field names, so the field subset operation will work regardless of the release of the COUNTER data in question.
-        new_resource_data = pd.DataFrame(self.report_dataframe[['Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', 'Platform']], index=self.report_dataframe.index)
+        new_resource_data = pd.DataFrame(self.report_dataframe[['resource_name', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'data_type', 'platform']], index=self.report_dataframe.index)
         # The recordlinkage `missing_value` argument doesn't recognize pd.NA, the null value for strings in dataframes, as a missing value, so those values need to be replaced with `None`. Performing this swap changes the data type of all the field back to pandas' generic `object`, but since recordlinkage can do string comparisons on strings of the object data type, this change doesn't cause problems with the program's functionality.
         new_resource_data = new_resource_data.applymap(lambda cell_value: None if pd.isna(cell_value) else cell_value)
         logging.info(f"The new data for comparison:\n{new_resource_data}")
@@ -190,7 +134,7 @@ class RawCOUNTERReport:
         matched_records = set()
             # For record index pairs matched through exact methods or fuzzy methods with very high thresholds, a set ensures a given match won't be added multiple times because it's identified as a match multiple times.
         matches_to_manually_confirm = dict()
-            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in `new_resource_data` and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and sets as values; each tuple will contain two tuples, one for each resource's metadata, in 'Resource_Name', 'DOI', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'Data_Type', and 'Platform' order (because dictionaries can't be used in dictionary keys); each set will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
+            # For record index pairs matched through fuzzy methods, the match will need to be manually confirmed. Each resource, however, appears multiple times in `new_resource_data` and the potential index pairs are created through a Cartesian product, so the same two resources will be compared multiple times. So that each fuzzily matched pair is only asked about once, `matches_to_manually_confirm` will employ nested data collection structures: the variable will be a dictionary with tuples as keys and sets as values; each tuple will contain two tuples, one for each resource's metadata, in 'resource_name', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'data_type', and 'platform' order (because dictionaries can't be used in dictionary keys); each set will contain tuples of record indexes for resources matching the metadata in the dictionary key. This layout is modeled below:
         # {
         #     (
         #         (first resource metadata),
@@ -226,8 +170,8 @@ class RawCOUNTERReport:
         compare_DOI_and_ISBN = recordlinkage.Compare()
         compare_DOI_and_ISBN.exact('DOI', 'DOI',label='DOI')
         compare_DOI_and_ISBN.exact('ISBN', 'ISBN', label='ISBN')
-        compare_DOI_and_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
-        compare_DOI_and_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
+        compare_DOI_and_ISBN.exact('print_ISSN', 'print_ISSN', missing_value=1, label='Print_ISSN')
+        compare_DOI_and_ISBN.exact('online_ISSN', 'online_ISSN', missing_value=1, label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on DOI and ISBN
         # Record index combines record indexes of records being compared into a multiindex, field index lists comparison objects, and values are the result--`1` is a match, `0` is not a match
@@ -252,8 +196,8 @@ class RawCOUNTERReport:
         compare_DOI_and_ISSNs = recordlinkage.Compare()
         compare_DOI_and_ISSNs.exact('DOI', 'DOI', label='DOI')
         compare_DOI_and_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
-        compare_DOI_and_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
-        compare_DOI_and_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        compare_DOI_and_ISSNs.exact('print_ISSN', 'print_ISSN', label='Print_ISSN')
+        compare_DOI_and_ISSNs.exact('online_ISSN', 'online_ISSN', label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on DOI and ISSNs
         if normalized_resource_data:
@@ -275,22 +219,22 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Based on ISBN
         logging.info("**Comparing based on ISBN**")
         compare_ISBN = recordlinkage.Compare()
-        compare_ISBN.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        compare_ISBN.string('resource_name', 'resource_name', threshold=0.9, label='Resource_Name')
         compare_ISBN.exact('DOI', 'DOI', missing_value=1, label='DOI')
         compare_ISBN.exact('ISBN', 'ISBN', label='ISBN')
-        compare_ISBN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
-        compare_ISBN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
+        compare_ISBN.exact('print_ISSN', 'print_ISSN', missing_value=1, label='Print_ISSN')
+        compare_ISBN.exact('online_ISSN', 'online_ISSN', missing_value=1, label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on ISBN
         # The various editions or volumes of a title will be grouped together by fuzzy matching, and these can sometimes be given the same ISBN even when not appropriate. To keep this from causing problems, matches where one of the resource names has a volume or edition reference will be checked manually.
         if normalized_resource_data:
             compare_ISBN_table = compare_ISBN.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
+            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'resource_name'])
         else:
             compare_ISBN_table = compare_ISBN.compute(candidate_matches, new_resource_data)
-            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+            compare_ISBN_table['index_one_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'resource_name'])
         
-        compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        compare_ISBN_table['index_zero_resource_name'] = compare_ISBN_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'resource_name'])
         logging.info(f"ISBN comparison result with metadata:\n{compare_ISBN_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on Regex and ISBN
@@ -304,33 +248,33 @@ class RawCOUNTERReport:
                 if compare_ISBN_table.loc[match]['index_zero_resource_name'] != compare_ISBN_table.loc[match]['index_one_resource_name']:
                     if volume_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or volume_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_zero_resource_name']) or edition_regex.search(compare_ISBN_table.loc[match]['index_one_resource_name']):
                         index_zero_metadata = (
-                            new_resource_data.loc[match[0]]['Resource_Name'],
+                            new_resource_data.loc[match[0]]['resource_name'],
                             new_resource_data.loc[match[0]]['DOI'],
                             new_resource_data.loc[match[0]]['ISBN'],
-                            new_resource_data.loc[match[0]]['Print_ISSN'],
-                            new_resource_data.loc[match[0]]['Online_ISSN'],
-                            new_resource_data.loc[match[0]]['Data_Type'],
-                            new_resource_data.loc[match[0]]['Platform'],
+                            new_resource_data.loc[match[0]]['print_ISSN'],
+                            new_resource_data.loc[match[0]]['online_ISSN'],
+                            new_resource_data.loc[match[0]]['data_type'],
+                            new_resource_data.loc[match[0]]['platform'],
                         )
                         if normalized_resource_data:
                             index_one_metadata = (
-                                normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                normalized_resource_data.loc[match[1]]['resource_name'],
                                 normalized_resource_data.loc[match[1]]['DOI'],
                                 normalized_resource_data.loc[match[1]]['ISBN'],
-                                normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Data_Type'],
-                                normalized_resource_data.loc[match[1]]['Platform'],
+                                normalized_resource_data.loc[match[1]]['print_ISSN'],
+                                normalized_resource_data.loc[match[1]]['online_ISSN'],
+                                normalized_resource_data.loc[match[1]]['data_type'],
+                                normalized_resource_data.loc[match[1]]['platform'],
                             )
                         else:
                             index_one_metadata = (
-                                new_resource_data.loc[match[1]]['Resource_Name'],
+                                new_resource_data.loc[match[1]]['resource_name'],
                                 new_resource_data.loc[match[1]]['DOI'],
                                 new_resource_data.loc[match[1]]['ISBN'],
-                                new_resource_data.loc[match[1]]['Print_ISSN'],
-                                new_resource_data.loc[match[1]]['Online_ISSN'],
-                                new_resource_data.loc[match[1]]['Data_Type'],
-                                new_resource_data.loc[match[1]]['Platform'],
+                                new_resource_data.loc[match[1]]['print_ISSN'],
+                                new_resource_data.loc[match[1]]['online_ISSN'],
+                                new_resource_data.loc[match[1]]['data_type'],
+                                new_resource_data.loc[match[1]]['platform'],
                             )
                         # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                         if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -352,11 +296,11 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Based on ISSNs
         logging.info("**Comparing based on ISSNs**")
         compare_ISSNs = recordlinkage.Compare()
-        compare_ISSNs.string('Resource_Name', 'Resource_Name', threshold=0.9, label='Resource_Name')
+        compare_ISSNs.string('resource_name', 'resource_name', threshold=0.9, label='Resource_Name')
         compare_ISSNs.exact('DOI', 'DOI', missing_value=1, label='DOI')
         compare_ISSNs.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
-        compare_ISSNs.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
-        compare_ISSNs.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        compare_ISSNs.exact('print_ISSN', 'print_ISSN', label='Print_ISSN')
+        compare_ISSNs.exact('online_ISSN', 'online_ISSN', label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on ISSNs
         if normalized_resource_data:
@@ -378,11 +322,11 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Based on Print ISSN
         logging.info("**Comparing based on print ISSN**")
         compare_print_ISSN = recordlinkage.Compare()
-        compare_print_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.95, label='Resource_Name')
+        compare_print_ISSN.string('resource_name', 'resource_name', threshold=0.95, label='Resource_Name')
         compare_print_ISSN.exact('DOI', 'DOI', missing_value=1, label='DOI')
         compare_print_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
-        compare_print_ISSN.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
-        compare_print_ISSN.exact('Online_ISSN', 'Online_ISSN', missing_value=1, label='Online_ISSN')
+        compare_print_ISSN.exact('print_ISSN', 'print_ISSN', label='Print_ISSN')
+        compare_print_ISSN.exact('online_ISSN', 'online_ISSN', missing_value=1, label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on Print ISSN
         if normalized_resource_data:
@@ -404,11 +348,11 @@ class RawCOUNTERReport:
         #Subsection: Create Comparison Based on Online ISSN
         logging.info("**Comparing based on online ISSN**")
         compare_online_ISSN = recordlinkage.Compare()
-        compare_online_ISSN.string('Resource_Name', 'Resource_Name', threshold=0.95, label='Resource_Name')
+        compare_online_ISSN.string('resource_name', 'resource_name', threshold=0.95, label='Resource_Name')
         compare_online_ISSN.exact('DOI', 'DOI', missing_value=1, label='DOI')
         compare_online_ISSN.exact('ISBN', 'ISBN', missing_value=1, label='ISBN')
-        compare_online_ISSN.exact('Print_ISSN', 'Print_ISSN', missing_value=1, label='Print_ISSN')
-        compare_online_ISSN.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        compare_online_ISSN.exact('print_ISSN', 'print_ISSN', missing_value=1, label='Print_ISSN')
+        compare_online_ISSN.exact('online_ISSN', 'online_ISSN', label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on Online ISSN
         if normalized_resource_data:
@@ -432,17 +376,17 @@ class RawCOUNTERReport:
         logging.info("**Comparing databases with high resource name matching threshold**")
         #Subsection: Create Comparison Based on High Database Name String Matching Threshold
         compare_database_names = recordlinkage.Compare()
-        compare_database_names.string('Resource_Name', 'Resource_Name', threshold=0.925, label='Resource_Name')
+        compare_database_names.string('resource_name', 'resource_name', threshold=0.925, label='Resource_Name')
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Database Name String Matching Threshold
         if normalized_resource_data:
             compare_database_names_table = compare_database_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
+            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'data_type'])
         else:
             compare_database_names_table = compare_database_names.compute(candidate_matches, new_resource_data)
-            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
+            compare_database_names_table['index_one_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'data_type'])
         
-        compare_database_names_table['index_zero_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
+        compare_database_names_table['index_zero_data_type'] = compare_database_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'data_type'])
         logging.info(f"Database names comparison result with metadata:\n{compare_database_names_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe Based on High Database Name String Matching Threshold
@@ -453,14 +397,14 @@ class RawCOUNTERReport:
         ]
 
         # Resource names and platforms are added after filtering to reduce the number of names that need to be found
-        database_names_matches_table['index_zero_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
-        database_names_matches_table['index_zero_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Platform'])
+        database_names_matches_table['index_zero_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'resource_name'])
+        database_names_matches_table['index_zero_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'platform'])
         if normalized_resource_data:
-            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
-            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Platform'])
+            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'resource_name'])
+            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'platform'])
         else:
-            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
-            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
+            database_names_matches_table['index_one_resource_name'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'resource_name'])
+            database_names_matches_table['index_one_platform'] = database_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'platform'])
         logging.info(f"Database names matches table with metadata:\n{database_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length and High Database Name String Matching Threshold
@@ -475,33 +419,33 @@ class RawCOUNTERReport:
                         if len(database_names_matches_table.loc[match]['index_zero_resource_name']) >= 35 or len(database_names_matches_table.loc[match]['index_one_resource_name']) >= 35:
                             # The DOI, ISBN, and ISSNs are collected not to use for comparison here but to keep the number of metadata elements in the inner tuples of `matches_to_manually_confirm` keys constant
                             index_zero_metadata = (
-                                new_resource_data.loc[match[0]]['Resource_Name'],
+                                new_resource_data.loc[match[0]]['resource_name'],
                                 new_resource_data.loc[match[0]]['DOI'],
                                 new_resource_data.loc[match[0]]['ISBN'],
-                                new_resource_data.loc[match[0]]['Print_ISSN'],
-                                new_resource_data.loc[match[0]]['Online_ISSN'],
-                                new_resource_data.loc[match[0]]['Data_Type'],
-                                new_resource_data.loc[match[0]]['Platform'],
+                                new_resource_data.loc[match[0]]['print_ISSN'],
+                                new_resource_data.loc[match[0]]['online_ISSN'],
+                                new_resource_data.loc[match[0]]['data_type'],
+                                new_resource_data.loc[match[0]]['platform'],
                             )
                             if normalized_resource_data:
                                 index_one_metadata = (
-                                    normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                    normalized_resource_data.loc[match[1]]['resource_name'],
                                     normalized_resource_data.loc[match[1]]['DOI'],
                                     normalized_resource_data.loc[match[1]]['ISBN'],
-                                    normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                                    normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                                    normalized_resource_data.loc[match[1]]['Data_Type'],
-                                    normalized_resource_data.loc[match[1]]['Platform'],
+                                    normalized_resource_data.loc[match[1]]['print_ISSN'],
+                                    normalized_resource_data.loc[match[1]]['online_ISSN'],
+                                    normalized_resource_data.loc[match[1]]['data_type'],
+                                    normalized_resource_data.loc[match[1]]['platform'],
                                 )
                             else:
                                 index_one_metadata = (
-                                    new_resource_data.loc[match[1]]['Resource_Name'],
+                                    new_resource_data.loc[match[1]]['resource_name'],
                                     new_resource_data.loc[match[1]]['DOI'],
                                     new_resource_data.loc[match[1]]['ISBN'],
-                                    new_resource_data.loc[match[1]]['Print_ISSN'],
-                                    new_resource_data.loc[match[1]]['Online_ISSN'],
-                                    new_resource_data.loc[match[1]]['Data_Type'],
-                                    new_resource_data.loc[match[1]]['Platform'],
+                                    new_resource_data.loc[match[1]]['print_ISSN'],
+                                    new_resource_data.loc[match[1]]['online_ISSN'],
+                                    new_resource_data.loc[match[1]]['data_type'],
+                                    new_resource_data.loc[match[1]]['platform'],
                                 )
                             # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                             if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -519,33 +463,33 @@ class RawCOUNTERReport:
                     logging.debug(f"{match} added as a match on database names with a high matching threshold")
                 else:
                     index_zero_metadata = (
-                        new_resource_data.loc[match[0]]['Resource_Name'],
+                        new_resource_data.loc[match[0]]['resource_name'],
                         new_resource_data.loc[match[0]]['DOI'],
                         new_resource_data.loc[match[0]]['ISBN'],
-                        new_resource_data.loc[match[0]]['Print_ISSN'],
-                        new_resource_data.loc[match[0]]['Online_ISSN'],
-                        new_resource_data.loc[match[0]]['Data_Type'],
-                        new_resource_data.loc[match[0]]['Platform'],
+                        new_resource_data.loc[match[0]]['print_ISSN'],
+                        new_resource_data.loc[match[0]]['online_ISSN'],
+                        new_resource_data.loc[match[0]]['data_type'],
+                        new_resource_data.loc[match[0]]['platform'],
                     )
                     if normalized_resource_data:
                         index_one_metadata = (
-                            normalized_resource_data.loc[match[1]]['Resource_Name'],
+                            normalized_resource_data.loc[match[1]]['resource_name'],
                             normalized_resource_data.loc[match[1]]['DOI'],
                             normalized_resource_data.loc[match[1]]['ISBN'],
-                            normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                            normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                            normalized_resource_data.loc[match[1]]['Data_Type'],
-                            normalized_resource_data.loc[match[1]]['Platform'],
+                            normalized_resource_data.loc[match[1]]['print_ISSN'],
+                            normalized_resource_data.loc[match[1]]['online_ISSN'],
+                            normalized_resource_data.loc[match[1]]['data_type'],
+                            normalized_resource_data.loc[match[1]]['platform'],
                         )
                     else:
                         index_one_metadata = (
-                            new_resource_data.loc[match[1]]['Resource_Name'],
+                            new_resource_data.loc[match[1]]['resource_name'],
                             new_resource_data.loc[match[1]]['DOI'],
                             new_resource_data.loc[match[1]]['ISBN'],
-                            new_resource_data.loc[match[1]]['Print_ISSN'],
-                            new_resource_data.loc[match[1]]['Online_ISSN'],
-                            new_resource_data.loc[match[1]]['Data_Type'],
-                            new_resource_data.loc[match[1]]['Platform'],
+                            new_resource_data.loc[match[1]]['print_ISSN'],
+                            new_resource_data.loc[match[1]]['online_ISSN'],
+                            new_resource_data.loc[match[1]]['data_type'],
+                            new_resource_data.loc[match[1]]['platform'],
                         )
                     # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                     if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -567,17 +511,18 @@ class RawCOUNTERReport:
         logging.info("**Comparing platforms with high platform name matching threshold**")
         #Subsection: Create Comparison Based on High Platform Name String Matching Threshold
         compare_platform_names = recordlinkage.Compare()
-        compare_platform_names.string('Platform', 'Platform', threshold=0.925, label='Platform')
+        compare_platform_names.string('platform', 'platform', threshold=0.925, label='Platform')
+        #ALERT: The AWS t3.2xlarge instance ends the test of this method here with the word `Killed` in lieu of a standard error message
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Platform Name String Matching Threshold
         if normalized_resource_data:
             compare_platform_names_table = compare_platform_names.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Data_Type'])
+            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'data_type'])
         else:
             compare_platform_names_table = compare_platform_names.compute(candidate_matches, new_resource_data)
-            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Data_Type'])
+            compare_platform_names_table['index_one_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'data_type'])
         
-        compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Data_Type'])
+        compare_platform_names_table['index_zero_data_type'] = compare_platform_names_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'data_type'])
         logging.info(f"Platform names comparison result with metadata:\n{compare_platform_names_table}")
 
         #Subsection: Filter and Update Comparison Results Dataframe Based on High Platform Name String Matching Threshold
@@ -588,11 +533,11 @@ class RawCOUNTERReport:
         ]
 
         # Platform names are added after filtering to reduce the number of names that need to be found
-        platform_names_matches_table['index_zero_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Platform'])
+        platform_names_matches_table['index_zero_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'platform'])
         if normalized_resource_data:
-            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Platform'])
+            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'platform'])
         else:
-            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Platform'])
+            platform_names_matches_table['index_one_platform_name'] = platform_names_matches_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'platform'])
         logging.info(f"Platform names matches table with metadata:\n{platform_names_matches_table}")
 
         #Subsection: Add Matches to `matched_records` or `matches_to_manually_confirm` Based on String Length and High Platform Name String Matching Threshold
@@ -606,33 +551,33 @@ class RawCOUNTERReport:
                     if len(platform_names_matches_table.loc[match]['index_zero_platform_name']) >= 35 or len(platform_names_matches_table.loc[match]['index_one_platform_name']) >= 35:
                         # The DOI, ISBN, and ISSNs are collected not to use for comparison here but to keep the number of metadata elements in the inner tuples of `matches_to_manually_confirm` keys constant
                         index_zero_metadata = (
-                            new_resource_data.loc[match[0]]['Resource_Name'],
+                            new_resource_data.loc[match[0]]['resource_name'],
                             new_resource_data.loc[match[0]]['DOI'],
                             new_resource_data.loc[match[0]]['ISBN'],
-                            new_resource_data.loc[match[0]]['Print_ISSN'],
-                            new_resource_data.loc[match[0]]['Online_ISSN'],
-                            new_resource_data.loc[match[0]]['Data_Type'],
-                            new_resource_data.loc[match[0]]['Platform'],
+                            new_resource_data.loc[match[0]]['print_ISSN'],
+                            new_resource_data.loc[match[0]]['online_ISSN'],
+                            new_resource_data.loc[match[0]]['data_type'],
+                            new_resource_data.loc[match[0]]['platform'],
                         )
                         if normalized_resource_data:
                             index_one_metadata = (
-                                normalized_resource_data.loc[match[1]]['Resource_Name'],
+                                normalized_resource_data.loc[match[1]]['resource_name'],
                                 normalized_resource_data.loc[match[1]]['DOI'],
                                 normalized_resource_data.loc[match[1]]['ISBN'],
-                                normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                                normalized_resource_data.loc[match[1]]['Data_Type'],
-                                normalized_resource_data.loc[match[1]]['Platform'],
+                                normalized_resource_data.loc[match[1]]['print_ISSN'],
+                                normalized_resource_data.loc[match[1]]['online_ISSN'],
+                                normalized_resource_data.loc[match[1]]['data_type'],
+                                normalized_resource_data.loc[match[1]]['platform'],
                             )
                         else:
                             index_one_metadata = (
-                                new_resource_data.loc[match[1]]['Resource_Name'],
+                                new_resource_data.loc[match[1]]['resource_name'],
                                 new_resource_data.loc[match[1]]['DOI'],
                                 new_resource_data.loc[match[1]]['ISBN'],
-                                new_resource_data.loc[match[1]]['Print_ISSN'],
-                                new_resource_data.loc[match[1]]['Online_ISSN'],
-                                new_resource_data.loc[match[1]]['Data_Type'],
-                                new_resource_data.loc[match[1]]['Platform'],
+                                new_resource_data.loc[match[1]]['print_ISSN'],
+                                new_resource_data.loc[match[1]]['online_ISSN'],
+                                new_resource_data.loc[match[1]]['data_type'],
+                                new_resource_data.loc[match[1]]['platform'],
                             )
                         # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                         if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -658,8 +603,8 @@ class RawCOUNTERReport:
         compare_identifiers = recordlinkage.Compare()
         compare_identifiers.exact('DOI', 'DOI', label='DOI')
         compare_identifiers.exact('ISBN', 'ISBN', label='ISBN')
-        compare_identifiers.exact('Print_ISSN', 'Print_ISSN', label='Print_ISSN')
-        compare_identifiers.exact('Online_ISSN', 'Online_ISSN', label='Online_ISSN')
+        compare_identifiers.exact('print_ISSN', 'print_ISSN', label='Print_ISSN')
+        compare_identifiers.exact('online_ISSN', 'online_ISSN', label='Online_ISSN')
 
         #Subsection: Return Dataframe with Comparison Results Based on a Single Standard Identifier Field
         if normalized_resource_data:
@@ -695,33 +640,33 @@ class RawCOUNTERReport:
         if identifiers_matches_index:
             for match in identifiers_matches_index:
                 index_zero_metadata = (
-                    new_resource_data.loc[match[0]]['Resource_Name'],
+                    new_resource_data.loc[match[0]]['resource_name'],
                     new_resource_data.loc[match[0]]['DOI'],
                     new_resource_data.loc[match[0]]['ISBN'],
-                    new_resource_data.loc[match[0]]['Print_ISSN'],
-                    new_resource_data.loc[match[0]]['Online_ISSN'],
-                    new_resource_data.loc[match[0]]['Data_Type'],
-                    new_resource_data.loc[match[0]]['Platform'],
+                    new_resource_data.loc[match[0]]['print_ISSN'],
+                    new_resource_data.loc[match[0]]['online_ISSN'],
+                    new_resource_data.loc[match[0]]['data_type'],
+                    new_resource_data.loc[match[0]]['platform'],
                 )
                 if normalized_resource_data:
                     index_one_metadata = (
-                        normalized_resource_data.loc[match[1]]['Resource_Name'],
+                        normalized_resource_data.loc[match[1]]['resource_name'],
                         normalized_resource_data.loc[match[1]]['DOI'],
                         normalized_resource_data.loc[match[1]]['ISBN'],
-                        normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                        normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                        normalized_resource_data.loc[match[1]]['Data_Type'],
-                        normalized_resource_data.loc[match[1]]['Platform'],
+                        normalized_resource_data.loc[match[1]]['print_ISSN'],
+                        normalized_resource_data.loc[match[1]]['online_ISSN'],
+                        normalized_resource_data.loc[match[1]]['data_type'],
+                        normalized_resource_data.loc[match[1]]['platform'],
                     )
                 else:
                     index_one_metadata = (
-                        new_resource_data.loc[match[1]]['Resource_Name'],
+                        new_resource_data.loc[match[1]]['resource_name'],
                         new_resource_data.loc[match[1]]['DOI'],
                         new_resource_data.loc[match[1]]['ISBN'],
-                        new_resource_data.loc[match[1]]['Print_ISSN'],
-                        new_resource_data.loc[match[1]]['Online_ISSN'],
-                        new_resource_data.loc[match[1]]['Data_Type'],
-                        new_resource_data.loc[match[1]]['Platform'],
+                        new_resource_data.loc[match[1]]['print_ISSN'],
+                        new_resource_data.loc[match[1]]['online_ISSN'],
+                        new_resource_data.loc[match[1]]['data_type'],
+                        new_resource_data.loc[match[1]]['platform'],
                     )
                 # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                 if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -742,22 +687,22 @@ class RawCOUNTERReport:
         logging.info("**Comparing resources with high resource name matching threshold**")
         #Subsection: Create Comparison Based on High Resource Name String Matching Threshold
         compare_resource_name = recordlinkage.Compare()
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.65, label='levenshtein')
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.75, method='lcs', label='lcs')
-        compare_resource_name.string('Resource_Name', 'Resource_Name', threshold=0.70, method='smith_waterman', label='smith_waterman')
-        # This comparison will take about an hour on a 16GB RAM 1.61GHz workstation
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.65, label='levenshtein')
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.75, method='lcs', label='lcs')
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='smith_waterman', label='smith_waterman')
+        #Alert: On a 16GB RAM 1.61GHz workstation, with the combined R4 and R5 test data, it takes nearly four hours to get to this point in the program, at which point, the Command Prompt window closes without showing any sort of error message. Opening task manager shortly afterwords shows the `Python 3.8` process still working, using the vast majority of the workstation's memory for some 15 minutes after. At the end of that time, the program seemed to stop, leaving no evidence the test had been run despite the command line instruction including arguments for writing the logging statements to a log file.
 
         #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Resource Name String Matching Threshold
         if normalized_resource_data:
             compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'Resource_Name'])
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'resource_name'])
         else:
             compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data)
-            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'Resource_Name'])
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'resource_name'])
         
-        compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'Resource_Name'])
+        compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'resource_name'])
         logging.info(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
 
         #Subsection: Update Comparison Results Dataframe Using FuzzyWuzzy Based on High Resource Name String Matching Threshold
@@ -806,33 +751,33 @@ class RawCOUNTERReport:
         if resource_name_matches_index:
             for match in resource_name_matches_index:
                 index_zero_metadata = (
-                    new_resource_data.loc[match[0]]['Resource_Name'],
+                    new_resource_data.loc[match[0]]['resource_name'],
                     new_resource_data.loc[match[0]]['DOI'],
                     new_resource_data.loc[match[0]]['ISBN'],
-                    new_resource_data.loc[match[0]]['Print_ISSN'],
-                    new_resource_data.loc[match[0]]['Online_ISSN'],
-                    new_resource_data.loc[match[0]]['Data_Type'],
-                    new_resource_data.loc[match[0]]['Platform'],
+                    new_resource_data.loc[match[0]]['print_ISSN'],
+                    new_resource_data.loc[match[0]]['online_ISSN'],
+                    new_resource_data.loc[match[0]]['data_type'],
+                    new_resource_data.loc[match[0]]['platform'],
                 )
                 if normalized_resource_data:
                     index_one_metadata = (
-                        normalized_resource_data.loc[match[1]]['Resource_Name'],
+                        normalized_resource_data.loc[match[1]]['resource_name'],
                         normalized_resource_data.loc[match[1]]['DOI'],
                         normalized_resource_data.loc[match[1]]['ISBN'],
-                        normalized_resource_data.loc[match[1]]['Print_ISSN'],
-                        normalized_resource_data.loc[match[1]]['Online_ISSN'],
-                        normalized_resource_data.loc[match[1]]['Data_Type'],
-                        normalized_resource_data.loc[match[1]]['Platform'],
+                        normalized_resource_data.loc[match[1]]['print_ISSN'],
+                        normalized_resource_data.loc[match[1]]['online_ISSN'],
+                        normalized_resource_data.loc[match[1]]['data_type'],
+                        normalized_resource_data.loc[match[1]]['platform'],
                     )
                 else:
                     index_one_metadata = (
-                        new_resource_data.loc[match[1]]['Resource_Name'],
+                        new_resource_data.loc[match[1]]['resource_name'],
                         new_resource_data.loc[match[1]]['DOI'],
                         new_resource_data.loc[match[1]]['ISBN'],
-                        new_resource_data.loc[match[1]]['Print_ISSN'],
-                        new_resource_data.loc[match[1]]['Online_ISSN'],
-                        new_resource_data.loc[match[1]]['Data_Type'],
-                        new_resource_data.loc[match[1]]['Platform'],
+                        new_resource_data.loc[match[1]]['print_ISSN'],
+                        new_resource_data.loc[match[1]]['online_ISSN'],
+                        new_resource_data.loc[match[1]]['data_type'],
+                        new_resource_data.loc[match[1]]['platform'],
                     )
                 # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
                 if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
@@ -852,7 +797,7 @@ class RawCOUNTERReport:
         #Section: Return Record Index Pair Lists
         logging.warning(f"`matched_records`:\n{matched_records}")
         logging.warning(f"`matches_to_manually_confirm`:\n{matches_to_manually_confirm}")
-        #ToDo: Resources where an ISSN appears in both the Print_ISSN and Online_ISSN fields and/or is paired with different ISSNs still need to be paired--can the node and edge model used after this initial manual matching perform that pairing?
+        #ToDo: Resources where an ISSN appears in both the print_ISSN and online_ISSN fields and/or is paired with different ISSNs still need to be paired--can the node and edge model used after this initial manual matching perform that pairing?
         # The only pairings not being found are those described by the above
         return (
             matched_records,

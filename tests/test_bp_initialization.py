@@ -21,25 +21,25 @@ def flask_client():
 
 
 #ToDo: @pytest.mark.dependency()
-#ToDo: Create test for collecting data by uploading TSVs in `collect_initial_relation_data()` 
+#ToDo: Create test for collecting data by uploading CSVs in `collect_initial_relation_data()` 
     #ToDo: Create files with same data that's in `tests\bin\fixture_data.xlsx` aka the data in `conftest.py`
     #ToDo: Submit the files to the forms on the page (via Selenium?)
     #ToDo: Confirm that the form submission and conversion to dataframes were successful by comparing variables containing data from forms as dataframes to files used for submitting data and/or `conftest.py`
 
 
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_TSV_upload'])
-#ToDo: Create test for loading data collected via TSV into database in `collect_initial_relation_data()`
+#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_CSV_upload'])
+#ToDo: Create test for loading data collected via CSV into database in `collect_initial_relation_data()`
     #ToDo: Create files with same data that's in `tests\bin\fixture_data.xlsx` aka the data in `conftest.py`
     #ToDo: Submit the files to the forms on the page (via Selenium?)
-    #ToDo: At return statement for function/redirect to new page, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `statisticsResourceSources`, `resourceSources`, and `resourceSourceNotes` relations and ensure results match files used for submitting data and/or `conftest.py`
+    #ToDo: At return statement for function/redirect to new page, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
 
 
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_TSV_upload'])--if moved to a different module, could this test be preceded by populating the database with known values?
+#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_CSV_upload'])--if moved to a different module, could this test be preceded by populating the database with known values?
 #ToDo: @pytest.mark.dependency()
 #ToDo: Create test for creation of the `annualUsageCollectionTracking` relation template in `collect_AUCT_and_historical_COUNTER_data()`
     #ToDo: Enter route function with `if request.method == 'GET':`
-    #ToDo: Create TSV file (function through `TSV_file.close()`)
-    #ToDo: Compare TSV file to contents of existing TSV file which aligns with what result should be saved in `tests` folder
+    #ToDo: Create CSV file (function through `CSV_file.close()`)
+    #ToDo: Compare CSV file to contents of existing CSV file which aligns with what result should be saved in `tests` folder
     
 
 #ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_creating_AUCT_template'])
@@ -51,16 +51,16 @@ def flask_client():
 
 
 #ToDo: @pytest.mark.dependency()
-#ToDo: Create test for collecting data by uploading TSVs in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Create TSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
+#ToDo: Create test for collecting data by uploading CSVs in `collect_AUCT_and_historical_COUNTER_data()`
+    #ToDo: Create CSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
     #ToDo: Let the page at `initial-data-upload-2.html` render
     #ToDo: Submit the file to the appropriate form on the page (via Selenium?)
     #ToDo: Confirm that the form submission and conversion to a dataframe was successful by comparing variable containing data from form as a dataframe to file used for submitting data
 
 
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_AUCT_TSV_upload'])
-#ToDo: Create test for loading data collected via TSV into database in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Create TSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
+#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_AUCT_CSV_upload'])
+#ToDo: Create test for loading data collected via CSV into database in `collect_AUCT_and_historical_COUNTER_data()`
+    #ToDo: Create CSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
     #ToDo: Let the page at `initial-data-upload-2.html` render
     #ToDo: Submit the file to the appropriate form on the page (via Selenium?)
     #ToDo: Upload AUCT data to database
@@ -73,6 +73,7 @@ def flask_client():
     #ToDo: Confirm an object of the correct type ("<class 'werkzeug.datastructures.ImmutableMultiDict'>"?) is created
 
 
+#ALERT: `UploadCOUNTERReports.create_dataframe()` turns Excel workbooks into dataframes; revise tests in light of this and changes to module being tested
 #ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_file_upload'])
 #ToDo: @pytest.mark.dependency()
 #ToDo: Create test confirming the creation of the `RawCOUNTERReport` object from the uploaded COUNTER reports in `collect_AUCT_and_historical_COUNTER_data()`

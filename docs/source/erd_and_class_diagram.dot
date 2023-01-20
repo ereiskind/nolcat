@@ -112,18 +112,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_statisticsResourceSources {
-        label="statisticsResourceSources"
-
-        // Attributes
-        SRS_statistics_source [shape="component"]
-        SRS_resource_source [shape="component"]
-        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
-
-        // Methods
-    }
-
-
     subgraph cluster_resourceSources {
         label="resourceSources"
 
@@ -158,6 +146,18 @@ digraph erd_and_classes {
         ]
 
         //Methods
+    }
+
+
+    subgraph cluster_statisticsResourceSources {
+        label="statisticsResourceSources"
+
+        // Attributes
+        SRS_statistics_source [shape="component"]
+        SRS_resource_source [shape="component"]
+        current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
+
+        // Methods
     }
 
 
@@ -225,11 +225,10 @@ digraph erd_and_classes {
             shape="record"
             label="\N|user interfaces"
         ]
+        __publication_date
+        __article_version
         proprietary_ID
         __URI // This is found in R5 TR, IR only—how to add it?
-        // Parent_Data_Type?
-        // Parent_DOI?
-        // Parent_Proprietary_ID?
         interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
         resource_ID_in_resourcePlatforms [
             label="resource_ID"
@@ -273,7 +272,7 @@ digraph erd_and_classes {
         report_dataframe
 
         // Methods
-        create_normalized_resource_data_argument [shape="Mrecord"]
+        _create_normalized_resource_data_argument [shape="Mrecord"]
         perform_deduplication_matching [shape="Mrecord"]
         load_data_into_database [shape="Mrecord"]
     }
@@ -292,6 +291,17 @@ digraph erd_and_classes {
         make_SUSHI_call [shape="Mrecord"]
         _handle_SUSHI_exceptions [shape="Mrecord"]
         _create_error_query_text [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_UploadCOUNTERReports {
+        label="CLASS: UploadCOUNTERReports"
+
+        // Attributes
+        COUNTER_report_files
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
     }
 
 

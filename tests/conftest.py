@@ -1,24 +1,34 @@
-"""This module contains the fixtures and configurations for testing."""
-# https://github.com/jeancochrane/pytest-flask-sqlalchemy
-# https://xvrdm.github.io/2017/07/03/testing-flask-sqlalchemy-database-with-pytest/
-# https://flask.palletsprojects.com/en/2.1.x/tutorial/tests/
-# https://stackoverflow.com/a/49215772
-# https://stackoverflow.com/questions/29706278/python-pandas-to-sql-with-sqlalchemy-how-to-speed-up-exporting-to-ms-sql
-# https://pypi.org/project/memory-profiler/
+"""This module contains the fixtures and configurations for testing.
+
+The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
+"""
 
 import pytest
+from sqlalchemy import create_engine
 
-from nolcat.app import db
+from nolcat.app import db as _db
 from nolcat.app import create_app
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations
 
 
+#Section: Fixtures for Connecting to the Database
 @pytest.fixture(scope='session')
 def app():
-    """Creates an instance of the Flask object."""
-    app = create_app()
+    """Creates an instance of the Flask object for the test session.
+    
+    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
+    """
+    app = create_app()  #ToDo: Warnings at end of pytest include `serWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".` even though the SQLALCHEMY_DATABASE_URI config is set in the `create_app()` function imported from "nolcat/app.py"; is this a problem?
+    app.debug = True
     app.testing = True  # Lets exceptions come through to test client
+    app.env = 'test'
+    app.testing = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    context = app.app_context()  # Creates an application context
+    context.push()  # Binds the application context to the current context/Flask application
     yield app
+    context.pop()  # Removes and deletes the application context; placement after the yield statement means the action occurs at the end of the session
 
 
 @pytest.fixture(scope='session')
@@ -30,23 +40,57 @@ def client(app):
     yield app.test_client()
 
 
-@pytest.fixture(scope='module')
-def session():
-    """A fixture creating a session for a module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
+@pytest.fixture(scope="session")
+def db(app):
+    """Creates a temporary copy of the database for testing.
     
-    The scope of the fixture is set to module because setting the scope to `function` would prevent tests from building upon one another--for example, to test loading data with foreign keys in an environment whereCRUD operations were rolled back after every test function, the function would need to load the data from which the foreign keys derive and then the data containing the foreign keys; when the session covers the entire module, the data in the database from a previous test for loading data can be used as the reference for the foreign keys.
+    The variable of the first statement, `_db.app`, is the Flask-SQLAlchemy integration's attribute for the Flask application (context). As a result, the fixture's first statement connects the Flask-SQLAlchemy integration to the Flask application (context) being used for testing.
     """
-    #ToDo: Even with `-s` flag, neither `print` nor `sys.stdout.write` output f-strings to the console, so the exact nature and types of the variables invoked below are unknown
-    engine = db.engine
-    connection = engine.connect()  # Creates a connection to the database
-    transaction = connection.begin()  # Begins a transaction
-    options = dict(bind=connection, binds={})  #ToDo: What does this do?
-    session = db.create_scoped_session(options=options)  # Creates the scoped session; `session = sessionmaker(bind=connection)` in SQLAlchemy alone
-    # db.session = session  #ToDo: What does this do?
+    _db.app = app
+    _db.create_all()
+    yield _db
+    print(f"\nAbout to run `_db.drop_all()` on {_db}.")  # The statement appears in stdout after all the tests in the module, but the database isn't being rolled back
+    _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
+
+
+@pytest.fixture(scope="session")
+def engine():
+    """Creates a SQLAlchemy engine for testing.
+    
+    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
+    """
+    yield create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+
+
+@pytest.fixture(scope='module')
+def session(engine, db):
+    """Creates a database session for each test module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
+    
+    First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object.
+    """
+    #Section: Create Connections
+    #Subsection: Create Connection Object (SQLAlchemy Core Connection)
+    connection = db.engine.connect()  # Tutorials vary between `engine.connect()` or `db.engine.connect()`
+
+    #Subsection: Create Session Object (SQLAlchemy ORM Connection)
+    options = {
+        'bind': connection,  # Tutorials vary between `'bind': connection,` and `'bind': engine,`
+        'binds': {},  # This explicitly empty value seems to exist to force everything in the session object to use the connection object specified in `bind`
+    }
+    session = db.create_scoped_session(options=options)
+
+    #Subsection: Yield Fixture
+    transaction = connection.begin()
+    db.session = session  # Sets the scoped session object created above equal to the Flask-SQLAlchemy integration's attribute for creating scoped sessions
     yield session
+
+    #Section: Close and Remove Connections
+    print(f"\nAbout to close/rollback/remove session {session}, transaction {transaction}, and connection {connection}.")  # The statement appears in stdout after all the tests in the module, but the database isn't being rolled back
+    print("\nFocus on `transaction.rollback()`, `connection.close()`, and ``session.remove()")
+    session.close()
     transaction.rollback()
     connection.close()
-    session.remove()  # `session.close()` in SQLAlchemy alone
+    session.remove()
 
 
 #Section: Data for Sources of Resources and Statistics
@@ -65,8 +109,7 @@ def vendors_relation():
 @pytest.fixture
 def vendorNotes_relation():
     """Creates a dataframe that can be loaded into the `vendorNotes` relation."""
-    # yield relations.vendorNotes_relation()
-    pass
+    yield relations.vendorNotes_relation()
 
 
 @pytest.fixture
@@ -78,14 +121,7 @@ def statisticsSources_relation():
 @pytest.fixture
 def statisticsSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation."""
-    # yield relations.statisticsSourceNotes_relation()
-    pass
-
-
-@pytest.fixture
-def statisticsResourceSources_relation():
-    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
-    yield relations.statisticsResourceSources_relation()
+    yield relations.statisticsSourceNotes_relation()
 
 
 @pytest.fixture
@@ -97,8 +133,13 @@ def resourceSources_relation():
 @pytest.fixture
 def resourceSourceNotes_relation():
     """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation."""
-    # yield relations.resourceSourceNotes_relation()
-    pass
+    yield relations.resourceSourceNotes_relation()
+
+
+@pytest.fixture
+def statisticsResourceSources_relation():
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
+    yield relations.statisticsResourceSources_relation()
 
 
 @pytest.fixture

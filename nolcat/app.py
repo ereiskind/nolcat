@@ -3,12 +3,23 @@ from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+import pandas as pd
+from numpy import datetime64
 
-"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file exclusive to the Docker container and imported into this file.
+"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
-The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no init file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from the `secrets.py` file here.
+The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multiple possible import statements in try-except blocks are used to handle the problem.
 """
-from .. import nolcat_secrets as secrets
+try:
+    import nolcat_secrets as secrets
+except:
+    try:
+        from . import nolcat_secrets as secrets
+    except:
+        try:
+            from nolcat import nolcat_secrets as secrets
+        except:
+            print("None of the provided import statements for `nolcat\\nolcat_secrets.py` worked.")
 
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
@@ -26,29 +37,36 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
+def internal_server_error(error):
+    """Returns the 500 page when a HTTP 500 error is raised."""
+    return render_template('500.html', error=error), 500  #ToDo: This doesn't seem to be working; figure out why
+
+
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_server_error)
     csrf.init_app(app)
     db.init_app(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['UPLOAD_FOLDER'] = './data'
+    app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
 
     #Section: Create Command to Build Schema
-    # Documentation at https://flask.palletsprojects.com/en/2.1.x/appcontext/
+    # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
     @app.cli.command('create-db')
     def create_db():
-        with create_app().app_context():
+        with create_app().app_context():  # Creates an app context using the Flask factory pattern
+            # Per instructions at https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/: "To create the initial database, just import the db object[s]...and run the `SQLAlchemy.create_all()` method"
             from .models import FiscalYears
             from .models import Vendors
             from .models import VendorNotes
             from .models import StatisticsSources
             from .models import StatisticsSourceNotes
-            from .models import StatisticsResourceSources
             from .models import ResourceSources
             from .models import ResourceSourceNotes
+            from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
             from .models import Resources
             from .models import ResourceMetadata
@@ -56,31 +74,32 @@ def create_app():
             from .models import UsageData
             db.create_all()
 
-    #Section: Create Homepage and Register Other Blueprints
-    from ..nolcat import annual_stats
+    #Section: Register Blueprints
+    from nolcat import annual_stats
     app.register_blueprint(annual_stats.bp)
 
-    from ..nolcat import ingest_usage
+    from nolcat import ingest_usage
     app.register_blueprint(ingest_usage.bp)
 
-    from ..nolcat import initialization
+    from nolcat import initialization
     app.register_blueprint(initialization.bp)
 
-    from ..nolcat import login
+    from nolcat import login
     app.register_blueprint(login.bp)
 
-    from ..nolcat import view_resources
+    from nolcat import view_resources
     app.register_blueprint(view_resources.bp)
 
-    from ..nolcat import view_sources
+    from nolcat import view_sources
     app.register_blueprint(view_sources.bp)
 
-    from ..nolcat import view_usage
+    from nolcat import view_usage
     app.register_blueprint(view_usage.bp)
 
-    from ..nolcat import view_vendors
+    from nolcat import view_vendors
     app.register_blueprint(view_vendors.bp)
 
+    #Section: Create Homepage Route
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
@@ -88,3 +107,32 @@ def create_app():
     
     
     return app
+
+
+def date_parser(dates):
+    """The function for parsing dates as part of converting ingested data into a dataframe.
+    
+    The `date_parser` argument of pandas's methods for reading external files to a dataframe traditionally takes a lambda expression, but due to repeated use throughout the program, a reusable function is a better option. Using the `to_datetime` method itself ensures dates will be in ISO format in dataframes, facilitating the upload of those dataframes to the database.
+
+    Args:
+        dates (date, datetime, string): a value in a data file being read into a pandas dataframe being interpreted as a date
+
+    Returns:
+        datetime64[ns]: a datetime value pandas inherits from numpy
+    """
+    return pd.to_datetime(dates, format='%Y-%m-%d', errors='coerce', infer_datetime_format=True)  # The `errors` argument sets all invalid parsing values, including null values and empty strings, to `NaT`, the null value for the pandas datetime data type
+
+
+def last_day_of_month(first_day_of_month):
+    """The function for returning the last day of a given month.
+
+    When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
+
+    Args:
+        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[n] data type, but within this function, the data type is Timestamp
+    
+    Returns:
+        str: the last day of the given month in ISO format
+    """
+    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
+    return year_and_month_string + str(first_day_of_month.days_in_month)
