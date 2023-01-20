@@ -1,13 +1,9 @@
 NoLCAT
 ######
 
-Use Pandas to Transform COUNTER Binary Files
-********************************************
-Initially, the CSV, TSV, or binary files containing COUNTER data were to be transformed from a tabular layout to a normalized one with OpenRefine; further work, however, revealed that using pandas for this transformation would be better. The steps for this are:
-
-2. Have `initialization` blueprint use the new class
-3. Have `ingest_usage` blueprint use the new class
-4. Try to get a `werkzeug.datastructures.ImmutableMultiDict` object into the `UploadCOUNTERReports` test module
+NoLCAT Simplification
+*********************
+At this time, the environment is unable to support the matching and deduplication needed for the distinct identification of all the resources included in the COUNTER reports, which enabled most of NoLCAT's more advanced features. As a result, COUNTER data from uploaded tabular R4 reports, uploaded tabular R5 reports, and R5 SUSHI calls will be loaded into a single relation without further processing. 
 
 To-Do List
 **********
