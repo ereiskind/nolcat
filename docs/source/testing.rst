@@ -38,14 +38,6 @@ This folder contains all the Excel files, which are split into three subfolders:
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 
-
-"\\tests\\data\\COUNTER_reports.py"
----------------------------------------
-
-This module contains the functions:
-
-* ``sample_COUNTER_reports()``: The dataframe returned by a ``UploadCOUNTERReports.create_dataframe()`` method using the "COUNTER_workbooks_for_tests" test data COUNTER reports.
-
 "\\tests\\data\\deduplication_data.py"
 ---------------------------------------
 
@@ -71,6 +63,7 @@ This module contains the functions:
 * ``resourceSourceNotes_relation()``: The dataframe of test data for the `resourceSourceNotes` relation.
 * ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
 * ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
+* ``COUNTERData_relation()``: The dataframe of test data for the `COUNTERData` relation.
 * ``resources_relation()``: The dataframe of test data for the `resources` relation.
 * ``resourceMetadata_relation()``: The dataframe of test data for the `resourceMetadata` relation.
 * ``resourcePlatforms_relation()``: The dataframe of test data for the `resourcePlatforms` relation.
@@ -93,16 +86,7 @@ Test Data Creation Procedure
 3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields. (That worksheet is saved as "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx".)
 4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
 5. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data.json" to the "nolcat_test_data" project.
-6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.COUNTER_reports.sample_COUNTER_reports()".
-7. Undo the steps reordering the columns and creating the ``df`` column in the "nolcat_test_data" project.
-8.  Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_1.json" to the "nolcat_test_data" project.
-9.  Create a filter for blanks on the ``resourceMetadata`` column in the "nolcat_test_data" project and select ``false`` on that filter.
-10. Download the "nolcat_test_data" project in Excel, then use the ``resourceMetadata`` column for the data in "data.relations.resourceMetadata_relation()".
-11. For every value in the ``resource_ID`` column in the "nolcat_test_data" project, add a "None" or a note to the data of the "data.relations.resources_relation()" series.
-12. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_2.json" to the "nolcat_test_data" project.
-13. Download the "nolcat_test_data" project in Excel, then use the ``resourcePlatforms`` column for the data in "data.relations.resourcePlatforms_relation()".
-14. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_3.json" to the "nolcat_test_data" project.
-15. Download the "nolcat_test_data" project in Excel, then use the ``usageData`` column for the data in "data.relations.usageData_relation()".
+6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
 
 SUSHI Variations
 ****************

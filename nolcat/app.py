@@ -68,6 +68,7 @@ def create_app():
             from .models import ResourceSourceNotes
             from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
+            from .models import COUNTERData
             from .models import Resources
             from .models import ResourceMetadata
             from .models import ResourcePlatforms

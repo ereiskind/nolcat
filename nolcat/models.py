@@ -623,6 +623,93 @@ class AnnualUsageCollectionTracking(db.Model):
         pass
 
 
+class COUNTERData(db.Model):
+    """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
+
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types.
+
+    Attributes:
+        self.COUNTER_data_ID (int): the primary key
+        self.statistics_source_ID (int): the foreign key for `statisticsSources`
+        self.resource_name (str): the name of the resource
+        self.publisher (str): the name of the publisher
+        self.publisher_ID (str): the statistics source's ID for the publisher
+        self.platform (str): the name of the resource's platform in the COUNTER report
+        self.authors (str): the authors of the resource
+        self.publication_date (datetime): the resource publication date in the COUNTER IR
+        self.article_version (str): version of article within the publication life cycle from the COUNTER IR
+        self.DOI (str): the DOI for the resource
+        self.proprietary_ID (str): the statistics source's ID for the resource
+        self.ISBN (str): the ISBN for the resource
+        self.print_ISSN (str): the print ISSN for the resource
+        self.online_ISSN (str): the online ISSN for the resource
+        self.URI (str): the statistics source's permalink to the resource
+        self.data_type (str): the COUNTER data type
+        self.section_type (str): the COUNTER section type
+        self.YOP (smallInt): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
+        self.access_type (str): the COUNTER access type
+        self.access_method (str): the COUNTER access method
+        self.parent_title (str): the name of the resource's host
+        self.parent_authors (str): the authors of the resource's host
+        self.parent_publication_date (datetime): the resource's host's publication date in the COUNTER IR
+        self.parent_article_version (str): version of article's host within the publication life cycle from the COUNTER IR
+        self.parent_data_type (str): the COUNTER data type for the resource's host
+        self.parent_DOI (str): the DOI for the resource's host
+        self.parent_proprietary_ID (str): the statistics source's ID for the resource's host
+        self.parent_ISBN (str): the ISBN for the resource's host
+        self.parent_print_ISSN (str): the print ISSN for the resource's host
+        self.parent_online_ISSN (str): the online ISSN for the resource's host
+        self.parent_URI (str): the statistics source's permalink to the resource's host
+        self.metric_type (str): the COUNTER metric type
+        self.usage_date (date): the month when the use occurred, represented by the first day of that month
+        self.usage_count (int): the number of uses
+        self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
+    """
+    __tablename__ = 'COUNTERData'
+
+    COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    resource_name = db.Column(db.String(2000))
+    publisher = db.Column(db.String(225))
+    publisher_ID = db.Column(db.String(50))
+    platform = db.Column(db.String(75))
+    authors = db.Column(db.String(1000))
+    publication_date = db.Column(db.DateTime)
+    article_version = db.Column(db.String(50))
+    DOI = db.Column(db.String(75))
+    proprietary_ID = db.Column(db.String(100))
+    ISBN = db.Column(db.String(20))
+    print_ISSN = db.Column(db.String(10))
+    online_ISSN = db.Column(db.String(10))
+    URI = db.Column(db.String(200))
+    data_type = db.Column(db.String(25))
+    section_type = db.Column(db.String(10))
+    YOP = db.Column(db.SmallInteger)
+    access_type = db.Column(db.String(20))
+    access_method = db.Column(db.String(10))
+    parent_title = db.Column(db.String(2000))
+    parent_authors = db.Column(db.String(1000))
+    parent_publication_date = db.Column(db.DateTime)
+    parent_article_version = db.Column(db.String(50))
+    parent_data_type = db.Column(db.String(25))
+    parent_DOI = db.Column(db.String(75))
+    parent_proprietary_ID = db.Column(db.String(100))
+    parent_ISBN = db.Column(db.String(20))
+    parent_print_ISSN = db.Column(db.String(10))
+    parent_online_ISSN = db.Column(db.String(10))
+    parent_URI = db.Column(db.String(200))
+    metric_type = db.Column(db.String(75))
+    usage_date = db.Column(db.Date)
+    usage_count = db.Column(db.Integer)
+    report_creation_date = db.Column(db.DateTime)
+
+
+    def __repr__(self):
+        """The printable representation of the record."""
+        #ToDo: Create an f-string to serve as a printable representation of the record
+        pass
+
+
 class Resources(db.Model):
     """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
     

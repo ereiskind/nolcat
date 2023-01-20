@@ -6,7 +6,6 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
-from data import COUNTER_reports
 from data import deduplication_data
 
 relation_name = pyip.inputMenu(
@@ -21,11 +20,11 @@ relation_name = pyip.inputMenu(
         "resourceSourceNotes_relation",
         "statisticsResourceSources_relation",
         "annualUsageCollectionTracking_relation",
+        "COUNTERData_relation",
         "resources_relation",
         "resourceMetadata_relation",
         "resourcePlatforms_relation",
         "usageData_relation",
-        "sample_COUNTER_reports",
         "sample_normalized_resource_data",
         "matched_records",
         "matches_to_manually_confirm",
@@ -53,6 +52,8 @@ elif relation_name == "statisticsResourceSources_relation":
     relation_data = relations.statisticsResourceSources_relation()
 elif relation_name == "annualUsageCollectionTracking_relation":
     relation_data = relations.annualUsageCollectionTracking_relation()
+elif relation_name == "COUNTERData_relation":
+    relation_data = relations.COUNTERData_relation()
 elif relation_name == "resources_relation":
     relation_data = relations.resources_relation()
 elif relation_name == "resourceMetadata_relation":
@@ -61,8 +62,6 @@ elif relation_name == "resourcePlatforms_relation":
     relation_data = relations.resourcePlatforms_relation()
 elif relation_name == "usageData_relation":
     relation_data = relations.usageData_relation()
-elif relation_name == "sample_COUNTER_reports":
-    relation_data = COUNTER_reports.sample_COUNTER_reports()
 elif relation_name == "sample_normalized_resource_data":
     relation_data = deduplication_data.sample_normalized_resource_data()
 elif relation_name == "matched_records":

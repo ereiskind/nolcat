@@ -148,6 +148,12 @@ def annualUsageCollectionTracking_relation():
     yield relations.annualUsageCollectionTracking_relation()
 
 
+@pytest.fixture
+def COUNTERData_relation():
+    """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
+    yield relations.COUNTERData_relation()
+
+
 #Section: Data for Resources (from samples based on ProQuest, EBSCOhost, Gale Cengage Learning reports)
 @pytest.fixture
 def resources_relation():
