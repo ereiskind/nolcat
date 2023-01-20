@@ -53,14 +53,8 @@ def StatisticsSources_fixture(CREDENTIALS_FILE_PATH, most_recent_month_with_usag
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         retrieval_codes.append(interface)  #ALERT: placeholder for below
-        #ToDo: Run query below against database
-            # SELECT COUNT(*)
-            # FROM usageData
-            # JOIN resourcePlatforms ON resourcePlatforms.Resource_Platform_ID=usageData.Resource_Platform_ID
-            # JOIN statisticsSources ON statisticsSources.Statistics_Source_ID=resourcePlatforms.Interface
-            # WHERE statisticsSources.Statistics_Source_Retrieval_Code = {code}
-            # AND WHERE usageData.Usage_Date = {str(most_recent_month_with_usage)};
-        #ToDo: if the above returns an empty set:
+        #ToDo: Run query to check if usage for the source and date combination exists
+        #ToDo: if the query returns an empty set:
             #ToDo: retrieval_codes.append(interface)
     
     #Section: Create Dataframe

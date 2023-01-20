@@ -710,43 +710,6 @@ class COUNTERData(db.Model):
         pass
 
 
-class ResourcePlatforms(db.Model):
-    """The class representation of the `resourcePlatforms` relation, which contains metadata from COUNTER reports specific to a statistics source.
-    
-    Attributes:
-        self.resource_platform_ID (int): the primary key
-        self.publisher (str): the name of the publisher
-        self.publisher_ID (str): the statistics source's ID for the publisher
-        self.platform (str): the name of the resource's platform in the COUNTER report
-        self.publication_date (str): the publisher's resource release date in the COUNTER IR  #ToDo: If this is always a date data type in the IR, it can be changed to a datetime in the database
-        self.article_version (str): version of article within the publication life cycle from the COUNTER IR
-        self.proprietary_ID (str): the statistics source's ID for the resource
-        self.URI (str): the statistics source's permalink to the resource
-        self.interface (int): the foreign key for `statisticsSources`
-        self.resource_ID (int): the foreign key for `resources`
-    """
-    __tablename__ = 'resourcePlatforms'
-
-    resource_platform_ID = db.Column(db.Integer, primary_key=True)
-    publisher = db.Column(db.String(225))
-    publisher_ID = db.Column(db.String(50))
-    platform = db.Column(db.String(75))
-    publication_date = db.Column(db.String(200))
-    article_version = db.Column(db.String(50))
-    proprietary_ID = db.Column(db.String(100))
-    URI = db.Column(db.String(200))
-    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
-
-    resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
-
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
 class UsageData(db.Model):
     """The class representation of the `usageData` relation, which contains the COUNTER usage statistics and the fields by which they're broken down.
     
