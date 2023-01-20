@@ -49,16 +49,4 @@ def sample_COUNTER_reports():
 def test_create_dataframe(sample_COUNTER_report_workbooks, sample_COUNTER_reports):
     """Tests transforming multiple Excel workbooks with tabular COUNTER data into a single dataframe ready for the RawCOUNTERReport class."""
     df = UploadCOUNTERReports(sample_COUNTER_report_workbooks).create_dataframe()
-    field_order = df.columns.tolist()
-    
-    try:
-        print(f"Dataframe comparison, original index:\n{df[field_order].compare(sample_COUNTER_reports[field_order])}")
-    except Exception as e:
-        print(f"`df[field_order].compare(sample_COUNTER_reports[field_order])` raised the error {format(e)}")
-    
-    try:
-        print(f"Dataframe comparison, resource names used as index:\n{df[field_order].set_index('resource_name').compare(sample_COUNTER_reports[field_order].set_index('resource_name'))}")
-    except Exception as e:
-        print(f"`df[field_order].set_index('resource_name').compare(sample_COUNTER_reports[field_order].set_index('resource_name'))` raised the error {format(e)}")
-    
     assert_frame_equal(df, sample_COUNTER_reports, check_like=True)  # Keyword argument allows test to pass if fields aren't in the same order
