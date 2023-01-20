@@ -6,7 +6,6 @@ from flask import request
 from flask import abort
 from flask import current_app
 from flask import send_from_directory
-from werkzeug.utils import secure_filename
 import pandas as pd
 from sqlalchemy.sql import text
 from sqlalchemy import exc
@@ -18,7 +17,7 @@ from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
-logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
 #Section: Uploads and Downloads
@@ -257,9 +256,9 @@ def collect_initial_relation_data():
 
 @bp.route('/initialization-page-2', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
-    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the reformatted historical COUNTER reports so the former is loaded into the database and the latter is divided and deduped.
+    """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
-    Upon redirect, this route function renders the page showing the template for the `annualUsageCollectionTracking` relation, the JSONs for transforming COUNTER R4 reports into formats that can be ingested by NoLCAT, and the form to upload the filled-out template and transformed COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, saves the COUNTER data as a `RawCOUNTERReport` object in a temporary file, then redirects to the `determine_if_resources_match` route function.
+    Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
     form = AUCTAndCOUNTERForm()
     
@@ -314,91 +313,73 @@ def collect_AUCT_and_historical_COUNTER_data():
         #Subsection: Load `annualUsageCollectionTracking` into Database
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
+            index_col=['AUCT_statistics_source', 'AUCT_fiscal_year'],
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        #AUCT_dataframe['notes'] = AUCT_dataframe['notes'].encode('utf-8').decode('unicode-escape')
+        if AUCT_dataframe.isnull().all(axis=None) == True:
+            logging.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
+            return render_template('initialization/empty_dataframes_warning.html', relation="`annualUsageCollectionTracking`")
+        
+        #ToDo: AUCT_dataframe['collection_status'] is an Enum; does anything special need to happen here? Should there be a check that all the values in the field are valid before the load into the database?
+        AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].astype("string")
+        AUCT_dataframe['notes'] = AUCT_dataframe['notes'].astype("string")
+        logging.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
+        AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        AUCT_dataframe['notes'] = AUCT_dataframe['notes'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
+        logging.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
         AUCT_dataframe.to_sql(
             'annualUsageCollectionTracking',
             con=db.engine,
             if_exists='append',
         )
+        logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
         #Subsection: Save COUNTER Reports in a Single Temp Tabular File
         COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
-        COUNTER_reports_df.to_csv(
-            'str of a file path',  #ToDo: Determine where to save file
-            na_rep='`None`',
-            index_label='index',
-            encoding='utf-8',
-            date_format='%Y-%m-%d',  #ToDo: Double check this is correct for setting ISO format
-            errors='backslashreplace',
-        )
+        #ToDo: Does there need to be a warning here about if the above method returns no data?
+        #ToDo: COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+        #ToDo: COUNTER_reports_df.to_sql(
+        #     'COUNTERData',
+        #     con=db.engine,
+        #     if_exists='append',
+        # )
+        logging.debug("Relation `COUNTERData` loaded into the database")
+        logging.info("All relations loaded into the database")
 
-        return redirect(url_for('determine_if_resources_match'))
+        return redirect(url_for('upload_historical_non_COUNTER_usage'))
 
     else:
         return abort(404)
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
-def determine_if_resources_match():
-    #ToDo: Write actual docstring
-    """Basic description of what the function does
-    
-    The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
-    """
-    '''
-    form = FormClass()
-    if request.method == 'GET':
-        #ToDo: Anything that's needed before the page the form is on renders
-        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
-    elif form.validate_on_submit():
-        #ToDo: Process data from `form`
-        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-    else:
-        return abort(404)
-    '''
-    pass
-
-
-#ToDo: Create a route and page for picking default metadata values
-
-
-#ToDo: @bp.route('/historical-non-COUNTER-data')
-#ToDo: def upload_historical_non_COUNTER_usage():
+def upload_historical_non_COUNTER_usage():
+    """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
-    '''
-    form = FormClass()
-    if request.method == 'GET':
-        #ToDo: Anything that's needed before the page the form is on renders
-        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
-    elif form.validate_on_submit():
-        #ToDo: Process data from `form`
-        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-    else:
-        return abort(404)
-    '''
-
-
-@bp.route('/database-creation-complete', methods=['GET', 'POST'])
-def data_load_complete():
-    """Returns a page showing data just added to the database upon its successful loading into the database."""
-    #ToDo: Write actual docstring
-    """Basic description of what the function does
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
     '''
     form = FormClass()
     if request.method == 'GET':
-        #ToDo: Anything that's needed before the page the form is on renders
-        return render_template('blueprint_name/page-the-form-is-on.html', form=form)
+        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
+        #ToDo: Create an iterable to pass all the records returned by the above to a form
+        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
+        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Process data from `form`
+        #ToDo: For each file uploaded in the form
+            #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
+            #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
         return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
     else:
         return abort(404)
     '''
     pass
+
+
+@bp.route('/initialization-page-4', methods=['GET', 'POST'])
+def data_load_complete():
+    """This route function indicates the successful completion of the wizard and initialization of the database."""
+    return render_template('initialization/show-loaded-data.html')
