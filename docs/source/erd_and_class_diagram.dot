@@ -228,32 +228,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_usageData {
-        label="usageData"
-
-        // Nouns: Classes or Attributes
-        usage_data_ID [shape="note"]
-        resource_platform_ID_in_usageData [
-            label="resource_platform_ID"
-            shape="folder"
-        ]
-        __metric_type
-        __usage_date
-        usage_count [
-            shape="record"
-            label="\N|usage stats|e-resources usage numbers"
-        ]
-        __YOP
-        __access_type
-        __access_method
-        data_type
-        __section_type
-        __report_creation_date // For SUSHI harvested R5 reports only
-        
-        // Methods
-    }
-
-
     subgraph cluster_RawCOUNTERReport {
         label="CLASS: RawCOUNTERReport"
 
@@ -401,13 +375,6 @@ digraph erd_and_classes {
     ]
 
 
-    statistics_source_ID -> interface [
-        dir="both"
-        arrowhead="crowodot"
-        arrowtail="teetee"
-    ]
-
-
     resource_source_ID -> SRS_resource_source [
         dir="both"
         arrowhead="crowtee"
@@ -418,13 +385,6 @@ digraph erd_and_classes {
     resource_source_ID -> resource_source_ID_in_resourceSourceNotes [
         dir="both"
         arrowhead="crowodot"
-        arrowtail="teetee"
-    ]
-
-
-    resource_platform_ID -> resource_platform_ID_in_usageData [
-        dir="both"
-        arrowhead="crowtee"
         arrowtail="teetee"
     ]
 

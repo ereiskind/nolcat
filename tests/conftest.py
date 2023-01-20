@@ -93,7 +93,7 @@ def session(engine, db):
     session.remove()
 
 
-#Section: Data for Sources of Resources and Statistics
+#Section: Test Data for Relations
 @pytest.fixture
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
@@ -152,10 +152,3 @@ def annualUsageCollectionTracking_relation():
 def COUNTERData_relation():
     """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
     yield relations.COUNTERData_relation()
-
-
-#Section: Data for Resources (from samples based on ProQuest, EBSCOhost, Gale Cengage Learning reports)
-@pytest.fixture
-def usageData_relation():
-    """Creates a dataframe that can be loaded into the `usageData` relation."""
-    yield relations.usageData_relation()
