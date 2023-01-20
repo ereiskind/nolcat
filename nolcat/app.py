@@ -69,7 +69,6 @@ def create_app():
             from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
             from .models import COUNTERData
-            from .models import Resources
             from .models import ResourceMetadata
             from .models import ResourcePlatforms
             from .models import UsageData
@@ -87,9 +86,6 @@ def create_app():
 
     from nolcat import login
     app.register_blueprint(login.bp)
-
-    from nolcat import view_resources
-    app.register_blueprint(view_resources.bp)
 
     from nolcat import view_sources
     app.register_blueprint(view_sources.bp)

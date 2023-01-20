@@ -710,29 +710,6 @@ class COUNTERData(db.Model):
         pass
 
 
-class Resources(db.Model):
-    """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
-    
-    Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
-    
-    Attributes:
-        self.resource_ID (int): the primary key
-        self.note (text): qualitative collections management information for the resource
-    """
-    __tablename__ = 'resources'
-
-    resource_ID = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
-
-    resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
-
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
 class ResourceMetadata(db.Model):
     """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
     

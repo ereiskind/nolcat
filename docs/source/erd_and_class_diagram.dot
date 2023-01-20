@@ -228,39 +228,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_resources {
-        label="resources"
-
-        // Attributes
-        resource_ID [shape="note"]
-        data_type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
-        __section_type // This is in R5 IR only-how to add it? Does it go here?
-        note
-
-        // Methods
-    }
-
-
-    subgraph cluster_resourceMetadata {
-        label="resourceMetadata"
-
-        // Attributes
-        resource_metadata_ID [shape="note"]
-        metadata_field
-        metadata_value [
-            shape="record"
-            label="\N|title (R4)|title (TR)|database (DR)|item (IR)|DOI|ISBN|print ISSN|online ISSN"
-        ]
-        default
-        resource_ID_in_resourceMetadata [
-            label="resource_ID"
-            shape="folder"
-        ]
-
-        // Methods
-    }
-
-
     subgraph cluster_resourcePlatforms {
         label="resourcePlatforms"
 
@@ -476,20 +443,6 @@ digraph erd_and_classes {
     resource_source_ID -> resource_source_ID_in_resourceSourceNotes [
         dir="both"
         arrowhead="crowodot"
-        arrowtail="teetee"
-    ]
-
-
-    resource_ID -> resource_ID_in_resourceMetadata [
-        dir="both"
-        arrowhead="crowtee"
-        arrowtail="teetee"
-    ]
-
-
-    resource_ID -> resource_ID_in_resourcePlatforms [
-        dir="both"
-        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
         arrowtail="teetee"
     ]
 
