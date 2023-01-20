@@ -58,7 +58,7 @@ def test_create_dataframe(sample_COUNTER_report_workbooks, sample_COUNTER_report
     
     try:
         print(f"Dataframe comparison, resource names used as index:\n{df[field_order].set_index('resource_name').compare(sample_COUNTER_reports[field_order].set_index('resource_name'))}")
-    except:
+    except Exception as e:
         print(f"`df[field_order].set_index('resource_name').compare(sample_COUNTER_reports[field_order].set_index('resource_name'))` raised the error {format(e)}")
     
     assert assert_frame_equal(df, sample_COUNTER_reports, check_like=True)  # Keyword argument allows test to pass if fields aren't in the same order
