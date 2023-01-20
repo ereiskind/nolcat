@@ -381,7 +381,6 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-            #ALERT: `RawCOUNTERReport` requires the JSON (from the API) be converted into a dataframe
                 #ToDo: Old note says "TR can contain item listed with Section_Type value and without, creating duplication issue"--does the JSON to dataframe conversion need to include a check for this?
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
