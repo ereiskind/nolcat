@@ -180,7 +180,7 @@ Organize Documentation Layout
 Improve UI
 ----------
 * Clean up CSS file
-* Create Jinja template header and footer in "nolcat/templates/layout.html"
+* Create Jinja template header and footer in "nolcat/templates/layout.html" *branch exists*
 
 
 TaDS Assistance Required
