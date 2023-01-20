@@ -710,51 +710,6 @@ class COUNTERData(db.Model):
         pass
 
 
-class ResourceMetadata(db.Model):
-    """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
-    
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation. Additionally, including parent metadata from IR reports can be a potential starting point for matching parent and child resources.
-        Resource_Name
-        DOI
-        ISBN
-        Print_ISSN
-        Online_ISSN
-        Authors
-        Parent_Title
-        Parent_Authors
-        Parent_Publication_Date
-        Parent_Article_Version
-        Parent_Data_Type
-        Parent_DOI
-        Parent_Proprietary_ID
-        Parent_ISBN
-        Parent_Print_ISSN
-        Parent_Online_ISSN
-        Parent_URI
-    
-    Attributes:
-        self.resource_metadata_ID (int): the primary key
-        self.metadata_field (str): the metadata field label  #ToDo: Should this actually be an `enum`?
-        self.metadata_value (str): the metadata value
-        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin?
-        self.default (bool): indicates if the value is the default for the field and title
-        self.resource_ID (int): the foreign key for `resources`
-    """
-    __tablename__ = 'resourceMetadata'
-
-    resource_metadata_ID = db.Column(db.Integer, primary_key=True)
-    metadata_field = db.Column(db.String(35))
-    metadata_value = db.Column(db.String(2000))
-    default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
-    
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
 class ResourcePlatforms(db.Model):
     """The class representation of the `resourcePlatforms` relation, which contains metadata from COUNTER reports specific to a statistics source.
     

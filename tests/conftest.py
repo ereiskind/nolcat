@@ -156,12 +156,6 @@ def COUNTERData_relation():
 
 #Section: Data for Resources (from samples based on ProQuest, EBSCOhost, Gale Cengage Learning reports)
 @pytest.fixture
-def resourceMetadata_relation():
-    """Creates a dataframe that can be loaded into the `resourceMetadata` relation."""
-    yield relations.resourceMetadata_relation()
-
-
-@pytest.fixture
 def resourcePlatforms_relation():
     """Creates a dataframe that can be loaded into the `resourcePlatforms` relation."""
     yield relations.resourcePlatforms_relation()

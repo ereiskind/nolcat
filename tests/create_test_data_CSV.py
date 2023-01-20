@@ -21,7 +21,6 @@ relation_name = pyip.inputMenu(
         "statisticsResourceSources_relation",
         "annualUsageCollectionTracking_relation",
         "COUNTERData_relation",
-        "resourceMetadata_relation",
         "resourcePlatforms_relation",
         "usageData_relation",
         "sample_normalized_resource_data",
@@ -53,8 +52,6 @@ elif relation_name == "annualUsageCollectionTracking_relation":
     relation_data = relations.annualUsageCollectionTracking_relation()
 elif relation_name == "COUNTERData_relation":
     relation_data = relations.COUNTERData_relation()
-elif relation_name == "resourceMetadata_relation":
-    relation_data = relations.resourceMetadata_relation()
 elif relation_name == "resourcePlatforms_relation":
     relation_data = relations.resourcePlatforms_relation()
 elif relation_name == "usageData_relation":

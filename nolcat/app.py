@@ -69,7 +69,6 @@ def create_app():
             from .models import StatisticsResourceSources
             from .models import AnnualUsageCollectionTracking
             from .models import COUNTERData
-            from .models import ResourceMetadata
             from .models import ResourcePlatforms
             from .models import UsageData
             db.create_all()
