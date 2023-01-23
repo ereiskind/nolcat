@@ -222,7 +222,7 @@ class StatisticsSources(db.Model):
     
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
-        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
         collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
         upload_R4_report: #ToDo: Copy first line of docstring here
         upload_R5_report: #ToDo: Copy first line of docstring here
@@ -301,9 +301,9 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
-        """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+        """Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
-        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a RawCOUNTERReport object for loading into the database. This is a private method meant to be called by other methods which will provide additional context at the method call and wrap the result in the RawCOUNTERReport class.
+        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
@@ -381,7 +381,6 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-                #ToDo: Old note says "TR can contain item listed with Section_Type value and without, creating duplication issue"--does the JSON to dataframe conversion need to include a check for this?
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
