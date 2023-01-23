@@ -64,7 +64,7 @@ class FiscalYears(db.Model):
         calculate_ARL_19: #ToDo: Copy first line of docstring here
         calculate_ARL_20: #ToDo: Copy first line of docstring here
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
-        collect_fiscal_year_usage_statistics: A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
@@ -125,12 +125,12 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def collect_fiscal_year_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage for the given fiscal year
+            None: no return value is needed, so the default `None` is used
         """
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
@@ -138,7 +138,12 @@ class FiscalYears(db.Model):
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: dfs.append(df)
         #ToDo: df = pd.concat(dfs)
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
