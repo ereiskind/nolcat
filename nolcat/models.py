@@ -559,7 +559,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
-        collect_annual_usage_statistics: A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'annualUsageCollectionTracking'
@@ -596,19 +596,24 @@ class AnnualUsageCollectionTracking(db.Model):
 
     @hybrid_method
     def collect_annual_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given fiscal year
+            None: no return value is needed, so the default `None` is used
         """
         #ToDo: start_date = start date for FY
         #ToDo: end_date = end date for FY
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
