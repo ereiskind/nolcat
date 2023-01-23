@@ -224,8 +224,6 @@ class StatisticsSources(db.Model):
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
-        upload_R4_report: #ToDo: Copy first line of docstring here
-        upload_R5_report: #ToDo: Copy first line of docstring here
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
@@ -409,18 +407,6 @@ class StatisticsSources(db.Model):
         #ToDo:     if_exists='append',
         #ToDo: )
         #ToDo: add logging statement
-        pass
-
-
-    @hybrid_method
-    def upload_R4_report(self):
-        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
-        pass
-
-
-    @hybrid_method
-    def upload_R5_report(self):
-        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
         pass
 
 
