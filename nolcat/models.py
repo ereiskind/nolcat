@@ -223,7 +223,7 @@ class StatisticsSources(db.Model):
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
-        collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         upload_R4_report: #ToDo: Copy first line of docstring here
         upload_R5_report: #ToDo: Copy first line of docstring here
         add_note: #ToDo: Copy first line of docstring here
@@ -391,19 +391,24 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
-        """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given date range
+            None: no return value is needed, so the default `None` is used
         """
-        #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        #ToDo: return RawCOUNTERReport(above dataframe)
+        #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
