@@ -38,16 +38,6 @@ This folder contains all the Excel files, which are split into three subfolders:
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 
-"\\tests\\data\\deduplication_data.py"
----------------------------------------
-
-This module contains the functions:
-
-* ``sample_normalized_resource_data()``: The dataframe returned by a ``RawCOUNTERReport.normalized_resource_data()`` method when the underlying dataframe has resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports.
-* ``matched_records()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport``.
-* ``matches_to_manually_confirm()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
-* ``matched_records_including_sample_normalized_resource_data()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**.
-* ``matches_to_manually_confirm_including_sample_normalized_resource_data()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**; a dictionary which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
 
 "\\tests\\data\\relations.py"
 -----------------------------

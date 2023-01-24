@@ -228,19 +228,6 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_RawCOUNTERReport {
-        label="CLASS: RawCOUNTERReport"
-
-        // Attributes
-        report_dataframe
-
-        // Methods
-        _create_normalized_resource_data_argument [shape="Mrecord"]
-        perform_deduplication_matching [shape="Mrecord"]
-        load_data_into_database [shape="Mrecord"]
-    }
-
-
     subgraph cluster_SUSHICallAndResponse {
         label="CLASS: SUSHICallAndResponse"
 
@@ -286,10 +273,6 @@ digraph erd_and_classes {
         login [
             shape="record"
             label="\N|librarians (as users)"
-        ]
-        view_resources [
-            shape="record"
-            label="\N"
         ]
         view_sources [
             shape="record"

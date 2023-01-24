@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
     <title>Database Initialization Wizard 3</title>
 </head>
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
+    <!--
     <ol>
         <li><h2>Upload Historical R4 Usage</h2>
             <p>Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.</p>
@@ -26,7 +26,16 @@
             </ol>
         </li>
     </ol>
+    -->
 
+    <!--
+    form = FormClass()
+    if request.method == 'GET':
+        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
+        #ToDo: Create an iterable to pass all the records returned by the above to a form
+        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
+        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
+    -->
     
 </body>
 </html>

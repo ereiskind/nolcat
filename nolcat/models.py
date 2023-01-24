@@ -64,7 +64,7 @@ class FiscalYears(db.Model):
         calculate_ARL_19: #ToDo: Copy first line of docstring here
         calculate_ARL_20: #ToDo: Copy first line of docstring here
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
-        collect_fiscal_year_usage_statistics: A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
@@ -125,12 +125,12 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def collect_fiscal_year_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage for the given fiscal year
+            None: no return value is needed, so the default `None` is used
         """
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
@@ -138,7 +138,12 @@ class FiscalYears(db.Model):
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: dfs.append(df)
         #ToDo: df = pd.concat(dfs)
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
@@ -222,10 +227,8 @@ class StatisticsSources(db.Model):
     
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
-        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
-        collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
-        upload_R4_report: #ToDo: Copy first line of docstring here
-        upload_R5_report: #ToDo: Copy first line of docstring here
+        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
+        collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
@@ -301,9 +304,9 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
-        """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+        """Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
-        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a RawCOUNTERReport object for loading into the database. This is a private method meant to be called by other methods which will provide additional context at the method call and wrap the result in the RawCOUNTERReport class.
+        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
@@ -381,8 +384,6 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-            #ALERT: `RawCOUNTERReport` requires the JSON (from the API) be converted into a dataframe
-                #ToDo: Old note says "TR can contain item listed with Section_Type value and without, creating duplication issue"--does the JSON to dataframe conversion need to include a check for this?
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
@@ -393,31 +394,24 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
-        """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given date range
+            None: no return value is needed, so the default `None` is used
         """
-        #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        #ToDo: return RawCOUNTERReport(above dataframe)
-        pass
-
-
-    @hybrid_method
-    def upload_R4_report(self):
-        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
-        pass
-
-
-    @hybrid_method
-    def upload_R5_report(self):
-        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
+        #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
@@ -565,7 +559,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
-        collect_annual_usage_statistics: A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'annualUsageCollectionTracking'
@@ -602,19 +596,24 @@ class AnnualUsageCollectionTracking(db.Model):
 
     @hybrid_method
     def collect_annual_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given fiscal year
+            None: no return value is needed, so the default `None` is used
         """
         #ToDo: start_date = start date for FY
         #ToDo: end_date = end date for FY
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.to_sql(
+        #ToDo:     'COUNTERData',
+        #ToDo:     con=db.engine,
+        #ToDo:     if_exists='append',
+        #ToDo: )
+        #ToDo: add logging statement
         pass
 
 
