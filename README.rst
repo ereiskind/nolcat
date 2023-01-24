@@ -70,7 +70,8 @@ Test Modules
 ``nolcat.modules.FiscalYears`` Class
 ------------------------------------
 * Finish ``FiscalYears.collect_fiscal_year_usage_statistics()``
-* Write tests for ``models.FiscalYears``: ``collect_fiscal_year_usage_statistics()``
+* Finish ``FiscalYears.create_usage_tracking_records_for_fiscal_year()``
+* Write tests for ``models.FiscalYears``: ``collect_fiscal_year_usage_statistics()``, ``FiscalYears.create_usage_tracking_records_for_fiscal_year()``
 
 ``nolcat.ingest_usage`` Blueprint
 ---------------------------------
@@ -81,3 +82,7 @@ Test Modules
 
 To Complete NoLCAT
 ==================
+
+``nolcat.annual_stats`` Blueprint
+---------------------------------
+* Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)

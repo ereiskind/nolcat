@@ -130,6 +130,7 @@ class FiscalYears(db.Model):
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: dfs.append(df)
+            #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.to_sql(
         #ToDo:     'COUNTERData',
