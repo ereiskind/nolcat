@@ -94,6 +94,14 @@ To Complete NoLCAT
 * Write ``Vendors.add_note()`` method
 * Write tests for ``models.Vendors``: ``get_statisticsSources()``, ``get_resourceSources()``, ``add_note()``
 
+``nolcat.models.ResourceSources`` Class
+---------------------------------------
+* Finish ``ResourceSources.change_StatisticsSource()`` method
+* Write ``ResourceSources.add_access_stop_date()`` method
+* Write ``ResourceSources.remove_access_stop_date()`` method
+* Write ``ResourceSources.add_note()`` method
+* Write tests for ``models.ResourceSources``: ``change_StatisticsSource()``, ``add_access_stop_date()``, ``remove_access_stop_date()``, ``add_note()``
+
 ``nolcat.annual_stats`` Blueprint
 ---------------------------------
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)

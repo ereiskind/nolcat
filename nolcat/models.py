@@ -495,6 +495,7 @@ class ResourceSources(db.Model):
     Methods:
         add_access_stop_date: #ToDo: Copy first line of docstring here
         remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        change_StatisticsSource: Change the current statistics source for the resource source.
         add_note:  #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'resourceSources'
@@ -522,6 +523,28 @@ class ResourceSources(db.Model):
     @hybrid_method
     def remove_access_stop_date(self):
         #ToDo: Null value in access_stop_date when current_access goes from False to True
+        pass
+
+
+    @hybrid_method
+    def change_StatisticsSource(self, statistics_source_PK):
+        """Change the current statistics source for the resource source.
+
+        This method changes the `True` value in the `StatisticsResourceSources` record for the given resource source to `False`, then adds a new record creating a connection between the given statistics source and resource source.
+
+        Args:
+            statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
+        
+        Returns:
+            None: no return value is needed, so the default `None` is used
+        """
+        #ToDo: SQL_query = f'''
+        #ToDo:     UPDATE 
+        #ToDo:     SET current_statistics_source = false
+        #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
+        #ToDo: '''
+        #ToDo: Apply above query to database
+        #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
         pass
 
 
