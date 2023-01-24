@@ -41,5 +41,43 @@ Configure Flask-User
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
 
+Test Modules
+------------
+* Finish pytest configuration and/or fixtures so data loaded into database during tests automatically rolls back once pytest session finishes
+
+``nolcat.initialization`` Blueprint
+-----------------------------------
+* Finish writing creation of AUCT template file
+* Finish writing ingest of dataframe from tabular COUNTER reports into database
+* Write ``upload_historical_non_COUNTER_usage()`` route
+* Write form class for non-COUNTER usage downloads
+* Write "initial-data-upload-3.html" page
+* Write tests for ``nolcat.initialization`` blueprint
+
+``nolcat.modules.StatisticsSources`` Class
+------------------------------------------
+* Finish ``StatisticsSources.fetch_SUSHI_information()``
+* Finish ``StatisticsSources._harvest_R5_SUSHI()``, including an exception for MathSciNet, which doesn't have a `/status` endpoint but does return reports
+* Finish ``StatisticsSources.collect_usage_statistics()``
+* Write ``StatisticsSources.add_note`` method
+* Write tests for ``models.StatisticsSources``: ``fetch_SUSHI_information()`` for both API and display, ``_harvest_R5_SUSHI()``, ``collect_usage_statistics()``, ``add_note()``
+
+``nolcat.modules.AnnualUsageCollectionTracking`` Class
+------------------------------------------------------
+* Finish ``AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
+* Write tests for ``models.AnnualUsageCollectionTracking``: ``collect_annual_usage_statistics()``
+
+``nolcat.modules.FiscalYears`` Class
+------------------------------------
+* Finish ``FiscalYears.collect_fiscal_year_usage_statistics()``
+* Write tests for ``models.FiscalYears``: ``collect_fiscal_year_usage_statistics()``
+
+``nolcat.ingest_usage`` Blueprint
+---------------------------------
+* Finish ``upload_COUNTER_reports()``, ``harvest_SUSHI_statistics()``, ``upload_non_COUNTER_reports()`` routes
+* Finish the ``SUSHIParametersForm()`` class
+* Create "make-SUSHI-call.html", "upload-COUNTER-reports.html", and "save-non-COUNTER-usage.html" pages
+* Write tests for all functions
+
 To Complete NoLCAT
 ==================
