@@ -14,29 +14,22 @@ from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://py
 
 from .app import db
 
-#ToDo: Should the values in the `__table_args__` dictionaries be f-strings referencing `Database_Credentials.Database`?
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
 
 def PATH_TO_CREDENTIALS_FILE():
-    """Contains the constant for the path to the SUSHI credentials file.
+    """Provides the file path to the SUSHI credentials file as a string.
     
-    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows. In test modules for classes that use this constant, the first function is a fixture that will skip all other tests in the module if the function doesn't return a string.
+    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    AWS_path = Path(os.path.abspath(os.path.dirname(__file__))) / Path('R5_SUSHI_credentials.json')
-    if AWS_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in AWS at `{AWS_path}`.")
-        return str(AWS_path)
-
-    library_network_path = Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_credentials.json')
-    if library_network_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in the FSU Libraries networked drive at `{library_network_path}`.")
-        return str(library_network_path)
-
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    if file_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file was found at at `{file_path}`.")
+        return str(file_path)
     logging.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()
 
