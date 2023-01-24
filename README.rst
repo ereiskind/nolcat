@@ -83,6 +83,10 @@ Test Modules
 To Complete NoLCAT
 ==================
 
+``nolcat`` Modules
+------------------
+* Write ``__repr__`` values in ``nolcat.models``
+
 ``nolcat.models.Vendors`` Class
 -------------------------------
 * Finish ``Vendors.get_statisticsSources()`` method
