@@ -11,6 +11,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
+import pandas as pd
 
 from .app import db
 
@@ -150,8 +151,8 @@ class Vendors(db.Model):
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
 
     Methods:
-        get_SUSHI_credentials_from_Alma: #ToDo: Copy first line of docstring here
-        get_SUSHI_credentials_from_JSON: #ToDo: Copy first line of docstring here
+        get_statisticsSources: Shows all the statistics sources associated with the vendor.
+        get_resourceSources: Shows all the resource sources associated with the vendor.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'vendors'
@@ -170,12 +171,51 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_Alma(self):
+    def get_statisticsSources(self):
+        """Shows all the statistics sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `statisticsSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             statistics_source_ID,
+        #ToDo:             statistics_source_name,
+        #ToDo:             statistics_source_retrieval_code
+        #ToDo:         FROM statisticsSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='statistics_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_JSON(self):
+    def get_resourceSources(self):
+        """Shows all the resource sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `resourceSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             resource_source_ID,
+        #ToDo:             resource_source_name,
+        #ToDo:             source_in_use,
+        #ToDo:             use_stop_date
+        #ToDo:         FROM resourceSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='resource_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 

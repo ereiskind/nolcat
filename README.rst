@@ -83,6 +83,13 @@ Test Modules
 To Complete NoLCAT
 ==================
 
+``nolcat.models.Vendors`` Class
+-------------------------------
+* Finish ``Vendors.get_statisticsSources()`` method
+* Finish ``Vendors.get_resourceSources()`` method
+* Write ``Vendors.add_note()`` method
+* Write tests for ``models.Vendors``: ``get_statisticsSources()``, ``get_resourceSources()``, ``add_note()``
+
 ``nolcat.annual_stats`` Blueprint
 ---------------------------------
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)
