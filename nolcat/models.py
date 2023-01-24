@@ -547,7 +547,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))  #ALERT: In MySQL as `resource_source_id`
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
     
 
     def __repr__(self):
