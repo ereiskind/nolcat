@@ -31,6 +31,12 @@ Last updated: 2023-01-24
 
 TaDS Assistance Required
 ========================
+* Perform setup to allow files to be saved to and downloaded from the container
+
+Configure Flask-User
+----------------------------
+* Establish if there's going to be a single user login and a single admin login, or if everyone has their own login
+* Create route/page for login page with tests
 
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
