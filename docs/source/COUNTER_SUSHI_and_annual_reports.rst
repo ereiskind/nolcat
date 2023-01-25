@@ -113,3 +113,27 @@ COUNTER 5.1 Proposals
   * Planning to add release number in URL path
 
 * Optional global reports provide total usage for content--provide usage for OA sponsorships
+
+Annual Usage Statistics
+***********************
+Each year, ARL and ACRL/IPEDS request data from libraries, including e-resource usage statistics, for the fiscal year. NoLCAT both compiles the requested information, which is described below, and saves it in the ``fiscalYears`` relation. That relation's class contains methods to calculate all of the metrics described below.
+
+ACRL/IPEDS 60b. Initial Circulation: Digital/Electronic
+=======================================================
+"Report usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database." The instructions say to use TR_B1 "unique title requests" for e-books and IR_M1 "total_item_requests" for e-media.
+
+ACRL/IPEDS 63. E-Serials Usage: Digital/Electronic
+==================================================
+"Report usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database. Viewing a document is defined as having the full text of a digital document or electronic resource downloaded." The instructions say to use TR_J1 "unique item requests."
+
+ARL 18. Number of successful full-text article requests (journals)
+==================================================================
+"The COUNTER 5 report that corresponds to Question 18 is TR_J3 Journal Usage by Access Type. The metric from this COUNTER 5 report is Unique Item Requests. In a footnote, please include the types of resources for which you are reporting data."
+
+ARL 19. Number of regular searches (databases)
+==============================================
+"The COUNTER 5 report that corresponds to Question 19 is DR_D1 Database Search and Item Usage. The metric from this COUNTER 5 report is Searches_Regular....In a footnote, please include the types of resources for which you are reporting data. Please be sure to indicate whether you used DR_D1 or PR_P1. It is recommended that ONLY data that follow the COUNTER definitions be reported."
+
+ARL 20. Number of federated searches (databases)
+================================================
+"The COUNTER 5 report that corresponds to Question 20 is DR_D1 Searches_Federated. Metric options include "Searches_Federated",...The goal is to capture the totality of federated searches. In a footnote, please include the types of resources for which you are reporting data, and please specify the COUNTER 5 metric used to report this value. It is recommended that ONLY data that follow the COUNTER definitions be reported."
