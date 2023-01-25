@@ -110,3 +110,7 @@ To Complete NoLCAT
 * Finish ``RunAnnualStatsMethodsForm``, ``EditFiscalYearForm``, and ``EditAUCTForm`` field classes
 * Finish "fiscal_year_details.html"
 * Write tests for ``nolcat.annual_stats`` blueprint
+
+``nolcat.view_usage`` Blueprint
+-------------------------------
+* Possibly add group by statements to standard view SQL queries
