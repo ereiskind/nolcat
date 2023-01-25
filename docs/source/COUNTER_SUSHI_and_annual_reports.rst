@@ -89,8 +89,7 @@ COUNTER refers to the fields in their reports as "elements." Not all elements ar
 * Reporting Period PDF (JR1) -- Not preserved in NoLCAT
 
 COUNTER 5.1 Proposals
-*********************
-
+=====================
 * Many changes are designed to improve OA reporting
 * Item is the unit of reporting
 
