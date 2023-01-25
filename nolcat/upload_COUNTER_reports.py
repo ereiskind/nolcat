@@ -264,11 +264,15 @@ class UploadCOUNTERReports:
                 if "parent_publication_date" in df_field_names:
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
 
-                #Subsection: Add `Statistics_Source_ID` Field
+                #Subsection: Add `statistics_source_ID` and `report_type` Fields
+                # The names of the fields are added at the same time as the fields themselves so the length of the list of field names matches the number of fields in the dataframe
                 df['statistics_source_ID'] = statistics_source_ID
-                # Adding the name of the field any earlier would make the list of field names longer than the number of fields in the spreadsheet being imported
                 df_field_names.append("statistics_source_ID")
                 df_non_date_field_names.append("statistics_source_ID")
+
+                df['report_type'] = report_type
+                df_field_names.append("report_type")
+                df_non_date_field_names.append("report_type")
                 logging.debug(f"Dataframe field names: {df_field_names}")
 
                 #Subsection: Remove `Reporting Period` Field
@@ -435,6 +439,7 @@ class UploadCOUNTERReports:
             # usage_date retains datetime64[ns] type from heading conversion
             # usage_count is a numpy int type, let the program determine the number of bits used for storage
             'statistics_source_ID': 'int',
+            'resource_type': 'string',
         }
         if "resource_name" in combined_df_field_names:
             combined_df_dtypes['resource_name'] = 'string'

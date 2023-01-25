@@ -418,6 +418,7 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
+            #ToDo: df['report_type'] = master_report_name
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
