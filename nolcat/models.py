@@ -687,6 +687,7 @@ class COUNTERData(db.Model):
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
+        self.report_type(str): the type of COUNTER report, represented by the official report abbreviation
         self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
@@ -725,6 +726,7 @@ class COUNTERData(db.Model):
 
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(2000))
     publisher = db.Column(db.String(225))
     publisher_ID = db.Column(db.String(50))
