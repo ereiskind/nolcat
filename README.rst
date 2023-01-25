@@ -1,6 +1,8 @@
 NoLCAT
 ######
 
+**For the ACRL/IAPEDS and ARL queries to work properly, the type of report must be saved in `COUNTERData`.**
+
 NoLCAT Simplification
 *********************
 At this time, the environment is unable to support the matching and deduplication needed for the distinct identification of all the resources included in the COUNTER reports, which enabled most of NoLCAT's more advanced features. As a result, COUNTER data from uploaded tabular R4 reports, uploaded tabular R5 reports, and R5 SUSHI calls will be loaded into a single relation without further processing. 

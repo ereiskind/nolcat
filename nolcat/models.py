@@ -418,6 +418,7 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
+            #ToDo: df['report_type'] = master_report_name
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
@@ -687,6 +688,7 @@ class COUNTERData(db.Model):
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
+        self.report_type(str): the type of COUNTER report, represented by the official report abbreviation
         self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
@@ -725,6 +727,7 @@ class COUNTERData(db.Model):
 
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(2000))
     publisher = db.Column(db.String(225))
     publisher_ID = db.Column(db.String(50))

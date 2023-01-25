@@ -191,6 +191,7 @@ digraph erd_and_classes {
             shape="folder"
         ]
         resource_name
+        __report_type
         publisher
         publisher_ID
         platform
