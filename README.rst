@@ -108,4 +108,5 @@ To Complete NoLCAT
 * Finish ``annual_stats_homepage()``, ``show_fiscal_year_details()`` routes
 * Finish the blueprint's "index.html" by adjusting the links to the ``view_sources`` and ``view_vendors`` blueprints
 * Finish ``RunAnnualStatsMethodsForm``, ``EditFiscalYearForm``, and ``EditAUCTForm`` field classes
+* Finish "fiscal_year_details.html"
 * Write tests for ``nolcat.annual_stats`` blueprint
