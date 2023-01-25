@@ -52,7 +52,7 @@ class FiscalYears(db.Model):
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
     Methods:
-        calculate_ACRL_60b: #ToDo: Copy first line of docstring here
+        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
         calculate_ACRL_63: #ToDo: Copy first line of docstring here
         calculate_ARL_18: #ToDo: Copy first line of docstring here
         calculate_ARL_19: #ToDo: Copy first line of docstring here
@@ -86,7 +86,47 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def calculate_ACRL_60b(self):
-        pass
+        """This method calculates the value of ACRL question 60b for the given fiscal year.
+
+        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+
+        Returns:
+            int: the answer to ACRL 60b
+        """
+        TR_B1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_B1_sum = TR_B1_df.iloc[0][0]
+        logging.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            ''',
+            con=db.engine,
+        )
+        IR_M1_sum = IR_M1_df.iloc[0][0]
+        logging.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        TR_J1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_J1_sum = TR_J1_df.iloc[0][0]
+        logging.debug(f"The e-serials sum query returned\n{TR_J1_df}\nfrom which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")
+        
+        return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
 
     @hybrid_method
