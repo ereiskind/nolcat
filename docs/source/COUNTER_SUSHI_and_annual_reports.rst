@@ -6,8 +6,7 @@ The COUNTER Standard
 
 Metric Types in R4 and R5
 =========================
-
-COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generations of the standard shouldn't be directly compared; all COUNTER data, however, is stored in the same relation. Usage from the two generations is separated by the  different metric types used.
+COUNTER underwent a paradigm shift from R4 to R5, so usage from the two generations of the standard shouldn't be directly compared; all COUNTER data, however, is stored in the same relation. Usage from the two generations is separated by the different metric types used. Per an extension as defined in section 11.4 of the Release 5.0 Code of Practice, custom metrics are allowed in customizable and custom reports, but these metrics aren't saved in NoLCAT.
 
 R4 Metric Types
 ---------------
