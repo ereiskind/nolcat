@@ -54,7 +54,7 @@ class FiscalYears(db.Model):
     Methods:
         calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
         calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
-        calculate_ARL_18: #ToDo: Copy first line of docstring here
+        calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: #ToDo: Copy first line of docstring here
         calculate_ARL_20: #ToDo: Copy first line of docstring here
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
@@ -152,7 +152,23 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def calculate_ARL_18(self):
-        pass
+        """This method calculates the value of ARL question 18 for the given fiscal year.
+
+        ARL 18 is the "Number of successful full-text article requests (journals)."
+
+        Returns:
+            int: the answer to ARL 18
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
     
     @hybrid_method
