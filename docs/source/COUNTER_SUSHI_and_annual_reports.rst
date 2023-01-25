@@ -36,25 +36,26 @@ R5 Metric Types
 * No_License
 * Limit_Exceeded
 
-Elements in R5
-==============
+Elements in R4 and R5
+=====================
+COUNTER refers to the fields in their reports as "elements." Not all elements are used in all reports. The names for the fields differ slightly from R4 to R5; when the difference is great enough that the match may be unclear, the R4 field name is added in quotation marks after the name of the report it's found in.
 
-COUNTER refers to the fields in their reports as "elements." Not all elements are used in all reports, and in some cases, different elements from different reports have been consolidated into a single field in NoLCAT.
-
-* Database (DR) -- Part of `resource_name` in NoLCAT
-* Title (TR) -- Part of `resource_name` in NoLCAT
+* Database (DB1, DB2, DR) -- Part of `resource_name` in NoLCAT
+* Title (BR1, BR2, BR3, TR) -- Part of `resource_name` in NoLCAT
 * Item (IR) -- Part of `resource_name` in NoLCAT
-* Publisher (DR, TR, IR)
+* Journal (JR1, JR2) -- Part of `resource_name` in NoLCAT
+* Collection (MR1) -- Part of `resource_name` in NoLCAT
+* Publisher (JR1, JR2, DB1, DB2, PR1, BR1, BR2, BR3, MR1 "Content Provider", DR, TR, IR)
 * Publisher_ID (DR, TR, IR)
-* Platform (PR, DR, TR, IR)
+* Platform (JR1, JR2, DB1, DB2, PR1, BR1, BR2, BR3, MR1, PR, DR, TR, IR)
 * Authors (IR)
 * Publication_Date (IR)
 * Article_Version (IR)
-* DOI (TR, IR)
-* Proprietary_ID (DR, TR, IR)
-* ISBN (TR, IR)
-* Print_ISSN (TR, IR)
-* Online_ISSN (TR, IR)
+* DOI (JR1, JR2, BR1, BR2, BR3, TR, IR)
+* Proprietary_ID (JR1, JR2, BR1, BR2, BR3, DR, TR, IR)
+* ISBN (BR1, BR2, BR3, TR, IR)
+* Print_ISSN (JR1, JR2, TR, IR)
+* Online_ISSN (JR1, JR2, BR1 "ISSN", BR2 "ISSN", BR3 "ISSN", TR, IR)
 * URI (TR, IR)
 * Parent_Title (IR)
 * Parent_Authors (IR)
@@ -82,8 +83,10 @@ COUNTER refers to the fields in their reports as "elements." Not all elements ar
 * YOP (TR, IR)
 * Access_Type (TR, IR)
 * Access_Method (PR, DR, TR, IR)
-* Metric_Type (PR, DR, TR, IR)
-* Reporting_Period_Total (PR, DR, TR, IR) -- Not preserved in NoLCAT
+* Metric_Type (JR2 "Access Denied Category", DB1 "User Activity", DB2 "Access Denied Category", PR1 "User Activity", BR3 "Access Denied Category", PR, DR, TR, IR)
+* Reporting_Period_Total (JR1, JR2, DB1, DB2, PR1, BR1, BR2, BR3, MR1, PR, DR, TR, IR) -- Not preserved in NoLCAT
+* Reporting Period HTML (JR1) -- Not preserved in NoLCAT
+* Reporting Period PDF (JR1) -- Not preserved in NoLCAT
 
 COUNTER 5.1 Proposals
 *********************
