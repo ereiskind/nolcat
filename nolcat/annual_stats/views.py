@@ -7,7 +7,7 @@ from flask import url_for
 
 from . import bp
 from ..app import db
-from .forms import ChooseFiscalYearForm
+from .forms import ChooseFiscalYearForm, RunAnnualStatsMethodsForm, EditFiscalYearForm, EditAUCTForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
