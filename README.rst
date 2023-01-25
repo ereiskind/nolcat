@@ -105,3 +105,4 @@ To Complete NoLCAT
 ``nolcat.annual_stats`` Blueprint
 ---------------------------------
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)
+* Finish the blueprint's "index.html", including adjusting the links to the ``view_sources`` and ``view_vendors`` blueprints
