@@ -55,7 +55,7 @@ class FiscalYears(db.Model):
         calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
         calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
-        calculate_ARL_19: #ToDo: Copy first line of docstring here
+        calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: #ToDo: Copy first line of docstring here
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
         collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
@@ -173,7 +173,23 @@ class FiscalYears(db.Model):
     
     @hybrid_method
     def calculate_ARL_19(self):
-        pass
+        """This method calculates the value of ARL question 19 for the given fiscal year.
+
+        ARL 19 is the "Number of regular searches (databases)."
+
+        Returns:
+            int: the answer to ARL 19
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
