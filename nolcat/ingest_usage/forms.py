@@ -16,7 +16,7 @@ class SUSHIParametersForm(FlaskForm):
     """Creates a form for capturing the parameters for calling the `StatisticsSources.collect_usage_statistics()` method."""
     statistics_source = SelectField("pick stats source", coerce=int)
     begin_date = DateField("Beginning of timespan", validators=[DataRequired()])
-    end_date = DateField("end of timespan", validators=[DataRequired()])  #ToDo: is there a way to validate that this is after begin_date and/or the last day of the month?
+    end_date = DateField("end of timespan", validators=[DataRequired()])  #ToDo: Check `view_usage` routes for handling validation of date sequence and last date of month
 
 
 class UsageFileForm(FlaskForm):
