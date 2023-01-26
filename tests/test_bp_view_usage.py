@@ -27,7 +27,7 @@ def test_GET_request_for_homepage(client):
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-#ToDo: Create test for entering SQL into SQL query text box in form on SQL page and having the query run
+#ToDo: Create test for `run_custom_SQL_query()` route method, which returns a CSV download
 
 
 #ToDo: Create tests for some of the saved queries, choosing specific options and comparing the returned value to what's known as the returned value in the database

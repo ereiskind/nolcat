@@ -7,9 +7,19 @@
     <title>Write SQL Queries</title>
 </head>
 <body>
-    <!--
-        ToDo: Have text input field for SQL queries
-        ToDo: Warn that if unfamiliar with COUNTER terms or if looking for particular resource/vendor, use query wizard to ensure the desired result is actually captured
-    -->
+    <h1>Write a Custom SQL Query</h1>
+
+    <p>A custom SQL query to be run against the database can be entered below. Please note that knowledge of the NoLCAT database structure, COUNTER and its fixed vocabulary terms, and the names used for resources in COUNTER reports are necessary to construct a successful query. If there is any doubt about the ability to construct a successful query, use <a href="{{ url_for('view_usage.use_predefined_SQL_query') }}">the query wizard instead</a>.</p>
+    
+    <form action="{{ url_for('view_usage.run_custom_SQL_query') }}" method="POST">
+        {{ form.csrf_token }}
+        <label>
+            {{ form.SQL_query.label }}
+            {{ form.SQL_query }}
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+
+    <p><a href="{{ url_for('view_usage.view_usage_homepage') }}">Click here</a> to return to the "Ways to View Usage" page.</p>
 </body>
 </html>

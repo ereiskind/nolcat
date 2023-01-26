@@ -1,5 +1,11 @@
 import logging
 from flask import render_template
+from flask import request
+from flask import redirect
+from flask import url_for
+from flask import abort
+from flask import Response
+import pandas as pd
 
 from . import bp
 from ..app import db
@@ -16,9 +22,28 @@ def view_usage_homepage():
     return render_template('view_usage/index.html')
 
 
-#ToDo: Create route for page allowing writing SQL queries
-    #ToDo: Input from this field's text box is run as query against database
-    # return write_SQL_queries.html
+@bp.route('/custom-SQL', methods=['GET', 'POST'])
+def run_custom_SQL_query():
+    """Returns a page that accepts a SQL query from the user and runs it against the database."""
+    form = CustomSQLQueryForm()
+    if request.method == 'GET':
+        return render_template('blueprint_name/page.html', form=form)
+    elif form.validate_on_submit():
+        df = pd.read_sql(
+            sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
+            con=db.engine,
+        )
+        return Response(
+            df.to_csv(
+                index_label="index",
+                date_format='%Y-%m-%d',
+                errors='backslashreplace',
+            ),
+            mimetype='text/csv',
+            headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
+        )
+    else:
+        return abort(404)
 
 
 #ToDo: Create route for query wizard
