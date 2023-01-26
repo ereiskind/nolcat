@@ -3,7 +3,7 @@ from flask import render_template
 
 from . import bp
 from ..app import db
-#from .forms import <name of form classes>
+from .forms import CustomSQLQueryForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
