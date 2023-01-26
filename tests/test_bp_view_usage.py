@@ -30,10 +30,7 @@ def test_GET_request_for_homepage(client):
 #ToDo: Create test for `run_custom_SQL_query()` route method, which returns a CSV download
 
 
-#ToDo: Create tests for some of the saved queries, choosing specific options and comparing the returned value to what's known as the returned value in the database
+#ToDo: Create test for `use_predefined_SQL_query()` route method, which returns a CSV download, that starts with selecting one of the predefined queries
 
 
-#ToDo: Create test for the query wizard, confirming that selecting specific options sends a given SQL string to the database
-
-
-#ToDo: Create a test for the query wizard, making specific selections and comparing the returned value to what's known as the returned value in the database
+#ToDo: Create test for `use_predefined_SQL_query()` route method, which returns a CSV download, that starts with choosing to make a custom query with the query wizard

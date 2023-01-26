@@ -115,4 +115,7 @@ To Complete NoLCAT
 -------------------------------
 * Possibly add group by statements to standard view SQL queries
 * Finish ``run_custom_SQL_query()`` route by figuring out how to prevent SQL injection with complete SQL statement
+* Add descriptions of standard views to canned query form
+* Finish ``use_predefined_SQL_query()`` route
+* Finish "query_wizard.html"
 * Finish tests for ``nolcat.view_usage`` blueprint
