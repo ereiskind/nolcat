@@ -119,3 +119,5 @@ To Complete NoLCAT
 * Finish ``use_predefined_SQL_query()`` route
 * Finish "query_wizard.html"
 * Finish tests for ``nolcat.view_usage`` blueprint
+* Confirm Flask return object downloads files as expected
+* Later phase of project can add in-web app data viz of usage
