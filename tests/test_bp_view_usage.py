@@ -34,3 +34,6 @@ def test_GET_request_for_homepage(client):
 
 
 #ToDo: Create test for `use_predefined_SQL_query()` route method, which returns a CSV download, that starts with choosing to make a custom query with the query wizard
+
+
+#ToDo: Create test for `download_non_COUNTER_usage()` route method, which is all about downloading files

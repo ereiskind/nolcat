@@ -30,3 +30,8 @@ class QueryWizardForm(FlaskForm):
         ('w', "Create a query with the wizard options below:")
     ], validators=[DataRequired()])
     #ToDo: Add wizard option fields
+
+
+class ChooseNonCOUNTERDownloadForm(FlaskForm):
+    """Creates a form allowing the download of all saved non-COUNTER usage files."""
+    file_download = SelectField("Choose the usage statistics file to download:")

@@ -1,6 +1,7 @@
 import logging
 import datetime
 import calendar
+from pathlib import Path
 from flask import render_template
 from flask import request
 from flask import redirect
@@ -11,7 +12,7 @@ import pandas as pd
 
 from . import bp
 from ..app import db
-from .forms import CustomSQLQueryForm, QueryWizardForm
+from .forms import CustomSQLQueryForm, QueryWizardForm, ChooseNonCOUNTERDownloadForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -169,6 +170,69 @@ def use_predefined_SQL_query():
             ),
             mimetype='text/csv',
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
+        )
+    else:
+        return abort(404)
+
+
+@bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
+def download_non_COUNTER_usage():
+    """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
+    form = ChooseNonCOUNTERDownloadForm()
+    if request.method == 'GET':
+        SQL_query = f'''
+            SELECT
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year,
+                annualUsageCollectionTracking.usage_file_path
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+        '''
+        file_download_options = pd.read_sql(
+            sql=SQL_query,
+            con=db.engine,
+        )
+        file_download_options['field_display'] = file_download_options['statistics_source_name'] + "--FY " + file_download_options['fiscal_year']
+        form.file_download.choices = list(file_download_options['usage_file_path', 'field_display'].itertuples(index=False, name=None))
+        return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
+    elif form.validate_on_submit():
+        download = Path(form.file_download.data)
+        download_name = download.name
+        if download.suffix == "xlsx":
+            download_mimetype = "application/vnd.ms-excel"
+        elif download.suffix == "csv":
+            download_mimetype = "text/csv"
+        elif download.suffix == "tsv":
+            download_mimetype = "text/tab-separated-values"
+        elif download.suffix == "pdf":
+            download_mimetype = "application/pdf"
+        elif download.suffix == "docx":
+            download_mimetype = "application/msword"
+        elif download.suffix == "pptx":
+            download_mimetype = "application/vnd.ms-powerpoint"
+        elif download.suffix == "txt":
+            download_mimetype = "text/plain"
+        elif download.suffix == "jpeg" or download.suffix == "jpg":
+            download_mimetype = "image/jpeg"
+        elif download.suffix == "png":
+            download_mimetype = "image/png"
+        elif download.suffix == "svg":
+            download_mimetype = "image/svg+xml"
+        elif download.suffix == "json":
+            download_mimetype = "application/json"
+        elif download.suffix == "html" or download.suffix == "htm":
+            download_mimetype = "text/html"
+        elif download.suffix == "xml":
+            download_mimetype = "text/xml"
+        elif download.suffix == "zip":
+            download_mimetype = "application/zip"
+        
+        return Response(
+            download,
+            mimetype=download_mimetype,
+            headers={'Content-disposition': f'attachment; filename={download_name}'},
         )
     else:
         return abort(404)
