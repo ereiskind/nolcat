@@ -90,9 +90,6 @@ def create_app():
     from nolcat import view_usage
     app.register_blueprint(view_usage.bp)
 
-    from nolcat import view_vendors
-    app.register_blueprint(view_vendors.bp)
-
     #Section: Create Homepage Route
     @app.route('/')
     def homepage():
