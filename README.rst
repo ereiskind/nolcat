@@ -118,7 +118,7 @@ To Complete NoLCAT
 * Finish ``annual_stats_homepage()``, ``show_fiscal_year_details()`` routes
 * Finish the blueprint's "index.html" by confirming the variable routes to the ``view_lists`` blueprint work
 * Finish ``RunAnnualStatsMethodsForm``, ``EditFiscalYearForm``, and ``EditAUCTForm`` field classes
-* Finish "fiscal_year_details.html"
+* Finish "fiscal-year-details.html"
 * Write tests for ``nolcat.annual_stats`` blueprint
 
 ``nolcat.view_usage`` Blueprint
@@ -127,7 +127,7 @@ To Complete NoLCAT
 * Finish ``run_custom_SQL_query()`` route by figuring out how to prevent SQL injection with complete SQL statement
 * Add descriptions of standard views to canned query form
 * Finish ``use_predefined_SQL_query()`` route
-* Finish "query_wizard.html"
+* Finish "query-wizard.html"
 * Finish tests for ``nolcat.view_usage`` blueprint
 * Confirm Flask return object downloads files as expected
 * Later phase of project can add in-web app data viz of usage

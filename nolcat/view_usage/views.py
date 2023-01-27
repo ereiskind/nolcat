@@ -30,7 +30,7 @@ def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     form = CustomSQLQueryForm()
     if request.method == 'GET':
-        return render_template('blueprint_name/page.html', form=form)
+        return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
         df = pd.read_sql(
             sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
@@ -54,7 +54,7 @@ def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     form = QueryWizardForm()
     if request.method == 'GET':
-        return render_template('view_usage/query_wizard.html', form=form)
+        return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
         begin_date = form.begin_date.data
         end_date = form.end_date.data

@@ -54,7 +54,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             index_col='AUCT_statistics_source',
         )
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
-        return render_template('annual_stats/fiscal_year_details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
+        return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
     elif run_annual_stats_methods_form.validate_on_submit():
         #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_60b()`:
             #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_60b()`

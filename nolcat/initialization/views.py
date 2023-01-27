@@ -55,7 +55,7 @@ def collect_initial_relation_data():
         )
         if fiscalYears_dataframe.isnull().all(axis=None) == True:
             logging.error("The `fiscalYears` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`fiscalYears`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
         fiscalYears_dataframe['fiscal_year'] = fiscalYears_dataframe['fiscal_year'].astype("string")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].astype("string")
@@ -75,7 +75,7 @@ def collect_initial_relation_data():
         )
         if vendors_dataframe.isnull().all(axis=None) == True:
             logging.error("The `vendors` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`vendors`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`vendors`")
         
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].astype("string")
         vendors_dataframe['alma_vendor_code'] = vendors_dataframe['alma_vendor_code'].astype("string")
@@ -94,7 +94,7 @@ def collect_initial_relation_data():
         )
         if vendorNotes_dataframe.isnull().all(axis=None) == True:
             logging.error("The `vendorNotes` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`vendorNotes`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].astype("string")
         vendorNotes_dataframe['written_by'] = vendorNotes_dataframe['written_by'].astype("string")
@@ -112,7 +112,7 @@ def collect_initial_relation_data():
         )
         if statisticsSources_dataframe.isnull().all(axis=None) == True:
             logging.error("The `statisticsSources` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSources`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSources`")
         
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].astype("string")
         statisticsSources_dataframe['statistics_source_retrieval_code'] = statisticsSources_dataframe['statistics_source_retrieval_code'].astype("string")
@@ -131,7 +131,7 @@ def collect_initial_relation_data():
         )
         if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
             logging.error("The `statisticsSourceNotes` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsSourceNotes`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
         statisticsSourceNotes_dataframe['written_by'] = statisticsSourceNotes_dataframe['written_by'].astype("string")
@@ -151,7 +151,7 @@ def collect_initial_relation_data():
         )
         if resourceSources_dataframe.isnull().all(axis=None) == True:
             logging.error("The `resourceSources` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSources`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
@@ -169,7 +169,7 @@ def collect_initial_relation_data():
         )
         if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
             logging.error("The `resourceSourceNotes` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`resourceSourceNotes`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].astype("string")
         resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
@@ -187,7 +187,7 @@ def collect_initial_relation_data():
         )
         if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
             logging.error("The `statisticsResourceSources` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`statisticsResourceSources`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsResourceSources`")
         
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
         logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
@@ -319,7 +319,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         )
         if AUCT_dataframe.isnull().all(axis=None) == True:
             logging.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
-            return render_template('initialization/empty_dataframes_warning.html', relation="`annualUsageCollectionTracking`")
+            return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
         #ToDo: AUCT_dataframe['collection_status'] is an Enum; does anything special need to happen here? Should there be a check that all the values in the field are valid before the load into the database?
         AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].astype("string")
