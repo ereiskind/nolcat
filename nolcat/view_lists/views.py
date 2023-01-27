@@ -15,7 +15,11 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 
 @bp.route('/<string:list>')
 def view_lists_homepage(list):
-    """Returns the homepage for the `view_lists` blueprint, which shows the list of resource sources, statistics sources, or vendors depending on the variable route value."""
+    """Returns the homepage for the `view_lists` blueprint, which shows the list of resource sources, statistics sources, or vendors depending on the variable route value.
+
+        Args:
+            list (str): the relation whose records are being listed
+    """
     if request.method == 'GET':
         if list == "resources":
             title = "Resource Sources"
