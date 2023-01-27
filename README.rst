@@ -116,7 +116,7 @@ To Complete NoLCAT
 ---------------------------------
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)
 * Finish ``annual_stats_homepage()``, ``show_fiscal_year_details()`` routes
-* Finish the blueprint's "index.html" by adjusting the links to the ``view_sources`` and ``view_vendors`` blueprints
+* Finish the blueprint's "index.html" by confirming the variable routes to the ``view_lists`` blueprint work
 * Finish ``RunAnnualStatsMethodsForm``, ``EditFiscalYearForm``, and ``EditAUCTForm`` field classes
 * Finish "fiscal_year_details.html"
 * Write tests for ``nolcat.annual_stats`` blueprint

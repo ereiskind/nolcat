@@ -84,8 +84,8 @@ def create_app():
     from nolcat import login
     app.register_blueprint(login.bp)
 
-    from nolcat import view_sources
-    app.register_blueprint(view_sources.bp)
+    from nolcat import view_lists
+    app.register_blueprint(view_lists.bp)
 
     from nolcat import view_usage
     app.register_blueprint(view_usage.bp)
