@@ -2,6 +2,8 @@ import logging
 from flask import render_template
 from flask import request
 from flask import abort
+from flask import redirect
+from flask import url_for
 import pandas as pd
 
 from . import bp
@@ -43,9 +45,30 @@ def view_lists_homepage(list):
         return abort(404)
 
 
-#ToDo: Route to view all fields and notes for a given record in `resourceSources`, `statisticsSources`, or `vendors`
-    #ToDo: for vendors, this includes all affiliated resource and statistics sources
-    #ToDo: This includes adding notes
+@bp.route('/<string:list>/<int:PK>')
+def view_list_record(list, PK):
+    """Returns the details and notes about a statistics source, resource source, or vendor.
+
+    For a given record in the `resourceSources`, `statisticsSources`, or `vendors` relations, the value of all of the relation's fields and the notes are shown. For vendor records, the currently affiliated resource sources and statistics sources are shown as well. From this page, notes can be added, but not edited or deleted.
+
+    Args:
+        list (str): the relation the record comes from
+        PK (int): the primary key of the record being viewed
+    """
+    form = #ToDo: Write form for adding notes
+    if request.method == 'GET':
+        SQL_query = #toDo: Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
+        df = pd.read_sql(
+            sql=SQL_query,
+            con=db.engine,
+        )
+        #ToDo: Display the returned data
+        return render_template('view_lists/page.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: Add the form data to the relevant notes relation
+        return redirect(url_for('view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
+    else:
+        return abort(404)
     
 
 

@@ -135,4 +135,5 @@ To Complete NoLCAT
 ``nolcat.view_lists`` Blueprint
 ---------------------------------
 * Finish ``view_lists_homepage()`` route and "index.html" page
+* Finish ``view_list_record()`` route function and create associated webpage
 * Write tests for ``nolcat.view_lists`` blueprint
