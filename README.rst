@@ -1,5 +1,15 @@
 NoLCAT
 ######
+Noles Collection Assessment Tool (NoLCAT) is a combined database and web application designed to facilitate collections assessment. Its features include
+
+* Lists of all past and present sources of resources, sources of usage statistics, and vendors supplying resources and/or usage statistics
+* Separate listings for sources of resources and sources of usage statistics to handle both those instances where multiple resource sources have a single statistics source (e.g. SAGE/CQ Press) and when a resource source has multiple statistics sources for historical purposes (e.g. migrating from Allen Press/Pinnacle Hosting to an independent platform)
+* A listing of fiscal years and every statistics source that must be accounted for for that fiscal year, creating a single location for tracking the status of usage statistics collection
+* The ability to add notes about the vendors, statistics sources, resource sources, and annual usage statistics collection elements
+* A single database relation containing all COUNTER R4 and R5 data
+* The ability to ingest COUNTER data through both uploads of Excel files with tabular layouts and SUSHI
+* The ability to store files containing non-COUNTER compliant usage data for later download
+* A wizard for the initial data entry of the vendors, statistics sources, resource sources, historical usage collection tracking information, and historical usage
 
 NoLCAT Simplification
 *********************
