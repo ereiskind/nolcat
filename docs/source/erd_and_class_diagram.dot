@@ -191,6 +191,7 @@ digraph erd_and_classes {
             shape="folder"
         ]
         resource_name
+        __report_type
         publisher
         publisher_ID
         platform
@@ -274,17 +275,13 @@ digraph erd_and_classes {
             shape="record"
             label="\N|librarians (as users)"
         ]
-        view_sources [
+        view_lists [
             shape="record"
             label="\N"
         ]
         view_usage [
             shape="record"
             label="\N|COUNTER stats"
-        ]
-        view_vendors [
-            shape="record"
-            label="\N"
         ]
     }
 

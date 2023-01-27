@@ -37,35 +37,23 @@ digraph nolcat_sitemap {
 
     /* *** `annual_stats` Blueprint *** */
     manage_usage_collection_homepage [shape="house"]
-        manage_usage_collection_homepage -> view_sources_list // For StatisticsSources and ResourceSources
-        manage_usage_collection_homepage -> view_vendors_list
+        manage_usage_collection_homepage -> view_lists
         manage_usage_collection_homepage -> view_FY_details // The FY for which the details will be shown is selected before going to the page
     view_FY_details
         view_FY_details -> all_AUCT_records_for_chosen_FY
     all_AUCT_records_for_chosen_FY
 
 
-    /* *** `view_sources` Blueprint *** */
-    // StatisticsSources and ResourceSources are similar enough in structure and purpose that the same Flask logic and Jinja templates can be used
-    view_sources_list
-        view_sources_list -> add_new_source
-        view_sources_list -> view_source_details
-    add_new_source
-        add_new_source -> edit_source_details // To provide info for the new source
-    view_source_details
-        view_source_details -> edit_source_details
-    edit_source_details // Includes adding or editing notes
-
-
-     /* *** `view_vendors` Blueprint *** */
-    view_vendors_list
-        view_vendors_list -> add_new_vendor
-        view_vendors_list -> view_vendor_details
-    add_new_vendor
-        add_new_vendor -> edit_vendor_details // To provide info for the new vendor
-    view_vendor_details
-        view_vendor_details -> edit_vendor_details
-    edit_vendor_details // Includes adding or editing notes
+    /* *** `view_lists` Blueprint *** */
+    // StatisticsSources, ResourceSources, and Vendors are similar enough in structure and purpose that the same Flask logic and Jinja templates can be used
+    view_lists
+        view_lists -> add_new_record
+        view_lists -> view_record_details
+    add_new_record
+        add_new_record -> edit_record_details // To provide info for the new source
+    view_record_details
+        view_record_details -> edit_record_details
+    edit_record_details // Includes adding or editing notes
 
 
     /* *** `view_usage` Blueprint *** */

@@ -11,32 +11,26 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
+import pandas as pd
 
 from .app import db
 
-#ToDo: Should the values in the `__table_args__` dictionaries be f-strings referencing `Database_Credentials.Database`?
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
 
 def PATH_TO_CREDENTIALS_FILE():
-    """Contains the constant for the path to the SUSHI credentials file.
+    """Provides the file path to the SUSHI credentials file as a string.
     
-    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows. In test modules for classes that use this constant, the first function is a fixture that will skip all other tests in the module if the function doesn't return a string.
+    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    AWS_path = Path(os.path.abspath(os.path.dirname(__file__))) / Path('R5_SUSHI_credentials.json')
-    if AWS_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in AWS at `{AWS_path}`.")
-        return str(AWS_path)
-
-    library_network_path = Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_credentials.json')
-    if library_network_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in the FSU Libraries networked drive at `{library_network_path}`.")
-        return str(library_network_path)
-
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    if file_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file was found at at `{file_path}`.")
+        return str(file_path)
     logging.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()
 
@@ -58,11 +52,11 @@ class FiscalYears(db.Model):
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
     Methods:
-        calculate_ACRL_60b: #ToDo: Copy first line of docstring here
-        calculate_ACRL_63: #ToDo: Copy first line of docstring here
-        calculate_ARL_18: #ToDo: Copy first line of docstring here
-        calculate_ARL_19: #ToDo: Copy first line of docstring here
-        calculate_ARL_20: #ToDo: Copy first line of docstring here
+        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
+        calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
+        calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
+        calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
+        calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
         collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
@@ -92,27 +86,131 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def calculate_ACRL_60b(self):
-        pass
+        """This method calculates the value of ACRL question 60b for the given fiscal year.
+
+        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+
+        Returns:
+            int: the answer to ACRL 60b
+        """
+        TR_B1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_B1_sum = TR_B1_df.iloc[0][0]
+        logging.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            ''',
+            con=db.engine,
+        )
+        IR_M1_sum = IR_M1_df.iloc[0][0]
+        logging.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        TR_J1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_J1_sum = TR_J1_df.iloc[0][0]
+        logging.debug(f"The e-serials sum query returned\n{TR_J1_df}\nfrom which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")
+        
+        return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
 
     @hybrid_method
     def calculate_ACRL_63(self):
-        pass
+        """This method calculates the value of ACRL question 63 for the given fiscal year.
+
+        ACRL 60b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 63
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
     def calculate_ARL_18(self):
-        pass
+        """This method calculates the value of ARL question 18 for the given fiscal year.
+
+        ARL 18 is the "Number of successful full-text article requests (journals)."
+
+        Returns:
+            int: the answer to ARL 18
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
     
     @hybrid_method
     def calculate_ARL_19(self):
-        pass
+        """This method calculates the value of ARL question 19 for the given fiscal year.
+
+        ARL 19 is the "Number of regular searches (databases)."
+
+        Returns:
+            int: the answer to ARL 19
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
     def calculate_ARL_20(self):
-        pass
+        """This method calculates the value of ARL question 20 for the given fiscal year.
+
+        ARL 20 is the "Number of federated searches (databases)."
+
+        Returns:
+            int: the answer to ARL 20
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
@@ -137,6 +235,7 @@ class FiscalYears(db.Model):
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: dfs.append(df)
+            #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.to_sql(
         #ToDo:     'COUNTERData',
@@ -156,8 +255,8 @@ class Vendors(db.Model):
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
 
     Methods:
-        get_SUSHI_credentials_from_Alma: #ToDo: Copy first line of docstring here
-        get_SUSHI_credentials_from_JSON: #ToDo: Copy first line of docstring here
+        get_statisticsSources: Shows all the statistics sources associated with the vendor.
+        get_resourceSources: Shows all the resource sources associated with the vendor.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'vendors'
@@ -176,12 +275,51 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_Alma(self):
+    def get_statisticsSources(self):
+        """Shows all the statistics sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `statisticsSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             statistics_source_ID,
+        #ToDo:             statistics_source_name,
+        #ToDo:             statistics_source_retrieval_code
+        #ToDo:         FROM statisticsSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='statistics_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_JSON(self):
+    def get_resourceSources(self):
+        """Shows all the resource sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `resourceSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             resource_source_ID,
+        #ToDo:             resource_source_name,
+        #ToDo:             source_in_use,
+        #ToDo:             use_stop_date
+        #ToDo:         FROM resourceSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='resource_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 
@@ -384,6 +522,7 @@ class StatisticsSources(db.Model):
             #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
             #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
+            #ToDo: df['report_type'] = master_report_name
             #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
         
 
@@ -461,6 +600,7 @@ class ResourceSources(db.Model):
     Methods:
         add_access_stop_date: #ToDo: Copy first line of docstring here
         remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        change_StatisticsSource: Change the current statistics source for the resource source.
         add_note:  #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'resourceSources'
@@ -492,6 +632,28 @@ class ResourceSources(db.Model):
 
 
     @hybrid_method
+    def change_StatisticsSource(self, statistics_source_PK):
+        """Change the current statistics source for the resource source.
+
+        This method changes the `True` value in the `StatisticsResourceSources` record for the given resource source to `False`, then adds a new record creating a connection between the given statistics source and resource source.
+
+        Args:
+            statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
+        
+        Returns:
+            None: no return value is needed, so the default `None` is used
+        """
+        #ToDo: SQL_query = f'''
+        #ToDo:     UPDATE 
+        #ToDo:     SET current_statistics_source = false
+        #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
+        #ToDo: '''
+        #ToDo: Apply above query to database
+        #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
+        pass
+
+
+    @hybrid_method
     def add_note(self):
         #ToDo: Create a method for adding notes
         pass
@@ -513,7 +675,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))  #ALERT: In MySQL as `resource_source_id`
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
     
 
     def __repr__(self):
@@ -630,6 +792,7 @@ class COUNTERData(db.Model):
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
+        self.report_type(str): the type of COUNTER report, represented by the official report abbreviation
         self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
@@ -668,6 +831,7 @@ class COUNTERData(db.Model):
 
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(2000))
     publisher = db.Column(db.String(225))
     publisher_ID = db.Column(db.String(50))

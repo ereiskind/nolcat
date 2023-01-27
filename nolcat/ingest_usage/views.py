@@ -99,6 +99,23 @@ def upload_non_COUNTER_reports():
         return render_template('ingest_usage/save-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         #ToDo: Save uploaded file to location `file_path_of_record` in container
+            #ToDo: Uploaded files must be of extension types
+                # "xlsx"
+                # "csv"
+                # "tsv"
+                # "pdf"
+                # "docx"
+                # "pptx"
+                # "txt"
+                # "jpeg"
+                # "jpg"
+                # "png"
+                # "svg"
+                # "json"
+                # "html"
+                # "htm"
+                # "xml"
+                # "zip"
         #ToDo: series_data_type = non_COUNTER_files_needed.loc[form.AUCT_options.data]
         #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_statistics_source'] = int_PK_for_stats_source
         #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_fiscal_year'] = int_PK_for_fiscal_year

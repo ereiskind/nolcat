@@ -133,9 +133,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -178,9 +178,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -217,9 +217,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -256,9 +256,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -289,9 +289,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -322,9 +322,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -367,9 +367,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -400,9 +400,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -439,9 +439,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -478,9 +478,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -511,9 +511,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -544,9 +544,9 @@
             "facets": [
                 {
                     "type": "list",
-                    "name": "Report",
+                    "name": "Report_Type",
                     "expression": "value",
-                    "columnName": "Report",
+                    "columnName": "Report_Type",
                     "invert": false,
                     "omitBlank": false,
                     "omitError": false,
@@ -570,11 +570,6 @@
         "repeat": false,
         "repeatCount": 10,
         "description": "Change values in column ``Metric_Type`` to `Successful Section Requests` for BR2 reports"
-    },
-    {
-        "op": "core/column-removal",
-        "columnName": "Report",
-        "description": "Remove column ``Report``"
     },
     {
         "op": "core/text-transform",
@@ -724,6 +719,7 @@
         "columnNames": [
             "df",
             "Statistics_Source_ID",
+            "Report_Type",
             "Resource_Name",
             "Publisher",
             "Publisher_ID",
