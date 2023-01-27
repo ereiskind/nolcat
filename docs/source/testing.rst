@@ -66,7 +66,6 @@ In the test data, the ``statistics_source_ID`` values are as follows
 
 Test Data Creation Procedure
 ----------------------------
-
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields.
