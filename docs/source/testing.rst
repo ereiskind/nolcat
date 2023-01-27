@@ -31,9 +31,9 @@ Test Data Folders and Modules
 
 "\\tests\\bin\\"
 ----------------
+This folder contains all the Excel files, most of which are stored in one of three subfolders:
 
-This folder contains all the Excel files, which are split into three subfolders:
-
+* "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx": This workbook contains all the records from all the workbooks in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" in the order in which they would be ingested.
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
@@ -41,7 +41,6 @@ This folder contains all the Excel files, which are split into three subfolders:
 
 "\\tests\\data\\relations.py"
 -----------------------------
-
 This module contains the functions:
 
 * ``fiscalYears_relation()``: The dataframe of test data for the `fiscalYears` relation.
@@ -59,7 +58,8 @@ Creating the Test Data
 ======================
 All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
 
-In the test data, the ``Statistics_Source_ID`` values are as follows
+In the test data, the ``statistics_source_ID`` values are as follows
+
 * EBSCO = 1
 * Gale = 2
 * ProQuest = 0
@@ -69,9 +69,9 @@ Test Data Creation Procedure
 
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
-3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields. (That worksheet is saved as "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx".)
+3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields.
 4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
-5. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data.json" to the "nolcat_test_data" project.
+5. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
 6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
 
 SUSHI Variations
