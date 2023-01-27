@@ -72,10 +72,36 @@ def view_list_record(list, PK):
     
 
 
-#ToDo: Route to edit all fields and notes for a given record in `resourceSources`, `statisticsSources`, or `vendors`
-    #ToDo: Adding records uses blank fields where editing resources prepopulates them and saves any changes
-        # https://stackoverflow.com/q/35892144
-        # https://stackoverflow.com/q/23712986
-        # https://stackoverflow.com/q/42984453
-        # https://stackoverflow.com/q/28941504
+@bp.route('/edit/<string:list>/<int:PK>')
+def edit_list_record(list, PK):
+    """Returns a page for editing records in the `resourceSources`, `statisticsSources`, or `vendors` relations.
+
+    Adding a record is done by creating a `PK` value that matches what's next in the auto-generated count list, adding new values to all the fields available for edit, which are then committed to the relation as a new record. Editing the `resourceSources` relation is also the method for updating the `statisticsResourceSources` junction table, which is never directly visible or directly accessed.
+
+    Args:
+        list (_type_): _description_
+        PK (_type_): _description_
+    """
+    #ToDo: Write form for adding/editing record and for adding or editing notes
+    if request.method == 'GET':
+        #toDo: if request came from adding new record link/PK not in relation:
+            #ToDo: Show page without prefilled values
+            return render_template('view_lists/page.html', form=form)
+        #ToDo: if `PK` is in the relation
+            #ToDo: SQL_query = Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
+            #ToDo: df = pd.read_sql(
+            #ToDo:     sql=SQL_query,
+            #ToDo:     con=db.engine,
+            #ToDo: )
+            #ToDo: Prepopulate the fields
+                # https://stackoverflow.com/q/35892144
+                # https://stackoverflow.com/q/23712986
+                # https://stackoverflow.com/q/42984453
+                # https://stackoverflow.com/q/28941504
+        return render_template('view_lists/page.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: update or insert the changes
         #ToDo: Changing a statisticsSources-resourceSources connection means changing the non-PK field in statisticsResourceSources from true to false and creating a new record with the PKs of the new sources--does it makes sense to have a "if stats source changes, pick new one here" drop-down listing all stats sources but the current one on a resource source details page?
+        return redirect(url_for('view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
+    else:
+        return abort(404)
