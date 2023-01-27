@@ -138,3 +138,15 @@ To Complete NoLCAT
 * Finish ``view_list_record()`` route function and create associated webpage
 * Finish ``edit_list_record()`` route function and create associated webpage
 * Write tests for ``nolcat.view_lists`` blueprint
+
+Documentation
+-------------
+* Write README
+* Create Sphinx index--organize custom pages on index
+* Create Sphinx index--order documentation created automatically from docstrings
+* Flesh out documentation on what situations are better tested with the `SUSHICallAndResponse` test suite vs. the `models.StatisticsSources` test suite
+
+``nolcat.static`` and ``nolcat.templates``
+------------------------------------------
+* Clean up CSS file
+* Create Jinja template header and footer in "nolcat/templates/layout.html"
