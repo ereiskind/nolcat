@@ -131,3 +131,8 @@ To Complete NoLCAT
 * Finish tests for ``nolcat.view_usage`` blueprint
 * Confirm Flask return object downloads files as expected
 * Later phase of project can add in-web app data viz of usage
+
+``nolcat.view_lists`` Blueprint
+---------------------------------
+* Finish ``view_lists_homepage()`` route and "index.html" page
+* Write tests for ``nolcat.view_lists`` blueprint
