@@ -94,7 +94,7 @@ df = df.replace(
 
 
 #Section: Change Dataframe into JSON
-#Subsection: Create Multiindex for Combining
+#Subsection: Create Field Lists
 fields_used_in_performance_nested_groups = ['Begin_Date', 'End_Date', 'Metric_Type', 'Count']
 fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance_nested_groups]
 fields_used_for_groupby_operations = [field_name for field_name in fields_used_for_groupby_operations if not df[field_name].isnull().all()]  # Series with nothing but null values cause ValueErrors later in the program, so they need to be removed
