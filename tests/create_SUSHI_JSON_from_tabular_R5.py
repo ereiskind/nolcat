@@ -132,5 +132,4 @@ final_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda 
 
 
 #Section: Output JSON
-final_JSON_output_path = pathlib.Path('data', 'COUNTER_JSONs_for_tests', 'result_JSON.json')
-final_df.to_json(final_JSON_output_path, force_ascii=False, indent=4, orient='table', index=False)
+final_df.to_json(directory_with_final_JSONs / 'result_JSON.json', force_ascii=False, indent=4, orient='table', index=False)
