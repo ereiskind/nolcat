@@ -83,7 +83,7 @@ df['End_Date'] = df['Begin_Date'].map(last_day_of_month)
 df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
 
 #Subsection: Put Placeholder in for Null Values
-'''
+# Null values and fields with nothing but null values cause problems and errors in groupby functions, so they're replaced with placeholder strings
 df = df.fillna("`None`")
 df = df.replace(
     to_replace='^\s*$',
@@ -91,7 +91,6 @@ df = df.replace(
     value="`None`",
     regex=True
 )
-'''
 
 
 #Section: Change Dataframe into JSON
