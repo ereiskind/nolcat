@@ -96,24 +96,24 @@ df = df.replace(
 
 #Section: Change Dataframe into JSON
 #Subsection: Create Multiindex for Combining
-fields_used_in_grouping = ['Begin_Date', 'End_Date', 'Metric_Type', 'Count']
-grouping_fields = [field_name for field_name in df_field_names if field_name not in fields_used_in_grouping]
-join_index_fields = grouping_fields + ['Begin_Date']
+fields_used_in_SUSHI_nested_groups = ['Begin_Date', 'End_Date', 'Metric_Type', 'Count']
+fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_SUSHI_nested_groups]
+index_fields_for_join_operation = fields_used_for_groupby_operations + ['Begin_Date']
 
 #Subsection: Create Instance Grouping
-instance_grouping_fields = grouping_fields + ['Begin_Date']
+instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
 #ALERT: Below raised `ValueError: cannot insert Begin_Date, already exists` for DR but not PR
-instance_df = (df.groupby(instance_grouping_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `grouping_fields` can be used for the groupby fields because it includes the two fields included in the instance grouping plus a field that doesn't need to be in the dataframe
-instance_df = instance_df.set_index(join_index_fields)
+instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
+instance_df = instance_df.set_index(index_fields_for_join_operation)
 
 #Subsection: Create Period Grouping
 df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
-period_grouping_fields = grouping_fields + ['Metric_Type', 'Count', 'temp']
-period_df = df.groupby(period_grouping_fields).apply(lambda period: period[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
+period_groupby_operation_fields = fields_used_for_groupby_operations + ['Metric_Type', 'Count', 'temp']
+period_df = df.groupby(period_groupby_operation_fields).apply(lambda period: period[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
 period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
 period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
-period_df = period_df.set_index(join_index_fields)
+period_df = period_df.set_index(index_fields_for_join_operation)
 
 #Subsection: Combine Period and Instance Groupings
 combined_df = period_df.join(instance_df, how='inner')  # This contains duplicate records
@@ -127,7 +127,7 @@ combined_df['repeat'] = combined_df.duplicated(subset=['Platform', 'Data_Type', 
 combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
 combined_df = combined_df.reset_index(drop=True)
-final_df = combined_df.groupby(grouping_fields).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+final_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
 
 #Section: Output JSON
