@@ -103,7 +103,6 @@ index_fields_for_join_operation = fields_used_for_groupby_operations + ['Begin_D
 
 #Subsection: Create Instance Grouping
 instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
-#ALERT: Below raised `ValueError: cannot insert Begin_Date, already exists` for DR but not PR
 instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
 instance_df = instance_df.set_index(index_fields_for_join_operation)
 
