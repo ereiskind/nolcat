@@ -101,6 +101,12 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 
+#Subsection: Create Nested JSON Section for Publisher IDs
+
+#Subsection: Create Nested JSON Section for Item IDs
+
+#Subsection: Create Nested JSON Section for Item Parent Data
+
 #Subsection: Create Instance Grouping
 instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
 instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
