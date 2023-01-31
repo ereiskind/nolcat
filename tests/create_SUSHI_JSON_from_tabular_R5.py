@@ -94,16 +94,17 @@ df = df.replace(
 
 
 #Section: Change Dataframe into JSON
-#Subsection: Create Field Lists
+#Subsection: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
 fields_used_in_performance_nested_groups = ['Begin_Date', 'End_Date', 'Metric_Type', 'Count']
 fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance_nested_groups]
-fields_used_for_groupby_operations = [field_name for field_name in fields_used_for_groupby_operations if not df[field_name].isnull().all()]  # Series with nothing but null values cause ValueErrors later in the program, so they need to be removed
-index_fields_for_join_operation = fields_used_for_groupby_operations + ['Begin_Date']
+
+fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
+performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 
 #Subsection: Create Instance Grouping
 instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
 instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
-instance_df = instance_df.set_index(index_fields_for_join_operation)
+instance_df = instance_df.set_index(fields_used_in_performance_join_multiindex)
 
 #Subsection: Create Period Grouping
 df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
@@ -112,7 +113,7 @@ period_df = df.groupby(period_groupby_operation_fields).apply(lambda period: per
 period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
 period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
-period_df = period_df.set_index(index_fields_for_join_operation)
+period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
 
 #Subsection: Combine Period and Instance Groupings
 combined_df = period_df.join(instance_df, how='inner')  # This contains duplicate records
