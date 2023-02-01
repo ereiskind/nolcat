@@ -25,17 +25,17 @@ def view_lists_homepage(list):
     if request.method == 'GET':
         if list == "resources":
             title = "Resource Sources"
-            SQL_query = #ToDo: Write query that provides all fields in human-understandable data
+            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
         elif list == "statistics":
             title = "Statistics Sources"
-            SQL_query = #ToDo: Write query that provides all fields in human-understandable data
+            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
         elif list == "vendors":
             title = "Vendors"
-            SQL_query = #ToDo: Write query that provides all fields in human-understandable data
-        df = pd.read_sql(
-            sql=SQL_query,
-            con=db.engine,
-        )
+            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=SQL_query,
+        #ToDo:     con=db.engine,
+        #ToDo: )
         #ToDo: Add field with links to see details for each record
         #ToDo: Display the returned dataframe
             # https://stackoverflow.com/q/52644035
@@ -55,16 +55,16 @@ def view_list_record(list, PK):
         list (str): the relation the record comes from
         PK (int): the primary key of the record being viewed
     """
-    form = #ToDo: Write form for adding notes
+    #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        SQL_query = #toDo: Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
-        df = pd.read_sql(
-            sql=SQL_query,
-            con=db.engine,
-        )
+        #ToDo: SQL_query = Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=SQL_query,
+        #ToDo:     con=db.engine,
+        #ToDo: )
         #ToDo: Display the returned data
-        return render_template('view_lists/page.html', form=form)
-    elif form.validate_on_submit():
+        return render_template('view_lists/page.html')#ToDo, :form=form)
+    #ToDo: elif form.validate_on_submit():
         #ToDo: Add the form data to the relevant notes relation
         return redirect(url_for('view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
@@ -84,9 +84,9 @@ def edit_list_record(list, PK):
     """
     #ToDo: Write form for adding/editing record and for adding or editing notes
     if request.method == 'GET':
-        #toDo: if request came from adding new record link/PK not in relation:
+        #ToDo: if request came from adding new record link/PK not in relation:
             #ToDo: Show page without prefilled values
-            return render_template('view_lists/page.html', form=form)
+            return render_template('view_lists/page.html')#ToDo:, form=form)
         #ToDo: if `PK` is in the relation
             #ToDo: SQL_query = Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
             #ToDo: df = pd.read_sql(
@@ -98,10 +98,10 @@ def edit_list_record(list, PK):
                 # https://stackoverflow.com/q/23712986
                 # https://stackoverflow.com/q/42984453
                 # https://stackoverflow.com/q/28941504
-        return render_template('view_lists/page.html', form=form)
-    elif form.validate_on_submit():
+        #ToDo: return render_template('view_lists/page.html', form=form)
+    #ToDo: elif form.validate_on_submit():
         #ToDo: update or insert the changes
         #ToDo: Changing a statisticsSources-resourceSources connection means changing the non-PK field in statisticsResourceSources from true to false and creating a new record with the PKs of the new sources--does it makes sense to have a "if stats source changes, pick new one here" drop-down listing all stats sources but the current one on a resource source details page?
-        return redirect(url_for('view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
+        #ToDo: return redirect(url_for('view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
         return abort(404)
