@@ -47,11 +47,11 @@ def create_app():
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
-    csrf.init_app(app)
-    db.init_app(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
+    csrf.init_app(app)
+    db.init_app(app)
 
     #Section: Create Command to Build Schema
     # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
