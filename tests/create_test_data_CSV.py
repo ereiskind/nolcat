@@ -6,7 +6,6 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
-from data import deduplication_data
 
 relation_name = pyip.inputMenu(
     prompt="Enter the number of the test data dataframe that should be output to a CSV.\n",
@@ -21,11 +20,6 @@ relation_name = pyip.inputMenu(
         "statisticsResourceSources_relation",
         "annualUsageCollectionTracking_relation",
         "COUNTERData_relation",
-        "sample_normalized_resource_data",
-        "matched_records",
-        "matches_to_manually_confirm",
-        "matched_records_including_sample_normalized_resource_data",
-        "matches_to_manually_confirm_including_sample_normalized_resource_data",
     ],
     numbered=True,
 )
@@ -50,16 +44,6 @@ elif relation_name == "annualUsageCollectionTracking_relation":
     relation_data = relations.annualUsageCollectionTracking_relation()
 elif relation_name == "COUNTERData_relation":
     relation_data = relations.COUNTERData_relation()
-elif relation_name == "sample_normalized_resource_data":
-    relation_data = deduplication_data.sample_normalized_resource_data()
-elif relation_name == "matched_records":
-    relation_data = deduplication_data.matched_records()
-elif relation_name == "matches_to_manually_confirm":
-    relation_data = deduplication_data.matches_to_manually_confirm()
-elif relation_name == "matched_records_including_sample_normalized_resource_data":
-    relation_data = deduplication_data.matched_records_including_sample_normalized_resource_data()
-elif relation_name == "matches_to_manually_confirm_including_sample_normalized_resource_data":
-    relation_data = deduplication_data.matches_to_manually_confirm_including_sample_normalized_resource_data()
 
 # Ideally, this module can run in the container in the AWS instance, but an inability to authenticate from that command line to GitHub makes running the module on the local machine the only way to access the CSVs on the local machine. This module is thus set up to determine if it's running in the AWS instance or on a local machine and create a `pathlib.Path` object for the absolute path of the file based on the environment and folder the module is run from.
 file_name = Path('/', 'nolcat', 'tests', 'data')
