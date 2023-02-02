@@ -381,7 +381,6 @@ class StatisticsSources(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
         return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
