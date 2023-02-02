@@ -15,7 +15,7 @@ from nolcat.models import PATH_TO_CREDENTIALS_FILE
 
 
 #Section: Fixtures
-@pytest.fixture
+@pytest.fixture(scope='session')
 def most_recent_month_with_usage():
     """Creates the value that will be used for the `begin_date` SUSHI parameter and for database queries in other locations in the testing module."""
     current_date = datetime.date.today()
