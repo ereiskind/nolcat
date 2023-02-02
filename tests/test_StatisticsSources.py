@@ -41,7 +41,7 @@ def StatisticsSources_fixture(most_recent_month_with_usage):
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
-    with open(PATH_TO_CREDENTIALS_FILE) as JSON_file:
+    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
         for vendor in SUSHI_data_file:
             for stats_source in vendor['interface']:
