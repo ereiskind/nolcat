@@ -10,8 +10,6 @@ from random import choice
 import calendar
 
 # `conftest.py` fixtures are imported automatically
-from conftest import engine  # Without the explicit import, `engine` in the pandas `read_sql` methods is undefined (uncertain why automatic import not working, possible issue with name being overloaded?)
-from nolcat.app import create_app  # Imported because in Flask factory pattern test, where `engine` in `read_sql` method works
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 
@@ -30,7 +28,7 @@ def most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='session')
-def StatisticsSources_fixture(most_recent_month_with_usage):
+def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
