@@ -11,6 +11,7 @@ import calendar
 
 # `conftest.py` fixtures are imported automatically
 from conftest import engine  # Without the explicit import, `engine` in the pandas `read_sql` methods is undefined (uncertain why automatic import not working, possible issue with name being overloaded?)
+from nolcat.app import create_app  # Imported because in Flask factory pattern test, where `engine` in `read_sql` method works
 from nolcat.models import StatisticsSources
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 
