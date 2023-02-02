@@ -5,7 +5,7 @@ from random import sample
 import datetime
 import pytest
 import pandas as pd
-from dateutil import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
+from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 from random import choice
 import calendar
 
