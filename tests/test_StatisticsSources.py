@@ -57,7 +57,12 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture = StatisticsSources(1, "Stats source fixture name", choice(retrieval_codes), 1)
+    fixture = StatisticsSources(
+        statistics_source_ID = 1,
+        statistics_source_name = "Stats source fixture name",
+        statistics_source_retrieval_code = choice(retrieval_codes),
+        vendor_ID = 1,
+    )
     yield fixture
 
 
