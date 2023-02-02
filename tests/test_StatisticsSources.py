@@ -28,7 +28,7 @@ def most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='session')
-def StatisticsSources_fixture(PATH_TO_CREDENTIALS_FILE, most_recent_month_with_usage):
+def StatisticsSources_fixture(most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
