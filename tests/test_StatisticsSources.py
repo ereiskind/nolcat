@@ -51,7 +51,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         query_result = pd.read_sql(
-            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_sources_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage.strftime('%Y-%m-%d')}",
+            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage.strftime('%Y-%m-%d')}",
             con=engine,
         )
         if not query_result:  # Query returned an empty set
