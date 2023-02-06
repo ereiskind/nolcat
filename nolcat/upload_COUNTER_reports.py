@@ -439,7 +439,6 @@ class UploadCOUNTERReports:
             # usage_date retains datetime64[ns] type from heading conversion
             # usage_count is a numpy int type, let the program determine the number of bits used for storage
             'statistics_source_ID': 'int',
-            'resource_type': 'string',
         }
         if "resource_name" in combined_df_field_names:
             combined_df_dtypes['resource_name'] = 'string'
