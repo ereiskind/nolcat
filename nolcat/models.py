@@ -75,7 +75,7 @@ class FiscalYears(db.Model):
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
-    fiscal_years_FK = db.relationship('ChildRelation', backref='FiscalYearsFK')
+    FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='fiscalYears')
 
 
     def __repr__(self):
@@ -265,7 +265,9 @@ class Vendors(db.Model):
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
-    vendors_FK = db.relationship('ChildRelation', backref='VendorsFK')
+    FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
+    FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
+    FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
 
 
     def __repr__(self):
@@ -376,7 +378,10 @@ class StatisticsSources(db.Model):
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
-    statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
+    FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
+    FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
+    FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='statisticsSources')
+    FK_in_COUNTERData = db.relationship('COUNTERData', backref='statisticsSources')
 
 
     def __repr__(self):
@@ -610,7 +615,8 @@ class ResourceSources(db.Model):
     use_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
-    resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
+    FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
+    FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
 
 
     def __repr__(self):
