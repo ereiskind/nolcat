@@ -82,14 +82,20 @@ def test_fetch_SUSHI_credentials_for_display(StatisticsSources_fixture):
 
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
+    begin_test = datetime.now()
     end_date = datetime.date(
         most_recent_month_with_usage.year,
         most_recent_month_with_usage.month,
         calendar.monthrange(most_recent_month_with_usage.year, most_recent_month_with_usage.month)[1],
     )
-    #ToDo: SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage, end_date)
-    #ToDo: assert `SUSHI_data` is a dataframe; what else can be checked to confirm the right data was returned?
-    pass
+    before_data_collection = datetime.now()
+    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage, end_date)
+    data_collected = datetime.now()
+    print(SUSHI_data)
+    print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
+    print(type(SUSHI_data))
+    #ToDo: assert `SUSHI_data` is a dataframe and statistics source ID field value is `1` and time collected value is equal to one of the above if possible
+    assert True
 
 
 def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage):
