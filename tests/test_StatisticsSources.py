@@ -5,6 +5,7 @@ import json
 import datetime
 import calendar
 from random import choice
+import re
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
@@ -68,9 +69,8 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 #Section: Tests
 def test_fetch_SUSHI_credentials_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
-    #ToDo: credentials = StatisticsSources_fixture.fetch_SUSHI_credentials()
-    #ToDo: assert credentials == dict and credentials['URL'] matches regex /https?:\/\/.*\//
-    pass
+    credentials = StatisticsSources_fixture.fetch_SUSHI_credentials()
+    assert credentials == dict and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
 def test_fetch_SUSHI_credentials_for_display(StatisticsSources_fixture):
