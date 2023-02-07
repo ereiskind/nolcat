@@ -441,7 +441,7 @@ class StatisticsSources(db.Model):
             logging.debug(f"Returning the credentials {credentials} for a SUSHI API call.")
             return credentials
         else:
-            return None  #ToDo: Change to a way to display the `credentials` values to the user via Flask
+            return f"ToDo: Display {credentials} in Flask"  #ToDo: Change to a way to display the `credentials` values to the user via Flask
 
 
     @hybrid_method
