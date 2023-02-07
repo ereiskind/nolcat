@@ -67,15 +67,15 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 
 
 #Section: Tests
-def test_fetch_SUSHI_credentials_for_API(StatisticsSources_fixture):
+def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
-    credentials = StatisticsSources_fixture.fetch_SUSHI_credentials()
+    credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert credentials == dict and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
-def test_fetch_SUSHI_credentials_for_display(StatisticsSources_fixture):
+def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display."""
-    #ToDo: credentials = StatisticsSources_fixture.fetch_SUSHI_credentials(False)
+    #ToDo: credentials = StatisticsSources_fixture.fetch_SUSHI_information(False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
 
