@@ -82,15 +82,15 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    begin_test = datetime.now()
+    begin_test = datetime.datetime.now()
     end_date = datetime.date(
         most_recent_month_with_usage.year,
         most_recent_month_with_usage.month,
         calendar.monthrange(most_recent_month_with_usage.year, most_recent_month_with_usage.month)[1],
     )
-    before_data_collection = datetime.now()
+    before_data_collection = datetime.datetime.now()
     SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage, end_date)
-    data_collected = datetime.now()
+    data_collected = datetime.datetime.now()
     print(SUSHI_data)
     print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
     print(type(SUSHI_data))
