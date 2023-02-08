@@ -835,7 +835,7 @@ class COUNTERData(db.Model):
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
-        self.report_type(str): the type of COUNTER report, represented by the official report abbreviation
+        self.report_type (str): the type of COUNTER report, represented by the official report abbreviation
         self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
