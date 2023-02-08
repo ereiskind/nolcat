@@ -53,7 +53,7 @@ To Make NoLCAT Viable with Command Line SQL
 * Finish ``ingest_usage.harvest_SUSHI_statistics()``
 * Finish the ``ingest_usage.SUSHIParametersForm()`` class
 * Create "make-SUSHI-call.html" page in ``ingest_usage``
-* Finish ``models.StatisticsSources._harvest_R5_SUSHI()``, including an exception for MathSciNet, which doesn't have a `/status` endpoint but does return reports
+* Add JSON to dataframe conversion to ``models.StatisticsSources._harvest_R5_SUSHI()``
 * Finish ``models.StatisticsSources.collect_usage_statistics()``
 
 Test Modules
@@ -98,6 +98,8 @@ To Complete NoLCAT
 ``nolcat`` Modules
 ------------------
 * Write ``__repr__`` values in ``nolcat.models``
+* Get return statements providing info on errors as strings in stdout to show those messages in Flask
+* Make other updates in ``nolcat.models`` methods based on to-do notes
 
 ``nolcat.models.Vendors`` Class
 -------------------------------

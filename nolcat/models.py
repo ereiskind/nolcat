@@ -5,6 +5,8 @@ from pathlib import Path
 import os
 import sys
 import json
+import re
+import datetime
 from sqlalchemy import Column
 from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
 from sqlalchemy import ForeignKey
@@ -12,8 +14,10 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
+from SUSHI_call_and_response import SUSHICallAndResponse
 
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
@@ -458,81 +462,121 @@ class StatisticsSources(db.Model):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        #ToDo: SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
-        #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
+        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        logging.info(f"Making SUSHI calls for {self.statistics_source_name} with parameters {SUSHI_parameters}.")
 
 
         #Section: Confirm SUSHI API Functionality
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #Alert: MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable--how should this be handled so that it can pass through?
-
+        SUSHI_status_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
+            pass
+        elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
+            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
+            pass
 
         #Section: Get List of Resources
         #Subsection: Make API Call
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a single-item dict with the key "reports" is returned, iterate through the list so the ultimate result is all_available_reports = a list of all available reports
+        SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+        if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
+            logging.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
+            all_available_reports = []
+            for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
+                for report_details_dict in report_call_response:
+                    for report_detail_keys, report_detail_values in report_details_dict.items():
+                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                            all_available_reports.append(report_detail_values)
+            logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
+        elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
+            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
+            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
 
         #Subsection: Get List of Master Reports
-        #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
-        #ToDo: available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+        available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        logging.debug(f"Master reports provided by {self.statistics_source_name}: {available_master_reports}")
 
         #Subsection: Add Any Standard Reports Not Corresponding to a Master Report
-        #ToDo: represented_by_master_report = set()
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: for report in available_reports:
-                #ToDo: if report[0:2] == master_report:
-                    #ToDo: Add report to represented_by_master_report
-        #ToDo: not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        represented_by_master_report = set()
+        for master_report in available_master_reports:
+            for report in available_reports:
+                if report[0:2] == master_report:
+                    represented_by_master_report.add(report)
+        not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        if len(not_represented_by_master_report) > 0:  # Logging statement only appears if it would include content
+            logging.debug(f"Standard reports lacking corresponding master reports provided by {self.statistics_source_name}: {not_represented_by_master_report}")
         #ToDo: Figure out inspecting to see if pulling usage from reports in not_represented_by_master_report is appropriate
 
 
         #Section: Make Master Report SUSHI Calls
         #Subsection: Add Date Parameters
-        #ToDo: SUSHI_parameters['begin_date'] = usage_start_date
-        #toDo: SUSHI_parameters['end_date'] = usage_end_date
+        SUSHI_parameters['begin_date'] = usage_start_date
+        SUSHI_parameters['end_date'] = usage_end_date
 
         #Subsection: Set Up Loop Through Master Reports
-        #ToDo: master_report_dataframes = []
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: master_report_name = master_report short name in uppercase letters
+        master_report_dataframes = []
+        for master_report in available_master_reports:
+            master_report_name = master_report.upper()
+            logging.info(f"Making SUSHI calls for {self.statistics_source_name} for report {master_report_name}.")
 
             #Subsection: Check if Usage Is Already in Database
-            #ToDo: for month in <the range of months the usage time span represents>
-                #ToDo: Get number of records in usage data relation with self.statistics_source_ID, the month, and master_report
-                #ToDo: If the above returns data
-                    #ToDo: Ask if data should be loaded
-            #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
+            #ToDo: months_to_exclude_from_harvest = []
+            for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):
+                date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
+                number_of_records = pd.read_sql(
+                    sql=f'''
+                        SELECT COUNT(*) FROM COUNTERData
+                        WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
+                    ''',
+                    con=db.engine,
+                )
+                logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
+                if number_of_records.iloc[0][0] > 0:
+                    logging.warning(f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
+                    return f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
+                    #ToDo: Use Flask to ask if data should be loaded, and if not, `months_to_exclude_from_harvest.append(month_being_checked)`
+            #ToDo: if len(months_to_exclude_from_harvest) > 0:
+                #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
+                #ToDo: If it's multiple ranges, how will that iteration be initiated from here?
 
             #Subsection: Add Parameters for Master Report Type
-            #ToDo: if master_report_name == "PR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "DR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                    #ToDo: try:
-                        #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "TR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "IR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
-                #ToDo: SUSHI_parameters["include_parent_details"] = "True"
+            if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
+                del SUSHI_parameters["include_parent_details"]
+            
+            if master_report_name == "PR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "DR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "TR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            elif master_report_name == "IR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
+                SUSHI_parameters["include_parent_details"] = "True"
+            else:
+                logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name} with parameters {SUSHI_parameters}.")
             
             #Subsection: Make Master Report API Call
-            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
-            #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-            #ToDo: df['report_type'] = master_report_name
-            #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
+            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
+            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+                logging.error(f"The call to the `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
+            #ToDo: df = `SUSHI_data_response` transformed into a dataframe with the field labels lowercase
+            df['report_type'] = master_report_name
+            master_report_dataframes.append(df)
         
 
         #Section: Return a Single Dataframe
-        #ToDo: return pd.concat(master_report_dataframes)
-        pass
+        return pd.concat(master_report_dataframes)
 
 
     @hybrid_method
