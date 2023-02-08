@@ -50,6 +50,11 @@ Configure Flask-User
 
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
+* Finish ``ingest_usage.harvest_SUSHI_statistics()``
+* Finish the ``ingest_usage.SUSHIParametersForm()`` class
+* Create "make-SUSHI-call.html" page in ``ingest_usage``
+* Finish ``models.StatisticsSources._harvest_R5_SUSHI()``, including an exception for MathSciNet, which doesn't have a `/status` endpoint but does return reports
+* Finish ``models.StatisticsSources.collect_usage_statistics()``
 
 Test Modules
 ------------
@@ -67,8 +72,6 @@ Test Modules
 ``nolcat.modules.StatisticsSources`` Class
 ------------------------------------------
 * Finish ``StatisticsSources.fetch_SUSHI_information()``
-* Finish ``StatisticsSources._harvest_R5_SUSHI()``, including an exception for MathSciNet, which doesn't have a `/status` endpoint but does return reports
-* Finish ``StatisticsSources.collect_usage_statistics()``
 * Write ``StatisticsSources.add_note`` method
 * Write tests for ``models.StatisticsSources``: ``fetch_SUSHI_information()`` for both API and display, ``_harvest_R5_SUSHI()``, ``collect_usage_statistics()``, ``add_note()``
 
@@ -85,9 +88,8 @@ Test Modules
 
 ``nolcat.ingest_usage`` Blueprint
 ---------------------------------
-* Finish ``upload_COUNTER_reports()``, ``harvest_SUSHI_statistics()``, ``upload_non_COUNTER_reports()`` routes
-* Finish the ``SUSHIParametersForm()`` class
-* Create "make-SUSHI-call.html", "upload-COUNTER-reports.html", and "save-non-COUNTER-usage.html" pages
+* Finish ``upload_COUNTER_reports()``, ``upload_non_COUNTER_reports()`` routes
+* Create "upload-COUNTER-reports.html" and "save-non-COUNTER-usage.html" pages
 * Write tests for all functions
 
 To Complete NoLCAT
