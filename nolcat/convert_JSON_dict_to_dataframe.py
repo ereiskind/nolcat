@@ -1,0 +1,105 @@
+import logging
+
+logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
+
+
+class ConvertJSONDictToDataframe:
+    """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into dataframes.
+
+    SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a dataframe, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into dataframes that can be loaded into the `COUNTERData` relation; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the dictionary as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `ConvertJSONDictToDataframe` type are never instantiated.
+
+    Attributes:
+        self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
+
+    Methods:
+        create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+    """
+    def __init__(self, SUSHI_JSON_dictionary):
+        """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
+
+        This constructor is not meant to be used alone; all class instantiations should have a `create_dataframe()` method call appended to it.
+
+        Args:
+            SUSHI_JSON_dictionary (dict): The dictionary created by converting the JSON returned by the SUSHI API call into Python data types
+        """
+        self.SUSHI_JSON_dictionary = SUSHI_JSON_dictionary
+    
+
+    def create_dataframe(self):
+        """This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+
+        This method prepares the dictionaries containing all the data from the SUSHI API responses for upload into the database. The `statistics_source_ID` and `report_type` are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
+
+        Returns:
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+        """
+        #ToDo: records_orient_list = []
+        #ToDo: report_header_creation_date = self.SUSHI_JSON_dictionary['Report_Header']['Created'] made into datetime.date
+        #ToDo: for record in self.SUSHI_JSON_dictionary['Report_Items']:
+            #ToDo: record_dict = {"report_creation_date": report_header_creation_date}
+            #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
+                #ToDo: `resource_name`
+                #ToDo: `publisher`
+                #ToDo: `publisher_ID`
+                #ToDo: `platform`
+                #ToDo: `authors`
+                #ToDo: `publication_date`
+                #ToDo: `article_version`
+                #ToDo: `DOI`
+                #ToDo: `proprietary_ID`
+                #ToDo: `ISBN`
+                #ToDo: `print_ISSN`
+                #ToDo: `online_ISSN`
+                #ToDo: `URI`
+                #ToDo: `data_type`
+                #ToDo: `section_type`
+                #ToDo: `YOP`
+                #ToDo: `access_type`
+                #ToDo: `access_method`
+                #ToDo: `parent_title`
+                #ToDo: `parent_authors`
+                #ToDo: `parent_publication_date`
+                #ToDo: `parent_article_version`
+                #ToDo: `parent_data_type`
+                #ToDo: `parent_DOI`
+                #ToDo: `parent_proprietary_ID`
+                #ToDo: `parent_ISBN`
+                #ToDo: `parent_print_ISSN`
+                #ToDo: `parent_online_ISSN`
+                #ToDo: `parent_URI`
+                #ToDo: `metric_type`
+                #ToDo: `usage_date`
+                #ToDo: `usage_count`
+            #ToDo: records_orient_list.append(record_dict)
+        #ToDo: Create dtypes dictionary
+        #ToDo: df = pd.read_json(records_orient_list, orient='records') plus dtypes dictionary
+        #ToDo: return df
+        pass
+
+        
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+
+
+
+
+
+
+
+
+
+
+
+

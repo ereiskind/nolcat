@@ -565,6 +565,7 @@ class StatisticsSources(db.Model):
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
             #ToDo: df = `SUSHI_data_response` transformed into a dataframe with the field labels lowercase
+            df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = master_report_name
             master_report_dataframes.append(df)
         
