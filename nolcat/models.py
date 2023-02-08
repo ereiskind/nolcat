@@ -2,16 +2,10 @@
 
 import logging
 from pathlib import Path
-import os
 import sys
 import json
 import re
 import datetime
-from sqlalchemy import Column
-from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 from dateutil.rrule import rrule, MONTHLY
