@@ -12,6 +12,7 @@ from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
 from SUSHI_call_and_response import SUSHICallAndResponse
+from convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
@@ -575,7 +576,9 @@ class StatisticsSources(db.Model):
                 logging.error(f"The call to the `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
-            #ToDo: df = `SUSHI_data_response` transformed into a dataframe with the field labels lowercase
+            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            if df.empty:
+                continue  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database; a `return` statement here would keep any other valid reports from being pulled and processed
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = master_report_name
             master_report_dataframes.append(df)
