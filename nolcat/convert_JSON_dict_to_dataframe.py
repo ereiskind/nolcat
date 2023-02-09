@@ -1,5 +1,7 @@
 import logging
 
+import models
+
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
 
 
@@ -9,11 +11,29 @@ class ConvertJSONDictToDataframe:
     SUSHI API calls return data in a JSON format, which is easily converted to a Python dictionary; this conversion is done in the `SUSHICallAndResponse.make_SUSHI_call()` method. The conversion from a heavily nested dictionary to a dataframe, however, is much more complicated, as none of the built-in dataframe constructors can be employed. This class exists to convert the SUSHI JSON-derived dictionaries into dataframes that can be loaded into the `COUNTERData` relation; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the dictionary as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `ConvertJSONDictToDataframe` type are never instantiated.
 
     Attributes:
+        self.RESOURCE_NAME_LENGTH (int): A class variable for the length of the `COUNTERData.resource_name` and `COUNTERData.parent_title` fields.
+        self.PUBLISHER_LENGTH (int): A class variable for the length of the `COUNTERData.publisher` field.
+        self.PUBLISHER_ID_LENGTH (int): A class variable for the length of the `COUNTERData.publisher_ID` field.
+        self.PLATFORM_LENGTH (int): A class variable for the length of the `COUNTERData.platform` field.
+        self.AUTHORS_LENGTH (int): A class variable for the length of the `COUNTERData.authors` and `COUNTERData.parent_authors` fields.
+        self.DOI_LENGTH (int): A class variable for the length of the `COUNTERData.DOI` and `COUNTERData.parent_DOI` fields.
+        self.PROPRIETARY_ID_LENGTH (int): A class variable for the length of the `COUNTERData.proprietary_ID` and `COUNTERData.parent_proprietary_ID` fields.
+        self.URI_LENGTH (int): A class variable for the length of the `COUNTERData.URI` and `COUNTERData.parent_URI` fields.
         self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
     Methods:
         create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
     """
+    # Class variables
+    RESOURCE_NAME_LENGTH = models.RESOURCE_NAME_LENGTH
+    PUBLISHER_LENGTH = models.PUBLISHER_LENGTH
+    PUBLISHER_ID_LENGTH = models.PUBLISHER_ID_LENGTH
+    PLATFORM_LENGTH = models.PLATFORM_LENGTH
+    AUTHORS_LENGTH = models.AUTHORS_LENGTH
+    DOI_LENGTH = models.DOI_LENGTH
+    PROPRIETARY_ID_LENGTH = models.PROPRIETARY_ID_LENGTH
+    URI_LENGTH = models.URI_LENGTH
+
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 

@@ -17,6 +17,17 @@ from SUSHI_call_and_response import SUSHICallAndResponse
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
 
+# Using field length constants allows `ConvertJSONDictToDataframe` to check that data successfully be uploaded to varchar fields without COUNTER-defined fixed vocabularies in the `COUNTERData` relation
+RESOURCE_NAME_LENGTH = 2000
+PUBLISHER_LENGTH = 225
+PUBLISHER_ID_LENGTH = 50
+PLATFORM_LENGTH = 75
+AUTHORS_LENGTH = 1000
+DOI_LENGTH = 75
+PROPRIETARY_ID_LENGTH = 100
+URI_LENGTH = 200
+
+
 def PATH_TO_CREDENTIALS_FILE():
     """Provides the file path to the SUSHI credentials file as a string.
     
@@ -831,7 +842,7 @@ class AnnualUsageCollectionTracking(db.Model):
 class COUNTERData(db.Model):
     """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
 
-    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types.
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToDataframe` to be updated at the same time.
 
     Attributes:
         self.COUNTER_data_ID (int): the primary key
@@ -876,35 +887,35 @@ class COUNTERData(db.Model):
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     report_type = db.Column(db.String(5))
-    resource_name = db.Column(db.String(2000))
-    publisher = db.Column(db.String(225))
-    publisher_ID = db.Column(db.String(50))
-    platform = db.Column(db.String(75))
-    authors = db.Column(db.String(1000))
+    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    publisher = db.Column(db.String(PUBLISHER_LENGTH))
+    publisher_ID = db.Column(db.String(PUBLISHER_ID_LENGTH))
+    platform = db.Column(db.String(PLATFORM_LENGTH))
+    authors = db.Column(db.String(AUTHORS_LENGTH))
     publication_date = db.Column(db.DateTime)
     article_version = db.Column(db.String(50))
-    DOI = db.Column(db.String(75))
-    proprietary_ID = db.Column(db.String(100))
+    DOI = db.Column(db.String(DOI_LENGTH))
+    proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
     online_ISSN = db.Column(db.String(10))
-    URI = db.Column(db.String(200))
+    URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
-    parent_title = db.Column(db.String(2000))
-    parent_authors = db.Column(db.String(1000))
+    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    parent_authors = db.Column(db.String(AUTHORS_LENGTH))
     parent_publication_date = db.Column(db.DateTime)
     parent_article_version = db.Column(db.String(50))
     parent_data_type = db.Column(db.String(25))
-    parent_DOI = db.Column(db.String(75))
-    parent_proprietary_ID = db.Column(db.String(100))
+    parent_DOI = db.Column(db.String(DOI_LENGTH))
+    parent_proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     parent_ISBN = db.Column(db.String(20))
     parent_print_ISSN = db.Column(db.String(10))
     parent_online_ISSN = db.Column(db.String(10))
-    parent_URI = db.Column(db.String(200))
+    parent_URI = db.Column(db.String(URI_LENGTH))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
