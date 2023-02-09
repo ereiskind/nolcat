@@ -1,4 +1,6 @@
 import logging
+from dateutil import parser
+import pandas as pd
 
 import models
 
@@ -53,10 +55,10 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
-        #ToDo: records_orient_list = []
-        #ToDo: report_header_creation_date = self.SUSHI_JSON_dictionary['Report_Header']['Created'] made into datetime.date
-        #ToDo: for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            #ToDo: record_dict = {"report_creation_date": report_header_creation_date}
+        records_orient_list = []
+        report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
+        for record in self.SUSHI_JSON_dictionary['Report_Items']:
+            record_dict = {"report_creation_date": report_header_creation_date}
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
                 #ToDo: `resource_name`
                 #ToDo: `publisher`
@@ -90,11 +92,16 @@ class ConvertJSONDictToDataframe:
                 #ToDo: `metric_type`
                 #ToDo: `usage_date`
                 #ToDo: `usage_count`
-            #ToDo: records_orient_list.append(record_dict)
+            records_orient_list.append(record_dict)
         #ToDo: Create dtypes dictionary
-        #ToDo: df = pd.read_json(records_orient_list, orient='records') plus dtypes dictionary
-        #ToDo: return df
-        pass
+        df = pd.read_json(
+            records_orient_list,
+            orient='records',
+            #dtype
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        return df
 
         
 
