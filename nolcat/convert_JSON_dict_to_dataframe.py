@@ -93,11 +93,47 @@ class ConvertJSONDictToDataframe:
                 #ToDo: `usage_date`
                 #ToDo: `usage_count`
             records_orient_list.append(record_dict)
-        #ToDo: Create dtypes dictionary
+        df_dtypes = {
+            # 'COUNTER_data_ID' : '',
+            # 'statistics_source_ID' : '',
+            # 'report_type' : '',
+            # 'resource_name' : '',
+            # 'publisher' : '',
+            # 'publisher_ID' : '',
+            # 'platform' : '',
+            # 'authors' : '',
+            # 'publication_date' : '',
+            # 'article_version' : '',
+            # 'DOI' : '',
+            # 'proprietary_ID' : '',
+            # 'ISBN' : '',
+            # 'print_ISSN' : '',
+            # 'online_ISSN' : '',
+            # 'URI' : '',
+            # 'data_type' : '',
+            # 'section_type' : '',
+            # 'YOP' : '',
+            # 'access_type' : '',
+            # 'access_method' : '',
+            # 'parent_title' : '',
+            # 'parent_authors' : '',
+            # 'parent_publication_date' : '',
+            # 'parent_article_version' : '',
+            # 'parent_data_type' : '',
+            # 'parent_DOI' : '',
+            # 'parent_proprietary_ID' : '',
+            # 'parent_ISBN' : '',
+            # 'parent_print_ISSN' : '',
+            # 'parent_online_ISSN' : '',
+            # 'parent_URI' : '',
+            # 'metric_type' : '',
+            # 'usage_date' : '',
+            # 'usage_count' : '',
+        }
         df = pd.read_json(
             records_orient_list,
             orient='records',
-            #dtype
+            dtype=df_dtypes,
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
