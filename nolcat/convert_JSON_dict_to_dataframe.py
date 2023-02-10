@@ -3,6 +3,7 @@ import re
 import datetime
 from dateutil import parser
 import pandas as pd
+from pandas import Int64Dtype
 
 import models
 
@@ -213,8 +214,13 @@ class ConvertJSONDictToDataframe:
                 elif key == "Section_Type":
                     record_dict['section_type'] = value
                     logging.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
+                
+
+                #Section: Capture `YOP` Value
+                elif key == "YOP":
+                    record_dict['YOP'] = Int64Dtype(value)
+                    logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `YOP`
                 #ToDo: `access_type`
                 #ToDo: `access_method`
                 #ToDo: `parent_title`
