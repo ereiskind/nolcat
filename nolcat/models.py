@@ -471,7 +471,7 @@ class StatisticsSources(db.Model):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
+        SUSHI_info = self.fetch_SUSHI_information()
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         logging.info(f"Making SUSHI calls for {self.statistics_source_name} with parameters {SUSHI_parameters}.")
 
