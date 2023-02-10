@@ -37,7 +37,7 @@ E-resources involves working with scholarly content in a wide variety of languag
 
 To-Do List
 **********
-Last updated: 2023-01-24
+Last updated: 2023-02-10
 
 TaDS Assistance Required
 ========================
@@ -54,6 +54,7 @@ To Make NoLCAT Viable with Command Line SQL
 Test Modules
 ------------
 * Finish pytest configuration and/or fixtures so data loaded into database during tests automatically rolls back once pytest session finishes
+* Update test data to use IR reports with all attributes--this may require adding another vendor with an IR that provides fewer resources than ProQuest to the test data
 
 ``nolcat.initialization`` Blueprint
 -----------------------------------
