@@ -1,5 +1,6 @@
 import logging
 import re
+import datetime
 from dateutil import parser
 import pandas as pd
 
@@ -132,8 +133,14 @@ class ConvertJSONDictToDataframe:
                                 else:
                                     record_dict['authors'] = type_and_value['Value']
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                
+                #Section: Capture `publication_date` Value
+                elif key == "Item_Dates":
+                    for type_and_value in value:
+                        if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
+                            record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                            logging.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `publication_date`
                 #ToDo: `article_version`
                 #ToDo: `DOI`
                 #ToDo: `proprietary_ID`
