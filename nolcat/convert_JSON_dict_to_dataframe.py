@@ -58,7 +58,9 @@ class ConvertJSONDictToDataframe:
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            record_dict = {"report_creation_date": report_header_creation_date}
+            logging.info(f"Starting iteration for record {record}")
+            record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            for key, value in record.items():
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
                 #ToDo: `resource_name`
                 #ToDo: `publisher`
