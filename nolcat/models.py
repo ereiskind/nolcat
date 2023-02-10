@@ -238,7 +238,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
@@ -247,12 +247,15 @@ class FiscalYears(db.Model):
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: return statement indicating success
+        #ToDo: except Exception as e:
+            #ToDo: return statement indicating failure
         pass
 
 
@@ -599,7 +602,7 @@ class StatisticsSources(db.Model):
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         #ToDo: df.to_sql(
@@ -821,19 +824,22 @@ class AnnualUsageCollectionTracking(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: start_date = start date for FY
         #ToDo: end_date = end date for FY
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: return statement indicating success
+        #ToDo: except Exception as e:
+            #ToDo: return statement indicating failure
         pass
 
 
