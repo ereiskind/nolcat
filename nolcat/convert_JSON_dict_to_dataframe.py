@@ -101,8 +101,16 @@ class ConvertJSONDictToDataframe:
                                     logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                             else:
                                 continue  # The `for type_and_value in value` loop
+                
+                #Section: Capture `platform` Value
+                elif key == "Platform":
+                    if len(value) > self.PLATFORM_LENGTH:
+                        logging.error(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                    else:
+                        record_dict['platform'] = value
+                        logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `platform`
                 #ToDo: `authors`
                 #ToDo: `publication_date`
                 #ToDo: `article_version`
