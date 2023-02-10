@@ -61,8 +61,16 @@ class ConvertJSONDictToDataframe:
             logging.info(f"Starting iteration for record {record}")
             record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
+
+                #Section: Capture `resource_name` Value
+                if key == "Database" or key == "Title" or key == "Item":
+                    if len(value) > self.RESOURCE_NAME_LENGTH:
+                        logging.error(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                    else:
+                        record_dict['resource_name'] = value
+                        logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `resource_name`
                 #ToDo: `publisher`
                 #ToDo: `publisher_ID`
                 #ToDo: `platform`
