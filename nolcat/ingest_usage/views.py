@@ -55,7 +55,7 @@ def harvest_SUSHI_statistics():
             sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
             con=db.engine,
         )
-        form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))  # This sets the statistics source field options to a list of every statistics source that has SUSHI credentials
+        #ToDo: `form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))  # This sets the statistics source field options to a list of every statistics source that has SUSHI credentials` returned `KeyError: ('statistics_source_ID', 'statistics_source_name')` -- the way to make this a valid drop-down needs to be investigated
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         df = pd.read_sql(

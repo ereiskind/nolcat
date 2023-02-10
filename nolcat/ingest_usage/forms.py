@@ -3,6 +3,7 @@ from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import MultipleFileField
 from wtforms.fields import FileField
+from wtforms.fields import IntegerField  #ToDo: Remove when restoring drop-down
 from wtforms.validators import DataRequired
 import pandas as pd
 
@@ -14,7 +15,8 @@ class COUNTERReportsForm(FlaskForm):
 
 class SUSHIParametersForm(FlaskForm):
     """Creates a form for capturing the parameters for calling the `StatisticsSources.collect_usage_statistics()` method."""
-    statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int)
+    #ToDo: Restore `statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int)` when the drop-down works
+    statistics_source = IntegerField("Enter the `statisticsSources.statistics_source_ID` for the statistics source whose SUSHI should be pulled.", validators=[DataRequired()])  #ToDo: Remove when restoring drop-down
     begin_date = DateField("Select the first day of the first month of data being collected.", validators=[DataRequired()])
     end_date = DateField("Select the last day of the last month of data being collected.", validators=[DataRequired()])
 

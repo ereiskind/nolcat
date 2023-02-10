@@ -85,6 +85,7 @@ Test Modules
 ---------------------------------
 * Finish ``upload_COUNTER_reports()``, ``upload_non_COUNTER_reports()`` routes
 * Create "upload-COUNTER-reports.html" and "save-non-COUNTER-usage.html" pages
+* Figure out how to create drop-down list in ``harvest_SUSHI_statistics()`` and adjust ``SUSHIParametersForm`` accordingly
 * Write tests for all functions
 
 To Complete NoLCAT
