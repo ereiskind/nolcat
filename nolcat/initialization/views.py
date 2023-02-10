@@ -211,6 +211,7 @@ def collect_initial_relation_data():
                 'vendorNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `vendorNotes` loaded into the database")
             statisticsSources_dataframe.to_sql(
@@ -223,6 +224,7 @@ def collect_initial_relation_data():
                 'statisticsSourceNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `statisticsSourceNotes` loaded into the database")
             resourceSources_dataframe.to_sql(
@@ -235,6 +237,7 @@ def collect_initial_relation_data():
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `resourceSourceNotes` loaded into the database")
             statisticsResourceSources_dataframe.to_sql(
