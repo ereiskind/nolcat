@@ -50,7 +50,6 @@ Configure Flask-User
 
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
-* Finish ``ingest_usage.harvest_SUSHI_statistics()``
 
 Test Modules
 ------------
