@@ -604,14 +604,16 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
-        pass
+        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            return "The load was a success"
+        except Exception as error:
+            return f"The load had an error: {format(error)}"
 
 
     @hybrid_method

@@ -58,8 +58,8 @@ def harvest_SUSHI_statistics():
     elif form.validate_on_submit():
         #ToDo: Get the `statisticsSource` record matching `form.statistics_source.data` and instantiate it as a `StatisticsSource` object
         #ToDo: Validate dates if not possible in the form, and if they're invalid, send user back to the form
-        #ToDo: StatisticsSources.collect_usage_statistics(form.begin_date.data, form.end_date.data)
-        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        #ToDo: result_message = StatisticsSources.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
     else:
         return abort(404)
 
