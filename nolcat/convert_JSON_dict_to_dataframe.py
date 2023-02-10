@@ -345,6 +345,16 @@ class ConvertJSONDictToDataframe:
                 else:
                     pass  # The other keys in the JSON dict are handled outside of this loop
             
+            
+            #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
+            for performance in record['Performance']:
+                record_dict['usage_date'] = datetime.date.fromisoformat(performance['Period']['Begin_Date'])
+                for instance in performance['Instance']:
+                    record_dict['metric_type'] = instance['Metric_Type']
+                    record_dict['usage_count'] = instance['Count']
+                    records_orient_list.append(record_dict)  # This adds the dictionary with the specific date, metric, and count combinations represented by each item in the `Instance` list
+                    logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
+
         df_dtypes = {
             # 'COUNTER_data_ID' : '',
             # 'statistics_source_ID' : '',
