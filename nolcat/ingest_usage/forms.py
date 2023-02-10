@@ -14,9 +14,9 @@ class COUNTERReportsForm(FlaskForm):
 
 class SUSHIParametersForm(FlaskForm):
     """Creates a form for capturing the parameters for calling the `StatisticsSources.collect_usage_statistics()` method."""
-    statistics_source = SelectField("pick stats source", coerce=int)
-    begin_date = DateField("Beginning of timespan", validators=[DataRequired()])
-    end_date = DateField("end of timespan", validators=[DataRequired()])  #ToDo: Check `view_usage` routes for handling validation of date sequence and last date of month
+    statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int)
+    begin_date = DateField("Select the first day of the first month of data being collected.", validators=[DataRequired()])
+    end_date = DateField("Select the last day of the last month of data being collected.", validators=[DataRequired()])
 
 
 class UsageFileForm(FlaskForm):

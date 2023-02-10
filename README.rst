@@ -51,7 +51,6 @@ Configure Flask-User
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
 * Finish ``ingest_usage.harvest_SUSHI_statistics()``
-* Finish the ``ingest_usage.SUSHIParametersForm()`` class
 * Create "make-SUSHI-call.html" page in ``ingest_usage``
 
 Test Modules
