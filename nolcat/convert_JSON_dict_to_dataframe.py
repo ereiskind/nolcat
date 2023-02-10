@@ -147,13 +147,63 @@ class ConvertJSONDictToDataframe:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
                             logging.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
+                
+                #Section: Capture Standard Identifiers
+                elif key == "Item_ID":
+                    for type_and_value in value:
+                        
+                        #Subsection: Capture `DOI` Value
+                        if type_and_value['Type'] == "DOI":
+                            if len(type_and_value['Value']) > self.DOI_LENGTH:
+                                logging.error(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                            else:
+                                record_dict['DOI'] = type_and_value['Value']
+                                logging.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
+                        
+                        #Subsection: Capture `proprietary_ID` Value
+                        elif re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
+                            if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
+                                logging.error(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                            else:
+                                record_dict['proprietary_ID'] = type_and_value['Value']
+                                logging.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
+                        
+                        #Subsection: Capture `ISBN` Value
+                        elif type_and_value['Type'] == "ISBN":
+                            record_dict['ISBN'] = str(type_and_value['Value'])  #ToDo: Since hyphen placement isn't uniform, should all hyphens be stripped?
+                            logging.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
+                        
+                        #subsection: Capture `print_ISSN` Value
+                        elif type_and_value['Type'] == "Print_ISSN":
+                            if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
+                                record_dict['print_ISSN'] = type_and_value['Value'].strip()
+                                logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
+                            else:
+                                record_dict['print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
+                        
+                        #Subsection: Capture `online_ISSN` Value
+                        elif type_and_value['Type'] == "Online_ISSN":
+                            if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
+                                record_dict['online_ISSN'] = type_and_value['Value'].strip()
+                                logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
+                            else:
+                                record_dict['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
+                        
+                        #Subsection: Capture `URI` Value
+                        elif type_and_value['Type'] == "URI":
+                            if len(type_and_value['Value']) > self.URI_LENGTH:
+                                logging.error(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                            else:
+                                record_dict['URI'] = type_and_value['Value']
+                                logging.debug(f"Added `COUNTERData.URI` value {record_dict['URI']} to `record_dict`.")
+                        else:
+                            continue  # The `for type_and_value in value` loop
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `DOI`
-                #ToDo: `proprietary_ID`
-                #ToDo: `ISBN`
-                #ToDo: `print_ISSN`
-                #ToDo: `online_ISSN`
-                #ToDo: `URI`
                 #ToDo: `data_type`
                 #ToDo: `section_type`
                 #ToDo: `YOP`
