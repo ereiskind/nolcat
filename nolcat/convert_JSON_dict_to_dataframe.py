@@ -1,4 +1,5 @@
 import logging
+import re
 from dateutil import parser
 import pandas as pd
 
@@ -79,8 +80,28 @@ class ConvertJSONDictToDataframe:
                     else:
                         record_dict['publisher'] = value
                         logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
+                
+                #Section: Capture `publisher_ID` Value
+                elif key == "Publisher_ID":
+                    if len(value) == 1:
+                        if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
+                            logging.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
+                            return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                        else:
+                            record_dict['publisher_ID'] = value[0]['Value']
+                            logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                    else:
+                        for type_and_value in value:
+                            if re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
+                                if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
+                                    logging.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                    return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                                else:
+                                    record_dict['publisher_ID'] = type_and_value['Value']
+                                    logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                            else:
+                                continue  # The `for type_and_value in value` loop
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `publisher_ID`
                 #ToDo: `platform`
                 #ToDo: `authors`
                 #ToDo: `publication_date`
