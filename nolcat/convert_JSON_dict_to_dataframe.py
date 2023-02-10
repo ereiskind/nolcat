@@ -70,8 +70,16 @@ class ConvertJSONDictToDataframe:
                     else:
                         record_dict['resource_name'] = value
                         logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
+                
+                #Section: Capture `publisher` Value
+                elif key == "Publisher":
+                    if len(value) > self.PUBLISHER_LENGTH:
+                        logging.error(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                    else:
+                        record_dict['publisher'] = value
+                        logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `publisher`
                 #ToDo: `publisher_ID`
                 #ToDo: `platform`
                 #ToDo: `authors`
