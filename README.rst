@@ -53,7 +53,6 @@ To Make NoLCAT Viable with Command Line SQL
 * Finish ``ingest_usage.harvest_SUSHI_statistics()``
 * Finish the ``ingest_usage.SUSHIParametersForm()`` class
 * Create "make-SUSHI-call.html" page in ``ingest_usage``
-* Add JSON to dataframe conversion to ``models.StatisticsSources._harvest_R5_SUSHI()``
 * Finish ``models.StatisticsSources.collect_usage_statistics()``
 
 Test Modules

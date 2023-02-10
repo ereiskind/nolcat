@@ -355,43 +355,66 @@ class ConvertJSONDictToDataframe:
                     records_orient_list.append(record_dict)  # This adds the dictionary with the specific date, metric, and count combinations represented by each item in the `Instance` list
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
+        
+        #Section: Create Dataframe
         df_dtypes = {
-            # 'COUNTER_data_ID' : '',
-            # 'statistics_source_ID' : '',
-            # 'report_type' : '',
-            # 'resource_name' : '',
-            # 'publisher' : '',
-            # 'publisher_ID' : '',
-            # 'platform' : '',
-            # 'authors' : '',
-            # 'publication_date' : '',
-            # 'article_version' : '',
-            # 'DOI' : '',
-            # 'proprietary_ID' : '',
-            # 'ISBN' : '',
-            # 'print_ISSN' : '',
-            # 'online_ISSN' : '',
-            # 'URI' : '',
-            # 'data_type' : '',
-            # 'section_type' : '',
-            # 'YOP' : '',
-            # 'access_type' : '',
-            # 'access_method' : '',
-            # 'parent_title' : '',
-            # 'parent_authors' : '',
-            # 'parent_publication_date' : '',
-            # 'parent_article_version' : '',
-            # 'parent_data_type' : '',
-            # 'parent_DOI' : '',
-            # 'parent_proprietary_ID' : '',
-            # 'parent_ISBN' : '',
-            # 'parent_print_ISSN' : '',
-            # 'parent_online_ISSN' : '',
-            # 'parent_URI' : '',
-            # 'metric_type' : '',
-            # 'usage_date' : '',
-            # 'usage_count' : '',
+            'platform' : 'string',
+            'metric_type' : 'string',
+            'usage_count' : 'int',
         }
+        if record_dict.get('resource_name'):
+            df_dtypes['resource_name'] = 'string'
+        if record_dict.get('publisher'):
+            df_dtypes['publisher'] = 'string'
+        if record_dict.get('publisher_ID'):
+            df_dtypes['publisher_ID'] = 'string'
+        if record_dict.get('authors'):
+            df_dtypes['authors'] = 'string'
+        if record_dict.get('article_version'):
+            df_dtypes['article_version'] = 'string'
+        if record_dict.get('DOI'):
+            df_dtypes['DOI'] = 'string'
+        if record_dict.get('proprietary_ID'):
+            df_dtypes['proprietary_ID'] = 'string'
+        if record_dict.get('ISBN'):
+            df_dtypes['ISBN'] = 'string'
+        if record_dict.get('print_ISSN'):
+            df_dtypes['print_ISSN'] = 'string'
+        if record_dict.get('online_ISSN'):
+            df_dtypes['online_ISSN'] = 'string'
+        if record_dict.get('URI'):
+            df_dtypes['URI'] = 'string'
+        if record_dict.get('data_type'):
+            df_dtypes['data_type'] = 'string'
+        if record_dict.get('section_type'):
+            df_dtypes['section_type'] = 'string'
+        if record_dict.get('YOP'):
+            df_dtypes['YOP'] = 'Int64'  # `smallint` in database; using the pandas data type here because it allows null values
+        if record_dict.get('access_type'):
+            df_dtypes['access_type'] = 'string'
+        if record_dict.get('access_method'):
+            df_dtypes['access_method'] = 'string'
+        if record_dict.get('parent_title'):
+            df_dtypes['parent_title'] = 'string'
+        if record_dict.get('parent_authors'):
+            df_dtypes['parent_authors'] = 'string'
+        if record_dict.get('parent_article_version'):
+            df_dtypes['parent_article_version'] = 'string'
+        if record_dict.get('parent_data_type'):
+            df_dtypes['parent_data_Type'] = 'string'
+        if record_dict.get('parent_DOI'):
+            df_dtypes['parent_DOI'] = 'string'
+        if record_dict.get('parent_proprietary_ID'):
+            df_dtypes['parent_proprietary_ID'] = 'string'
+        if record_dict.get('parent_ISBN'):
+            df_dtypes['parent_ISBN'] = 'string'
+        if record_dict.get('parent_print_ISSN'):
+            df_dtypes['parent_print_ISSN'] = 'string'
+        if record_dict.get('parent_online_ISSN'):
+            df_dtypes['parent_online_ISSN'] = 'string'
+        if record_dict.get('parent_URI'):
+            df_dtypes['parent_URI'] = 'string'
+
         df = pd.read_json(
             records_orient_list,
             orient='records',
@@ -399,32 +422,20 @@ class ConvertJSONDictToDataframe:
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+
+        if record_dict.get('publication_date'):
+            df['publication_date'] = pd.to_datetime(
+                df['publication_date'],
+                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+                infer_datetime_format=True,
+            )
+        if record_dict.get('parent_publication_date'):
+            df['parent_publication_date'] = pd.to_datetime(
+                record_dict['parent_publication_date'],
+                errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+                infer_datetime_format=True,
+            )
+        df['usage_date'] = pd.to_datetime(df['usage_date'])
+        df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+
         return df
-
-        
-
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-
-
-
-
-
-
-
-
-
-
-
-
