@@ -110,8 +110,29 @@ class ConvertJSONDictToDataframe:
                     else:
                         record_dict['platform'] = value
                         logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                
+                #Section: Capture `authors` Value
+                elif key == "Item_Contributors":
+                    for type_and_value in value:
+                        if re.match(r'[Aa]uthor', string=type_and_value['Type']):
+                            if record_dict.get('authors'):
+                                if record_dict['authors'].endswith(" et al."):
+                                    continue  # The `for type_and_value in value` loop
+                                elif len(record_dict['authors']) + len(type_and_value['Value']) + 8 > self.AUTHORS_LENGTH:
+                                    record_dict['authors'] = record_dict['authors'] + " et al."
+                                    logging.debug(f"Updated `COUNTERData.authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                else:
+                                    record_dict['authors'] = record_dict['authors'] + "; " + type_and_value['Value']
+                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                            
+                            else:
+                                if len(type_and_value['Value']) > self.AUTHORS_LENGTH:
+                                    logging.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                    return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                                else:
+                                    record_dict['authors'] = type_and_value['Value']
+                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `authors`
                 #ToDo: `publication_date`
                 #ToDo: `article_version`
                 #ToDo: `DOI`
