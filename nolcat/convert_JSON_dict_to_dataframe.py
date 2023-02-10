@@ -220,8 +220,12 @@ class ConvertJSONDictToDataframe:
                 elif key == "YOP":
                     record_dict['YOP'] = Int64Dtype(value)
                     logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
+                
+                #Section: Capture `access_type` Value
+                elif key == "Access_Type":
+                    record_dict['access_type'] = value
+                    logging.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
             #ToDo: For each of the below, determine if `record[listed_item]` exists, and if it does, add it with the appropriately lowercase field name to `record_dict`
-                #ToDo: `access_type`
                 #ToDo: `access_method`
                 #ToDo: `parent_title`
                 #ToDo: `parent_authors`
