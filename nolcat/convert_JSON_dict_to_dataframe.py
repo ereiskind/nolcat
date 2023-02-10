@@ -5,7 +5,6 @@ from dateutil import parser
 import pandas as pd
 from pandas import Int64Dtype
 
-from . import models
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
 
@@ -29,15 +28,15 @@ class ConvertJSONDictToDataframe:
     Methods:
         create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
     """
-    # Class variables
-    RESOURCE_NAME_LENGTH = models.RESOURCE_NAME_LENGTH
-    PUBLISHER_LENGTH = models.PUBLISHER_LENGTH
-    PUBLISHER_ID_LENGTH = models.PUBLISHER_ID_LENGTH
-    PLATFORM_LENGTH = models.PLATFORM_LENGTH
-    AUTHORS_LENGTH = models.AUTHORS_LENGTH
-    DOI_LENGTH = models.DOI_LENGTH
-    PROPRIETARY_ID_LENGTH = models.PROPRIETARY_ID_LENGTH
-    URI_LENGTH = models.URI_LENGTH
+    # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
+    RESOURCE_NAME_LENGTH = 2000
+    PUBLISHER_LENGTH = 225
+    PUBLISHER_ID_LENGTH = 50
+    PLATFORM_LENGTH = 75
+    AUTHORS_LENGTH = 1000
+    DOI_LENGTH = 75
+    PROPRIETARY_ID_LENGTH = 100
+    URI_LENGTH = 200
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.

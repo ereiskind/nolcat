@@ -18,15 +18,15 @@ from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
 
-# Using field length constants allows `ConvertJSONDictToDataframe` to check that data successfully be uploaded to varchar fields without COUNTER-defined fixed vocabularies in the `COUNTERData` relation
-RESOURCE_NAME_LENGTH = 2000
-PUBLISHER_LENGTH = 225
-PUBLISHER_ID_LENGTH = 50
-PLATFORM_LENGTH = 75
-AUTHORS_LENGTH = 1000
-DOI_LENGTH = 75
-PROPRIETARY_ID_LENGTH = 100
-URI_LENGTH = 200
+# Using field length constants ensures the lengths being checked for in `ConvertJSONDictToDataframe` are the lengths used in the database
+RESOURCE_NAME_LENGTH = ConvertJSONDictToDataframe.RESOURCE_NAME_LENGTH
+PUBLISHER_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_LENGTH
+PUBLISHER_ID_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_ID_LENGTH
+PLATFORM_LENGTH = ConvertJSONDictToDataframe.PLATFORM_LENGTH
+AUTHORS_LENGTH = ConvertJSONDictToDataframe.AUTHORS_LENGTH
+DOI_LENGTH = ConvertJSONDictToDataframe.DOI_LENGTH
+PROPRIETARY_ID_LENGTH = ConvertJSONDictToDataframe.PROPRIETARY_ID_LENGTH
+URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
 
 
 def PATH_TO_CREDENTIALS_FILE():
