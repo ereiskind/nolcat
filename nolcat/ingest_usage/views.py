@@ -63,11 +63,12 @@ def harvest_SUSHI_statistics():
             con=db.engine,
         )
         stats_source = StatisticsSources(
-            statistics_source_ID = df['statistics_source_ID'],
+            statistics_source_ID = int(df['statistics_source_ID']),
             statistics_source_name = df['statistics_source_name'],
-            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
-            vendor_ID = df['vendor_ID'],
+            statistics_source_retrieval_code = int(df['statistics_source_retrieval_code']),
+            vendor_ID = int(df['vendor_ID']),
         )
+        logging.info(stats_source)
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
@@ -79,7 +80,8 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        result_message = StatisticsSources.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+        result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+        logging.info(result_message)
         return redirect(url_for('ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
     else:
         return abort(404)
