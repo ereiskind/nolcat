@@ -68,7 +68,6 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
             vendor_ID = df['vendor_ID'],
         )
-        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source}.")
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
