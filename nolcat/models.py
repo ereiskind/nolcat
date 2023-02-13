@@ -423,6 +423,8 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:
                 for stats_source in vendor:
+                    print(f"`stats_source` is {stats_source} of type {type(stats_source)}")
+                    print(f"`stats_source['interface_id']` is {stats_source['interface_id']} of type {type(stats_source['interface_id'])}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
