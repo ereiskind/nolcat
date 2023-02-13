@@ -415,6 +415,7 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
             TBD: a data type that can be passed into Flask for display to the user
         """
+        logging.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
         #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
@@ -423,8 +424,6 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if stats_source != "<class 'dict'>":
-                        sys.exit()
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
@@ -473,7 +472,9 @@ class StatisticsSources(db.Model):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
+        logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
         SUSHI_info = self.fetch_SUSHI_information()
+        logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         logging.info(f"Making SUSHI calls for {self.statistics_source_name} with parameters {SUSHI_parameters}.")
 

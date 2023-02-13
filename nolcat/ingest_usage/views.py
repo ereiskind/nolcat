@@ -68,7 +68,7 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
             vendor_ID = df['vendor_ID'],
         )
-        logging.info(stats_source)
+        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source}.")
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
@@ -79,6 +79,7 @@ def harvest_SUSHI_statistics():
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
+        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
 
         result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
         logging.info(result_message)
