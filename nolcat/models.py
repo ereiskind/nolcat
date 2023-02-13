@@ -424,8 +424,15 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    logging.info(f"`stats_source['interface_id']`: {stats_source['interface_id']} (type {type(stats_source['interface_id'])})")
                     logging.info(f"`self.statistics_source_retrieval_code`: {self.statistics_source_retrieval_code} (type {type(self.statistics_source_retrieval_code)})")
+                    '''
+                    `self.statistics_source_retrieval_code`: 0    86.0
+                    docker-nolcat-1  | Name: statistics_source_retrieval_code, dtype: object (type <class 'pandas.core.series.Series'>)
+                    '''
+                    logging.info(f"`self.statistics_source_retrieval_code` index: {self.statistics_source_retrieval_code.index}")
+                    logging.info(f"`self.statistics_source_retrieval_code` dtype: {self.statistics_source_retrieval_code.dtype}")
+                    logging.info(f"`self.statistics_source_retrieval_code` name: {self.statistics_source_retrieval_code.name}")
+                    logging.info(f"`self.statistics_source_retrieval_code` to_list(): {self.statistics_source_retrieval_code.to_list()}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
