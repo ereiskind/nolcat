@@ -63,10 +63,10 @@ def harvest_SUSHI_statistics():
             con=db.engine,
         )
         stats_source = StatisticsSources(
-            statistics_source_ID = int(df['statistics_source_ID']),
+            statistics_source_ID = df['statistics_source_ID'],
             statistics_source_name = df['statistics_source_name'],
-            statistics_source_retrieval_code = int(df['statistics_source_retrieval_code']),
-            vendor_ID = int(df['vendor_ID']),
+            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
+            vendor_ID = df['vendor_ID'],
         )
         logging.info(stats_source)
 
