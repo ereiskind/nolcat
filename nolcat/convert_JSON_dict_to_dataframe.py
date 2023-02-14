@@ -36,7 +36,7 @@ class ConvertJSONDictToDataframe:
     AUTHORS_LENGTH = 1000
     DOI_LENGTH = 75
     PROPRIETARY_ID_LENGTH = 100
-    URI_LENGTH = 200
+    URI_LENGTH = 250
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
