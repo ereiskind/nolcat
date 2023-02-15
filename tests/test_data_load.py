@@ -1,4 +1,5 @@
-"""This module loads the test data for the relations into the relational database without running any tests and with no expectation that the data will be removed any way but through DELETE or TRUNCATE TABLE commands manually entered into the MySQL command line accessible through the AWS instance. This functionality was created for getting an understanding of the system and testing it beyond the bounds """
+"""This module consists exclusively of fixtures for loading the test data for the relations into the relational database. Its purpose is to quickly add the test data to the database; since the data rollback functionality has not yet been established, data loaded into the database via this module will persist past the completion of the pytest session and must be deleted manually."""
+#ToDo: Make into standard pytest module, including starting file name with `test_`
 
 import logging
 import sys
@@ -6,7 +7,7 @@ import pyinputplus as pyip
 import pandas as pd
 from sqlalchemy import exc
 
-from conftest import engine
+from conftest import engine  #ToDo: Line one of two in stack trace for `ModuleNotFoundError: No module named 'nolcat'`--stack trace is the same whether running from outer nolcat folder or from tests folder
 from data import relations
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
