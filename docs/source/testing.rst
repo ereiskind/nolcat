@@ -60,9 +60,10 @@ All test data provided in this repository is based on the workbooks in "\\tests\
 
 In the test data, the ``statistics_source_ID`` values are as follows
 
+* ProQuest = 0
 * EBSCO = 1
 * Gale = 2
-* ProQuest = 0
+* Duke UP = 3
 
 Create COUNTER Relation Test Data
 ---------------------------------

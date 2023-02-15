@@ -519,7 +519,7 @@ class StatisticsSources(db.Model):
                 #ToDo: try:
                     #ToDo: del SUSHI_parameters["include_parent_details"]
             #ToDo: if master_report_name == "IR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
+                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 #ToDo: SUSHI_parameters["include_parent_details"] = "True"
             
             #Subsection: Make Master Report API Call
@@ -848,7 +848,7 @@ class COUNTERData(db.Model):
     proprietary_ID = db.Column(db.String(100))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
-    online_ISSN = db.Column(db.String(10))
+    online_ISSN = db.Column(db.String(10))  #ToDo: How should second ISBNs in this field be handled?
     URI = db.Column(db.String(200))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))

@@ -37,7 +37,7 @@ E-resources involves working with scholarly content in a wide variety of languag
 
 To-Do List
 **********
-Last updated: 2023-01-24
+Last updated: 2023-02-10
 
 TaDS Assistance Required
 ========================
