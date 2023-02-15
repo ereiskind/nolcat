@@ -54,7 +54,6 @@ To Make NoLCAT Viable with Command Line SQL
 Test Modules
 ------------
 * Finish pytest configuration and/or fixtures so data loaded into database during tests automatically rolls back once pytest session finishes
-* Update test data to use IR reports with all attributes
 
 ``nolcat.initialization`` Blueprint
 -----------------------------------
