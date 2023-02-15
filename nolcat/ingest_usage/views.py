@@ -1,4 +1,6 @@
 import logging
+import datetime
+import calendar
 from flask import render_template
 from flask import request
 from flask import abort
@@ -9,7 +11,7 @@ import pandas as pd
 from . import bp
 from ..app import db
 from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
-#from ..models import <name of SQLAlchemy classes used in views below>
+from ..models import StatisticsSources
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -53,13 +55,34 @@ def harvest_SUSHI_statistics():
             sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
             con=db.engine,
         )
-        form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))  # This sets the statistics source field options to a list of every statistics source that has SUSHI credentials
+        #ToDo: `form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))  # This sets the statistics source field options to a list of every statistics source that has SUSHI credentials` returned `KeyError: ('statistics_source_ID', 'statistics_source_name')` -- the way to make this a valid drop-down needs to be investigated
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Get the `statisticsSource` record matching `form.statistics_source.data` and instantiate it as a `StatisticsSource` object
-        #ToDo: Validate dates if not possible in the form, and if they're invalid, send user back to the form
-        #ToDo: StatisticsSources.collect_usage_statistics(form.begin_date.data, form.end_date.data)
-        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        df = pd.read_sql(
+            sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+            con=db.engine,
+        )
+        stats_source = StatisticsSources(
+            statistics_source_ID = df['statistics_source_ID'],
+            statistics_source_name = df['statistics_source_name'],
+            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
+            vendor_ID = df['vendor_ID'],
+        )
+
+        begin_date = form.begin_date.data
+        end_date = form.end_date.data
+        if end_date < begin_date:
+            return redirect(url_for('harvest_SUSHI_statistics'))  #ToDo: Add message flashing that the end date was before the begin date
+        end_date = datetime.date(
+            end_date.year,
+            end_date.month,
+            calendar.monthrange(end_date.year, end_date.month)[1],
+        )
+        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+
+        result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+        logging.info(result_message)
+        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
     else:
         return abort(404)
 

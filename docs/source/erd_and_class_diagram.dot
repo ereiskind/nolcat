@@ -256,6 +256,17 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_ConvertJSONDictToDataframe {
+        label="CLASS: ConvertJSONDictToDataframe"
+
+        // Attributes
+        SUSHI_JSON_dictionary
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
+    }
+
+
     subgraph cluster_Blueprints {
         label="CLASS: Blueprints"
 

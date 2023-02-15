@@ -67,8 +67,6 @@ Test Modules
 ``nolcat.modules.StatisticsSources`` Class
 ------------------------------------------
 * Finish ``StatisticsSources.fetch_SUSHI_information()``
-* Finish ``StatisticsSources._harvest_R5_SUSHI()``, including an exception for MathSciNet, which doesn't have a `/status` endpoint but does return reports
-* Finish ``StatisticsSources.collect_usage_statistics()``
 * Write ``StatisticsSources.add_note`` method
 * Write tests for ``models.StatisticsSources``: ``fetch_SUSHI_information()`` for both API and display, ``_harvest_R5_SUSHI()``, ``collect_usage_statistics()``, ``add_note()``
 
@@ -85,9 +83,9 @@ Test Modules
 
 ``nolcat.ingest_usage`` Blueprint
 ---------------------------------
-* Finish ``upload_COUNTER_reports()``, ``harvest_SUSHI_statistics()``, ``upload_non_COUNTER_reports()`` routes
-* Finish the ``SUSHIParametersForm()`` class
-* Create "make-SUSHI-call.html", "upload-COUNTER-reports.html", and "save-non-COUNTER-usage.html" pages
+* Finish ``upload_COUNTER_reports()``, ``upload_non_COUNTER_reports()`` routes
+* Create "upload-COUNTER-reports.html" and "save-non-COUNTER-usage.html" pages
+* Figure out how to create drop-down list in ``harvest_SUSHI_statistics()`` and adjust ``SUSHIParametersForm`` accordingly
 * Write tests for all functions
 
 To Complete NoLCAT
@@ -96,6 +94,8 @@ To Complete NoLCAT
 ``nolcat`` Modules
 ------------------
 * Write ``__repr__`` values in ``nolcat.models``
+* Get return statements providing info on errors as strings in stdout to show those messages in Flask
+* Make other updates in ``nolcat.models`` methods based on to-do notes
 
 ``nolcat.models.Vendors`` Class
 -------------------------------
