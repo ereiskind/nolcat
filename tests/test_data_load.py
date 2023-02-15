@@ -34,9 +34,7 @@ def load_test_data_into_database(engine):
         sql=f"SELECT COUNT(*) FROM {relation_name};",
         con=engine,
     )
-    print(check_for_data.iloc[0]['COUNT(*)'])
-    print(type(check_for_data.iloc[0]['COUNT(*)']))
-    if not check_for_data.empty or not check_for_data.isnull().all().all():
+    if not check_for_data.iloc[0]['COUNT(*)'] == 0:  # Query above is requesting the number of records in the relation, so an empty relation returns the integer `0`
         return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."  #ToDo: Shorten string to prevent removal of middle section in pytest display
     
     if relation_name == "fiscalYears":
