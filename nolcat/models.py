@@ -848,7 +848,7 @@ class COUNTERData(db.Model):
     proprietary_ID = db.Column(db.String(100))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
-    online_ISSN = db.Column(db.String(10))
+    online_ISSN = db.Column(db.String(10))  #ToDo: How should second ISBNs in this field be handled?
     URI = db.Column(db.String(200))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))
