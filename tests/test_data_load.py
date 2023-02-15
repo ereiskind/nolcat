@@ -35,7 +35,7 @@ def load_test_data_into_database(engine):
         con=engine,
     )
     if not check_for_data.empty or not check_for_data.isnull().all().all():
-        return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."
+        return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."  #ToDo: Shorten string to prevent removal of middle section in pytest display
     
     if relation_name == "fiscalYears":
         relation_data = relations.fiscalYears_relation()
