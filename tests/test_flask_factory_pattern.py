@@ -112,6 +112,7 @@ def test_loading_connected_data_into_other_relation(app, engine, statisticsSourc
             ["ProQuest", None, "ProQuest", None],
             ["EBSCOhost", None, "EBSCO", None],
             ["Gale Cengage Learning", None, "Gale", None],
+            ["Duke UP", None, "Duke UP", None],
             ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
             ["DemographicsNow", None, "Gale", None],
             ["Ebook Central", None, "ProQuest", None],
