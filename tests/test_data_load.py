@@ -70,3 +70,9 @@ def load_test_data_into_database(engine):
             return f"The `to_sql` method raised an exception: {error.orig.args}"
 
     return f"The test data was loaded into {relation_name}."
+
+
+def test_data_load_function(load_test_data_into_database):
+    """The pytest function that runs the `load_test_data_into_database` fixture."""
+    print(load_test_data_into_database)
+    assert load_test_data_into_database.startswith("The test data was loaded into ")  # String method returns Boolean true if the load is successful, so the test's pass or fail will match the success of the load 
