@@ -148,6 +148,18 @@ if 'DOI' not in performance_join_multiindex_df.columns or 'Proprietary_ID' not i
 
 
 #Section: Create Nested JSON Section for Authors
+if 'Authors' not in performance_join_multiindex_df.columns:  # If the author field exists
+    if not performance_join_multiindex_df['Authors'].eq("`None`").all():  # If the author field has values
+        author_values_df = performance_join_multiindex_df.copy()
+        non_author_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Authors"]
+        author_values_df = author_values_df.drop(columns=non_author_fields)
+        author_values_df['Type'] = "Proprietary"
+        author_values_df = author_values_df.rename(columns={"Authors": "Name"})
+        author_values_df = author_values_df.reset_index()
+        author_values_df['repeat'] = author_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
+        author_values_df =  author_values_df.loc[author_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        author_values_df =  author_values_df.drop(columns=['repeat'])
+        author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors: authors[['Type', 'Value']].to_dict('records')).rename("Item_Contributors")
 
 
 #Section: Create Nested JSON Section for Publication Date
