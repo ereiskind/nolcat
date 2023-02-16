@@ -151,6 +151,15 @@ else:
     pass  # The report is a TR or IR, but none of the fields used in `Item_ID` exist
 
 
+#Section: Create Nested JSON Section for Authors
+
+
+#Section: Create Nested JSON Section for Publication Date
+
+
+#Section: Create Nested JSON Section for Article Version
+
+
 #Section: Create Nested JSON Section for Item Parent Data
 
 
