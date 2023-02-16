@@ -34,8 +34,16 @@ def load_test_data_into_database(engine):
         sql=f"SELECT COUNT(*) FROM {relation_name};",
         con=engine,
     )
+    print(f"`check_for_data`: {check_for_data}")
+    print(f"`type(check_for_data)`: {type(check_for_data)}")
     if not check_for_data.iloc[0]['COUNT(*)'] == 0:  # Query above is requesting the number of records in the relation, so an empty relation returns the integer `0`
         return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."  #ToDo: Shorten string to prevent removal of middle section in pytest display
+    else:
+        show_data = pd.read_sql(
+            sql=f"SELECT * FROM {relation_name};",
+            con=engine,
+        )
+        print(f"`show_data`:\n{show_data}")
     
     if relation_name == "fiscalYears":
         relation_data = relations.fiscalYears_relation()
@@ -58,6 +66,7 @@ def load_test_data_into_database(engine):
     elif relation_name == "COUNTERData":
         relation_data = relations.COUNTERData_relation()
     
+    print(f"`relation_data`:\n{relation_data}")
     try:
         relation_data.to_sql(
             relation_name,
