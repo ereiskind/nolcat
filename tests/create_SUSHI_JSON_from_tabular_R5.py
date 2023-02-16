@@ -117,37 +117,36 @@ if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publi
         publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
 
 #Section: Create Nested JSON Section for Item IDs
-if report_type == "TR" or report_type == "IR":
-    if 'DOI' not in performance_join_multiindex_df.columns or 'Proprietary_ID' not in performance_join_multiindex_df.columns or 'ISBN' not in performance_join_multiindex_df.columns or 'Print_ISSN' not in performance_join_multiindex_df.columns or 'Online_ISSN' not in performance_join_multiindex_df.columns or 'URI' not in performance_join_multiindex_df.columns:  # If the fields in the item ID section exist
-        if not performance_join_multiindex_df['DOI'].eq("`None`").all() or not performance_join_multiindex_df['Proprietary_ID'].eq("`None`").all() or not performance_join_multiindex_df['ISBN'].eq("`None`").all() or not performance_join_multiindex_df['Print_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Online_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['URI'].eq("`None`").all():  # If the fields in the item ID section have values
-            item_ID_values_df = performance_join_multiindex_df.copy()
+if 'DOI' not in performance_join_multiindex_df.columns or 'Proprietary_ID' not in performance_join_multiindex_df.columns or 'ISBN' not in performance_join_multiindex_df.columns or 'Print_ISSN' not in performance_join_multiindex_df.columns or 'Online_ISSN' not in performance_join_multiindex_df.columns or 'URI' not in performance_join_multiindex_df.columns:  # If the fields in the item ID section exist
+    if not performance_join_multiindex_df['DOI'].eq("`None`").all() or not performance_join_multiindex_df['Proprietary_ID'].eq("`None`").all() or not performance_join_multiindex_df['ISBN'].eq("`None`").all() or not performance_join_multiindex_df['Print_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Online_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['URI'].eq("`None`").all():  # If the fields in the item ID section have values
+        item_ID_values_df = performance_join_multiindex_df.copy()
 
-            #Subsection: Determine All the Fields Going in the Nested Section
-            possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']
-            fields_in_item_ID = []
-            for field_name in item_ID_values_df.columns:
-                if field_name in possible_fields_in_item_ID:
-                    if not item_ID_values_df[field_name].eq("`None`").all():
-                        fields_in_item_ID.append(field_name)
+        #Subsection: Determine All the Fields Going in the Nested Section
+        possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']
+        fields_in_item_ID = []
+        for field_name in item_ID_values_df.columns:
+            if field_name in possible_fields_in_item_ID:
+                if not item_ID_values_df[field_name].eq("`None`").all():
+                    fields_in_item_ID.append(field_name)
 
-            #Subsection: Remove Fields Not Being Nested
-            non_item_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_ID]
-            item_ID_values_df = item_ID_values_df.drop(columns=non_item_ID_fields).drop(columns=['Begin_Date'])
-            item_ID_values_df = item_ID_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
-            item_ID_values_df = item_ID_values_df.rename(columns={item_ID_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
+        #Subsection: Remove Fields Not Being Nested
+        non_item_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_ID]
+        item_ID_values_df = item_ID_values_df.drop(columns=non_item_ID_fields).drop(columns=['Begin_Date'])
+        item_ID_values_df = item_ID_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
+        item_ID_values_df = item_ID_values_df.rename(columns={item_ID_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
 
-            #Subsection: Remove Null Values and Repetitions
-            item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]
-            item_ID_values_df['repeat'] = item_ID_values_df.duplicated(keep='first')
-            item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
-            item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
+        #Subsection: Remove Null Values and Repetitions
+        item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]
+        item_ID_values_df['repeat'] = item_ID_values_df.duplicated(keep='first')
+        item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
+        item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
 
-            #Subsection: Complete Nested JSON Section for Item IDs
-            item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
-        else:
-            pass  # At least one of the fields used in `Item_ID` exists, but none of them have non-null values
+        #Subsection: Complete Nested JSON Section for Item IDs
+        item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
     else:
-        pass  # The report is a TR or IR, but none of the fields used in `Item_ID` exist
+        pass  # At least one of the fields used in `Item_ID` exists, but none of them have non-null values
+else:
+    pass  # The report is a TR or IR, but none of the fields used in `Item_ID` exist
 
 
 #Section: Create Nested JSON Section for Item Parent Data
