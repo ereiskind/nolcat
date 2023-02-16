@@ -102,17 +102,18 @@ fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations 
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 
 #Subsection: Create Nested JSON Section for Publisher IDs
-if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If there are publisher ID values
-    publisher_ID_values_df = performance_join_multiindex_df.copy()
-    non_publisher_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publisher_ID"]
-    publisher_ID_values_df = publisher_ID_values_df.drop(columns=non_publisher_ID_fields)
-    publisher_ID_values_df['Type'] = "Proprietary"
-    publisher_ID_values_df = publisher_ID_values_df.rename(columns={"Publisher_ID": "Value"})
-    publisher_ID_values_df = publisher_ID_values_df.reset_index()
-    publisher_ID_values_df['repeat'] = publisher_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
-    publisher_ID_values_df =  publisher_ID_values_df.loc[ publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
-    publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
-    publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
+if performance_join_multiindex_df.get('Publisher_ID'):  # If the publisher ID key exists
+    if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If the publisher ID key has values
+        publisher_ID_values_df = performance_join_multiindex_df.copy()
+        non_publisher_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publisher_ID"]
+        publisher_ID_values_df = publisher_ID_values_df.drop(columns=non_publisher_ID_fields)
+        publisher_ID_values_df['Type'] = "Proprietary"
+        publisher_ID_values_df = publisher_ID_values_df.rename(columns={"Publisher_ID": "Value"})
+        publisher_ID_values_df = publisher_ID_values_df.reset_index()
+        publisher_ID_values_df['repeat'] = publisher_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
+        publisher_ID_values_df =  publisher_ID_values_df.loc[ publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
+        publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
 
 #Subsection: Create Nested JSON Section for Item IDs
 if report_type == "TR" or report_type == "IR":
