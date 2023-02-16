@@ -145,10 +145,6 @@ if 'DOI' not in performance_join_multiindex_df.columns or 'Proprietary_ID' not i
 
         #Subsection: Complete Nested JSON Section for Item IDs
         item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
-    else:
-        pass  # At least one of the fields used in `Item_ID` exists, but none of them have non-null values
-else:
-    pass  # The report is a TR or IR, but none of the fields used in `Item_ID` exist
 
 
 #Section: Create Nested JSON Section for Authors
