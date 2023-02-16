@@ -102,6 +102,7 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 
+
 #Section: Create Nested JSON Section for Publisher IDs
 if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publisher ID field exists
     if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If the publisher ID field has values
@@ -115,6 +116,7 @@ if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publi
         publisher_ID_values_df =  publisher_ID_values_df.loc[ publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
         publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
+
 
 #Section: Create Nested JSON Section for Item IDs
 if 'DOI' not in performance_join_multiindex_df.columns or 'Proprietary_ID' not in performance_join_multiindex_df.columns or 'ISBN' not in performance_join_multiindex_df.columns or 'Print_ISSN' not in performance_join_multiindex_df.columns or 'Online_ISSN' not in performance_join_multiindex_df.columns or 'URI' not in performance_join_multiindex_df.columns:  # If the fields in the item ID section exist
