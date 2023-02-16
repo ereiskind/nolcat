@@ -133,8 +133,7 @@ if report_type == "TR" or report_type == "IR":
         non_item_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_ID]
         item_ID_values_df = item_ID_values_df.drop(columns=non_item_ID_fields).drop(columns=['Begin_Date'])
         item_ID_values_df = item_ID_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
-        current_type_field_name = item_ID_values_df.columns[-2]  # The name of the field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
-        item_ID_values_df = item_ID_values_df.rename(columns={current_type_field_name: 'Type', 0: 'Value'})
+        item_ID_values_df = item_ID_values_df.rename(columns={item_ID_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
 
         #Subsection: Remove Null Values and Repetitions
         item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]
