@@ -93,15 +93,16 @@ df = df.replace(
 )
 
 
-#Section: Change Dataframe into JSON
-#Subsection: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
+######Section: CHANGE DATAFRAME INTO JSON #####
+
+#Section: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
 fields_used_in_performance_nested_groups = ['Begin_Date', 'End_Date', 'Metric_Type', 'Count']
 fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance_nested_groups]
 
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 
-#Subsection: Create Nested JSON Section for Publisher IDs
+#Section: Create Nested JSON Section for Publisher IDs
 if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publisher ID field exists
     if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If the publisher ID field has values
         publisher_ID_values_df = performance_join_multiindex_df.copy()
@@ -115,31 +116,42 @@ if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publi
         publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
         publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
 
-#Subsection: Create Nested JSON Section for Item IDs
+#Section: Create Nested JSON Section for Item IDs
 if report_type == "TR" or report_type == "IR":
     if not performance_join_multiindex_df['DOI'].eq("`None`").all() or not performance_join_multiindex_df['Proprietary_ID'].eq("`None`").all() or not performance_join_multiindex_df['ISBN'].eq("`None`").all() or not performance_join_multiindex_df['Print_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Online_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['URI'].eq("`None`").all():
         item_ID_values_df = performance_join_multiindex_df.copy()
+
+        #Subsection: Determine All the Fields Going in the Nested Section
         possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']
         fields_in_item_ID = []
         for field_name in item_ID_values_df.columns:
             if field_name in possible_fields_in_item_ID:
                 if not item_ID_values_df[field_name].eq("`None`").all():
                     fields_in_item_ID.append(field_name)
+        
+        #Subsection: Remove fields Not Being Nested
         non_item_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_ID]
         item_ID_values_df = item_ID_values_df.drop(columns=non_item_ID_fields).drop(columns=['Begin_Date'])
         item_ID_values_df = item_ID_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
         current_type_field_name = item_ID_values_df.columns[-2]  # The name of the field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
         item_ID_values_df = item_ID_values_df.rename(columns={current_type_field_name: 'Type', 0: 'Value'})
+
+        #Subsection: Remove Null Values and Repetitions
         item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]
         item_ID_values_df['repeat'] = item_ID_values_df.duplicated(keep='first')
         item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
         item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
+
+        #Subsection: Complete Nested JSON Section for Item IDs
         item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
     else:
         pass  # The report is a TR or IR, but none of the fields used in `Item_ID` have values
 
-#Subsection: Create Nested JSON Section for Item Parent Data
 
+#Section: Create Nested JSON Section for Item Parent Data
+
+
+#Section: Create Nested JSON Section for Performance
 #Subsection: Create Instance Grouping
 instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
 instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
@@ -161,7 +173,8 @@ combined_df = combined_df.drop(columns=['Begin_Date'])
 combined_df['instance_string'] = combined_df['Instance'].astype('string')
 combined_df['period_string'] = combined_df['Period'].astype('string')
 
-#Subsection: Create Final JSON
+
+#Section: Create Final JSON
 combined_df['repeat'] = combined_df.duplicated(subset=['Platform', 'Data_Type', 'Access_Method', 'instance_string', 'period_string'], keep='first')
 combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
