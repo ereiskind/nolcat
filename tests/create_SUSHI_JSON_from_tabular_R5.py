@@ -113,7 +113,7 @@ if 'Publisher_ID' not in performance_join_multiindex_df.columns:  # If the publi
         publisher_ID_values_df = publisher_ID_values_df.rename(columns={"Publisher_ID": "Value"})
         publisher_ID_values_df = publisher_ID_values_df.reset_index()
         publisher_ID_values_df['repeat'] = publisher_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
-        publisher_ID_values_df =  publisher_ID_values_df.loc[ publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        publisher_ID_values_df =  publisher_ID_values_df.loc[publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
         publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
 
