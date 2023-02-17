@@ -104,7 +104,7 @@ performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].
 
 
 #Section: Create Nested JSON Section for Publisher IDs
-if 'Publisher_ID' not in list(performance_join_multiindex_df.columns):  # If the publisher ID field exists
+if 'Publisher_ID' in list(performance_join_multiindex_df.columns):  # If the publisher ID field exists
     if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If the publisher ID field has values
         publisher_ID_values_df = performance_join_multiindex_df.copy()
         non_publisher_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publisher_ID"]
@@ -119,7 +119,7 @@ if 'Publisher_ID' not in list(performance_join_multiindex_df.columns):  # If the
 
 
 #Section: Create Nested JSON Section for Item IDs
-if 'DOI' not in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' not in list(performance_join_multiindex_df.columns) or 'ISBN' not in list(performance_join_multiindex_df.columns) or 'Print_ISSN' not in list(performance_join_multiindex_df.columns) or 'Online_ISSN' not in list(performance_join_multiindex_df.columns) or 'URI' not in list(performance_join_multiindex_df.columns):  # If the fields in the item ID section exist
+if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in list(performance_join_multiindex_df.columns) or 'ISBN' in list(performance_join_multiindex_df.columns) or 'Print_ISSN' in list(performance_join_multiindex_df.columns) or 'Online_ISSN' in list(performance_join_multiindex_df.columns) or 'URI' in list(performance_join_multiindex_df.columns):  # If the fields in the item ID section exist
     if not performance_join_multiindex_df['DOI'].eq("`None`").all() or not performance_join_multiindex_df['Proprietary_ID'].eq("`None`").all() or not performance_join_multiindex_df['ISBN'].eq("`None`").all() or not performance_join_multiindex_df['Print_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Online_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['URI'].eq("`None`").all():  # If the fields in the item ID section have values
         item_ID_values_df = performance_join_multiindex_df.copy()
 
@@ -148,7 +148,7 @@ if 'DOI' not in list(performance_join_multiindex_df.columns) or 'Proprietary_ID'
 
 
 #Section: Create Nested JSON Section for Authors
-if 'Authors' not in list(performance_join_multiindex_df.columns):  # If the author field exists
+if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author field exists
     if not performance_join_multiindex_df['Authors'].eq("`None`").all():  # If the author field has values
         author_values_df = performance_join_multiindex_df.copy()
         non_author_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Authors"]
