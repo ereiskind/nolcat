@@ -71,6 +71,7 @@ def load_test_data_into_database(engine):
             relation_name,
             con=engine,
             if_exists='append',
+            method='multi',
         )
     except exc.IntegrityError as error:
         return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
