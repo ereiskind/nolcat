@@ -42,7 +42,7 @@ def load_test_data_into_database(engine):
             sql=f"SELECT * FROM {relation_name};",
             con=engine,
         )
-        print(f"Records to be loaded into relation:\n{show_data}")
+        print(f"Result of SELECT call to relation:\n{show_data}")
     
     if relation_name == "fiscalYears":
         relation_data = relations.fiscalYears_relation()
@@ -65,7 +65,7 @@ def load_test_data_into_database(engine):
     elif relation_name == "COUNTERData":
         relation_data = relations.COUNTERData_relation()
     
-    print(f"`relation_data`:\n{relation_data}")
+    print(f"Records to be loaded into relation:\n{relation_data}")
     try:
         relation_data.to_sql(
             relation_name,
