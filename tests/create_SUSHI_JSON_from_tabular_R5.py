@@ -208,7 +208,6 @@ combined_df = combined_df.reset_index(drop=True)
 joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
 #Subsection: Add Other JSON Groupings
-fields_to_remove = []
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
 if dict(locals()).get('publisher_ID_values_df') is not None:
     joining_df = joining_df.join(publisher_ID_values_df, how='left')
@@ -230,5 +229,7 @@ if dict(locals()).get('item_parent_values_df') is not None:
     fields_to_remove = fields_to_remove + ['Parent_Title'] + ['Parent_Authors'] + ['Parent_Publication_Date'] + ['Parent_Article_Version'] + ['Parent_Data_Type'] + ['Parent_DOI'] + ['Parent_Proprietary_ID'] + ['Parent_ISBN'] + ['Parent_Print_ISSN'] + ['Parent_Online_ISSN'] + ['Parent_URI']
 
 
-#Section: Output JSON
+#Section: Create Final JSON
+final_df = joining_df.reset_index()
+final_df = final_df.drop(columns=fields_to_remove, errors='ignore')
 final_df.to_json(directory_with_final_JSONs / 'result_JSON.json', force_ascii=False, indent=4, orient='table', index=False)
