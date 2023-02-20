@@ -209,7 +209,13 @@ combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'rep
 
 #Subsection: Create Performance Grouping
 combined_df = combined_df.reset_index(drop=True)
-final_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+
+#Subsection: Add Other JSON Groupings
+joining_df = joining_df.set_index(fields_used_for_groupby_operations)
+for grouping_df in JSON_grouping_dfs:
+    if dict(locals()).get(str(grouping_df)):
+        joining_df = joining_df.join(grouping_df, how='left')
 
 
 #Section: Output JSON
