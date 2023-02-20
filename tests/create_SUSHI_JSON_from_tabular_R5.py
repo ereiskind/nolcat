@@ -101,10 +101,12 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
+fields_to_drop_at_end = []
 
 
 #Section: Create Nested JSON Section for Publisher IDs
 if 'Publisher_ID' in list(performance_join_multiindex_df.columns):  # If the publisher ID field exists
+    fields_to_drop_at_end.append('Publisher_ID')
     if not performance_join_multiindex_df['Publisher_ID'].eq("`None`").all():  # If the publisher ID field has values
         publisher_ID_values_df = performance_join_multiindex_df.copy()
         non_publisher_ID_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publisher_ID"]
@@ -128,6 +130,7 @@ if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in 
         fields_in_item_ID = []
         for field_name in item_ID_values_df.columns:
             if field_name in possible_fields_in_item_ID:
+                fields_to_drop_at_end.append(field_name)
                 if not item_ID_values_df[field_name].eq("`None`").all():
                     fields_in_item_ID.append(field_name)
 
@@ -149,6 +152,7 @@ if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in 
 
 #Section: Create Nested JSON Section for Authors
 if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author field exists
+    fields_to_drop_at_end.append('Authors')
     if not performance_join_multiindex_df['Authors'].eq("`None`").all():  # If the author field has values
         author_values_df = performance_join_multiindex_df.copy()
         non_author_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Authors"]
@@ -211,25 +215,19 @@ joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambd
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
 if dict(locals()).get('publisher_ID_values_df') is not None:
     joining_df = joining_df.join(publisher_ID_values_df, how='left')
-    fields_to_remove.append('Publisher_ID')
 if dict(locals()).get('item_ID_values_df') is not None:
     joining_df = joining_df.join(item_ID_values_df, how='left')
-    fields_to_remove = fields_to_remove + ['DOI'] + ['Proprietary_ID'] + ['ISBN'] + ['Print_ISSN'] + ['Online_ISSN'] + ['URI']
 if dict(locals()).get('author_values_df') is not None:
     joining_df = joining_df.join(author_values_df, how='left')
-    fields_to_remove.append('Authors')
 if dict(locals()).get('publication_date_values_df') is not None:
     joining_df = joining_df.join(publication_date_values_df, how='left')
-    fields_to_remove.append('Publication_Date')
 if dict(locals()).get('article_version_values_df') is not None:
     joining_df = joining_df.join(article_version_values_df, how='left')
-    fields_to_remove.append('Article_Version')
 if dict(locals()).get('item_parent_values_df') is not None:
     joining_df = joining_df.join(item_parent_values_df, how='left')
-    fields_to_remove = fields_to_remove + ['Parent_Title'] + ['Parent_Authors'] + ['Parent_Publication_Date'] + ['Parent_Article_Version'] + ['Parent_Data_Type'] + ['Parent_DOI'] + ['Parent_Proprietary_ID'] + ['Parent_ISBN'] + ['Parent_Print_ISSN'] + ['Parent_Online_ISSN'] + ['Parent_URI']
 
 
 #Section: Create Final JSON
 final_df = joining_df.reset_index()
-final_df = final_df.drop(columns=fields_to_remove, errors='ignore')
+final_df = final_df.drop(columns=fields_to_drop_at_end)
 final_df.to_json(directory_with_final_JSONs / 'result_JSON.json', force_ascii=False, indent=4, orient='table', index=False)
