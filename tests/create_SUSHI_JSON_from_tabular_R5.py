@@ -101,7 +101,6 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
-JSON_grouping_dfs = []
 
 
 #Section: Create Nested JSON Section for Publisher IDs
@@ -117,7 +116,6 @@ if 'Publisher_ID' in list(performance_join_multiindex_df.columns):  # If the pub
         publisher_ID_values_df =  publisher_ID_values_df.loc[publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
         publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
-        JSON_grouping_dfs.append(publisher_ID_values_df)
 
 
 #Section: Create Nested JSON Section for Item IDs
@@ -147,7 +145,6 @@ if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in 
 
         #Subsection: Complete Nested JSON Section for Item IDs
         item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
-        JSON_grouping_dfs.append(item_ID_values_df)
 
 
 #Section: Create Nested JSON Section for Authors
@@ -163,7 +160,6 @@ if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author f
         author_values_df =  author_values_df.loc[author_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         author_values_df =  author_values_df.drop(columns=['repeat'])
         author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors: authors[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")  # `Item_Contributors` uses `Type` and `Name` as the keys in its dictionaries
-        JSON_grouping_dfs.append(author_values_df)
 
 
 #Section: Create Nested JSON Section for Publication Date
