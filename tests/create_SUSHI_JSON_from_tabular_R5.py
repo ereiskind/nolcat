@@ -167,6 +167,19 @@ if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author f
 
 
 #Section: Create Nested JSON Section for Publication Date
+if 'Publication_Date' in list(performance_join_multiindex_df.columns):  # If the publication date field exists
+    fields_to_drop_at_end.append('Publication_Date')
+    if not performance_join_multiindex_df['Publication_Date'].eq("`None`").all():  # If the publication date field has values
+        publication_date_values_df = performance_join_multiindex_df.copy()
+        non_publication_date_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publication_Date"]
+        publication_date_values_df = publication_date_values_df.drop(columns=non_publication_date_fields)
+        publication_date_values_df['Type'] = "Publication_Date"
+        publication_date_values_df = publication_date_values_df.rename(columns={"Publication_Date": "Value"})
+        publication_date_values_df = publication_date_values_df.reset_index()
+        publication_date_values_df['repeat'] = publication_date_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
+        publication_date_values_df =  publication_date_values_df.loc[publication_date_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        publication_date_values_df =  publication_date_values_df.drop(columns=['repeat'])
+        publication_date_values_df = (publication_date_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
 
 
 #Section: Create Nested JSON Section for Article Version
