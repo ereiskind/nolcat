@@ -188,20 +188,22 @@ period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
 
 
 #Section: Combine Nested JSON Groupings
-#Subsection: Combine Period and Instance Groupings and Dedupe
+#Subsection: Combine Period and Instance Groupings
 combined_df = period_df.join(instance_df, how='inner')  # This contains duplicate records
 combined_df = combined_df.reset_index()
 combined_df = combined_df.drop(columns=['Begin_Date'])
-#ToDo: Is `combined_df['instance_string'] = combined_df['Instance'].astype('string')` needed?
-#ToDo: Is `combined_df['period_string'] = combined_df['Period'].astype('string')` needed?
-combined_df['repeat'] = combined_df.duplicated(keep='first') # Check all index values and non-string values that aren't in the index
+
+#Subsection: Deduplicate Records
+# Using pandas' `duplicated` method on dict data type fields raises a TypeError, so their contents must be compared as equivalent strings
+combined_df['instance_string'] = combined_df['Instance'].astype('string')
+combined_df['period_string'] = combined_df['Period'].astype('string')
+fields_to_use_in_deduping = fields_used_for_groupby_operations + ['instance_string'] + ['period_string']
+combined_df['repeat'] = combined_df.duplicated(subset=fields_to_use_in_deduping, keep='first')
 combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
 
 
 #Section: Create Final JSON
-combined_df['repeat'] = combined_df.duplicated(subset=['Platform', 'Data_Type', 'Access_Method', 'instance_string', 'period_string'], keep='first')
-combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
-combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
 combined_df = combined_df.reset_index(drop=True)
 final_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
