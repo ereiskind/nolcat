@@ -203,7 +203,7 @@ combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boole
 combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
 
 
-#Section: Create Final JSON
+#Subsection: Create Performance Grouping
 combined_df = combined_df.reset_index(drop=True)
 final_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
