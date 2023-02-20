@@ -186,12 +186,16 @@ period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
 period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
 
-#Subsection: Combine Period and Instance Groupings
+
+#Section: Combine Nested JSON Groupings
+#Subsection: Combine Period and Instance Groupings and Dedupe
 combined_df = period_df.join(instance_df, how='inner')  # This contains duplicate records
 combined_df = combined_df.reset_index()
 combined_df = combined_df.drop(columns=['Begin_Date'])
-combined_df['instance_string'] = combined_df['Instance'].astype('string')
-combined_df['period_string'] = combined_df['Period'].astype('string')
+#ToDo: Is `combined_df['instance_string'] = combined_df['Instance'].astype('string')` needed?
+#ToDo: Is `combined_df['period_string'] = combined_df['Period'].astype('string')` needed?
+combined_df['repeat'] = combined_df.duplicated(keep='first') # Check all index values and non-string values that aren't in the index
+combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 
 
 #Section: Create Final JSON
