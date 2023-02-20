@@ -153,7 +153,7 @@ if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author f
         author_values_df = performance_join_multiindex_df.copy()
         non_author_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Authors"]
         author_values_df = author_values_df.drop(columns=non_author_fields)
-        author_values_df['Type'] = "Proprietary"
+        author_values_df['Type'] = "Author"
         author_values_df = author_values_df.rename(columns={"Authors": "Name"})
         author_values_df = author_values_df.reset_index()
         author_values_df['repeat'] = author_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
