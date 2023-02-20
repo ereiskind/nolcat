@@ -159,7 +159,7 @@ if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author f
         author_values_df['repeat'] = author_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
         author_values_df =  author_values_df.loc[author_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         author_values_df =  author_values_df.drop(columns=['repeat'])
-        author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors: authors[['Type', 'Value']].to_dict('records')).rename("Item_Contributors")
+        author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors: authors[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")  # `Item_Contributors` uses `Type` and `Name` as the keys in its dictionaries
 
 
 #Section: Create Nested JSON Section for Publication Date
