@@ -209,9 +209,18 @@ joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambd
 
 #Subsection: Add Other JSON Groupings
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
-for grouping_df in JSON_grouping_dfs:
-    if dict(locals()).get(str(grouping_df)):
-        joining_df = joining_df.join(grouping_df, how='left')
+if dict(locals()).get('publisher_ID_values_df'):
+    joining_df = joining_df.join(publisher_ID_values_df, how='left')
+if dict(locals()).get('item_ID_values_df'):
+    joining_df = joining_df.join(item_ID_values_df, how='left')
+if dict(locals()).get('author_values_df'):
+    joining_df = joining_df.join(author_values_df, how='left')
+if dict(locals()).get('publication_date_values_df'):
+    joining_df = joining_df.join(publication_date_values_df, how='left')
+if dict(locals()).get('article_version_values_df'):
+    joining_df = joining_df.join(article_version_values_df, how='left')
+if dict(locals()).get('item_parent_values_df'):
+    joining_df = joining_df.join(item_parent_values_df, how='left')
 
 
 #Section: Output JSON
