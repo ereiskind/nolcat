@@ -208,19 +208,26 @@ combined_df = combined_df.reset_index(drop=True)
 joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
 #Subsection: Add Other JSON Groupings
+fields_to_remove = []
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
 if dict(locals()).get('publisher_ID_values_df') is not None:
     joining_df = joining_df.join(publisher_ID_values_df, how='left')
+    fields_to_remove.append('Publisher_ID')
 if dict(locals()).get('item_ID_values_df') is not None:
     joining_df = joining_df.join(item_ID_values_df, how='left')
+    fields_to_remove = fields_to_remove + ['DOI'] + ['Proprietary_ID'] + ['ISBN'] + ['Print_ISSN'] + ['Online_ISSN'] + ['URI']
 if dict(locals()).get('author_values_df') is not None:
     joining_df = joining_df.join(author_values_df, how='left')
+    fields_to_remove.append('Authors')
 if dict(locals()).get('publication_date_values_df') is not None:
     joining_df = joining_df.join(publication_date_values_df, how='left')
+    fields_to_remove.append('Publication_Date')
 if dict(locals()).get('article_version_values_df') is not None:
     joining_df = joining_df.join(article_version_values_df, how='left')
+    fields_to_remove.append('Article_Version')
 if dict(locals()).get('item_parent_values_df') is not None:
     joining_df = joining_df.join(item_parent_values_df, how='left')
+    fields_to_remove = fields_to_remove + ['Parent_Title'] + ['Parent_Authors'] + ['Parent_Publication_Date'] + ['Parent_Article_Version'] + ['Parent_Data_Type'] + ['Parent_DOI'] + ['Parent_Proprietary_ID'] + ['Parent_ISBN'] + ['Parent_Print_ISSN'] + ['Parent_Online_ISSN'] + ['Parent_URI']
 
 
 #Section: Output JSON
