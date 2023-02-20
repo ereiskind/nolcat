@@ -183,6 +183,19 @@ if 'Publication_Date' in list(performance_join_multiindex_df.columns):  # If the
 
 
 #Section: Create Nested JSON Section for Article Version
+if 'Article_Version' in list(performance_join_multiindex_df.columns):  # If the article version field exists
+    fields_to_drop_at_end.append('Article_Version')
+    if not performance_join_multiindex_df['Article_Version'].eq("`None`").all():  # If the article version field has values
+        article_version_values_df = performance_join_multiindex_df.copy()
+        non_article_version_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Article_Version"]
+        article_version_values_df = article_version_values_df.drop(columns=non_article_version_fields)
+        article_version_values_df['Type'] = "Article_Version"
+        article_version_values_df = article_version_values_df.rename(columns={"Article_Version": "Value"})
+        article_version_values_df = article_version_values_df.reset_index()
+        article_version_values_df['repeat'] = article_version_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
+        article_version_values_df =  article_version_values_df.loc[article_version_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        article_version_values_df =  article_version_values_df.drop(columns=['repeat'])
+        article_version_values_df = (article_version_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
 
 
 #Section: Create Nested JSON Section for Item Parent Data
