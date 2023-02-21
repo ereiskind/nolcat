@@ -234,8 +234,8 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
             item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
         
         #Subsection: Remove Fields Not Being Nested
-        #ToDo: non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
-        #ToDo: item_parent_values_df = item_parent_values_df.drop(columns=non_item_parent_fields).drop(columns=['Begin_Date'])
+        non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
+        item_parent_values_df = item_parent_values_df.drop(columns=non_item_parent_fields).drop(columns=['Begin_Date'])
 
         #Subsection: Prepare for Inner Nesting
         #ToDo: item_parent_values_df = item_parent_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
