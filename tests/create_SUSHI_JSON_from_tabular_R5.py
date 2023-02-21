@@ -243,10 +243,11 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
         item_parent_values_df['Type'] = item_parent_values_df['Type'].map(lambda type: re.search(r'Parent_(.*)', type)[1] if isinstance(type, str) else type).replace("Title", "Item_Name").replace("Authors", "Author")
 
         #Subsection: Remove Null Values and Repetitions
-        #ToDo: item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]
-        #ToDo: item_parent_values_df['repeat'] = item_parent_values_df.duplicated(keep='first')
-        #ToDo: item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]
-        #ToDo: item_parent_values_df = item_parent_values_df.drop(columns=['repeat'])
+        item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]
+        item_parent_values_df['repeat'] = item_parent_values_df.duplicated(keep='first')
+        item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]
+        item_parent_values_df = item_parent_values_df.drop(columns=['repeat'])
+        item_parent_values_df = item_parent_values_df.set_index(fields_used_for_groupby_operations)
 
         #Subsection: Create Inner Nested JSON Section for Author
         #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Authors' values
