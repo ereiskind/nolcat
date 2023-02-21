@@ -218,20 +218,20 @@ if 'Article_Version' in list(performance_join_multiindex_df.columns):  # If the 
     # Parent_Print_ISSN --> Item_Parent > Item_ID > Value
     # Parent_Online_ISSN --> Item_Parent > Item_ID > Value
     # Parent_URI --> Item_Parent > Item_ID > Value
-#ToDo: if '' in list(performance_join_multiindex_df.columns) or...:  # If the fields in the item parent section exist
-    #ToDo: if not performance_join_multiindex_df[''].eq("`None`").all() or...:  # If the fields in the item parent section have values
-        #ToDo: item_parent_values_df = performance_join_multiindex_df.copy()
+if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Authors' in list(performance_join_multiindex_df.columns) or 'Parent_Publication_Date' in list(performance_join_multiindex_df.columns) or 'Parent_Article_Version' in list(performance_join_multiindex_df.columns) or 'Parent_Data_Type' in list(performance_join_multiindex_df.columns) or 'Parent_DOI' in list(performance_join_multiindex_df.columns) or 'Parent_Proprietary_ID' in list(performance_join_multiindex_df.columns) or 'Parent_ISBN' in list(performance_join_multiindex_df.columns) or 'Parent_Print_ISSN' in list(performance_join_multiindex_df.columns) or 'Parent_Online_ISSN' in list(performance_join_multiindex_df.columns) or 'Parent_URI' in list(performance_join_multiindex_df.columns):  # If the fields in the item parent section exist
+    if not performance_join_multiindex_df['Parent_Title'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Authors'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Publication_Date'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Article_Version'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Data_Type'].eq("`None`").all() or not performance_join_multiindex_df['Parent_DOI'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Proprietary_ID'].eq("`None`").all() or not performance_join_multiindex_df['Parent_ISBN'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Print_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Parent_Online_ISSN'].eq("`None`").all() or not performance_join_multiindex_df['Parent_URI'].eq("`None`").all():  # If the fields in the item parent section have values
+        item_parent_values_df = performance_join_multiindex_df.copy()
 
         #Subsection: Determine All the Fields Going in the Nested Section
-        #ToDo: possible_fields_in_item_parent = ['Parent_Title', 'Parent_Authors', 'Parent_Publication_Date', 'Parent_Article_Version', 'Parent_Data_Type', 'Parent_DOI', 'Parent_Proprietary_ID', 'Parent_ISBN', 'Parent_Print_ISSN', 'Parent_Online_ISSN', 'Parent_URI']
-        #ToDo: fields_in_item_parent = []
-        #ToDo: for field_name in item_parent_values_df.columns:
-            #ToDo: if field_name in possible_fields_in_item_parent:
-                #ToDo: fields_to_drop_at_end.append(field_name)
-                #ToDo: if not item_parent_values_df[field_name].eq("`None`").all():
-                    #ToDo: fields_in_item_parent.append(field_name)
-        #ToDo: if 'Parent_Publication_Date' in fields_in_item_parent:
-            #ToDo: item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+        possible_fields_in_item_parent = ['Parent_Title', 'Parent_Authors', 'Parent_Publication_Date', 'Parent_Article_Version', 'Parent_Data_Type', 'Parent_DOI', 'Parent_Proprietary_ID', 'Parent_ISBN', 'Parent_Print_ISSN', 'Parent_Online_ISSN', 'Parent_URI']
+        fields_in_item_parent = []
+        for field_name in item_parent_values_df.columns:
+            if field_name in possible_fields_in_item_parent:
+                fields_to_drop_at_end.append(field_name)
+                if not item_parent_values_df[field_name].eq("`None`").all():
+                    fields_in_item_parent.append(field_name)
+        if 'Parent_Publication_Date' in fields_in_item_parent:
+            item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
         
         #Subsection: Remove Fields Not Being Nested
         #ToDo: non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
