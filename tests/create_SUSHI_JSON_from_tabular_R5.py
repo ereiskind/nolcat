@@ -263,10 +263,10 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
             item_parent_values_df = item_parent_values_df.join(item_dates_df)
 
         #Subsection: Create Inner Nested JSON Section for Article Version
-        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Article_Version' values
-        #ToDo: if new dataframe isn't empty:
-            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Name']].to_dict('records')).rename("Item_Attributes")
-            #ToDo: Join new dataframe back to `item_parent_values_df`
+        item_attributes_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Article_Version']
+        if not item_attributes_df.empty:
+            item_attributes_df = (item_attributes_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
+            item_parent_values_df = item_parent_values_df.join(item_attributes_df)
 
         #Subsection: Create Inner Nested JSON Section for Item IDs
         #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'DOI' or item_parent_values_df['Type'] == 'Proprietary_ID' or item_parent_values_df['Type'] == 'ISBN' or item_parent_values_df['Type'] == 'Print_ISSN' or item_parent_values_df['Type'] == 'Online_ISSN' or item_parent_values_df['Type'] == 'URI' values
