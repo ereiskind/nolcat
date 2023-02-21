@@ -72,7 +72,11 @@ df = pd.read_excel(
     header=1,
     names=df_field_names,
     dtype=df_dtypes,
-    converters={'Begin_Date': pd.to_datetime}  # `to_datetime` called as object, not function; adding `format` argument causes TypeError
+    converters={  # `to_datetime` called as object, not function; adding `format` argument causes TypeError
+    'Begin_Date': pd.to_datetime,
+    'Publication_Date': pd.to_datetime,
+    'Parent_Publication_Date': pd.to_datetime,
+    }
 )
 
 
@@ -171,6 +175,7 @@ if 'Publication_Date' in list(performance_join_multiindex_df.columns):  # If the
     fields_to_drop_at_end.append('Publication_Date')
     if not performance_join_multiindex_df['Publication_Date'].eq("`None`").all():  # If the publication date field has values
         publication_date_values_df = performance_join_multiindex_df.copy()
+        publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
         non_publication_date_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publication_Date"]
         publication_date_values_df = publication_date_values_df.drop(columns=non_publication_date_fields)
         publication_date_values_df['Type'] = "Publication_Date"
