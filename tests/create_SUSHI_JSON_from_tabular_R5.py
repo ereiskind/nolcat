@@ -257,10 +257,10 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
             item_parent_values_df = item_parent_values_df.join(item_contributors_df)
 
         #Subsection: Create Inner Nested JSON Section for Publication Date
-        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Publication_Date' values
-        #ToDo: if new dataframe isn't empty:
-            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
-            #ToDo: Join new dataframe back to `item_parent_values_df`
+        item_dates_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Publication_Date']
+        if not item_dates_df.empty:
+            item_dates_df = (item_dates_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
+            item_parent_values_df = item_parent_values_df.join(item_dates_df)
 
         #Subsection: Create Inner Nested JSON Section for Article Version
         #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Article_Version' values
