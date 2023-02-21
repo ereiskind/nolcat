@@ -206,6 +206,76 @@ if 'Article_Version' in list(performance_join_multiindex_df.columns):  # If the 
 
 
 #Section: Create Nested JSON Section for Item Parent Data
+# Parent data fields and their labels with nesting in the JSON
+    # Parent_Title --> Item_Parent > Item_Name
+    # Parent_Authors --> Item_Parent > Item_Contributors > Name
+    # Parent_Publication_Date --> Item_Parent > Item_Dates > Value
+    # Parent_Article_Version --> Item_Parent > Item_Attributes > Value
+    # Parent_Data_Type --> Item_Parent > Data_Type
+    # Parent_DOI --> Item_Parent > Item_ID > Value
+    # Parent_Proprietary_ID --> Item_Parent > Item_ID > Value
+    # Parent_ISBN --> Item_Parent > Item_ID > Value
+    # Parent_Print_ISSN --> Item_Parent > Item_ID > Value
+    # Parent_Online_ISSN --> Item_Parent > Item_ID > Value
+    # Parent_URI --> Item_Parent > Item_ID > Value
+#ToDo: if '' in list(performance_join_multiindex_df.columns) or...:  # If the fields in the item parent section exist
+    #ToDo: if not performance_join_multiindex_df[''].eq("`None`").all() or...:  # If the fields in the item parent section have values
+        #ToDo: item_parent_values_df = performance_join_multiindex_df.copy()
+
+        #Subsection: Determine All the Fields Going in the Nested Section
+        #ToDo: possible_fields_in_item_parent = ['Parent_Title', 'Parent_Authors', 'Parent_Publication_Date', 'Parent_Article_Version', 'Parent_Data_Type', 'Parent_DOI', 'Parent_Proprietary_ID', 'Parent_ISBN', 'Parent_Print_ISSN', 'Parent_Online_ISSN', 'Parent_URI']
+        #ToDo: fields_in_item_parent = []
+        #ToDo: for field_name in item_parent_values_df.columns:
+            #ToDo: if field_name in possible_fields_in_item_parent:
+                #ToDo: fields_to_drop_at_end.append(field_name)
+                #ToDo: if not item_parent_values_df[field_name].eq("`None`").all():
+                    #ToDo: fields_in_item_parent.append(field_name)
+        #ToDo: if 'Parent_Publication_Date' in fields_in_item_parent:
+            #ToDo: item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+        
+        #Subsection: Remove Fields Not Being Nested
+        #ToDo: non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
+        #ToDo: item_parent_values_df = item_parent_values_df.drop(columns=non_item_parent_fields).drop(columns=['Begin_Date'])
+
+        #Subsection: Prepare for Inner Nesting
+        #ToDo: item_parent_values_df = item_parent_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
+        #ToDo: item_parent_values_df = item_parent_values_df.rename(columns={item_parent_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
+        #ToDo: item_parent_values_df['Type'] = item_parent_values_df['Type'].map(lambda type: re.search(r'Parent_(.*)', type)[1] if isinstance(type, str) else type).replace("Title", "Item_Name")
+
+        #Subsection: Remove Null Values and Repetitions
+        #ToDo: item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]
+        #ToDo: item_parent_values_df['repeat'] = item_parent_values_df.duplicated(keep='first')
+        #ToDo: item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]
+        #ToDo: item_parent_values_df = item_parent_values_df.drop(columns=['repeat'])
+
+        #Subsection: Create Inner Nested JSON Section for Author
+        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Authors' values
+        #ToDo: if new dataframe isn't empty:
+            #ToDo: Rename `Value` field to `Name`
+            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_contributors: item_contributors[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")
+            #ToDo: Join new dataframe back to `item_parent_values_df`
+
+        #Subsection: Create Inner Nested JSON Section for Publication Date
+        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Publication_Date' values
+        #ToDo: if new dataframe isn't empty:
+            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
+            #ToDo: Join new dataframe back to `item_parent_values_df`
+
+        #Subsection: Create Inner Nested JSON Section for Article Version
+        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'Article_Version' values
+        #ToDo: if new dataframe isn't empty:
+            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Name']].to_dict('records')).rename("Item_Attributes")
+            #ToDo: Join new dataframe back to `item_parent_values_df`
+
+        #Subsection: Create Inner Nested JSON Section for Item IDs
+        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'DOI' or item_parent_values_df['Type'] == 'Proprietary_ID' or item_parent_values_df['Type'] == 'ISBN' or item_parent_values_df['Type'] == 'Print_ISSN' or item_parent_values_df['Type'] == 'Online_ISSN' or item_parent_values_df['Type'] == 'URI' values
+        #ToDo: if new dataframe isn't empty:
+            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
+            #ToDo: Join new dataframe back to `item_parent_values_df`
+
+        #Subsection: Combine All Inner Nested Sections
+        #ToDo: Stack `Item_Contributor`, `Item_Dates`, `Item_Attributes`, `Item_ID` fields so those values are in the same field as `Item_Name` and `Data_Type`
+        #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent: item_parent[['name_of_field_with_values_listed_above', 'name_of_field_with_content']].to_dict('records')).rename("Item_Parent")
 
 
 #Section: Create Nested JSON Section for Performance
