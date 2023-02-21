@@ -59,7 +59,7 @@ for row in sheet.rows:
 # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be set as strings at the creation of the dataframe to head off problems.
 df_dtypes = dict()
 for field_name in df_field_names:
-    if field_name == "Count":
+    if field_name == "Count" or field_name == "YOP":
         df_dtypes[field_name] = 'Int64'  # The pandas integer dtype; Python's 'int' is ignored
     else:  # JSON uses strings for dates; `Begin_Date` is changed to a date with the `converters` argument in `read_excel`
         df_dtypes[field_name] = 'string'
@@ -85,6 +85,8 @@ df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some 
 df = df.replace("licence", "license")  # "Have `license` always use American English spelling
 df['End_Date'] = df['Begin_Date'].map(last_day_of_month)
 df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
+if 'YOP' in list(df.columns):
+    df['YOP'] = df['YOP'].astype('string')  # Setting the dtype to string when reading in the data means every value in the field ends with `.0`
 
 #Subsection: Put Placeholder in for Null Values
 # Null values and fields with nothing but null values cause problems and errors in groupby functions, so they're replaced with placeholder strings
