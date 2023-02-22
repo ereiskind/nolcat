@@ -288,7 +288,7 @@ instance_df = instance_df.set_index(fields_used_in_performance_join_multiindex)
 #Subsection: Create Period Grouping
 df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
 period_groupby_operation_fields = fields_used_for_groupby_operations + ['Metric_Type', 'Count', 'temp']
-period_df = df.groupby(period_groupby_operation_fields).apply(lambda period_groupby: period_groupby[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
+period_df = (df.groupby(period_groupby_operation_fields)).apply(lambda period_groupby: period_groupby[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
 period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
 period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
@@ -313,7 +313,7 @@ combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'rep
 
 #Subsection: Create Performance Grouping
 combined_df = combined_df.reset_index(drop=True)
-joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance_groupby: performance_groupby[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+joining_df = (combined_df.groupby(fields_used_for_groupby_operations)).apply(lambda performance_groupby: performance_groupby[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
 #Subsection: Add Other JSON Groupings
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
