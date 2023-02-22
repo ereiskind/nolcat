@@ -269,10 +269,10 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
             item_parent_values_df = item_parent_values_df.join(item_attributes_df)
 
         #Subsection: Create Inner Nested JSON Section for Item IDs
-        #ToDo: Create new dataframe with only item_parent_values_df['Type'] == 'DOI' or item_parent_values_df['Type'] == 'Proprietary_ID' or item_parent_values_df['Type'] == 'ISBN' or item_parent_values_df['Type'] == 'Print_ISSN' or item_parent_values_df['Type'] == 'Online_ISSN' or item_parent_values_df['Type'] == 'URI' values
-        #ToDo: if new dataframe isn't empty:
-            #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
-            #ToDo: Join new dataframe back to `item_parent_values_df`
+        item_ID_df = item_parent_values_df[item_parent_values_df['Type'].isin(possible_fields_in_item_ID)]
+        if not item_ID_df.empty:
+            item_ID_df = (item_ID_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
+            item_parent_values_df = item_parent_values_df.join(item_ID_df)
 
         #Subsection: Combine All Inner Nested Sections
         #ToDo: Stack `Item_Contributor`, `Item_Dates`, `Item_Attributes`, `Item_ID` fields so those values are in the same field as `Item_Name` and `Data_Type`
