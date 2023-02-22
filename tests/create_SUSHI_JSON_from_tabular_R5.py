@@ -108,6 +108,7 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 fields_to_drop_at_end = []
+possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']  # List defined here because it's used in two separate `if` blocks
 
 
 #Section: Create Nested JSON Section for Publisher IDs
@@ -132,7 +133,6 @@ if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in 
         item_ID_values_df = performance_join_multiindex_df.copy()
 
         #Subsection: Determine All the Fields Going in the Nested Section
-        possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']
         fields_in_item_ID = []
         for field_name in item_ID_values_df.columns:
             if field_name in possible_fields_in_item_ID:
