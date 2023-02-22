@@ -124,7 +124,7 @@ if 'Publisher_ID' in list(performance_join_multiindex_df.columns):  # If the pub
         publisher_ID_values_df['repeat'] = publisher_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
         publisher_ID_values_df =  publisher_ID_values_df.loc[publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
-        publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID: publisher_ID[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
+        publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID_groupby: publisher_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
 
 
 #Section: Create Nested JSON Section for Item IDs
@@ -153,7 +153,7 @@ if 'DOI' in list(performance_join_multiindex_df.columns) or 'Proprietary_ID' in 
         item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
 
         #Subsection: Complete Nested JSON Section for Item IDs
-        item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
+        item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
 
 
 #Section: Create Nested JSON Section for Authors
@@ -169,7 +169,7 @@ if 'Authors' in list(performance_join_multiindex_df.columns):  # If the author f
         author_values_df['repeat'] = author_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
         author_values_df =  author_values_df.loc[author_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         author_values_df =  author_values_df.drop(columns=['repeat'])
-        author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors: authors[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")  # `Item_Contributors` uses `Type` and `Name` as the keys in its dictionaries
+        author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors_groupby: authors_groupby[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")  # `Item_Contributors` uses `Type` and `Name` as the keys in its dictionaries
 
 
 #Section: Create Nested JSON Section for Publication Date
@@ -186,7 +186,7 @@ if 'Publication_Date' in list(performance_join_multiindex_df.columns):  # If the
         publication_date_values_df['repeat'] = publication_date_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
         publication_date_values_df =  publication_date_values_df.loc[publication_date_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         publication_date_values_df =  publication_date_values_df.drop(columns=['repeat'])
-        publication_date_values_df = (publication_date_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
+        publication_date_values_df = (publication_date_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates_groupby: item_dates_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
 
 
 #Section: Create Nested JSON Section for Article Version
@@ -202,7 +202,7 @@ if 'Article_Version' in list(performance_join_multiindex_df.columns):  # If the 
         article_version_values_df['repeat'] = article_version_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
         article_version_values_df =  article_version_values_df.loc[article_version_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         article_version_values_df =  article_version_values_df.drop(columns=['repeat'])
-        article_version_values_df = (article_version_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
+        article_version_values_df = (article_version_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes_groupby: item_attributes_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
 
 
 #Section: Create Nested JSON Section for Item Parent Data
@@ -253,25 +253,25 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
         item_contributors_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Author']
         if not item_contributors_df.empty:
             item_contributors_df = item_contributors_df.rename(columns={'Value': 'Name'})
-            item_contributors_df = (item_contributors_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_contributors: item_contributors[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")
+            item_contributors_df = (item_contributors_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_contributors_groupby: item_contributors_groupby[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")
             item_parent_values_df = item_parent_values_df.join(item_contributors_df)
 
         #Subsection: Create Inner Nested JSON Section for Publication Date
         item_dates_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Publication_Date']
         if not item_dates_df.empty:
-            item_dates_df = (item_dates_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates: item_dates[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
+            item_dates_df = (item_dates_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates_groupby: item_dates_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
             item_parent_values_df = item_parent_values_df.join(item_dates_df)
 
         #Subsection: Create Inner Nested JSON Section for Article Version
         item_attributes_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Article_Version']
         if not item_attributes_df.empty:
-            item_attributes_df = (item_attributes_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes: item_attributes[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
+            item_attributes_df = (item_attributes_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes_groupby: item_attributes_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
             item_parent_values_df = item_parent_values_df.join(item_attributes_df)
 
         #Subsection: Create Inner Nested JSON Section for Item IDs
         item_ID_df = item_parent_values_df[item_parent_values_df['Type'].isin(possible_fields_in_item_ID)]
         if not item_ID_df.empty:
-            item_ID_df = (item_ID_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID: item_ID[['Type', 'Value']].to_dict('records')).rename("Item_ID")
+            item_ID_df = (item_ID_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
             item_parent_values_df = item_parent_values_df.join(item_ID_df)
 
         #Subsection: Combine All Inner Nested Sections
@@ -282,13 +282,13 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
 #Section: Create Nested JSON Section for Performance
 #Subsection: Create Instance Grouping
 instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
-instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance: instance[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
+instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance_groupby: instance_groupby[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
 instance_df = instance_df.set_index(fields_used_in_performance_join_multiindex)
 
 #Subsection: Create Period Grouping
 df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
 period_groupby_operation_fields = fields_used_for_groupby_operations + ['Metric_Type', 'Count', 'temp']
-period_df = df.groupby(period_groupby_operation_fields).apply(lambda period: period[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
+period_df = df.groupby(period_groupby_operation_fields).apply(lambda period_groupby: period_groupby[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
 period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
 period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
@@ -313,7 +313,7 @@ combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'rep
 
 #Subsection: Create Performance Grouping
 combined_df = combined_df.reset_index(drop=True)
-joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance: performance[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+joining_df = combined_df.groupby(fields_used_for_groupby_operations).apply(lambda performance_groupby: performance_groupby[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 
 #Subsection: Add Other JSON Groupings
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
