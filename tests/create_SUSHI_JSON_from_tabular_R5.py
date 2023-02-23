@@ -288,9 +288,30 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
             item_ID_df = (item_ID_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
             item_parent_values_df = item_parent_values_df.join(item_ID_df)
 
-        #Subsection: Combine All Inner Nested Sections
-        #ToDo: Stack `Item_Contributor`, `Item_Dates`, `Item_Attributes`, `Item_ID` fields so those values are in the same field as `Item_Name` and `Data_Type`
-        #ToDo: (???_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent: item_parent[['name_of_field_with_values_listed_above', 'name_of_field_with_content']].to_dict('records')).rename("Item_Parent")
+        #Subsection: Deduplicate Dataframe with All Inner Nested Sections
+        item_parent_values_df = item_parent_values_df.reset_index()
+        item_parent_subsection_string_fields = []
+        item_parent_fields_to_nest = []
+        # Using pandas' `duplicated` method on dict data type fields raises a TypeError, so their contents must be compared as equivalent strings
+        if 'Item_Contributors' in list(item_parent_values_df.columns):
+            item_parent_values_df['item_contributors_string'] = item_parent_values_df['Item_Contributors'].astype('string')
+            item_parent_subsection_string_fields.append('item_contributors_string')
+            item_parent_fields_to_nest.append('Item_Contributors')
+        if 'Item_Dates' in list(item_parent_values_df.columns):
+            item_parent_values_df['item_dates_string'] = item_parent_values_df['Item_Dates'].astype('string')
+            item_parent_subsection_string_fields.append('item_dates_string')
+            item_parent_fields_to_nest.append('Item_Dates')
+        if 'Item_Attributes' in list(item_parent_values_df.columns):
+            item_parent_values_df['item_attributes_string'] = item_parent_values_df['Item_Attributes'].astype('string')
+            item_parent_subsection_string_fields.append('item_attributes_string')
+            item_parent_fields_to_nest.append('Item_Attributes')
+        if 'Item_ID' in list(item_parent_values_df.columns):
+            item_parent_values_df['item_ID_string'] = item_parent_values_df['Item_ID'].astype('string')
+            item_parent_subsection_string_fields.append('item_ID_string')
+            item_parent_fields_to_nest.append('Item_ID')
+        item_parent_values_df['repeat'] = item_parent_values_df.duplicated(subset=item_parent_subsection_string_fields + fields_used_for_groupby_operations, keep='first')
+        item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+        item_parent_values_df = item_parent_values_df.drop(columns=item_parent_subsection_string_fields).drop(columns=['Type', 'Value', 'repeat'])
 
 
 #Section: Create Nested JSON Section for Performance
