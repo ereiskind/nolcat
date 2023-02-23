@@ -24,6 +24,20 @@ def last_day_of_month(first_day_of_month):
     return year_and_month_string + str(first_day_of_month.days_in_month)
 
 
+def correct_item_parent_dictionary(item_parent_dictionary):
+    """This function corrects the problems in the nested `Item_Parent` JSON that come from the dataframe to dictionary/JSON conversion process.
+
+    There's no way to directly create the `Item_Parent` nested JSON section from its subsections and the existing columns; this function, entered into a lambda statement, performs the final adjustments.
+
+    Args:
+        item_parent_dictionary (dict): an individual value in the series created by applying a groupby operation to `item_parent_values_df`
+    
+    Returns:
+        dict: the dictionary that's the value to the `Item_Parent` key in the SUSHI test data JSON
+    """
+    pass
+
+
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
 file_path = pathlib.Path(file_path)
