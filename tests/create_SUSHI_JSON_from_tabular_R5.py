@@ -313,6 +313,15 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
         item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
         item_parent_values_df = item_parent_values_df.drop(columns=item_parent_subsection_string_fields).drop(columns=['Type', 'Value', 'repeat'])
 
+        #Subsection: Combine All Inner Nested Sections
+        item_parent_values_df = item_parent_values_df.reset_index(drop=True)
+        if 'Parent_Title' in list(item_parent_values_df.columns):
+            item_parent_fields_to_nest.append('Parent_Title')
+        if 'Parent_Data_Type' in list(item_parent_values_df.columns):
+            item_parent_fields_to_nest.append('Parent_Data_Type')
+        item_parent_values_df = (item_parent_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent_groupby: item_parent_groupby[item_parent_fields_to_nest].to_dict('index')).apply(correct_item_parent_dictionary).rename("Item_Parent")
+        #ToDo: Index of `item_parent_values_df` needs to be set to `fields_used_for_groupby_operations`
+
 
 #Section: Create Nested JSON Section for Performance
 #Subsection: Create Instance Grouping
