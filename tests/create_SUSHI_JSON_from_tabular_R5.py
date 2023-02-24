@@ -233,11 +233,14 @@ if report_type == "IR":
         fields_to_drop_at_end.append('Publication_Date')
         if not performance_join_multiindex_df['Publication_Date'].eq("`None`").all():  # If the publication date field has values
             publication_date_values_df = performance_join_multiindex_df.copy()
-            try:
-                publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
-            except:
-                publication_date_values_df['Publication_Date'] = pd.to_datetime(publication_date_values_df['Publication_Date'])
-                publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
+            # For the `.dt` accessor function that removes the time data to work, the field must have a date data type, meaning there are no strings in the field
+            publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].replace(
+                to_replace="`None`",
+                value=pd.NA,
+            )
+            publication_date_values_df['Publication_Date'] = pd.to_datetime(publication_date_values_df['Publication_Date'])
+            publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
+            publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].fillna("`None`")
             non_publication_date_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publication_Date"]
             publication_date_values_df = publication_date_values_df.drop(columns=non_publication_date_fields)
             publication_date_values_df['Type'] = "Publication_Date"
@@ -293,11 +296,14 @@ if report_type == "IR":
                     if not item_parent_values_df[field_name].eq("`None`").all():
                         fields_in_item_parent.append(field_name)
             if 'Parent_Publication_Date' in fields_in_item_parent:
-                try:
-                    item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
-                except:
-                    item_parent_values_df['Parent_Publication_Date'] = pd.to_datetime(item_parent_values_df['Parent_Publication_Date'])
-                    item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+                # For the `.dt` accessor function that removes the time data to work, the field must have a date data type, meaning there are no strings in the field
+                item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].replace(
+                    to_replace="`None`",
+                    value=pd.NA,
+                )
+                item_parent_values_df['Parent_Publication_Date'] = pd.to_datetime(item_parent_values_df['Parent_Publication_Date'])
+                item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+                item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].fillna("`None`")
             
             #Subsection: Remove Fields Not Being Nested
             non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
