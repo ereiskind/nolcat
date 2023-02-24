@@ -77,7 +77,7 @@ def load_test_data_into_database(engine):
             relation_name,
             con=engine,
             if_exists='append',
-            method='multi',
+            #method='multi',
         )
     except exc.IntegrityError as error:
         check_auto_increment_after = pd.read_sql(
