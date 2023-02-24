@@ -115,7 +115,11 @@ df = pd.read_excel(
 df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
 df = df.replace("licence", "license")  # "Have `license` always use American English spelling
 df['End_Date'] = df['Begin_Date'].map(last_day_of_month)
-df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
+try:
+    df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
+except:
+    df['Begin_Date'] = pd.to_datetime(df['Begin_Date'])
+    df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
 if 'YOP' in list(df.columns):
     df['YOP'] = df['YOP'].astype('string')  # Setting the dtype to string when reading in the data means every value in the field ends with `.0`
 
@@ -229,7 +233,11 @@ if report_type == "IR":
         fields_to_drop_at_end.append('Publication_Date')
         if not performance_join_multiindex_df['Publication_Date'].eq("`None`").all():  # If the publication date field has values
             publication_date_values_df = performance_join_multiindex_df.copy()
-            publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
+            try:
+                publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
+            except:
+                publication_date_values_df['Publication_Date'] = pd.to_datetime(publication_date_values_df['Publication_Date'])
+                publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].dt.strftime('%Y-%m-%d')
             non_publication_date_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name != "Publication_Date"]
             publication_date_values_df = publication_date_values_df.drop(columns=non_publication_date_fields)
             publication_date_values_df['Type'] = "Publication_Date"
@@ -285,7 +293,11 @@ if report_type == "IR":
                     if not item_parent_values_df[field_name].eq("`None`").all():
                         fields_in_item_parent.append(field_name)
             if 'Parent_Publication_Date' in fields_in_item_parent:
-                item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+                try:
+                    item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
+                except:
+                    item_parent_values_df['Parent_Publication_Date'] = pd.to_datetime(item_parent_values_df['Parent_Publication_Date'])
+                    item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].dt.strftime('%Y-%m-%d')
             
             #Subsection: Remove Fields Not Being Nested
             non_item_parent_fields = [field_name for field_name in fields_used_for_groupby_operations if field_name not in fields_in_item_parent]
