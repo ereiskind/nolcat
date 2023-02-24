@@ -30,22 +30,11 @@ def load_test_data_into_database(engine):
         numbered=True,
     )
     
-    check_auto_increment_1 = pd.read_sql(
-        sql=f"SHOW CREATE TABLE {relation_name};",
-        con=engine,
-    )
-    print(f"The `create table` statement when no select queries have been run in the database:\n{check_auto_increment_1.iloc[0]['Create Table']}")
-    
     check_for_data = pd.read_sql(
         sql=f"SELECT COUNT(*) FROM {relation_name};",
         con=engine,
     )
-    check_auto_increment_2 = pd.read_sql(
-        sql=f"SHOW CREATE TABLE {relation_name};",
-        con=engine,
-    )
     print(f"Number of records currently in relation: {check_for_data.iloc[0]['COUNT(*)']}")
-    print(f"The `create table` statement after the query to get the number above:\n{check_auto_increment_2.iloc[0]['Create Table']}")
     if not check_for_data.iloc[0]['COUNT(*)'] == 0:  # Query above is requesting the number of records in the relation, so an empty relation returns the integer `0`
         return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."  #ToDo: Shorten string to prevent removal of middle section in pytest display
     else:
@@ -55,11 +44,6 @@ def load_test_data_into_database(engine):
         )
         print(f"Result of SELECT call to relation:\n{show_data}")
     
-    check_auto_increment_3 = pd.read_sql(
-        sql=f"SHOW CREATE TABLE {relation_name};",
-        con=engine,
-    )
-    print(f"The `create table` statement after the SELECT query to get entire relation:\n{check_auto_increment_3.iloc[0]['Create Table']}")
     
     if relation_name == "fiscalYears":
         relation_data = relations.fiscalYears_relation()
@@ -83,6 +67,11 @@ def load_test_data_into_database(engine):
         relation_data = relations.COUNTERData_relation()
     
     print(f"Records to be loaded into relation:\n{relation_data}")
+    check_auto_increment_before = pd.read_sql(
+        sql=f"SHOW CREATE TABLE {relation_name};",
+        con=engine,
+    )
+    print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
     try:
         relation_data.to_sql(
             relation_name,
@@ -91,10 +80,20 @@ def load_test_data_into_database(engine):
             method='multi',
         )
     except exc.IntegrityError as error:
+        check_auto_increment_after = pd.read_sql(
+            sql=f"SHOW CREATE TABLE {relation_name};",
+            con=engine,
+        )
+        print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
         return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
     except Exception as error:
         return f"The `to_sql` method raised an exception: {error.orig.args}"
 
+    check_auto_increment_after = pd.read_sql(
+        sql=f"SHOW CREATE TABLE {relation_name};",
+        con=engine,
+    )
+    print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
     return f"The test data was loaded into {relation_name}."
 
 
