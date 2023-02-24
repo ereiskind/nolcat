@@ -420,6 +420,7 @@ joining_df = (combined_df.groupby(fields_used_for_groupby_operations)).apply(lam
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
 if dict(locals()).get('publisher_ID_values_df') is not None:
     joining_df = joining_df.join(publisher_ID_values_df, how='left')
+    joining_df = joining_df.rename(columns={'Publisher_ID': '_Publisher_ID'})  # This field and its origin field have the same name, which causes an error when resetting the index; to avoid it, a temporary new name is used
 if dict(locals()).get('item_ID_values_df') is not None:
     joining_df = joining_df.join(item_ID_values_df, how='left')
 if dict(locals()).get('author_values_df') is not None:
@@ -435,4 +436,6 @@ if dict(locals()).get('item_parent_values_df') is not None:
 #Section: Create Final JSON
 final_df = joining_df.reset_index()
 final_df = final_df.drop(columns=fields_to_drop_at_end)
+if '_Publisher_ID' in list(final_df.columns):
+    final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
 final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
