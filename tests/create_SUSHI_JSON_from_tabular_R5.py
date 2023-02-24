@@ -337,7 +337,6 @@ if 'Parent_Title' in list(performance_join_multiindex_df.columns) or 'Parent_Aut
         if 'Parent_Data_Type' in list(item_parent_values_df.columns):
             item_parent_fields_to_nest.append('Parent_Data_Type')
         item_parent_values_df = (item_parent_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent_groupby: item_parent_groupby[item_parent_fields_to_nest].to_dict('index')).apply(correct_item_parent_dictionary).rename("Item_Parent")
-        #ToDo: Index of `item_parent_values_df` needs to be set to `fields_used_for_groupby_operations`
 
 
 #Section: Create Nested JSON Section for Performance
@@ -395,4 +394,4 @@ if dict(locals()).get('item_parent_values_df') is not None:
 #Section: Create Final JSON
 final_df = joining_df.reset_index()
 final_df = final_df.drop(columns=fields_to_drop_at_end)
-final_df.to_json(directory_with_final_JSONs / 'result_JSON.json', force_ascii=False, indent=4, orient='table', index=False)
+final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
