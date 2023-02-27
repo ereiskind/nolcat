@@ -84,6 +84,7 @@ def load_test_data_into_database(engine):
                     sql=f"SHOW CREATE TABLE {relation_name};",
                     con=engine,
                 )
+                print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
                 print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
                 return f"The test data was loaded into {relation_name}."
             except:
