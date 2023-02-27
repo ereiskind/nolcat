@@ -72,7 +72,10 @@ def create_app():
             db.create_all()
 
     #Section: Register Blueprints
-    from nolcat import annual_stats
+    try:
+        from nolcat import annual_stats
+    except:
+        from . import annual_stats
     app.register_blueprint(annual_stats.bp)
 
     from nolcat import ingest_usage
