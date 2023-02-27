@@ -78,19 +78,34 @@ def create_app():
         from . import annual_stats
     app.register_blueprint(annual_stats.bp)
 
-    from nolcat import ingest_usage
+    try:
+        from nolcat import ingest_usage
+    except:
+        from . import ingest_usage
     app.register_blueprint(ingest_usage.bp)
 
-    from nolcat import initialization
+    try:
+        from nolcat import initialization
+    except:
+        from . import initialization
     app.register_blueprint(initialization.bp)
 
-    from nolcat import login
+    try:
+        from nolcat import login
+    except:
+        from . import login
     app.register_blueprint(login.bp)
 
-    from nolcat import view_lists
+    try:
+        from nolcat import view_lists
+    except:
+        from . import view_lists
     app.register_blueprint(view_lists.bp)
 
-    from nolcat import view_usage
+    try:
+        from nolcat import view_usage
+    except:
+        from . import view_usage
     app.register_blueprint(view_usage.bp)
 
     #Section: Create Homepage Route
