@@ -1,7 +1,6 @@
 """This module consists exclusively of a fixture for loading the test data for the relations into the relational database. Its purpose is to quickly add the test data to the database; since the data rollback functionality has not yet been established, data loaded into the database via this module will persist past the completion of the pytest session and must be deleted manually."""
 
 import pytest
-import sys
 import pyinputplus as pyip
 import pandas as pd
 from sqlalchemy import exc
@@ -36,13 +35,7 @@ def load_test_data_into_database(engine):
     )
     print(f"Number of records currently in relation: {check_for_data.iloc[0]['COUNT(*)']}")
     if not check_for_data.iloc[0]['COUNT(*)'] == 0:  # Query above is requesting the number of records in the relation, so an empty relation returns the integer `0`
-        return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."  #ToDo: Shorten string to prevent removal of middle section in pytest display
-    else:
-        show_data = pd.read_sql(
-            sql=f"SELECT * FROM {relation_name};",
-            con=engine,
-        )
-        print(f"Result of SELECT call to relation:\n{show_data}")
+        return f"The `{relation_name}` relation already has data in it, so there will either be an error when attempting to load the test data or data in other relations won't be appropriately matched. To prevent either of those problems, the program is quitting now without loading any data into the selected relation; please use the MySQL command line or the `db-actions` script's truncate function, both in the instance, to remove all data from the relation before trying again."
     
     
     if relation_name == "fiscalYears":
@@ -68,45 +61,18 @@ def load_test_data_into_database(engine):
     
     print(f"Records to be loaded into relation:\n{relation_data}")
     try:
-        check_auto_increment_before = pd.read_sql(
-            sql=f"SHOW CREATE TABLE {relation_name};",
+        relation_data.to_sql(
+            relation_name,
             con=engine,
+            if_exists='append',
+            chunksize=10000,
         )
-        try:
-            relation_data.to_sql(
-                relation_name,
-                con=engine,
-                if_exists='append',
-                chunksize=10000,
-            )
-            try:
-                check_auto_increment_after = pd.read_sql(
-                    sql=f"SHOW CREATE TABLE {relation_name};",
-                    con=engine,
-                )
-                print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
-                print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
-                return f"The test data was loaded into {relation_name}."
-            except:
-                print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
-                return f"The test data was loaded into {relation_name}, but the `SHOW CREATE TABLE` statement after the load couldn't be collected."
-        except exc.IntegrityError as error:
-            print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
-            try:
-                check_auto_increment_after = pd.read_sql(
-                    sql=f"SHOW CREATE TABLE {relation_name};",
-                    con=engine,
-                )
-                print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
-                return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
-            except:
-                print("The `SHOW CREATE TABLE` statement after the load couldn't be collected.")
-                return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
-        except Exception as error:
-            return f"The `to_sql` method raised a non-`IntegrityError` exception: {error.orig.args}"
+    except exc.IntegrityError as error:
+        return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
     except Exception as error:
-        return f"The `read_sql` method to get the `SHOW CREATE TABLE` statement before the data load attempt raised an exception: {error.orig.args}"
+        return f"The `to_sql` method raised an exception: {error.orig.args}"
 
+    return f"The test data was loaded into {relation_name}."
 
 def test_data_load_function(load_test_data_into_database):
     """The pytest function that runs the `load_test_data_into_database` fixture."""
