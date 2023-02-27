@@ -145,3 +145,17 @@ def last_day_of_month(first_day_of_month):
     """
     year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
     return year_and_month_string + str(first_day_of_month.days_in_month)
+
+
+def first_new_PK_value(relation):
+    """The function for getting the next value in the primary key sequence.
+
+    The default value of the SQLAlchemy `autoincrement` argument in the field constructor method adds `AUTO_INCREMENT` to the primary key field in the data definition language. Loading values, even ones following the sequential numbering that auto-incrementation would use, alters the relation's `AUTO_INCREMENT` attribute, causing a primary key duplication error. Stopping this error requires removing auto-incrementation from the primary key fields (by setting the `autoincrement` argument in the field constructor method to `False`); without the auto-incrementation, however, the primary key values must be included as the dataframe's record index field. This function finds the highest value in the primary key field of the given relation and returns the next integer.
+
+    Args:
+        relation (str): the name of the relation being checked
+    
+    Returns:
+        int: the first primary key value in the data to be uploaded to the relation
+    """
+    pass
