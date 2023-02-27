@@ -67,34 +67,44 @@ def load_test_data_into_database(engine):
         relation_data = relations.COUNTERData_relation()
     
     print(f"Records to be loaded into relation:\n{relation_data}")
-    check_auto_increment_before = pd.read_sql(
-        sql=f"SHOW CREATE TABLE {relation_name};",
-        con=engine,
-    )
-    print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
     try:
-        relation_data.to_sql(
-            relation_name,
-            con=engine,
-            if_exists='append',
-            chunksize=10000,
-        )
-    except exc.IntegrityError as error:
-        check_auto_increment_after = pd.read_sql(
+        check_auto_increment_before = pd.read_sql(
             sql=f"SHOW CREATE TABLE {relation_name};",
             con=engine,
         )
-        print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
-        return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
+        try:
+            relation_data.to_sql(
+                relation_name,
+                con=engine,
+                if_exists='append',
+                chunksize=10000,
+            )
+            try:
+                check_auto_increment_after = pd.read_sql(
+                    sql=f"SHOW CREATE TABLE {relation_name};",
+                    con=engine,
+                )
+                print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
+                return f"The test data was loaded into {relation_name}."
+            except:
+                print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
+                return f"The test data was loaded into {relation_name}, but the `SHOW CREATE TABLE` statement after the load couldn't be collected."
+        except exc.IntegrityError as error:
+            print(f"The `create table` statement before attempting to load data:\n{check_auto_increment_before.iloc[0]['Create Table']}")
+            try:
+                check_auto_increment_after = pd.read_sql(
+                    sql=f"SHOW CREATE TABLE {relation_name};",
+                    con=engine,
+                )
+                print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
+                return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
+            except:
+                print("The `SHOW CREATE TABLE` statement after the load couldn't be collected.")
+                return f"The `to_sql` method raised an IntegrityError: {error.orig.args}"
+        except Exception as error:
+            return f"The `to_sql` method raised a non-`IntegrityError` exception: {error.orig.args}"
     except Exception as error:
-        return f"The `to_sql` method raised an exception: {error.orig.args}"
-
-    check_auto_increment_after = pd.read_sql(
-        sql=f"SHOW CREATE TABLE {relation_name};",
-        con=engine,
-    )
-    print(f"The `create table` statement after loading data:\n{check_auto_increment_after.iloc[0]['Create Table']}")
-    return f"The test data was loaded into {relation_name}."
+        return f"The `read_sql` method to get the `SHOW CREATE TABLE` statement before the data load attempt raised an exception: {error.orig.args}"
 
 
 def test_data_load_function(load_test_data_into_database):
