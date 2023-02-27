@@ -59,7 +59,13 @@ def engine():
     
     The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
     """
-    yield create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+    yield create_engine(
+        f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
+        echo=True,
+        logging_name='SQLAlchemy_engine_logging',
+        echo_pool='debug',
+        pool_logging_name='SQLAlchemy_pool_logging',
+    )
 
 
 @pytest.fixture(scope='module')
