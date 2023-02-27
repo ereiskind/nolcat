@@ -63,7 +63,7 @@ class FiscalYears(db.Model):
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
-    fiscal_year_ID = db.Column(db.Integer, primary_key=True)
+    fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     fiscal_year = db.Column(db.String(4))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
@@ -261,7 +261,7 @@ class Vendors(db.Model):
     """
     __tablename__ = 'vendors'
 
-    vendor_ID = db.Column(db.Integer, primary_key=True)
+    vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
@@ -343,7 +343,7 @@ class VendorNotes(db.Model):
     """
     __tablename__ = 'vendorNotes'
 
-    vendor_notes_ID = db.Column(db.Integer, primary_key=True)
+    vendor_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -373,7 +373,7 @@ class StatisticsSources(db.Model):
     """
     __tablename__ = 'statisticsSources'
 
-    statistics_source_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
@@ -576,7 +576,7 @@ class StatisticsSourceNotes(db.Model):
     """
     __tablename__ = 'statisticsSourceNotes'
 
-    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -609,7 +609,7 @@ class ResourceSources(db.Model):
     """
     __tablename__ = 'resourceSources'
 
-    resource_source_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
@@ -676,7 +676,7 @@ class ResourceSourceNotes(db.Model):
     """
     __tablename__ = 'resourceSourceNotes'
 
-    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -701,8 +701,8 @@ class StatisticsResourceSources(db.Model):
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True, autoincrement=False)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -731,8 +731,8 @@ class AnnualUsageCollectionTracking(db.Model):
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True, autoincrement=False)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -834,7 +834,7 @@ class COUNTERData(db.Model):
     """
     __tablename__ = 'COUNTERData'
 
-    COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
+    COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(2000))
