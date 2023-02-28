@@ -62,7 +62,8 @@ def test_loading_data_into_relation(engine, vendors_relation):
     vendors_relation.to_sql(
         name='vendors',
         con=engine,
-        if_exists='replace',
+        if_exists='append',
+        # `if_exists='replace',` raises the error `sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')`
         chunksize=1000,
         index=True,
         index_label='vendor_ID',
@@ -88,7 +89,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=engine,
-        if_exists='append',  #ToDo: See above about handling databases and fixtures
+        if_exists='append',
         chunksize=1000,
         index=True,
         index_label='statistics_source_ID',
