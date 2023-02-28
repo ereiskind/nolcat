@@ -53,24 +53,16 @@ def test_404_page(client):
 
 
 @pytest.mark.dependency()
-def test_loading_data_into_relation(app, engine, vendors_relation):
+def test_loading_data_into_relation(engine, vendors_relation):
     """Tests loading data into and querying data from a relation.
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    check = pd.read_sql(
-        sql="SELECT * FROM vendors;",
-        con=engine,
-        index_col='vendor_ID',
-    )
-    print(f"\nThe result of `SELECT * FROM vendors;` before explicitly loading anything into the relation is:\n{check}")
-
     print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
-    vendors_relation.to_sql(  #ALERT: If the database has content in it, a `sqlalchemy.exc.IntegrityError:` error is returned because of the duplicate primary keys
+    vendors_relation.to_sql(
         name='vendors',
         con=engine,
-        #ToDo: `if_exists='replace',` was used to remove the existing data and replace it with the data from the fixture, ensuring no PK duplication and PK-FK matching problems would come out of adding the test data to the existing production data, with a rollback at the end of the test restoring the original data. The table dropping that causes, however, creates PK-FK integrity problems that cause the database to return an error; how should the situation be handled?
-        if_exists='append',
+        if_exists='replace',
         chunksize=1000,
         index=True,
         index_label='vendor_ID',
