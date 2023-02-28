@@ -14,6 +14,7 @@ from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://py
 import pandas as pd
 
 from .app import db
+from .app import first_new_PK_value
 
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
@@ -237,6 +238,7 @@ class FiscalYears(db.Model):
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: df.to_sql(
         #ToDo:     'COUNTERData',
         #ToDo:     con=db.engine,
@@ -549,6 +551,7 @@ class StatisticsSources(db.Model):
             None: no return value is needed, so the default `None` is used
         """
         #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: df.to_sql(
         #ToDo:     'COUNTERData',
         #ToDo:     con=db.engine,
@@ -775,6 +778,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: df.to_sql(
         #ToDo:     'COUNTERData',
         #ToDo:     con=db.engine,
