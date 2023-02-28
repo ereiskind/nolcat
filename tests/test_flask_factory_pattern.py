@@ -12,6 +12,7 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
+from nolcat.app import first_new_PK_value
 
 
 def test_flask_app_creation(app):
@@ -129,3 +130,9 @@ def test_loading_connected_data_into_other_relation(app, engine, statisticsSourc
     expected_output_data.index.name = "statistics_source_ID"
 
     pd.assert_frame_equal(retrieved_data, expected_output_data)
+
+
+@pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
+def test_first_new_PK_value():
+    """Tests the retrieval of a relation's next primary key value."""
+    assert first_new_PK_value('vendors') == 8
