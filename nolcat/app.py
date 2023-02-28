@@ -172,6 +172,8 @@ def first_new_PK_value(relation):
         PK_field = 'resource_source_ID'
     elif relation == 'resourceSourceNotes':
         PK_field = 'resource_source_notes_ID'
+    elif relation == 'COUNTERData':
+        PK_field = 'COUNTER_data_ID'
     
     largest_PK_value = pd.read_sql(
         sql=f'''
