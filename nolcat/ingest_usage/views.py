@@ -31,6 +31,7 @@ def upload_COUNTER_reports():
     elif form.validate_on_submit():
         #ToDo: df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
         #ToDo: df['report_creation_date'] = pd.to_datetime(None)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: df.to_sql(
         #     'COUNTERData',
         #     con=db.engine,
