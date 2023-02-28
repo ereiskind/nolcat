@@ -51,6 +51,7 @@ def test_404_page(client):
     assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
 
 
+@pytest.mark.dependency()
 def test_loading_data_into_relation(app, engine, vendors_relation):
     """Tests loading data into and querying data from a relation.
     
@@ -84,6 +85,7 @@ def test_loading_data_into_relation(app, engine, vendors_relation):
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
+@pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_loading_connected_data_into_other_relation(app, engine, statisticsSources_relation):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
