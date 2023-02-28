@@ -158,4 +158,28 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
     """
-    pass
+    if relation == 'fiscalYears':
+        PK_field = 'fiscal_year_ID'
+    elif relation == 'vendors':
+        PK_field = 'vendor_ID'
+    elif relation == 'vendorNotes':
+        PK_field = 'vendor_notes_ID'
+    elif relation == 'statisticsSources':
+        PK_field = 'statistics_source_ID'
+    elif relation == 'statisticsSourceNotes':
+        PK_field = 'statistics_source_notes_ID'
+    elif relation == 'resourceSources':
+        PK_field = 'resource_source_ID'
+    elif relation == 'resourceSourceNotes':
+        PK_field = 'resource_source_notes_ID'
+    
+    largest_PK_value = pd.read_sql(
+        sql=f'''
+            SELECT {PK_field} FROM {relation}
+            ORDER BY {PK_field} DESC
+            LIMIT 1;
+        ''',
+        con=db.engine,
+    )
+    largest_PK_value = largest_PK_value.iloc[0][0]
+    return int(largest_PK_value) + 1
