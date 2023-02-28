@@ -1,33 +1,35 @@
 """Tests the routes in the `initialization` blueprint."""
 
 import pytest
+from pathlib import Path
+import os
+from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.initialization import *
 
 
-@pytest.fixture(scope='module')
-def flask_client():
-    """Creates an instance of the Flask web app for testing."""
-    app = create_app()
-    app.testing = True  # Lets exceptions come through to test client
-    with app.test_client() as client:
-        yield client
+def test_GET_request_for_homepage(client):
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    #Section: Get Data from `GET` Requested Page
+    homepage = client.get('/')
+    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
 
-
-#ToDo: Create fixtures for other files that are uploaded that will need to remove themselves from the system at the end of the test
+    #Section: Get Data from HTML File
+    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    
+    assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
 def test_download_file():
     """Tests the route enabling file downloads."""
     #ToDo: How can this route be tested?
-    pass
-
-
-def test_requesting_collect_initial_relation_data():
-    """Tests calling the route and subsequently rendering the page."""
-    #ToDo: The call to `collect_initial_relation_data()` without data to validate just renders a page in the browser--does this need a test?
     pass
 
 
