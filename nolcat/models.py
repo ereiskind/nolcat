@@ -412,26 +412,26 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:
                 for stats_source in vendor['interface']:
-                    logging.debug(f"`stats_source` (type {type(stats_source)}):\n{stats_source}")
+                    logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
-                            URL = stats_source['online_location'],
-                            customer_id = stats_source['user_id']
+                            URL = stats_source['statistics']['online_location'],
+                            customer_id = stats_source['statistics']['user_id']
                         )
 
                         try:
-                            credentials['requestor_id'] = stats_source['user_password']
+                            credentials['requestor_id'] = stats_source['statistics']['user_password']
                         except:
                             pass
 
                         try:
-                            credentials['api_key'] = stats_source['user_pass_note']
+                            credentials['api_key'] = stats_source['statistics']['user_pass_note']
                         except:
                             pass
 
                         try:
-                            credentials['platform'] = stats_source['delivery_address']
+                            credentials['platform'] = stats_source['statistics']['delivery_address']
                         except:
                             pass
 
