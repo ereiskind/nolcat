@@ -108,14 +108,11 @@ class SUSHICallAndResponse:
         
         elif str(type(API_response.text)) == "<class 'str'>":
             logging.debug("The returned text was read from a downloaded JSON file.")
-            logging.debug(f"`API_response` (type {type(API_response)}) is {API_response}")
-            logging.debug(f"`API_response.text` (type {type(API_response.text)}) is {API_response.text}")  # Per the elif above, the type will be a string
             try:
                 API_response = json.loads(API_response.content.decode('utf-8'))
             except:
                 API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform values that don't decode as JSONs (generally lists)
-            logging.debug("`API_response` was decoded.")
-            logging.debug(f"`API_response` (type {type(API_response)}) is {API_response}")
+
             if str(type(API_response)) == "<class 'dict'>":
                 logging.debug("The returned text was converted to a dictionary.")
             elif str(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
@@ -147,7 +144,7 @@ class SUSHICallAndResponse:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
             return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
       
-        logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
+        logging.info(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
 
 
         #Section: Check for SUSHI Error Codes
