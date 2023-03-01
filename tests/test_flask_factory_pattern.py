@@ -98,7 +98,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
         con=engine,
-        #index_col='statisticsSources.statistics_source_ID'
+        index_col='statistics_source_ID'  # Dataframe field names don't include source relation names
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
