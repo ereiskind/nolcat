@@ -48,6 +48,7 @@ def create_app():
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
     csrf.init_app(app)
