@@ -409,10 +409,9 @@ class StatisticsSources(db.Model):
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
-            logging.debug("JSON with SUSHI credentials loaded.")
+            logging.debug(f"JSON with SUSHI credentials (type {type(SUSHI_data_file)}):\n{SUSHI_data_file}")
             for vendor in SUSHI_data_file:
                 for stats_source in vendor:
-                    logging.debug(f"`stats_source`: {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
