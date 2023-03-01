@@ -52,7 +52,7 @@ def test_GET_request_for_download_non_COUNTER_usage(client):
     #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
 
     #Section: Get Data from HTML File
-    with open(Path(os.getcwd(), 'nolcat', 'view_usage', 'templates', 'view_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(os.getcwd(), 'nolcat', 'view_usage', 'templates', 'view_usage', 'download-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
