@@ -121,7 +121,7 @@ class SUSHICallAndResponse:
             elif str(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
                 logging.debug(f"The returned text was converted to a list and is the list of reports, so it will be made the value of an one-item dictionary.")
                 API_response = dict(reports = API_response)
-            elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":
+            elif str(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0])) == "<class 'dict'>":
                 logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                 API_response = API_response[0]
             else:
