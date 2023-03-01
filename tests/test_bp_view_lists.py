@@ -14,7 +14,7 @@ def test_GET_request_for_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
     #Section: Get Data from `GET` Requested Page
-    #homepage = client.get('/')  #ToDo: Route to homepage is `('/<string:list>')`
+    #homepage = client.get('/view_lists/')  #ToDo: Add variable route element
     #GET_soup = BeautifulSoup(homepage.data, 'lxml')
     #GET_response_title = GET_soup.head.title
     #GET_response_page_title = GET_soup.body.h1

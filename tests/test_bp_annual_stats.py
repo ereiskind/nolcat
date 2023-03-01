@@ -13,7 +13,7 @@ from nolcat.annual_stats import *
 def test_GET_request_for_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/')
+    homepage = client.get('/annual_stats/')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1

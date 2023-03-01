@@ -16,17 +16,13 @@ def test_GET_request_for_homepage(client):
     homepage = client.get('/ingest_usage/')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
-    print(f"`GET_response_title`: {GET_response_title}")
     GET_response_page_title = GET_soup.body.h1
-    print(f"`GET_response_page_title`: {GET_response_page_title}")
 
     #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
-        print(f"`HTML_file_title`: {HTML_file_title}")
         HTML_file_page_title = file_soup.body.h1
-        print(f"`HTML_file_page_title`: {HTML_file_page_title}")
     
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
@@ -47,7 +43,7 @@ def test_manual_SUSHI_call():
 def test_GET_request_for_non_COUNTER_uploads_page(client):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/upload-non-COUNTER')
+    homepage = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1

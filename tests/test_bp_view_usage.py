@@ -13,7 +13,7 @@ from nolcat.view_usage import *
 def test_GET_request_for_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/')
+    homepage = client.get('/view_usage/')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
@@ -45,7 +45,7 @@ def test_use_predefined_SQL_query_wizard():
 def test_GET_request_for_download_non_COUNTER_usage(client):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/non-COUNTER-downloads')
+    homepage = client.get('/view_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
