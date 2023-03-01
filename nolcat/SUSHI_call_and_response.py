@@ -106,7 +106,7 @@ class SUSHICallAndResponse:
             pass  # The SUSHI data was returned as a standard API call
 
         #Subsection: Convert Response to Python Data Types
-        if API_response.text == "":
+        if str(type(API_response)) == "<class 'str'>" and API_response.text == "":
             logging.warning(f"Call to {self.calling_to} returned an empty string")
             return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
 
