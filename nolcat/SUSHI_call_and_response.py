@@ -89,6 +89,22 @@ class SUSHICallAndResponse:
 
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
+        #Subsection: Convert Responses Read from Downloaded JSONs
+        if str(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
+            logging.debug("The returned text was read from a downloaded JSON file but will be a list of reports and, to match the other reports' data types, made the value of an one-item dict.")
+            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+            API_response = dict(reports = API_response)
+        
+        elif str(type(API_response.text)) == "<class 'str'>":
+            logging.debug("The returned text was read from a downloaded JSON file.")
+            try:
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            except:
+                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform lists
+        
+        else:
+            pass  # The SUSHI data was returned as a standard API call
+
         #Subsection: Convert Response to Python Data Types
         if API_response.text == "":
             logging.warning(f"Call to {self.calling_to} returned an empty string")
@@ -107,18 +123,6 @@ class SUSHICallAndResponse:
         elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":
             logging.debug("The returned text is a dict wrapped in a single-item list, so the item in the list will be converted to JSON.")
             API_response = json.loads(API_response[0].content.decode('utf-8'))
-        
-        elif str(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
-            logging.debug("The returned text was read from a downloaded JSON file but will be a list of reports and, to match the other reports' data types, made the value of an one-item dict.")
-            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-            API_response = dict(reports = API_response)
-        
-        elif str(type(API_response.text)) == "<class 'str'>":
-            logging.debug("The returned text was read from a downloaded JSON file.")
-            try:
-                API_response = json.loads(API_response.content.decode('utf-8'))
-            except:
-                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform lists
         
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
