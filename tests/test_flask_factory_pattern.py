@@ -122,7 +122,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     )
     expected_output_data.index.name = "statistics_source_ID"
 
-    pd.assert_frame_equal(retrieved_data, expected_output_data)
+    assert_frame_equal(retrieved_data, expected_output_data)
 
 
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
