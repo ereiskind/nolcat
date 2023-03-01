@@ -97,7 +97,7 @@ def upload_non_COUNTER_reports():
         non_COUNTER_files_needed =  non_COUNTER_files_needed.index.rename('index')
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statisticsSources.statistics_source_name'].astype('string') + " " + non_COUNTER_files_needed['fiscalYears.fiscal_year'].astype('string')
         form.AUCT_option.choices = list(non_COUNTER_files_needed['index', 'AUCT_option'].itertuples(index=False, name=None))
-        return render_template('ingest_usage/save-non-COUNTER-usage.html', form=form)
+        return render_template('ingest_usage/save-non-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
         #ToDo: Save uploaded file to location `file_path_of_record` in container
             #ToDo: Uploaded files must be of extension types

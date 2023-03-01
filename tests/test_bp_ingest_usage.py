@@ -54,7 +54,7 @@ def test_GET_request_for_non_COUNTER_uploads_page(client):
     #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
 
     #Section: Get Data from HTML File
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-historical-non-COUNTER-data.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'save-non-COUNTER-data.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
