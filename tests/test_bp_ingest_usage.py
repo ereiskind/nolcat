@@ -13,7 +13,7 @@ from nolcat.ingest_usage import *
 def test_GET_request_for_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/')
+    homepage = client.get('/ingest_usage/')
     GET_soup = BeautifulSoup(homepage.data, 'lxml')
     GET_response_title = GET_soup.head.title
     print(f"`GET_response_title`: {GET_response_title}")
