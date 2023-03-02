@@ -8,37 +8,37 @@ from nolcat.models import FiscalYears
 
 def test_calculate_ACRL_60b():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_calculate_ACRL_63():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_calculate_ARL_18():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_calculate_ARL_19():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_calculate_ARL_20():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_create_usage_tracking_records_for_fiscal_year():
     """Create a test for adding records to the annualUsageCollectionTracking relation for the instance's FY for every current statistics source."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 

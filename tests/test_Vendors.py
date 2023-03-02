@@ -6,19 +6,19 @@ import pytest
 from nolcat.models import Vendors
 
 
-def test_get_SUSHI_credentials_from_Alma():
+def test_get_statisticsSources_records():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
-def test_get_SUSHI_credentials_from_JSON():
+def test_get_resourceSources_records():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_add_note():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass

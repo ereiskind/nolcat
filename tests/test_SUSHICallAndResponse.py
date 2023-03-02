@@ -17,7 +17,6 @@ For testing the SUSHI API, a fixture that prompts the user for the SUSHI API inf
     2. SUSHI credentials are unique to each institution and should be secret, so using the API would require another secure file or a mechanism to randomly select a set of SUSHI credentials from wherever they're being stored.
     3. The JSON formatting used for the API responses contains some inconsistencies among vendors, so the ability to control which vendor is being used for testing is valuable.
 """
-#ToDo: Test for longer periods of time and more granular reports will be done by testing the StatisticsSources._harvest_R5_SUSHI method
 
 
 @pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
