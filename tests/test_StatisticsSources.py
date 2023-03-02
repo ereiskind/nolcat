@@ -70,7 +70,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
-    assert credentials == dict and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
+    assert str(type(credentials)) == "<class 'dict'>" and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
