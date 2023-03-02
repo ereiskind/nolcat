@@ -48,7 +48,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server.
+    The Flask test client lets tests make HTTP requests without running the server, facilitating testing of the web application's interface.
     """
     yield app.test_client()
 
