@@ -13,6 +13,18 @@ from data import relations
 
 
 #Section: Fixtures for Connecting to the Database
+@pytest.fixture(scope="session")
+def engine():
+    """Creates a SQLAlchemy engine for testing.
+    
+    Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database. Pandas' `read_sql` and `to_sql` methods use an engine to connect to the database; this fixture fulfills that role for those methods in tests. The `echo` argument adds SQLAlchemy's logging to the pytest log.
+    """
+    yield create_engine(
+        f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
+        echo=True,
+    )
+
+
 @pytest.fixture(scope='session')
 def app():
     """Creates an instance of the Flask object for the test session.
@@ -52,18 +64,6 @@ def db(app):
     yield _db
     print(f"\nAbout to run `_db.drop_all()` on {_db}.")  # The statement appears in stdout after all the tests in the module, but the database isn't being rolled back
     _db.drop_all()  # Drops all the tables created at the beginning of the session; placement after the yield statement means the action occurs at the end of the session
-
-
-@pytest.fixture(scope="session")
-def engine():
-    """Creates a SQLAlchemy engine for testing.
-    
-    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
-    """
-    yield create_engine(
-        f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
-        echo=True,
-    )
 
 
 @pytest.fixture(scope='module')
