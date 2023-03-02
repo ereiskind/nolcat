@@ -118,7 +118,7 @@ def upload_non_COUNTER_reports():
             con=db.engine,
         )
         non_COUNTER_files_needed =  non_COUNTER_files_needed.index.rename('index')
-        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statisticsSources.statistics_source_name'].astype('string') + " " + non_COUNTER_files_needed['fiscalYears.fiscal_year'].astype('string')
+        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'].astype('string') + " " + non_COUNTER_files_needed['fiscal_year'].astype('string')
         form.AUCT_option.choices = list(non_COUNTER_files_needed['index', 'AUCT_option'].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
