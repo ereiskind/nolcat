@@ -162,7 +162,7 @@ class UploadCOUNTERReports:
                             df_field_names.append(datetime.date(field_name.year, field_name.month, 1))  # This both ensures the date is the first of the month and removes the unneeded time data
                             df_date_field_names.append(datetime.date(field_name.year, field_name.month, 1))
                         
-                        elif field_name is None and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
+                        elif (field_name is None or field_name == "" or field_name == " ") and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
                             df_field_names.append("resource_name")
                         elif field_name == "Collection" and report_type == 'MR1':
                             df_field_names.append("resource_name")
