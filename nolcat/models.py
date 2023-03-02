@@ -270,8 +270,8 @@ class Vendors(db.Model):
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
 
     Methods:
-        get_statisticsSources: Shows all the statistics sources associated with the vendor.
-        get_resourceSources: Shows all the resource sources associated with the vendor.
+        get_statisticsSources_records: Shows the records for all the statistics sources associated with the vendor.
+        get_resourceSources_records: Shows the records for all the resource sources associated with the vendor.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'vendors'
@@ -292,8 +292,8 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_statisticsSources(self):
-        """Shows all the statistics sources associated with the vendor.
+    def get_statisticsSources_records(self):
+        """Shows the records for all the statistics sources associated with the vendor.
 
         Returns:
             dataframe: a filtered copy of the `statisticsSources` relation
@@ -316,8 +316,8 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_resourceSources(self):
-        """Shows all the resource sources associated with the vendor.
+    def get_resourceSources_records(self):
+        """Shows the records for all the resource sources associated with the vendor.
 
         Returns:
             dataframe: a filtered copy of the `resourceSources` relation

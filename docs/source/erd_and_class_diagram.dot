@@ -52,8 +52,8 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
-        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
-        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+        get_statisticsSources_records [shape="Mrecord"]
+        get_resourceSources-records [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
