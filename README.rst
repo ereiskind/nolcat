@@ -37,7 +37,7 @@ E-resources involves working with scholarly content in a wide variety of languag
 
 To-Do List
 **********
-Last updated: 2023-02-10
+Last updated: 2023-03-02
 
 TaDS Assistance Required
 ========================
@@ -50,10 +50,6 @@ Configure Flask-User
 
 To Make NoLCAT Viable with Command Line SQL
 ===========================================
-
-Test Modules
-------------
-* Finish pytest configuration and/or fixtures so data loaded into database during tests automatically rolls back once pytest session finishes
 
 ``nolcat.initialization`` Blueprint
 -----------------------------------
@@ -90,6 +86,10 @@ Test Modules
 
 To Complete NoLCAT
 ==================
+
+Test Modules
+------------
+* Finish pytest configuration and/or fixtures so data loaded into database during tests automatically rolls back once pytest session finishes
 
 ``nolcat`` Modules
 ------------------
