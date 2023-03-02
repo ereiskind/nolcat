@@ -118,7 +118,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
             ["Pivot", None, "ProQuest", None],
             ["Ulrichsweb", None, "ProQuest", None],
         ],
-        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"]
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
     )
     expected_output_data.index.name = "statistics_source_ID"
 
