@@ -126,24 +126,24 @@ class SUSHICallAndResponse:
                 return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {str(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."}
 
         elif str(type(API_response.text)) == "<class 'dict'>":
-            logging.debug("The returned text is in dict format, so it's ready for JSON conversion.")
+            logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
             API_response = json.loads(API_response.content.decode('utf-8'))
             # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
         
         elif str(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
-            logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {str(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dict.")
+            logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {str(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dictionary.")
             API_response = json.loads(API_response.content.decode('utf-8'))
             API_response = dict(reports = API_response)
         
         elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":
-            logging.debug("The returned text is a dict wrapped in a single-item list, so the item in the list will be converted to JSON.")
+            logging.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
             API_response = json.loads(API_response[0].content.decode('utf-8'))
         
         else:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
             return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
       
-        logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
+        logging.info(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
 
 
         #Section: Check for SUSHI Error Codes
