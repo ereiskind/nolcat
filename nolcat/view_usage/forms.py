@@ -3,6 +3,7 @@ from wtforms.fields import TextAreaField
 from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.validators import DataRequired
+from wtforms.validators import InputRequired
 
 
 class CustomSQLQueryForm(FlaskForm):
@@ -34,4 +35,4 @@ class QueryWizardForm(FlaskForm):
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
     """Creates a form allowing the download of all saved non-COUNTER usage files."""
-    file_download = SelectField("Choose the usage statistics file to download:")
+    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired])
