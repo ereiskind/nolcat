@@ -56,23 +56,30 @@ This module contains the functions:
 
 Creating the Test Data
 ======================
-All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for. Creating this test data also includes creating the JSON format for the data, both for ease in applying the changes made to the tabular data to the JSON data and because COUNTER R5 data providers have been known to provide different data in tabular and JSON COUNTER reports pulled at nearly the same time with the same date range and parameters.
 
 In the test data, the ``statistics_source_ID`` values are as follows
 
+* ProQuest = 0
 * EBSCO = 1
 * Gale = 2
-* ProQuest = 0
+* Duke UP = 3
 
-Test Data Creation Procedure
-----------------------------
-
+Create COUNTER Relation Test Data
+---------------------------------
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
 3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields.
 4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
 5. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
 6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
+
+Create JSON Format Test Data
+----------------------------
+1. For each COUNTER R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
+2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
+3. Download each of the above projects in Excel.
+4. Use each of the Excel workbooks as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py", use a find and replace to unescape the slashes (/) in the file, then take the part of the output JSON that corresponds to the SUSHI "Report Items" and combine it with a SUSHI header to create the final test data JSON file.
 
 SUSHI Variations
 ****************

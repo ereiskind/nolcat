@@ -19,7 +19,7 @@ def app():
     
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
     """
-    app = create_app()  #ToDo: Warnings at end of pytest include `serWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".` even though the SQLALCHEMY_DATABASE_URI config is set in the `create_app()` function imported from "nolcat/app.py"; is this a problem?
+    app = create_app()
     app.debug = True
     app.testing = True  # Lets exceptions come through to test client
     app.env = 'test'
@@ -59,7 +59,10 @@ def engine():
     
     The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
     """
-    yield create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')
+    yield create_engine(
+        f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
+        echo=True,
+    )
 
 
 @pytest.fixture(scope='module')

@@ -1,0 +1,108 @@
+[
+    {
+        "op": "core/transpose-columns-into-rows",
+        "startColumnName": "Reporting_Period_Total",
+        "columnCount": -1,
+        "ignoreBlankCells": true,
+        "fillDown": true,
+        "separator": null,
+        "keyColumnName": "Begin_Date",
+        "valueColumnName": "Count",
+        "description": "Pivot all columns with counts into two columns, one named ``Begin_Date`` with the column name/date and the other named ``Count`` with the data value/count"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Begin_Date",
+                    "expression": "value",
+                    "columnName": "Begin_Date",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Reporting_Period_Total",
+                                "l": "Reporting_Period_Total"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove total rows based on `Reporting_Period_Total` metric"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Count",
+        "expression": "value.toNumber()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Make cells in column ``Count`` numbers"
+    },
+    {
+        "op": "core/row-removal",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Count",
+                    "expression": "grel:or(isBlank(value),value==0)",
+                    "columnName": "Count",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": true,
+                                "l": "true"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "description": "Remove rows with no usage"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Begin_Date",
+        "expression": "grel:value.match(/\\w{3}\\-(\\d{4})/)[0]+\"-\"+value.match(/(\\w{3})\\-\\d{4}/)[0].replace(\"Jan\",\"01\").replace(\"Feb\",\"02\").replace(\"Mar\",\"03\").replace(\"Apr\",\"04\").replace(\"May\",\"05\").replace(\"Jun\",\"06\").replace(\"Jul\",\"07\").replace(\"Aug\",\"08\").replace(\"Sep\",\"09\").replace(\"Oct\",\"10\").replace(\"Nov\",\"11\").replace(\"Dec\",\"12\")+\"-01\"",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change dates in `mmm-yyyy` format to ISO format"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Begin_Date",
+        "expression": "grel:value.split(\"T\")[0].toDate()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change the values in column ``Begin_Date`` to date data type"
+    }
+]

@@ -67,30 +67,30 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 
 
 #Section: Tests
-def test_fetch_SUSHI_credentials_for_API(StatisticsSources_fixture):
+def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
-    credentials = StatisticsSources_fixture.fetch_SUSHI_credentials()
+    credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert credentials == dict and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
-def test_fetch_SUSHI_credentials_for_display(StatisticsSources_fixture):
+def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning the credentials for user display."""
-    #ToDo: credentials = StatisticsSources_fixture.fetch_SUSHI_credentials(False)
+    #ToDo: credentials = StatisticsSources_fixture.fetch_SUSHI_information(False)
     #ToDo: assert `credentials` is displaying credentials to the user
     pass
 
 
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    begin_test = datetime.now()
+    begin_test = datetime.datetime.now()
     end_date = datetime.date(
         most_recent_month_with_usage.year,
         most_recent_month_with_usage.month,
         calendar.monthrange(most_recent_month_with_usage.year, most_recent_month_with_usage.month)[1],
     )
-    before_data_collection = datetime.now()
+    before_data_collection = datetime.datetime.now()
     SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage, end_date)
-    data_collected = datetime.now()
+    data_collected = datetime.datetime.now()
     print(SUSHI_data)
     print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
     print(type(SUSHI_data))

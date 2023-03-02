@@ -11,6 +11,7 @@ import pandas as pd
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
+from .app import first_new_PK_value
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -73,7 +74,7 @@ class FiscalYears(db.Model):
     #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
-    fiscal_year_ID = db.Column(db.Integer, primary_key=True)
+    fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     fiscal_year = db.Column(db.String(4))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
@@ -247,6 +248,7 @@ class FiscalYears(db.Model):
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: try:
             #ToDo: df.to_sql(
             #ToDo:     'COUNTERData',
@@ -274,7 +276,7 @@ class Vendors(db.Model):
     """
     __tablename__ = 'vendors'
 
-    vendor_ID = db.Column(db.Integer, primary_key=True)
+    vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
@@ -356,7 +358,7 @@ class VendorNotes(db.Model):
     """
     __tablename__ = 'vendorNotes'
 
-    vendor_notes_ID = db.Column(db.Integer, primary_key=True)
+    vendor_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -386,7 +388,7 @@ class StatisticsSources(db.Model):
     """
     __tablename__ = 'statisticsSources'
 
-    statistics_source_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
@@ -572,7 +574,7 @@ class StatisticsSources(db.Model):
             elif master_report_name == "TR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
             elif master_report_name == "IR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
             else:
                 logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name.to_list()[0]}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
@@ -611,6 +613,7 @@ class StatisticsSources(db.Model):
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(
                 'COUNTERData',
@@ -640,7 +643,7 @@ class StatisticsSourceNotes(db.Model):
     """
     __tablename__ = 'statisticsSourceNotes'
 
-    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -673,7 +676,7 @@ class ResourceSources(db.Model):
     """
     __tablename__ = 'resourceSources'
 
-    resource_source_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
@@ -740,7 +743,7 @@ class ResourceSourceNotes(db.Model):
     """
     __tablename__ = 'resourceSourceNotes'
 
-    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -765,8 +768,8 @@ class StatisticsResourceSources(db.Model):
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True, autoincrement=False)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -795,8 +798,8 @@ class AnnualUsageCollectionTracking(db.Model):
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True, autoincrement=False)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
@@ -839,6 +842,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: try:
             #ToDo: df.to_sql(
             #ToDo:     'COUNTERData',
@@ -901,7 +905,7 @@ class COUNTERData(db.Model):
     """
     __tablename__ = 'COUNTERData'
 
-    COUNTER_data_ID = db.Column(db.Integer, primary_key=True)
+    COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
@@ -915,7 +919,7 @@ class COUNTERData(db.Model):
     proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
-    online_ISSN = db.Column(db.String(10))
+    online_ISSN = db.Column(db.String(10))  #ToDo: How should second ISBNs in this field be handled?
     URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))

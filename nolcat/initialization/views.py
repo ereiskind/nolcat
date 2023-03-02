@@ -39,7 +39,6 @@ def collect_initial_relation_data():
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
-        #ToDo: Should a subsection for truncating all relations go here? Since the data being loaded includes primary keys, the relations seem to need explicit truncating before the data will successfully load.
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
@@ -249,10 +248,8 @@ def collect_initial_relation_data():
             logging.info("All relations loaded into the database")
             #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
             return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
-        except exc.IntegrityError as error:
-            logging.warning(f"The `to_sql` methods prompted an IntegrityError: {error.orig.args}")  # https://stackoverflow.com/a/55581428
-            # https://stackoverflow.com/a/29614207 uses temp table
-            # https://stackoverflow.com/q/24522290 talks about using `session.flush()`
+        except Exception as error:
+            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
     else:
         return abort(404)
 
@@ -339,10 +336,11 @@ def collect_AUCT_and_historical_COUNTER_data():
         )
         logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
-        #Subsection: Save COUNTER Reports in a Single Temp Tabular File
+        #Subsection: Load COUNTER Reports into Database
         COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
         #ToDo: Does there need to be a warning here about if the above method returns no data?
         #ToDo: COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+        #ToDo: COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
         #ToDo: COUNTER_reports_df.to_sql(
         #     'COUNTERData',
         #     con=db.engine,
