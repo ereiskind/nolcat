@@ -86,7 +86,6 @@ def collect_initial_relation_data():
         logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
-            index_col='vendor_notes_ID',
             parse_dates=['date_written'],
             date_parser=date_parser,
             encoding='utf-8',
@@ -125,7 +124,6 @@ def collect_initial_relation_data():
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
-            index_col='statistics_source_notes_ID',
             parse_dates=['date_written'],
             date_parser=date_parser,
             encoding_errors='backslashreplace',
@@ -163,7 +161,6 @@ def collect_initial_relation_data():
         logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
-            index_col='resource_source_notes_ID',
             parse_dates=['date_written'],
             date_parser=date_parser,
             encoding='utf-8',
@@ -213,6 +210,7 @@ def collect_initial_relation_data():
                 'vendorNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `vendorNotes` loaded into the database")
             statisticsSources_dataframe.to_sql(
@@ -225,6 +223,7 @@ def collect_initial_relation_data():
                 'statisticsSourceNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `statisticsSourceNotes` loaded into the database")
             resourceSources_dataframe.to_sql(
@@ -237,6 +236,7 @@ def collect_initial_relation_data():
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
+                index=False,
             )
             logging.debug("Relation `resourceSourceNotes` loaded into the database")
             statisticsResourceSources_dataframe.to_sql(

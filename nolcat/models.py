@@ -2,22 +2,32 @@
 
 import logging
 from pathlib import Path
-import os
 import sys
 import json
-from sqlalchemy import Column
-from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+import re
+import datetime
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
 from .app import first_new_PK_value
+from .SUSHI_call_and_response import SUSHICallAndResponse
+from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
+
+
+# Using field length constants ensures the lengths being checked for in `ConvertJSONDictToDataframe` are the lengths used in the database
+RESOURCE_NAME_LENGTH = ConvertJSONDictToDataframe.RESOURCE_NAME_LENGTH
+PUBLISHER_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_LENGTH
+PUBLISHER_ID_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_ID_LENGTH
+PLATFORM_LENGTH = ConvertJSONDictToDataframe.PLATFORM_LENGTH
+AUTHORS_LENGTH = ConvertJSONDictToDataframe.AUTHORS_LENGTH
+DOI_LENGTH = ConvertJSONDictToDataframe.DOI_LENGTH
+PROPRIETARY_ID_LENGTH = ConvertJSONDictToDataframe.PROPRIETARY_ID_LENGTH
+URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
 
 
 def PATH_TO_CREDENTIALS_FILE():
@@ -229,7 +239,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
@@ -239,12 +249,15 @@ class FiscalYears(db.Model):
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: return statement indicating success
+        #ToDo: except Exception as e:
+            #ToDo: return statement indicating failure
         pass
 
 
@@ -387,8 +400,11 @@ class StatisticsSources(db.Model):
 
 
     def __repr__(self):
-        """The printable representation of the record."""
-        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
+        """The printable representation of a `StatisticsSources` instance.
+        
+        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item form that list.
+        """
+        return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
 
 
     @hybrid_method
@@ -404,33 +420,34 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
             TBD: a data type that can be passed into Flask for display to the user
         """
+        logging.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
         #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
             logging.debug("JSON with SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:
-                for stats_source in vendor:
-                    if stats_source['interface_id'] == self.statistics_source_retrieval_code:
-                        logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
+                for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
+                    if stats_source['interface_id'] == self.statistics_source_retrieval_code.to_list()[0]:
+                        logging.info(f"Saving credentials for {self.statistics_source_name.to_list()[0]} ({self.statistics_source_retrieval_code.to_list()[0]}) to dictionary.")
                         credentials = dict(
-                            URL = stats_source['online_location'],
-                            customer_id = stats_source['user_id']
+                            URL = stats_source['statistics']['online_location'],
+                            customer_id = stats_source['statistics']['user_id']
                         )
 
                         try:
-                            credentials['requestor_id'] = stats_source['user_password']
+                            credentials['requestor_id'] = stats_source['statistics']['user_password']
                         except:
                             pass
 
                         try:
-                            credentials['api_key'] = stats_source['user_pass_note']
+                            credentials['api_key'] = stats_source['statistics']['user_pass_note']
                         except:
                             pass
 
                         try:
-                            credentials['platform'] = stats_source['delivery_address']
+                            credentials['platform'] = stats_source['statistics']['delivery_address']
                         except:
                             pass
 
@@ -460,81 +477,126 @@ class StatisticsSources(db.Model):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        #ToDo: SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
-        #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
+        SUSHI_info = self.fetch_SUSHI_information()
+        logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
+        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        logging.info(f"Making SUSHI calls for {self.statistics_source_name.to_list()[0]} with parameters {SUSHI_parameters}.")
 
 
         #Section: Confirm SUSHI API Functionality
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #Alert: MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable--how should this be handled so that it can pass through?
-
+        SUSHI_status_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()  #ToDo: Does attribute need `.to_list()[0]`
+        if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name.to_list()[0]} successful.")
+            pass
+        elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `status` endpoint for {self.statistics_source_name.to_list()[0]} returned the error {SUSHI_status_response}.")
+            return f"The call to the `status` endpoint for {self.statistics_source_name.to_list()[0]} returned the error {SUSHI_status_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name.to_list()[0]} successful.")  # These are status endpoints that checked out
+            pass
 
         #Section: Get List of Resources
         #Subsection: Make API Call
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a single-item dict with the key "reports" is returned, iterate through the list so the ultimate result is all_available_reports = a list of all available reports
+        SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()  #ToDo: Does attribute need `.to_list()[0]`
+        if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
+            logging.info(f"Call to `reports` endpoint for {self.statistics_source_name.to_list()[0]} successful.")
+            all_available_reports = []
+            for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
+                for report_details_dict in report_call_response:
+                    for report_detail_keys, report_detail_values in report_details_dict.items():
+                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                            all_available_reports.append(report_detail_values)
+            logging.debug(f"All reports provided by {self.statistics_source_name.to_list()[0]}: {all_available_reports}")
+        elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name.to_list()[0]} returned the error {SUSHI_reports_response}.")
+            return f"The call to the `reports` endpoint for {self.statistics_source_name.to_list()[0]} returned the error {SUSHI_reports_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name.to_list()[0]}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
+            return f"A `reports` SUSHI call was made to {self.statistics_source_name.to_list()[0]}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
 
         #Subsection: Get List of Master Reports
-        #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
-        #ToDo: available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+        available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        logging.debug(f"Master reports provided by {self.statistics_source_name.to_list()[0]}: {available_master_reports}")
 
         #Subsection: Add Any Standard Reports Not Corresponding to a Master Report
-        #ToDo: represented_by_master_report = set()
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: for report in available_reports:
-                #ToDo: if report[0:2] == master_report:
-                    #ToDo: Add report to represented_by_master_report
-        #ToDo: not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        represented_by_master_report = set()
+        for master_report in available_master_reports:
+            for report in available_reports:
+                if report[0:2] == master_report:
+                    represented_by_master_report.add(report)
+        not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        if len(not_represented_by_master_report) > 0:  # Logging statement only appears if it would include content
+            logging.debug(f"Standard reports lacking corresponding master reports provided by {self.statistics_source_name.to_list()[0]}: {not_represented_by_master_report}")
         #ToDo: Figure out inspecting to see if pulling usage from reports in not_represented_by_master_report is appropriate
 
 
         #Section: Make Master Report SUSHI Calls
         #Subsection: Add Date Parameters
-        #ToDo: SUSHI_parameters['begin_date'] = usage_start_date
-        #toDo: SUSHI_parameters['end_date'] = usage_end_date
+        SUSHI_parameters['begin_date'] = usage_start_date
+        SUSHI_parameters['end_date'] = usage_end_date
 
         #Subsection: Set Up Loop Through Master Reports
-        #ToDo: master_report_dataframes = []
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: master_report_name = master_report short name in uppercase letters
+        master_report_dataframes = []
+        for master_report in available_master_reports:
+            master_report_name = master_report.upper()
+            logging.info(f"Making SUSHI calls for {self.statistics_source_name.to_list()[0]} for report {master_report_name}.")
 
             #Subsection: Check if Usage Is Already in Database
-            #ToDo: for month in <the range of months the usage time span represents>
-                #ToDo: Get number of records in usage data relation with self.statistics_source_ID, the month, and master_report
-                #ToDo: If the above returns data
-                    #ToDo: Ask if data should be loaded
-            #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
+            #ToDo: months_to_exclude_from_harvest = []
+            for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):
+                date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
+                number_of_records = pd.read_sql(
+                    sql=f'''
+                        SELECT COUNT(*) FROM COUNTERData
+                        WHERE statistics_source_ID={self.statistics_source_ID.to_list()[0]} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
+                    ''',
+                    con=db.engine,
+                )
+                logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name.to_list()[0]} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
+                if number_of_records.iloc[0][0] > 0:
+                    logging.warning(f"There were records for {self.statistics_source_name.to_list()[0]} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
+                    return f"There were records for {self.statistics_source_name.to_list()[0]} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
+                    #ToDo: Use Flask to ask if data should be loaded, and if not, `months_to_exclude_from_harvest.append(month_being_checked)`
+            #ToDo: if len(months_to_exclude_from_harvest) > 0:
+                #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
+                #ToDo: If it's multiple ranges, how will that iteration be initiated from here?
 
             #Subsection: Add Parameters for Master Report Type
-            #ToDo: if master_report_name == "PR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "DR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                    #ToDo: try:
-                        #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "TR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "IR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
-                #ToDo: SUSHI_parameters["include_parent_details"] = "True"
+            if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
+                del SUSHI_parameters["include_parent_details"]
+            
+            if master_report_name == "PR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "DR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "TR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            elif master_report_name == "IR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                SUSHI_parameters["include_parent_details"] = "True"
+            else:
+                logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name.to_list()[0]}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name.to_list()[0]} with parameters {SUSHI_parameters}.")
             
             #Subsection: Make Master Report API Call
-            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
-            #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-            #ToDo: df['report_type'] = master_report_name
-            #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
+            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()  #ToDo: Does attribute need `.to_list()[0]`
+            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+                logging.error(f"The call to the `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name.to_list()[0]} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name.to_list()[0]} successful.")
+            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            if df.empty:
+                continue  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database; a `return` statement here would keep any other valid reports from being pulled and processed
+            df['statistics_source_ID'] = self.statistics_source_ID.to_list()[0]
+            df['report_type'] = master_report_name
+            master_report_dataframes.append(df)
         
 
         #Section: Return a Single Dataframe
-        #ToDo: return pd.concat(master_report_dataframes)
-        pass
+        return pd.concat(master_report_dataframes)
 
 
     @hybrid_method
@@ -548,17 +610,19 @@ class StatisticsSources(db.Model):
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
-        pass
+        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            return "The load was a success"
+        except Exception as error:
+            return f"The load had an error: {format(error)}"
 
 
     @hybrid_method
@@ -771,7 +835,7 @@ class AnnualUsageCollectionTracking(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: start_date = start date for FY
         #ToDo: end_date = end date for FY
@@ -779,12 +843,15 @@ class AnnualUsageCollectionTracking(db.Model):
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
         #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: df.to_sql(
-        #ToDo:     'COUNTERData',
-        #ToDo:     con=db.engine,
-        #ToDo:     if_exists='append',
-        #ToDo: )
-        #ToDo: add logging statement
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: return statement indicating success
+        #ToDo: except Exception as e:
+            #ToDo: return statement indicating failure
         pass
 
 
@@ -796,12 +863,12 @@ class AnnualUsageCollectionTracking(db.Model):
 class COUNTERData(db.Model):
     """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
 
-    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types.
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToDataframe` to be updated at the same time.
 
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
-        self.report_type(str): the type of COUNTER report, represented by the official report abbreviation
+        self.report_type (str): the type of COUNTER report, represented by the official report abbreviation
         self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
@@ -841,35 +908,35 @@ class COUNTERData(db.Model):
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
     report_type = db.Column(db.String(5))
-    resource_name = db.Column(db.String(2000))
-    publisher = db.Column(db.String(225))
-    publisher_ID = db.Column(db.String(50))
-    platform = db.Column(db.String(75))
-    authors = db.Column(db.String(1000))
+    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    publisher = db.Column(db.String(PUBLISHER_LENGTH))
+    publisher_ID = db.Column(db.String(PUBLISHER_ID_LENGTH))
+    platform = db.Column(db.String(PLATFORM_LENGTH))
+    authors = db.Column(db.String(AUTHORS_LENGTH))
     publication_date = db.Column(db.DateTime)
     article_version = db.Column(db.String(50))
-    DOI = db.Column(db.String(75))
-    proprietary_ID = db.Column(db.String(100))
+    DOI = db.Column(db.String(DOI_LENGTH))
+    proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
     online_ISSN = db.Column(db.String(10))  #ToDo: How should second ISBNs in this field be handled?
-    URI = db.Column(db.String(200))
+    URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
-    parent_title = db.Column(db.String(2000))
-    parent_authors = db.Column(db.String(1000))
+    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    parent_authors = db.Column(db.String(AUTHORS_LENGTH))
     parent_publication_date = db.Column(db.DateTime)
     parent_article_version = db.Column(db.String(50))
     parent_data_type = db.Column(db.String(25))
-    parent_DOI = db.Column(db.String(75))
-    parent_proprietary_ID = db.Column(db.String(100))
+    parent_DOI = db.Column(db.String(DOI_LENGTH))
+    parent_proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     parent_ISBN = db.Column(db.String(20))
     parent_print_ISSN = db.Column(db.String(10))
     parent_online_ISSN = db.Column(db.String(10))
-    parent_URI = db.Column(db.String(200))
+    parent_URI = db.Column(db.String(URI_LENGTH))
     metric_type = db.Column(db.String(75))
     usage_date = db.Column(db.Date)
     usage_count = db.Column(db.Integer)
