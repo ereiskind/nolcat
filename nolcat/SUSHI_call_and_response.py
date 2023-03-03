@@ -143,7 +143,7 @@ class SUSHICallAndResponse:
             logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
             return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
       
-        logging.info(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
+        logging.info(f"SUSHI data converted to {str(type(API_response))}")
 
 
         #Section: Check for SUSHI Error Codes
