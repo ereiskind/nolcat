@@ -416,9 +416,7 @@ class ConvertJSONDictToDataframe:
         if record_dict.get('parent_URI'):
             df_dtypes['parent_URI'] = 'string'
 
-        logging.debug(f"`records_orient_list` type before: {type(records_orient_list)}")
         records_orient_list = str(records_orient_list)  # `pd.read_json` takes a string
-        logging.debug(f"`records_orient_list` type after: {type(records_orient_list)}")
         df = pd.read_json(
             records_orient_list,
             orient='records',
