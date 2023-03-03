@@ -421,7 +421,7 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         """
         logging.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
-        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
+        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location--this will need to be set up after the possible Alma integration is created
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
