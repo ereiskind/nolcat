@@ -35,4 +35,4 @@ class QueryWizardForm(FlaskForm):
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
     """Creates a form allowing the download of all saved non-COUNTER usage files."""
-    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired])
+    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired()])
