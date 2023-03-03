@@ -482,7 +482,7 @@ class StatisticsSources(db.Model):
         SUSHI_info = self.fetch_SUSHI_information()
         logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
-        logging.info(f"Making SUSHI calls for {self.statistics_source_name} with parameters {SUSHI_parameters}.")
+        logging.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
 
         #Section: Confirm SUSHI API Functionality
@@ -580,7 +580,7 @@ class StatisticsSources(db.Model):
             else:
                 logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name} with parameters {SUSHI_parameters}.")
+            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name}.")
             
             #Subsection: Make Master Report API Call
             SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
