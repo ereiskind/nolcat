@@ -15,7 +15,6 @@ def sample_SUSHI_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
-        print(f"`sample_SUSHI_response_JSON_dict` result (type {type(dict_from_JSON)}):\n{dict_from_JSON}")
         yield dict_from_JSON
 
 
@@ -116,7 +115,6 @@ def sample_SUSHI_response_dataframe():
         ],
         columns=['platform', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],
     )
-    print(f"`sample_SUSHI_response_dataframe` initial dataframe:\n{df}")
     df = df.astype({
         "platform": 'string',
         "data_type": 'string',
@@ -126,7 +124,6 @@ def sample_SUSHI_response_dataframe():
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-    print(f"`sample_SUSHI_response_dataframe` with dtypes:\n{df.info()}\n{df}")
     yield df
 
 
