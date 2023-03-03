@@ -546,19 +546,19 @@ class StatisticsSources(db.Model):
 
             #Subsection: Check if Usage Is Already in Database
             #ToDo: months_to_exclude_from_harvest = []
-            for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):
-                date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
-                number_of_records = pd.read_sql(
-                    sql=f'''
-                        SELECT COUNT(*) FROM COUNTERData
-                        WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
-                    ''',
-                    con=db.engine,
-                )
-                logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
-                if number_of_records.iloc[0][0] > 0:
-                    logging.warning(f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
-                    return f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
+            #for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):
+            #    date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
+            #    number_of_records = pd.read_sql(
+            #        sql=f'''
+            #            SELECT COUNT(*) FROM COUNTERData
+            #            WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
+            #        ''',
+            #        con=db.engine,  #ALERT: In testing, causing `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+            #    )
+            #    logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
+            #    if number_of_records.iloc[0][0] > 0:
+            #        logging.warning(f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
+            #        return f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
                     #ToDo: Use Flask to ask if data should be loaded, and if not, `months_to_exclude_from_harvest.append(month_being_checked)`
             #ToDo: if len(months_to_exclude_from_harvest) > 0:
                 #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
