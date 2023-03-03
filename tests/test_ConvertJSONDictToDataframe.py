@@ -1,6 +1,9 @@
 """Test using `ConvertJSONDictToDataframe`."""
 
 import pytest
+from pathlib import Path
+import os
+import json
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
@@ -9,8 +12,10 @@ from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 @pytest.fixture(scope='session')
 def sample_SUSHI_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI API calls."""
-    #ToDo: Create dictionary
-    pass
+    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+        dict_from_JSON = json.load(JSON_file)
+        print(f"`sample_SUSHI_response_JSON_dict` result (type {type(dict_from_JSON)}):\n{dict_from_JSON}")
+        yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
