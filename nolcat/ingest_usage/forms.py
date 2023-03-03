@@ -22,5 +22,5 @@ class SUSHIParametersForm(FlaskForm):
 
 class UsageFileForm(FlaskForm):
     """Creates a form for selecting a given statistics source and fiscal year combination and uploading a file containing non-COUNTER usage data for that selection."""
-    AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", coerce=int, validators=[InputRequired()])
+    AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", validators=[InputRequired()])
     usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.", validators=[DataRequired()])
