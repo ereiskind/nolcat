@@ -3,7 +3,6 @@ import re
 import datetime
 from dateutil import parser
 import pandas as pd
-from pandas import Int64Dtype
 
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
@@ -217,7 +216,10 @@ class ConvertJSONDictToDataframe:
 
                 #Section: Capture `YOP` Value
                 elif key == "YOP":
-                    record_dict['YOP'] = Int64Dtype(value)
+                    try:
+                        record_dict['YOP'] = int(value)  # The Int64 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                    except:
+                        record_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
                     logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
                 
                 #Section: Capture `access_type` Value
