@@ -120,6 +120,7 @@ def sample_SUSHI_response_dataframe():
     df = df.astype({
         "platform": 'string',
         "data_type": 'string',
+        "access_method": 'string',
         "metric_type": 'string',
         "usage_count": 'int',
     })
