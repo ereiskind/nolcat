@@ -6,14 +6,14 @@ import pytest
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 #Section: Fixtures
-@pytest.fixture
+@pytest.fixture(scope='session')
 def sample_SUSHI_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI API calls."""
     #ToDo: Create dictionary
     pass
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def sample_SUSHI_response_dataframe():
     """Creates a dataframe with the same data as is in the `sample_SUSHI_response_JSON_dict` fixture."""
     #ToDo: Create dataframe
