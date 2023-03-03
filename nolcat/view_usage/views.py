@@ -196,7 +196,7 @@ def download_non_COUNTER_usage():
         )
         file_download_options['field_display'] = file_download_options[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
         logging.info(file_download_options.columns)
-        form.file_download.choices = list(file_download_options['usage_file_path', 'field_display'].itertuples(index=False, name=None))
+        form.file_download.choices = list(file_download_options[['usage_file_path', 'field_display']].itertuples(index=False, name=None))
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         download = Path(form.file_download.data)
