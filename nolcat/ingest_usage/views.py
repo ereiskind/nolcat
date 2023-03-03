@@ -120,8 +120,6 @@ def upload_non_COUNTER_reports():
         logging.info(f"Initial load:\n{non_COUNTER_files_needed}\n{non_COUNTER_files_needed.info()}")
         non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
         logging.info(f"After `index` creation:\n{non_COUNTER_files_needed}")
-        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['fiscal_year'].apply(lambda value: value.dtype('string'))
-        logging.info(f"After `AUCT_option` field creation:\n{non_COUNTER_files_needed}\n{non_COUNTER_files_needed.info()}")
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['AUCT_option']
         logging.info(f"After string concatenation in `AUCT_option`:\n{non_COUNTER_files_needed}")
         form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
