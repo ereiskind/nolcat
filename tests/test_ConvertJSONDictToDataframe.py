@@ -5,6 +5,7 @@ from pathlib import Path
 import os
 import json
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
@@ -130,6 +131,5 @@ def sample_SUSHI_response_dataframe():
 #Section: Tests
 def test_create_dataframe(sample_SUSHI_response_JSON_dict, sample_SUSHI_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI JSONs into dataframes."""
-    #ToDo: df = ConvertJSONDictToDataframe(sample_SUSHI_response_JSON_dict).create_dataframe()
-    #ToDo: assert_frame_equal(df, sample_SUSHI_response_dataframe, check_like=True)  # Keyword argument allows test to pass if fields aren't in the same order
-    pass
+    df = ConvertJSONDictToDataframe(sample_SUSHI_response_JSON_dict).create_dataframe()
+    assert_frame_equal(df, sample_SUSHI_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
