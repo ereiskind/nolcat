@@ -117,11 +117,9 @@ def upload_non_COUNTER_reports():
             sql=SQL_query,
             con=db.engine,
         )
-        logging.info(f"Initial load:\n{non_COUNTER_files_needed}\n{non_COUNTER_files_needed.info()}")
         non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
-        logging.info(f"After `index` creation:\n{non_COUNTER_files_needed}")
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
-        logging.info(f"After string concatenation in `AUCT_option`:\n{non_COUNTER_files_needed}")
+        logging.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
         form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
