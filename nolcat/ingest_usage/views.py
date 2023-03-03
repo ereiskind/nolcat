@@ -119,7 +119,7 @@ def upload_non_COUNTER_reports():
         )
         logging.info(f"Before index rename:\n{non_COUNTER_files_needed}\n{non_COUNTER_files_needed.info()}")
         non_COUNTER_files_needed =  non_COUNTER_files_needed.index.rename('index')
-        logging.info(f"After index rename:\n{non_COUNTER_files_needed}\n{non_COUNTER_files_needed.info()}")
+        logging.info(f"After index rename:\n{non_COUNTER_files_needed}")
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed[['statistics_source_name', 'fiscal_year']].apply(" ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
         form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
