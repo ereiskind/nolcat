@@ -194,9 +194,8 @@ def download_non_COUNTER_usage():
             sql=SQL_query,
             con=db.engine,
         )
-        file_download_options['field_display'] = file_download_options['statistics_source_name'] + "--FY " + file_download_options['fiscal_year']
-        file_download_options_df = file_download_options['usage_file_path', 'field_display']  # Applying `itertuples` to this raises the error `KeyError: ('usage_file_path', 'field_display')`
-        form.file_download.choices = list(file_download_options_df.itertuples(index=False, name=None))
+        file_download_options['field_display'] = file_download_options[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
+        form.file_download.choices = list(file_download_options['usage_file_path', 'field_display'].itertuples(index=False, name=None))
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         download = Path(form.file_download.data)

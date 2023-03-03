@@ -56,8 +56,7 @@ def harvest_SUSHI_statistics():
             sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
             con=db.engine,
         )
-        statistics_source_options_df = statistics_source_options['statistics_source_ID', 'statistics_source_name']
-        form.statistics_source.choices = list(statistics_source_options_df.itertuples(index=False, name=None))
+        form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         df = pd.read_sql(
@@ -119,9 +118,8 @@ def upload_non_COUNTER_reports():
             con=db.engine,
         )
         non_COUNTER_files_needed =  non_COUNTER_files_needed.index.rename('index')
-        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'].astype('string') + " " + non_COUNTER_files_needed['fiscal_year'].astype('string')
-        non_COUNTER_files_needed_df = non_COUNTER_files_needed['index', 'AUCT_option']
-        form.AUCT_option.choices = list(non_COUNTER_files_needed_df.itertuples(index=False, name=None))
+        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed[['statistics_source_name', 'fiscal_year']].apply(" ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
+        form.AUCT_option.choices = list(non_COUNTER_files_needed['index', 'AUCT_option'].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         #ToDo: Save uploaded file to location `file_path_of_record` in container
