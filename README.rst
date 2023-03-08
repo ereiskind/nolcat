@@ -37,7 +37,7 @@ E-resources involves working with scholarly content in a wide variety of languag
 
 To-Do List
 **********
-Last updated: 2023-03-02
+Last updated: 2023-03-08
 
 TaDS Assistance Required
 ========================
@@ -53,36 +53,35 @@ To Make NoLCAT Viable with Command Line SQL
 
 ``nolcat.initialization`` Blueprint
 -----------------------------------
-* Finish writing creation of AUCT template file
-* Finish writing ingest of dataframe from tabular COUNTER reports into database
-* Write ``upload_historical_non_COUNTER_usage()`` route
-* Write form class for non-COUNTER usage downloads
-* Write "initial-data-upload-3.html" page
-* Write tests for ``nolcat.initialization`` blueprint
+* Finish ``collect_AUCT_and_historical_COUNTER_data()`` route [3 days]
+* Write ``upload_historical_non_COUNTER_usage()`` route [3 days]
+* Write form class for non-COUNTER usage downloads [1 hour]
+* Write "initial-data-upload-3.html" page [3 hours]
+* Write tests for ``nolcat.initialization`` blueprint [8 days]
 
 ``nolcat.modules.StatisticsSources`` Class
 ------------------------------------------
-* Finish ``StatisticsSources.fetch_SUSHI_information()``
-* Write ``StatisticsSources.add_note`` method
-* Write tests for ``models.StatisticsSources``: ``fetch_SUSHI_information()`` for both API and display, ``_harvest_R5_SUSHI()``, ``collect_usage_statistics()``, ``add_note()``
+* Write ``StatisticsSources.add_note`` method [2 days]
+* Write tests for ``models.StatisticsSources``: ``fetch_SUSHI_information()`` for display, ``_harvest_R5_SUSHI()``, ``collect_usage_statistics()``, ``add_note()`` [7 days]
 
 ``nolcat.modules.AnnualUsageCollectionTracking`` Class
 ------------------------------------------------------
-* Finish ``AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
-* Write tests for ``models.AnnualUsageCollectionTracking``: ``collect_annual_usage_statistics()``
+* Finish ``AnnualUsageCollectionTracking.collect_annual_usage_statistics()`` [1 hour]
+* Write ``AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`` [6 days]
+* Write tests for ``models.AnnualUsageCollectionTracking``: ``collect_annual_usage_statistics()``, ``.upload_nonstandard_usage_file()`` [8 days]
 
 ``nolcat.modules.FiscalYears`` Class
 ------------------------------------
-* Finish ``FiscalYears.collect_fiscal_year_usage_statistics()``
-* Finish ``FiscalYears.create_usage_tracking_records_for_fiscal_year()``
-* Write tests for ``models.FiscalYears``: ``collect_fiscal_year_usage_statistics()``, ``FiscalYears.create_usage_tracking_records_for_fiscal_year()``
+* Finish ``FiscalYears.collect_fiscal_year_usage_statistics()`` [1 hour]
+* Finish ``FiscalYears.create_usage_tracking_records_for_fiscal_year()`` [3 days]
+* Write tests for ``models.FiscalYears``: ``collect_fiscal_year_usage_statistics()``, ``create_usage_tracking_records_for_fiscal_year()`` [7 days]
 
 ``nolcat.ingest_usage`` Blueprint
 ---------------------------------
-* Finish ``upload_COUNTER_reports()``, ``upload_non_COUNTER_reports()`` routes
-* Create "upload-COUNTER-reports.html" and "save-non-COUNTER-usage.html" pages
-* Figure out how to create drop-down list in ``harvest_SUSHI_statistics()`` and adjust ``SUSHIParametersForm`` accordingly
-* Write tests for all functions
+* Finish ``upload_COUNTER_reports()``, ``upload_non_COUNTER_reports()`` routes [4 days]
+* Create "upload-COUNTER-reports.html" and "save-non-COUNTER-usage.html" pages [3 days]
+* Figure out how to create drop-down list in ``harvest_SUSHI_statistics()`` and adjust ``SUSHIParametersForm`` accordingly [spend 1 day max; if unable to figure out by then, use int field and move item to "To Complete NoLCAT" list]
+* Write tests for all functions [8 days]
 
 To Complete NoLCAT
 ==================
@@ -138,6 +137,14 @@ Test Modules
 * Finish ``view_list_record()`` route function and create associated webpage
 * Finish ``edit_list_record()`` route function and create associated webpage
 * Write tests for ``nolcat.view_lists`` blueprint
+
+``nolcat.initialization`` Blueprint
+-----------------------------------
+* Ensure template files download correctly
+
+``nolcat.modules.StatisticsSources`` Class
+------------------------------------------
+* Finish ``StatisticsSources.fetch_SUSHI_information()``
 
 Documentation
 -------------
