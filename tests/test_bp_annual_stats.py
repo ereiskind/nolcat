@@ -10,7 +10,7 @@ from nolcat.app import create_app
 from nolcat.annual_stats import *
 
 
-def test_GET_request_for_homepage(client):
+def test_GET_request_for_annual_stats_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/annual_stats/')
@@ -27,25 +27,25 @@ def test_GET_request_for_homepage(client):
     assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-def test_GET_request_for_FY_details_page():
-    """Tests that the data for the given year from the `fiscalYears` and `annualUsageCollectionTracking` relations as well as the `annual_stats.RunAnnualStatsMethodsForm`, `annual_stats.EditFiscalYearForm`, and `annual_stats.EditAUCTForm` forms."""
+def test_GET_request_for_show_fiscal_year_details():
+    """Tests that the page displays the data from the `fiscalYears` and `annualUsageCollectionTracking` relations for the given year."""
     #ToDo: Write test
     pass
 
 
-def test_running_annual_statistics():
+def test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm():
     """Tests requesting an annual report."""
     #ToDo: Write test
     pass
 
 
-def test_editing_fiscalYears_relation():
+def test_show_fiscal_year_details_submitting_EditFiscalYearForm():
     """Tests changing the values in the fields of the displayed fiscal year."""
     #ToDo: Write test
     pass
 
 
-def test_editing_AUCT_relation():
+def test_show_fiscal_year_details_submitting_EditAUCTForm():
     """Tests changing the values in the fields of one of the AUCT records being displayed."""
     #ToDo: Write test
     pass

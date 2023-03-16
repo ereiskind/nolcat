@@ -8,10 +8,9 @@ Planned Iterations
 Iteration 1: SUSHI Only Product
 ===============================
 * Finish ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Write ``tests.test_bp_initialization.test_submitting_collect_initial_relation_data()``
-* Write ``tests.test_bp_initialization.test_requesting_collect_AUCT_and_historical_COUNTER_data()``
-* Write AUCT form part of ``tests.test_bp_initialization.test_submitting_collect_AUCT_and_historical_COUNTER_data()``
-* Write ``tests.test_bp_initialization.test_requesting_data_load_complete()``
+* Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
+* Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
+* Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
 * Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
@@ -24,9 +23,9 @@ Iteration 2: COUNTER Only Product
 =================================
 * Remove commenting out from "initialization/initial-data-upload-2.html"
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``tests.test_bp_initialization.test_submitting_collect_AUCT_and_historical_COUNTER_data()``
+* Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
-* Write ``tests.test_bp_ingest_usage.test_uploading_COUNTER_report_files()``
+* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create "ingest_usage/upload-COUNTER-reports.html" page
 
 Iteration 3: Minimum Viable Product
@@ -35,12 +34,12 @@ Iteration 3: Minimum Viable Product
 * Write form class for non-COUNTER usage downloads
 * Write "initialization/initial-data-upload-3.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_requesting_upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_submitting_upload_historical_non_COUNTER_usage()``
+* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
+* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Write ``nolcat.modules.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` as two separate int fields if needed
-* Write ``tests.test_bp_ingest_usage.test_uploading_non_COUNTER_usage_files()``
+* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * If able to get drop-down working, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Create "ingest_usage/save-non-COUNTER-usage.html" page
 * Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
@@ -60,7 +59,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
 * Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
 * Write ``tests.test_StatisticsSources.test_collect_usage_statistics()``
-* Write ``tests.test_bp_ingest_usage.test_manual_SUSHI_call()``
+* Write ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
@@ -77,14 +76,16 @@ Iteration 1: View Lists
 * Confirm variable routes in "annual_stats/index.html" work
 * Finish ``nolcat.view_lists.views.view_lists_homepage()``
 * Create "view_lists/index.html" page
-* Write ``tests.test_bp_view_list.test_GET_request_for_details_page()``
+* Write ``tests.test_bp_view_list.test_GET_request_for_view_lists_homepage()``
+* Write ``tests.test_bp_view_list.test_GET_request_for_view_list_record()``
 * Finish ``nolcat.view_lists.views.view_list_record()``
 * Create "view_lists/view_record.html" page
 * Finish ``nolcat.view_lists.views.edit_list_record()``
 * Create "view_lists/edit_record.html" page
 * Create form classes needed for editing
-* Write ``tests.test_bp_view_list.test_editing_record_details()``
-* Write ``tests.test_bp_view_list.test_adding_a_record()``
+* Write ``tests.test_bp_view_list.test_GET_request_for_edit_list_record_for_existing_record()``
+* Write ``tests.test_bp_view_list.test_GET_request_for_edit_list_record_for_new_record()``
+* Write ``tests.test_bp_view_list.test_edit_list_record()``
 
 Iteration 2: Update Statistics Sources to Resource Sources Relationship
 =======================================================================
@@ -104,7 +105,7 @@ Iteration 4: Add Notes
 ======================
 * Write form class for adding notes
 * Add form for adding notes to "view_lists/view_record.html"
-* Write ``tests.test_bp_view_list.test_adding_a_note()``
+* Write ``tests.test_bp_view_list.test_view_list_record()``
 * Write ``nolcat.modules.StatisticsSources.add_note()``
 * Write ``tests.test_StatisticsSources.test_add_note()``
 * Write ``nolcat.models.Vendors.add_note()``
@@ -139,15 +140,15 @@ Iteration 8: Show Fiscal Year Information
 * Finish ``nolcat.annual_stats.forms.RunAnnualStatsMethodsForm()``
 * Finish ``nolcat.annual_stats.forms.EditFiscalYearForm()``
 * Finish "annual_stats/fiscal-year-details.html"
-* Write ``tests.test_bp_annual_stats.test_GET_request_for_FY_details_page()``
-* Write ``tests.test_bp_annual_stats.test_running_annual_statistics()``
-* Write ``tests.test_bp_annual_stats.test_editing_fiscalYears_relation()``
+* Write ``tests.test_bp_annual_stats.test_GET_request_for_show_fiscal_year_details()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 
 Iteration 9: Show Annual Usage Collection Tracking Information
 ==============================================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
-* Write ``tests.test_bp_annual_stats.test_editing_AUCT_relation()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
 Iteration 10: Initiate All SUSHI Collection for Fiscal Year
 ===========================================================
@@ -175,7 +176,7 @@ These iterations contain updates necessary for NoLCAT to be used as an open sour
 Iteration 1: Create Downloadable AUCT Template
 ==============================================
 * Finish creation of "initialize_annualUsageCollectionTracking.csv" in ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Update ``tests.test_bp_initialization.test_requesting_collect_AUCT_and_historical_COUNTER_data()``
+* Update ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
 
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
@@ -203,7 +204,7 @@ Iteration 4: Formalize Documentation
 Iteration 5: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
-* Update ``tests.test_bp_initialization.test_requesting_data_load_complete()``
+* Write ``tests.test_bp_initialization.test_data_load_complete()``
 
 Iteration 6: Correct 500 Error Function
 =======================================

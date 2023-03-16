@@ -10,7 +10,7 @@ from nolcat.app import create_app
 from nolcat.view_lists import *
 
 
-def test_GET_request_for_homepage(client):
+def test_GET_request_for_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
     #Section: Get Data from `GET` Requested Page
@@ -29,25 +29,34 @@ def test_GET_request_for_homepage(client):
     pass
 
 
-def test_GET_request_for_details_page():
+def test_GET_request_for_view_list_record():
     """Tests that the page with a record's details and affiliated notes can be successfully GET requested."""
     #ToDo: Write test
     pass
 
 
-def test_adding_a_note():
-    """Tests adding a record to the notes relation appropriate for the record the note is being added to."""
+def test_view_list_record():
+    """Tests adding a record to the notes relation appropriate for the record the note is being added to.
+    
+    The function name derives from the fact that adding a note is the behavior after `validate_on_submit()` in the `view_list_record()` route.
+    """
     #ToDo: Write test
     pass
 
 
-def test_editing_record_details():
+def test_GET_request_for_edit_list_record_for_existing_record():
+    """Tests rendering the page with the edit record form prefilled with values from an existing record."""
+    #ToDo: Write test
+    pass
+
+
+def test_GET_request_for_edit_list_record_for_new_record():
+    """Tests rendering a blank edit record form page."""
+    #ToDo: Write test
+    pass
+
+
+def test_edit_list_record():
     """Tests changing values in a given record."""
-    #ToDo: Write test
-    pass
-
-
-def test_adding_a_record():
-    """Tests adding a record to the selected relation."""
     #ToDo: Write test
     pass
