@@ -71,7 +71,6 @@ class FiscalYears(db.Model):
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
         collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
-    #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
     fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
@@ -421,7 +420,6 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         """
         logging.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
-        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location--this will need to be set up after the possible Alma integration is created
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
@@ -530,7 +528,6 @@ class StatisticsSources(db.Model):
         not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
         if len(not_represented_by_master_report) > 0:  # Logging statement only appears if it would include content
             logging.debug(f"Standard reports lacking corresponding master reports provided by {self.statistics_source_name}: {not_represented_by_master_report}")
-        #ToDo: Figure out inspecting to see if pulling usage from reports in not_represented_by_master_report is appropriate
 
 
         #Section: Make Master Report SUSHI Calls
@@ -805,7 +802,6 @@ class AnnualUsageCollectionTracking(db.Model):
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
     is_COUNTER_compliant = db.Column(db.Boolean)
-    #ToDo: Check how to do enums in Flask-SQLAlchemy
     collection_status = db.Column(db.Enum(
         'N/A: Paid by Law',
         'N/A: Paid by Med',
@@ -920,7 +916,7 @@ class COUNTERData(db.Model):
     proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
     ISBN = db.Column(db.String(20))
     print_ISSN = db.Column(db.String(10))
-    online_ISSN = db.Column(db.String(10))  #ToDo: How should second ISBNs in this field be handled?
+    online_ISSN = db.Column(db.String(20))  # Some R4 book reports put another ISBN in the report's ISSN field, the contents of which go into this field, so the field must be large enough to store ISBNs
     URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
     section_type = db.Column(db.String(10))

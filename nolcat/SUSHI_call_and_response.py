@@ -238,7 +238,6 @@ class SUSHICallAndResponse:
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
-        #ToDo: When the `StatisticsSources._harvest_R5_SUSHI()` method is triggered in the Flask UI, have these messages display in Flask
 
         This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
         
@@ -307,7 +306,8 @@ class SUSHICallAndResponse:
             str_code = str(error_contents['Code'])
         elif error_contents['Code'].isnumeric():
             str_code = error_contents['Code']
-        #ToDo: What if anything should be done if the error code isn't valid?
+        else:
+            str_code = None
         
         
         #Section: Separate Elements of Error into Variables

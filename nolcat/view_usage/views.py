@@ -151,12 +151,11 @@ def use_predefined_SQL_query():
                 AND metric_type='Total_Item_Requests';
             '''
         #ToDo: Decide what other canned reports, if any, are needed
-        #ToDo: Create some queries with a single free text variable field where the entered data is used as a fuzzy search
         elif form.query_options.data == "w":
+            #ToDo: Create queries that filter on metrics with fixed vocabularies via checkboxes
+            #ToDo: Create queries where a sanitized (safe from SQL injection) free text field is fuzzily matched against a COUNTER free text field
             query = f'''
             '''
-            #ToDo: Determine how to write query and what fields to use
-            #ToDo: Figure out how to do modern string formatting safe from SQL injection
 
         df = pd.read_sql(
             sql=query,
