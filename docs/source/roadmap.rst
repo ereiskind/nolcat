@@ -1,6 +1,6 @@
 NoLCAT Development Roadmap
 ##########################
-This page contains all the current to-dos and possible plans for the NoLCAT program. 
+This page contains all the current to-dos and possible plans for the NoLCAT program.
 
 Planned Iterations
 ******************
@@ -120,7 +120,19 @@ Iteration 5: Create CSV Downloads from COUNTER Data
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_wizard()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 
-Iteration 6: Show Fiscal Year Information
+Iteration 6: Create Drop-Down Lists
+===================================
+* If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
+* If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
+* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field and adjust ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()`` accordingly
+* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_harvest_SUSHI_statistics()``
+
+Iteration 7: Create Query Wizard
+================================
+* Craft queries to use
+* Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
+
+Iteration 8: Show Fiscal Year Information
 =========================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.views.show_fiscal_year_details()``
@@ -131,19 +143,19 @@ Iteration 6: Show Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_running_annual_statistics()``
 * Write ``tests.test_bp_annual_stats.test_editing_fiscalYears_relation()``
 
-Iteration 7: Show Annual Usage Collection Tracking Information
+Iteration 9: Show Annual Usage Collection Tracking Information
 ==============================================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
 * Write ``tests.test_bp_annual_stats.test_editing_AUCT_relation()``
 
-Iteration 8: Initiate All SUSHI Collection for Fiscal Year
-==========================================================
+Iteration 10: Initiate All SUSHI Collection for Fiscal Year
+===========================================================
 * Finish ``nolcat.modules.FiscalYears.collect_fiscal_year_usage_statistics()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 
-Iteration 9: Switch Message Display from Stdout to Flask
-========================================================
+Iteration 11: Switch Message Display from Stdout to Flask
+=========================================================
 * Make second return statement in ``nolcat.modules.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
 * Make return statements with strings in ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
@@ -151,14 +163,7 @@ Iteration 9: Switch Message Display from Stdout to Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 * Add message flashing of returned redirects in ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()``
 
-Iteration 10: Create Drop-Down Lists
-====================================
-* If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
-* If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field and adjust ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()`` accordingly
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_harvest_SUSHI_statistics()``
-
-Iteration 11: Create UI Design and Jinja Templates
+Iteration 12: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
@@ -177,8 +182,8 @@ Iteration 2: Make Initialization Forms Downloadable
 * Get Jinja download to work in "initialization/index.html" and "initialization/initial-data-upload-2.html"
 * Write ``tests.test_bp_initialization.test_download_file()``
 
-Iteration: Write ``__repr__`` Methods
-=====================================
+Iteration 3: Write ``__repr__`` Methods
+=======================================
 * Write ``nolcat.models.FiscalYears.__repr__()``
 * Write ``nolcat.models.Vendors.__repr__()``
 * Write ``nolcat.models.VendorNotes.__repr__()``
@@ -189,14 +194,14 @@ Iteration: Write ``__repr__`` Methods
 * Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
 * Write ``nolcat.models.COUNTERData.__repr__()``
 
-Iteration 4: Update Documentation
-=================================
+Iteration 4: Formalize Documentation
+====================================
 * Update and flesh out README according to best practices
 * Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
 * Organize custom documentation pages on Sphinx index
 
-Iteration: Display Data Uploaded at End of Initialization
-=========================================================
+Iteration 5: Display Data Uploaded at End of Initialization
+===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
 * Update ``tests.test_bp_initialization.test_requesting_data_load_complete()``
 
@@ -231,11 +236,13 @@ Iteration: Allow User-Created SQL Queries
 
 Iteration: Display Results of Usage Data Requests in Browser
 ============================================================
-*
+* Modify routes in ``nolcat.view_usage.views`` that return CSVs to return HTML pages from which those CSVs can be downloaded
+* Show dataframes used to create CSVs in browser (see https://stackoverflow.com/q/52644035 and https://stackoverflow.com/q/22180993 for info about adding dataframes to Flask display)
 
 Iteration: Display Data Visualization of Usage Data Requests in Browser
 =======================================================================
-*
+* Make final decision between Plotly/Dash and Bokeh
+* Change dataframes displayed as tables in browser to data visualizations
 
 Iteration: Get SUSHI Credentials from Alma
 ==========================================
@@ -253,8 +260,23 @@ Iteration: Add User Accounts to Restrict Access
 
 Iteration: Deduplicate Resources
 ================================
+* Review the main branch of the repo as of commit 207c4a14b521b7f247f5249a080b4a725963b599 (made 2023-01-20)
 * Remove hyphens from all ISBNs to handle their inconsistency in usage and placement
 
 Iteration: Handle Reports Without Corresponding Master Reports
 ==============================================================
 * Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Master Report" of ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()``
+
+Iteration: Incorporate Springshare Databases A-Z Statistics
+===========================================================
+* Create relation with the databases in the Springshare Databases A-Z list
+* Connect values in the above relation with ``resourceSources`` records through a foreign key in the new relation or a junction table
+* Create other relation(s) to hold the usage data in a normalized fashion
+* Add relation classes to ``nolcat.models`` for all the newly created relations
+
+Iteration: Incorporate OpenAthens Statistics
+============================================
+* Create relation with the activated resources in the OpenAthens resource catalog
+* Connect values in the above relation with ``resourceSources`` records through a foreign key in the new relation or a junction table
+* Create other relation(s) to hold the usage data in a normalized fashion
+* Add relation classes to ``nolcat.models`` for all the newly created relations
