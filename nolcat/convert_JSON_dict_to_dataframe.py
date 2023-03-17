@@ -2,6 +2,7 @@ import logging
 import re
 import datetime
 from dateutil import parser
+import json
 import pandas as pd
 
 
@@ -416,9 +417,8 @@ class ConvertJSONDictToDataframe:
         if record_dict.get('parent_URI'):
             df_dtypes['parent_URI'] = 'string'
 
-        records_orient_list = str(records_orient_list)  # `pd.read_json` takes a string
         df = pd.read_json(
-            records_orient_list,
+            json.dumps(records_orient_list),  # `pd.read_json` takes a string
             orient='records',
             dtype=df_dtypes,
             encoding='utf-8',
