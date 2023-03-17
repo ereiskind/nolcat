@@ -27,6 +27,7 @@ class ConvertJSONDictToDataframe:
 
     Methods:
         create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+        _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
     RESOURCE_NAME_LENGTH = 2000
@@ -443,3 +444,20 @@ class ConvertJSONDictToDataframe:
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
 
         return df
+    
+
+    def _serialize_dates(dates):
+        """This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
+
+        This method and its use in are adapted from https://stackoverflow.com/a/22238613.
+
+        Args:
+            dates (datetime.datetime or datetime.date): A date or timestamp with a data type from Python's datetime library
+
+        Returns:
+            str: the date or timestamp in ISO format
+        """
+        if isinstance(dates,(datetime.date, datetime.datetime)):
+            return dates.isoformat()
+        else:
+            raise TypeError  # So any unexpected non-serializable data types raise a type error
