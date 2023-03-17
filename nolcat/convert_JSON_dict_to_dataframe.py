@@ -418,7 +418,7 @@ class ConvertJSONDictToDataframe:
         if record_dict.get('parent_URI'):
             df_dtypes['parent_URI'] = 'string'
 
-        records_orient_list = json.dumps(records_orient_list)  # `pd.read_json` takes a string, conversion cannot be done within method because of date and datetime data types
+        records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
         logging.debug(f"JSON as a string:\n{records_orient_list}")
         df = pd.read_json(
             records_orient_list,
