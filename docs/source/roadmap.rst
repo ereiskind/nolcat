@@ -51,6 +51,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources below have been consulted in multiple attempts to get this set up, but have thus far proven unsuccessful.
 
     * https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
+    * https://flask.palletsprojects.com/en/2.0.x/testing/
     * https://porter.codes/2020/07/24/Pytest-Sqlalchemy-Test-Fixutres.html
     * https://spotofdata.com/flask-testing/
     * http://alexmic.net/flask-sqlalchemy-pytest/
@@ -118,7 +119,7 @@ Iteration 5: Create CSV Downloads from COUNTER Data
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
 * Finish "query-wizard.html"
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_wizard()``
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 
 Iteration 6: Create Drop-Down Lists

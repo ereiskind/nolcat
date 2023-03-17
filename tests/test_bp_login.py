@@ -10,7 +10,7 @@ from nolcat.app import create_app
 from nolcat.login import *
 
 
-def test_GET_request_for_login_homepage(client):
+def test_login_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/login/')
