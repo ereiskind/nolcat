@@ -171,7 +171,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
-                            record_dict['ISBN'] = str(type_and_value['Value'])  #ToDo: Since hyphen placement isn't uniform, should all hyphens be stripped?
+                            record_dict['ISBN'] = str(type_and_value['Value'])
                             logging.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
                         #subsection: Capture `print_ISSN` Value
@@ -310,7 +310,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_ISBN` Value
                                 elif type_and_value['Type'] == "ISBN":
-                                    record_dict['parent_ISBN'] = str(type_and_value['Value'])  #ToDo: Since hyphen placement isn't uniform, should all hyphens be stripped?
+                                    record_dict['parent_ISBN'] = str(type_and_value['Value'])
                                     logging.debug(f"Added `COUNTERData.parent_ISBN` value {record_dict['parent_ISBN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_print_ISSN` Value

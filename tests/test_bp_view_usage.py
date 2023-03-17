@@ -10,7 +10,7 @@ from nolcat.app import create_app
 from nolcat.view_usage import *
 
 
-def test_GET_request_for_homepage(client):
+def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/view_usage/')
@@ -39,7 +39,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views():
     pass
 
 
-def test_use_predefined_SQL_query_wizard():
+def test_use_predefined_SQL_query_with_wizard():
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     #ToDo: Write test
     pass
