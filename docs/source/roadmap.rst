@@ -77,7 +77,7 @@ Iteration 1: View Lists
 * Confirm variable routes in "annual_stats/index.html" work
 * Finish ``nolcat.view_lists.views.view_lists_homepage()``
 * Create "view_lists/index.html" page
-* Write ``tests.test_bp_view_list.test_GET_request_for_view_lists_homepage()``
+* Write ``tests.test_bp_view_list.test_view_lists_homepage()``
 * Write ``tests.test_bp_view_list.test_GET_request_for_view_list_record()``
 * Finish ``nolcat.view_lists.views.view_list_record()``
 * Create "view_lists/view_record.html" page

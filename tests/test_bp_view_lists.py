@@ -10,7 +10,7 @@ from nolcat.app import create_app
 from nolcat.view_lists import *
 
 
-def test_GET_request_for_view_lists_homepage(client):
+def test_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
     #Section: Get Data from `GET` Requested Page
