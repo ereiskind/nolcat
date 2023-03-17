@@ -443,6 +443,7 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
 
+        logging.info(f"Dataframe info:\n{df.info()}")
         return df
     
 
