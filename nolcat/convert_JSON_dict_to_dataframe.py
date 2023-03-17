@@ -5,6 +5,8 @@ from dateutil import parser
 import json
 import pandas as pd
 
+from app import return_string_of_dataframe_info
+
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
 
@@ -443,7 +445,7 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
 
-        logging.info(f"Dataframe info:\n{df.info()}")
+        logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         return df
     
 

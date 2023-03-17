@@ -9,6 +9,8 @@ from flask import request
 from openpyxl import load_workbook
 import pandas as pd
 
+from app import return_string_of_dataframe_info
+
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
 
@@ -250,7 +252,7 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype=df_dtypes,
                 )
-                logging.info(f"Dataframe immediately after creation:\n{df}\n{df.info()}")
+                logging.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -429,7 +431,7 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        logging.info(f"Combined dataframe:\n{combined_df}\n{combined_df.info()}")
+        logging.info(f"Combined dataframe:\n{combined_df}\n{return_string_of_dataframe_info(combined_df)}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
