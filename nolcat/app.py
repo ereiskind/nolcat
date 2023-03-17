@@ -1,4 +1,5 @@
 from pathlib import Path
+import io
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -186,3 +187,19 @@ def first_new_PK_value(relation):
     )
     largest_PK_value = largest_PK_value.iloc[0][0]
     return int(largest_PK_value) + 1
+
+
+def return_string_of_dataframe_info(df):
+    """Returns the data output by `pandas.DataFrame.info()` as a string so the method can be used in logging statements.
+
+    The `pandas.DataFrame.info()` method forgoes returning a value in favor of printing directly to stdout; as a result, it doesn't output anything when used in a logging statement. This function captures the data traditionally output directly to stdout in a string for use in a logging statement. This function is based off the one at https://stackoverflow.com/a/39440325.
+
+    Args:
+        df (dataframe): the dataframe in the logging statement
+    
+    Returns:
+        str: the output of the `pandas.DataFrame.info()` method
+    """
+    in_memory_stream = io.StringIO()
+    df.info(buf=in_memory_stream)
+    return in_memory_stream.getvalue()
