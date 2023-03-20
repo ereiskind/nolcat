@@ -12,16 +12,16 @@ from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 #Section: Fixtures
 @pytest.fixture(scope='session')
-def sample_SUSHI_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI API calls."""
+def sample_SUSHI_PR_response_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
-def sample_SUSHI_response_dataframe():
-    """Creates a dataframe with the same data as is in the `sample_SUSHI_response_JSON_dict` fixture."""
+def sample_SUSHI_PR_response_dataframe():
+    """Creates a dataframe with the same data as is in the `sample_SUSHI_PR_response_JSON_dict` fixture."""
     df = pd.DataFrame(
         [
             ["Duke University Press", "Book", "Regular", "Unique_Item_Investigations", "2019-07-01", 10, "2019-07-01"],
@@ -129,7 +129,7 @@ def sample_SUSHI_response_dataframe():
 
 
 #Section: Tests
-def test_create_dataframe(sample_SUSHI_response_JSON_dict, sample_SUSHI_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_response_JSON_dict).create_dataframe()
-    assert_frame_equal(df, sample_SUSHI_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUSHI_PR_response_dataframe):
+    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_JSON_dict).create_dataframe()
+    assert_frame_equal(df, sample_SUSHI_PR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
