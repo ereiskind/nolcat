@@ -81,6 +81,13 @@ Create JSON Format Test Data
 3. Download each of the above projects in Excel.
 4. Use each of the Excel workbooks as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py", use a find and replace to unescape the slashes (/) in the file, then take the part of the output JSON that corresponds to the SUSHI "Report Items" and combine it with a SUSHI header to create the final test data JSON file.
 
+Create Dataframe Based on JSON Format Test Data
+-----------------------------------------------
+1. For each JSON to be used as a fixture in the test, open the corresponding OpenRefine project.
+2. Apply "tests\\data\\create_dataframe_from_JSON.json" to each project.
+3. Download each project in Excel.
+4. Copy the ``df`` field from the Excel workbook and paste it into the dataframe constructor in the fixture.
+
 SUSHI Variations
 ****************
 Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the ``SUSHICallAndResponse`` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
