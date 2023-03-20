@@ -9,7 +9,7 @@ from flask import request
 from openpyxl import load_workbook
 import pandas as pd
 
-from app import return_string_of_dataframe_info
+from .app import return_string_of_dataframe_info
 
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
