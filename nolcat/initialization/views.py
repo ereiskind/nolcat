@@ -23,6 +23,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 #Section: Uploads and Downloads
 @bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
 def download_file(filename):
+    """This route function allows the user to access the file specified in the route name through a Jinja link."""
     return send_from_directory(directory=current_app.config['UPLOAD_FOLDER'], path='.', filename=filename, as_attachment=True)
 
 
