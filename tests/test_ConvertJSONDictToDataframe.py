@@ -4440,7 +4440,7 @@ def sample_SUSHI_IR_response_dataframe():
         'publisher_ID': 'string',
         'platform': 'string',
         'authors': 'string',
-        'article_version': '',
+        'article_version': 'string',
         'DOI': 'string',
         'proprietary_ID': 'string',
         'ISBN': 'string',
