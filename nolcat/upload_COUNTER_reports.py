@@ -9,6 +9,8 @@ from flask import request
 from openpyxl import load_workbook
 import pandas as pd
 
+from app import return_string_of_dataframe_info
+
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
 
@@ -127,7 +129,6 @@ class UploadCOUNTERReports:
                             date_as_string = False
                         
                         if field_name == "ISSN" and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
-                            #ToDo: How should second ISBNs in this field be handled?
                             df_field_names.append("online_ISSN")  # This is the first name replacement because assigning a certain type of ISSN changes the meaning slightly
                         
                         elif date_as_string:
@@ -251,7 +252,7 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype=df_dtypes,
                 )
-                logging.info(f"Dataframe immediately after creation:\n{df}\n{df.info()}")
+                logging.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -430,7 +431,7 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        logging.info(f"Combined dataframe:\n{combined_df}\n{combined_df.info()}")
+        logging.info(f"Combined dataframe:\n{combined_df}\n{return_string_of_dataframe_info(combined_df)}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
@@ -496,7 +497,7 @@ class UploadCOUNTERReports:
         if "metric_type" in combined_df_field_names:
             combined_df_dtypes['metric_type'] = 'string'
         
-        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
+        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],

@@ -1,0 +1,55 @@
+[
+    {
+        "op": "core/column-reorder",
+        "columnNames": [
+            "Item",
+            "Database",
+            "Title",
+            "Publisher",
+            "Publisher_ID",
+            "Platform",
+            "Authors",
+            "Publication_Date",
+            "Article_Version",
+            "DOI",
+            "Proprietary_ID",
+            "ISBN",
+            "Print_ISSN",
+            "Online_ISSN",
+            "URI",
+            "Data_Type",
+            "Section_Type",
+            "YOP",
+            "Access_Type",
+            "Access_Method",
+            "Parent_Title",
+            "Parent_Authors",
+            "Parent_Publication_Date",
+            "Parent_Article_Version",
+            "Parent_Data_Type",
+            "Parent_DOI",
+            "Parent_Proprietary_ID",
+            "Parent_ISBN",
+            "Parent_Print_ISSN",
+            "Parent_Online_ISSN",
+            "Parent_URI",
+            "Metric_Type",
+            "Begin_Date",
+            "Count"
+        ],
+        "description": "Reorder fields to match order of attributes in `COUNTERData`"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Publisher",
+        "expression": "grel:'['+forEach(row.columnNames,field,if(isBlank(cells[field].value),'None',if(cells[field].value.type()=='date','\"'+cells[field].value.toString('yyyy-MM-dd')+'\"',if(cells[field].value.type()=='string','\"'+cells[field].value.replace('\"','\\\\\"')+'\"',cells[field].value.round())))).join(', ')+', \"2019-07-01\"],'",
+        "onError": "set-to-blank",
+        "newColumnName": "df",
+        "columnInsertIndex": 0,
+        "description": "Create column ``df`` with values and content for the fixture dataframes"
+    }
+]

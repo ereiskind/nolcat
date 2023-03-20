@@ -1,7 +1,4 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-# https://flask.palletsprojects.com/en/2.0.x/testing/
-# https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-# https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
 
 from pathlib import Path
 import os
@@ -25,7 +22,7 @@ def test_flask_client_creation(client):
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_GET_request_for_homepage(client):
+def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/')

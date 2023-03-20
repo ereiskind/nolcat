@@ -2,7 +2,10 @@ import logging
 import re
 import datetime
 from dateutil import parser
+import json
 import pandas as pd
+
+from app import return_string_of_dataframe_info
 
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
@@ -26,6 +29,7 @@ class ConvertJSONDictToDataframe:
 
     Methods:
         create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+        _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
     RESOURCE_NAME_LENGTH = 2000
@@ -171,7 +175,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
-                            record_dict['ISBN'] = str(type_and_value['Value'])  #ToDo: Since hyphen placement isn't uniform, should all hyphens be stripped?
+                            record_dict['ISBN'] = str(type_and_value['Value'])
                             logging.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
                         #subsection: Capture `print_ISSN` Value
@@ -310,7 +314,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_ISBN` Value
                                 elif type_and_value['Type'] == "ISBN":
-                                    record_dict['parent_ISBN'] = str(type_and_value['Value'])  #ToDo: Since hyphen placement isn't uniform, should all hyphens be stripped?
+                                    record_dict['parent_ISBN'] = str(type_and_value['Value'])
                                     logging.debug(f"Added `COUNTERData.parent_ISBN` value {record_dict['parent_ISBN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_print_ISSN` Value
@@ -416,7 +420,8 @@ class ConvertJSONDictToDataframe:
         if record_dict.get('parent_URI'):
             df_dtypes['parent_URI'] = 'string'
 
-        records_orient_list = str(records_orient_list)  # `pd.read_json` takes a string
+        records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
+        logging.debug(f"JSON as a string:\n{records_orient_list}")
         df = pd.read_json(
             records_orient_list,
             orient='records',
@@ -440,4 +445,22 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
 
+        logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         return df
+    
+
+    def _serialize_dates(dates):
+        """This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
+
+        This method and its use in are adapted from https://stackoverflow.com/a/22238613.
+
+        Args:
+            dates (datetime.datetime or datetime.date): A date or timestamp with a data type from Python's datetime library
+
+        Returns:
+            str: the date or timestamp in ISO format
+        """
+        if isinstance(dates,(datetime.date, datetime.datetime)):
+            return dates.isoformat()
+        else:
+            raise TypeError  # So any unexpected non-serializable data types raise a type error
