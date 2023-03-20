@@ -282,3 +282,8 @@ Iteration: Incorporate OpenAthens Statistics
 * Connect values in the above relation with ``resourceSources`` records through a foreign key in the new relation or a junction table
 * Create other relation(s) to hold the usage data in a normalized fashion
 * Add relation classes to ``nolcat.models`` for all the newly created relations
+
+Iteration: Incorporate Embargo and Paywall Data
+===============================================
+* Add fields to relation for resources for the embargo and paywall data
+* Create templates in query wizard that separates usage into before and after embargo and/or paywall dates based on the ``YOP`` field
