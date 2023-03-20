@@ -20,6 +20,30 @@ def sample_SUSHI_PR_response_JSON_dict():
 
 
 @pytest.fixture(scope='session')
+def sample_SUSHI_DR_response_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+        dict_from_JSON = json.load(JSON_file)
+        yield dict_from_JSON
+
+
+@pytest.fixture(scope='session')
+def sample_SUSHI_TR_response_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+        dict_from_JSON = json.load(JSON_file)
+        yield dict_from_JSON
+
+
+@pytest.fixture(scope='session')
+def sample_SUSHI_IR_response_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+        dict_from_JSON = json.load(JSON_file)
+        yield dict_from_JSON
+
+
+@pytest.fixture(scope='session')
 def sample_SUSHI_PR_response_dataframe():
     """Creates a dataframe with the same data as is in the `sample_SUSHI_PR_response_JSON_dict` fixture."""
     df = pd.DataFrame(
