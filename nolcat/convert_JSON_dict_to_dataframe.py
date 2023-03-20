@@ -5,7 +5,7 @@ from dateutil import parser
 import json
 import pandas as pd
 
-from app import return_string_of_dataframe_info
+from .app import return_string_of_dataframe_info
 
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
