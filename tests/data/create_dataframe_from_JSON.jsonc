@@ -39,6 +39,7 @@
         ],
         "description": "Reorder fields to match order of attributes in `COUNTERData`"
     },
+    // Remove all fields containing only null values
     {
         "op": "core/column-addition",
         "engineConfig": {

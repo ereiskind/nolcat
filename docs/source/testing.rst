@@ -77,7 +77,7 @@ Create COUNTER Relation Test Data
 Create JSON Format Test Data
 ----------------------------
 1. For each COUNTER R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
-2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
+2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above, remembering there's a manual step added via comment in the file.
 3. Download each of the above projects in Excel.
 4. Use each of the Excel workbooks as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py", use a find and replace to unescape the slashes (/) in the file, then take the part of the output JSON that corresponds to the SUSHI "Report Items" and combine it with a SUSHI header to create the final test data JSON file.
 
