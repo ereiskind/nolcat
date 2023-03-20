@@ -141,11 +141,11 @@ def sample_SUSHI_PR_response_dataframe():
         columns=['platform', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],
     )
     df = df.astype({
-        "platform": 'string',
-        "data_type": 'string',
-        "access_method": 'string',
-        "metric_type": 'string',
-        "usage_count": 'int',
+        'platform': 'string',
+        'data_type': 'string',
+        'access_method': 'string',
+        'metric_type': 'string',
+        'usage_count': 'int',
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
