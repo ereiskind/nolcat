@@ -165,7 +165,7 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
+        try:  #ALERT: Couldn't find a statistics source to use as a test case--prior code indicates this case appears in response to `status` calls
             logging.debug(f"The report has an `Exception` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exception']}.")
             if not self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}")
@@ -217,6 +217,7 @@ class SUSHICallAndResponse:
 
         #Subsection: Check Master Reports for Data
         # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
+        #ToDo: Rework subsection to ask if empty reports are errors--when there's no usage or when a resource with no databases offers a DR, the empty report is appropriate
         master_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if master_report_regex.search(self.call_path):
             try:
