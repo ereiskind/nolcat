@@ -2,17 +2,28 @@
 
 import logging
 import pathlib
+import io
 import re
 from openpyxl import load_workbook
 import pandas as pd
 
-from ..nolcat import app
+# `from ..nolcat import app` raises `ImportError: attempted relative import with no known parent package`
+# `from nolcat import app` raises `ModuleNotFoundError: No module named 'nolcat'`
+# `from .. import nolcat` raises `ImportError: attempted relative import with no known parent package`
+# `from .nolcat import app` raises `ImportError: attempted relative import with no known parent package`
+# `from nolcat.app import return_string_of_dataframe_info` raises `ModuleNotFoundError: No module named 'nolcat'`
 
 logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")
 
 absolute_path_to_tests_directory = pathlib.Path(__file__).parent.resolve()
 directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'
 
+
+def return_string_of_dataframe_info(df):
+    # This is a copy of a function in `nolcat.nolcat.app`, which can't be imported
+    in_memory_stream = io.StringIO()
+    df.info(buf=in_memory_stream)
+    return in_memory_stream.getvalue()
 
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
@@ -61,7 +72,7 @@ df = pd.read_excel(
     file_path,
     sheet_name=report_name,
     engine='openpyxl',
-    header=1,
+    header=0,  # This means the first row of the spreadsheet will be treated as the row with the headers, meaning the data starts on the second row
     names=df_field_names,
     dtype=df_dtypes,
     converters={  # `to_datetime` called as object, not function; adding `format` argument causes TypeError
@@ -71,4 +82,4 @@ df = pd.read_excel(
     }
 )
 logging.debug(f"Complete dataframe:\n{df}")
-logging.info(f"Dataframe summary info:\n{app.return_string_of_dataframe_info(df)}")
+logging.info(f"Dataframe summary info:\n{return_string_of_dataframe_info(df)}")
