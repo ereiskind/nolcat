@@ -4,6 +4,9 @@ import logging
 import pathlib
 import re
 from openpyxl import load_workbook
+import pandas as pd
+
+from ..nolcat import app
 
 logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")
 
@@ -41,3 +44,31 @@ for row in sheet.rows:
             df_field_names.append(field_name.value)
     break
 logging.info(f"The field names are {df_field_names}.")
+
+
+#Section: Create Dataframe
+#Subsection: Ensure String Data Type for Potentially Numeric Metadata Fields
+# Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be set as strings at the creation of the dataframe to head off problems.
+df_dtypes = dict()
+for field_name in df_field_names:
+    if field_name == "Count" or field_name == "YOP":
+        df_dtypes[field_name] = 'Int64'  # The pandas integer dtype; Python's 'int' is ignored
+    else:  # JSON uses strings for dates; `Begin_Date` is changed to a date with the `converters` argument in `read_excel`
+        df_dtypes[field_name] = 'string'
+
+#Subsection: Create Dataframe from Excel Worksheet
+df = pd.read_excel(
+    file_path,
+    sheet_name=report_name,
+    engine='openpyxl',
+    header=1,
+    names=df_field_names,
+    dtype=df_dtypes,
+    converters={  # `to_datetime` called as object, not function; adding `format` argument causes TypeError
+    'Begin_Date': pd.to_datetime,
+    'Publication_Date': pd.to_datetime,
+    'Parent_Publication_Date': pd.to_datetime,
+    }
+)
+logging.debug(f"Complete dataframe:\n{df}")
+logging.info(f"Dataframe summary info:\n{app.return_string_of_dataframe_info(df)}")
