@@ -399,3 +399,21 @@ if report_type == "IR":
                 item_parent_fields_to_nest.append('Parent_Data_Type')
             item_parent_values_df = (item_parent_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent_groupby: item_parent_groupby[item_parent_fields_to_nest].to_dict('index')).apply(correct_item_parent_dictionary).rename("Item_Parent")
             logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+
+
+#Section: Create Nested JSON Section for Performance
+#Subsection: Create Instance Grouping
+instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin_Date']
+instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance_groupby: instance_groupby[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
+instance_df = instance_df.set_index(fields_used_in_performance_join_multiindex)
+logging.debug(f"`instance_df`:\n{instance_df}")
+
+#Subsection: Create Period Grouping
+df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
+period_groupby_operation_fields = fields_used_for_groupby_operations + ['Metric_Type', 'Count', 'temp']
+period_df = (df.groupby(period_groupby_operation_fields)).apply(lambda period_groupby: period_groupby[['Begin_Date','End_Date']].to_dict('records')).reset_index().rename(columns={0: "Period"})
+period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
+period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
+period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
+period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
+logging.debug(f"`period_df`:\n{period_df}")
