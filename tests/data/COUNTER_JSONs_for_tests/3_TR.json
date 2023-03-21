@@ -74,6 +74,44 @@
             ]
         },
         {
+            "Title": "Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>",
+            "Publisher": "Duke University Press",
+            "Platform": "Duke University Press",
+            "Data_Type": "Book",
+            "Section_Type": "`None`",
+            "YOP": "2005",
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "DOI",
+                    "Value": "10.1215/9780822387046"
+                },
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Silverchair:989"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-8223-8704-6"
+                }
+            ]
+        },
+        {
             "Title": "Empires of Vision<subtitle>A Reader</subtitle>",
             "Publisher": "Duke University Press",
             "Platform": "Duke University Press",
