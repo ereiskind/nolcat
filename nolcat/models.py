@@ -546,7 +546,7 @@ class StatisticsSources(db.Model):
 
             #Subsection: Check if Usage Is Already in Database
             #ToDo: months_to_exclude_from_harvest = []
-            #for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):
+            #for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):  # rrule generates a object that can be unpacked into a list of datetime objects representing dates and/or times occurring on a recurring schedule
             #    date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
             #    number_of_records = pd.read_sql(
             #        sql=f'''
