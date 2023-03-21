@@ -74,7 +74,7 @@ def test_status_call(SUSHI_credentials_fixture):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
-    assert str(type(response)) == "<class 'dict'>" or str(type(response[0])) == "<class 'dict'>"  # EBSCO's is a dict inside a list as of 2022-12-14
+    assert repr(type(response)) == "<class 'dict'>" or repr(type(response[0])) == "<class 'dict'>"  # EBSCO's is a dict inside a list as of 2022-12-14
 
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
@@ -95,7 +95,7 @@ def test_reports_call(SUSHI_credentials_fixture):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    assert str(type(response)) == "<class 'dict'>"
+    assert repr(type(response)) == "<class 'dict'>"
 
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped

@@ -47,7 +47,7 @@ def correct_item_parent_dictionary(item_parent_dictionary):
     for metadata in item_parent_dictionary.values():  # This removes the key with the record number
         corrected_metadata = dict()  # This creates an empty dictionary to avoid changing `metadata` while iterating through it
         for key, value in metadata.items():
-            if str(type(value)) == "<class 'list'>":  # Key-value pairs with list and string (non-list) values are separated because using the comprehensive null checking method on a list raises an error
+            if repr(type(value)) == "<class 'list'>":  # Key-value pairs with list and string (non-list) values are separated because using the comprehensive null checking method on a list raises an error
                 if pd.isnull(value).all():
                     continue  # Key-value pair not being added to `corrected_metadata`
                 else:
