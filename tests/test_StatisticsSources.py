@@ -108,16 +108,11 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     pass
 
 
-def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage):
+def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
     begin_test = datetime.datetime.now()
-    end_date = datetime.date(
-        most_recent_month_with_usage.year,
-        most_recent_month_with_usage.month,
-        calendar.monthrange(most_recent_month_with_usage.year, most_recent_month_with_usage.month)[1],
-    )
     before_data_collection = datetime.datetime.now()
-    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, end_date)
+    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, last_day_of_month)
     data_collected = datetime.datetime.now()
     print(SUSHI_data)
     print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
@@ -125,16 +120,11 @@ def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_mo
     assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>" and SUSHI_data['statistics_source_ID'].eq(1).all()  #ToDo: and time collected value is equal to one of the above if possible
 
 
-def test_collect_usage_statistics(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage):
+def test_collect_usage_statistics(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
-    end_date = datetime.date(
-        most_recent_month_with_usage.year,
-        most_recent_month_with_usage.month,
-        calendar.monthrange(most_recent_month_with_usage.year, most_recent_month_with_usage.month)[1],
-    )
-    #ToDo: to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, end_date)
+    #ToDo: to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, last_day_of_month)
     #ToDo: number_of_records = to_check_against.shape[0]
-    #ToDo: StatisticsSources_fixture.collect_usage_statistics(first_day_of_most_recent_month_with_usage, end_date)
+    #ToDo: StatisticsSources_fixture.collect_usage_statistics(first_day_of_most_recent_month_with_usage, last_day_of_month)
     #ToDo: SQL_query = f"""
     #ToDo:     SELECT *
     #ToDo:     FROM (
