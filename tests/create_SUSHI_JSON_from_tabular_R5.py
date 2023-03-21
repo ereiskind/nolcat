@@ -25,6 +25,13 @@ def return_string_of_dataframe_info(df):
     df.info(buf=in_memory_stream)
     return in_memory_stream.getvalue()
 
+
+def last_day_of_month(first_day_of_month):
+    # This is a copy of a function in `nolcat.nolcat.app`, which can't be imported
+    year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
+    return year_and_month_string + str(first_day_of_month.days_in_month)
+
+
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
 file_path = pathlib.Path(file_path)
@@ -83,3 +90,27 @@ df = pd.read_excel(
 )
 logging.debug(f"Complete dataframe:\n{df}")
 logging.info(f"Dataframe summary info:\n{return_string_of_dataframe_info(df)}")
+
+
+#Section: Update Dataframe
+df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
+df = df.replace("licence", "license")  # "Have `license` always use American English spelling
+df['End_Date'] = df['Begin_Date'].map(last_day_of_month)
+try:
+    df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
+except:
+    df['Begin_Date'] = pd.to_datetime(df['Begin_Date'])
+    df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
+if 'YOP' in list(df.columns):
+    df['YOP'] = df['YOP'].astype('string')  # Setting the dtype to string when reading in the data means every value in the field ends with `.0`
+
+#Subsection: Put Placeholder in for Null Values
+# Null values and fields with nothing but null values cause problems and errors in groupby functions, so they're replaced with placeholder strings
+df = df.fillna("`None`")
+df = df.replace(
+    to_replace='^\s*$',
+    # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
+    value="`None`",
+    regex=True
+)
+logging.debug(f"Dataframe after initial updates:\n{df}")
