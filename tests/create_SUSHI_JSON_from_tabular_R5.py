@@ -417,3 +417,51 @@ period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
 period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
 logging.debug(f"`period_df`:\n{period_df}")
+
+
+#Section: Combine Nested JSON Groupings
+#Subsection: Combine Period and Instance Groupings
+combined_df = period_df.join(instance_df, how='inner')  # This contains duplicate records
+combined_df = combined_df.reset_index()
+combined_df = combined_df.drop(columns=['Begin_Date'])
+
+#Subsection: Deduplicate Records
+# Using pandas' `duplicated` method on dict data type fields raises a TypeError, so their contents must be compared as equivalent strings
+combined_df['instance_string'] = combined_df['Instance'].astype('string')
+combined_df['period_string'] = combined_df['Period'].astype('string')
+fields_to_use_in_deduping = fields_used_for_groupby_operations + ['instance_string'] + ['period_string']
+combined_df['repeat'] = combined_df.duplicated(subset=fields_to_use_in_deduping, keep='first')
+combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
+logging.debug(f"`combined_df`:\n{combined_df}")
+
+#Subsection: Create Performance Grouping
+combined_df = combined_df.reset_index(drop=True)
+joining_df = (combined_df.groupby(fields_used_for_groupby_operations)).apply(lambda performance_groupby: performance_groupby[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
+logging.debug(f"`joining_df` before metadata additions:\n{joining_df}")
+
+#Subsection: Add Other JSON Groupings
+joining_df = joining_df.set_index(fields_used_for_groupby_operations)
+if dict(locals()).get('publisher_ID_values_df') is not None:
+    joining_df = joining_df.join(publisher_ID_values_df, how='left')
+    joining_df = joining_df.rename(columns={'Publisher_ID': '_Publisher_ID'})  # This field and its origin field have the same name, which causes an error when resetting the index; to avoid it, a temporary new name is used
+if dict(locals()).get('item_ID_values_df') is not None:
+    joining_df = joining_df.join(item_ID_values_df, how='left')
+if dict(locals()).get('author_values_df') is not None:
+    joining_df = joining_df.join(author_values_df, how='left')
+if dict(locals()).get('publication_date_values_df') is not None:
+    joining_df = joining_df.join(publication_date_values_df, how='left')
+if dict(locals()).get('article_version_values_df') is not None:
+    joining_df = joining_df.join(article_version_values_df, how='left')
+if dict(locals()).get('item_parent_values_df') is not None:
+    joining_df = joining_df.join(item_parent_values_df, how='left')
+logging.debug(f"`joining_df` after metadata additions:\n{joining_df}")
+
+
+#Section: Create Final JSON
+final_df = joining_df.reset_index()
+final_df = final_df.drop(columns=fields_to_drop_at_end)
+if '_Publisher_ID' in list(final_df.columns):
+    final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
+logging.info(f"`final_df`:\n{final_df}")
+final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
