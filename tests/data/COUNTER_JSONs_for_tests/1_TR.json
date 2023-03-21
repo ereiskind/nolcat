@@ -48,6 +48,10 @@
                     },
                     "Instance": [
                         {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
                             "Metric_Type": "Unique_Item_Investigations",
                             "Count": 2
                         }

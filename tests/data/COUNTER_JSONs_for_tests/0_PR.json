@@ -47,6 +47,10 @@
                     },
                     "Instance": [
                         {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2015
+                        },
+                        {
                             "Metric_Type": "Total_Item_Requests",
                             "Count": 557
                         },
