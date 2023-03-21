@@ -96,8 +96,7 @@ def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usag
     print(SUSHI_data)
     print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
     print(type(SUSHI_data))
-    #ToDo: assert `SUSHI_data` is a dataframe and statistics source ID field value is `1` and time collected value is equal to one of the above if possible
-    assert True
+    assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>" and SUSHI_data['statistics_source_ID'].eq(1).all()  #ToDo: and time collected value is equal to one of the above if possible
 
 
 def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage):
