@@ -429,7 +429,10 @@ class ConvertJSONDictToDataframe:
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
+        logging.info(f"Dtypes immediately after initialization:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
 
+        df = df.astype(df_dtypes)
+        logging.info(f"Dtypes after `astype` method:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
         if record_dict.get('publication_date'):
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
@@ -444,6 +447,7 @@ class ConvertJSONDictToDataframe:
             )
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
+        logging.info(f"Dtypes after `to_datetime` methods:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
 
         logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         return df
