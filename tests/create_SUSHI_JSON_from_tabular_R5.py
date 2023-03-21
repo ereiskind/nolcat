@@ -4,6 +4,7 @@ import logging
 import pathlib
 import io
 import re
+import json
 from openpyxl import load_workbook
 import pandas as pd
 
@@ -13,7 +14,7 @@ import pandas as pd
 # `from .nolcat import app` raises `ImportError: attempted relative import with no known parent package`
 # `from nolcat.app import return_string_of_dataframe_info` raises `ModuleNotFoundError: No module named 'nolcat'`
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")
 
 absolute_path_to_tests_directory = pathlib.Path(__file__).parent.resolve()
 directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'
@@ -175,6 +176,7 @@ if report_type == "DR" or report_type == "TR" or report_type == "IR":
             publisher_ID_values_df =  publisher_ID_values_df.drop(columns=['repeat'])
             publisher_ID_values_df = (publisher_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda publisher_ID_groupby: publisher_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Publisher_ID")
             logging.debug(f"`publisher_ID_values_df`:\n{publisher_ID_values_df}")
+            # `to_json` method raises `ValueError: Overlapping names between the index and columns` because `Publisher_ID` is both the key to the list of dictionaries just formed and a field in the multiindex
 
 
 #Section: Create Nested JSON Section for Item IDs
@@ -194,6 +196,7 @@ if report_type == "DR":
             item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
             item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
             logging.debug(f"`item_ID_values_df`:\n{item_ID_values_df}")
+            logging.debug(f"JSON with `Item_ID` nesting:\n{item_ID_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Subsection: Create Nested JSON Section for TR and IR Item IDs
@@ -225,6 +228,7 @@ if report_type == "TR" or report_type == "IR":
             #Subsection: Complete Nested JSON Section for Item IDs
             item_ID_values_df = (item_ID_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
             logging.debug(f"`item_ID_values_df`:\n{item_ID_values_df}")
+            logging.debug(f"JSON with `Item_ID` nesting:\n{item_ID_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Nested JSON Section for Authors
@@ -243,6 +247,7 @@ if report_type == "IR":
             author_values_df =  author_values_df.drop(columns=['repeat'])
             author_values_df = (author_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda authors_groupby: authors_groupby[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")  # `Item_Contributors` uses `Type` and `Name` as the keys in its dictionaries
             logging.debug(f"`author_values_df`:\n{author_values_df}")
+            logging.debug(f"JSON with `Item_Contributors` nesting:\n{author_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Nested JSON Section for Publication Date
@@ -269,6 +274,7 @@ if report_type == "IR":
             publication_date_values_df =  publication_date_values_df.drop(columns=['repeat'])
             publication_date_values_df = (publication_date_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates_groupby: item_dates_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
             logging.debug(f"`publication_date_values_df`:\n{publication_date_values_df}")
+            logging.debug(f"JSON with `Item_Dates` nesting:\n{publication_date_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Nested JSON Section for Article Version
@@ -287,6 +293,7 @@ if report_type == "IR":
             article_version_values_df =  article_version_values_df.drop(columns=['repeat'])
             article_version_values_df = (article_version_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes_groupby: item_attributes_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
             logging.debug(f"`article_version_values_df`:\n{article_version_values_df}")
+            logging.debug(f"JSON with `Item_Attributes` nesting containing `Article_Version`:\n{article_version_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Nested JSON Section for Item Parent Data
@@ -347,24 +354,33 @@ if report_type == "IR":
                 item_contributors_df = item_contributors_df.rename(columns={'Value': 'Name'})
                 item_contributors_df = (item_contributors_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_contributors_groupby: item_contributors_groupby[['Type', 'Name']].to_dict('records')).rename("Item_Contributors")
                 item_parent_values_df = item_parent_values_df.join(item_contributors_df)
+                logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+                logging.debug(f"JSON with `Item_Contributors` nesting:\n{item_parent_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
             #Subsection: Create Inner Nested JSON Section for Publication Date
             item_dates_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Publication_Date']
             if not item_dates_df.empty:
                 item_dates_df = (item_dates_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_dates_groupby: item_dates_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Dates")
                 item_parent_values_df = item_parent_values_df.join(item_dates_df)
+                logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+                logging.debug(f"JSON with `Item_Dates` nesting:\n{item_parent_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
             #Subsection: Create Inner Nested JSON Section for Article Version
             item_attributes_df = item_parent_values_df.loc[item_parent_values_df['Type'] == 'Article_Version']
             if not item_attributes_df.empty:
+                # NoLCAT test data never enters this code block
                 item_attributes_df = (item_attributes_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_attributes_groupby: item_attributes_groupby[['Type', 'Value']].to_dict('records')).rename("Item_Attributes")
                 item_parent_values_df = item_parent_values_df.join(item_attributes_df)
+                logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+                logging.debug(f"JSON with `Item_Attributes` nesting:\n{item_parent_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
             #Subsection: Create Inner Nested JSON Section for Item IDs
             item_ID_df = item_parent_values_df[item_parent_values_df['Type'].isin(possible_fields_in_item_ID)]
             if not item_ID_df.empty:
                 item_ID_df = (item_ID_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_ID_groupby: item_ID_groupby[['Type', 'Value']].to_dict('records')).rename("Item_ID")
                 item_parent_values_df = item_parent_values_df.join(item_ID_df)
+                logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+                logging.debug(f"JSON with `Item_ID` nesting:\n{item_parent_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
             #Subsection: Deduplicate Dataframe with All Inner Nested Sections
             item_parent_values_df = item_parent_values_df.reset_index()
@@ -399,6 +415,7 @@ if report_type == "IR":
                 item_parent_fields_to_nest.append('Parent_Data_Type')
             item_parent_values_df = (item_parent_values_df.groupby(fields_used_for_groupby_operations)).apply(lambda item_parent_groupby: item_parent_groupby[item_parent_fields_to_nest].to_dict('index')).apply(correct_item_parent_dictionary).rename("Item_Parent")
             logging.debug(f"`item_parent_values_df`:\n{item_parent_values_df}")
+            logging.debug(f"JSON with `Item_Parent` nesting:\n{item_parent_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Nested JSON Section for Performance
@@ -407,6 +424,7 @@ instance_groupby_operation_fields = fields_used_for_groupby_operations + ['Begin
 instance_df = (df.groupby(instance_groupby_operation_fields)).apply(lambda instance_groupby: instance_groupby[['Metric_Type', 'Count']].to_dict('records')).reset_index().rename(columns={0: "Instance"})  # `instance_groupby_operation_fields` contains all the non-null fields that must be the same for all the records represented in a instance grouping plus a date field to keep instances where the metric and count are repeated from being combined
 instance_df = instance_df.set_index(fields_used_in_performance_join_multiindex)
 logging.debug(f"`instance_df`:\n{instance_df}")
+logging.debug(f"JSON with `Instance` nesting:\n{instance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 #Subsection: Create Period Grouping
 df['temp'] = range(1, len(df.index)+1)  # The way groupby works, for each resource defined by metadata, if a given instance (a metric and its count) occurs in multiple months, those months will be combined, which is not the desired behavior; this field puts a unique value in each row/record, which prevents this grouping
@@ -416,7 +434,6 @@ period_df = period_df.drop(columns=['temp', 'Metric_Type', 'Count'])
 period_df['Period'] = period_df['Period'].map(lambda list_like: list_like[0])
 period_df['Begin_Date'] = period_df['Period'].astype('string').map(lambda string: string[16:-28])  # This turns the JSON/dict value into a string, then isolates the desired date from within each string
 period_df = period_df.set_index(fields_used_in_performance_join_multiindex)
-logging.debug(f"`period_df`:\n{period_df}")
 
 
 #Section: Combine Nested JSON Groupings
@@ -434,11 +451,13 @@ combined_df['repeat'] = combined_df.duplicated(subset=fields_to_use_in_deduping,
 combined_df = combined_df.loc[combined_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 combined_df = combined_df.drop(columns=['instance_string', 'period_string', 'repeat'])
 logging.debug(f"`combined_df`:\n{combined_df}")
+logging.debug(f"JSON with `Period` nesting:\n{combined_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 #Subsection: Create Performance Grouping
 combined_df = combined_df.reset_index(drop=True)
 joining_df = (combined_df.groupby(fields_used_for_groupby_operations)).apply(lambda performance_groupby: performance_groupby[['Period', 'Instance']].to_dict('records')).reset_index().rename(columns={0: "Performance"})
 logging.debug(f"`joining_df` before metadata additions:\n{joining_df}")
+logging.debug(f"JSON with `Performance` nesting:\n{joining_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 #Subsection: Add Other JSON Groupings
 joining_df = joining_df.set_index(fields_used_for_groupby_operations)
@@ -456,6 +475,7 @@ if dict(locals()).get('article_version_values_df') is not None:
 if dict(locals()).get('item_parent_values_df') is not None:
     joining_df = joining_df.join(item_parent_values_df, how='left')
 logging.debug(f"`joining_df` after metadata additions:\n{joining_df}")
+logging.debug(f"JSON with all nesting combined:\n{joining_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Create Final JSON
@@ -463,5 +483,6 @@ final_df = joining_df.reset_index()
 final_df = final_df.drop(columns=fields_to_drop_at_end)
 if '_Publisher_ID' in list(final_df.columns):
     final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
-logging.info(f"`final_df`:\n{final_df}")
+logging.debug(f"`final_df`:\n{final_df}")
+logging.info(f"Final JSON:\n{final_df.to_json(force_ascii=False, indent=4, orient='table', index=False)}")
 final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
