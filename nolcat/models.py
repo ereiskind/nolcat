@@ -254,9 +254,11 @@ class FiscalYears(db.Model):
             #ToDo:     con=db.engine,
             #ToDo:     if_exists='append',
             #ToDo: )
-            #ToDo: return statement indicating success
+            #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
+            #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: return statement indicating failure
+            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {format(error)}")
+            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {format(error)}"
         pass
 
 
@@ -619,8 +621,10 @@ class StatisticsSources(db.Model):
                 con=db.engine,
                 if_exists='append',
             )
-            return "The load was a success"
+            logging.info("The load was a success.")
+            return "The load was a success."
         except Exception as error:
+            logging.warning(f"The load had an error: {format(error)}")
             return f"The load had an error: {format(error)}"
 
 
@@ -847,9 +851,11 @@ class AnnualUsageCollectionTracking(db.Model):
             #ToDo:     con=db.engine,
             #ToDo:     if_exists='append',
             #ToDo: )
-            #ToDo: return statement indicating success
+            #ToDo: logging.info(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success.")
+            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: return statement indicating failure
+            #ToDo: logging.warning(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}")
+            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}"
         pass
 
 
