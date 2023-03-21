@@ -35,6 +35,25 @@ def first_day_of_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='session')
+def last_day_of_month(first_day_of_most_recent_month_with_usage):
+    """The last day of the month identified in the `first_day_of_month_with_usage` fixture.
+
+    When including the day in the `end_date` value for a SUSHI API call, that date must be the last day of the month. This fixture creates the last day of the month that corresponds to the first day of the month from the `first_day_of_month_with_usage` fixture.
+
+    Args:
+        first_day_of_most_recent_month_with_usage (datetime.date): the first day of the most recent month for which COUNTER data is available
+
+    Yields:
+        datetime.date: the last day of a month
+    """
+    yield datetime.date(
+        first_day_of_most_recent_month_with_usage.year,
+        first_day_of_most_recent_month_with_usage.month,
+        calendar.monthrange(first_day_of_most_recent_month_with_usage.year, first_day_of_most_recent_month_with_usage.month)[1],
+    )
+
+
+@pytest.fixture(scope='session')
 def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
