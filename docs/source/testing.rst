@@ -92,7 +92,7 @@ Create R5 SUSHI Response JSON Reports
 Create ``ConvertJSONDictToDataframe`` Test Fixtures
 ---------------------------------------------------
 1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
-2. Apply "tests\\data\\create_dataframe_from_JSON.json" to each project, remembering there's a manual step added via comment in the file.
+2. Apply "tests\\data\\create_dataframe_from_JSON.jsonc" to each project, remembering there's a manual step added via comment in the file.
 3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
 
 SUSHI Variations
