@@ -30,5 +30,1975 @@
             }
         ]
     },
-    "Report_Items": 
+    "Report_Items": [
+        {
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 192
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 144
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 164
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 123
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 129
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 110
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 65
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 48
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 65
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 48
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 37
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 37
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 271
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 173
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 271
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 173
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 162
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 162
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1063
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 829
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 911
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 827
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 396
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 394
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 414
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 350
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 406
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 296
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 215
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 245
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 213
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 186
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 213
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 186
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 172
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 172
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 189
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 142
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 187
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 121
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 101
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 117
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 478
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 304
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 474
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 352
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 219
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 254
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 416
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 285
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 416
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 285
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 232
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 232
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 523
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 470
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 521
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 468
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 339
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 393
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 134
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 121
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 134
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 121
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 97
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 97
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 217
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 213
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 217
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 213
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 149
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 149
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Database",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 1867
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 543
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 1726
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 4232
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 2294
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 1288
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 988
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 2349
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 2421
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 3621
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 1220
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Platform",
+                            "Count": 2004
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1625
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1286
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1542
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1224
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 645
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 408
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 523
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 444
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1476
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1287
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1439
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1076
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3357
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2610
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3267
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2184
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2353
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1557
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2306
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1525
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1262
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1122
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1235
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1099
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1454
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1317
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1435
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1298
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 5659
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3500
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 5625
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3479
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3466
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2745
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3423
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2715
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 31718
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 24581
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 27241
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 24558
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 9084
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6525
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 10543
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6508
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2512
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1941
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2901
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2242
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Multimedia",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 16
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 13
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 16
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 13
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 25
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 25
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 22
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 29
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 24
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 29
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 24
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 9
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 11
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 10
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 9
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 22
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 9
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 9
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 18
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 22
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 18
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Newspaper",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1073
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1024
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1056
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1013
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 157
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 120
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 155
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 118
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 648
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 635
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 644
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 543
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1691
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1393
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1665
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1602
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1283
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 927
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1091
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 920
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 519
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 528
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 515
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 451
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 861
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 709
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 730
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 701
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1680
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1387
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1927
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1593
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1862
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1536
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2120
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1518
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2135
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1794
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2094
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1769
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 933
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 887
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 926
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 881
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1015
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 732
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1011
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 849
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Other",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 132
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 118
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 132
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 118
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 64
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 67
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 64
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 67
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 245
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 249
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 243
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 213
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 237
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 206
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 237
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 206
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 66
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 65
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 66
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 65
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 179
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 131
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 153
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 151
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 72
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 76
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 72
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 76
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 198
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 147
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 198
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 147
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 16
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 12
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 16
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 12
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 63
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 55
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 63
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 55
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Platform": "Gale",
+            "Data_Type": "Report",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }

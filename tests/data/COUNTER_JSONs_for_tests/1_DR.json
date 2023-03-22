@@ -30,5 +30,1239 @@
             }
         ]
     },
-    "Report_Items": 
+    "Report_Items": [
+        {
+            "Database": "ERIC",
+            "Publisher": "Computer Sciences Corporation",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Database",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 97849
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1533
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4010
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3502
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 43838
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 348
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1131
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1012
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 119982
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1670
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3500
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3086
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 180736
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 3374
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7650
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6721
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 144333
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2219
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4429
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3935
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 82191
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1445
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4127
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3234
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 82548
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1350
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3284
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2924
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 137683
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2678
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3927
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3503
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 122564
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2648
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3533
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3173
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 145058
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2656
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4713
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3993
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 55916
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 747
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2152
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1953
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 91158
+                        },
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1848
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3638
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3266
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 2
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:eric"
+                }
+            ]
+        },
+        {
+            "Database": "ERICdata Higher Education Knowledge",
+            "Publisher": "Hyweb Technology Co., Ltd.",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Database",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 5
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:edserd"
+                }
+            ]
+        },
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 23
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 20
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 20
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 5
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 5
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 10
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:hia"
+                }
+            ]
+        },
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Database",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 927
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 168
+                        },
+                        {
+                            "Metric_Type": "Limit_Exceeded",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 241
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1422
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2640
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2005
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1218
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1126
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2470
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2390
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 2462
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 506
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Searches_Regular",
+                            "Count": 1476
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:hia"
+                }
+            ]
+        },
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Journal",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 107
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 78
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 35
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 32
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 248
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 229
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 339
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 305
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 344
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 295
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 99
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 90
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 101
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 82
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 249
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 223
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 260
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 217
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 323
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 274
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 50
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 47
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 33
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 32
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:hia"
+                }
+            ]
+        },
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Newspaper_or_Newsletter",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:hia"
+                }
+            ]
+        },
+        {
+            "Database": "Historical Abstracts",
+            "Publisher": "EBSCO Publishing",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Other",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary",
+                    "Value": "EBSCOhost:hia"
+                }
+            ]
+        }
+    ]
 }
