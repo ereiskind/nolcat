@@ -106,6 +106,32 @@
         "description": "Change the values in column ``Begin_Date`` to date data type"
     },
     {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publication_Date",
+        "expression": "grel:value.split(\"T\")[0].toDate()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change the values in column ``Publication_Date`` to date data type without time zones"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Parent_Publication_Date",
+        "expression": "grel:value.split(\"T\")[0].toDate()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change the values in column ``Parent_Publication_Date`` to date data type without time zones"
+    },
+    {
         "op": "core/column-addition",
         "engineConfig": {
             "facets": [],
