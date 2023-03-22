@@ -46,7 +46,7 @@
             "facets": [],
             "mode": "row-based"
         },
-        "baseColumnName": "Publisher",
+        "baseColumnName": "Count",
         "expression": "grel:'['+forEach(row.columnNames,field,if(isBlank(cells[field].value),'None',if(cells[field].value.type()=='date','\"'+cells[field].value.toString('yyyy-MM-dd')+'\"',if(cells[field].value.type()=='string','\"'+cells[field].value.replace('\"','\\\\\"')+'\"',cells[field].value.round())))).join(', ')+', \"2019-07-01\"],'",
         "onError": "set-to-blank",
         "newColumnName": "df",
