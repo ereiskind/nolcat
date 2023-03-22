@@ -37,6 +37,7 @@ This folder contains all the Excel files, most of which are stored in one of thr
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
+* "\\tests\\bin\\workbooks_to_transform_into_JSONs\\": This folder contains all the Excel workbooks transformed by "tests\\data\\create_JSON_base.json" for use as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py".
 
 
 "\\tests\\data\\relations.py"
@@ -65,28 +66,34 @@ In the test data, the ``statistics_source_ID`` values are as follows
 * Gale = 2
 * Duke UP = 3
 
-Create COUNTER Relation Test Data
----------------------------------
+Create Tabular COUNTER Reports
+------------------------------
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
-3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields.
-4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
-5. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
-6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
+3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_reports.py".
+4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
 
-Create JSON Format Test Data
-----------------------------
-1. For each COUNTER R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
-2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above, remembering there's a manual step added via comment in the file.
-3. Download each of the above projects in Excel.
-4. Use each of the Excel workbooks as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py", use a find and replace to unescape the slashes (/) in the file (replace ``\/`` with ``/``), then take the part of the output JSON that corresponds to the SUSHI "Report Items" and combine it with a SUSHI header to create the final test data JSON file.
+Create `COUNTERData` Relation Fixture Data
+------------------------------------------
+1. Load the sole worksheet in "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" into OpenRefine to create project "nolcat_test_data".
+2. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
+3. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
 
-Create Dataframe Based on JSON Format Test Data
------------------------------------------------
-1. For each JSON to be used as a fixture in the test, open the corresponding OpenRefine project.
-2. Apply "tests\\data\\create_dataframe_from_JSON.json" to each project.
-3. Download each project in Excel.
-4. Copy the ``df`` field from the Excel workbook and paste it into the dataframe constructor in the fixture.
+Create R5 SUSHI Response JSON Reports
+-------------------------------------
+1. For each worksheet in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" with an R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
+2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
+3. Download each of the above projects in Excel and save to "\\tests\\bin\\workbooks_to_transform_into_JSONs\\".
+4. For each type of report and vendor combination with a file in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\", make a SUSHI API call in the browser, copy the result into a JSON file named with the statistics source ID, an underscore, and the report name abbreviation (the test data contains only one year of R5 reports, preventing repetitions with this naming convention) in the "\\tests\\data\\COUNTER_JSONs_for_tests" folder.
+5. In each newly created JSON file, anonymize the data in ``Report_Header``, change the ``Created`` value in ``Report_Header`` to ``2019-07-01T00:00:00Z``, and delete the data in ``Report_Items``.
+6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\COUNTER_JSONs_for_tests".
+7. Unescape the slashes (/) in each JSON file via find and replace (replace ``\/`` with ``/``).
+
+Create ``ConvertJSONDictToDataframe`` Test Fixtures
+---------------------------------------------------
+1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
+2. Apply "tests\\data\\create_dataframe_from_JSON.json" to each project, remembering there's a manual step added via comment in the file.
+3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
 
 SUSHI Variations
 ****************
