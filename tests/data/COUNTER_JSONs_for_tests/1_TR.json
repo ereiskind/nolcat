@@ -1,0 +1,34 @@
+{
+    "Report_Header": {
+        "Created": "2019-07-01T00:00:00Z",
+        "Created_By": "EBSCO Information Services",
+        "Customer_ID": "a0000000",
+        "Report_ID": "TR",
+        "Release": "5",
+        "Report_Name": "Title Master Report",
+        "Institution_Name": "FLORIDA STATE UNIV-MAIN",
+        "Institution_ID": [
+            {
+                "Type": "Proprietary",
+                "Value": "EBSCOhost:a0000000"
+            }
+        ],
+        "Report_Filters": [
+            {
+                "Name": "Begin_Date",
+                "Value": "2019-07-01"
+            },
+            {
+                "Name": "End_Date",
+                "Value": "2019-12"
+            }
+        ],
+        "Report_Attributes": [
+            {
+                "Name": "Attributes_To_Show",
+                "Value": "Data_Type|Section_Type|YOP|Access_Type|Access_Method"
+            }
+        ]
+    },
+    "Report_Items": 
+}

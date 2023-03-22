@@ -1,0 +1,34 @@
+{
+    "Report_Header": {
+        "Created": "2019-07-01T00:00:00Z",
+        "Created_By": "Silverchair",
+        "Customer_ID": "000",
+        "Report_ID": "TR",
+        "Release": "5",
+        "Report_Name": "Title Master Report",
+        "Institution_Name": "FLORIDA STATE UNIV",
+        "Institution_ID": [
+            {
+                "Type": "Proprietary",
+                "Value": "Silverchair:000"
+            }
+        ],
+        "Report_Filters": [
+            {
+                "Name": "Begin_Date",
+                "Value": "2019-07-01"
+            },
+            {
+                "Name": "End_Date",
+                "Value": "2020-06-30"
+            }
+        ],
+        "Report_Attributes": [
+            {
+                "Name": "Attributes_To_Show",
+                "Value": "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            }
+        ]
+    },
+    "Report_Items": 
+}

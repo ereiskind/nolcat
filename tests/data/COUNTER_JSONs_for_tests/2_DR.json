@@ -1,0 +1,34 @@
+{
+    "Report_Header": {
+        "Created": "2019-07-01T00:00:00Z",
+        "Created_By": "Gale",
+        "Customer_ID": "aaaa00000",
+        "Report_ID": "DR",
+        "Report_Name": "Database Master Report",
+        "Release": "5",
+        "Institution_Name": "Florida State University",
+        "Institution_ID": [
+            {
+                "Type": "Proprietary",
+                "Value": "Gale:aaaa00000"
+            }
+        ],
+        "Report_Filters": [
+            {
+                "Name": "Begin_Date",
+                "Value": "2019-07-01"
+            },
+            {
+                "Name": "End_Date",
+                "Value": "2020-06-30"
+            }
+        ],
+        "Report_Attributes": [
+            {
+                "Name": "Attributes_To_Show",
+                "Value": "Data_Type|Access_Method"
+            }
+        ]
+    },
+    "Report_Items": 
+}

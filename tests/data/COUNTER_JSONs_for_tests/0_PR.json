@@ -1,0 +1,38 @@
+{
+    "Report_Header": {
+        "Created": "2019-07-01T00:00:00Z",
+        "Created_By": "ProQuest",
+        "Customer_ID": "0000",
+        "Report_ID": "PR",
+        "Release": "5",
+        "Report_Name": "Platform Master Report",
+        "Institution_Name": "FLORIDA STATE UNIVERSITY",
+        "Institution_ID": [
+            {
+                "Type": "Proprietary",
+                "Value": "ProQuest:0000"
+            }
+        ],
+        "Report_Filters": [
+            {
+                "Name": "Platform",
+                "Value": "ProQuest"
+            },
+            {
+                "Name": "Begin_Date",
+                "Value": "2019-10-01"
+            },
+            {
+                "Name": "End_Date",
+                "Value": "2020-06-30"
+            }
+        ],
+        "Report_Attributes": [
+            {
+                "Name": "Attributes_To_Show",
+                "Value": "Data_Type|Access_Method"
+            }
+        ]
+    },
+    "Report_Items": 
+}
