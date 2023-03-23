@@ -248,16 +248,16 @@ class ConvertJSONDictToDataframe:
                                 logging.error(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
-                                record_dict['parent_title'] = value
+                                record_dict['parent_title'] = value_for_parent
                                 logging.debug(f"Added `COUNTERData.parent_title` value {record_dict['parent_title']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_authors` Value
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                            for type_and_value in value:
+                            for type_and_value in value_for_parent:
                                 if re.match(r'[Aa]uthor', string=type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
-                                            continue  # The `for type_and_value in value` loop
+                                            continue  # The `for type_and_value in value_for_parent` loop
                                     elif len(record_dict['parent_authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
                                         record_dict['parent_authors'] = record_dict['parent_authors'] + " et al."
                                         logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
@@ -274,25 +274,25 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
-                            for type_and_value in value:
+                            for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                                     record_dict['parent_publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
                                     logging.debug(f"Added `COUNTERData.parent_publication_date` value {record_dict['parent_publication_date']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_article_version` Value
                         elif key_for_parent == "Item_Attributes":
-                            for type_and_value in value:
+                            for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                                     record_dict['parent_article_version'] = type_and_value['Value']
                                     logging.debug(f"Added `COUNTERData.parent_article_version` value {record_dict['parent_article_version']} to `record_dict`.")
 
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
-                            record_dict['parent_data_type'] = value
+                            record_dict['parent_data_type'] = value_for_parent
                             logging.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
-                            for type_and_value in value:
+                            for type_and_value in value_for_parent:
                                 
                                 #Subsection: Capture `parent_DOI` Value
                                 if type_and_value['Type'] == "DOI":
