@@ -360,6 +360,10 @@ class ConvertJSONDictToDataframe:
                     records_orient_list.append(record_dict)  # This adds the dictionary with the specific date, metric, and count combinations represented by each item in the `Instance` list
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
+                #ALERT: These temporary log statements are to determine why above log shows each record being added to `records_orient_list`, but in the JSON string, the values for the very last dictionary for a given metadata set are being repeated for all the records with that metadata
+                logging.warning(f"At end of `for instance in performance['Instance']` loop, `records_orient_list` is\n{records_orient_list}\n")
+            logging.warning(f"At end of `for performance in record['Performance']` loop, `records_orient_list` is\n{records_orient_list}\n")
+        logging.warning(f"At end of `for record in self.SUSHI_JSON_dictionary['Report_Items']` loop, `records_orient_list` is\n{records_orient_list}\n")
         
         #Section: Create Dataframe
         df_dtypes = {
@@ -425,14 +429,12 @@ class ConvertJSONDictToDataframe:
         df = pd.read_json(
             records_orient_list,
             orient='records',
-            dtype=df_dtypes,
+            dtype=df_dtypes,  # This only sets numeric data types
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.info(f"Dtypes immediately after initialization:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
 
-        df = df.astype(df_dtypes)
-        logging.info(f"Dtypes after `astype` method:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
+        df = df.astype(df_dtypes)  # This sets the string data types
         if record_dict.get('publication_date'):
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
@@ -447,7 +449,6 @@ class ConvertJSONDictToDataframe:
             )
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
-        logging.info(f"Dtypes after `to_datetime` methods:\n{df.dtypes}")  #ALERT: Temporary statement for checking dtypes
 
         logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         return df
