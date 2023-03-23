@@ -216,7 +216,6 @@ class ConvertJSONDictToDataframe:
                 elif key == "Section_Type":
                     record_dict['section_type'] = value
                     logging.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
-                
 
                 #Section: Capture `YOP` Value
                 elif key == "YOP":
