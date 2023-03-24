@@ -70,7 +70,10 @@ class ConvertJSONDictToDataframe:
 
                 #Section: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
-                    if len(value) > self.RESOURCE_NAME_LENGTH:
+                    if value is None:  # This value handled first because `len()` of null value raises an error
+                        record_dict['resource_name'] = value
+                        logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
+                    elif len(value) > self.RESOURCE_NAME_LENGTH:
                         logging.error(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
@@ -79,7 +82,10 @@ class ConvertJSONDictToDataframe:
                 
                 #Section: Capture `publisher` Value
                 elif key == "Publisher":
-                    if len(value) > self.PUBLISHER_LENGTH:
+                    if value is None:  # This value handled first because `len()` of null value raises an error
+                        record_dict['publisher'] = value
+                        logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
+                    elif len(value) > self.PUBLISHER_LENGTH:
                         logging.error(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
@@ -88,7 +94,10 @@ class ConvertJSONDictToDataframe:
                 
                 #Section: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
-                    if len(value) == 1:
+                    if value is None:  # This value handled first because `len()` of null value raises an error
+                        record_dict['publisher_ID'] = value
+                        logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                    elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
                             logging.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
@@ -109,7 +118,10 @@ class ConvertJSONDictToDataframe:
                 
                 #Section: Capture `platform` Value
                 elif key == "Platform":
-                    if len(value) > self.PLATFORM_LENGTH:
+                    if value is None:  # This value handled first because `len()` of null value raises an error
+                        record_dict['platform'] = value
+                        logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                    elif len(value) > self.PLATFORM_LENGTH:
                         logging.error(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
@@ -120,7 +132,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                     for type_and_value in value:
                         if re.match(r'[Aa]uthor', string=type_and_value['Type']):
-                            if record_dict.get('authors'):
+                            if record_dict.get('authors'):  # If the author name value is null, this will never be true
                                 if record_dict['authors'].endswith(" et al."):
                                     continue  # The `for type_and_value in value` loop
                                 elif len(record_dict['authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
@@ -131,7 +143,10 @@ class ConvertJSONDictToDataframe:
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                             
                             else:
-                                if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
+                                if value is None:  # This value handled first because `len()` of null value raises an error
+                                    record_dict['authors'] = type_and_value['Name']
+                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                                elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
                                     logging.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
@@ -142,8 +157,11 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Dates":
                     for type_and_value in value:
                         if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
-                            record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
-                            logging.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
+                            try:
+                                record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                                logging.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
+                            except:  # In case `type_and_value['Value']` is null, which would cause the conversion to a datetime data type to return a TypeError
+                                continue  # The `for type_and_value in value` loop
                 
                 #Section: Capture `article_version` Value
                 elif key == "Item_Attributes":
@@ -153,6 +171,7 @@ class ConvertJSONDictToDataframe:
                             logging.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
                 
                 #Section: Capture Standard Identifiers
+                # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
                     for type_and_value in value:
                         
@@ -237,6 +256,7 @@ class ConvertJSONDictToDataframe:
                     logging.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
                 
                 #Section: Capture Parent Resource Metadata
+                # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
                     if repr(type(value)) == "<class 'list'>" and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
                         value = value[0]
