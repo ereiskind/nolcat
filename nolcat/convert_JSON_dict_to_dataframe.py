@@ -63,7 +63,8 @@ class ConvertJSONDictToDataframe:
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            logging.info(f"Starting iteration for record {record}")
+            logging.info("\nStarting iteration for new JSON record.")
+            logging.debug(record)  # The data is in a logging statement a level down because it isn't very useful for debugging
             record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
@@ -359,11 +360,6 @@ class ConvertJSONDictToDataframe:
                     records_orient_list.append(record_dict)  # This adds the dictionary with the specific date, metric, and count combinations represented by each item in the `Instance` list
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
-                #ALERT: These temporary log statements are to determine why above log shows each record being added to `records_orient_list`, but in the JSON string, the values for the very last dictionary for a given metadata set are being repeated for all the records with that metadata
-                logging.warning(f"At end of `for instance in performance['Instance']` loop, `records_orient_list` is\n{records_orient_list}\n")
-            logging.warning(f"At end of `for performance in record['Performance']` loop, `records_orient_list` is\n{records_orient_list}\n")
-        logging.warning(f"At end of `for record in self.SUSHI_JSON_dictionary['Report_Items']` loop, `records_orient_list` is\n{records_orient_list}\n")
-        
         #Section: Create Dataframe
         df_dtypes = {
             'platform' : 'string',
