@@ -347,17 +347,21 @@ class ConvertJSONDictToDataframe:
                         else:
                             continue  # The `for key_for_parent, value_for_parent in value.items()` loop
 
+                elif key == "Performance":
+                    record_dict['temp'] = value
+
                 else:
-                    pass  # The other keys in the JSON dict are handled outside of this loop
-            
+                    logging.warning(f"The unexpected key `{key}` was found in the JSON response to a SUSHI API call.")
+                    pass
             
             #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
-            for performance in record['Performance']:
-                record_dict['usage_date'] = datetime.date.fromisoformat(performance['Period']['Begin_Date'])
-                for instance in performance['Instance']:
+            performance = record_dict.pop('temp')
+            for period_grouping in performance:
+                record_dict['usage_date'] = datetime.date.fromisoformat(period_grouping['Period']['Begin_Date'])
+                for instance in period_grouping['Instance']:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
-                    records_orient_list.append(record_dict)  # This adds the dictionary with the specific date, metric, and count combinations represented by each item in the `Instance` list
+                    records_orient_list.append(record_dict)
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
         #Section: Create Dataframe
