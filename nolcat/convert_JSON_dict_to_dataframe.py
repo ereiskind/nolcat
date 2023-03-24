@@ -258,19 +258,19 @@ class ConvertJSONDictToDataframe:
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
                                             continue  # The `for type_and_value in value_for_parent` loop
-                                    elif len(record_dict['parent_authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
-                                        record_dict['parent_authors'] = record_dict['parent_authors'] + " et al."
-                                        logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                        elif len(record_dict['parent_authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
+                                            record_dict['parent_authors'] = record_dict['parent_authors'] + " et al."
+                                            logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                        else:
+                                            record_dict['parent_authors'] = record_dict['parent_authors'] + "; " + type_and_value['Name']
+                                            logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                     else:
-                                        record_dict['parent_authors'] = record_dict['parent_authors'] + "; " + type_and_value['Name']
-                                        logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
-                                else:
-                                    if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                        logging.error(f"Increase the `COUNTERData.parent_authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
-                                        return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
-                                    else:
-                                        record_dict['parent_authors'] = type_and_value['Name']
-                                        logging.debug(f"Added `COUNTERData.parent_authors` value {record_dict['parent_authors']} to `record_dict`.")
+                                        if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
+                                            logging.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
+                                            return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+                                        else:
+                                            record_dict['parent_authors'] = type_and_value['Name']
+                                            logging.debug(f"Added `COUNTERData.parent_authors` value {record_dict['parent_authors']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
