@@ -170,6 +170,7 @@ if report_type == "DR" or report_type == "TR" or report_type == "IR":
             publisher_ID_values_df = publisher_ID_values_df.drop(columns=non_publisher_ID_fields)
             publisher_ID_values_df['Type'] = "Proprietary"
             publisher_ID_values_df = publisher_ID_values_df.rename(columns={"Publisher_ID": "Value"})
+            publisher_ID_values_df = publisher_ID_values_df.replace({"`None`": None})
             publisher_ID_values_df = publisher_ID_values_df.reset_index()
             publisher_ID_values_df['repeat'] = publisher_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
             publisher_ID_values_df =  publisher_ID_values_df.loc[publisher_ID_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
@@ -190,6 +191,7 @@ if report_type == "DR":
             item_ID_values_df = item_ID_values_df.drop(columns=non_item_ID_fields)
             item_ID_values_df['Type'] = "Proprietary"
             item_ID_values_df = item_ID_values_df.rename(columns={"Proprietary_ID": "Value"})
+            item_ID_values_df = item_ID_values_df.replace({"`None`": None})
             item_ID_values_df = item_ID_values_df.reset_index()
             item_ID_values_df['repeat'] = item_ID_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
             item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
@@ -220,7 +222,7 @@ if report_type == "TR" or report_type == "IR":
             item_ID_values_df = item_ID_values_df.rename(columns={item_ID_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
 
             #Subsection: Remove Null Values and Repetitions
-            item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]
+            item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['Value'] != "`None`"]  # Because the null placeholders are targeted for removal, they don't need to be replaced
             item_ID_values_df['repeat'] = item_ID_values_df.duplicated(keep='first')
             item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
             item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
@@ -241,6 +243,7 @@ if report_type == "IR":
             author_values_df = author_values_df.drop(columns=non_author_fields)
             author_values_df['Type'] = "Author"
             author_values_df = author_values_df.rename(columns={"Authors": "Name"})
+            author_values_df = author_values_df.replace({"`None`": None})
             author_values_df = author_values_df.reset_index()
             author_values_df['repeat'] = author_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
             author_values_df =  author_values_df.loc[author_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
@@ -268,6 +271,7 @@ if report_type == "IR":
             publication_date_values_df = publication_date_values_df.drop(columns=non_publication_date_fields)
             publication_date_values_df['Type'] = "Publication_Date"
             publication_date_values_df = publication_date_values_df.rename(columns={"Publication_Date": "Value"})
+            publication_date_values_df = publication_date_values_df.replace({"`None`": None})
             publication_date_values_df = publication_date_values_df.reset_index()
             publication_date_values_df['repeat'] = publication_date_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
             publication_date_values_df =  publication_date_values_df.loc[publication_date_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
@@ -287,6 +291,7 @@ if report_type == "IR":
             article_version_values_df = article_version_values_df.drop(columns=non_article_version_fields)
             article_version_values_df['Type'] = "Article_Version"
             article_version_values_df = article_version_values_df.rename(columns={"Article_Version": "Value"})
+            article_version_values_df = article_version_values_df.replace({"`None`": None})
             article_version_values_df = article_version_values_df.reset_index()
             article_version_values_df['repeat'] = article_version_values_df.duplicated(subset=fields_used_for_groupby_operations, keep='first')
             article_version_values_df =  article_version_values_df.loc[article_version_values_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
@@ -342,7 +347,7 @@ if report_type == "IR":
             item_parent_values_df['Type'] = item_parent_values_df['Type'].map(lambda type: re.search(r'Parent_(.*)', type)[1] if isinstance(type, str) else type).replace("Title", "Item_Name").replace("Authors", "Author")
 
             #Subsection: Remove Null Values and Repetitions
-            item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]
+            item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]  # Because the null placeholders are targeted for removal, they don't need to be replaced
             item_parent_values_df['repeat'] = item_parent_values_df.duplicated(keep='first')
             item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['repeat'] == False]
             item_parent_values_df = item_parent_values_df.drop(columns=['repeat'])
@@ -483,6 +488,7 @@ final_df = joining_df.reset_index()
 final_df = final_df.drop(columns=fields_to_drop_at_end)
 if '_Publisher_ID' in list(final_df.columns):
     final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
+final_df = final_df.replace({"`None`": None})
 logging.debug(f"`final_df`:\n{final_df}")
 logging.info(f"Final JSON:\n{final_df.to_json(force_ascii=False, indent=4, orient='table', index=False)}")
 final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
