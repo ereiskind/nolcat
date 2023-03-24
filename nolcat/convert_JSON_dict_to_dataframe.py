@@ -143,7 +143,7 @@ class ConvertJSONDictToDataframe:
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                             
                             else:
-                                if value is None:  # This value handled first because `len()` of null value raises an error
+                                if value['Name'] is None:  # This value handled first because `len()` of null value raises an error
                                     record_dict['authors'] = type_and_value['Name']
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
