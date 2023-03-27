@@ -453,11 +453,14 @@ class ConvertJSONDictToDataframe:
                     #logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
         #Section: Create Dataframe
+        logging.debug(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `0 == False` returns `True` in Python
+        logging.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
         df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
         df_dtypes['platform'] = 'string'
         df_dtypes['metric_type'] = 'string'
         df_dtypes['usage_count'] = 'int'
+        logging.debug(f"`df_dtypes`: {df_dtypes}")
 
         records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
         logging.debug(f"JSON as a string:\n{records_orient_list}")
