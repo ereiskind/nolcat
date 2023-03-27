@@ -64,6 +64,38 @@ class ConvertJSONDictToDataframe:
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
 
+        #Section: Set Up Tracking of Fields to Include in `df_dtypes`
+        include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
+            'resource_name': False,
+            'publisher': False,
+            'publisher_ID': False,
+            'authors': False,
+            'publication_date': False,
+            'article_version': False,
+            'DOI': False,
+            'proprietary_ID': False,
+            'ISBN': False,
+            'print_ISSN': False,
+            'online_ISSN': False,
+            'URI': False,
+            'data_type': False,
+            'section_type': False,
+            'YOP': False,
+            'access_type': False,
+            'access_method': False,
+            'parent_title': False,
+            'parent_authors': False,
+            'parent_publication_date': False,
+            'parent_article_version': False,
+            'parent_data_Type': False,
+            'parent_DOI': False,
+            'parent_proprietary_ID': False,
+            'parent_ISBN': False,
+            'parent_print_ISSN': False,
+            'parent_online_ISSN': False,
+            'parent_URI': False,
+        }
+
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             logging.info("Starting iteration for new JSON record.")
@@ -81,6 +113,7 @@ class ConvertJSONDictToDataframe:
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['resource_name'] = value
+                        include_in_df_dtypes['resource_name'] = 'string'
                         logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                 
                 #Subsection: Capture `publisher` Value
@@ -93,6 +126,7 @@ class ConvertJSONDictToDataframe:
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['publisher'] = value
+                        include_in_df_dtypes['publisher'] = 'string'
                         logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                 
                 #Subsection: Capture `publisher_ID` Value
@@ -106,6 +140,7 @@ class ConvertJSONDictToDataframe:
                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                         else:
                             record_dict['publisher_ID'] = value[0]['Value']
+                            include_in_df_dtypes['publisher_ID'] = 'string'
                             logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     else:
                         for type_and_value in value:
@@ -115,6 +150,7 @@ class ConvertJSONDictToDataframe:
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['publisher_ID'] = type_and_value['Value']
+                                    include_in_df_dtypes['publisher_ID'] = 'string'
                                     logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                             else:
                                 continue  # The `for type_and_value in value` loop
@@ -154,6 +190,7 @@ class ConvertJSONDictToDataframe:
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['authors'] = type_and_value['Name']
+                                    include_in_df_dtypes['authors'] = 'string'
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                 
                 #Subsection: Capture `publication_date` Value
@@ -162,6 +199,7 @@ class ConvertJSONDictToDataframe:
                         if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                             try:
                                 record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                                include_in_df_dtypes['publication_date'] = True
                                 logging.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
                             except:  # In case `type_and_value['Value']` is null, which would cause the conversion to a datetime data type to return a TypeError
                                 continue  # The `for type_and_value in value` loop
@@ -171,6 +209,7 @@ class ConvertJSONDictToDataframe:
                     for type_and_value in value:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
+                            include_in_df_dtypes['article_version'] = 'string'
                             logging.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
                 
                 #Subsection: Capture Standard Identifiers
@@ -185,6 +224,7 @@ class ConvertJSONDictToDataframe:
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['DOI'] = type_and_value['Value']
+                                include_in_df_dtypes['DOI'] = 'string'
                                 logging.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
                         
                         #Subsection: Capture `proprietary_ID` Value
@@ -194,29 +234,35 @@ class ConvertJSONDictToDataframe:
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
+                                include_in_df_dtypes['proprietary_ID'] = 'string'
                                 logging.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
                             record_dict['ISBN'] = str(type_and_value['Value'])
+                            include_in_df_dtypes['ISBN'] = 'string'
                             logging.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
                             if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                 record_dict['print_ISSN'] = type_and_value['Value'].strip()
+                                include_in_df_dtypes['print_ISSN'] = 'string'
                                 logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
                             else:
                                 record_dict['print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                include_in_df_dtypes['print_ISSN'] = 'string'
                                 logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
                         
                         #Subsection: Capture `online_ISSN` Value
                         elif type_and_value['Type'] == "Online_ISSN":
                             if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                 record_dict['online_ISSN'] = type_and_value['Value'].strip()
+                                include_in_df_dtypes['online_ISSN'] = 'string'
                                 logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
                             else:
                                 record_dict['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                include_in_df_dtypes['online_ISSN'] = 'string'
                                 logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
                         
                         #Subsection: Capture `URI` Value
@@ -226,6 +272,7 @@ class ConvertJSONDictToDataframe:
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['URI'] = type_and_value['Value']
+                                include_in_df_dtypes['URI'] = 'string'
                                 logging.debug(f"Added `COUNTERData.URI` value {record_dict['URI']} to `record_dict`.")
                         else:
                             continue  # The `for type_and_value in value` loop
@@ -233,17 +280,20 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `data_type` Value
                 elif key == "Data_Type":
                     record_dict['data_type'] = value
+                    include_in_df_dtypes['data_type'] = 'string'
                     logging.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
                 
                 #Subsection: Capture `section_Type` Value
                 elif key == "Section_Type":
                     record_dict['section_type'] = value
+                    include_in_df_dtypes['section_type'] = 'string'
                     logging.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
                     try:
                         record_dict['YOP'] = int(value)  # The Int64 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
+                        include_in_df_dtypes['YOP'] = 'Int64'  # `smallint` in database; using the pandas data type here because it allows null values
                     except:
                         record_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
                     logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
@@ -251,11 +301,13 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     record_dict['access_type'] = value
+                    include_in_df_dtypes['access_type'] = 'string'
                     logging.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
                 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
                     record_dict['access_method'] = value
+                    include_in_df_dtypes['access_method'] = 'string'
                     logging.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
                 
                 #Subsection: Capture Parent Resource Metadata
@@ -272,6 +324,7 @@ class ConvertJSONDictToDataframe:
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['parent_title'] = value_for_parent
+                                include_in_df_dtypes['parent_title'] = 'string'
                                 logging.debug(f"Added `COUNTERData.parent_title` value {record_dict['parent_title']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_authors` Value
@@ -293,6 +346,7 @@ class ConvertJSONDictToDataframe:
                                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                         else:
                                             record_dict['parent_authors'] = type_and_value['Name']
+                                            include_in_df_dtypes['parent_authors'] = 'string'
                                             logging.debug(f"Added `COUNTERData.parent_authors` value {record_dict['parent_authors']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_publication_date` Value
@@ -300,6 +354,7 @@ class ConvertJSONDictToDataframe:
                             for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                                     record_dict['parent_publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                                    include_in_df_dtypes['parent_publication_date'] = True
                                     logging.debug(f"Added `COUNTERData.parent_publication_date` value {record_dict['parent_publication_date']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_article_version` Value
@@ -307,11 +362,13 @@ class ConvertJSONDictToDataframe:
                             for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                                     record_dict['parent_article_version'] = type_and_value['Value']
+                                    include_in_df_dtypes['parent_article_version'] = 'string'
                                     logging.debug(f"Added `COUNTERData.parent_article_version` value {record_dict['parent_article_version']} to `record_dict`.")
 
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
                             record_dict['parent_data_type'] = value_for_parent
+                            include_in_df_dtypes['parent_data_Type'] = 'string'
                             logging.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
@@ -324,6 +381,7 @@ class ConvertJSONDictToDataframe:
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_DOI'] = type_and_value['Value']
+                                        include_in_df_dtypes['parent_DOI'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_DOI` value {record_dict['parent_DOI']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
@@ -333,29 +391,35 @@ class ConvertJSONDictToDataframe:
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_proprietary_ID'] = type_and_value['Value']
+                                        include_in_df_dtypes['parent_proprietary_ID'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_proprietary_ID` value {record_dict['parent_proprietary_ID']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_ISBN` Value
                                 elif type_and_value['Type'] == "ISBN":
                                     record_dict['parent_ISBN'] = str(type_and_value['Value'])
+                                    include_in_df_dtypes['parent_ISBN'] = 'string'
                                     logging.debug(f"Added `COUNTERData.parent_ISBN` value {record_dict['parent_ISBN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_print_ISSN` Value
                                 elif type_and_value['Type'] == "Print_ISSN":
                                     if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                         record_dict['parent_print_ISSN'] = type_and_value['Value'].strip()
+                                        include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
                                     else:
                                         record_dict['parent_print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_online_ISSN` Value
                                 elif type_and_value['Type'] == "Online_ISSN":
                                     if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                         record_dict['parent_online_ISSN'] = type_and_value['Value'].strip()
+                                        include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
                                     else:
                                         record_dict['parent_online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
+                                        include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_URI` Value
@@ -365,6 +429,7 @@ class ConvertJSONDictToDataframe:
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_URI'] = type_and_value['Value']
+                                        include_in_df_dtypes['parent_URI'] = 'string'
                                         logging.debug(f"Added `COUNTERData.parent_URI` value {record_dict['parent_URI']} to `record_dict`.")
 
                         else:
@@ -388,63 +453,11 @@ class ConvertJSONDictToDataframe:
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
         #Section: Create Dataframe
-        df_dtypes = {
-            'platform' : 'string',
-            'metric_type' : 'string',
-            'usage_count' : 'int',
-        }
-        if record_dict.get('resource_name'):
-            df_dtypes['resource_name'] = 'string'
-        if record_dict.get('publisher'):
-            df_dtypes['publisher'] = 'string'
-        if record_dict.get('publisher_ID'):
-            df_dtypes['publisher_ID'] = 'string'
-        if record_dict.get('authors'):
-            df_dtypes['authors'] = 'string'
-        if record_dict.get('article_version'):
-            df_dtypes['article_version'] = 'string'
-        if record_dict.get('DOI'):
-            df_dtypes['DOI'] = 'string'
-        if record_dict.get('proprietary_ID'):
-            df_dtypes['proprietary_ID'] = 'string'
-        if record_dict.get('ISBN'):
-            df_dtypes['ISBN'] = 'string'
-        if record_dict.get('print_ISSN'):
-            df_dtypes['print_ISSN'] = 'string'
-        if record_dict.get('online_ISSN'):
-            df_dtypes['online_ISSN'] = 'string'
-        if record_dict.get('URI'):
-            df_dtypes['URI'] = 'string'
-        if record_dict.get('data_type'):
-            df_dtypes['data_type'] = 'string'
-        if record_dict.get('section_type'):
-            df_dtypes['section_type'] = 'string'
-        if record_dict.get('YOP'):
-            df_dtypes['YOP'] = 'Int64'  # `smallint` in database; using the pandas data type here because it allows null values
-        if record_dict.get('access_type'):
-            df_dtypes['access_type'] = 'string'
-        if record_dict.get('access_method'):
-            df_dtypes['access_method'] = 'string'
-        if record_dict.get('parent_title'):
-            df_dtypes['parent_title'] = 'string'
-        if record_dict.get('parent_authors'):
-            df_dtypes['parent_authors'] = 'string'
-        if record_dict.get('parent_article_version'):
-            df_dtypes['parent_article_version'] = 'string'
-        if record_dict.get('parent_data_type'):
-            df_dtypes['parent_data_Type'] = 'string'
-        if record_dict.get('parent_DOI'):
-            df_dtypes['parent_DOI'] = 'string'
-        if record_dict.get('parent_proprietary_ID'):
-            df_dtypes['parent_proprietary_ID'] = 'string'
-        if record_dict.get('parent_ISBN'):
-            df_dtypes['parent_ISBN'] = 'string'
-        if record_dict.get('parent_print_ISSN'):
-            df_dtypes['parent_print_ISSN'] = 'string'
-        if record_dict.get('parent_online_ISSN'):
-            df_dtypes['parent_online_ISSN'] = 'string'
-        if record_dict.get('parent_URI'):
-            df_dtypes['parent_URI'] = 'string'
+        include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `0 == False` returns `True` in Python
+        df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
+        df_dtypes['platform'] = 'string'
+        df_dtypes['metric_type'] = 'string'
+        df_dtypes['usage_count'] = 'int'
 
         records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
         logging.debug(f"JSON as a string:\n{records_orient_list}")
@@ -459,13 +472,13 @@ class ConvertJSONDictToDataframe:
 
         df = df.astype(df_dtypes)  # This sets the string data types
         logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
-        if record_dict.get('publication_date'):
+        if include_in_df_dtypes.get('publication_date'):  # Meaning the value was changed to `True`
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-        if record_dict.get('parent_publication_date'):
+        if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
