@@ -98,8 +98,7 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            logging.info("Starting iteration for new JSON record.")
-            logging.debug(record)  # The data is in a logging statement a level down because it isn't very useful for debugging
+            logging.debug(f"Starting iteration for new JSON record {record}")
             record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
@@ -454,14 +453,14 @@ class ConvertJSONDictToDataframe:
             logging.info(f"End of the iteration with the metadata {record_dict}")
 
         #Section: Create Dataframe
-        logging.debug(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        logging.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `0 == False` returns `True` in Python
         logging.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
         df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
         df_dtypes['platform'] = 'string'
         df_dtypes['metric_type'] = 'string'
         df_dtypes['usage_count'] = 'int'
-        logging.debug(f"`df_dtypes`: {df_dtypes}")
+        logging.info(f"`df_dtypes`: {df_dtypes}")
 
         records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
         logging.debug(f"JSON as a string:\n{records_orient_list}")
