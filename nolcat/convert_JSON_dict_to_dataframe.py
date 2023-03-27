@@ -63,13 +63,15 @@ class ConvertJSONDictToDataframe:
         """
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
+
+        #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            logging.info("\nStarting iteration for new JSON record.")
+            logging.info("Starting iteration for new JSON record.")
             logging.debug(record)  # The data is in a logging statement a level down because it isn't very useful for debugging
             record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
-                #Section: Capture `resource_name` Value
+                #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['resource_name'] = value
@@ -81,7 +83,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['resource_name'] = value
                         logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                 
-                #Section: Capture `publisher` Value
+                #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher'] = value
@@ -93,7 +95,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['publisher'] = value
                         logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                 
-                #Section: Capture `publisher_ID` Value
+                #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher_ID'] = value
@@ -117,7 +119,7 @@ class ConvertJSONDictToDataframe:
                             else:
                                 continue  # The `for type_and_value in value` loop
                 
-                #Section: Capture `platform` Value
+                #Subsection: Capture `platform` Value
                 elif key == "Platform":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['platform'] = value
@@ -129,7 +131,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['platform'] = value
                         logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                 
-                #Section: Capture `authors` Value
+                #Subsection: Capture `authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                     for type_and_value in value:
                         if re.match(r'[Aa]uthor', string=type_and_value['Type']):
@@ -154,7 +156,7 @@ class ConvertJSONDictToDataframe:
                                     record_dict['authors'] = type_and_value['Name']
                                     logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                 
-                #Section: Capture `publication_date` Value
+                #Subsection: Capture `publication_date` Value
                 elif key == "Item_Dates":
                     for type_and_value in value:
                         if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
@@ -164,14 +166,14 @@ class ConvertJSONDictToDataframe:
                             except:  # In case `type_and_value['Value']` is null, which would cause the conversion to a datetime data type to return a TypeError
                                 continue  # The `for type_and_value in value` loop
                 
-                #Section: Capture `article_version` Value
+                #Subsection: Capture `article_version` Value
                 elif key == "Item_Attributes":
                     for type_and_value in value:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
                             logging.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
                 
-                #Section: Capture Standard Identifiers
+                #Subsection: Capture Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
                     for type_and_value in value:
@@ -228,17 +230,17 @@ class ConvertJSONDictToDataframe:
                         else:
                             continue  # The `for type_and_value in value` loop
                 
-                #Section: Capture `data_type` Value
+                #Subsection: Capture `data_type` Value
                 elif key == "Data_Type":
                     record_dict['data_type'] = value
                     logging.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
                 
-                #Section: Capture `section_Type` Value
+                #Subsection: Capture `section_Type` Value
                 elif key == "Section_Type":
                     record_dict['section_type'] = value
                     logging.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
 
-                #Section: Capture `YOP` Value
+                #Subsection: Capture `YOP` Value
                 elif key == "YOP":
                     try:
                         record_dict['YOP'] = int(value)  # The Int64 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
@@ -246,17 +248,17 @@ class ConvertJSONDictToDataframe:
                         record_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
                     logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
                 
-                #Section: Capture `access_type` Value
+                #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     record_dict['access_type'] = value
                     logging.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
                 
-                #Section: Capture `access_method` Value
+                #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
                     record_dict['access_method'] = value
                     logging.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
                 
-                #Section: Capture Parent Resource Metadata
+                #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
                     if repr(type(value)) == "<class 'list'>" and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
@@ -472,7 +474,7 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
 
-        logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
+        logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
         return df
     
 
