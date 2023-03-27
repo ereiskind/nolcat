@@ -4465,24 +4465,21 @@ def sample_SUSHI_IR_response_dataframe():
 def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUSHI_PR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_JSON_dict).create_dataframe()
-    print(f"Dataframe `df`:\n{df}")
-    print(f"Dataframe `sample_SUSHI_PR_response_dataframe`:\n{sample_SUSHI_PR_response_dataframe}")
     assert_frame_equal(df, sample_SUSHI_PR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
 def test_create_dataframe_from_DR(sample_SUSHI_DR_response_JSON_dict, sample_SUSHI_DR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_JSON_dict).create_dataframe()
-    print(f"Dataframe `df`:\n{df}")
-    print(f"Dataframe `sample_SUSHI_DR_response_dataframe`:\n{sample_SUSHI_DR_response_dataframe}")
+    print(f"Shape--`df`\n{df.shape}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.shape}")
+    print(f"Indexes--`df`\n{df.index}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.index}")
+    print(f"Columns--`df`\n{df.columns}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.columns}")
     assert_frame_equal(df, sample_SUSHI_DR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
 def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUSHI_TR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_JSON_dict).create_dataframe()
-    print(f"Dataframe `df`:\n{df}")
-    print(f"Dataframe `sample_SUSHI_TR_response_dataframe`:\n{sample_SUSHI_TR_response_dataframe}")
     assert_frame_equal(df, sample_SUSHI_TR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 

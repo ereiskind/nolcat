@@ -450,7 +450,7 @@ class ConvertJSONDictToDataframe:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
                     records_orient_list.append(deepcopy(record_dict))  # Appending `record_dict` directly adds a reference to that variable, which changes with each iteration of the loop, meaning all the records for a given set of metadata have the `usage_date`, `metric_type`, and `usage_count` values of `record_dict` during the final iteration
-                    logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
+                    #logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
         #Section: Create Dataframe
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `0 == False` returns `True` in Python
