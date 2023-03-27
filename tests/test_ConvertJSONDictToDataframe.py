@@ -4471,9 +4471,10 @@ def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUS
 def test_create_dataframe_from_DR(sample_SUSHI_DR_response_JSON_dict, sample_SUSHI_DR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_JSON_dict).create_dataframe()
-    print(f"Shape--`df`\n{df.shape}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.shape}")
-    print(f"Indexes--`df`\n{df.index}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.index}")
-    print(f"Columns--`df`\n{df.columns}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.columns}")
+    df1 = df[['resource_name', 'publisher', 'platform', 'proprietary_ID', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date']]
+    print(f"Shape--`df1`\n{df1.shape}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.shape}")
+    print(f"Indexes--`df1`\n{df1.index}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.index}")
+    print(f"Columns--`df1`\n{df1.columns}\nand `sample_SUSHI_DR_response_dataframe`\n{sample_SUSHI_DR_response_dataframe.columns}")
     assert_frame_equal(df, sample_SUSHI_DR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
