@@ -449,7 +449,7 @@ class ConvertJSONDictToDataframe:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
                     records_orient_list.append(deepcopy(record_dict))  # Appending `record_dict` directly adds a reference to that variable, which changes with each iteration of the loop, meaning all the records for a given set of metadata have the `usage_date`, `metric_type`, and `usage_count` values of `record_dict` during the final iteration
-                    logging.debug(f"Added record {record_dict} to `COUNTERData` relation.")
+                    logging.debug(f"Added record {record_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
         #Section: Create Dataframe
         logging.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
