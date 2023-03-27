@@ -3,6 +3,7 @@ import re
 import datetime
 from dateutil import parser
 import json
+from copy import deepcopy
 import pandas as pd
 
 from .app import return_string_of_dataframe_info
@@ -381,7 +382,7 @@ class ConvertJSONDictToDataframe:
                 for instance in period_grouping['Instance']:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
-                    records_orient_list.append(record_dict)
+                    records_orient_list.append(deepcopy(record_dict))  # Appending `record_dict` directly adds a reference to that variable, which changes with each iteration of the loop, meaning all the records for a given set of metadata have the `usage_date`, `metric_type`, and `usage_count` values of `record_dict` during the final iteration
                     logging.info(f"Added record {record_dict} to `COUNTERData` relation.")
 
         #Section: Create Dataframe
