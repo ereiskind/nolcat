@@ -460,6 +460,16 @@ class ConvertJSONDictToDataframe:
         df_dtypes['metric_type'] = 'string'
         df_dtypes['usage_count'] = 'int'
         logging.info(f"`df_dtypes`: {df_dtypes}")
+        #########################################################################
+        logging.info(f"The keys in `df_dtypes`: {df_dtypes.keys()}")
+        temp = pd.read_json(
+            records_orient_list,
+            orient='records',
+            encoding='utf-8',
+            encoding_errors='backslashreplace',
+        )
+        logging.info(f"The dataframe fields: {temp.columns}")
+        #########################################################################
 
         records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
         logging.debug(f"JSON as a string:\n{records_orient_list}")
