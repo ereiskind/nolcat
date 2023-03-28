@@ -133,8 +133,6 @@ try:
 except:
     df['Begin_Date'] = pd.to_datetime(df['Begin_Date'])
     df['Begin_Date'] = df['Begin_Date'].dt.strftime('%Y-%m-%d')
-if 'YOP' in list(df.columns):
-    df['YOP'] = df['YOP'].astype('string')  # Setting the dtype to string when reading in the data means every value in the field ends with `.0`
 
 #Subsection: Put Placeholder in for Null Values
 # Null values and fields with nothing but null values cause problems and errors in groupby functions, so they're replaced with placeholder strings
