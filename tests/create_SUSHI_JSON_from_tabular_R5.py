@@ -1,4 +1,4 @@
-"""Transform Excel worksheet produced by "tests\\data\\create_JSON_base.json" into a JSON."""
+"""Transform Excel worksheet produced by "tests\\data\\create_JSON_base.json" into a JSON. This module requires pandas 1.4 or higher to run due to the bug described at https://github.com/pandas-dev/pandas/pull/43949."""
 
 import logging
 import pathlib
