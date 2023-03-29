@@ -32,12 +32,88 @@
     },
     "Report_Items": [
         {
+            "Title": "Ágora: Estudos Clássicos em Debate",
+            "Publisher": "Universidade de Aveiro",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2015,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:1598020"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0874-5498"
+                }
+            ]
+        },
+        {
+            "Title": "Ágora: Estudos Clássicos em Debate",
+            "Publisher": "Universidade de Aveiro",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2019,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:1598020"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0874-5498"
+                }
+            ]
+        },
+        {
             "Title": "Beauty",
             "Publisher": null,
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -61,96 +137,12 @@
             "Item_ID": null
         },
         {
-            "Title": "Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States",
-            "Publisher": "National Academies Press",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": "Book",
-            "YOP": "1996",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-12-01",
-                        "End_Date": "2019-12-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 10
-                        },
-                        {
-                            "Metric_Type": "Total_Item_Requests",
-                            "Count": 5
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 6
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Requests",
-                            "Count": 5
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:2269134"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-309-28655-8"
-                }
-            ]
-        },
-        {
-            "Title": "Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States",
-            "Publisher": "National Academies Press",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": null,
-            "YOP": "1996",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-12-01",
-                        "End_Date": "2019-12-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 6
-                        },
-                        {
-                            "Metric_Type": "Unique_Title_Requests",
-                            "Count": 5
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:2269134"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-309-28655-8"
-                }
-            ]
-        },
-        {
             "Title": "Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States: A Guide for Providers of Victim and Support Services",
             "Publisher": "National Academies Press",
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -220,7 +212,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -269,12 +261,168 @@
             ]
         },
         {
+            "Title": "Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States",
+            "Publisher": "National Academies Press",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": "Book",
+            "YOP": 1996,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 10
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 5
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 5
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:2269134"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-309-28655-8"
+                }
+            ]
+        },
+        {
+            "Title": "Confronting Commercial Sexual Exploitation and Sex Trafficking of Minors in the United States",
+            "Publisher": "National Academies Press",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": null,
+            "YOP": 1996,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 5
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:2269134"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-309-28655-8"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of the Middle Ages",
+            "Publisher": "James Clarke & Co.",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": "Chapter",
+            "YOP": 2002,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:188368"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-227-67931-9"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of the Middle Ages",
+            "Publisher": "James Clarke & Co.",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": null,
+            "YOP": 2002,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:188368"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-227-67931-9"
+                }
+            ]
+        },
+        {
             "Title": "ERIC",
             "Publisher": null,
             "Platform": "EBSCOhost",
             "Data_Type": "Database",
             "Section_Type": "Other",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -402,84 +550,12 @@
             "Item_ID": null
         },
         {
-            "Title": "Encyclopedia of the Middle Ages",
-            "Publisher": "James Clarke & Co.",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": "Chapter",
-            "YOP": "2002",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-09-01",
-                        "End_Date": "2019-09-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:188368"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-227-67931-9"
-                }
-            ]
-        },
-        {
-            "Title": "Encyclopedia of the Middle Ages",
-            "Publisher": "James Clarke & Co.",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": null,
-            "YOP": "2002",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-09-01",
-                        "End_Date": "2019-09-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:188368"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-227-67931-9"
-                }
-            ]
-        },
-        {
             "Title": "Learning Python",
             "Publisher": "O'Reilly Media, Inc.",
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -525,7 +601,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -563,7 +639,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -681,7 +757,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1969",
+            "YOP": 1969,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -719,7 +795,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1972",
+            "YOP": 1972,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -757,7 +833,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1976",
+            "YOP": 1976,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -827,7 +903,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1977",
+            "YOP": 1977,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -873,7 +949,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1979",
+            "YOP": 1979,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -935,7 +1011,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1980",
+            "YOP": 1980,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1053,7 +1129,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1981",
+            "YOP": 1981,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1147,7 +1223,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1982",
+            "YOP": 1982,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1193,7 +1269,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1983",
+            "YOP": 1983,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1255,7 +1331,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1984",
+            "YOP": 1984,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1317,7 +1393,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1985",
+            "YOP": 1985,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1395,7 +1471,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1986",
+            "YOP": 1986,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1465,7 +1541,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1987",
+            "YOP": 1987,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1559,7 +1635,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1988",
+            "YOP": 1988,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1653,7 +1729,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1989",
+            "YOP": 1989,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1795,7 +1871,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1990",
+            "YOP": 1990,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1873,7 +1949,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1991",
+            "YOP": 1991,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1967,7 +2043,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2061,7 +2137,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1995",
+            "YOP": 1995,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2179,7 +2255,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1996",
+            "YOP": 1996,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2225,7 +2301,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1997",
+            "YOP": 1997,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2319,7 +2395,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1998",
+            "YOP": 1998,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2413,7 +2489,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2555,7 +2631,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2721,7 +2797,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2863,7 +2939,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3005,7 +3081,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2003",
+            "YOP": 2003,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3171,7 +3247,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3313,7 +3389,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3479,7 +3555,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3645,7 +3721,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2007",
+            "YOP": 2007,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3787,7 +3863,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2008",
+            "YOP": 2008,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3929,7 +4005,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4071,7 +4147,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4237,7 +4313,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2011",
+            "YOP": 2011,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4403,7 +4479,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4569,7 +4645,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4711,7 +4787,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -4877,7 +4953,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5043,7 +5119,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5209,7 +5285,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5375,7 +5451,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5541,7 +5617,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5707,7 +5783,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5736,7 +5812,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5794,7 +5870,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1995",
+            "YOP": 1995,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5836,7 +5912,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1996",
+            "YOP": 1996,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5878,7 +5954,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1997",
+            "YOP": 1997,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5936,7 +6012,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1998",
+            "YOP": 1998,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -5978,7 +6054,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6020,7 +6096,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6062,7 +6138,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6112,7 +6188,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2003",
+            "YOP": 2003,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6210,7 +6286,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6284,7 +6360,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6358,7 +6434,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6480,7 +6556,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2007",
+            "YOP": 2007,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6578,7 +6654,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2008",
+            "YOP": 2008,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6676,7 +6752,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6822,7 +6898,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -6896,7 +6972,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2011",
+            "YOP": 2011,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7018,7 +7094,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7140,7 +7216,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7286,7 +7362,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7408,7 +7484,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7506,7 +7582,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7628,7 +7704,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7774,7 +7850,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -7944,7 +8020,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8090,7 +8166,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "2020",
+            "YOP": 2020,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8132,7 +8208,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "2021",
+            "YOP": 2021,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8222,7 +8298,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "2022",
+            "YOP": 2022,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8264,7 +8340,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8301,7 +8377,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "2021",
+            "YOP": 2021,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8343,7 +8419,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8413,7 +8489,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8467,7 +8543,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8521,7 +8597,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8567,7 +8643,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8605,7 +8681,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8675,7 +8751,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8724,12 +8800,174 @@
             ]
         },
         {
+            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
+            "Publisher": "State University of New York Press",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": "Book",
+            "YOP": 1985,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:967718"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-7914-0625-0"
+                }
+            ]
+        },
+        {
+            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
+            "Publisher": "State University of New York Press",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": "Chapter",
+            "YOP": 1985,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:967718"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-7914-0625-0"
+                }
+            ]
+        },
+        {
+            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
+            "Publisher": "State University of New York Press",
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": null,
+            "YOP": 1985,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 2
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 1
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "EBSCOhost:KBID:967718"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-7914-0625-0"
+                }
+            ]
+        },
+        {
             "Title": "The Scientific Revolution",
             "Publisher": "University of Chicago Press",
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "1996",
+            "YOP": 1996,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8791,7 +9029,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "1996",
+            "YOP": 1996,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8845,7 +9083,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "1996",
+            "YOP": 1996,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8895,7 +9133,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8929,7 +9167,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8952,6 +9190,60 @@
                     "Value": "EBSCOhost:KBID:8016659"
                 }
             ]
+        },
+        {
+            "Title": "The yellow wallpaper",
+            "Publisher": null,
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": "Chapter",
+            "YOP": 1973,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 1
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": null
+        },
+        {
+            "Title": "The yellow wallpaper",
+            "Publisher": null,
+            "Platform": "EBSCOhost",
+            "Data_Type": "Book",
+            "Section_Type": null,
+            "YOP": 1973,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 1
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": null
         },
         {
             "Title": "The Yellow Wallpaper",
@@ -8959,7 +9251,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Other",
             "Section_Type": "Other",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -8981,222 +9273,6 @@
                 }
             ],
             "Item_ID": null
-        },
-        {
-            "Title": "The yellow wallpaper",
-            "Publisher": null,
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": "Chapter",
-            "YOP": "1973",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": null
-        },
-        {
-            "Title": "The yellow wallpaper",
-            "Publisher": null,
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": null,
-            "YOP": "1973",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": null
-        },
-        {
-            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
-            "Publisher": "State University of New York Press",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": "Book",
-            "YOP": "1985",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 2
-                        },
-                        {
-                            "Metric_Type": "Total_Item_Requests",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Requests",
-                            "Count": 1
-                        }
-                    ]
-                },
-                {
-                    "Period": {
-                        "Begin_Date": "2019-12-01",
-                        "End_Date": "2019-12-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 2
-                        },
-                        {
-                            "Metric_Type": "Total_Item_Requests",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Requests",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:967718"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-7914-0625-0"
-                }
-            ]
-        },
-        {
-            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
-            "Publisher": "State University of New York Press",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": "Chapter",
-            "YOP": "1985",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:967718"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-7914-0625-0"
-                }
-            ]
-        },
-        {
-            "Title": "The ÁAbbåasid Revolution (SUNY Series in Near Eastern Studies)",
-            "Publisher": "State University of New York Press",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Book",
-            "Section_Type": null,
-            "YOP": "1985",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 2
-                        },
-                        {
-                            "Metric_Type": "Unique_Title_Requests",
-                            "Count": 1
-                        }
-                    ]
-                },
-                {
-                    "Period": {
-                        "Begin_Date": "2019-12-01",
-                        "End_Date": "2019-12-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Title_Requests",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:967718"
-                },
-                {
-                    "Type": "ISBN",
-                    "Value": "978-0-7914-0625-0"
-                }
-            ]
         },
         {
             "Title": "Whole Dog Journal",
@@ -9204,7 +9280,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9242,7 +9318,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9280,7 +9356,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9318,7 +9394,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9356,7 +9432,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9442,7 +9518,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1993",
+            "YOP": 1993,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9512,7 +9588,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9550,7 +9626,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1995",
+            "YOP": 1995,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9596,7 +9672,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1997",
+            "YOP": 1997,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9642,7 +9718,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1998",
+            "YOP": 1998,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9704,7 +9780,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9798,7 +9874,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9844,7 +9920,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9914,7 +9990,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -9960,7 +10036,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10006,7 +10082,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10052,7 +10128,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10098,7 +10174,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2008",
+            "YOP": 2008,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10168,7 +10244,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10214,7 +10290,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10260,7 +10336,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2011",
+            "YOP": 2011,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10338,7 +10414,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10408,7 +10484,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10454,7 +10530,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10516,7 +10592,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10618,7 +10694,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10688,7 +10764,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10806,7 +10882,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -10972,7 +11048,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11018,7 +11094,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11056,7 +11132,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1893",
+            "YOP": 1893,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11098,7 +11174,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1930",
+            "YOP": 1930,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11140,7 +11216,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1931",
+            "YOP": 1931,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11198,7 +11274,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1942",
+            "YOP": 1942,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11256,7 +11332,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1944",
+            "YOP": 1944,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11298,7 +11374,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1972",
+            "YOP": 1972,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11340,7 +11416,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1975",
+            "YOP": 1975,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11382,7 +11458,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1977",
+            "YOP": 1977,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11424,7 +11500,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1987",
+            "YOP": 1987,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11466,7 +11542,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1991",
+            "YOP": 1991,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11508,7 +11584,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1992",
+            "YOP": 1992,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11550,7 +11626,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1993",
+            "YOP": 1993,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11592,7 +11668,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1998",
+            "YOP": 1998,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11666,7 +11742,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11708,7 +11784,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11750,7 +11826,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11792,7 +11868,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11834,7 +11910,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2003",
+            "YOP": 2003,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11876,7 +11952,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11918,7 +11994,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -11992,7 +12068,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12042,7 +12118,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12180,7 +12256,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12254,7 +12330,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12320,7 +12396,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12370,7 +12446,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12420,7 +12496,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12470,7 +12546,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12616,7 +12692,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12786,7 +12862,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12876,7 +12952,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -12937,88 +13013,12 @@
             ]
         },
         {
-            "Title": "Ágora: Estudos Clássicos em Debate",
-            "Publisher": "Universidade de Aveiro",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Journal",
-            "Section_Type": "Article",
-            "YOP": "2015",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-10-01",
-                        "End_Date": "2019-10-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:1598020"
-                },
-                {
-                    "Type": "Print_ISSN",
-                    "Value": "0874-5498"
-                }
-            ]
-        },
-        {
-            "Title": "Ágora: Estudos Clássicos em Debate",
-            "Publisher": "Universidade de Aveiro",
-            "Platform": "EBSCOhost",
-            "Data_Type": "Journal",
-            "Section_Type": "Article",
-            "YOP": "2019",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-12-01",
-                        "End_Date": "2019-12-31"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Total_Item_Investigations",
-                            "Count": 1
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 1
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "EBSCOhost:KBID:1598020"
-                },
-                {
-                    "Type": "Print_ISSN",
-                    "Value": "0874-5498"
-                }
-            ]
-        },
-        {
             "Title": "ΕΠΙΣΤΗΜΟΝΙΚΑ ΧΡΟΝΙΚΑ",
             "Publisher": "Scientific Council of the General Hospital of Piraeus \"Tzaneion\"",
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13068,7 +13068,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2011",
+            "YOP": 2011,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13110,7 +13110,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13160,7 +13160,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13234,7 +13234,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13324,7 +13324,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13370,7 +13370,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13440,7 +13440,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13526,7 +13526,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -13596,7 +13596,7 @@
             "Platform": "EBSCOhost",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
