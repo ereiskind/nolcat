@@ -63,6 +63,7 @@ class ConvertJSONDictToDataframe:
         """
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created'])
+        logging.info(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
         include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
@@ -471,7 +472,10 @@ class ConvertJSONDictToDataframe:
             encoding_errors='backslashreplace',
         )
         logging.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
-        logging.info(f"Dataframe immediately after creation:\n{df[['publication_date', 'parent_publication_date', 'report_creation_date', 'usage_date']]}")
+        logging.info(f"Data types of `report_creation_date`:\n{df['report_creation_date'].apply(type)}")
+        logging.info(f"Data types of `publication_date`:\n{df['publication_date'].apply(type)}")
+        logging.info(f"Data types of `parent_publication_date`:\n{df['parent_publication_date'].apply(type)}")
+        logging.info(f"Data types of `usage_date`:\n{df['usage_date'].apply(type)}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
         logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
