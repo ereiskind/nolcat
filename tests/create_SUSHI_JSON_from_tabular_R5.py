@@ -507,10 +507,15 @@ final_df = final_df.sort_values(
 )
 logging.info(f"`final_df` with original record order restored:\n{final_df}")
 
+#Subsection: Organize Fields and Data Types
 final_df = final_df.drop(columns=fields_to_drop_at_end)
 if '_Publisher_ID' in list(final_df.columns):
     final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
 final_df = final_df.replace({"`None`": None})
+fields_to_update_dtypes = [field for field in fields_used_for_groupby_operations if field not in fields_to_drop_at_end]  # Fields in `final_df` not used in groupby operations are formatted as JSONs to become the nested sections of the final JSON, changing their dtypes could interfere with this
+df_dtypes = {key: value for (key, value) in df_dtypes.items() if key in fields_to_update_dtypes}  # JSON uses strings for dates
+final_df = final_df.astype(df_dtypes)
+logging.info(f"`final_df` summary info:\n{return_string_of_dataframe_info(final_df)}")
 logging.debug(f"`final_df`:\n{final_df}")
 logging.info(f"Final JSON:\n{final_df.to_json(force_ascii=False, indent=4, orient='table', index=False)}")
 final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
