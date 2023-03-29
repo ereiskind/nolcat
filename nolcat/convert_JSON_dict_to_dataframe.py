@@ -472,21 +472,21 @@ class ConvertJSONDictToDataframe:
             encoding_errors='backslashreplace',
         )
         logging.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
-        logging.info(f"Data types of `report_creation_date`:\n{df['report_creation_date'].apply(type)}")
-        logging.info(f"Data types of `publication_date`:\n{df['publication_date'].apply(type)}")
-        logging.info(f"Data types of `parent_publication_date`:\n{df['parent_publication_date'].apply(type)}")
-        logging.info(f"Data types of `usage_date`:\n{df['usage_date'].apply(type)}")
+        logging.info(f"All `report_creation_date`values are strings: {df['report_creation_date'].apply(lambda cell_value: isinstance(cell_value, str)).all()}")
+        logging.info(f"All `usage_date` values are strings: {df['usage_date'].apply(lambda cell_value: isinstance(cell_value, str)).all()}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
         logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
         # `tz_localize(None)` removes the timezone information, which is unneeded and prevents tests from passing (`datetime64[ns]` dtypes with and without timezones are considered different)
         if include_in_df_dtypes.get('publication_date'):  # Meaning the value was changed to `True`
+            logging.info(f"All `publication_date` values are strings: {df['publication_date'].apply(lambda cell_value: isinstance(cell_value, str)).all()}")
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             ).dt.tz_localize(None)
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
+            logging.info(f"All `parent_publication_date` values are strings: {df['parent_publication_date'].apply(lambda cell_value: isinstance(cell_value, str)).all()}")
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
