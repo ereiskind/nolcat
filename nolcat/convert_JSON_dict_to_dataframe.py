@@ -196,6 +196,7 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture `publication_date` Value
                 elif key == "Item_Dates":
                     for type_and_value in value:
+                        #ToDo: If value is `1753-01-01`, replace with null placeholder
                         if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                             try:
                                 record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
@@ -352,6 +353,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
                             for type_and_value in value_for_parent:
+                                #ToDo: If value is `1753-01-01`, replace with null placeholder
                                 if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                                     record_dict['parent_publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
                                     include_in_df_dtypes['parent_publication_date'] = True

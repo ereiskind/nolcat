@@ -262,8 +262,10 @@ class UploadCOUNTERReports:
                 #Subsection: Remove Time and Timezome Data from Dates
                 # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier; because this values is combined into a larger string as part of the unstacking process, changing its dtype now will not help
                 if "publication_date" in df_field_names:
+                    #ToDo: If value is `1753-01-01`, replace with null
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
                 if "parent_publication_date" in df_field_names:
+                    #ToDo: If value is `1753-01-01`, replace with null
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
 
                 #Subsection: Add `statistics_source_ID` and `report_type` Fields

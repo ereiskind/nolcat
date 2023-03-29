@@ -43,6 +43,9 @@
         "repeatCount": 10,
         "description": "Change the values in column ``Publication_Date`` to date data type"
     },
+    //ToDo: If value is `1753-01-01`, replace with null
+    //ToDo: Change parent publication date to date data type
+    //ToDo: If value is `1753-01-01`, replace with null
     {
         "op": "core/text-transform",
         "engineConfig": {
