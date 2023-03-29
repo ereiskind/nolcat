@@ -484,16 +484,16 @@ class ConvertJSONDictToDataframe:
                 df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
-            ).dt.tz_localize(None)
+            ).tz_localize(None)
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             logging.info(f"All `parent_publication_date` values are strings: {df['parent_publication_date'].apply(lambda cell_value: isinstance(cell_value, str)).all()}")
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
-            ).dt.tz_localize(None)
+            ).tz_localize(None)
         df['usage_date'] = pd.to_datetime(df['usage_date'])
-        df['report_creation_date'] = pd.to_datetime(df['report_creation_date']).dt.tz_localize(None)
+        df['report_creation_date'] = pd.to_datetime(df['report_creation_date']).tz_localize(None)
 
         logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
         return df
