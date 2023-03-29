@@ -43,9 +43,45 @@
         "repeatCount": 10,
         "description": "Change the values in column ``Publication_Date`` to date data type"
     },
-    //ToDo: If value is `1753-01-01`, replace with null
-    //ToDo: Change parent publication date to date data type
-    //ToDo: If value is `1753-01-01`, replace with null
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Publication_Date",
+        "expression": "grel:if(or(value.toString('yyyy-MM-DD')=='1000-01-01',value.toString('yyyy-MM-DD')=='1753-01-01',value.toString('yyyy-MM-DD')=='1900-01-01'),null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``Publication_Date`` if the dates are the RDBMS/spreadsheet minimum date data type values `1000-01-01`, `1753-01-01`, or `1900-01-01`"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Parent_Publication_Date",
+        "expression": "grel:value.split(\"T\")[0].toDate()",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Change the values in column ``Parent_Publication_Date`` to date data type"
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Parent_Publication_Date",
+        "expression": "grel:if(or(value.toString('yyyy-MM-DD')=='1000-01-01',value.toString('yyyy-MM-DD')=='1753-01-01',value.toString('yyyy-MM-DD')=='1900-01-01'),null,value)",
+        "onError": "keep-original",
+        "repeat": false,
+        "repeatCount": 10,
+        "description": "Null values in column ``Parent_Publication_Date`` if the dates are the RDBMS/spreadsheet minimum date data type values `1000-01-01`, `1753-01-01`, or `1900-01-01`"
+    },
     {
         "op": "core/text-transform",
         "engineConfig": {
