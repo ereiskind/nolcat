@@ -492,7 +492,21 @@ logging.debug(f"JSON with all nesting combined:\n{joining_df.to_json(force_ascii
 
 
 #Section: Create Final JSON
+#Subsection: Restore Initial Record Order
 final_df = joining_df.reset_index()
+final_df['sort'] = final_df[fields_used_for_groupby_operations].apply(
+    lambda cell_value: '|'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
+    axis='columns',
+)
+fields_to_drop_at_end.append('sort')  # So this field is removed in the next subsection
+record_reordering_dict = {metadata_string: record_sorting_dict[metadata_string] for metadata_string in final_df['sort'].tolist()}
+final_df['sort'] = final_df['sort'].replace(record_reordering_dict)
+final_df = final_df.sort_values(
+    by='sort',
+    ignore_index=True,  # This resets the record index
+)
+logging.info(f"`final_df` with original record order restored:\n{final_df}")
+
 final_df = final_df.drop(columns=fields_to_drop_at_end)
 if '_Publisher_ID' in list(final_df.columns):
     final_df = final_df.rename(columns={'_Publisher_ID': 'Publisher_ID'})
