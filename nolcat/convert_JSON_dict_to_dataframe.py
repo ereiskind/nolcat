@@ -475,25 +475,20 @@ class ConvertJSONDictToDataframe:
 
         df = df.astype(df_dtypes)  # This sets the string data types
         logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
-        # `tz_localize(None)` removes the timezone information, which is unneeded and prevents tests from passing (`datetime64[ns]` dtypes with and without timezones are considered different)
         if include_in_df_dtypes.get('publication_date'):  # Meaning the value was changed to `True`
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
-            )#.dt.tz_localize(None)
-            logging.info(f"The dtype of `df['publication_date']` is {df['publication_date'].dtype} and the dtypes of its individual values are\n{df['publication_date'].apply(type)}")
+            )
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
-            )#.dt.tz_localize(None)
-            logging.info(f"The dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and the dtypes of its individual values are\n{df['parent_publication_date'].apply(type)}")
+            )
         df['usage_date'] = pd.to_datetime(df['usage_date'])
-        logging.info(f"The dtype of `df['usage_date']` is {df['usage_date'].dtype} and the dtypes of its individual values are\n{df['usage_date'].apply(type)}")
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
-        logging.info(f"The dtype of `df['report_creation_date']` is {df['report_creation_date'].dtype} and the dtypes of its individual values are\n{df['report_creation_date'].apply(type)}")
 
         logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
         return df
