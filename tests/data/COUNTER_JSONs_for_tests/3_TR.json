@@ -37,7 +37,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -79,7 +79,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -117,7 +117,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -155,7 +155,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -197,7 +197,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -235,7 +235,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -277,7 +277,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -315,7 +315,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -393,7 +393,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": null,
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
