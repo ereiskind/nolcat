@@ -87,7 +87,7 @@ class ConvertJSONDictToDataframe:
             'parent_authors': False,
             'parent_publication_date': False,
             'parent_article_version': False,
-            'parent_data_Type': False,
+            'parent_data_type': False,
             'parent_DOI': False,
             'parent_proprietary_ID': False,
             'parent_ISBN': False,
@@ -367,7 +367,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
                             record_dict['parent_data_type'] = value_for_parent
-                            include_in_df_dtypes['parent_data_Type'] = 'string'
+                            include_in_df_dtypes['parent_data_type'] = 'string'
                             logging.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
