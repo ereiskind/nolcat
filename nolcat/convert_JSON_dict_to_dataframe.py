@@ -470,7 +470,7 @@ class ConvertJSONDictToDataframe:
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.debug(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
+        logging.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
         logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
