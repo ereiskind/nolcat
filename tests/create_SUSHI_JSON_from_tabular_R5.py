@@ -267,8 +267,6 @@ if report_type == "IR":
         fields_to_drop_at_end.append('Publication_Date')
         if not performance_join_multiindex_df['Publication_Date'].eq("`None`").all():  # If the publication date field has values
             publication_date_values_df = performance_join_multiindex_df.copy()
-            #ToDo: If value is `1753-01-01`, replace with null placeholder
-            #ToDo: If all values equaling null placeholder is not true:
             # For the `.dt` accessor function that removes the time data to work, the field must have a date data type, meaning there are no strings in the field
             publication_date_values_df['Publication_Date'] = publication_date_values_df['Publication_Date'].replace(
                 to_replace="`None`",
@@ -338,7 +336,6 @@ if report_type == "IR":
                     if not item_parent_values_df[field_name].eq("`None`").all():
                         fields_in_item_parent.append(field_name)
             if 'Parent_Publication_Date' in fields_in_item_parent:
-                #ToDo: If value is `1753-01-01`, replace with null placeholder
                 # For the `.dt` accessor function that removes the time data to work, the field must have a date data type, meaning there are no strings in the field
                 item_parent_values_df['Parent_Publication_Date'] = item_parent_values_df['Parent_Publication_Date'].replace(
                     to_replace="`None`",
