@@ -1,4 +1,5 @@
 from pathlib import Path
+import io
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -48,8 +49,9 @@ def create_app():
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
+    app.config['UPLOAD_FOLDER'] = './relation_initialization_template'  # This config sets the file that handles both Flask file downloads adn uploads, but since all input, including file uploads, is handled with WTForms, this folder is only used for storing content the user will need to download.
     csrf.init_app(app)
     db.init_app(app)
 
@@ -72,22 +74,40 @@ def create_app():
             db.create_all()
 
     #Section: Register Blueprints
-    from nolcat import annual_stats
+    try:
+        from nolcat import annual_stats
+    except:
+        from . import annual_stats
     app.register_blueprint(annual_stats.bp)
 
-    from nolcat import ingest_usage
+    try:
+        from nolcat import ingest_usage
+    except:
+        from . import ingest_usage
     app.register_blueprint(ingest_usage.bp)
 
-    from nolcat import initialization
+    try:
+        from nolcat import initialization
+    except:
+        from . import initialization
     app.register_blueprint(initialization.bp)
 
-    from nolcat import login
+    try:
+        from nolcat import login
+    except:
+        from . import login
     app.register_blueprint(login.bp)
 
-    from nolcat import view_lists
+    try:
+        from nolcat import view_lists
+    except:
+        from . import view_lists
     app.register_blueprint(view_lists.bp)
 
-    from nolcat import view_usage
+    try:
+        from nolcat import view_usage
+    except:
+        from . import view_usage
     app.register_blueprint(view_usage.bp)
 
     #Section: Create Homepage Route
@@ -127,3 +147,59 @@ def last_day_of_month(first_day_of_month):
     """
     year_and_month_string = first_day_of_month.date().isoformat()[0:-2]  # Returns an ISO date string, then takes off the last two digits
     return year_and_month_string + str(first_day_of_month.days_in_month)
+
+
+def first_new_PK_value(relation):
+    """The function for getting the next value in the primary key sequence.
+
+    The default value of the SQLAlchemy `autoincrement` argument in the field constructor method adds `AUTO_INCREMENT` to the primary key field in the data definition language. Loading values, even ones following the sequential numbering that auto-incrementation would use, alters the relation's `AUTO_INCREMENT` attribute, causing a primary key duplication error. Stopping this error requires removing auto-incrementation from the primary key fields (by setting the `autoincrement` argument in the field constructor method to `False`); without the auto-incrementation, however, the primary key values must be included as the dataframe's record index field. This function finds the highest value in the primary key field of the given relation and returns the next integer.
+
+    Args:
+        relation (str): the name of the relation being checked
+    
+    Returns:
+        int: the first primary key value in the data to be uploaded to the relation
+    """
+    if relation == 'fiscalYears':
+        PK_field = 'fiscal_year_ID'
+    elif relation == 'vendors':
+        PK_field = 'vendor_ID'
+    elif relation == 'vendorNotes':
+        PK_field = 'vendor_notes_ID'
+    elif relation == 'statisticsSources':
+        PK_field = 'statistics_source_ID'
+    elif relation == 'statisticsSourceNotes':
+        PK_field = 'statistics_source_notes_ID'
+    elif relation == 'resourceSources':
+        PK_field = 'resource_source_ID'
+    elif relation == 'resourceSourceNotes':
+        PK_field = 'resource_source_notes_ID'
+    elif relation == 'COUNTERData':
+        PK_field = 'COUNTER_data_ID'
+    
+    largest_PK_value = pd.read_sql(
+        sql=f'''
+            SELECT {PK_field} FROM {relation}
+            ORDER BY {PK_field} DESC
+            LIMIT 1;
+        ''',
+        con=db.engine,
+    )
+    largest_PK_value = largest_PK_value.iloc[0][0]
+    return int(largest_PK_value) + 1
+
+
+def return_string_of_dataframe_info(df):
+    """Returns the data output by `pandas.DataFrame.info()` as a string so the method can be used in logging statements.
+
+    The `pandas.DataFrame.info()` method forgoes returning a value in favor of printing directly to stdout; as a result, it doesn't output anything when used in a logging statement. This function captures the data traditionally output directly to stdout in a string for use in a logging statement. This function is based off the one at https://stackoverflow.com/a/39440325.
+
+    Args:
+        df (dataframe): the dataframe in the logging statement
+    
+    Returns:
+        str: the output of the `pandas.DataFrame.info()` method
+    """
+    in_memory_stream = io.StringIO()
+    df.info(buf=in_memory_stream)
+    return in_memory_stream.getvalue()

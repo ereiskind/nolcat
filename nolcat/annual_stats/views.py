@@ -25,7 +25,7 @@ def annual_stats_homepage():
             sql="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
             con=db.engine,
         )
-        form.fiscal_year.choices = list(fiscal_year_options['fiscal_year_ID', 'fiscal_year'].itertuples(index=False, name=None))
+        form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
     elif form.validate_on_submit():
         fiscal_year_PK = form.fiscal_year.data

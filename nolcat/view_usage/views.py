@@ -151,12 +151,11 @@ def use_predefined_SQL_query():
                 AND metric_type='Total_Item_Requests';
             '''
         #ToDo: Decide what other canned reports, if any, are needed
-        #ToDo: Create some queries with a single free text variable field where the entered data is used as a fuzzy search
         elif form.query_options.data == "w":
+            #ToDo: Create queries that filter on metrics with fixed vocabularies via checkboxes
+            #ToDo: Create queries where a sanitized (safe from SQL injection) free text field is fuzzily matched against a COUNTER free text field
             query = f'''
             '''
-            #ToDo: Determine how to write query and what fields to use
-            #ToDo: Figure out how to do modern string formatting safe from SQL injection
 
         df = pd.read_sql(
             sql=query,
@@ -194,8 +193,8 @@ def download_non_COUNTER_usage():
             sql=SQL_query,
             con=db.engine,
         )
-        file_download_options['field_display'] = file_download_options['statistics_source_name'] + "--FY " + file_download_options['fiscal_year']
-        form.file_download.choices = list(file_download_options['usage_file_path', 'field_display'].itertuples(index=False, name=None))
+        file_download_options['field_display'] = file_download_options[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
+        form.file_download.choices = list(file_download_options[['usage_file_path', 'field_display']].itertuples(index=False, name=None))
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         download = Path(form.file_download.data)

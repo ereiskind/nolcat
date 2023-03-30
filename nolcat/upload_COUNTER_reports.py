@@ -9,6 +9,8 @@ from flask import request
 from openpyxl import load_workbook
 import pandas as pd
 
+from .app import return_string_of_dataframe_info
+
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
 
@@ -161,7 +163,7 @@ class UploadCOUNTERReports:
                             df_field_names.append(datetime.date(field_name.year, field_name.month, 1))  # This both ensures the date is the first of the month and removes the unneeded time data
                             df_date_field_names.append(datetime.date(field_name.year, field_name.month, 1))
                         
-                        elif field_name is None and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
+                        elif (field_name is None or field_name == "" or field_name == " ") and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
                             df_field_names.append("resource_name")
                         elif field_name == "Collection" and report_type == 'MR1':
                             df_field_names.append("resource_name")
@@ -250,19 +252,25 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype=df_dtypes,
                 )
-                logging.info(f"Dataframe immediately after creation:\n{df}\n{df.info()}")
+                logging.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
                 df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
                 df = df.applymap(lambda cell_value: html.unescape(cell_value) if isinstance(cell_value, str) else cell_value)  # Reverts all HTML escaped values
 
-                #Subsection: Remove Time and Timezome Data from Dates
-                # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier; because this values is combined into a larger string as part of the unstacking process, changing its dtype now will not help
+                #Subsection: Make Publication Dates Date Only ISO Strings
+                # At this point, dates can be in multiple formats and data types, but NoLCAT doesn't need time or timezone data, and since all the metadata values are combined into a larger string as part of the unstacking process, using ISO strings or the null placeholder string is appropriate
                 if "publication_date" in df_field_names:
+                    df['publication_date'] = df['publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
                 if "parent_publication_date" in df_field_names:
+                    df['parent_publication_date'] = df['parent_publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
 
                 #Subsection: Add `statistics_source_ID` and `report_type` Fields
                 # The names of the fields are added at the same time as the fields themselves so the length of the list of field names matches the number of fields in the dataframe
@@ -429,7 +437,7 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        logging.info(f"Combined dataframe:\n{combined_df}\n{combined_df.info()}")
+        logging.info(f"Combined dataframe:\n{combined_df}\n{return_string_of_dataframe_info(combined_df)}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
@@ -439,7 +447,6 @@ class UploadCOUNTERReports:
             # usage_date retains datetime64[ns] type from heading conversion
             # usage_count is a numpy int type, let the program determine the number of bits used for storage
             'statistics_source_ID': 'int',
-            'resource_type': 'string',
         }
         if "resource_name" in combined_df_field_names:
             combined_df_dtypes['resource_name'] = 'string'
@@ -496,7 +503,7 @@ class UploadCOUNTERReports:
         if "metric_type" in combined_df_field_names:
             combined_df_dtypes['metric_type'] = 'string'
         
-        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')  #ToDo: Will ignoring data type conversion errors cause problems with loading into MySQL?
+        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],

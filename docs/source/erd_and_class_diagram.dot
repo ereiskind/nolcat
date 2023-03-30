@@ -52,8 +52,8 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
-        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
-        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+        get_statisticsSources_records [shape="Mrecord"]
+        get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
@@ -250,6 +250,17 @@ digraph erd_and_classes {
 
         // Attributes
         COUNTER_report_files
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
+    }
+
+
+    subgraph cluster_ConvertJSONDictToDataframe {
+        label="CLASS: ConvertJSONDictToDataframe"
+
+        // Attributes
+        SUSHI_JSON_dictionary
 
         // Methods
         create_dataframe [shape="Mrecord"]
