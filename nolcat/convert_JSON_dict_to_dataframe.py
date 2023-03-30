@@ -485,6 +485,8 @@ class ConvertJSONDictToDataframe:
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
+        logging.info(f"`include_in_df_dtypes['parent_publication_date']` has the value {include_in_df_dtypes['parent_publication_date']}")
+        logging.info(f"`include_in_df_dtypes.get('parent_publication_date')` is {include_in_df_dtypes.get('parent_publication_date')}")
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
