@@ -28,7 +28,7 @@ def test_GET_request_for_annual_stats_homepage(client):
 
 
 def test_GET_request_for_show_fiscal_year_details():
-    """Tests that the page displays the data from the `fiscalYears` and `annualUsageCollectionTracking` relations for the given year."""
+    """Tests that the page displays the data for the given year from the `fiscalYears` and `annualUsageCollectionTracking` relations as well as the `annual_stats.RunAnnualStatsMethodsForm`, `annual_stats.EditFiscalYearForm`, and `annual_stats.EditAUCTForm` forms."""
     #ToDo: Write test
     pass
 
