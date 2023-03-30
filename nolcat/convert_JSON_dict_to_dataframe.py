@@ -459,7 +459,7 @@ class ConvertJSONDictToDataframe:
         #Section: Create Dataframe
         logging.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `1 != False` returns `True` in Python
-        logging.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        logging.info(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
         df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
         df_dtypes['platform'] = 'string'
         df_dtypes['metric_type'] = 'string'
@@ -485,8 +485,6 @@ class ConvertJSONDictToDataframe:
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-        logging.info(f"`include_in_df_dtypes['parent_publication_date']` has the value {include_in_df_dtypes['parent_publication_date']}")
-        logging.info(f"`include_in_df_dtypes.get('parent_publication_date')` is {include_in_df_dtypes.get('parent_publication_date')}")
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
