@@ -2,6 +2,12 @@ NoLCAT Development Roadmap
 ##########################
 This page contains all the current to-dos and possible plans for the NoLCAT program.
 
+To Investigate
+**************
+This is a list of issues encountered over the course of development that require further investigation.
+
+* A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
+
 Planned Iterations
 ******************
 
