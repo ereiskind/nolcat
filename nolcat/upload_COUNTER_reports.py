@@ -263,10 +263,12 @@ class UploadCOUNTERReports:
                 # Dates are in ISO format with a UTC offset, but `to_datetime` is unable to parse them, even when the format is provided; because the time isn't needed, it's removed to make the date parsing easier; because this values is combined into a larger string as part of the unstacking process, changing its dtype now will not help
                 if "publication_date" in df_field_names:
                     #ToDo: If value is `1753-01-01`, replace with null
+                    logging.warning(f"Before the lambda, the dtype of `df['publication_date']` is {df['publication_date'].dtype} and its individual values are\n{df['publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
                     logging.warning(f"The dtype of `df['publication_date']` is {df['publication_date'].dtype} and its individual values are\n{df['publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
                 if "parent_publication_date" in df_field_names:
                     #ToDo: If value is `1753-01-01`, replace with null
+                    logging.warning(f"Before the lambda, the dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
                     logging.warning(f"The dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
 
