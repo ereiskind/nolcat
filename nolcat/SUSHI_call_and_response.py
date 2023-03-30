@@ -112,6 +112,7 @@ class SUSHICallAndResponse:
                 API_response = json.loads(API_response.content.decode('utf-8'))
             except:
                 API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform values that don't decode as JSONs (generally lists)
+
             if repr(type(API_response)) == "<class 'dict'>":
                 logging.debug("The returned text was converted to a dictionary.")
             elif repr(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
@@ -144,6 +145,7 @@ class SUSHICallAndResponse:
             return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
       
         logging.info(f"SUSHI data converted to {repr(type(API_response))}")
+        logging.debug(f"SUSHI data:\n{API_response}")
 
 
         #Section: Check for SUSHI Error Codes
