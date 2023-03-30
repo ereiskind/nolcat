@@ -63,7 +63,7 @@ class ConvertJSONDictToDataframe:
         """
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
-        logging.info(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
+        logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
         include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
