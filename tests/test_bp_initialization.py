@@ -1,89 +1,83 @@
 """Tests the routes in the `initialization` blueprint."""
 
 import pytest
+from pathlib import Path
+import os
+from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.initialization import *
 
 
-@pytest.fixture
-def flask_client():
-    """Creates an instance of the Flask web app for testing."""
-    app = create_app()
-    app.testing = True  # Lets exceptions come through to test client
-    with app.test_client() as client:
-        yield client
+def test_download_file():
+    """Tests the route enabling file downloads."""
+    #ToDo: How can this route be tested?
+    pass
 
 
-#ToDo: Create test rendering page at `collect_initial_relation_data()` without submitting data
-    #ToDo: This is just showing a page--is this test needed?
+def test_GET_request_for_collect_initial_relation_data(client):
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    #Section: Get Data from `GET` Requested Page
+    homepage = client.get('/initialization/')
+    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+
+    #Section: Get Data from HTML File
+    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+
+    assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-#ToDo: @pytest.mark.dependency()
-#ToDo: Create test for collecting data by uploading CSVs in `collect_initial_relation_data()` 
-    #ToDo: Create files with same data that's in `tests\bin\fixture_data.xlsx` aka the data in `conftest.py`
-    #ToDo: Submit the files to the forms on the page (via Selenium?)
-    #ToDo: Confirm that the form submission and conversion to dataframes were successful by comparing variables containing data from forms as dataframes to files used for submitting data and/or `conftest.py`
+@pytest.mark.dependency()
+def test_collect_initial_relation_data():
+    """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+    #ToDo: Get the fixtures representing the relations in `conftest.py` to serve as CSVs being uploaded into the rendered form
+    #ToDo: Submit the files to the form on the page
+    #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
+    pass
 
 
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_CSV_upload'])
-#ToDo: Create test for loading data collected via CSV into database in `collect_initial_relation_data()`
-    #ToDo: Create files with same data that's in `tests\bin\fixture_data.xlsx` aka the data in `conftest.py`
-    #ToDo: Submit the files to the forms on the page (via Selenium?)
-    #ToDo: At return statement for function/redirect to new page, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
-
-
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_CSV_upload'])--if moved to a different module, could this test be preceded by populating the database with known values?
-#ToDo: @pytest.mark.dependency()
-#ToDo: Create test for creation of the `annualUsageCollectionTracking` relation template in `collect_AUCT_and_historical_COUNTER_data()`
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
+    """Test creating the AUCT relation template CSV."""
     #ToDo: Enter route function with `if request.method == 'GET':`
     #ToDo: Create CSV file (function through `CSV_file.close()`)
     #ToDo: Compare CSV file to contents of existing CSV file which aligns with what result should be saved in `tests` folder
-    
-
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_creating_AUCT_template'])
-#ToDo: Create test confirming the `annualUsageCollectionTracking` relation template can be uploaded in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Enter route function `collect_AUCT_and_historical_COUNTER_data()` with `if request.method == 'GET':`
-    #ToDo: Let the page at `initial-data-upload-2.html` render
-    #ToDo: Download the AUCT template via the link on the page (via Selenium?)
-    #ToDo: Compare downloaded file to file which matches what result should be saved in `tests` folder
+    pass
 
 
-#ToDo: @pytest.mark.dependency()
-#ToDo: Create test for collecting data by uploading CSVs in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Create CSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
-    #ToDo: Let the page at `initial-data-upload-2.html` render
-    #ToDo: Submit the file to the appropriate form on the page (via Selenium?)
-    #ToDo: Confirm that the form submission and conversion to a dataframe was successful by comparing variable containing data from form as a dataframe to file used for submitting data
+@pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
+def test_collect_AUCT_and_historical_COUNTER_data():
+    """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    #ToDo: Get the fixture representing the AUCT relation in `conftest.py` to serve as CSVs being uploaded into the rendered form
+    #ToDo: Get other files to serve as temp tabular COUNTER report files
+    #ToDo: Submit the files to the appropriate forms on the page
+    #ToDo: At or after function return statement/redirect, query database for `annualUsageCollectionTracking` and `COUNTERData` relations and ensure results match files used for submitting data and/or `conftest.py`
+    pass
 
 
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_AUCT_CSV_upload'])
-#ToDo: Create test for loading data collected via CSV into database in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Create CSV for AUCT with same data that's in `tests\bin\fixture_data.xlsx`
-    #ToDo: Let the page at `initial-data-upload-2.html` render
-    #ToDo: Submit the file to the appropriate form on the page (via Selenium?)
-    #ToDo: Upload AUCT data to database
-    #ToDo: Check success by querying database for AUCT relation to ensure results match file used for submitting data
+@pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
+def test_GET_request_for_upload_historical_non_COUNTER_usage():
+    """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
+    #ToDo: Render the page
+    #ToDo: Compare the fields in the form on the page to a static list of the test data values that meet the requirements
+    pass
 
 
-#ToDo: @pytest.mark.dependency()
-#ToDo: Create test confirming the multi-file upload in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Upload all files in `tests\data\sample_COUNTER_data` into the appropriate form field
-    #ToDo: Confirm an object of the correct type ("<class 'werkzeug.datastructures.ImmutableMultiDict'>"?) is created
+@pytest.mark.dependency(depends=['test_GET_request_for_upload_historical_non_COUNTER_usage'])
+def test_upload_historical_non_COUNTER_usage():
+    """Tests uploading the files with non-COUNTER usage statistics."""
+    #ToDo: Get the file paths out of the AUCT relation
+    #ToDo: For each file path, get the file at that path and compare its contents to the test data file used to create it
+    pass
 
 
-#ALERT: `UploadCOUNTERReports.create_dataframe()` turns Excel workbooks into dataframes; revise tests in light of this and changes to module being tested
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_multiple_file_upload'])
-#ToDo: @pytest.mark.dependency()
-#ToDo: Create test confirming the creation of the `RawCOUNTERReport` object from the uploaded COUNTER reports in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Upload all files in `tests\data\sample_COUNTER_data` into the appropriate form field
-    #ToDo: Use `RawCOUNTERReport` constructor
-    #ToDo: Compare constructor result to file containing data matching what the result should be
-
-
-#ToDo: @pytest.mark.dependency(depends=['name_of_test_function_for_creating_RawCOUNTERReport_object'])
-#ToDo: Create test confirming the `RawCOUNTERReport` object is saved to a temp file in `collect_AUCT_and_historical_COUNTER_data()`
-    #ToDo: Upload all files in `tests\data\sample_COUNTER_data` into the appropriate form field
-    #ToDo: Run the route function through the redirect
-    #ToDo: Compare the contents of the file that was saved by the route function to the file containing data matching what the result should be
+def test_data_load_complete():
+    """Tests calling the route and subsequently rendering the page."""
+    #ToDo: Write test once this route contains content for displaying the newly uploaded data in the browser
+    pass

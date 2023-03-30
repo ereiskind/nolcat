@@ -1,7 +1,0 @@
-from flask import Blueprint
-
-bp = Blueprint('view_vendors', __name__, template_folder='templates', url_prefix='/view_vendors')
-
-from . import views
-
-#ToDo: Create `forms.py`

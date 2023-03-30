@@ -52,8 +52,8 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
-        get_SUSHI_credentials_from_Alma [shape="Mrecord"]
-        get_SUSHI_credentials_from_JSON [shape="Mrecord"]
+        get_statisticsSources_records [shape="Mrecord"]
+        get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
@@ -181,100 +181,51 @@ digraph erd_and_classes {
     }
 
 
-    subgraph cluster_resources {
-        label="resources"
+    subgraph cluster_COUNTERData {
+        label="COUNTERData"
 
         // Attributes
-        resource_ID [shape="note"]
-        data_type // The initial list from R4 reports will have the less specific R4 types derived from the type of report itself. Should the R5 types overwrite these values or go in their own field?
-        __section_type // This is in R5 IR only-how to add it? Does it go here?
-        note
-
-        // Methods
-    }
-
-
-    subgraph cluster_resourceMetadata {
-        label="resourceMetadata"
-
-        // Attributes
-        resource_metadata_ID [shape="note"]
-        metadata_field
-        metadata_value [
-            shape="record"
-            label="\N|title (R4)|title (TR)|database (DR)|item (IR)|DOI|ISBN|print ISSN|online ISSN"
-        ]
-        default
-        resource_ID_in_resourceMetadata [
-            label="resource_ID"
+        COUNTER_data_ID [shape="note"]
+        statistics_source_ID_in_COUNTERData [
+            label="statistics_source_ID"
             shape="folder"
         ]
-
-        // Methods
-    }
-
-
-    subgraph cluster_resourcePlatforms {
-        label="resourcePlatforms"
-
-        // Attributes
-        resource_platform_ID [shape="note"]
-        publisher // From the COUNTER report
-        publisher_ID // This is found in R5 only—how to add it?
-        platform [
-            shape="record"
-            label="\N|user interfaces"
-        ]
+        resource_name
+        __report_type
+        publisher
+        publisher_ID
+        platform
+        __authors
         __publication_date
         __article_version
+        DOI
         proprietary_ID
-        __URI // This is found in R5 TR, IR only—how to add it?
-        interface [shape="folder"] // This is interface in the Alma sense--the FK for Statistics_Source
-        resource_ID_in_resourcePlatforms [
-            label="resource_ID"
-            shape="folder"
-        ]
-
-        // Methods
-    }
-
-
-    subgraph cluster_usageData {
-        label="usageData"
-
-        // Nouns: Classes or Attributes
-        usage_data_ID [shape="note"]
-        resource_platform_ID_in_usageData [
-            label="resource_platform_ID"
-            shape="folder"
-        ]
-        __metric_type
-        __usage_date
-        usage_count [
-            shape="record"
-            label="\N|usage stats|e-resources usage numbers"
-        ]
+        ISBN
+        print_ISSN
+        online_ISSN
+        __URI
+        data_type
+        __section_type
         __YOP
         __access_type
         __access_method
-        data_type
-        __section_type
-        __report_creation_date // For SUSHI harvested R5 reports only
-        
+        parent_title
+        __parent_authors
+        __parent_publication_date
+        __parent_article_version
+        parent_data_type
+        parent_DOI
+        parent_proprietary_ID
+        parent_ISBN
+        parent_print_ISSN
+        parent_online_ISSN
+        __parent_URI
+        __metric_type
+        __usage_date
+        usage_count
+        __report_creation_date
+
         // Methods
-    }
-
-
-    subgraph cluster_RawCOUNTERReport {
-        label="CLASS: RawCOUNTERReport"
-
-        // Attributes
-        report_dataframe
-
-        // Methods
-        _create_normalized_resource_data_argument [shape="Mrecord"]
-        perform_deduplication_matching [shape="Mrecord"]
-        load_data_into_database [shape="Mrecord"]
     }
 
 
@@ -305,6 +256,17 @@ digraph erd_and_classes {
     }
 
 
+    subgraph cluster_ConvertJSONDictToDataframe {
+        label="CLASS: ConvertJSONDictToDataframe"
+
+        // Attributes
+        SUSHI_JSON_dictionary
+
+        // Methods
+        create_dataframe [shape="Mrecord"]
+    }
+
+
     subgraph cluster_Blueprints {
         label="CLASS: Blueprints"
 
@@ -324,21 +286,13 @@ digraph erd_and_classes {
             shape="record"
             label="\N|librarians (as users)"
         ]
-        view_resources [
-            shape="record"
-            label="\N"
-        ]
-        view_sources [
+        view_lists [
             shape="record"
             label="\N"
         ]
         view_usage [
             shape="record"
             label="\N|COUNTER stats"
-        ]
-        view_vendors [
-            shape="record"
-            label="\N"
         ]
     }
 
@@ -405,7 +359,7 @@ digraph erd_and_classes {
     ]
 
 
-    statistics_source_ID -> interface [
+    statistics_source_ID -> statistics_source_ID_in_COUNTERData [
         dir="both"
         arrowhead="crowodot"
         arrowtail="teetee"
@@ -422,27 +376,6 @@ digraph erd_and_classes {
     resource_source_ID -> resource_source_ID_in_resourceSourceNotes [
         dir="both"
         arrowhead="crowodot"
-        arrowtail="teetee"
-    ]
-
-
-    resource_ID -> resource_ID_in_resourceMetadata [
-        dir="both"
-        arrowhead="crowtee"
-        arrowtail="teetee"
-    ]
-
-
-    resource_ID -> resource_ID_in_resourcePlatforms [
-        dir="both"
-        arrowhead="crowodot" // Platforms are normalized in this relation; they don't connect to individual resources
-        arrowtail="teetee"
-    ]
-
-
-    resource_platform_ID -> resource_platform_ID_in_usageData [
-        dir="both"
-        arrowhead="crowtee"
         arrowtail="teetee"
     ]
 

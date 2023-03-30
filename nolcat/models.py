@@ -2,41 +2,46 @@
 
 import logging
 from pathlib import Path
-import os
 import sys
 import json
-from sqlalchemy import Column
-from sqlalchemy import Boolean, Date, DateTime, Enum, Integer, SmallInteger, String, Text
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+import re
+import datetime
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
+import pandas as pd
+from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
+from .app import first_new_PK_value
+from .SUSHI_call_and_response import SUSHICallAndResponse
+from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
-#ToDo: Should the values in the `__table_args__` dictionaries be f-strings referencing `Database_Credentials.Database`?
 
 logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
 
 
+# Using field length constants ensures the lengths being checked for in `ConvertJSONDictToDataframe` are the lengths used in the database
+RESOURCE_NAME_LENGTH = ConvertJSONDictToDataframe.RESOURCE_NAME_LENGTH
+PUBLISHER_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_LENGTH
+PUBLISHER_ID_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_ID_LENGTH
+PLATFORM_LENGTH = ConvertJSONDictToDataframe.PLATFORM_LENGTH
+AUTHORS_LENGTH = ConvertJSONDictToDataframe.AUTHORS_LENGTH
+DOI_LENGTH = ConvertJSONDictToDataframe.DOI_LENGTH
+PROPRIETARY_ID_LENGTH = ConvertJSONDictToDataframe.PROPRIETARY_ID_LENGTH
+URI_LENGTH = ConvertJSONDictToDataframe.URI_LENGTH
+
+
 def PATH_TO_CREDENTIALS_FILE():
-    """Contains the constant for the path to the SUSHI credentials file.
+    """Provides the file path to the SUSHI credentials file as a string.
     
-    This constant is stored in a function because different contexts have the R5 SUSHI credentials file in different locations. In the AWS container, it's in this `nolcat` folder; for FSU Libraries employees working on the repo locally, the file can be accessed through the eResources shared network drive, conventionally assigned the drive letter `J` on Windows. In test modules for classes that use this constant, the first function is a fixture that will skip all other tests in the module if the function doesn't return a string.
+    The SUSHI credentials are stored in a JSON file with a fixed location set by the Dockerfile that builds the `nolcat` container in the AWS image; the function's name is capitalized to reflect its nature as a constant. It's placed within a function for error handling--if the file can't be found, the program being run will exit cleanly.
     
     Returns:
         str: the absolute path to the R5 SUSHI credentials file
     """
-    AWS_path = Path(os.path.abspath(os.path.dirname(__file__))) / Path('R5_SUSHI_credentials.json')
-    if AWS_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in AWS at `{AWS_path}`.")
-        return str(AWS_path)
-
-    library_network_path = Path('J:', 'nolcat_containers', 'nolcat_build_files', 'database_build_files', 'R5_SUSHI_credentials.json')
-    if library_network_path.exists():
-        logging.debug(f"The R5 SUSHI credentials file is in the FSU Libraries networked drive at `{library_network_path}`.")
-        return str(library_network_path)
-
+    file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
+    if file_path.exists():
+        logging.debug(f"The R5 SUSHI credentials file was found at at `{file_path}`.")
+        return str(file_path)
     logging.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()
 
@@ -58,18 +63,17 @@ class FiscalYears(db.Model):
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
     Methods:
-        calculate_ACRL_60b: #ToDo: Copy first line of docstring here
-        calculate_ACRL_63: #ToDo: Copy first line of docstring here
-        calculate_ARL_18: #ToDo: Copy first line of docstring here
-        calculate_ARL_19: #ToDo: Copy first line of docstring here
-        calculate_ARL_20: #ToDo: Copy first line of docstring here
+        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
+        calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
+        calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
+        calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
+        calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
         create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
-        collect_fiscal_year_usage_statistics: A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
-    #ToDo: On July 1 every year, a new record needs to be added to fiscalYears; how can that be set to happen automatically?
     __tablename__ = 'fiscalYears'
 
-    fiscal_year_ID = db.Column(db.Integer, primary_key=True)
+    fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     fiscal_year = db.Column(db.String(4))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
@@ -81,7 +85,7 @@ class FiscalYears(db.Model):
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
-    fiscal_years_FK = db.relationship('ChildRelation', backref='FiscalYearsFK')
+    FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='fiscalYears')
 
 
     def __repr__(self):
@@ -92,27 +96,131 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def calculate_ACRL_60b(self):
-        pass
+        """This method calculates the value of ACRL question 60b for the given fiscal year.
+
+        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+
+        Returns:
+            int: the answer to ACRL 60b
+        """
+        TR_B1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_B1_sum = TR_B1_df.iloc[0][0]
+        logging.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            ''',
+            con=db.engine,
+        )
+        IR_M1_sum = IR_M1_df.iloc[0][0]
+        logging.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        TR_J1_df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        TR_J1_sum = TR_J1_df.iloc[0][0]
+        logging.debug(f"The e-serials sum query returned\n{TR_J1_df}\nfrom which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")
+        
+        return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
 
     @hybrid_method
     def calculate_ACRL_63(self):
-        pass
+        """This method calculates the value of ACRL question 63 for the given fiscal year.
+
+        ACRL 60b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 63
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
     def calculate_ARL_18(self):
-        pass
+        """This method calculates the value of ARL question 18 for the given fiscal year.
+
+        ARL 18 is the "Number of successful full-text article requests (journals)."
+
+        Returns:
+            int: the answer to ARL 18
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
     
     @hybrid_method
     def calculate_ARL_19(self):
-        pass
+        """This method calculates the value of ARL question 19 for the given fiscal year.
+
+        ARL 19 is the "Number of regular searches (databases)."
+
+        Returns:
+            int: the answer to ARL 19
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
     def calculate_ARL_20(self):
-        pass
+        """This method calculates the value of ARL question 20 for the given fiscal year.
+
+        ARL 20 is the "Number of federated searches (databases)."
+
+        Returns:
+            int: the answer to ARL 20
+        """
+        df = pd.read_sql(
+            sql=f'''
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The sum query returned (type {type(df)}):\n{df}")
+        return df.iloc[0][0]
 
 
     @hybrid_method
@@ -125,20 +233,32 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def collect_fiscal_year_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for all of a fiscal year's usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage for the given fiscal year
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: dfs.append(df)
+            #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
+            #ToDo: return f"The load for FY {self.fiscal_year} was a success."
+        #ToDo: except Exception as e:
+            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {format(error)}")
+            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {format(error)}"
         pass
 
 
@@ -151,17 +271,19 @@ class Vendors(db.Model):
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
 
     Methods:
-        get_SUSHI_credentials_from_Alma: #ToDo: Copy first line of docstring here
-        get_SUSHI_credentials_from_JSON: #ToDo: Copy first line of docstring here
+        get_statisticsSources_records: Shows the records for all the statistics sources associated with the vendor.
+        get_resourceSources_records: Shows the records for all the resource sources associated with the vendor.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'vendors'
 
-    vendor_ID = db.Column(db.Integer, primary_key=True)
+    vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     vendor_name = db.Column(db.String(80))
     alma_vendor_code = db.Column(db.String(10))
 
-    vendors_FK = db.relationship('ChildRelation', backref='VendorsFK')
+    FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
+    FK_in_StatisticsSources = db.relationship('StatisticsSources', backref='vendors')
+    FK_in_ResourceSources = db.relationship('ResourceSources', backref='vendors')
 
 
     def __repr__(self):
@@ -171,12 +293,51 @@ class Vendors(db.Model):
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_Alma(self):
+    def get_statisticsSources_records(self):
+        """Shows the records for all the statistics sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `statisticsSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             statistics_source_ID,
+        #ToDo:             statistics_source_name,
+        #ToDo:             statistics_source_retrieval_code
+        #ToDo:         FROM statisticsSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='statistics_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 
     @hybrid_method
-    def get_SUSHI_credentials_from_JSON(self):
+    def get_resourceSources_records(self):
+        """Shows the records for all the resource sources associated with the vendor.
+
+        Returns:
+            dataframe: a filtered copy of the `resourceSources` relation
+        """
+        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
+        #ToDo: df = pd.read_sql(
+        #ToDo:     sql=f'''
+        #ToDo:         SELECT
+        #ToDo:             resource_source_ID,
+        #ToDo:             resource_source_name,
+        #ToDo:             source_in_use,
+        #ToDo:             use_stop_date
+        #ToDo:         FROM resourceSources
+        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:     ''',
+        #ToDo:     con=db.engine,
+        #ToDo:     index_col='resource_source_ID',
+        #ToDo: )
+        #ToDo: return df
         pass
 
 
@@ -198,7 +359,7 @@ class VendorNotes(db.Model):
     """
     __tablename__ = 'vendorNotes'
 
-    vendor_notes_ID = db.Column(db.Integer, primary_key=True)
+    vendor_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -222,26 +383,29 @@ class StatisticsSources(db.Model):
     
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
-        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
-        collect_usage_statistics: A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
-        upload_R4_report: #ToDo: Copy first line of docstring here
-        upload_R5_report: #ToDo: Copy first line of docstring here
+        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
+        collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'statisticsSources'
 
-    statistics_source_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     statistics_source_name = db.Column(db.String(100))
     statistics_source_retrieval_code = db.Column(db.String(30))
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
-    statistics_sources_FK = db.relationship('ChildRelation', backref='StatisticsSourcesFK')
+    FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
+    FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
+    FK_in_AUCT = db.relationship('AnnualUsageCollectionTracking', backref='statisticsSources')
+    FK_in_COUNTERData = db.relationship('COUNTERData', backref='statisticsSources')
 
 
     def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Should the name of the vendor be returned instead of or in addition to the ID?
-        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
+        """The printable representation of a `StatisticsSources` instance.
+        
+        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item form that list.
+        """
+        return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
 
 
     @hybrid_method
@@ -257,33 +421,34 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
             TBD: a data type that can be passed into Flask for display to the user
         """
-        #ToDo: Determine if info for API calls is coming from the Alma API or a JSON file saved in a secure location
+        logging.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
             logging.debug("JSON with SUSHI credentials loaded.")
-            for vendor in SUSHI_data_file:
-                for stats_source in vendor:
+            for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
+                for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
+                    logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
-                            URL = stats_source['online_location'],
-                            customer_id = stats_source['user_id']
+                            URL = stats_source['statistics']['online_location'],
+                            customer_id = stats_source['statistics']['user_id']
                         )
 
                         try:
-                            credentials['requestor_id'] = stats_source['user_password']
+                            credentials['requestor_id'] = stats_source['statistics']['user_password']
                         except:
                             pass
 
                         try:
-                            credentials['api_key'] = stats_source['user_pass_note']
+                            credentials['api_key'] = stats_source['statistics']['user_pass_note']
                         except:
                             pass
 
                         try:
-                            credentials['platform'] = stats_source['delivery_address']
+                            credentials['platform'] = stats_source['statistics']['delivery_address']
                         except:
                             pass
 
@@ -296,14 +461,14 @@ class StatisticsSources(db.Model):
             logging.debug(f"Returning the credentials {credentials} for a SUSHI API call.")
             return credentials
         else:
-            return None  #ToDo: Change to a way to display the `credentials` values to the user via Flask
+            return f"ToDo: Display {credentials} in Flask"  #ToDo: Change to a way to display the `credentials` values to the user via Flask
 
 
     @hybrid_method
     def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
-        """Collects the COUNTER R5 reports for the given statistics source and loads it into the database.
+        """Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
-        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a RawCOUNTERReport object for loading into the database. This is a private method meant to be called by other methods which will provide additional context at the method call and wrap the result in the RawCOUNTERReport class.
+        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
@@ -313,112 +478,154 @@ class StatisticsSources(db.Model):
             dataframe: a dataframe containing all of the R5 COUNTER data
         """
         #Section: Get API Call URL and Parameters
-        #ToDo: SUSHI_info = self.statistics_source_retrieval_code.fetch_SUSHI_information()
-        #ToDo: SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
+        SUSHI_info = self.fetch_SUSHI_information()
+        logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
+        SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        logging.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
 
         #Section: Confirm SUSHI API Functionality
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #Alert: MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable--how should this be handled so that it can pass through?
-
+        SUSHI_status_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
+            pass
+        #ToDo: Allen Press raises error `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?customer_id=786-26-602&requestor_id=lib-eresources%40fsu.edu&begin_date=2023-01&end_date=2023-01 (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`; can requests ignore the specific error?
+        elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
+            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
+            pass
 
         #Section: Get List of Resources
         #Subsection: Make API Call
-        #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
-        #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-        #ToDo: If a single-item dict with the key "reports" is returned, iterate through the list so the ultimate result is all_available_reports = a list of all available reports
+        SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+        if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
+            logging.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
+            all_available_reports = []
+            for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
+                for report_details_dict in report_call_response:
+                    for report_detail_keys, report_detail_values in report_details_dict.items():
+                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                            all_available_reports.append(report_detail_values)
+            logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
+        elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
+            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+        else:
+            logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
+            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
 
         #Subsection: Get List of Master Reports
-        #ToDo: available_reports = [report for report in all_available_reports if report not matching regex /\w{2}_\w{2}/]
-        #ToDo: available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+        available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
+        logging.debug(f"Master reports provided by {self.statistics_source_name}: {available_master_reports}")
 
         #Subsection: Add Any Standard Reports Not Corresponding to a Master Report
-        #ToDo: represented_by_master_report = set()
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: for report in available_reports:
-                #ToDo: if report[0:2] == master_report:
-                    #ToDo: Add report to represented_by_master_report
-        #ToDo: not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
-        #ToDo: Figure out inspecting to see if pulling usage from reports in not_represented_by_master_report is appropriate
+        represented_by_master_report = set()
+        for master_report in available_master_reports:
+            for report in available_reports:
+                if report[0:2] == master_report:
+                    represented_by_master_report.add(report)
+        not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
+        if len(not_represented_by_master_report) > 0:  # Logging statement only appears if it would include content
+            logging.debug(f"Standard reports lacking corresponding master reports provided by {self.statistics_source_name}: {not_represented_by_master_report}")
 
 
         #Section: Make Master Report SUSHI Calls
         #Subsection: Add Date Parameters
-        #ToDo: SUSHI_parameters['begin_date'] = usage_start_date
-        #toDo: SUSHI_parameters['end_date'] = usage_end_date
+        SUSHI_parameters['begin_date'] = usage_start_date
+        SUSHI_parameters['end_date'] = usage_end_date
 
         #Subsection: Set Up Loop Through Master Reports
-        #ToDo: master_report_dataframes = []
-        #ToDo: for master_report in available_master_reports:
-            #ToDo: master_report_name = master_report short name in uppercase letters
+        master_report_dataframes = []
+        for master_report in available_master_reports:
+            master_report_name = master_report.upper()
+            logging.info(f"Making SUSHI calls for {self.statistics_source_name} for report {master_report_name}.")
 
             #Subsection: Check if Usage Is Already in Database
-            #ToDo: for month in <the range of months the usage time span represents>
-                #ToDo: Get number of records in usage data relation with self.statistics_source_ID, the month, and master_report
-                #ToDo: If the above returns data
-                    #ToDo: Ask if data should be loaded
-            #ToDo: If any months shouldn't be loaded, check if the date range is still contiguous; if not, figure out a way to make call as many times as necessary to call for all dates that need to be pulled
+            #ToDo: months_to_exclude_from_harvest = []
+            #for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):  # rrule generates a object that can be unpacked into a list of datetime objects representing dates and/or times occurring on a recurring schedule
+            #    date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
+            #    number_of_records = pd.read_sql(
+            #        sql=f'''
+            #            SELECT COUNT(*) FROM COUNTERData
+            #            WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
+            #        ''',
+            #        con=db.engine,  #ALERT: In testing, causing `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+            #    )
+            #    logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
+            #    if number_of_records.iloc[0][0] > 0:
+            #        logging.warning(f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
+            #        return f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
+                    #ToDo: Use Flask to ask if data should be loaded, and if not, `months_to_exclude_from_harvest.append(month_being_checked)`
+            #ToDo: if len(months_to_exclude_from_harvest) > 0:
+                #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
+                #ToDo: If it's multiple ranges, how will that iteration be initiated from here?
 
             #Subsection: Add Parameters for Master Report Type
-            #ToDo: if master_report_name == "PR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "DR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-                    #ToDo: try:
-                        #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "TR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-                #ToDo: try:
-                    #ToDo: del SUSHI_parameters["include_parent_details"]
-            #ToDo: if master_report_name == "IR":
-                #ToDo: SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type"
-                #ToDo: SUSHI_parameters["include_parent_details"] = "True"
+            if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
+                del SUSHI_parameters["include_parent_details"]
+            
+            if master_report_name == "PR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "DR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif master_report_name == "TR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            elif master_report_name == "IR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                SUSHI_parameters["include_parent_details"] = "True"
+            else:
+                logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name}.")
             
             #Subsection: Make Master Report API Call
-            #ToDo: SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
-            #ToDo: If a single-item dict with the key `ERROR` is returned, there was a problem--exit the function, providing information about the problem
-            #ToDo: If a JSON-like dictionary is returned, convert it into a dataframe, making the field labels lowercase
-            #ALERT: `RawCOUNTERReport` requires the JSON (from the API) be converted into a dataframe
-                #ToDo: Old note says "TR can contain item listed with Section_Type value and without, creating duplication issue"--does the JSON to dataframe conversion need to include a check for this?
-            #ToDo: master_report_dataframes.append(dataframe created from JSON-like dictionary)
+            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
+            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+                logging.error(f"The call to the `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+            logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
+            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            if df.empty:
+                continue  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database; a `return` statement here would keep any other valid reports from being pulled and processed
+            df['statistics_source_ID'] = self.statistics_source_ID
+            df['report_type'] = master_report_name
+            master_report_dataframes.append(df)
         
 
         #Section: Return a Single Dataframe
-        #ToDo: return pd.concat(master_report_dataframes)
-        pass
+        return pd.concat(master_report_dataframes)
 
 
     @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
-        """A method invoking the RawCOUNTERReport constructor for usage in the specified time range.
+        """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given date range
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: a dataframe of all the reports = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        #ToDo: return RawCOUNTERReport(above dataframe)
-        pass
-
-
-    @hybrid_method
-    def upload_R4_report(self):
-        #ToDo: Create a method for uploading a transformed R4 report after the creation of the database into the database
-        pass
-
-
-    @hybrid_method
-    def upload_R5_report(self):
-        #ToDo: Create a method for uploading a R5 report obtained by a method other than SUSHI into the database
-        pass
+        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.info("The load was a success.")
+            return "The load was a success."
+        except Exception as error:
+            logging.warning(f"The load had an error: {format(error)}")
+            return f"The load had an error: {format(error)}"
 
 
     @hybrid_method
@@ -439,7 +646,7 @@ class StatisticsSourceNotes(db.Model):
     """
     __tablename__ = 'statisticsSourceNotes'
 
-    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    statistics_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
@@ -467,17 +674,19 @@ class ResourceSources(db.Model):
     Methods:
         add_access_stop_date: #ToDo: Copy first line of docstring here
         remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        change_StatisticsSource: Change the current statistics source for the resource source.
         add_note:  #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'resourceSources'
 
-    resource_source_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     resource_source_name = db.Column(db.String(100))
     source_in_use = db.Column(db.Boolean)
     use_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
 
-    resource_sources_FK = db.relationship('ChildRelation', backref='ResourceSourcesFK')
+    FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
+    FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
 
 
     def __repr__(self):
@@ -494,6 +703,28 @@ class ResourceSources(db.Model):
     @hybrid_method
     def remove_access_stop_date(self):
         #ToDo: Null value in access_stop_date when current_access goes from False to True
+        pass
+
+
+    @hybrid_method
+    def change_StatisticsSource(self, statistics_source_PK):
+        """Change the current statistics source for the resource source.
+
+        This method changes the `True` value in the `StatisticsResourceSources` record for the given resource source to `False`, then adds a new record creating a connection between the given statistics source and resource source.
+
+        Args:
+            statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
+        
+        Returns:
+            None: no return value is needed, so the default `None` is used
+        """
+        #ToDo: SQL_query = f'''
+        #ToDo:     UPDATE 
+        #ToDo:     SET current_statistics_source = false
+        #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
+        #ToDo: '''
+        #ToDo: Apply above query to database
+        #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
         pass
 
 
@@ -515,11 +746,11 @@ class ResourceSourceNotes(db.Model):
     """
     __tablename__ = 'resourceSourceNotes'
 
-    resource_source_notes_ID = db.Column(db.Integer, primary_key=True)
+    resource_source_notes_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))  #ALERT: In MySQL as `resource_source_id`
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
     
 
     def __repr__(self):
@@ -540,8 +771,8 @@ class StatisticsResourceSources(db.Model):
     """
     __tablename__ = 'statisticsResourceSources'
 
-    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True)
+    SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True, autoincrement=False)
     current_statistics_source = db.Column(db.Boolean)
 
 
@@ -565,18 +796,17 @@ class AnnualUsageCollectionTracking(db.Model):
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
-        collect_annual_usage_statistics: A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
-    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True)
-    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True)
+    AUCT_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
+    AUCT_fiscal_year = db.Column(db.Integer, db.ForeignKey('fiscalYears.fiscal_year_ID'), primary_key=True, autoincrement=False)
     usage_is_being_collected = db.Column(db.Boolean)
     manual_collection_required = db.Column(db.Boolean)
     collection_via_email = db.Column(db.Boolean)
     is_COUNTER_compliant = db.Column(db.Boolean)
-    #ToDo: Check how to do enums in Flask-SQLAlchemy
     collection_status = db.Column(db.Enum(
         'N/A: Paid by Law',
         'N/A: Paid by Med',
@@ -602,19 +832,30 @@ class AnnualUsageCollectionTracking(db.Model):
 
     @hybrid_method
     def collect_annual_usage_statistics(self):
-        """A method invoking the RawCOUNTERReport constructor for the given resource's fiscal year usage.
+        """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
-        A helper method encapsulating `_harvest_R5_SUSHI` to change its return value from a dataframe to a RawCOUNTERReport object (RawCOUNTERReport objects are what get loaded into the database).
+        A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            RawCOUNTERReport: a RawCOUNTERReport object for all the usage from the given statistics source in the given fiscal year
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #ToDo: start_date = start date for FY
         #ToDo: end_date = end date for FY
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: return RawCOUNTERReport(df)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
+        #ToDo: try:
+            #ToDo: df.to_sql(
+            #ToDo:     'COUNTERData',
+            #ToDo:     con=db.engine,
+            #ToDo:     if_exists='append',
+            #ToDo: )
+            #ToDo: logging.info(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success.")
+            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success."
+        #ToDo: except Exception as e:
+            #ToDo: logging.warning(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}")
+            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}"
         pass
 
 
@@ -623,141 +864,86 @@ class AnnualUsageCollectionTracking(db.Model):
         pass
 
 
-class Resources(db.Model):
-    """The class representation of the `resources` relation, which functions as a deduplicated list of the resources used in COUNTER reports.
-    
-    Most of the metadata for resources are saved in the `resourceMetadata` relation because the latter relation allows multiple values to be saved for a single metadata field. Normalizing the metadata in this manner has multiple benefits; for more information, see the documentation on the `ResourceMetadata` class.
-    
+class COUNTERData(db.Model):
+    """The class representation of the `COUNTERData` relation, which contains all the data from the ingested COUNTER reports.
+
+    The attributes of this class represent the general and parent data fields found in R4 and R5 COUNTER reports, which are loaded into this relation with no processing beyond those necessary for aligning data types. Some of the variable string lengths are set with constants, which allow both the string length in the created database and the confirmations that the strings will fit in the database in `ConvertJSONDictToDataframe` to be updated at the same time.
+
     Attributes:
-        self.resource_ID (int): the primary key
-        self.note (text): qualitative collections management information for the resource
-    """
-    __tablename__ = 'resources'
-
-    resource_ID = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.Text)  # ToDo: Does this need to be a separate `ResourceNotes` relation/class?
-
-    resources_FK = db.relationship('ChildRelation', backref='ResourcesFK')
-
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-class ResourceMetadata(db.Model):
-    """The class representation of the `resourceMetadata` relation, which contains the titles and alternate metadata for the resources in `resources`.
-    
-    This class represents a relation that serves two distinct purposes that function in the same way in terms of relational database logic. First, fields in the `resources` relation for resource-specific metadata fields (listed below) would only be able to hold a single value, but resources can have multiple values for each of these metadata elements (use of an ISSN associated with an older name for the serial, separate ISBNs for each manner of publication, ect.), and this relation can store the secondary values not used for automated deduplication that may be used in searching. Second, all titles need to be stored for searching purposes, but between their frequent use in searching and their limited use in deduping, all titles should be stored in a single relation which is not the `resources` relation. Additionally, including parent metadata from IR reports can be a potential starting point for matching parent and child resources.
-        Resource_Name
-        DOI
-        ISBN
-        Print_ISSN
-        Online_ISSN
-        Authors
-        Parent_Title
-        Parent_Authors
-        Parent_Publication_Date
-        Parent_Article_Version
-        Parent_Data_Type
-        Parent_DOI
-        Parent_Proprietary_ID
-        Parent_ISBN
-        Parent_Print_ISSN
-        Parent_Online_ISSN
-        Parent_URI
-    
-    Attributes:
-        self.resource_metadata_ID (int): the primary key
-        self.metadata_field (str): the metadata field label  #ToDo: Should this actually be an `enum`?
-        self.metadata_value (str): the metadata value
-        #ToDo: Should there be a data_type field to indicate if data is for/from database, title-level resource, or item-level resource to record granularity/report of origin?
-        self.default (bool): indicates if the value is the default for the field and title
-        self.resource_ID (int): the foreign key for `resources`
-    """
-    __tablename__ = 'resourceMetadata'
-
-    resource_metadata_ID = db.Column(db.Integer, primary_key=True)
-    metadata_field = db.Column(db.String(35))
-    metadata_value = db.Column(db.String(2000))
-    default = db.Column(db.Boolean)
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
-    
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-class ResourcePlatforms(db.Model):
-    """The class representation of the `resourcePlatforms` relation, which contains metadata from COUNTER reports specific to a statistics source.
-    
-    Attributes:
-        self.resource_platform_ID (int): the primary key
+        self.COUNTER_data_ID (int): the primary key
+        self.statistics_source_ID (int): the foreign key for `statisticsSources`
+        self.report_type (str): the type of COUNTER report, represented by the official report abbreviation
+        self.resource_name (str): the name of the resource
         self.publisher (str): the name of the publisher
         self.publisher_ID (str): the statistics source's ID for the publisher
         self.platform (str): the name of the resource's platform in the COUNTER report
-        self.publication_date (str): the publisher's resource release date in the COUNTER IR  #ToDo: If this is always a date data type in the IR, it can be changed to a datetime in the database
+        self.authors (str): the authors of the resource
+        self.publication_date (datetime): the resource publication date in the COUNTER IR
         self.article_version (str): version of article within the publication life cycle from the COUNTER IR
+        self.DOI (str): the DOI for the resource
         self.proprietary_ID (str): the statistics source's ID for the resource
+        self.ISBN (str): the ISBN for the resource
+        self.print_ISSN (str): the print ISSN for the resource
+        self.online_ISSN (str): the online ISSN for the resource
         self.URI (str): the statistics source's permalink to the resource
-        self.interface (int): the foreign key for `statisticsSources`
-        self.resource_ID (int): the foreign key for `resources`
-    """
-    __tablename__ = 'resourcePlatforms'
-
-    resource_platform_ID = db.Column(db.Integer, primary_key=True)
-    publisher = db.Column(db.String(225))
-    publisher_ID = db.Column(db.String(50))
-    platform = db.Column(db.String(75))
-    publication_date = db.Column(db.String(200))
-    article_version = db.Column(db.String(50))
-    proprietary_ID = db.Column(db.String(100))
-    URI = db.Column(db.String(200))
-    interface = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
-    resource_ID = db.Column(db.Integer, db.ForeignKey('resources.resource_ID'))
-
-    resource_platforms_FK = db.relationship('ChildRelation', backref='ResourcePlatformsFK')
-
-
-    def __repr__(self):
-        """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
-
-
-class UsageData(db.Model):
-    """The class representation of the `usageData` relation, which contains the COUNTER usage statistics and the fields by which they're broken down.
-    
-    Many of the attributes became available in R5 as part of the improvements to COUNTER, as they made mode detailed investigations of usage data possible. Furthermore, not all attributes apply to all types of reports. In those instances where an attribute isn't present because the generation or type of report lacks that attribute, a null value is used. Another of the updates made for R5 was combining all resource types at a given level of granularity into a single report; as a result, while data derived from R4 reports uses a small number of general types largely derived from the type of report the data is from, `data_type` and `section_type` in R5 are fixed vocabulary fields used to give information about instances of usage. Finally, the `report_creation_date` attribute is used for R5 reports uploaded via SUSHI so on those occasions when a statistics source provider says the numbers provided during a given date range were incorrect and need to be ingested again, the SUSHI reports can be targeted to determine if they were harvested during the given date range and, if they were, more easily removed so corrected reports can be uploaded.
-    
-    Attributes:
-        self.usage_data_ID (int): the primary key
-        self.resource_platform_ID (int): the foreign key for `resourcePlatforms`
-        self.metric_type (str): the COUNTER metric type
-        self.usage_date (date): the month when the use occurred, represented by the first day of that month
-        self.usage_count (int): the number of uses
+        self.data_type (str): the COUNTER data type
+        self.section_type (str): the COUNTER section type
         self.YOP (smallInt): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
         self.access_type (str): the COUNTER access type
         self.access_method (str): the COUNTER access method
-        self.data_type (str): the COUNTER data type
-        self.section_type (str): the COUNTER section type
+        self.parent_title (str): the name of the resource's host
+        self.parent_authors (str): the authors of the resource's host
+        self.parent_publication_date (datetime): the resource's host's publication date in the COUNTER IR
+        self.parent_article_version (str): version of article's host within the publication life cycle from the COUNTER IR
+        self.parent_data_type (str): the COUNTER data type for the resource's host
+        self.parent_DOI (str): the DOI for the resource's host
+        self.parent_proprietary_ID (str): the statistics source's ID for the resource's host
+        self.parent_ISBN (str): the ISBN for the resource's host
+        self.parent_print_ISSN (str): the print ISSN for the resource's host
+        self.parent_online_ISSN (str): the online ISSN for the resource's host
+        self.parent_URI (str): the statistics source's permalink to the resource's host
+        self.metric_type (str): the COUNTER metric type
+        self.usage_date (date): the month when the use occurred, represented by the first day of that month
+        self.usage_count (int): the number of uses
         self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
     """
-    __tablename__ = 'usageData'
+    __tablename__ = 'COUNTERData'
 
-    usage_data_ID = db.Column(db.Integer, primary_key=True)
-    resource_platform_ID = db.Column(db.Integer, db.ForeignKey('resourcePlatforms.resource_platform_ID'))
-    metric_type = db.Column(db.String(75))
-    usage_date = db.Column(db.Date)
-    usage_count = db.Column(db.Integer)
+    COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    report_type = db.Column(db.String(5))
+    resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    publisher = db.Column(db.String(PUBLISHER_LENGTH))
+    publisher_ID = db.Column(db.String(PUBLISHER_ID_LENGTH))
+    platform = db.Column(db.String(PLATFORM_LENGTH))
+    authors = db.Column(db.String(AUTHORS_LENGTH))
+    publication_date = db.Column(db.DateTime)
+    article_version = db.Column(db.String(50))
+    DOI = db.Column(db.String(DOI_LENGTH))
+    proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
+    ISBN = db.Column(db.String(20))
+    print_ISSN = db.Column(db.String(10))
+    online_ISSN = db.Column(db.String(20))  # Some R4 book reports put another ISBN in the report's ISSN field, the contents of which go into this field, so the field must be large enough to store ISBNs
+    URI = db.Column(db.String(URI_LENGTH))
+    data_type = db.Column(db.String(25))
+    section_type = db.Column(db.String(10))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
-    data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
+    parent_title = db.Column(db.String(RESOURCE_NAME_LENGTH))
+    parent_authors = db.Column(db.String(AUTHORS_LENGTH))
+    parent_publication_date = db.Column(db.DateTime)
+    parent_article_version = db.Column(db.String(50))
+    parent_data_type = db.Column(db.String(25))
+    parent_DOI = db.Column(db.String(DOI_LENGTH))
+    parent_proprietary_ID = db.Column(db.String(PROPRIETARY_ID_LENGTH))
+    parent_ISBN = db.Column(db.String(20))
+    parent_print_ISSN = db.Column(db.String(10))
+    parent_online_ISSN = db.Column(db.String(10))
+    parent_URI = db.Column(db.String(URI_LENGTH))
+    metric_type = db.Column(db.String(75))
+    usage_date = db.Column(db.Date)
+    usage_count = db.Column(db.Integer)
     report_creation_date = db.Column(db.DateTime)
 
 

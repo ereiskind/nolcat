@@ -1,10 +1,17 @@
 import logging
+import datetime
+import calendar
 from flask import render_template
+from flask import request
+from flask import abort
+from flask import redirect
+from flask import url_for
+import pandas as pd
 
 from . import bp
 from ..app import db
-#from .forms import <name of form classes>
-#from ..models import <name of SQLAlchemy classes used in views below>
+from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
+from ..models import StatisticsSources
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -16,33 +23,132 @@ def ingest_usage_homepage():
     return render_template('ingest_usage/index.html')
 
 
-#ToDo: Create route for uploading COUNTER reports
-    #ToDo: form = class of form containing multi-file upload option
-    #ToDo: if request.method == 'GET':
-        #ToDo: return render_template('page-the-form-is-on.html', form=form)
-    #ToDo: elif form.validate_on_submit():
-        #ToDo: df = UploadCOUNTERReports.create_dataframe(data returned by form)
-        #ToDo: new_records = RawCOUNTERReport(df)
-        #ToDo: normalized_resources_in_database = RawCOUNTERReport._create_normalized_resource_data_argument()
-        #ToDo: tuples_with_index_values_of_matched_records, dict_with_keys_that_are_resource_metadata_for_possible_matches_and_values_that_are_lists_of_tuples_with_index_record_pairs_corresponding_to_the_metadata = new_records.perform_deduplication_matching(normalized_resources_in_database)
-        #ToDo: For all items in above dict, present the metadata in the keys and ask if the resources are the same
-        #ToDo: Load new_records with metadata matches into database
-        #ToDo: return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
-    #ToDo: else:
-        #ToDo: return abort(404)
+@bp.route('/upload-COUNTER', methods=['GET', 'POST'])
+def upload_COUNTER_reports():
+    """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
+    form = COUNTERReportsForm()
+    if request.method == 'GET':
+        #ToDo: return render_template('upload-COUNTER-reports.html', form=form)
+        pass
+    elif form.validate_on_submit():
+        #ToDo: df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        #ToDo: df['report_creation_date'] = pd.to_datetime(None)
+        #ToDo: df.index += first_new_PK_value('COUNTERData')
+        #ToDo: df.to_sql(
+        #     'COUNTERData',
+        #     con=db.engine,
+        #     if_exists='append',
+        # )
+        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+    else:
+        return abort(404)
 
 
-@bp.route('/harvest')
+@bp.route('/harvest', methods=['GET', 'POST'])
 def harvest_SUSHI_statistics():
     """A page for initiating R5 SUSHI usage statistics harvesting.
     
-    This page provides inputs for all the parameters needed for an R5 SUSHI call, then executes the StatisticsSources.collect_usage_statistics() method. This is designed to allow for the development of the method without having either the database connection the StatisticsSources class, as a SQLAlchemy table class, traditionally needs or knowing if the SUSHI credentials for the different StatisticsSources objects will be sourced from the Alma API or from a file of undetermined format and location within the container but outside this repository. 
+    This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
     """
-    #ToDo: Create route for getting start and end dates for custom SUSHI range, then putting them into StatisticsSources.collect_usage_statistics
-    pass
+    form = SUSHIParametersForm()
+    if request.method == 'GET':
+        statistics_source_options = pd.read_sql(
+            sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            con=db.engine,
+        )
+        form.statistics_source.choices = list(statistics_source_options[['statistics_source_ID', 'statistics_source_name']].itertuples(index=False, name=None))
+        return render_template('ingest_usage/make-SUSHI-call.html', form=form)
+    elif form.validate_on_submit():
+        df = pd.read_sql(
+            sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+            con=db.engine,
+        )
+        stats_source = StatisticsSources(
+            statistics_source_ID = df['statistics_source_ID'],
+            statistics_source_name = df['statistics_source_name'],
+            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
+            vendor_ID = df['vendor_ID'],
+        )
+
+        begin_date = form.begin_date.data
+        end_date = form.end_date.data
+        if end_date < begin_date:
+            return redirect(url_for('harvest_SUSHI_statistics'))  #ToDo: Add message flashing that the end date was before the begin date
+        end_date = datetime.date(
+            end_date.year,
+            end_date.month,
+            calendar.monthrange(end_date.year, end_date.month)[1],
+        )
+        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+
+        result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+        logging.info(result_message)
+        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
+    else:
+        return abort(404)
 
 
-#ToDo: Create route to and page for adding non-COUNTER compliant usage
-    #ToDo: How should non-COUNTER usage be stored? As BLOB in MySQL, as files in the container, as a Docker volume, in some other manner?
-    #ToDo: Find all resources to which this applies with `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';`
-    # render_template('ingest_usage/upload-historical-non-COUNTER-data.html')
+@bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
+def upload_non_COUNTER_reports():
+    """The route function for uploading files containing non-COUNTER data into the container."""
+    form = UsageFileForm()
+    if request.method == 'GET':
+        SQL_query = f'''
+            SELECT
+                annualUsageCollectionTracking.AUCT_statistics_source,
+                annualUsageCollectionTracking.AUCT_fiscal_year,
+                statisticsSources.statistics_source_name,
+                fiscalYears.fiscal_year,
+                annualUsageCollectionTracking.notes
+            FROM annualUsageCollectionTracking
+            JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+            JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.usage_is_being_collected = true AND
+                annualUsageCollectionTracking.is_COUNTER_compliant = false AND
+                annualUsageCollectionTracking.usage_file_path IS NULL AND
+                (
+                    annualUsageCollectionTracking.collection_status = 'Collection not started' OR
+                    annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
+                    annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
+                );
+        '''
+        non_COUNTER_files_needed = pd.read_sql(
+            sql=SQL_query,
+            con=db.engine,
+        )
+        non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
+        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
+        logging.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
+        form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
+        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: Save uploaded file to location `file_path_of_record` in container
+            #ToDo: Uploaded files must be of extension types
+                # "xlsx"
+                # "csv"
+                # "tsv"
+                # "pdf"
+                # "docx"
+                # "pptx"
+                # "txt"
+                # "jpeg"
+                # "jpg"
+                # "png"
+                # "svg"
+                # "json"
+                # "html"
+                # "htm"
+                # "xml"
+                # "zip"
+        #ToDo: series_data_type = non_COUNTER_files_needed.loc[form.AUCT_options.data]
+        #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_statistics_source'] = int_PK_for_stats_source
+        #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_fiscal_year'] = int_PK_for_fiscal_year
+        #ToDo: SQL_query = f'''
+        #ToDo:     UPDATE annualUsageCollectionTracking
+        #ToDo:     SET usage_file_path = {file_path_of_record}
+        #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
+        #ToDo: '''
+        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+    else:
+        return abort(404)

@@ -6,8 +6,6 @@ import pyinputplus as pyip
 import pandas as pd
 
 from data import relations
-from data import COUNTER_reports
-from data import deduplication_data
 
 relation_name = pyip.inputMenu(
     prompt="Enter the number of the test data dataframe that should be output to a CSV.\n",
@@ -21,16 +19,7 @@ relation_name = pyip.inputMenu(
         "resourceSourceNotes_relation",
         "statisticsResourceSources_relation",
         "annualUsageCollectionTracking_relation",
-        "resources_relation",
-        "resourceMetadata_relation",
-        "resourcePlatforms_relation",
-        "usageData_relation",
-        "sample_COUNTER_reports",
-        "sample_normalized_resource_data",
-        "matched_records",
-        "matches_to_manually_confirm",
-        "matched_records_including_sample_normalized_resource_data",
-        "matches_to_manually_confirm_including_sample_normalized_resource_data",
+        "COUNTERData_relation",
     ],
     numbered=True,
 )
@@ -53,26 +42,8 @@ elif relation_name == "statisticsResourceSources_relation":
     relation_data = relations.statisticsResourceSources_relation()
 elif relation_name == "annualUsageCollectionTracking_relation":
     relation_data = relations.annualUsageCollectionTracking_relation()
-elif relation_name == "resources_relation":
-    relation_data = relations.resources_relation()
-elif relation_name == "resourceMetadata_relation":
-    relation_data = relations.resourceMetadata_relation()
-elif relation_name == "resourcePlatforms_relation":
-    relation_data = relations.resourcePlatforms_relation()
-elif relation_name == "usageData_relation":
-    relation_data = relations.usageData_relation()
-elif relation_name == "sample_COUNTER_reports":
-    relation_data = COUNTER_reports.sample_COUNTER_reports()
-elif relation_name == "sample_normalized_resource_data":
-    relation_data = deduplication_data.sample_normalized_resource_data()
-elif relation_name == "matched_records":
-    relation_data = deduplication_data.matched_records()
-elif relation_name == "matches_to_manually_confirm":
-    relation_data = deduplication_data.matches_to_manually_confirm()
-elif relation_name == "matched_records_including_sample_normalized_resource_data":
-    relation_data = deduplication_data.matched_records_including_sample_normalized_resource_data()
-elif relation_name == "matches_to_manually_confirm_including_sample_normalized_resource_data":
-    relation_data = deduplication_data.matches_to_manually_confirm_including_sample_normalized_resource_data()
+elif relation_name == "COUNTERData_relation":
+    relation_data = relations.COUNTERData_relation()
 
 # Ideally, this module can run in the container in the AWS instance, but an inability to authenticate from that command line to GitHub makes running the module on the local machine the only way to access the CSVs on the local machine. This module is thus set up to determine if it's running in the AWS instance or on a local machine and create a `pathlib.Path` object for the absolute path of the file based on the environment and folder the module is run from.
 file_name = Path('/', 'nolcat', 'tests', 'data')

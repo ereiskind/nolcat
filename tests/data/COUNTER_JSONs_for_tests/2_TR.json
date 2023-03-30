@@ -1,0 +1,3663 @@
+{
+    "Report_Header": {
+        "Created": "2019-07-01T00:00:00Z",
+        "Created_By": "Gale",
+        "Customer_ID": "aaaa00000",
+        "Report_ID": "TR",
+        "Report_Name": "Title Master Report",
+        "Release": "5",
+        "Institution_Name": "Florida State University",
+        "Institution_ID": [
+            {
+                "Type": "Proprietary",
+                "Value": "Gale:aaaa00000"
+            }
+        ],
+        "Report_Filters": [
+            {
+                "Name": "Begin_Date",
+                "Value": "2019-07-01"
+            },
+            {
+                "Name": "End_Date",
+                "Value": "2020-06-30"
+            }
+        ],
+        "Report_Attributes": [
+            {
+                "Name": "Attributes_To_Show",
+                "Value": "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            }
+        ]
+    },
+    "Report_Items": [
+        {
+            "Title": "Business Plans Handbook,Vol.18",
+            "Publisher": "Gale, a Cengage Company",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2010,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2NLD"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-1-4144-6161-8"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1084-4473"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy,Vol.1,Ed.2",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 1,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5BNN"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-0286-6072-1"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy,Vol.1,Ed.2",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 7
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5BNN"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-0286-6072-1"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 1,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0SFR"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0SFR"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 1997,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 1998,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 1999,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2000,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2001,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2002,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2003,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2004,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2005,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2008,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2009,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2010,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2012,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2013,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2014,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2015,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2016,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2017,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-08-01",
+                        "End_Date": "2019-08-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-05-01",
+                        "End_Date": "2020-05-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2018,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2019,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "Library Journal",
+            "Publisher": "Library Journals, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2020,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-01-01",
+                        "End_Date": "2020-01-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:1273"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0363-0277"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist",
+            "Publisher": "New Scientist Ltd.",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2000,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0361"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0262-4079"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist",
+            "Publisher": "New Scientist Ltd.",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2001,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0361"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0262-4079"
+                }
+            ]
+        },
+        {
+            "Title": "New Scientist",
+            "Publisher": "New Scientist Ltd.",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2002,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0361"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0262-4079"
+                }
+            ]
+        },
+        {
+            "Title": "Short Stories for Students",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 1,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0QME"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1092-7735"
+                }
+            ]
+        },
+        {
+            "Title": "Short Stories for Students",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2002,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 7
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0QME"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1092-7735"
+                }
+            ]
+        },
+        {
+            "Title": "Small Business Resource Center",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 1,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5GBM"
+                }
+            ]
+        },
+        {
+            "Title": "Small Business Resource Center",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2015,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5GBM"
+                }
+            ]
+        },
+        {
+            "Title": "Small Business Resource Center",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2019,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 6
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 6
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5GBM"
+                }
+            ]
+        },
+        {
+            "Title": "Small Business Resource Center",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2020,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:5GBM"
+                }
+            ]
+        },
+        {
+            "Title": "Whole Dog Journal",
+            "Publisher": "Belvoir Media Group, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0ZRZ"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1097-5322"
+                }
+            ]
+        },
+        {
+            "Title": "Whole Dog Journal",
+            "Publisher": "Belvoir Media Group, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2009,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0ZRZ"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1097-5322"
+                }
+            ]
+        },
+        {
+            "Title": "Whole Dog Journal",
+            "Publisher": "Belvoir Media Group, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2013,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0ZRZ"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1097-5322"
+                }
+            ]
+        },
+        {
+            "Title": "Whole Dog Journal",
+            "Publisher": "Belvoir Media Group, LLC",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2020,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-06-01",
+                        "End_Date": "2020-06-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0ZRZ"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "1097-5322"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 1994,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-09-01",
+                        "End_Date": "2019-09-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-04-01",
+                        "End_Date": "2020-04-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2875"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "8755-4550"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 1995,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-10-01",
+                        "End_Date": "2019-10-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2875"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "8755-4550"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2004,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2875"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "8755-4550"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2005,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2875"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "8755-4550"
+                }
+            ]
+        },
+        {
+            "Title": "Women and Language",
+            "Publisher": "George Mason University",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:2875"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "8755-4550"
+                }
+            ]
+        },
+        {
+            "Title": "Yale Law Journal",
+            "Publisher": "Yale University, School of Law",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2004,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:6653"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0044-0094"
+                }
+            ]
+        },
+        {
+            "Title": "Yale Law Journal",
+            "Publisher": "Yale University, School of Law",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2017,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2020-03-01",
+                        "End_Date": "2020-03-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 4
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:6653"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0044-0094"
+                }
+            ]
+        },
+        {
+            "Title": "Yale Law Journal",
+            "Publisher": "Yale University, School of Law",
+            "Platform": "Gale",
+            "Data_Type": "Journal",
+            "Section_Type": "Article",
+            "YOP": 2019,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-07-01",
+                        "End_Date": "2019-07-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                },
+                {
+                    "Period": {
+                        "Begin_Date": "2020-02-01",
+                        "End_Date": "2020-02-29"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 4
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:6653"
+                },
+                {
+                    "Type": "Print_ISSN",
+                    "Value": "0044-0094"
+                }
+            ]
+        }
+    ]
+}

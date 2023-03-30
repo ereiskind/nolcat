@@ -31,35 +31,17 @@ Test Data Folders and Modules
 
 "\\tests\\bin\\"
 ----------------
+This folder contains all the Excel files, most of which are stored in one of three subfolders:
 
-This folder contains all the Excel files, which are split into three subfolders:
-
+* "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx": This workbook contains all the records from all the workbooks in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" in the order in which they would be ingested.
 * "\\tests\\bin\\COUNTER_workbooks_for_tests\\": The workbooks in this folder follow the formatting and naming rules for COUNTER reports to be uploaded. Any test related to COUNTER data ingest functionality will be getting their data from this folder.
 * "\\tests\\bin\\sample_COUNTER_R4_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
 * "\\tests\\bin\\sample_COUNTER_R5_reports\\": This folder contains all the R4 COUNTER reports used for testing sorted into workbooks by report type.
+* "\\tests\\bin\\workbooks_to_transform_into_JSONs\\": This folder contains all the Excel workbooks transformed by "tests\\data\\create_JSON_base.json" for use as input for "tests\\create_SUSHI_JSON_from_tabular_R5.py".
 
-
-"\\tests\\data\\COUNTER_reports.py"
----------------------------------------
-
-This module contains the functions:
-
-* ``sample_COUNTER_reports()``: The dataframe returned by a ``UploadCOUNTERReports.create_dataframe()`` method using the "COUNTER_workbooks_for_tests" test data COUNTER reports.
-
-"\\tests\\data\\deduplication_data.py"
----------------------------------------
-
-This module contains the functions:
-
-* ``sample_normalized_resource_data()``: The dataframe returned by a ``RawCOUNTERReport.normalized_resource_data()`` method when the underlying dataframe has resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports.
-* ``matched_records()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport``.
-* ``matches_to_manually_confirm()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching()`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
-* ``matched_records_including_sample_normalized_resource_data()``: The set of tuples containing the record index values of record matches created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**.
-* ``matches_to_manually_confirm_including_sample_normalized_resource_data()``: A dictionary created by ``RawCOUNTERReport.perform_deduplication_matching(sample_normalized_resource_data)`` when the resource data from the "COUNTER_workbooks_for_tests" test data COUNTER reports is in the ``RawCOUNTERReport`` and the data already in the database is from **TBD**; a dictionary which has keys that are tuples containing the metadata for two resources and values that are sets of tuples containing the record index values of record matches with one of the records corresponding to each of the resources in the tuple.
 
 "\\tests\\data\\relations.py"
 -----------------------------
-
 This module contains the functions:
 
 * ``fiscalYears_relation()``: The dataframe of test data for the `fiscalYears` relation.
@@ -71,38 +53,47 @@ This module contains the functions:
 * ``resourceSourceNotes_relation()``: The dataframe of test data for the `resourceSourceNotes` relation.
 * ``statisticsResourceSources_relation()``: The dataframe of test data for the `statisticsResourceSources` relation.
 * ``annualUsageCollectionTracking_relation()``: The dataframe of test data for the `annualUsageCollectionTracking` relation.
-* ``resources_relation()``: The dataframe of test data for the `resources` relation.
-* ``resourceMetadata_relation()``: The dataframe of test data for the `resourceMetadata` relation.
-* ``resourcePlatforms_relation()``: The dataframe of test data for the `resourcePlatforms` relation.
-* ``usageData_relation()``: The dataframe of test data for the `usageData` relation.
+* ``COUNTERData_relation()``: The dataframe of test data for the `COUNTERData` relation.
 
 Creating the Test Data
 ======================
-All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for.
+All test data provided in this repository is based on the workbooks in "\\tests\\bin\\sample_COUNTER_R4_reports" and "\\tests\\bin\\sample_COUNTER_R5_reports", which are actual COUNTER reports where the numbers have been changed for confidentiality and many of the resources have been removed for speed. The retained resources were selected to ensure as many edge cases as possible were accounted for. Creating this test data also includes creating the JSON format for the data, both for ease in applying the changes made to the tabular data to the JSON data and because COUNTER R5 data providers have been known to provide different data in tabular and JSON COUNTER reports pulled at nearly the same time with the same date range and parameters.
 
-In the test data, the ``Statistics_Source_ID`` values are as follows
+In the test data, the ``statistics_source_ID`` values are as follows
+
+* ProQuest = 0
 * EBSCO = 1
 * Gale = 2
-* ProQuest = 0
+* Duke UP = 3
 
-Test Data Creation Procedure
-----------------------------
-
+Create Tabular COUNTER Reports
+------------------------------
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
-3. Copy all usage into a single worksheet in the order in which the reports would be pulled from the "COUNTER_workbooks_for_tests" folder, aligning the data in the appropriate fields. (That worksheet is saved as "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx".)
-4. Load that worksheet into OpenRefine to create project "nolcat_test_data".
-5. Apply "\\tests\\data\\test_data_creation_procedures\\transform_test_data.json" to the "nolcat_test_data" project.
-6. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.COUNTER_reports.sample_COUNTER_reports()".
-7. Undo the steps reordering the columns and creating the ``df`` column in the "nolcat_test_data" project.
-8.  Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_1.json" to the "nolcat_test_data" project.
-9.  Create a filter for blanks on the ``resourceMetadata`` column in the "nolcat_test_data" project and select ``false`` on that filter.
-10. Download the "nolcat_test_data" project in Excel, then use the ``resourceMetadata`` column for the data in "data.relations.resourceMetadata_relation()".
-11. For every value in the ``resource_ID`` column in the "nolcat_test_data" project, add a "None" or a note to the data of the "data.relations.resources_relation()" series.
-12. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_2.json" to the "nolcat_test_data" project.
-13. Download the "nolcat_test_data" project in Excel, then use the ``resourcePlatforms`` column for the data in "data.relations.resourcePlatforms_relation()".
-14. Apply "\\tests\\data\\test_data_creation_procedures\\create_relations_3.json" to the "nolcat_test_data" project.
-15. Download the "nolcat_test_data" project in Excel, then use the ``usageData`` column for the data in "data.relations.usageData_relation()".
+3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_reports.py".
+4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
+
+Create `COUNTERData` Relation Fixture Data
+------------------------------------------
+1. Load the sole worksheet in "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" into OpenRefine to create project "nolcat_test_data".
+2. Apply "\\tests\\data\\transform_test_data.json" to the "nolcat_test_data" project.
+3. Download the "nolcat_test_data" project in Excel, then use the ``df`` column for the data in "data.relations.COUNTERData()".
+
+Create R5 SUSHI Response JSON Reports
+-------------------------------------
+1. For each worksheet in "\\tests\\bin\\COUNTER_workbooks_for_tests\\" with an R5 report, load the worksheet into OpenRefine to create a project with a name that ends with an underscore and the two letter code for the type of report.
+2. Apply "tests\\data\\create_JSON_base.json" to each of the projects created above.
+3. Download each of the above projects in Excel and save to "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" and adjust any pre-1900 publication dates if necessary (in creating test data, the date "1753-01-01" in OpenRefine became "-1" when exported to Excel, which in turn became Timestamp object with the value "1899-12-29" when the worksheet was uploaded).
+4. For each type of report and vendor combination with a file in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\", make a SUSHI API call in the browser, copy the result into a JSON file named with the statistics source ID, an underscore, and the report name abbreviation (the test data contains only one year of R5 reports, preventing repetitions with this naming convention) in the "\\tests\\data\\COUNTER_JSONs_for_tests" folder.
+5. In each newly created JSON file, anonymize the data in ``Report_Header``, change the ``Created`` value in ``Report_Header`` to ``2019-07-01T00:00:00Z``, and delete the data in ``Report_Items``.
+6. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_SUSHI_JSON_from_tabular_R5.py", then take the ``data`` section of the output JSON and copy it into the ``Report_Header`` section of the corresponding JSON in "\\tests\\data\\COUNTER_JSONs_for_tests".
+7. Unescape the slashes (/) in each JSON file via find and replace (replace ``\/`` with ``/``).
+
+Create ``ConvertJSONDictToDataframe`` Test Fixtures
+---------------------------------------------------
+1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
+2. Apply "tests\\data\\create_dataframe_from_JSON.jsonc" to each project, remembering there's a manual step added via comment in the file.
+3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
 
 SUSHI Variations
 ****************

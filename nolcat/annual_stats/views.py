@@ -1,23 +1,83 @@
 import logging
 from flask import render_template
+from flask import request
+from flask import abort
+from flask import redirect
+from flask import url_for
+import pandas as pd
 
 from . import bp
 from ..app import db
-#from .forms import <name of form classes>
+from .forms import ChooseFiscalYearForm, RunAnnualStatsMethodsForm, EditFiscalYearForm, EditAUCTForm
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
 
 
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 def annual_stats_homepage():
     """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
-    return render_template('annual_stats/index.html')
+    form = ChooseFiscalYearForm()
+    if request.method == 'GET':
+        # The links to the lists of vendors, resource sources, and statistics sources are standard jinja redirects; the code for populating the lists from the underlying relations is in the route functions being redirected to
+        fiscal_year_options = pd.read_sql(
+            sql="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+            con=db.engine,
+        )
+        form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
+        return render_template('annual_stats/index.html', form=form)
+    elif form.validate_on_submit():
+        fiscal_year_PK = form.fiscal_year.data
+        return redirect(url_for('show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
+    else:
+        return abort(404)
 
 
-#ToDo: Create route for details of a fiscal year
-    # return fiscal_year_details.html
-
-
-#ToDo: Create route for `annualUsageCollectionTracking` which uses a variable route to filter just a single fiscal year and displays all the records for that fiscal year
+@bp.route('/view_year', methods=['GET', 'POST'])  #ToDo: Add variable path information accepting the PK for the fiscal year
+def show_fiscal_year_details():  #ToDo: Add variable path information for the PK for the fiscal year
+    """Returns a page that shows the information about and the statistics collection status for the fiscal year."""
+    run_annual_stats_methods_form = RunAnnualStatsMethodsForm()
+    edit_fiscalYear_form = EditFiscalYearForm()
+    edit_AUCT_form = EditAUCTForm()
+    #ToDo: is the best way to run `FiscalYears.create_usage_tracking_records_for_fiscal_year()` also a form?
+    if request.method == 'GET':
+        #ToDo: fiscal_year_PK = the variable path int, which is also the PK in the fiscalYears relations for the fiscal year being viewed
+        fiscal_year_details = pd.read_sql(
+            sql=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
+            con=db.engine,
+        )
+        #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
+        fiscal_year_reporting = pd.read_sql(
+            sql=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
+            con=db.engine,
+            index_col='AUCT_statistics_source',
+        )
+        #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
+        return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
+    elif run_annual_stats_methods_form.validate_on_submit():
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_60b()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_60b()`
+            return redirect(url_for('show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_63()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_63()`
+            return redirect(url_for('show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ARL_18()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ARL_18()`
+            return redirect(url_for('show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ARL_19()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ARL_19()`
+            return redirect(url_for('show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ARL_20()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ARL_20()`
+            return redirect(url_for('show_fiscal_year_details'))
+    elif edit_fiscalYear_form.validate_on_submit():
+        #ToDo: Upload change to `fiscalYears` relation
+        #ToDo: Set up message flashing that change was made
+        return redirect(url_for('show_fiscal_year_details'))
+    elif edit_AUCT_form.validate_on_submit():
+        #ToDo: Upload change to `annualUsageCollectionTracking` relation
+        #ToDo: Set up message flashing that change was made
+        return redirect(url_for('show_fiscal_year_details'))
+    else:
+        return abort(404)
