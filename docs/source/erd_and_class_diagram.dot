@@ -53,7 +53,7 @@ digraph erd_and_classes {
 
         //Methods
         get_statisticsSources_records [shape="Mrecord"]
-        get_resourceSources-records [shape="Mrecord"]
+        get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
