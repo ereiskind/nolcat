@@ -1,4 +1,5 @@
 from pathlib import Path
+import io
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -48,8 +49,9 @@ def create_app():
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
     app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['UPLOAD_FOLDER'] = './nolcat_db_data'
+    app.config['UPLOAD_FOLDER'] = './relation_initialization_template'  # This config sets the file that handles both Flask file downloads adn uploads, but since all input, including file uploads, is handled with WTForms, this folder is only used for storing content the user will need to download.
     csrf.init_app(app)
     db.init_app(app)
 
@@ -185,3 +187,19 @@ def first_new_PK_value(relation):
     )
     largest_PK_value = largest_PK_value.iloc[0][0]
     return int(largest_PK_value) + 1
+
+
+def return_string_of_dataframe_info(df):
+    """Returns the data output by `pandas.DataFrame.info()` as a string so the method can be used in logging statements.
+
+    The `pandas.DataFrame.info()` method forgoes returning a value in favor of printing directly to stdout; as a result, it doesn't output anything when used in a logging statement. This function captures the data traditionally output directly to stdout in a string for use in a logging statement. This function is based off the one at https://stackoverflow.com/a/39440325.
+
+    Args:
+        df (dataframe): the dataframe in the logging statement
+    
+    Returns:
+        str: the output of the `pandas.DataFrame.info()` method
+    """
+    in_memory_stream = io.StringIO()
+    df.info(buf=in_memory_stream)
+    return in_memory_stream.getvalue()

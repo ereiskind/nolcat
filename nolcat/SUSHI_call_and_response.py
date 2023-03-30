@@ -46,7 +46,7 @@ class SUSHICallAndResponse:
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        self.parameters = {key: (requests.utils.unquote(value) if str(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
+        self.parameters = {key: (requests.utils.unquote(value) if repr(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
     
 
     def make_SUSHI_call(self):
@@ -93,38 +93,57 @@ class SUSHICallAndResponse:
         if API_response.text == "":
             logging.warning(f"Call to {self.calling_to} returned an empty string")
             return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
+        else:
+            pass  # The response contained SUSHI data
 
-        elif str(type(API_response.text)) == "<class 'dict'>":
-            logging.debug("The returned text is in dict format, so it's ready for JSON conversion.")
-            API_response = json.loads(API_response.content.decode('utf-8'))
-            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
-        
-        elif str(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
-            logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {str(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dict.")
-            API_response = json.loads(API_response.content.decode('utf-8'))
-            API_response = dict(reports = API_response)
-        
-        elif str(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and str(type(API_response[0].text)) == "<class 'dict'>":
-            logging.debug("The returned text is a dict wrapped in a single-item list, so the item in the list will be converted to JSON.")
-            API_response = json.loads(API_response[0].content.decode('utf-8'))
-        
-        elif str(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
-            logging.debug("The returned text was read from a downloaded JSON file but will be a list of reports and, to match the other reports' data types, made the value of an one-item dict.")
+        if repr(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
+            logging.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
             API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-            API_response = dict(reports = API_response)
-        
-        elif str(type(API_response.text)) == "<class 'str'>":
+            if repr(type(API_response)) == "<class 'list'>":
+                API_response = dict(reports = API_response)
+                logging.debug("The returned text was a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
+            else:
+                logging.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types.")
+                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types."}
+
+        elif repr(type(API_response.text)) == "<class 'str'>":
             logging.debug("The returned text was read from a downloaded JSON file.")
             try:
                 API_response = json.loads(API_response.content.decode('utf-8'))
             except:
-                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform lists
+                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform values that don't decode as JSONs (generally lists)
+            if repr(type(API_response)) == "<class 'dict'>":
+                logging.debug("The returned text was converted to a dictionary.")
+            elif repr(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
+                logging.debug(f"The returned text was converted to a list and is the list of reports, so it will be made the value of an one-item dictionary.")
+                API_response = dict(reports = API_response)
+            elif repr(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
+                logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                API_response = API_response[0]
+            else:
+                # Only calls to the `reports` endpoints should return lists; as both `reports` calls and dicts wrapped in a list have been previously handled, any response reaching this point is an error
+                logging.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types.")
+                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."}
+
+        elif repr(type(API_response.text)) == "<class 'dict'>":
+            logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
+            API_response = json.loads(API_response.content.decode('utf-8'))
+            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
+        
+        elif repr(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
+            logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {repr(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dictionary.")
+            API_response = json.loads(API_response.content.decode('utf-8'))
+            API_response = dict(reports = API_response)
+        
+        elif repr(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0].text)) == "<class 'dict'>":
+            logging.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+            API_response = json.loads(API_response[0].content.decode('utf-8'))
         
         else:
-            logging.warning(f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
-            return {"ERROR": f"Call to {self.calling_to} returned an object of the {str(type(API_response))} type with a {str(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
+            logging.warning(f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
+            return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
       
-        logging.debug(f"SUSHI data converted to {str(type(API_response))}:\n{API_response}")
+        logging.info(f"SUSHI data converted to {repr(type(API_response))}")
 
 
         #Section: Check for SUSHI Error Codes
@@ -146,7 +165,7 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
+        try:  #ALERT: Couldn't find a statistics source to use as a test case--prior code indicates this case appears in response to `status` calls
             logging.debug(f"The report has an `Exception` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exception']}.")
             if not self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
                 logging.warning(f"Call to {self.calling_to} returned the SUSHI error(s) {API_response['Exception']}")
@@ -198,6 +217,7 @@ class SUSHICallAndResponse:
 
         #Subsection: Check Master Reports for Data
         # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
+        #ToDo: Rework subsection to ask if empty reports are errors--when there's no usage or when a resource with no databases offers a DR, the empty report is appropriate
         master_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if master_report_regex.search(self.call_path):
             try:
@@ -219,7 +239,6 @@ class SUSHICallAndResponse:
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
-        #ToDo: When the `StatisticsSources._harvest_R5_SUSHI()` method is triggered in the Flask UI, have these messages display in Flask
 
         This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
         
@@ -233,13 +252,13 @@ class SUSHICallAndResponse:
         """
         #Section: Create Error Message(s)
         #Subsection: Detail Each SUSHI Error
-        if str(type(error_contents)) == "<class 'dict'>":
+        if repr(type(error_contents)) == "<class 'dict'>":
             if len(error_contents['Message']) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
             logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self._create_error_query_text(error_contents)
-        elif str(type(error_contents)) == "<class 'list'>":
+        elif repr(type(error_contents)) == "<class 'list'>":
             if len(error_contents) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
@@ -284,11 +303,12 @@ class SUSHICallAndResponse:
             str: a line of `handle_SUSHI_exceptions` dialog box text describing a single error
         """
         #Section: Confirm a Valid Error
-        if str(type(error_contents['Code'])) == "<class 'int'>":
+        if repr(type(error_contents['Code'])) == "<class 'int'>":
             str_code = str(error_contents['Code'])
         elif error_contents['Code'].isnumeric():
             str_code = error_contents['Code']
-        #ToDo: What if anything should be done if the error code isn't valid?
+        else:
+            str_code = None
         
         
         #Section: Separate Elements of Error into Variables

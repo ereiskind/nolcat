@@ -22,27 +22,27 @@ def view_lists_homepage(list):
         Args:
             list (str): the relation whose records are being listed
     """
-    if request.method == 'GET':
-        if list == "resources":
-            title = "Resource Sources"
-            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
-        elif list == "statistics":
-            title = "Statistics Sources"
-            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
-        elif list == "vendors":
-            title = "Vendors"
-            #ToDo: SQL_query = Write query that provides all fields in human-understandable data
-        #ToDo: df = pd.read_sql(
-        #ToDo:     sql=SQL_query,
-        #ToDo:     con=db.engine,
-        #ToDo: )
-        #ToDo: Add field with links to see details for each record
-        #ToDo: Display the returned dataframe
-            # https://stackoverflow.com/q/52644035
-            # https://stackoverflow.com/q/22180993
-        return render_template('view_lists/index.html', title=title)
+    if list == "resources":
+        title = "Resource Sources"
+        #ToDo: SQL_query = Write query that provides all fields in human-understandable data
+    elif list == "statistics":
+        title = "Statistics Sources"
+        #ToDo: SQL_query = Write query that provides all fields in human-understandable data
+    elif list == "vendors":
+        title = "Vendors"
+        #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
         return abort(404)
+    
+    #ToDo: df = pd.read_sql(
+    #ToDo:     sql=SQL_query,
+    #ToDo:     con=db.engine,
+    #ToDo: )
+    #ToDo: Add field with links to see details for each record
+    #ToDo: Display the returned dataframe
+        # https://stackoverflow.com/q/52644035
+        # https://stackoverflow.com/q/22180993
+    return render_template('view_lists/index.html', title=title)
 
 
 @bp.route('/<string:list>/<int:PK>')

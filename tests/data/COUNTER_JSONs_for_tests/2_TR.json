@@ -37,7 +37,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -82,84 +82,12 @@
             ]
         },
         {
-            "Title": "Encyclopedia of Philosophy",
-            "Publisher": "Gale",
-            "Platform": "Gale",
-            "Data_Type": "Book",
-            "Section_Type": "Article",
-            "YOP": "1",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Title_Investigations",
-                            "Count": 3
-                        },
-                        {
-                            "Metric_Type": "Unique_Title_Requests",
-                            "Count": 3
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "Gale:0SFR"
-                }
-            ]
-        },
-        {
-            "Title": "Encyclopedia of Philosophy",
-            "Publisher": "Gale",
-            "Platform": "Gale",
-            "Data_Type": "Book",
-            "Section_Type": "Article",
-            "YOP": "2006",
-            "Access_Type": "Controlled",
-            "Access_Method": "Regular",
-            "Performance": [
-                {
-                    "Period": {
-                        "Begin_Date": "2019-11-01",
-                        "End_Date": "2019-11-30"
-                    },
-                    "Instance": [
-                        {
-                            "Metric_Type": "Unique_Item_Investigations",
-                            "Count": 3
-                        },
-                        {
-                            "Metric_Type": "Total_Item_Requests",
-                            "Count": 3
-                        },
-                        {
-                            "Metric_Type": "Unique_Item_Requests",
-                            "Count": 3
-                        }
-                    ]
-                }
-            ],
-            "Item_ID": [
-                {
-                    "Type": "Proprietary_ID",
-                    "Value": "Gale:0SFR"
-                }
-            ]
-        },
-        {
             "Title": "Encyclopedia of Philosophy,Vol.1,Ed.2",
             "Publisher": "Gale",
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -245,7 +173,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -354,6 +282,82 @@
                 {
                     "Type": "ISBN",
                     "Value": "978-0-0286-6072-1"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 1,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Title_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0SFR"
+                }
+            ]
+        },
+        {
+            "Title": "Encyclopedia of Philosophy",
+            "Publisher": "Gale",
+            "Platform": "Gale",
+            "Data_Type": "Book",
+            "Section_Type": "Article",
+            "YOP": 2006,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-11-01",
+                        "End_Date": "2019-11-30"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Total_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Investigations",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Total_Item_Requests",
+                            "Count": 3
+                        },
+                        {
+                            "Metric_Type": "Unique_Item_Requests",
+                            "Count": 3
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Gale:0SFR"
                 }
             ]
         },
@@ -363,7 +367,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1997",
+            "YOP": 1997,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -457,7 +461,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1998",
+            "YOP": 1998,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -527,7 +531,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1999",
+            "YOP": 1999,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -597,7 +601,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -715,7 +719,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -833,7 +837,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -903,7 +907,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2003",
+            "YOP": 2003,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1045,7 +1049,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1163,7 +1167,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1257,7 +1261,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1375,7 +1379,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2008",
+            "YOP": 2008,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1469,7 +1473,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1539,7 +1543,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2010",
+            "YOP": 2010,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1609,7 +1613,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2012",
+            "YOP": 2012,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1679,7 +1683,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1821,7 +1825,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2014",
+            "YOP": 2014,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -1915,7 +1919,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2081,7 +2085,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2016",
+            "YOP": 2016,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2151,7 +2155,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2269,7 +2273,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2018",
+            "YOP": 2018,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2387,7 +2391,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2433,7 +2437,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2020",
+            "YOP": 2020,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2479,7 +2483,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2000",
+            "YOP": 2000,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2525,7 +2529,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2001",
+            "YOP": 2001,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2571,7 +2575,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2617,7 +2621,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2687,7 +2691,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2002",
+            "YOP": 2002,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2781,7 +2785,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "1",
+            "YOP": 1,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2863,7 +2867,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2015",
+            "YOP": 2015,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2929,7 +2933,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -2971,7 +2975,7 @@
             "Platform": "Gale",
             "Data_Type": "Book",
             "Section_Type": "Article",
-            "YOP": "2020",
+            "YOP": 2020,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3037,7 +3041,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3083,7 +3087,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3129,7 +3133,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3175,7 +3179,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2020",
+            "YOP": 2020,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3221,7 +3225,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3315,7 +3319,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "1995",
+            "YOP": 1995,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3361,7 +3365,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3407,7 +3411,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3453,7 +3457,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2006",
+            "YOP": 2006,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3499,7 +3503,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3545,7 +3549,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2017",
+            "YOP": 2017,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -3591,7 +3595,7 @@
             "Platform": "Gale",
             "Data_Type": "Journal",
             "Section_Type": "Article",
-            "YOP": "2019",
+            "YOP": 2019,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [

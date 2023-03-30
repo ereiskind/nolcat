@@ -23,11 +23,11 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # T
 #Section: Uploads and Downloads
 @bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
 def download_file(filename):
+    """This route function allows the user to access the file specified in the route name through a Jinja link."""
     return send_from_directory(directory=current_app.config['UPLOAD_FOLDER'], path='.', filename=filename, as_attachment=True)
 
 
 #Section: Database Initialization Wizard
-#ToDo: After creating the first account with ingest permissions, come here
 @bp.route('/', methods=['GET', 'POST'])
 def collect_initial_relation_data():
     """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
@@ -246,8 +246,7 @@ def collect_initial_relation_data():
             )
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
-            #ToDo: return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
-            return "placeholder for `return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))`"
+            return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
     else:
@@ -321,7 +320,6 @@ def collect_AUCT_and_historical_COUNTER_data():
             logging.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
-        #ToDo: AUCT_dataframe['collection_status'] is an Enum; does anything special need to happen here? Should there be a check that all the values in the field are valid before the load into the database?
         AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].astype("string")
         AUCT_dataframe['notes'] = AUCT_dataframe['notes'].astype("string")
         logging.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
@@ -337,19 +335,20 @@ def collect_AUCT_and_historical_COUNTER_data():
         logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
         #Subsection: Load COUNTER Reports into Database
-        COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
         #ToDo: Does there need to be a warning here about if the above method returns no data?
-        #ToDo: COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-        #ToDo: COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        #ToDo: COUNTER_reports_df.to_sql(
+        # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+        # COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        # COUNTER_reports_df.to_sql(
         #     'COUNTERData',
         #     con=db.engine,
         #     if_exists='append',
         # )
-        logging.debug("Relation `COUNTERData` loaded into the database")
-        logging.info("All relations loaded into the database")
+        # logging.debug("Relation `COUNTERData` loaded into the database")
+        # logging.info("All relations loaded into the database")
 
-        return redirect(url_for('upload_historical_non_COUNTER_usage'))
+        # return redirect(url_for('upload_historical_non_COUNTER_usage'))
+        return redirect(url_for('data_load_complete'))
 
     else:
         return abort(404)

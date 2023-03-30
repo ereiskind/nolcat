@@ -45,6 +45,10 @@
                     },
                     "Instance": [
                         {
+                            "Metric_Type": "Searches_Automated",
+                            "Count": 97849
+                        },
+                        {
                             "Metric_Type": "Searches_Regular",
                             "Count": 1533
                         },

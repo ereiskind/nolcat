@@ -3,8 +3,8 @@ from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import MultipleFileField
 from wtforms.fields import FileField
-from wtforms.fields import IntegerField  #ToDo: Remove when restoring drop-down
 from wtforms.validators import DataRequired
+from wtforms.validators import InputRequired
 import pandas as pd
 
 
@@ -15,13 +15,12 @@ class COUNTERReportsForm(FlaskForm):
 
 class SUSHIParametersForm(FlaskForm):
     """Creates a form for capturing the parameters for calling the `StatisticsSources.collect_usage_statistics()` method."""
-    #ToDo: Restore `statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int)` when the drop-down works
-    statistics_source = IntegerField("Enter the `statisticsSources.statistics_source_ID` for the statistics source whose SUSHI should be pulled.", validators=[DataRequired()])  #ToDo: Remove when restoring drop-down
+    statistics_source = SelectField("Select the source SUSHI should be harvested from.", coerce=int, validators=[InputRequired()])
     begin_date = DateField("Select the first day of the first month of data being collected.", validators=[DataRequired()])
     end_date = DateField("Select the last day of the last month of data being collected.", validators=[DataRequired()])
 
 
 class UsageFileForm(FlaskForm):
     """Creates a form for selecting a given statistics source and fiscal year combination and uploading a file containing non-COUNTER usage data for that selection."""
-    AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", coerce=int)
+    AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", validators=[InputRequired()])
     usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.", validators=[DataRequired()])

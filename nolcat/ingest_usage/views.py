@@ -56,7 +56,7 @@ def harvest_SUSHI_statistics():
             sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
             con=db.engine,
         )
-        #ToDo: `form.statistics_source.choices = list(statistics_source_options['statistics_source_ID', 'statistics_source_name'].itertuples(index=False, name=None))  # This sets the statistics source field options to a list of every statistics source that has SUSHI credentials` returned `KeyError: ('statistics_source_ID', 'statistics_source_name')` -- the way to make this a valid drop-down needs to be investigated
+        form.statistics_source.choices = list(statistics_source_options[['statistics_source_ID', 'statistics_source_name']].itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         df = pd.read_sql(
@@ -117,10 +117,11 @@ def upload_non_COUNTER_reports():
             sql=SQL_query,
             con=db.engine,
         )
-        non_COUNTER_files_needed =  non_COUNTER_files_needed.index.rename('index')
-        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statisticsSources.statistics_source_name'].astype('string') + " " + non_COUNTER_files_needed['fiscalYears.fiscal_year'].astype('string')
-        form.AUCT_option.choices = list(non_COUNTER_files_needed['index', 'AUCT_option'].itertuples(index=False, name=None))
-        return render_template('ingest_usage/save-non-COUNTER-usage.html', form=form)
+        non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
+        non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
+        logging.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
+        form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
+        return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         #ToDo: Save uploaded file to location `file_path_of_record` in container
             #ToDo: Uploaded files must be of extension types

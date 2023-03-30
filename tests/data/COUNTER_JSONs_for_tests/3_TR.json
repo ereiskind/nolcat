@@ -37,7 +37,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2005",
+            "YOP": 2005,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -74,12 +74,50 @@
             ]
         },
         {
+            "Title": "Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>",
+            "Publisher": "Duke University Press",
+            "Platform": "Duke University Press",
+            "Data_Type": "Book",
+            "Section_Type": null,
+            "YOP": 2005,
+            "Access_Type": "Controlled",
+            "Access_Method": "Regular",
+            "Performance": [
+                {
+                    "Period": {
+                        "Begin_Date": "2019-12-01",
+                        "End_Date": "2019-12-31"
+                    },
+                    "Instance": [
+                        {
+                            "Metric_Type": "Unique_Title_Investigations",
+                            "Count": 2
+                        }
+                    ]
+                }
+            ],
+            "Item_ID": [
+                {
+                    "Type": "DOI",
+                    "Value": "10.1215/9780822387046"
+                },
+                {
+                    "Type": "Proprietary_ID",
+                    "Value": "Silverchair:989"
+                },
+                {
+                    "Type": "ISBN",
+                    "Value": "978-0-8223-8704-6"
+                }
+            ]
+        },
+        {
             "Title": "Empires of Vision<subtitle>A Reader</subtitle>",
             "Publisher": "Duke University Press",
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2013",
+            "YOP": 2013,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -117,7 +155,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Book",
-            "YOP": "2004",
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -158,8 +196,8 @@
             "Publisher": "Duke University Press",
             "Platform": "Duke University Press",
             "Data_Type": "Book",
-            "Section_Type": "`None`",
-            "YOP": "2004",
+            "Section_Type": null,
+            "YOP": 2004,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -197,7 +235,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "2009",
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -238,8 +276,8 @@
             "Publisher": "Duke University Press",
             "Platform": "Duke University Press",
             "Data_Type": "Book",
-            "Section_Type": "`None`",
-            "YOP": "2009",
+            "Section_Type": null,
+            "YOP": 2009,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -277,7 +315,7 @@
             "Platform": "Duke University Press",
             "Data_Type": "Book",
             "Section_Type": "Chapter",
-            "YOP": "1994",
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [
@@ -354,8 +392,8 @@
             "Publisher": "Duke University Press",
             "Platform": "Duke University Press",
             "Data_Type": "Book",
-            "Section_Type": "`None`",
-            "YOP": "1994",
+            "Section_Type": null,
+            "YOP": 1994,
             "Access_Type": "Controlled",
             "Access_Method": "Regular",
             "Performance": [

@@ -8,17 +8,23 @@ from nolcat.models import ResourceSources
 
 def test_add_access_stop_date():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass
 
 
 def test_remove_access_stop_date():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_change_StatisticsSource():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
     pass
 
 
 def test_add_note():
     """Create a test for the function."""
-    #ToDo: ???
+    #ToDo: Write test and docstring
     pass

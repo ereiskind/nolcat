@@ -1,7 +1,4 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-# https://flask.palletsprojects.com/en/2.0.x/testing/
-# https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-# https://scotch.io/tutorials/test-a-flask-app-with-selenium-webdriver-part-1
 
 from pathlib import Path
 import os
@@ -25,7 +22,7 @@ def test_flask_client_creation(client):
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
-def test_GET_request_for_homepage(client):
+def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/')
@@ -96,9 +93,9 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     )
 
     retrieved_data = pd.read_sql(
-        sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID;",
+        sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID ORDER BY statisticsSources.statistics_source_ID;",
         con=engine,
-        index_col='statisticsSources.statistics_source_ID'
+        index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
@@ -118,11 +115,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
             ["Pivot", None, "ProQuest", None],
             ["Ulrichsweb", None, "ProQuest", None],
         ],
-        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"]
+        columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
     )
     expected_output_data.index.name = "statistics_source_ID"
 
-    pd.assert_frame_equal(retrieved_data, expected_output_data)
+    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped

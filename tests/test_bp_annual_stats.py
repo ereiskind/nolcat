@@ -1,16 +1,51 @@
 """Tests the routes in the `annual_stats` blueprint."""
 
 import pytest
+from pathlib import Path
+import os
+from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.annual_stats import *
 
 
-#ToDo: Create test for route to view homepage, which is static
+def test_GET_request_for_annual_stats_homepage(client):
+    """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    #Section: Get Data from `GET` Requested Page
+    homepage = client.get('/annual_stats/')
+    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+
+    #Section: Get Data from HTML File
+    with open(Path(os.getcwd(), 'nolcat', 'annual_stats', 'templates', 'annual_stats', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+
+    assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
 
 
-#ToDo: Create test for route to page with details of a fiscal year (display of data in a given fiscalYears record)
+def test_GET_request_for_show_fiscal_year_details():
+    """Tests that the page displays the data from the `fiscalYears` and `annualUsageCollectionTracking` relations for the given year."""
+    #ToDo: Write test
+    pass
 
 
-#ToDo: Create test for route to page displaying all `annualUsageCollectionTracking` records for a given fiscal year (which will likely be indicated through a variable route)
+def test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm():
+    """Tests requesting an annual report."""
+    #ToDo: Write test
+    pass
+
+
+def test_show_fiscal_year_details_submitting_EditFiscalYearForm():
+    """Tests changing the values in the fields of the displayed fiscal year."""
+    #ToDo: Write test
+    pass
+
+
+def test_show_fiscal_year_details_submitting_EditAUCTForm():
+    """Tests changing the values in the fields of one of the AUCT records being displayed."""
+    #ToDo: Write test
+    pass
