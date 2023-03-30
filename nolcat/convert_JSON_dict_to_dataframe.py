@@ -459,7 +459,7 @@ class ConvertJSONDictToDataframe:
         #Section: Create Dataframe
         logging.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `1 != False` returns `True` in Python
-        logging.info(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        logging.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
         df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
         df_dtypes['platform'] = 'string'
         df_dtypes['metric_type'] = 'string'
@@ -486,6 +486,7 @@ class ConvertJSONDictToDataframe:
                 infer_datetime_format=True,
             )
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
+            logging.info(f"The dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
             df['parent_publication_date'] = pd.to_datetime(
                 record_dict['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
