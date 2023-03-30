@@ -263,11 +263,17 @@ class UploadCOUNTERReports:
                 # At this point, dates can be in multiple formats and data types, but NoLCAT doesn't need time or timezone data, and since all the metadata values are combined into a larger string as part of the unstacking process, using ISO strings or the null placeholder string is appropriate
                 if "publication_date" in df_field_names:
                     logging.info(f"Before processing, the dtype of `df['publication_date']` is {df['publication_date'].dtype} and its individual values are\n{df['publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
-                    #ToDo: Process dates
+                    df['publication_date'] = df['publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
                     logging.info(f"After processing, the dtype of `df['publication_date']` is {df['publication_date'].dtype} and its individual values are\n{df['publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
                 if "parent_publication_date" in df_field_names:
                     logging.info(f"Before processing, the dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
-                    #ToDo: Process dates
+                    df['parent_publication_date'] = df['parent_publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
                     logging.info(f"After processing, the dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
 
                 #Subsection: Add `statistics_source_ID` and `report_type` Fields
