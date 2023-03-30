@@ -264,9 +264,11 @@ class UploadCOUNTERReports:
                 if "publication_date" in df_field_names:
                     #ToDo: If value is `1753-01-01`, replace with null
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    logging.warning(f"The dtype of `df['publication_date']` is {df['publication_date'].dtype} and the dtypes of its individual values are\n{df['publication_date'].apply(type)}")
                 if "parent_publication_date" in df_field_names:
                     #ToDo: If value is `1753-01-01`, replace with null
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
+                    logging.warning(f"The dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and the dtypes of its individual values are\n{df['parent_publication_date'].apply(type)}")
 
                 #Subsection: Add `statistics_source_ID` and `report_type` Fields
                 # The names of the fields are added at the same time as the fields themselves so the length of the list of field names matches the number of fields in the dataframe
