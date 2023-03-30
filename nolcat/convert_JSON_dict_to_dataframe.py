@@ -486,13 +486,11 @@ class ConvertJSONDictToDataframe:
                 infer_datetime_format=True,
             )
         if include_in_df_dtypes.get('parent_publication_date'):  # Meaning the value was changed to `True`
-            logging.info(f"Before `to_datetime`, the dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
             df['parent_publication_date'] = pd.to_datetime(
                 df['parent_publication_date'],
                 errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
                 infer_datetime_format=True,
             )
-            logging.info(f"After `to_datetime`, the dtype of `df['parent_publication_date']` is {df['parent_publication_date'].dtype} and its individual values are\n{df['parent_publication_date'].apply(lambda cell_value: f'{cell_value} type({type(cell_value)})')}")
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
 
