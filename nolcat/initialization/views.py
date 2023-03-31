@@ -280,13 +280,14 @@ def collect_AUCT_and_historical_COUNTER_data():
         df = df.set_index(["AUCT_statistics_source", "AUCT_fiscal_year"])
         logging.debug(f"AUCT dataframe with set index:\n{df}")
 
-        #ToDo: df['usage_is_being_collected'] = None
-        #ToDo: df['manual_collection_required'] = None
-        #ToDo: df['collection_via_email'] = None
-        #ToDo: df['is_COUNTER_compliant'] = None
-        #ToDo: df['collection_status'] = None
-        #ToDo: df['usage_file_path'] = None
-        #ToDo: df['notes'] = None
+        df['usage_is_being_collected'] = None
+        df['manual_collection_required'] = None
+        df['collection_via_email'] = None
+        df['is_COUNTER_compliant'] = None
+        df['collection_status'] = None
+        df['usage_file_path'] = None
+        df['notes'] = None
+        logging.info(f"AUCT template dataframe:\n{df}")
 
         #ToDo: df.to_csv(
         #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
