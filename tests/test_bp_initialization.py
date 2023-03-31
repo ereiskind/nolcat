@@ -46,26 +46,18 @@ def test_collect_initial_relation_data():
 @pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
     """Test creating the AUCT relation template CSV."""
-    df = pd.DataFrame(
-        [
-            ['a', 1, '2022-02-02'],
-            ['b', pd.NA, '2023-02-02'],
-            ['c', 3, '2022-02-02'],
-        ],
-        columns=['one', 'two', 'three'],
-    )
-    df.to_csv(
-        'test.csv',
-        index_label='index',
-        date_format='%Y-%m-%d',
-        encoding='utf-8',
-        errors='backslashreplace',  # For encoding errors
-    )
     #ToDo: Enter route function with `if request.method == 'GET':`
-    #ToDo: Point to CSV file at location it's saved to
-    #ToDo: When download functionality is set up, capture downloaded CSV
-    #ToDo: Compare CSV file to contents of existing CSV file which aligns with what result should be saved in `tests` folder
-    assert True
+    #ToDo: Create pathlib.Path variable for location of CSV created below
+    #ToDo: tests.data.relations.annualUsageCollectionTracking_relation.to_CSV(
+    #     pathlib.Path variable
+    #     index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    #     encoding='utf-8',
+    #     errors='backslashreplace',  
+    # )
+    #ToDo: Create pathlib.Path variable for location of CSV file created by route function at location it's saved to
+    #ToDo: When download functionality is set up, capture downloaded CSV instead
+    #ToDo: Compare the contents of the files at the locations of the two pathlib.Path variables
+    pass
 
 
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
