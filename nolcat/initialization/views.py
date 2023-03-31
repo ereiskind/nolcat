@@ -336,7 +336,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         #     if_exists='append',
         # )
         # logging.debug("Relation `COUNTERData` loaded into the database")
-        # logging.info("All relations loaded into the database")
+        logging.info("All relations loaded into the database")
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
         return redirect(url_for('initialization.data_load_complete'))

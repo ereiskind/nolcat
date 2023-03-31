@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Finish ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
 * Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
