@@ -1,5 +1,0 @@
-# File name patterns to be handled with Git LFS
-*_LFS.py
-
-# Lines added through `git lfs migrate import --include="name/of/a/file"` CLI command
-tests/data/COUNTER_reports_LFS.py filter=lfs diff=lfs merge=lfs -text
