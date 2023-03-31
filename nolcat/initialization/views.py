@@ -264,19 +264,11 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        SELECT_statement = text('SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;')
-        #ToDo: AUCT_values = db.engine.execute(SELECT_statement).values()  # Unable to determine exactly what is in the lists output by each method of https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy
-        #ToDo: From `AUCT_values`, generate the below
-        #ToDo: AUCT_index_array = [
-        #    [record1 statisticsSources.statistics_source_ID, record1 fiscalYears.fiscal_year_ID],
-        #    [record2 statisticsSources.statistics_source_ID, record2 fiscalYears.fiscal_year_ID],
-        #    ...
-        #]
-        #ToDo: AUCT_value_array = [
-        #    [record1 statisticsSources.statistics_source_name, record1 fiscalYears.fiscal_year],
-        #    [record2 statisticsSources.statistics_source_name, record2 fiscalYears.fiscal_year],
-        #    ...
-        #]
+        df = pd.read_sql(
+            sql='SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;',
+            con=db.engine,
+        )
+        logging.debug(f"AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         #ToDo: multiindex = pd.DataFrame(
