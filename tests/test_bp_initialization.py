@@ -75,7 +75,8 @@ def test_collect_AUCT_and_historical_COUNTER_data():
     #ToDo: Get other files to serve as temp tabular COUNTER report files
     #ToDo: Submit the files to the appropriate forms on the page
     #ToDo: At or after function return statement/redirect, query database for `annualUsageCollectionTracking` and `COUNTERData` relations and ensure results match files used for submitting data and/or `conftest.py`
-    pass
+    os.remove('test.csv')
+    assert True
 
 
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
