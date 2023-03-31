@@ -46,7 +46,8 @@ def test_collect_initial_relation_data():
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
     """Test creating the AUCT relation template CSV."""
     #ToDo: Enter route function with `if request.method == 'GET':`
-    #ToDo: Create CSV file (function through `CSV_file.close()`)
+    #ToDo: Point to CSV file at location it's saved to
+    #ToDo: When download functionality is set up, capture downloaded CSV
     #ToDo: Compare CSV file to contents of existing CSV file which aligns with what result should be saved in `tests` folder
     pass
 

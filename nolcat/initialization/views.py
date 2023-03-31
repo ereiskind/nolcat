@@ -296,7 +296,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             errors='backslashreplace',  # For encoding errors
         )
         #ToDo: Confirm above downloads successfully
-        #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-2.html', form=form)
 
     #Section: After Form Submission
     elif form.validate_on_submit():
