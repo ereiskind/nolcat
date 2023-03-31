@@ -5,7 +5,6 @@ The fixtures for connecting to the database are primarily based upon the fixture
 
 import pytest
 from sqlalchemy import create_engine
-import pandas as pd
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
@@ -102,21 +101,6 @@ def session(engine, db):
 @pytest.fixture
 def fiscalYears_relation():
     """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
-    df = pd.DataFrame(
-        [
-            ['a', 1, '2022-02-02'],
-            ['b', pd.NA, '2023-02-02'],
-            ['c', 3, '2022-02-02'],
-        ],
-        columns=['one', 'two'],
-    )
-    df.to_csv(
-        'test.csv',
-        index_label='index',
-        date_format='%Y-%m-%d',
-        encoding='utf-8',
-        errors='backslashreplace',  # For encoding errors
-    )
     yield relations.fiscalYears_relation()
 
 
