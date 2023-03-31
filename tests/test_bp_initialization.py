@@ -75,8 +75,7 @@ def test_collect_AUCT_and_historical_COUNTER_data():
     #ToDo: Get other files to serve as temp tabular COUNTER report files
     #ToDo: Submit the files to the appropriate forms on the page
     #ToDo: At or after function return statement/redirect, query database for `annualUsageCollectionTracking` and `COUNTERData` relations and ensure results match files used for submitting data and/or `conftest.py`
-    os.remove('test.csv')
-    assert True
+    pass
 
 
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
@@ -99,3 +98,12 @@ def test_data_load_complete():
     """Tests calling the route and subsequently rendering the page."""
     #ToDo: Write test once this route contains content for displaying the newly uploaded data in the browser
     pass
+
+
+def test_file_removal():
+    """Removes all the files created in previous test functions.
+    
+    Fixtures in the conftest module cannot be used to create files, but for some functions, the desired output is a file based on a conftest fixture. To ensure the exact output is being compared, files are created in the test functions. To ensure those files don't remain in the repo, this test function removes the created files at the end of this test module.
+    """
+    #ToDo: os.remove(pathlib.Path variable for location of CSV created in `test_GET_request_for_collect_AUCT_and_historical_COUNTER_data`)
+    assert True
