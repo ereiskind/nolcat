@@ -39,7 +39,7 @@ def upload_COUNTER_reports():
         #     con=db.engine,
         #     if_exists='append',
         # )
-        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
     else:
         return abort(404)
 
@@ -73,7 +73,7 @@ def harvest_SUSHI_statistics():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            return redirect(url_for('harvest_SUSHI_statistics'))  #ToDo: Add message flashing that the end date was before the begin date
+            return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))  #ToDo: Add message flashing that the end date was before the begin date
         end_date = datetime.date(
             end_date.year,
             end_date.month,
@@ -83,7 +83,7 @@ def harvest_SUSHI_statistics():
 
         result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
         logging.info(result_message)
-        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
     else:
         return abort(404)
 
@@ -149,6 +149,6 @@ def upload_non_COUNTER_reports():
         #ToDo:     SET usage_file_path = {file_path_of_record}
         #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
         #ToDo: '''
-        return redirect(url_for('ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
     else:
         return abort(404)

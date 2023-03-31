@@ -59,7 +59,7 @@ def use_predefined_SQL_query():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            return redirect(url_for('use_predefined_SQL_query'))  #ToDo: Add message flashing that the end date was before the begin date
+            return redirect(url_for('view_usage.use_predefined_SQL_query'))  #ToDo: Add message flashing that the end date was before the begin date
         end_date = datetime.date(
             end_date.year,
             end_date.month,
