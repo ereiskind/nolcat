@@ -289,12 +289,12 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['notes'] = None
         logging.info(f"AUCT template dataframe:\n{df}")
 
-        #ToDo: df.to_csv(
-        #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
-        #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        #    encoding='utf-8',
-        #    errors='backslashreplace',  # For encoding errors
-        #)
+        df.to_csv(
+            'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
+            index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+            encoding='utf-8',
+            errors='backslashreplace',  # For encoding errors
+        )
         #ToDo: Confirm above downloads successfully
         #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
 
