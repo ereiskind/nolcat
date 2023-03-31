@@ -271,16 +271,14 @@ def collect_AUCT_and_historical_COUNTER_data():
         logging.debug(f"AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: multiindex = pd.DataFrame(
-        #    AUCT_index_array,
-        #    columns=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        #)
-        #ToDo: multiindex = pd.MultiIndex.from_frame(multiindex)
-        #ToDo: df = pd.DataFrame(
-        #    AUCT_value_array,
-        #    index=multiindex,
-        #    columns=["Statistics Source", "Fiscal Year"],
-        #)
+        df = df.rename({
+            "statistics_source_ID": "AUCT_statistics_source",
+            "fiscal_year_ID": "AUCT_fiscal_year",
+            "statistics_source_name": "Statistics Source",
+            "fiscal_year": "Fiscal Year",
+        })
+        df = df.set_index(["AUCT_statistics_source", "AUCT_fiscal_year"])
+        logging.debug(f"AUCT dataframe with set index:\n{df}")
 
         #ToDo: df['usage_is_being_collected'] = None
         #ToDo: df['manual_collection_required'] = None
