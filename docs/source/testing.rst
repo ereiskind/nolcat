@@ -248,3 +248,19 @@ Internally Inconsistent
 These vendors show internal inconsistencies in testing:
 
 * Adam Matthew: ``status`` call always has a top-level ``Alerts`` key, but ``handle_SUSHI_exceptions`` isn't always called; calls made 11 minutes apart returning the exact same data can behave differently in regards to the method call
+
+nginx Logging
+*************
+When a ``docker compose up`` command is used in the AWS instance to build and start the NoLCAT containers, the command line switches to showing a combined Python and nginx log. The nginx logging statements use the default log configuration, which has the structure ``$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$gzip_ratio"`` where
+
+* **$remote_addr** is the client IP address
+* **$remote_user**  is the username from the authentication
+* **$time_local** is a timestamp in nginx's log format
+* **$request** is the HTTP request start line, consisting of a HTTP method, the request target, and the HTTP version
+* **$status** is the HTTP status code of the response
+* **$body_bytes_sent** is the number of bytes sent to the client, not including the response header
+* **$http_referer** is the address of the requested web page
+* **$http_user_agent** is the value of the ``User Agent`` HTTP request field
+* **$gzip_ratio** is the compression ratio achieved
+
+In nginx logging statements, null values are represented by hyphens (``-``).
