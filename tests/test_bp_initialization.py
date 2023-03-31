@@ -52,7 +52,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
             ['b', pd.NA, '2023-02-02'],
             ['c', 3, '2022-02-02'],
         ],
-        columns=['one', 'two'],
+        columns=['one', 'two', 'three'],
     )
     df.to_csv(
         'test.csv',
