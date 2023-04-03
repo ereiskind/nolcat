@@ -120,6 +120,18 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
     os.remove(tmp_path / 'annualUsageCollectionTracking_relation.csv')
 
 
+@pytest.fixture
+def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
+    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test."""
+    yield COUNTERData_relation.to_csv(
+        tmp_path / 'COUNTERData_relation.csv',
+        index_label="COUNTER_data_ID",
+        encoding='utf-8',
+        errors='backslashreplace',  
+    )
+    os.remove(tmp_path / 'COUNTERData_relation.csv')
+
+
 #Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
