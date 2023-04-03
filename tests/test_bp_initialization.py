@@ -60,10 +60,10 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data():
+def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file):
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
     fiscalYears_CSV = pd.read_csv(
-        absolute_path_to_tests_directory / 'fiscalYears_relation.csv',
+        tmp_path / 'fiscalYears_relation.csv',
         index_col="fiscal_year_ID",
          parse_dates=['start_date', 'end_date'],
         date_parser=date_parser,
