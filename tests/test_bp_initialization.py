@@ -27,7 +27,7 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
 @pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
     """Create a CSV file with the test data for the `vendors` relation."""
-    assert vendors_relation.to_csv(
+    yield vendors_relation.to_csv(
         tmp_path / 'vendors_relation.csv',
         index_label="fiscal_year_ID",
         encoding='utf-8',
