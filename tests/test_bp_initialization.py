@@ -159,7 +159,7 @@ def test_GET_request_for_collect_initial_relation_data(client):
 @pytest.mark.dependency()
 def test_collect_initial_relation_data(tmp_path, header_value, client):
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
-    POST_request = client.post('/initialization/', data={
+    POST_request = client.post('/initialization/', headers=header_value, data={  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'`
         'fiscalYears_CSV': tmp_path / 'fiscalYears_relation.csv',
         'vendors_CSV': tmp_path / 'vendors_relation.csv',
         'vendorNotes_CSV': tmp_path / 'vendorNotes_relation.csv',
@@ -168,7 +168,7 @@ def test_collect_initial_relation_data(tmp_path, header_value, client):
         'resourceSources_CSV': tmp_path / 'resourceSources_relation.csv',
         'resourceSourceNotes_CSV': tmp_path / 'resourceSourceNotes_relation.csv',
         'statisticsResourceSources_CSV': tmp_path / 'statisticsResourceSources_relation.csv',
-    }, timeout=90, headers=header_value)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    })  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     print(f"`POST_request.content`: {POST_request.content}")
     print(f"`POST_request.encoding`: {POST_request.encoding}")
     print(f"`POST_request.raise_for_status()`: {POST_request.raise_for_status()}")
