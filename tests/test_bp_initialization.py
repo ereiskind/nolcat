@@ -10,7 +10,21 @@ import pandas as pd
 from nolcat.app import create_app
 from nolcat.initialization import *
 
+absolute_path_to_tests_directory = Path(__file__).parent.resolve()
 
+#Section: Fixtures
+@pytest.fixture(scope='module')
+def create_fiscalYears_CSV_file(fiscalYears_relation):
+    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the testing module."""
+    yield fiscalYears_relation.to_CSV(
+        absolute_path_to_tests_directory / 'fiscalYears_relation.csv',
+        index_label="fiscal_year_ID",
+        encoding='utf-8',
+        errors='backslashreplace',  
+    )
+
+
+#Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
     #ToDo: How can this route be tested?
