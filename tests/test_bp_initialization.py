@@ -108,6 +108,18 @@ def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSource
     os.remove(tmp_path / 'statisticsResourceSources_relation.csv')
 
 
+@pytest.fixture
+def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectionTracking_relation):
+    """Create a CSV file with the test data for the `annualUsageCollectionTracking_relation` relation, then removes the file at the end of the test."""
+    yield annualUsageCollectionTracking_relation.to_csv(
+        tmp_path / 'annualUsageCollectionTracking_relation.csv',
+        index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        encoding='utf-8',
+        errors='backslashreplace',
+    )
+    os.remove(tmp_path / 'annualUsageCollectionTracking_relation.csv')
+
+
 #Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
