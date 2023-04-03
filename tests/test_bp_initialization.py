@@ -12,7 +12,7 @@ from nolcat.initialization import *
 
 
 #Section: Fixtures
-@pytest.fixture(scope='module')
+@pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the testing module."""
     yield fiscalYears_relation.to_CSV(
@@ -24,7 +24,7 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     os.remove(tmp_path / 'fiscalYears_relation.csv',)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
     """Create a CSV file with the test data for the `vendors` relation."""
     assert vendors_relation.to_CSV(
