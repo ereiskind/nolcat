@@ -169,7 +169,6 @@ def test_collect_initial_relation_data(tmp_path, header_value, client):
         'resourceSourceNotes_CSV': tmp_path / 'resourceSourceNotes_relation.csv',
         'statisticsResourceSources_CSV': tmp_path / 'statisticsResourceSources_relation.csv',
     })  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    print(f"`POST_request.content`: {POST_request.content}")
     print(f"`POST_request.encoding`: {POST_request.encoding}")
     print(f"`POST_request.raise_for_status()`: {POST_request.raise_for_status()}")
     print(f"`POST_request.status_code`: {POST_request.status_code}")
