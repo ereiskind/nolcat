@@ -19,7 +19,7 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
         tmp_path / 'fiscalYears_relation.csv',
         index_label="fiscal_year_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'fiscalYears_relation.csv')
 
@@ -31,7 +31,7 @@ def create_vendors_CSV_file(tmp_path, vendors_relation):
         tmp_path / 'vendors_relation.csv',
         index_label="vendor_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'vendors_relation.csv')
 
@@ -43,7 +43,7 @@ def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
         tmp_path / 'vendorNotes_relation.csv',
         index_label="vendor_notes_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'vendorNotes_relation.csv')
 
@@ -55,7 +55,7 @@ def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
         tmp_path / 'statisticsSources_relation.csv',
         index_label="statistics_source_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'statisticsSources_relation.csv')
 
@@ -67,7 +67,7 @@ def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relati
         tmp_path / 'statisticsSourceNotes_relation.csv',
         index_label="statistics_source_notes_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'statisticsSourceNotes_relation.csv')
 
@@ -79,7 +79,7 @@ def create_resourceSources_CSV_file(tmp_path, resourceSources_relation):
         tmp_path / 'resourceSources_relation.csv',
         index_label="resource_source_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'resourceSources_relation.csv')
 
@@ -91,7 +91,7 @@ def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
         tmp_path / 'resourceSourceNotes_relation.csv',
         index_label="resource_source_notes_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'resourceSourceNotes_relation.csv')
 
