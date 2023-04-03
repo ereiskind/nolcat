@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import date_parser
 from nolcat.initialization import *
 
 absolute_path_to_tests_directory = Path(__file__).parent.resolve()
@@ -51,10 +51,19 @@ def test_GET_request_for_collect_initial_relation_data(client):
 @pytest.mark.dependency()
 def test_collect_initial_relation_data():
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+    fiscalYears_CSV = pd.read_csv(
+        absolute_path_to_tests_directory / 'fiscalYears_relation.csv',
+        index_col="fiscal_year_ID",
+         parse_dates=['start_date', 'end_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    print(fiscalYears_CSV)
     #ToDo: Get the fixtures representing the relations in `conftest.py` to serve as CSVs being uploaded into the rendered form
     #ToDo: Submit the files to the form on the page
     #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
-    pass
+    assert True
 
 
 @pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
