@@ -10,14 +10,13 @@ import pandas as pd
 from nolcat.app import date_parser
 from nolcat.initialization import *
 
-absolute_path_to_tests_directory = Path(__file__).parent.resolve()
 
 #Section: Fixtures
 @pytest.fixture(scope='module')
-def create_fiscalYears_CSV_file(fiscalYears_relation):
+def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the testing module."""
     yield fiscalYears_relation.to_CSV(
-        absolute_path_to_tests_directory / 'fiscalYears_relation.csv',
+        tmp_path / 'fiscalYears_relation.csv',
         index_label="fiscal_year_ID",
         encoding='utf-8',
         errors='backslashreplace',  
