@@ -26,13 +26,14 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
 
 @pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
-    """Create a CSV file with the test data for the `vendors` relation."""
+    """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test."""
     yield vendors_relation.to_csv(
         tmp_path / 'vendors_relation.csv',
         index_label="vendor_ID",
         encoding='utf-8',
         errors='backslashreplace',  
     )
+    os.remove(tmp_path / 'vendors_relation.csv')
 
 
 #Section: Tests
