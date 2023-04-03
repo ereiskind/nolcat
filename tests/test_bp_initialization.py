@@ -24,6 +24,17 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     os.remove(tmp_path / 'fiscalYears_relation.csv',)
 
 
+@pytest.fixture(scope='module')
+def create_vendors_CSV_file(tmp_path, vendors_relation):
+    """Create a CSV file with the test data for the `vendors` relation."""
+    assert vendors_relation.to_CSV(
+        tmp_path / 'vendors_relation.csv',
+        index_label="fiscal_year_ID",
+        encoding='utf-8',
+        errors='backslashreplace',  
+    )
+
+
 #Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
