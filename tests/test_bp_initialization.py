@@ -29,7 +29,7 @@ def create_vendors_CSV_file(tmp_path, vendors_relation):
     """Create a CSV file with the test data for the `vendors` relation."""
     yield vendors_relation.to_csv(
         tmp_path / 'vendors_relation.csv',
-        index_label="fiscal_year_ID",
+        index_label="vendor_ID",
         encoding='utf-8',
         errors='backslashreplace',  
     )
