@@ -65,7 +65,7 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file):
     fiscalYears_CSV = pd.read_csv(
         tmp_path / 'fiscalYears_relation.csv',
         index_col="fiscal_year_ID",
-         parse_dates=['start_date', 'end_date'],
+        parse_dates=['start_date', 'end_date'],
         date_parser=date_parser,
         encoding='utf-8',
         encoding_errors='backslashreplace',
