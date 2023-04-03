@@ -14,14 +14,14 @@ from nolcat.initialization import *
 #Section: Fixtures
 @pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
-    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the testing module."""
-    yield fiscalYears_relation.to_csv(  #ALERT: `AttributeError: 'DataFrame' object has no attribute 'to_CSV'`
+    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test."""
+    yield fiscalYears_relation.to_csv(
         tmp_path / 'fiscalYears_relation.csv',
         index_label="fiscal_year_ID",
         encoding='utf-8',
         errors='backslashreplace',  
     )
-    os.remove(tmp_path / 'fiscalYears_relation.csv',)
+    os.remove(tmp_path / 'fiscalYears_relation.csv')
 
 
 @pytest.fixture
