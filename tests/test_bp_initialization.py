@@ -157,26 +157,23 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file):
+def test_collect_initial_relation_data(tmp_path, header_value, client):
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
-    fiscalYears_CSV = pd.read_csv(
-        tmp_path / 'fiscalYears_relation.csv',
-        index_col="fiscal_year_ID",
-        parse_dates=["start_date", "end_date"],
-        date_parser=date_parser,
-        encoding='utf-8',
-        encoding_errors='backslashreplace',
-    )
-    vendors_CSV = pd.read_csv(
-        tmp_path / 'vendors_relation.csv',
-        index_col="vendor_ID",
-        encoding='utf-8',
-        encoding_errors='backslashreplace',
-    )
-    print(f"The `vendors` CSV data:\n{vendors_CSV}")
-    print(f"The `fiscalYears` CSV data:\n{fiscalYears_CSV}")
-    #ToDo: Get the fixtures representing the relations in `conftest.py` to serve as CSVs being uploaded into the rendered form
-    #ToDo: Submit the files to the form on the page
+    POST_request = client.post('/initialization/', timeout=90, headers=header_value, data={
+        'fiscalYears_CSV': tmp_path / 'fiscalYears_relation.csv',
+        'vendors_CSV': tmp_path / 'vendors_relation.csv',
+        'vendorNotes_CSV': tmp_path / 'vendorNotes_relation.csv',
+        'statisticsSources_CSV': tmp_path / 'statisticsSources_relation.csv',
+        'statisticsSourceNotes_CSV': tmp_path / 'statisticsSourceNotes_relation.csv',
+        'resourceSources_CSV': tmp_path / 'resourceSources_relation.csv',
+        'resourceSourceNotes_CSV': tmp_path / 'resourceSourceNotes_relation.csv',
+        'statisticsResourceSources_CSV': tmp_path / 'statisticsResourceSources_relation.csv',
+    })  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    print(f"`POST_request.content`: {POST_request.content}")
+    print(f"`POST_request.encoding`: {POST_request.encoding}")
+    print(f"`POST_request.raise_for_status()`: {POST_request.raise_for_status()}")
+    print(f"`POST_request.status_code`: {POST_request.status_code}")
+    print(f"`POST_request.text`: {POST_request.text}")
     #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
     assert True
 
