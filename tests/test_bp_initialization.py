@@ -76,7 +76,8 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    print(fiscalYears_CSV)
+    print(f"The `vendors` CSV data:\n{vendors_CSV}")
+    print(f"The `fiscalYears` CSV data:\n{fiscalYears_CSV}")
     #ToDo: Get the fixtures representing the relations in `conftest.py` to serve as CSVs being uploaded into the rendered form
     #ToDo: Submit the files to the form on the page
     #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
