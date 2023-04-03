@@ -21,6 +21,7 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
         encoding='utf-8',
         errors='backslashreplace',  
     )
+    os.remove(tmp_path / 'fiscalYears_relation.csv',)
 
 
 #Section: Tests
