@@ -36,6 +36,18 @@ def create_vendors_CSV_file(tmp_path, vendors_relation):
     os.remove(tmp_path / 'vendors_relation.csv')
 
 
+@pytest.fixture
+def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
+    """Create a CSV file with the test data for the `vendorNotes_relation` relation, then removes the file at the end of the test."""
+    yield vendorNotes_relation.to_csv(
+        tmp_path / 'vendorNotes_relation.csv',
+        index_label="vendor_notes_ID",
+        encoding='utf-8',
+        errors='backslashreplace',  
+    )
+    os.remove(tmp_path / 'vendorNotes_relation.csv')
+
+
 #Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
