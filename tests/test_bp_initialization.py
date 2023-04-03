@@ -60,6 +60,18 @@ def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
     os.remove(tmp_path / 'statisticsSources_relation.csv')
 
 
+@pytest.fixture
+def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relation):
+    """Create a CSV file with the test data for the `statisticsSourceNotes_relation` relation, then removes the file at the end of the test."""
+    yield statisticsSourceNotes_relation.to_csv(
+        tmp_path / 'statisticsSourceNotes_relation.csv',
+        index_label="statistics_source_notes_ID",
+        encoding='utf-8',
+        errors='backslashreplace',  
+    )
+    os.remove(tmp_path / 'statisticsSourceNotes_relation.csv')
+
+
 #Section: Tests
 def test_download_file():
     """Tests the route enabling file downloads."""
