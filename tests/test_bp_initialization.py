@@ -5,6 +5,7 @@ from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 import pandas as pd
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import date_parser
@@ -159,6 +160,16 @@ def test_GET_request_for_collect_initial_relation_data(client):
 @pytest.mark.dependency()
 def test_collect_initial_relation_data(tmp_path, header_value, client):
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+    CSV_files = MultipartEncoder({
+        'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
+        'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
+        'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
+        'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
+        'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
+        'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
+        'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
+        'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
+    })
     POST_request = client.post('/initialization/', headers=header_value, data={  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'`
         'fiscalYears_CSV': tmp_path / 'fiscalYears_relation.csv',
         'vendors_CSV': tmp_path / 'vendors_relation.csv',
