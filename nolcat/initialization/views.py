@@ -34,20 +34,7 @@ def collect_initial_relation_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
-    logging.debug("In the `collect_initial_relation_data()` route function.")
     form = InitialRelationDataForm()
-    logging.debug(f"`is_submitted`: {form.is_submitted()}; `validate`: {form.validate()}")
-    logging.debug(f"""
-        `form.errors`: {form.errors}
-        `fiscalYears_CSV.errors`: {form.fiscalYears_CSV.errors}
-        `vendors_CSV.errors`: {form.vendors_CSV.errors}
-        `vendorNotes_CSV.errors`: {form.vendorNotes_CSV.errors}
-        `statisticsSources_CSV.errors`: {form.statisticsSources_CSV.errors}
-        `statisticsSourceNotes_CSV.errors`: {form.statisticsSourceNotes_CSV.errors}
-        `resourceSources_CSV.errors`: {form.resourceSources_CSV.errors}
-        `resourceSourceNotes_CSV.errors`: {form.resourceSourceNotes_CSV.errors}
-        `statisticsResourceSources_CSV.errors`: {form.statisticsResourceSources_CSV.errors}
-    """)
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
