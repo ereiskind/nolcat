@@ -69,6 +69,7 @@
         <li><h2>Upload the Relation CSVs</h2>
             <ol><form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
+                {{ form.hidden_tag() }}
                 <li><label>
                     {{ form.fiscalYears_CSV.label }}
                     {{ form.fiscalYears_CSV }}
