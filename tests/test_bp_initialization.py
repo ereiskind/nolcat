@@ -158,11 +158,8 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):
+def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
-    print("Content of `tmp_path`:")
-    for item in tmp_path.iterdir():
-        print(item)
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
         'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
