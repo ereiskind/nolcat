@@ -160,6 +160,9 @@ def test_GET_request_for_collect_initial_relation_data(client):
 @pytest.mark.dependency()
 def test_collect_initial_relation_data(tmp_path, header_value, client):
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+    print("Content of `tmp_path`:")
+    for item in tmp_path.iterdir():
+        print(item)
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
         'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
