@@ -24,9 +24,9 @@ def app():
     app.debug = True
     app.testing = True  # Lets exceptions come through to test client
     app.env = 'test'
-    app.testing = True
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
+    app.config['WTF_CSRF_ENABLED'] = False
     context = app.app_context()  # Creates an application context
     context.push()  # Binds the application context to the current context/Flask application
     yield app
