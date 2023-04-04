@@ -36,7 +36,18 @@ def collect_initial_relation_data():
     """
     logging.debug("In the `collect_initial_relation_data()` route function.")
     form = InitialRelationDataForm()
-    logging.debug(f"`form.errors`: {form.errors}")
+    logging.debug(f"`is_submitted`: {form.is_submitted()}; `validate`: {form.validate()}")
+    logging.debug(f"""
+        `form.errors`: {form.errors}
+        `fiscalYears_CSV.errors`: {form.fiscalYears_CSV.errors}
+        `vendors_CSV.errors`: {form.vendors_CSV.errors}
+        `vendorNotes_CSV.errors`: {form.vendorNotes_CSV.errors}
+        `statisticsSources_CSV.errors`: {form.statisticsSources_CSV.errors}
+        `statisticsSourceNotes_CSV.errors`: {form.statisticsSourceNotes_CSV.errors}
+        `resourceSources_CSV.errors`: {form.resourceSources_CSV.errors}
+        `resourceSourceNotes_CSV.errors`: {form.resourceSourceNotes_CSV.errors}
+        `statisticsResourceSources_CSV.errors`: {form.statisticsResourceSources_CSV.errors}
+    """)
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
