@@ -173,7 +173,7 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
     header_value['Content-Type'] = CSV_files.content_type
     POST_request = client.post(
         '/initialization/',
-        timeout=90,
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
