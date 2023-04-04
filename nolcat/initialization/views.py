@@ -36,6 +36,7 @@ def collect_initial_relation_data():
     """
     logging.debug("In the `collect_initial_relation_data()` route function.")
     form = InitialRelationDataForm()
+    logging.debug(f"`is_submitted`: {form.is_submitted()}\n`validate`: {form.validate()}")
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
