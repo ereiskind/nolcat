@@ -170,16 +170,13 @@ def test_collect_initial_relation_data(tmp_path, header_value, client):
         'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
         'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
     })
-    POST_request = client.post('/initialization/', headers=header_value, data={  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'`
-        'fiscalYears_CSV': tmp_path / 'fiscalYears_relation.csv',
-        'vendors_CSV': tmp_path / 'vendors_relation.csv',
-        'vendorNotes_CSV': tmp_path / 'vendorNotes_relation.csv',
-        'statisticsSources_CSV': tmp_path / 'statisticsSources_relation.csv',
-        'statisticsSourceNotes_CSV': tmp_path / 'statisticsSourceNotes_relation.csv',
-        'resourceSources_CSV': tmp_path / 'resourceSources_relation.csv',
-        'resourceSourceNotes_CSV': tmp_path / 'resourceSourceNotes_relation.csv',
-        'statisticsResourceSources_CSV': tmp_path / 'statisticsResourceSources_relation.csv',
-    })  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    header_value['Content-Type'] = CSV_files.content_type
+    POST_request = client.post(
+        '/initialization/',
+        timeout=90,
+        headers=header_value,
+        data=CSV_files,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     print(f"`POST_request` (type {type(POST_request)}): {POST_request}")
     print(f"`POST_request.charset` (type {type(POST_request.charset)}): {POST_request.charset}")  # `utf-8` (str)
     print(f"`POST_request.mimetype` (type {type(POST_request.mimetype)}): {POST_request.mimetype}")  # `text/html` (str)
