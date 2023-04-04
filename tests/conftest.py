@@ -19,6 +19,7 @@ def app():
     
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
     """
+    WTF_CSRF_ENABLED = False
     app = create_app()
     app.debug = True
     app.testing = True  # Lets exceptions come through to test client
