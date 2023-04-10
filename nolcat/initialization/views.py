@@ -259,7 +259,8 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
-    form = AUCTAndCOUNTERForm()
+    return "<p>A placeholder for the content of the `collect_AUCT_and_historical_COUNTER_data()` route function.</p>"
+    '''form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
@@ -342,7 +343,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        return abort(404)
+        return abort(404)'''
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
