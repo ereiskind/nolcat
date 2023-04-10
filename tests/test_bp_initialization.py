@@ -158,8 +158,56 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client, engine):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+    fiscalYears = pd.read_sql(
+        sql="SELECT * FROM fiscalYears;",
+        con=engine,
+        index_col='fiscal_year_ID',
+    )
+    print(f"`fiscalYears`:\n{fiscalYears}")
+    vendors = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=engine,
+        index_col='vendor_ID',
+    )
+    print(f"`vendors`:\n{vendors}")
+    vendorNotes = pd.read_sql(
+        sql="SELECT * FROM vendorNotes;",
+        con=engine,
+        index_col='vendor_notes_ID',
+    )
+    print(f"`vendorNotes`:\n{vendorNotes}")
+    statisticsSources = pd.read_sql(
+        sql="SELECT * FROM statisticsSources;",
+        con=engine,
+        index_col='statistics_source_ID',
+    )
+    print(f"`statisticsSources`:\n{statisticsSources}")
+    statisticsSourceNotes = pd.read_sql(
+        sql="SELECT * FROM statisticsSourceNotes;",
+        con=engine,
+        index_col='statistics_source_notes_ID',
+    )
+    print(f"`statisticsSourceNotes`:\n{statisticsSourceNotes}")
+    resourceSources = pd.read_sql(
+        sql="SELECT * FROM resourceSources;",
+        con=engine,
+        index_col='resource_source_ID',
+    )
+    print(f"`resourceSources`:\n{resourceSources}")
+    resourceSourceNotes = pd.read_sql(
+        sql="SELECT * FROM resourceSourceNotes;",
+        con=engine,
+        index_col='resource_source_notes_ID',
+    )
+    print(f"`resourceSourceNotes`:\n{resourceSourceNotes}")
+    statisticsResourceSources = pd.read_sql(
+        sql="SELECT * FROM statisticsResourceSources;",
+        con=engine,
+        index_col=['SRS_statistics_source', 'SRS_resource_source'],
+    )
+    print(f"`statisticsResourceSources`:\n{statisticsResourceSources}")
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
         'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
@@ -181,8 +229,56 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
     print(f"`POST_request.charset` (type {type(POST_request.charset)}): {POST_request.charset}")  # `utf-8` (str)
     print(f"`POST_request.mimetype` (type {type(POST_request.mimetype)}): {POST_request.mimetype}")  # `text/html` (str)
     print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")  # `b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to target URL: <a href="/initialization/initialization-page-2">/initialization/initialization-page-2</a>. If not click the link.'` (bytes)
-    print(f"`POST_request.response` (type {type(POST_request.response)}): {POST_request.response}")  # `[b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to target URL: <a href="/initialization/initialization-page-2">/initialization/initialization-page-2</a>. If not click the link.']` (list)
+    print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")
     print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")  # `302` (int)
+    fiscalYears = pd.read_sql(
+        sql="SELECT * FROM fiscalYears;",
+        con=engine,
+        index_col='fiscal_year_ID',
+    )
+    print(f"`fiscalYears`:\n{fiscalYears}")
+    vendors = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=engine,
+        index_col='vendor_ID',
+    )
+    print(f"`vendors`:\n{vendors}")
+    vendorNotes = pd.read_sql(
+        sql="SELECT * FROM vendorNotes;",
+        con=engine,
+        index_col='vendor_notes_ID',
+    )
+    print(f"`vendorNotes`:\n{vendorNotes}")
+    statisticsSources = pd.read_sql(
+        sql="SELECT * FROM statisticsSources;",
+        con=engine,
+        index_col='statistics_source_ID',
+    )
+    print(f"`statisticsSources`:\n{statisticsSources}")
+    statisticsSourceNotes = pd.read_sql(
+        sql="SELECT * FROM statisticsSourceNotes;",
+        con=engine,
+        index_col='statistics_source_notes_ID',
+    )
+    print(f"`statisticsSourceNotes`:\n{statisticsSourceNotes}")
+    resourceSources = pd.read_sql(
+        sql="SELECT * FROM resourceSources;",
+        con=engine,
+        index_col='resource_source_ID',
+    )
+    print(f"`resourceSources`:\n{resourceSources}")
+    resourceSourceNotes = pd.read_sql(
+        sql="SELECT * FROM resourceSourceNotes;",
+        con=engine,
+        index_col='resource_source_notes_ID',
+    )
+    print(f"`resourceSourceNotes`:\n{resourceSourceNotes}")
+    statisticsResourceSources = pd.read_sql(
+        sql="SELECT * FROM statisticsResourceSources;",
+        con=engine,
+        index_col=['SRS_statistics_source', 'SRS_resource_source'],
+    )
+    print(f"`statisticsResourceSources`:\n{statisticsResourceSources}")
     #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
     assert True
 
