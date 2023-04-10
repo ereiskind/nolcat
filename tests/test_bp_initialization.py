@@ -159,7 +159,7 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client, engine):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client, engine, fiscalYears_relation, vendors_relation):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
@@ -189,11 +189,13 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
         con=engine,
         index_col='fiscal_year_ID',
     )
+    print(f"{assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)} (type {assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)})")
     vendors_relation_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_ID',
     )
+    print(f"{assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation) and assert_frame_equal(vendors_relation_data, vendors_relation)} (type {type(assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation) and assert_frame_equal(vendors_relation_data, vendors_relation))})")
     vendorNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM vendorNotes;",
         con=engine,
