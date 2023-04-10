@@ -159,7 +159,7 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client, engine, fiscalYears_relation, vendors_relation):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
@@ -184,50 +184,119 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
     print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")  # `b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to target URL: <a href="/initialization/initialization-page-2">/initialization/initialization-page-2</a>. If not click the link.'` (bytes)
     print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")  # Empty tuple
     print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")  # `302` (int)
+    assert True
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
+    """Tests that the `fiscalYears` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     fiscalYears_relation_data = pd.read_sql(
         sql="SELECT * FROM fiscalYears;",
         con=engine,
         index_col='fiscal_year_ID',
     )
-    print(f"{assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)} (type {assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)})")
+    assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_vendors_relation_to_database(engine, vendors_relation):
+    """Tests that the `vendors` relation was was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     vendors_relation_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_ID',
     )
-    print(f"{assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation) and assert_frame_equal(vendors_relation_data, vendors_relation)} (type {type(assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation) and assert_frame_equal(vendors_relation_data, vendors_relation))})")
+    assert_frame_equal(vendors_relation_data, vendors_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
+    """Tests that the `vendorNotes` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     vendorNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM vendorNotes;",
         con=engine,
         index_col='vendor_notes_ID',
     )
+    assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_statisticsSources_relation_to_database(engine, statisticsSources_relation):
+    """Tests that the `statisticsSources` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     statisticsSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSources;",
         con=engine,
         index_col='statistics_source_ID',
     )
+    assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNotes_relation):
+    """Tests that the `statisticsSourceNotes` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
         con=engine,
         index_col='statistics_source_notes_ID',
     )
+    assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_resourceSources_relation_to_database(engine, resourceSources_relation):
+    """Tests that the `resourceSources` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     resourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSources;",
         con=engine,
         index_col='resource_source_ID',
     )
+    assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_relation):
+    """Tests that the `resourceSourceNotes` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     resourceSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSourceNotes;",
         con=engine,
         index_col='resource_source_notes_ID',
     )
+    assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+def test_statisticsResourceSources_relation_to_database(engine, statisticsResourceSources_relation):
+    """Tests that the `` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
     statisticsResourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsResourceSources;",
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    #ToDo: At or after function return statement/redirect, query database for `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and ensure results match files used for submitting data and/or `conftest.py`
-    assert True
+    assert_frame_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
 @pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
