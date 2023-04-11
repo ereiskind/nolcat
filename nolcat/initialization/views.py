@@ -252,10 +252,11 @@ def collect_initial_relation_data():
         # `return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))` has an initial `POST /initialization/ HTTP/1.1` request and a HTTP 302 response with the redirect URL `http://localhost/initialization/initialization-page-2` and a subsequent GET request to that URL, but the request isn't fully processed by nginx--there's no nginx logging statement, and the browser network tools show a response error `net::ERR_CONNECTION_REFUSED` and no response status code
         # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')` returns an error, the formatted version of which is the string `/initialization/initialization-page-2.html`
         # `return url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'` returns the bytes object `b'/initialization/initialization-page-2.html'` with a HTTP 200 status code
+        # `return redirect('/initialization-page-2')` has an initial `POST /initialization/ HTTP/1.1` request and a HTTP 302 response with the redirect URL `http://localhost/initialization/initialization-page-2` and a subsequent GET request to that URL, but the request isn't fully processed by nginx--there's no nginx logging statement, and the browser network tools show a response error `net::ERR_CONNECTION_REFUSED` and no response status code
         try:
-            return redirect('/initialization-page-2')
+            return redirect('collect_AUCT_and_historical_COUNTER_data')
         except Exception as error:
-            logging.warning(f"The return statement `redirect('/initialization-page-2')` returned the error `{format(error)}` (type {type(format(error))})")
+            logging.warning(f"The return statement `redirect('collect_AUCT_and_historical_COUNTER_data')` returned the error `{format(error)}` (type {type(format(error))})")
 
     else:
         return abort(404)
