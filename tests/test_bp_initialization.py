@@ -221,8 +221,10 @@ def test_vendors_relation_to_database(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
-    vendors_relation_data = vendors_relation_data.convert_dtypes()
-    print(f"`vendors_relation_data` dtypes:\n{vendors_relation_data.dtypes}")
+    vendors_relation_data = vendors_relation_data.astype({
+        "vendor_name": 'string',
+        "alma_vendor_code": 'string',
+    })
     assert_frame_equal(vendors_relation_data, vendors_relation)
 
 
