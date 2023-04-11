@@ -6,7 +6,7 @@ import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import date_parser
@@ -287,16 +287,16 @@ def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_re
 
 @pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
 def test_statisticsResourceSources_relation_to_database(engine, statisticsResourceSources_relation):
-    """Tests that the `` relation was successfully loaded into the database.
+    """Tests that the `statisticsResourceSources` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` (or, in this case, `assert_series_equal`) comparisons.
     """
     statisticsResourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsResourceSources;",
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    assert_frame_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
+    assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
 @pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
