@@ -268,6 +268,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
     form = AUCTAndCOUNTERForm()
+    logging.info("Successfully redirected to `collect_AUCT_and_historical_COUNTER_data()` route method")
     return render_template('initialization/initial-data-upload-2.html', form=form)
     '''form = AUCTAndCOUNTERForm()
     
