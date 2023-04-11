@@ -178,12 +178,9 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    print(f"`POST_request` (type {type(POST_request)}): {POST_request}")  # `<WrapperTestResponse streamed [302 FOUND]>` (<class 'werkzeug.test.WrapperTestResponse'>)
-    print(f"`POST_request.charset` (type {type(POST_request.charset)}): {POST_request.charset}")  # `utf-8` (str)
-    print(f"`POST_request.mimetype` (type {type(POST_request.mimetype)}): {POST_request.mimetype}")  # `text/html` (str)
-    print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")  # `b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n<title>Redirecting...</title>\n<h1>Redirecting...</h1>\n<p>You should be redirected automatically to target URL: <a href="/initialization/initialization-page-2">/initialization/initialization-page-2</a>. If not click the link.'` (bytes)
-    print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")  # Empty tuple
-    print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")  # `302` (int)
+    print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")
+    print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")
+    print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")
     assert True
 
 
