@@ -247,7 +247,8 @@ def collect_initial_relation_data():
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
             logging.info(f"`url_for('initialization.collect_AUCT_and_historical_COUNTER_data')` (type {type(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))}): {url_for('initialization.collect_AUCT_and_historical_COUNTER_data')}")
-            logging.info(f"`redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))` (type {type(redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data')))}): {redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))}")
+            logging.info(f"`render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))` (type {type(render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data')))}): {render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))}")
+            logging.info(f"`render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')` (type {type(render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'))}): {render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')}")
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
