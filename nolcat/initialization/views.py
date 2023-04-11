@@ -253,9 +253,9 @@ def collect_initial_relation_data():
         # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')` returns an error, the formatted version of which is the string `/initialization/initialization-page-2.html`
         # `return url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'` returns the bytes object `b'/initialization/initialization-page-2.html'` with a HTTP 200 status code
         try:
-            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+            return redirect('/initialization-page-2')
         except Exception as error:
-            logging.warning(f"The return statement `redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))` returned the error `{format(error)}` (type {type(format(error))})")
+            logging.warning(f"The return statement `redirect('/initialization-page-2')` returned the error `{format(error)}` (type {type(format(error))})")
 
     else:
         return abort(404)
