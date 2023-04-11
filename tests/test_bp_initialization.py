@@ -177,7 +177,6 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=CSV_files,
-        allow_redirects=True,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     print(f"`POST_request` (type {type(POST_request)}): {POST_request}")  # `<WrapperTestResponse streamed [302 FOUND]>` (<class 'werkzeug.test.WrapperTestResponse'>)
     print(f"`POST_request.charset` (type {type(POST_request.charset)}): {POST_request.charset}")  # `utf-8` (str)
