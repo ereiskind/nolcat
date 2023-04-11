@@ -239,8 +239,12 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
         con=engine,
         index_col='vendor_notes_ID',
     )
-    vendorNotes_relation_data = vendorNotes_relation_data.convert_dtypes()
-    print(f"`vendorNotes_relation_data` dtypes:\n{vendorNotes_relation_data.dtypes}")
+    vendorNotes_relation_data = vendorNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "vendor_ID": 'int',
+    })
+    vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
