@@ -195,6 +195,8 @@ def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
         con=engine,
         index_col='fiscal_year_ID',
     )
+    fiscalYears_relation_data = fiscalYears_relation_data.convert_dtypes()
+    print(f"`fiscalYears_relation_data` dtypes:\n{fiscalYears_relation_data.dtypes}")
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
 
 
@@ -209,6 +211,8 @@ def test_vendors_relation_to_database(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
+    vendors_relation_data = vendors_relation_data.convert_dtypes()
+    print(f"`vendors_relation_data` dtypes:\n{vendors_relation_data.dtypes}")
     assert_frame_equal(vendors_relation_data, vendors_relation)
 
 
@@ -223,6 +227,8 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
         con=engine,
         index_col='vendor_notes_ID',
     )
+    vendorNotes_relation_data = vendorNotes_relation_data.convert_dtypes()
+    print(f"`vendorNotes_relation_data` dtypes:\n{vendorNotes_relation_data.dtypes}")
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
@@ -237,6 +243,8 @@ def test_statisticsSources_relation_to_database(engine, statisticsSources_relati
         con=engine,
         index_col='statistics_source_ID',
     )
+    statisticsSources_relation_data = statisticsSources_relation_data.convert_dtypes()
+    print(f"`statisticsSources_relation_data` dtypes:\n{statisticsSources_relation_data.dtypes}")
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
 
 
@@ -251,6 +259,8 @@ def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNote
         con=engine,
         index_col='statistics_source_notes_ID',
     )
+    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.convert_dtypes()
+    print(f"`statisticsSourceNotes_relation_data` dtypes:\n{statisticsSourceNotes_relation_data.dtypes}")
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
 
 
@@ -265,6 +275,8 @@ def test_resourceSources_relation_to_database(engine, resourceSources_relation):
         con=engine,
         index_col='resource_source_ID',
     )
+    resourceSources_relation_data = resourceSources_relation_data.convert_dtypes()
+    print(f"`resourceSources_relation_data` dtypes:\n{resourceSources_relation_data.dtypes}")
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
 
 
@@ -279,6 +291,8 @@ def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_re
         con=engine,
         index_col='resource_source_notes_ID',
     )
+    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.convert_dtypes()
+    print(f"`resourceSourceNotes_relation_data` dtypes:\n{resourceSourceNotes_relation_data.dtypes}")
     assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
 
 
@@ -293,6 +307,9 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
+    print(f"`statisticsResourceSources_relation_data` is type {type(statisticsResourceSources_relation_data)}\n`statisticsResourceSources_relation` is type {type(statisticsResourceSources_relation)}")
+    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.convert_dtypes()
+    print(f"`statisticsResourceSources_relation_data` dtypes:\n{statisticsResourceSources_relation_data.dtypes}")
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
