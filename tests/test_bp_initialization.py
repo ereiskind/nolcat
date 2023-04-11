@@ -338,9 +338,11 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    print(f"`statisticsResourceSources_relation_data` is type {type(statisticsResourceSources_relation_data)}\n`statisticsResourceSources_relation` is type {type(statisticsResourceSources_relation)}")
-    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.convert_dtypes()
-    print(f"`statisticsResourceSources_relation_data` dtypes:\n{statisticsResourceSources_relation_data.dtypes}")
+    print(f"`statisticsResourceSources_relation_data`:\n{statisticsResourceSources_relation_data}")  # <class 'pandas.core.frame.DataFrame'>
+    print(f"`statisticsResourceSources_relation`:\n{statisticsResourceSources_relation}")  # <class 'pandas.core.series.Series'>
+    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
+        "current_statistics_source": 'bool',
+    })
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
