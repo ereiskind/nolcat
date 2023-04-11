@@ -195,8 +195,18 @@ def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
         con=engine,
         index_col='fiscal_year_ID',
     )
-    fiscalYears_relation_data = fiscalYears_relation_data.convert_dtypes()
-    print(f"`fiscalYears_relation_data` dtypes:\n{fiscalYears_relation_data.dtypes}")
+    fiscalYears_relation_data = fiscalYears_relation_data.astype({
+        "fiscal_year": 'string',
+        "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
+        "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
+        "notes_on_statisticsSources_used": 'string',  # For `text` data type
+        "notes_on_corrections_after_submission": 'string',  # For `text` data type
+    })
+    fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
+    fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
 
 
