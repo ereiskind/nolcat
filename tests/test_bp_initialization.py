@@ -298,8 +298,12 @@ def test_resourceSources_relation_to_database(engine, resourceSources_relation):
         con=engine,
         index_col='resource_source_ID',
     )
-    resourceSources_relation_data = resourceSources_relation_data.convert_dtypes()
-    print(f"`resourceSources_relation_data` dtypes:\n{resourceSources_relation_data.dtypes}")
+    resourceSources_relation_data = resourceSources_relation_data.astype({
+        "resource_source_name": 'string',
+        "source_in_use": 'bool',
+        "vendor_ID": 'int',
+    })
+    resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
 
 
