@@ -253,10 +253,9 @@ def collect_initial_relation_data():
         # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')` returns an error, the formatted version of which is the string `/initialization/initialization-page-2.html`
         # `return url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'` returns the bytes object `b'/initialization/initialization-page-2.html'` with a HTTP 200 status code
         try:
-            template_string = str(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')[1:]  # Index operator is to remove the `/` at the start of the string created by `url_for()`
-            return render_template(template_string)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         except Exception as error:
-            logging.warning(f"The return statement `render_template(template_string)` returned the error `{format(error)}` (type {type(format(error))})")
+            logging.warning(f"The return statement `redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))` returned the error `{format(error)}` (type {type(format(error))})")
 
     else:
         return abort(404)
@@ -268,7 +267,8 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
-    return "<p>A placeholder for the content of the `collect_AUCT_and_historical_COUNTER_data()` route function.</p>"
+    form = AUCTAndCOUNTERForm()
+    return render_template('initialization/initial-data-upload-2.html', form=form)
     '''form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
