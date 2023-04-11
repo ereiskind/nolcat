@@ -318,8 +318,12 @@ def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_re
         con=engine,
         index_col='resource_source_notes_ID',
     )
-    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.convert_dtypes()
-    print(f"`resourceSourceNotes_relation_data` dtypes:\n{resourceSourceNotes_relation_data.dtypes}")
+    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "resource_source_ID": 'int',
+    })
+    resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
     assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
 
 
