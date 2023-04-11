@@ -259,8 +259,11 @@ def test_statisticsSources_relation_to_database(engine, statisticsSources_relati
         con=engine,
         index_col='statistics_source_ID',
     )
-    statisticsSources_relation_data = statisticsSources_relation_data.convert_dtypes()
-    print(f"`statisticsSources_relation_data` dtypes:\n{statisticsSources_relation_data.dtypes}")
+    statisticsSources_relation_data = statisticsSources_relation_data.astype({
+        "statistics_source_name": 'string',
+        "statistics_source_retrieval_code": 'string',
+        "vendor_ID": 'int',
+    })
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
 
 
