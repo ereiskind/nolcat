@@ -278,8 +278,12 @@ def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNote
         con=engine,
         index_col='statistics_source_notes_ID',
     )
-    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.convert_dtypes()
-    print(f"`statisticsSourceNotes_relation_data` dtypes:\n{statisticsSourceNotes_relation_data.dtypes}")
+    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "statistics_source_ID": 'int',
+    })
+    statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
 
 
