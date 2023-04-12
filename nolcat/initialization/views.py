@@ -257,8 +257,8 @@ def collect_initial_relation_data():
         # `redirect(str(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'))` has an initial `POST /initialization/ HTTP/1.1` request and a HTTP 302 response in the nginx log, which also shows a redirect URL of `http://52.91.160.4/initialization/`, but the subsequent GET method isn't fully processed--there's no nginx logging statement, and the browser network tools show a request URL `http://localhost/initialization/initialization-page-2.html`, a response error `net::ERR_CONNECTION_REFUSED`, and no response status code
         try:
             redirect_path = str(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')
-            logging.info(f"Feeding {redirect_path} (type {type(redirect_path)}) into `redirect()`")
-            return redirect(redirect_path)
+            logging.info(f"Feeding {redirect_path} (type {type(redirect_path)}) into `render_template()`")
+            return render_template(redirect_path)
         except Exception as error:
             logging.warning(f"The return statement `redirect('collect_AUCT_and_historical_COUNTER_data')` returned the error `{format(error)}` (type {type(format(error))})")
 
