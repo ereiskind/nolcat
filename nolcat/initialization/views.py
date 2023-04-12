@@ -324,26 +324,7 @@ def collect_initial_relation_data():
             # nginx
                 # Status: HTTP 200
                 # Return value: `b'/initialization/initialization-page-2.html'`
-        try:
-            logging.info("Trying `redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))`")
-            return redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))
-        except Exception as e5:
-            logging.warning(f"`redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e5)}` ({e5})")
-            try:
-                logging.info("Trying `redirect(url_for(collect_AUCT_and_historical_COUNTER_data))`")
-                return redirect(url_for(collect_AUCT_and_historical_COUNTER_data))
-            except Exception as e6:
-                logging.warning(f"`redirect(url_for(collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e6)}` ({e6})")
-                try:
-                    logging.info("Trying `redirect(url_for('/initialization-page-2'))`")
-                    return redirect(url_for('/initialization-page-2'))
-                except Exception as e7:
-                    logging.warning(f"`redirect(url_for('/initialization-page-2'))` returned the error `{format(e7)}` ({e7})")
-                    try:
-                        logging.info("Trying `redirect(url_for('initialization/initialization-page-2'))`")
-                        return redirect(url_for('initialization/initialization-page-2'))
-                    except Exception as e8:
-                        logging.warning(f"`redirect(url_for('initialization/initialization-page-2'))` returned the error `{format(e8)}` ({e8})")
+        return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
         return abort(404)
