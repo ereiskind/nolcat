@@ -259,6 +259,16 @@ def collect_initial_relation_data():
                 # Status: `(failed) net::ERR_CONNECTION_REFUSED`
                 # Request URL (from header): `http://localhost/initialization/initialization-page-2`
 
+        # `redirect(url_for('.collect_AUCT_and_historical_COUNTER_data'))`
+            # nginx--first request
+                # Request: `POST /initialization/ HTTP/1.1`
+                # Status: HTTP 302
+                # Referrer (source) URL: `http://52.91.160.4/initialization/`
+            # Browser network tools--second request
+                # Request method: GET
+                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
+                # Request URL (from header): `http://localhost/initialization/initialization-page-2`
+
         #  `redirect(str(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'))`
             # nginx--first request
                 # Request: `POST /initialization/ HTTP/1.1`
@@ -292,6 +302,9 @@ def collect_initial_relation_data():
         #  `return redirect(url_for('initialization.initialization-page-2'))`
             # Error: `Could not build url for endpoint 'initialization.initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
 
+        # `redirect(url_for('.initialization-page-2'))`
+            # Error: `Could not build url for endpoint 'initialization.initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
+
         # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')`
             # Error: `/initialization/initialization-page-2.html` (string)
 
@@ -300,35 +313,25 @@ def collect_initial_relation_data():
                 # Status: HTTP 200
                 # Return value: `b'/initialization/initialization-page-2.html'`
         try:
-            logging.info("Trying `redirect(url_for('.initialization-page-2'))`")
-            return redirect(url_for('.initialization-page-2'))
-        except Exception as e3:
-            logging.warning(f"`redirect(url_for('.initialization-page-2'))` returned the error `{format(e3)}` ({e3})")
+            logging.info("Trying `redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))`")
+            return redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))
+        except Exception as e5:
+            logging.warning(f"`redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e5)}` ({e5})")
             try:
-                logging.info("Trying `redirect(url_for('.collect_AUCT_and_historical_COUNTER_data'))`")
-                return redirect(url_for('.collect_AUCT_and_historical_COUNTER_data'))
-            except Exception as e4:
-                logging.warning(f"`redirect(url_for('.collect_AUCT_and_historical_COUNTER_data'))` returned the error `{format(e4)}` ({e4})")
+                logging.info("Trying `redirect(url_for(collect_AUCT_and_historical_COUNTER_data))`")
+                return redirect(url_for(collect_AUCT_and_historical_COUNTER_data))
+            except Exception as e6:
+                logging.warning(f"`redirect(url_for(collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e6)}` ({e6})")
                 try:
-                    logging.info("Trying `redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))`")
-                    return redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))
-                except Exception as e5:
-                    logging.warning(f"`redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e5)}` ({e5})")
+                    logging.info("Trying `redirect(url_for('/initialization-page-2'))`")
+                    return redirect(url_for('/initialization-page-2'))
+                except Exception as e7:
+                    logging.warning(f"`redirect(url_for('/initialization-page-2'))` returned the error `{format(e7)}` ({e7})")
                     try:
-                        logging.info("Trying `redirect(url_for(collect_AUCT_and_historical_COUNTER_data))`")
-                        return redirect(url_for(collect_AUCT_and_historical_COUNTER_data))
-                    except Exception as e6:
-                        logging.warning(f"`redirect(url_for(collect_AUCT_and_historical_COUNTER_data))` returned the error `{format(e6)}` ({e6})")
-                        try:
-                            logging.info("Trying `redirect(url_for('/initialization-page-2'))`")
-                            return redirect(url_for('/initialization-page-2'))
-                        except Exception as e7:
-                            logging.warning(f"`redirect(url_for('/initialization-page-2'))` returned the error `{format(e7)}` ({e7})")
-                            try:
-                                logging.info("Trying `redirect(url_for('initialization/initialization-page-2'))`")
-                                return redirect(url_for('initialization/initialization-page-2'))
-                            except Exception as e8:
-                                logging.warning(f"`redirect(url_for('initialization/initialization-page-2'))` returned the error `{format(e8)}` ({e8})")
+                        logging.info("Trying `redirect(url_for('initialization/initialization-page-2'))`")
+                        return redirect(url_for('initialization/initialization-page-2'))
+                    except Exception as e8:
+                        logging.warning(f"`redirect(url_for('initialization/initialization-page-2'))` returned the error `{format(e8)}` ({e8})")
 
     else:
         return abort(404)
