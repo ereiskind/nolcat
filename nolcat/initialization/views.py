@@ -305,8 +305,20 @@ def collect_initial_relation_data():
         # `redirect(url_for('.initialization-page-2'))`
             # Error: `Could not build url for endpoint 'initialization.initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
 
+        # `redirect(url_for('/initialization-page-2'))`
+            # Error: `Could not build url for endpoint '/initialization-page-2'. Did you mean 'initialization.download_file' instead?`
+        
+        # `redirect(url_for('initialization/initialization-page-2'))`
+            # Error: `Could not build url for endpoint 'initialization/initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
+
         # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')`
             # Error: `/initialization/initialization-page-2.html` (string)
+
+        # `redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))`
+            # Error: `name 'initialization' is not defined`
+        
+        # `redirect(url_for(collect_AUCT_and_historical_COUNTER_data))`
+            # Error: `'function' object is not subscriptable`
 
         # `return url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'`
             # nginx
