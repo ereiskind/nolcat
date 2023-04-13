@@ -43,7 +43,7 @@ def collect_initial_relation_data():
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
-        '''logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
+        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -189,12 +189,12 @@ def collect_initial_relation_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsResourceSources`")
         
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
-        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")'''
+        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
 
 
         #Section: Load Data into Database
         try:
-            '''fiscalYears_dataframe.to_sql(
+            fiscalYears_dataframe.to_sql(
                 'fiscalYears',
                 con=db.engine,
                 if_exists='append',
@@ -243,89 +243,13 @@ def collect_initial_relation_data():
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
-            )'''
+            )
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
         
-        # `return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))`
-            # nginx--first request
-                # Request: `POST /initialization/ HTTP/1.1`
-                # Status: HTTP 302
-                # Referrer (source) URL: `http://52.91.160.4/initialization/`
-            # Browser network tools--second request
-                # Request method: GET
-                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
-                # Request URL (from header): `http://localhost/initialization/initialization-page-2`
-
-        # `redirect(url_for('.collect_AUCT_and_historical_COUNTER_data'))`
-            # nginx--first request
-                # Request: `POST /initialization/ HTTP/1.1`
-                # Status: HTTP 302
-                # Referrer (source) URL: `http://52.91.160.4/initialization/`
-            # Browser network tools--second request
-                # Request method: GET
-                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
-                # Request URL (from header): `http://localhost/initialization/initialization-page-2`
-
-        #  `redirect(str(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'))`
-            # nginx--first request
-                # Request: `POST /initialization/ HTTP/1.1`
-                # Status: HTTP 302
-                # Referrer (source) URL: `http://52.91.160.4/initialization/`
-            # Browser network tools--second request
-                # Request method: GET
-                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
-                # Request URL (from header): `http://localhost/initialization/initialization-page-2.html`
-
-        # `redirect('collect_AUCT_and_historical_COUNTER_data')`
-            # nginx--first request
-                # Request: `POST /initialization/ HTTP/1.1`
-                # Status: HTTP 302
-                # Referrer (source) URL: `http://52.91.160.4/initialization/`
-            # Browser network tools--second request
-                # Request method: GET
-                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
-                # Request URL (from header): `http://localhost/initialization/collect_AUCT_and_historical_COUNTER_data`
-
-        #  `return redirect('/initialization-page-2')`
-            # nginx--first request
-                # Request: `POST /initialization/ HTTP/1.1`
-                # Status: HTTP 302
-                # Referrer (source) URL: `http://52.91.160.4/initialization/`
-            # Browser network tools--second request
-                # Request method: GET
-                # Status: `(failed) net::ERR_CONNECTION_REFUSED`
-                # Request URL (from header): `http://localhost/initialization-page-2`
-
-        #  `return redirect(url_for('initialization.initialization-page-2'))`
-            # Error: `Could not build url for endpoint 'initialization.initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
-
-        # `redirect(url_for('.initialization-page-2'))`
-            # Error: `Could not build url for endpoint 'initialization.initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
-
-        # `redirect(url_for('/initialization-page-2'))`
-            # Error: `Could not build url for endpoint '/initialization-page-2'. Did you mean 'initialization.download_file' instead?`
-        
-        # `redirect(url_for('initialization/initialization-page-2'))`
-            # Error: `Could not build url for endpoint 'initialization/initialization-page-2'. Did you mean 'initialization.collect_initial_relation_data' instead?`
-
-        # `return render_template(url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html')`
-            # Error: `/initialization/initialization-page-2.html` (string)
-
-        # `redirect(url_for(initialization.collect_AUCT_and_historical_COUNTER_data))`
-            # Error: `name 'initialization' is not defined`
-        
-        # `redirect(url_for(collect_AUCT_and_historical_COUNTER_data))`
-            # Error: `'function' object is not subscriptable`
-
-        # `return url_for('initialization.collect_AUCT_and_historical_COUNTER_data') + '.html'`
-            # nginx
-                # Status: HTTP 200
-                # Return value: `b'/initialization/initialization-page-2.html'`
-        #return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        return render_template('initialization/index.html', form=form)
+        return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
         return abort(404)
@@ -338,9 +262,6 @@ def collect_AUCT_and_historical_COUNTER_data():
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
     form = AUCTAndCOUNTERForm()
-    logging.info("Successfully redirected to `collect_AUCT_and_historical_COUNTER_data()` route method")
-    return render_template('initialization/initial-data-upload-2.html', form=form)
-    '''form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
@@ -423,7 +344,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        return abort(404)'''
+        return abort(404)
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])

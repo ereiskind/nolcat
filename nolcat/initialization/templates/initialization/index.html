@@ -67,39 +67,9 @@
         </li>
 
         <li><h2>Upload the Relation CSVs</h2>
-            <form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}">
-                <label>
-                    {{ form.fiscalYears_CSV.label }}
-                    {{ form.fiscalYears_CSV }}
-                </label>
-                <input type="submit" value="POST form, no enctype or csrf">
-            </form>
-            <form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
-                <label>
-                    {{ form.vendors_CSV.label }}
-                    {{ form.vendors_CSV }}
-                </label>
-                <input type="submit" value="POST form, no csrf">
-            </form>
-            <form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}">
-                {{ form.csrf_token }}
-                <label>
-                    {{ form.vendorNotes_CSV.label }}
-                    {{ form.vendorNotes_CSV }}
-                </label>
-                <input type="submit" value="POST form, no enctype">
-            </form>
-            <form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
-                {{ form.csrf_token }}
-                <label>
-                    {{ form.statisticsSources_CSV.label }}
-                    {{ form.statisticsSources_CSV }}
-                </label>
-                <input type="submit" value="POST form">
-            </form>
             <ol><form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                <!--<li><label>
+                <li><label>
                     {{ form.fiscalYears_CSV.label }}
                     {{ form.fiscalYears_CSV }}
                 </label></li>
@@ -118,12 +88,12 @@
                     {{ form.statisticsSources_CSV.label }}
                     {{ form.statisticsSources_CSV }}
                 </label></li>
-                <br>-->
+                <br>
                 <li><label>
                     {{ form.statisticsSourceNotes_CSV.label }}
                     {{ form.statisticsSourceNotes_CSV }}
                 </label></li>
-                <!--<br>
+                <br>
                 <li><label>
                     {{ form.resourceSources_CSV.label }}
                     {{ form.resourceSources_CSV }}
@@ -137,7 +107,7 @@
                 <li><label>
                     {{ form.statisticsResourceSources_CSV.label }}
                     {{ form.statisticsResourceSources_CSV }}
-                </label></li>-->
+                </label></li>
                 <input type="submit" value="Submit">
             </form></ol>
         </li>
