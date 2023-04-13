@@ -325,8 +325,7 @@ def collect_initial_relation_data():
                 # Status: HTTP 200
                 # Return value: `b'/initialization/initialization-page-2.html'`
         #return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        form2 = AUCTAndCOUNTERForm()
-        return render_template('initialization/initial-data-upload-2.html', form=form2)
+        return render_template('initialization/index.html', form=form)
 
     else:
         return abort(404)
