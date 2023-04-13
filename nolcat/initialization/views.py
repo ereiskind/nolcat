@@ -35,8 +35,10 @@ def collect_initial_relation_data():
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
     form = InitialRelationDataForm()
+    temp = url_for('initialization.collect_initial_relation_data')
+    logging.info(f"`url_for('initialization.collect_initial_relation_data')` is {url_for('initialization.collect_initial_relation_data')}")
     if request.method == 'GET':
-        return render_template('initialization/index.html', form=form)
+        return render_template('initialization/index.html', form=form, temp=temp)
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
