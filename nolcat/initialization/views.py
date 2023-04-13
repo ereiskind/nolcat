@@ -45,7 +45,7 @@ def collect_initial_relation_data():
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
-        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
+        '''logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -141,7 +141,7 @@ def collect_initial_relation_data():
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` CSV File
-        '''logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
+        logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
@@ -157,10 +157,10 @@ def collect_initial_relation_data():
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")'''
+        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         #Subsection: Upload `resourceSourceNotes` CSV File
-        '''logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
+        logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
@@ -176,10 +176,10 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")'''
+        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsResourceSources` CSV File
-        '''logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
+        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
@@ -196,7 +196,7 @@ def collect_initial_relation_data():
 
         #Section: Load Data into Database
         try:
-            fiscalYears_dataframe.to_sql(
+            '''fiscalYears_dataframe.to_sql(
                 'fiscalYears',
                 con=db.engine,
                 if_exists='append',
@@ -234,14 +234,14 @@ def collect_initial_relation_data():
                 if_exists='append',
             )
             logging.debug("Relation `resourceSources` loaded into the database")
-            '''resourceSourceNotes_dataframe.to_sql(
+            resourceSourceNotes_dataframe.to_sql(
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
-            )'''
+            )
             logging.debug("Relation `resourceSourceNotes` loaded into the database")
-            '''statisticsResourceSources_dataframe.to_sql(
+            statisticsResourceSources_dataframe.to_sql(
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',

@@ -69,7 +69,7 @@
         <li><h2>Upload the Relation CSVs</h2>
             <ol><form method="POST" action="{{ temp }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                <li><label>
+                <!--<li><label>
                     {{ form.fiscalYears_CSV.label }}
                     {{ form.fiscalYears_CSV }}
                 </label></li>
@@ -94,7 +94,7 @@
                     {{ form.statisticsSourceNotes_CSV }}
                 </label></li>
                 <br>
-                <!--<li><label>
+                <li><label>
                     {{ form.resourceSources_CSV.label }}
                     {{ form.resourceSources_CSV }}
                 </label></li>
