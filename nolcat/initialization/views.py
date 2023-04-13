@@ -139,7 +139,7 @@ def collect_initial_relation_data():
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` CSV File
-        logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
+        '''logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
@@ -155,7 +155,7 @@ def collect_initial_relation_data():
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
+        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")'''
 
         #Subsection: Upload `resourceSourceNotes` CSV File
         '''logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
