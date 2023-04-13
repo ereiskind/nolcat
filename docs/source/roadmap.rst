@@ -13,8 +13,6 @@ Planned Iterations
 
 Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
 ========================================================================================
-* Change all instances of route function name from "collect_initial_relation_data" to "collect_FY_and_vendor_data"
-* Update ``nolcat.initialization.views.collect_FY_and_vendor_data()`` docstring
 * Create ``nolcat.initialization.views.collect_sources_data()`` route function with docstring, updating all subsequent route names
 * Create "initialization/initial-data-upload-2.html" to correspond with ``nolcat.initialization.views.collect_sources_data()``, updating all subsequent HTML file names
 * Create new form class containing form fields for uploading CSVs with data for statistics and resource source-related relations
@@ -25,7 +23,8 @@ Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
+* Write ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()``
+* Write ``tests.test_bp_initialization.test_collect_sources_data()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
 * Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
@@ -275,7 +274,7 @@ Iteration: Add User Accounts to Restrict Access
 * Write ``tests.test_bp_login.test_logging_in()``
 * Write ``tests.test_bp_login.test_logging_in_as_admin()``
 * Write ``tests.test_bp_login.test_creating_an_account()``
-* Create redirect to ``nolcat.initialization.views.collect_initial_relation_data()`` after the creation of the first account with data ingest permissions
+* Create redirect to ``nolcat.initialization.views.collect_FY_and_vendor_data()`` after the creation of the first account with data ingest permissions
 
 Iteration: Deduplicate Resources
 ================================

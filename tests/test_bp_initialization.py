@@ -141,7 +141,7 @@ def test_download_file():
     pass
 
 
-def test_GET_request_for_collect_initial_relation_data(client):
+def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
     homepage = client.get('/initialization/')
@@ -159,7 +159,8 @@ def test_GET_request_for_collect_initial_relation_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+    #ALERT: Needs to be redone
     """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
@@ -184,11 +185,11 @@ def test_collect_initial_relation_data(tmp_path, create_fiscalYears_CSV_file, cr
     assert True
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
 def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
     """Tests that the `fiscalYears` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     fiscalYears_relation_data = pd.read_sql(
         sql="SELECT * FROM fiscalYears;",
@@ -210,11 +211,11 @@ def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
 def test_vendors_relation_to_database(engine, vendors_relation):
     """Tests that the `vendors` relation was was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     vendors_relation_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
@@ -228,11 +229,11 @@ def test_vendors_relation_to_database(engine, vendors_relation):
     assert_frame_equal(vendors_relation_data, vendors_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
 def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
     """Tests that the `vendorNotes` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     vendorNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM vendorNotes;",
