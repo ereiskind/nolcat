@@ -11,6 +11,18 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
+Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
+========================================================================================
+* Change all instances of route function name from "collect_initial_relation_data" to "collect_FY_and_vendor_data"
+* Update ``nolcat.initialization.views.collect_FY_and_vendor_data()`` docstring
+* Create ``nolcat.initialization.views.collect_sources_data()`` route function with docstring, updating all subsequent route names
+* Create "initialization/initial-data-upload-2.html" to correspond with ``nolcat.initialization.views.collect_sources_data()``, updating all subsequent HTML file names
+* Create new form class containing form fields for uploading CSVs with data for statistics and resource source-related relations
+* Move code related to ingesting and uploading statistics and resource source-related relations from ``nolcat.initialization.views.collect_FY_and_vendor_data()`` to ``nolcat.initialization.views.collect_sources_data()``
+* Move instructions for creating CSVs with data for statistics and resource source-related relations and form for uploading them to "initialization/initial-data-upload-2.html"
+* Define ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()`` function to serve as placeholder
+* Reorganize test module as appropriate
+
 Iteration 1: SUSHI Only Product
 ===============================
 * Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
