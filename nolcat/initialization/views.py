@@ -12,7 +12,7 @@ from sqlalchemy import exc
 
 from . import bp
 from ..app import db, date_parser
-from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
+from .forms import FYAndVendorsDataForm, SourcesDataForm, AUCTAndCOUNTERForm
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
@@ -34,7 +34,7 @@ def collect_FY_and_vendor_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
-    form = InitialRelationDataForm()
+    form = FYAndVendorsDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
@@ -261,6 +261,7 @@ def collect_sources_data():
 
     The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
+    form = SourcesDataForm()
     pass
 
 
