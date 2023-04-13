@@ -256,6 +256,15 @@ def collect_FY_and_vendor_data():
 
 
 @bp.route('/initialization-page-2', methods=['GET', 'POST'])
+def collect_sources_data():
+    """This route function ingests the files containing data going into the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations, then loads that data into the database.
+
+    The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
+    """
+    pass
+
+
+@bp.route('/initialization-page-3', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
@@ -347,7 +356,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-3', methods=['GET', 'POST'])
+@bp.route('/initialization-page-4', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage():
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
@@ -372,7 +381,7 @@ def upload_historical_non_COUNTER_usage():
     pass
 
 
-@bp.route('/initialization-page-4', methods=['GET', 'POST'])
+@bp.route('/initialization-page-5', methods=['GET', 'POST'])
 def data_load_complete():
     """This route function indicates the successful completion of the wizard and initialization of the database."""
     return render_template('initialization/show-loaded-data.html')

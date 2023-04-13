@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
 ========================================================================================
-* Create ``nolcat.initialization.views.collect_sources_data()`` route function with docstring, updating all subsequent route names
 * Create "initialization/initial-data-upload-2.html" to correspond with ``nolcat.initialization.views.collect_sources_data()``, updating all subsequent HTML file names
 * Create new form class containing form fields for uploading CSVs with data for statistics and resource source-related relations
 * Move code related to ingesting and uploading statistics and resource source-related relations from ``nolcat.initialization.views.collect_FY_and_vendor_data()`` to ``nolcat.initialization.views.collect_sources_data()``
