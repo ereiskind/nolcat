@@ -10,7 +10,7 @@
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
-    <h2>5. Create the `annualUsageCollectionTracking` Relation</h2>
+    <h2>6. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
         <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
         <li>Fill out the CSV from existing documentation:
@@ -31,7 +31,7 @@
         <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
     </ol>
 
-    <h2>6. Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
+    <h2>7. Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
     <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <li><label>
