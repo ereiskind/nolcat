@@ -4,38 +4,46 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" rel="stylesheet">
     <title>Database Initialization Wizard 3</title>
 </head>
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
-    <!--
+    <h2>6. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
-        <li><h2>Upload Historical R4 Usage</h2>
-            <p>Initializing the database with the historical R4 data not only ensures that all the historical COUNTER data is preserved, it also provides a foundation for the deduplication of resources collected via SUSHI.</p>
-            <ol>
-                <li>Create a folder containing nothing but the reformatted R4 report CSVs with every file named using the naming convention `{Statistics_Source_ID}_{R4 report type abbreviation}_{calendar year assigned to fiscal year in "yyyy" format}.csv`</li>
-                <li>Click on the "Open" button below to get to the file navigation window, navigate to the folder created above, then use `Ctrl + a` to select all the files in the folder</li>
-                <li><form action="{{ url_for('ingest.wizard_page_4') }}" method="POST" enctype="multipart/form-data">
-                    <label>
-                        Upload all the selected files
-                        <input name="R4_files" type="file" multiple>
-                    </label>
-                    <button type="submit">Submit</button>
-                </form></li>
-            </ol>
+        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
+        <li>Fill out the CSV from existing documentation:
+            <ul>
+                <li>For statistics source and year combinations not requiring usage collection, set `usage_is_being_collected` to false and choose the appropriate `collection_status`</li>
+                <li>For statistics source and year combinations which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `usage_is_being_collected` and `manual_collection_required` to true, `is_COUNTER_compliant` to false, choose the appropriate `collection_status`, and if a file with the usage exists, put "true" in `usage_file_path`</li>
+                <li>For statistics source and year combinations with R5 SUSHI, set `usage_is_being_collected` and `is_COUNTER_compliant` to true and `collection_status` to "Collection not started"</li>
+                <li>For statistics source and year combinations with manually collected COUNTER reports, set `usage_is_being_collected`, `manual_collection_required`, and `is_COUNTER_compliant` to true, choose the appropriate `collection_status`, then prepare the R4 reports:
+                    <ol>
+                        <li>Save the reports in an Excel workbook where each sheet name is the abbreviation of the name of the report in that sheet</li>
+                        <li>Give the workbooks names that begin with the `statistics_source_ID` of the report followed by an underscore</li>
+                        <li>Place all the workbooks in a folder that contains nothing but these workbooks</li>
+                    </ol>
+                </li>
+                <li>For statistics source and year combinations not falling into any of the above categories, make selections as appropriate</li>
+            </ul>
         </li>
+        <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
     </ol>
-    -->
 
-    <!-- From the route function:
-    form = FormClass()
-    if request.method == 'GET':
-        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
-        #ToDo: Create an iterable to pass all the records returned by the above to a form
-        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
-    -->
-    
+    <h2>7. Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
+    <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <li><label>
+            {{ form.annualUsageCollectionTracking_CSV.label }}
+            {{ form.annualUsageCollectionTracking_CSV }}
+        </label></li>
+        <!--<br>
+        <li><label>
+            {{ form.COUNTER_reports.label }}
+            {{ form.COUNTER_reports }}
+        </label></li>-->
+        <input type="submit" value="Submit">
+    </form></ol>
 </body>
 </html>

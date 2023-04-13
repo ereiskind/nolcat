@@ -13,7 +13,8 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
+* Write ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()``
+* Write ``tests.test_bp_initialization.test_collect_sources_data()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
 * Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
@@ -26,7 +27,7 @@ Iteration 1: SUSHI Only Product
 
 Iteration 2: COUNTER Only Product
 =================================
-* Remove commenting out from "initialization/initial-data-upload-2.html"
+* Remove commenting out from "initialization/initial-data-upload-3.html"
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
@@ -37,7 +38,7 @@ Iteration 3: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-3.html" page
+* Write "initialization/initial-data-upload-4.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
@@ -186,7 +187,7 @@ Iteration 1: Create Downloadable AUCT Template
 
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
-* Get Jinja download to work in "initialization/index.html" and "initialization/initial-data-upload-2.html"
+* Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
 * Write ``tests.test_bp_initialization.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
@@ -263,7 +264,7 @@ Iteration: Add User Accounts to Restrict Access
 * Write ``tests.test_bp_login.test_logging_in()``
 * Write ``tests.test_bp_login.test_logging_in_as_admin()``
 * Write ``tests.test_bp_login.test_creating_an_account()``
-* Create redirect to ``nolcat.initialization.views.collect_initial_relation_data()`` after the creation of the first account with data ingest permissions
+* Create redirect to ``nolcat.initialization.views.collect_FY_and_vendor_data()`` after the creation of the first account with data ingest permissions
 
 Iteration: Deduplicate Resources
 ================================

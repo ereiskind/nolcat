@@ -12,7 +12,7 @@ from sqlalchemy import exc
 
 from . import bp
 from ..app import db, date_parser
-from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
+from .forms import FYAndVendorsDataForm, SourcesDataForm, AUCTAndCOUNTERForm
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
 
@@ -29,12 +29,12 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 @bp.route('/', methods=['GET', 'POST'])
-def collect_initial_relation_data():
-    """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
+def collect_FY_and_vendor_data():
+    """This route function ingests the files containing data going into the `fiscalYears`, `vendors`, and `vendorNotes` relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
-    form = InitialRelationDataForm()
+    form = FYAndVendorsDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
@@ -101,6 +101,50 @@ def collect_initial_relation_data():
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
+
+        #Section: Load Data into Database
+        try:
+            fiscalYears_dataframe.to_sql(
+                'fiscalYears',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `fiscalYears` loaded into the database")
+            vendors_dataframe.to_sql(
+                'vendors',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendors` loaded into the database")
+            vendorNotes_dataframe.to_sql(
+                'vendorNotes',
+                con=db.engine,
+                if_exists='append',
+                index=False,
+            )
+            logging.debug("Relation `vendorNotes` loaded into the database")
+            
+            logging.info("All relations loaded into the database")
+        except Exception as error:
+            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+        
+        return redirect(url_for('initialization.collect_sources_data'))
+
+    else:
+        return abort(404)
+
+
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+def collect_sources_data():
+    """This route function ingests the files containing data going into the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations, then loads that data into the database.
+
+    The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
+    """
+    form = SourcesDataForm()
+    if request.method == 'GET':
+        return render_template('blueprint_name/initial-data-upload-2.html', form=form)
+    elif form.validate_on_submit():
+        #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
@@ -194,25 +238,6 @@ def collect_initial_relation_data():
 
         #Section: Load Data into Database
         try:
-            fiscalYears_dataframe.to_sql(
-                'fiscalYears',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `fiscalYears` loaded into the database")
-            vendors_dataframe.to_sql(
-                'vendors',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `vendors` loaded into the database")
-            vendorNotes_dataframe.to_sql(
-                'vendorNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            logging.debug("Relation `vendorNotes` loaded into the database")
             statisticsSources_dataframe.to_sql(
                 'statisticsSources',
                 con=db.engine,
@@ -255,7 +280,7 @@ def collect_initial_relation_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+@bp.route('/initialization-page-3', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
@@ -298,7 +323,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             errors='backslashreplace',  # For encoding errors
         )
         #ToDo: Confirm above downloads successfully
-        return render_template('initialization/initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-3.html', form=form)
 
     #Section: After Form Submission
     elif form.validate_on_submit():
@@ -347,7 +372,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return abort(404)
 
 
-@bp.route('/initialization-page-3', methods=['GET', 'POST'])
+@bp.route('/initialization-page-4', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage():
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
@@ -360,7 +385,7 @@ def upload_historical_non_COUNTER_usage():
         #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
         #ToDo: Create an iterable to pass all the records returned by the above to a form
         #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
+        return render_template('blueprint_name/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         #ToDo: For each file uploaded in the form
             #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
@@ -372,7 +397,7 @@ def upload_historical_non_COUNTER_usage():
     pass
 
 
-@bp.route('/initialization-page-4', methods=['GET', 'POST'])
+@bp.route('/initialization-page-5', methods=['GET', 'POST'])
 def data_load_complete():
     """This route function indicates the successful completion of the wizard and initialization of the database."""
     return render_template('initialization/show-loaded-data.html')
