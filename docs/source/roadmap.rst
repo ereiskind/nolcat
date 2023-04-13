@@ -11,11 +11,6 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
-========================================================================================
-* Define ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()`` function to serve as placeholder
-* Reorganize test module as appropriate
-
 Iteration 1: SUSHI Only Product
 ===============================
 * Write ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()``

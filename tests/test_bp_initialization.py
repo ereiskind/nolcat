@@ -159,18 +159,12 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, create_annualUsageCollectionTracking_CSV_file, create_COUNTERData_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
-    #ALERT: Needs to be redone
-    """Tests uploading CSVs with data related to usage collection and loading that data into the database."""
+def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+    """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
     CSV_files = MultipartEncoder({
         'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
         'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
         'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
-        'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
-        'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
-        'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
-        'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
-        'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
     })
     header_value['Content-Type'] = CSV_files.content_type
     POST_request = client.post(
@@ -249,11 +243,31 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency()
+def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, header_value, client):  # Fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+    """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+    CSV_files = MultipartEncoder({
+        'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
+        'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
+        'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
+        'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
+        'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
+    })
+    header_value['Content-Type'] = CSV_files.content_type
+    POST_request = client.post(
+        '/initialization/',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        headers=header_value,
+        data=CSV_files,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    pass
+
+
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_statisticsSources_relation_to_database(engine, statisticsSources_relation):
     """Tests that the `statisticsSources` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     statisticsSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSources;",
@@ -268,11 +282,11 @@ def test_statisticsSources_relation_to_database(engine, statisticsSources_relati
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNotes_relation):
     """Tests that the `statisticsSourceNotes` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
@@ -288,11 +302,11 @@ def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNote
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_resourceSources_relation_to_database(engine, resourceSources_relation):
     """Tests that the `resourceSources` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     resourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSources;",
@@ -308,11 +322,11 @@ def test_resourceSources_relation_to_database(engine, resourceSources_relation):
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_relation):
     """Tests that the `resourceSourceNotes` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
     """
     resourceSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSourceNotes;",
@@ -328,11 +342,11 @@ def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_re
     assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_statisticsResourceSources_relation_to_database(engine, statisticsResourceSources_relation):
     """Tests that the `statisticsResourceSources` relation was successfully loaded into the database.
     
-    This test is separate from the `test_collect_initial_relation_data()` test function because a single test function can't support multiple `assert_frame_equal` (or, in this case, `assert_series_equal`) comparisons.
+    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` (or, in this case, `assert_series_equal`) comparisons.
     """
     statisticsResourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsResourceSources;",
@@ -347,7 +361,7 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_initial_relation_data'])
+@pytest.mark.dependency(depends=['test_collect_sources_data'])
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
     """Test creating the AUCT relation template CSV."""
     #ToDo: Enter route function with `if request.method == 'GET':`
