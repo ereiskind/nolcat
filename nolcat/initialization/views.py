@@ -307,7 +307,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             errors='backslashreplace',  # For encoding errors
         )
         #ToDo: Confirm above downloads successfully
-        return render_template('initialization/initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-3.html', form=form)
 
     #Section: After Form Submission
     elif form.validate_on_submit():
@@ -369,7 +369,7 @@ def upload_historical_non_COUNTER_usage():
         #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
         #ToDo: Create an iterable to pass all the records returned by the above to a form
         #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
+        return render_template('blueprint_name/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         #ToDo: For each file uploaded in the form
             #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name

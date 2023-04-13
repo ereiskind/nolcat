@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
 ========================================================================================
-* Create "initialization/initial-data-upload-2.html" to correspond with ``nolcat.initialization.views.collect_sources_data()``, updating all subsequent HTML file names
 * Create new form class containing form fields for uploading CSVs with data for statistics and resource source-related relations
 * Move code related to ingesting and uploading statistics and resource source-related relations from ``nolcat.initialization.views.collect_FY_and_vendor_data()`` to ``nolcat.initialization.views.collect_sources_data()``
 * Move instructions for creating CSVs with data for statistics and resource source-related relations and form for uploading them to "initialization/initial-data-upload-2.html"
@@ -36,7 +35,7 @@ Iteration 1: SUSHI Only Product
 
 Iteration 2: COUNTER Only Product
 =================================
-* Remove commenting out from "initialization/initial-data-upload-2.html"
+* Remove commenting out from "initialization/initial-data-upload-3.html"
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
@@ -47,7 +46,7 @@ Iteration 3: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-3.html" page
+* Write "initialization/initial-data-upload-4.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
@@ -196,7 +195,7 @@ Iteration 1: Create Downloadable AUCT Template
 
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
-* Get Jinja download to work in "initialization/index.html" and "initialization/initial-data-upload-2.html"
+* Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
 * Write ``tests.test_bp_initialization.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
