@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 0: Split ``nolcat.initialization.views.collect_initial_relation_data()``
 ========================================================================================
-* Move code related to ingesting and uploading statistics and resource source-related relations from ``nolcat.initialization.views.collect_FY_and_vendor_data()`` to ``nolcat.initialization.views.collect_sources_data()``
 * Move instructions for creating CSVs with data for statistics and resource source-related relations and form for uploading them to "initialization/initial-data-upload-2.html"
 * Define ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()`` function to serve as placeholder
 * Reorganize test module as appropriate

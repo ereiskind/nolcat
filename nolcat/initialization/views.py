@@ -101,6 +101,50 @@ def collect_FY_and_vendor_data():
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
+
+        #Section: Load Data into Database
+        try:
+            fiscalYears_dataframe.to_sql(
+                'fiscalYears',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `fiscalYears` loaded into the database")
+            vendors_dataframe.to_sql(
+                'vendors',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.debug("Relation `vendors` loaded into the database")
+            vendorNotes_dataframe.to_sql(
+                'vendorNotes',
+                con=db.engine,
+                if_exists='append',
+                index=False,
+            )
+            logging.debug("Relation `vendorNotes` loaded into the database")
+            
+            logging.info("All relations loaded into the database")
+        except Exception as error:
+            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+        
+        return redirect(url_for('initialization.collect_sources_data'))
+
+    else:
+        return abort(404)
+
+
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+def collect_sources_data():
+    """This route function ingests the files containing data going into the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations, then loads that data into the database.
+
+    The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
+    """
+    form = SourcesDataForm()
+    if request.method == 'GET':
+        return render_template('blueprint_name/initial-data-upload-2.html', form=form)
+    elif form.validate_on_submit():
+        #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
@@ -194,25 +238,6 @@ def collect_FY_and_vendor_data():
 
         #Section: Load Data into Database
         try:
-            fiscalYears_dataframe.to_sql(
-                'fiscalYears',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `fiscalYears` loaded into the database")
-            vendors_dataframe.to_sql(
-                'vendors',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `vendors` loaded into the database")
-            vendorNotes_dataframe.to_sql(
-                'vendorNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            logging.debug("Relation `vendorNotes` loaded into the database")
             statisticsSources_dataframe.to_sql(
                 'statisticsSources',
                 con=db.engine,
@@ -253,16 +278,6 @@ def collect_FY_and_vendor_data():
 
     else:
         return abort(404)
-
-
-@bp.route('/initialization-page-2', methods=['GET', 'POST'])
-def collect_sources_data():
-    """This route function ingests the files containing data going into the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations, then loads that data into the database.
-
-    The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
-    """
-    form = SourcesDataForm()
-    pass
 
 
 @bp.route('/initialization-page-3', methods=['GET', 'POST'])
