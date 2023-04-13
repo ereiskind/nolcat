@@ -34,7 +34,7 @@ def collect_initial_relation_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
     """
-    form = InitialRelationDataForm(request.form)  # Suggestion for fixing 404 upon POST from https://stackoverflow.com/a/18456943
+    form = InitialRelationDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
