@@ -75,17 +75,33 @@
                 <input type="submit" value="GET form with csrf">
             </form>
             <form action="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}">
+                <label>
+                    {{ form.fiscalYears_CSV.label }}
+                    {{ form.fiscalYears_CSV }}
+                </label>
                 <input type="submit" value="POST form, no enctype or csrf">
             </form>
             <form action="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
+                <label>
+                    {{ form.vendors_CSV.label }}
+                    {{ form.vendors_CSV }}
+                </label>
                 <input type="submit" value="POST form, no csrf">
             </form>
             <form action="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}">
                 {{ form.csrf_token }}
+                <label>
+                    {{ form.vendorNotes_CSV.label }}
+                    {{ form.vendorNotes_CSV }}
+                </label>
                 <input type="submit" value="POST form, no enctype">
             </form>
             <form action="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
                 {{ form.csrf_token }}
+                <label>
+                    {{ form.statisticsSources_CSV.label }}
+                    {{ form.statisticsSources_CSV }}
+                </label>
                 <input type="submit" value="POST form">
             </form>
             <ol><form method="POST" action="{{ url_for('initialization.collect_initial_relation_data') }}" enctype="multipart/form-data">
@@ -109,12 +125,12 @@
                     {{ form.statisticsSources_CSV.label }}
                     {{ form.statisticsSources_CSV }}
                 </label></li>
-                <br>
+                <br>-->
                 <li><label>
                     {{ form.statisticsSourceNotes_CSV.label }}
                     {{ form.statisticsSourceNotes_CSV }}
                 </label></li>
-                <br>
+                <!--<br>
                 <li><label>
                     {{ form.resourceSources_CSV.label }}
                     {{ form.resourceSources_CSV }}
