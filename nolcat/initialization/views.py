@@ -131,6 +131,11 @@ def collect_FY_and_vendor_data():
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
+        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
+        logging.warning(f"`form.validate()`: {form.validate()}")
+        logging.warning(f"`form.fiscalYears_CSV.validate()`: {form.fiscalYears_CSV.validate()}")
+        logging.warning(f"`form.vendors_CSV.validate()`: {form.vendors_CSV.validate()}")
+        logging.warning(f"`form.vendorNotes_CSV.validate()`: {form.vendorNotes_CSV.validate()}")
         return abort(404)
 
 
