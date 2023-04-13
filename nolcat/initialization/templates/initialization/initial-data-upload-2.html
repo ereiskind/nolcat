@@ -33,7 +33,7 @@
             </ol>
         </li>
         <li><h2>Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
-            <ol><form action="{{ url_for('initialization.temp_for_test') }}" method="POST" enctype="multipart/form-data">
+            <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <li><label>
                     {{ form.annualUsageCollectionTracking_CSV.label }}

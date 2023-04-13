@@ -324,21 +324,21 @@ def collect_initial_relation_data():
             # nginx
                 # Status: HTTP 200
                 # Return value: `b'/initialization/initialization-page-2.html'`
-        return redirect(url_for('initialization.temp_for_test'))
+        return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
         return abort(404)
 
 
-@bp.route('/temp_for_test', methods=['GET', 'POST'])
-def temp_for_test():
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
     form = AUCTAndCOUNTERForm()
     logging.info("Successfully redirected to `collect_AUCT_and_historical_COUNTER_data()` route method")
-    return render_template('initialization/temp_for_test.html', form=form)
+    return render_template('initialization/initial-data-upload-2.html', form=form)
     '''form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
