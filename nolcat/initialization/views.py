@@ -158,7 +158,7 @@ def collect_initial_relation_data():
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         #Subsection: Upload `resourceSourceNotes` CSV File
-        logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
+        '''logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
@@ -174,10 +174,10 @@ def collect_initial_relation_data():
         resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
+        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")'''
 
         #Subsection: Upload `statisticsResourceSources` CSV File
-        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
+        '''logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
@@ -189,7 +189,7 @@ def collect_initial_relation_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsResourceSources`")
         
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
-        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
+        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")'''
 
 
         #Section: Load Data into Database
@@ -232,18 +232,18 @@ def collect_initial_relation_data():
                 if_exists='append',
             )
             logging.debug("Relation `resourceSources` loaded into the database")
-            resourceSourceNotes_dataframe.to_sql(
+            '''resourceSourceNotes_dataframe.to_sql(
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
-            )
+            )'''
             logging.debug("Relation `resourceSourceNotes` loaded into the database")
-            statisticsResourceSources_dataframe.to_sql(
+            '''statisticsResourceSources_dataframe.to_sql(
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
-            )
+            )'''
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
         except Exception as error:
