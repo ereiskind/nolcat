@@ -23,7 +23,6 @@ Iteration 1: SUSHI Only Product
 * Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
 * Write ``tests.test_FiscalYears.test_create_usage_tracking_records_for_fiscal_year()``
 * Update all functions calling ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
-* Allow for ISBNs in ``nolcat.modules.COUNTERData.online_ISSN`` field
 * Create "ingest_usage/index.html"
 
 Iteration 2: COUNTER Only Product
