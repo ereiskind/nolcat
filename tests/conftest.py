@@ -102,12 +102,6 @@ def session(engine, db):
     session.remove()
 
 
-@pytest.fixture
-def header_value():
-    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
-    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
-
-
 #Section: Test Data for Relations
 @pytest.fixture
 def fiscalYears_relation():
@@ -170,6 +164,12 @@ def COUNTERData_relation():
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
+@pytest.fixture
+def header_value():
+    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
+    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+
+
 @pytest.fixture
 def sample_COUNTER_report_workbooks():
     """Creates a Flask-WTF File object for use in testing the `UploadCOUNTERReports` class.
