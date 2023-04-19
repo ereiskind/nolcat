@@ -839,12 +839,13 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        start_and_end_dates = pd.read_sql(
-            sql=f'SELECT start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
+        fiscal_year_data = pd.read_sql(
+            sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
             con=db.engine,
         )
-        start_date = start_and_end_dates['start_date'][0]
-        end_date = start_and_end_dates['end_date'][0]
+        start_date = fiscal_year_data['start_date'][0]
+        end_date = fiscal_year_data['end_date'][0]
+        fiscal_year = fiscal_year_data['fiscal_year'][0]
         logging.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)})")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
         #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
