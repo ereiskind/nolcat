@@ -559,12 +559,92 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create
 
 
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
-def test_collect_AUCT_and_historical_COUNTER_data():
+def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
-    #ToDo: Get the fixture representing the AUCT relation in `conftest.py` to serve as CSVs being uploaded into the rendered form
-    #ToDo: Get other files to serve as temp tabular COUNTER report files
-    #ToDo: Submit the files to the appropriate forms on the page
-    #ToDo: At or after function return statement/redirect, query database for `annualUsageCollectionTracking` and `COUNTERData` relations and ensure results match files used for submitting data and/or `conftest.py`
+    form_submissions = MultipartEncoder({
+        'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
+        'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
+    })
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_request = client.post(
+        '/initialization/initialization-page-3',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        headers=header_value,
+        data=form_submissions,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
+
+
+@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
+def test_annualUsageCollectionTracking_relation_to_database(engine, annualUsageCollectionTracking_relation):
+    """Tests that the `annualUsageCollectionTracking` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_AUCT_and_historical_COUNTER_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
+    annualUsageCollectionTracking_relation_data = pd.read_sql(
+        sql="SELECT * FROM annualUsageCollectionTracking;",
+        con=engine,
+        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    )
+    annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
+        "usage_is_being_collected": 'bool',
+        "manual_collection_required": 'bool',
+        "collection_via_email": 'bool',
+        "is_COUNTER_compliant": 'bool',
+        "collection_status": 'string',  # For `enum` data type
+        "usage_file_path": 'string',
+        "notes": 'string',  # For `text` data type
+    })
+    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
+
+
+@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
+def test_COUNTERData_relation_to_database(engine, COUNTERData_relation):
+    """Tests that the `COUNTERData` relation was successfully loaded into the database.
+    
+    This test is separate from the `test_collect_AUCT_and_historical_COUNTER_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
+    """
+    #COUNTERData_relation_data = pd.read_sql(
+    #    sql="SELECT * FROM COUNTERData;",
+    #    con=engine,
+    #    index_col="COUNTER_data_ID",
+    #)
+    #COUNTERData_relation_data = COUNTERData_relation_data.astype({
+    #    "statistics_source_ID": 'int',
+    #    "report_type": 'string',
+    #    "resource_name": 'string',
+    #    "publisher": 'string',
+    #    "publisher_ID": 'string',
+    #    "platform": 'string',
+    #    "authors": 'string',
+    #    "article_version": 'string',
+    #    "DOI": 'string',
+    #    "proprietary_ID": 'string',
+    #    "ISBN": 'string',
+    #    "print_ISSN": 'string',
+    #    "online_ISSN": 'string',
+    #    "URI": 'string',
+    #    "data_type": 'string',
+    #    "section_type": 'string',
+    #    "YOP": 'Int64',  # Using the pandas data type here because it allows null values
+    #    "access_type": 'string',
+    #    "access_method": 'string',
+    #    "parent_title": 'string',
+    #    "parent_authors": 'string',
+    #    "parent_article_version": 'string',
+    #    "parent_data_type": 'string',
+    #    "parent_DOI": 'string',
+    #    "parent_proprietary_ID": 'string',
+    #    "parent_ISBN": 'string',
+    #    "parent_print_ISSN": 'string',
+    #    "parent_online_ISSN": 'string',
+    #    "parent_URI": 'string',
+    #    "metric_type": 'string',
+    #})
+    #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
+    #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
+    #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+    #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
     pass
 
 

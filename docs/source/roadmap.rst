@@ -16,7 +16,8 @@ Iteration 1: SUSHI Only Product
 * Write ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()`` *In process*
 * Write ``tests.test_bp_initialization.test_collect_sources_data()`` *In process*
 * Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()`` *In process*
-* Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Write ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` *In process*
+* Write ``tests.test_bp_initialization.test_annualUsageCollectionTracking_relation_to_database()`` *In process*
 * Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
 * Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
@@ -29,7 +30,7 @@ Iteration 2: COUNTER Only Product
 =================================
 * Remove commenting out from "initialization/initial-data-upload-3.html"
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create "ingest_usage/upload-COUNTER-reports.html" page
