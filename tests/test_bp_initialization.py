@@ -526,20 +526,36 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
 
 
 @pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data():
+def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create_blank_annualUsageCollectionTracking_CSV_file):
     """Test creating the AUCT relation template CSV."""
-    #ToDo: Enter route function with `if request.method == 'GET':`
-    #ToDo: Create pathlib.Path variable for location of CSV created below
-    #ToDo: tests.data.relations.annualUsageCollectionTracking_relation.to_CSV(
-    #     pathlib.Path variable
-    #     index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
-    #     encoding='utf-8',
-    #     errors='backslashreplace',  
-    # )
-    #ToDo: Create pathlib.Path variable for location of CSV file created by route function at location it's saved to
-    #ToDo: When download functionality is set up, capture downloaded CSV instead
-    #ToDo: Compare the contents of the files at the locations of the two pathlib.Path variables
-    pass
+    page = client.get('/initialization/initialization-page-3')
+    df_dtypes = {  # Initialized here for reusability
+        "Statistics Source": 'string',
+        "Fiscal Year": 'string',
+        "usage_is_being_collected": 'bool',
+        "manual_collection_required": 'bool',
+        "collection_via_email": 'bool',
+        "is_COUNTER_compliant": 'bool',
+        "collection_status": 'string',
+        "usage_file_path": 'string',
+        "notes": 'string',
+    }
+    path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
+    AUCT_template_df = pd.read_csv(
+        path_to_template,  #ToDo: When download functionality is set up, download CSV and read it into dataframe
+        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        dtype=df_dtypes,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    AUCT_fixture_df = pd.read_csv(
+        create_blank_annualUsageCollectionTracking_CSV_file,
+        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        dtype=df_dtypes,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
