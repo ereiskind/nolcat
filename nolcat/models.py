@@ -849,7 +849,21 @@ class AnnualUsageCollectionTracking(db.Model):
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
         logging.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)})")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
-        #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
+        
+        #Subsection: Get Data from `statisticsSources`
+        # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
+        statistics_source_data = pd.read_sql(
+            sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
+            con=db.engine,
+        )
+        statistics_source_name = statistics_source_data['statistics_source_name'][0]
+        statistics_source = StatisticsSources(
+            statistics_source_ID = self.AUCT_statistics_source,
+            statistics_source_name = statistics_source_name,
+            statistics_source_retrieval_code = statistics_source_data['statistics_source_retrieval_code'][0],
+            vendor_ID = statistics_source_data['vendor_ID'][0],
+        )
+        logging.debug(f"The `StatisticsSources` object is {statistics_source}")
         #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         #ToDo: Change `collection_status` to "Collection complete"
         #ToDo: df.index += first_new_PK_value('COUNTERData')
