@@ -536,9 +536,9 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create
         "manual_collection_required": 'bool',
         "collection_via_email": 'bool',
         "is_COUNTER_compliant": 'bool',
-        "collection_status": 'string',
+        "collection_status": 'string',  # For `enum` data type
         "usage_file_path": 'string',
-        "notes": 'string',
+        "notes": 'string',  # For `text` data type
     }
     path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
     AUCT_template_df = pd.read_csv(
