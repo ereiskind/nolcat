@@ -839,6 +839,8 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        #Section: Get Data from Relations Corresponding to Composite Key
+        #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
             sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
             con=db.engine,
