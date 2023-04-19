@@ -340,7 +340,7 @@ def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, creat
     print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")
     print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")
     print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")
-    assert True
+    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
@@ -424,7 +424,7 @@ def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, creat
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    pass
+    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_sources_data'])
