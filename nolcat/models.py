@@ -864,21 +864,22 @@ class AnnualUsageCollectionTracking(db.Model):
             vendor_ID = statistics_source_data['vendor_ID'][0],
         )
         logging.debug(f"The `StatisticsSources` object is {statistics_source}")
-        #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: try:
-            #ToDo: df.to_sql(
-            #ToDo:     'COUNTERData',
-            #ToDo:     con=db.engine,
-            #ToDo:     if_exists='append',
-            #ToDo: )
-            #ToDo: logging.info(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success.")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success."
-        #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}"
-        pass
+
+        #Section: Collect and Load SUSHI Data
+        df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.info(f"The load for {statistics_source_name} for FY {fiscal_year} was a success.")
+            self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            return f"The load for {statistics_source_name} for FY {fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
+            return f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
