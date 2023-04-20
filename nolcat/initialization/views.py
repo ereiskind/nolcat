@@ -129,6 +129,7 @@ def collect_FY_and_vendor_data():
         
         logging.warning(f"`redirect(url_for('initialization.collect_sources_data'))` (type {type(redirect(url_for('initialization.collect_sources_data')))}): {redirect(url_for('initialization.collect_sources_data'))}")  # Type returned by `redirect()` should be a `response` object
         logging.warning(f"`redirect(url_for('initialization.collect_sources_data')).content_length`: {redirect(url_for('initialization.collect_sources_data')).content_length}")
+        # `MAX_CONTENT_LENGTH` (per https://stackoverflow.com/a/75613166) isn't the problem--when that value exists and is set too small, the POST returns a HTTP 413 (`Request Entity Too Large`) instead of the HTTP 302 appropriate for the `redirect` function
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
