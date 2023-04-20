@@ -129,17 +129,17 @@ def collect_FY_and_vendor_data():
         
         logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
         logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate()`: {form.fiscalYears_CSV.validate()}")
-        logging.warning(f"`form.vendors_CSV.validate()`: {form.vendors_CSV.validate()}")
-        logging.warning(f"`form.vendorNotes_CSV.validate()`: {form.vendorNotes_CSV.validate()}")
+        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
+        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
+        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
         logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
         logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate()`: {form.fiscalYears_CSV.validate()}")
-        logging.warning(f"`form.vendors_CSV.validate()`: {form.vendors_CSV.validate()}")
-        logging.warning(f"`form.vendorNotes_CSV.validate()`: {form.vendorNotes_CSV.validate()}")
+        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
+        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
+        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         return abort(404)
 
 
@@ -282,9 +282,9 @@ def collect_sources_data():
             logging.info("All relations loaded into the database")
             logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
             logging.warning(f"`form.validate()`: {form.validate()}")
-            logging.warning(f"`form.fiscalYears_CSV.validate()`: {form.fiscalYears_CSV.validate()}")
-            logging.warning(f"`form.vendors_CSV.validate()`: {form.vendors_CSV.validate()}")
-            logging.warning(f"`form.vendorNotes_CSV.validate()`: {form.vendorNotes_CSV.validate()}")
+            logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
+            logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
+            logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
         
@@ -293,9 +293,9 @@ def collect_sources_data():
     else:
         logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
         logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate()`: {form.fiscalYears_CSV.validate()}")
-        logging.warning(f"`form.vendors_CSV.validate()`: {form.vendors_CSV.validate()}")
-        logging.warning(f"`form.vendorNotes_CSV.validate()`: {form.vendorNotes_CSV.validate()}")
+        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
+        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
+        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         return abort(404)
 
 
