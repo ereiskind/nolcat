@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from nolcat.app import db as _db
 from nolcat.app import create_app
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
+from nolcat.app import MAX_CONTENT_LENGTH_KB
 from data import relations
 
 
@@ -26,6 +27,7 @@ def app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
     app.config['WTF_CSRF_ENABLED'] = False  # Without this, tests involving forms return a HTTP 400 error with the message `The CSRF token is missing.`
+    app.config['MAX_CONTENT_LENGTH'] = 1024 * MAX_CONTENT_LENGTH_KB  # Number of bytes to read from incoming data; without setting this variable, the connection seems to be unexpectedly closed by the server when executing the `redirect` method
     context = app.app_context()  # Creates an application context
     context.push()  # Binds the application context to the current context/Flask application
     yield app
