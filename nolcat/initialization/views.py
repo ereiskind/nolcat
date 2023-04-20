@@ -123,7 +123,6 @@ def collect_FY_and_vendor_data():
                 index=False,
             )
             logging.debug("Relation `vendorNotes` loaded into the database")
-            
             logging.info("All relations loaded into the database")
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
