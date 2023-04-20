@@ -29,7 +29,7 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
-MAX_CONTENT_LENGTH_KB = 10  # The number of KB in the `MAX_CONTENT_LENGTH` config, created as a constant to be consistent in both production and testing
+MAX_CONTENT_LENGTH_KB = 1  # The number of KB in the `MAX_CONTENT_LENGTH` config, created as a constant to be consistent in both production and testing
 
 
 csrf = CSRFProtect()
