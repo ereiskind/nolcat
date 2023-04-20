@@ -127,8 +127,9 @@ def collect_FY_and_vendor_data():
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
         
-        logging.warning(f"`url_for('initialization.collect_sources_data')` (type {type(url_for('initialization.collect_sources_data'))}): {url_for('initialization.collect_sources_data')}")
-        return url_for('initialization.collect_sources_data')
+        logging.warning(f"`redirect(url_for('initialization.collect_sources_data'))` (type {type(redirect(url_for('initialization.collect_sources_data')))}): {redirect(url_for('initialization.collect_sources_data'))}")  # Type returned by `redirect()` should be a `response` object
+        logging.warning(f"`redirect(url_for('initialization.collect_sources_data')).content_length`: {redirect(url_for('initialization.collect_sources_data')).content_length}")
+        return redirect(url_for('initialization.collect_sources_data'))
 
     else:
         return abort(404)
