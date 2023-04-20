@@ -29,6 +29,8 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
+MAX_CONTENT_LENGTH_KB = 1  # The number of KB in the `MAX_CONTENT_LENGTH` config, created as a constant to be consistent in both production and testing
+
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
@@ -50,6 +52,7 @@ def create_app():
     app.register_error_handler(500, internal_server_error)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
+    app.config['MAX_CONTENT_LENGTH'] = 1024 * MAX_CONTENT_LENGTH_KB  # Number of bytes to read from incoming data; without setting this variable, the connection seems to be unexpectedly closed by the server when executing the `redirect` method
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = './relation_initialization_template'  # This config sets the file that handles both Flask file downloads adn uploads, but since all input, including file uploads, is handled with WTForms, this folder is only used for storing content the user will need to download.
     csrf.init_app(app)
