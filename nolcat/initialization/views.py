@@ -127,19 +127,10 @@ def collect_FY_and_vendor_data():
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
         
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
-        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
-        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
-        return redirect(url_for('initialization.collect_sources_data'))
+        logging.warning(f"`url_for('initialization.collect_sources_data')` (type {type(url_for('initialization.collect_sources_data'))}): {url_for('initialization.collect_sources_data')}")
+        return url_for('initialization.collect_sources_data')
 
     else:
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
-        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
-        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         return abort(404)
 
 
@@ -281,22 +272,12 @@ def collect_sources_data():
             )
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
-            logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-            logging.warning(f"`form.validate()`: {form.validate()}")
-            logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
-            logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
-            logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.fiscalYears_CSV.validate(form)`: {form.fiscalYears_CSV.validate(form)}")
-        logging.warning(f"`form.vendors_CSV.validate(form)`: {form.vendors_CSV.validate(form)}")
-        logging.warning(f"`form.vendorNotes_CSV.validate(form)`: {form.vendorNotes_CSV.validate(form)}")
         return abort(404)'''
 
 
