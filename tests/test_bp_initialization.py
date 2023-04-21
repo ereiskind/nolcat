@@ -331,16 +331,13 @@ def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, creat
         'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
     })
     header_value['Content-Type'] = CSV_files.content_type
-    POST_request = client.post(
+    POST_response = client.post(
         '/initialization/',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    print(f"`POST_request.history` (type {type(POST_request.history)}): {POST_request.history}")
-    print(f"`POST_request.status_code` (type {type(POST_request.status_code)}): {POST_request.status_code}")
-    print(f"`POST_request.data` (type {type(POST_request.data)}): {POST_request.data}")
-    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
@@ -418,13 +415,13 @@ def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, creat
         'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
     })
     header_value['Content-Type'] = CSV_files.content_type
-    POST_request = client.post(
+    POST_response = client.post(
         '/initialization/',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_sources_data'])
@@ -566,13 +563,13 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
         'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
     })
     header_value['Content-Type'] = form_submissions.content_type
-    POST_request = client.post(
+    POST_response = client.post(
         '/initialization/initialization-page-3',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_request.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "200 OK"  # The success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
