@@ -16,6 +16,28 @@ Test modules are designed to be run from the root folder with the command ``pyth
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
+Working with the Database Within the Container
+----------------------------------------------
+The MySQL command line is accessible through the instance command line with the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate), but the data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
+
+1. Enter the Python command line with ``python``
+2. Import the needed SQLAlchemy methods with ``from sqlalchemy import create_engine`` and ``from sqlalchemy.orm import sessionmaker``
+3. Import the variables used in the engine with ``from nolcat.app import *`` when entering the Python CLI from the main "nolcat" folder
+4. Initialize the engine object with ``engine = create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')``
+5. Create a factory for session objects (sessionmaker) with ``Session = sessionmaker(bind=engine)``
+6. Initialize a session object with ``session = Session()``
+7. Run any given SQL query with ``session.execute("SQL").fetchall()`` where ``SQL`` is the SQL statement
+
+With an initialized session, it's possible to display the relations as dataframes:
+
+1. Import pandas with ``import pandas as pd``
+2. Initialize a variable ``relation`` with the name of the relation to be displayed
+3. Initialize a list for the field names with ``field_names=[]``
+4. Start the loop to get the field names with ``for field in session.execute(f"DESCRIBE {relation};").fetchall():``
+5. Write the iteration to get the field names with a tab followed by ``field_names.append(field[0])``
+6. Create the dataframe with ``df=pd.DataFrame(session.execute(f"SELECT" * FROM {relation};"),columns=field_names)``
+7. Set the index with ``df=df.set_index(field_names[0])`` or, for relations with multiindexes, ``df=df.set_index([field_names[0], field_names[1]])``
+
 Test Data
 *********
 Since this application is about data--its collection, storage, organization, and retrieval--many parts of the application require sample data for testing. To that end, a set of sample test data is included in this repo, along with information about how it was constructed.
