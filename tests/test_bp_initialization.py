@@ -9,7 +9,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 from pandas.testing import assert_frame_equal, assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import date_parser
+from nolcat.app import date_parser, change_multiindex_single_field_dataframe_into_series
 from nolcat.initialization import *
 
 
@@ -509,11 +509,12 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
     
     This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` (or, in this case, `assert_series_equal`) comparisons.
     """
-    statisticsResourceSources_relation_data = pd.read_sql(
+    statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
         sql="SELECT * FROM statisticsResourceSources;",
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
+    statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     print(f"`statisticsResourceSources_relation_data`:\n{statisticsResourceSources_relation_data}")  # <class 'pandas.core.frame.DataFrame'>
     print(f"`statisticsResourceSources_relation`:\n{statisticsResourceSources_relation}")  # <class 'pandas.core.series.Series'>
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
