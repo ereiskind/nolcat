@@ -416,7 +416,7 @@ def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, creat
     })
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
-        '/initialization/',
+        '/initialization/initialization-page-2',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=CSV_files,
