@@ -293,18 +293,20 @@ def collect_AUCT_and_historical_COUNTER_data():
         df = pd.read_sql(
             sql='SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;',
             con=db.engine,
+            index_col=["statistics_source_ID", "fiscal_year_ID"],
         )
         logging.debug(f"AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        df = df.rename({
+        df = df.rename_axis(index={
             "statistics_source_ID": "AUCT_statistics_source",
             "fiscal_year_ID": "AUCT_fiscal_year",
+        })
+        df = df.rename({
             "statistics_source_name": "Statistics Source",
             "fiscal_year": "Fiscal Year",
         })
-        df = df.set_index(["AUCT_statistics_source", "AUCT_fiscal_year"])
-        logging.debug(f"AUCT dataframe with set index:\n{df}")
+        logging.debug(f"AUCT dataframe with fields renamed:\n{df}")
 
         df['usage_is_being_collected'] = None
         df['manual_collection_required'] = None
