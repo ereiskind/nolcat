@@ -515,8 +515,6 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
     statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
-    print(f"`statisticsResourceSources_relation_data`:\n{statisticsResourceSources_relation_data}")  # <class 'pandas.core.frame.DataFrame'>
-    print(f"`statisticsResourceSources_relation`:\n{statisticsResourceSources_relation}")  # <class 'pandas.core.series.Series'>
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
         "current_statistics_source": 'bool',
     })
