@@ -302,7 +302,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             "statistics_source_ID": "AUCT_statistics_source",
             "fiscal_year_ID": "AUCT_fiscal_year",
         })
-        df = df.rename({
+        df = df.rename(columns={
             "statistics_source_name": "Statistics Source",
             "fiscal_year": "Fiscal Year",
         })
