@@ -831,7 +831,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self):
+    def collect_annual_usage_statistics(self):  #ALERT: This method is untested as its test hasn't been written
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
