@@ -337,7 +337,7 @@ def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, creat
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_response.status == "302 FOUND"  and '<a href="/initialization/initialization-page-2">' in POST_response.text  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "302 FOUND"  and '<a href="/initialization/initialization-page-2">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
@@ -421,7 +421,7 @@ def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, creat
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_response.status == "302 FOUND"  and '<a href="/initialization/initialization-page-3">' in POST_response.text  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-3">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_sources_data'])
