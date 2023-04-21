@@ -831,7 +831,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def collect_annual_usage_statistics(self):  #ALERT: This method is untested as its test hasn't been written
+    def collect_annual_usage_statistics(self):
         """A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -843,7 +843,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
             sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
-            con=db.engine,
+            con=db.engine,  #ALERT: This method has no test; running it from command line raises `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` which seems to be common to all hybrid methods run from the command line
         )
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
