@@ -13,8 +13,6 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Write ``tests.test_bp_initialization.test_collect_FY_and_vendor_data()`` *In process*
-* Write ``tests.test_bp_initialization.test_collect_sources_data()`` *In process*
 * Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()`` *In process*
 * Write ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` *In process*
 * Write ``tests.test_bp_initialization.test_annualUsageCollectionTracking_relation_to_database()`` *In process*
