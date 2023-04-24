@@ -522,7 +522,7 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
 
 
 @pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create_blank_annualUsageCollectionTracking_CSV_file):
+def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
     df_dtypes = {  # Initialized here for reusability
@@ -544,8 +544,9 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
+    path_to_fixture = Path(tmp_path / 'annualUsageCollectionTracking_relation.csv')
     AUCT_fixture_df = pd.read_csv(
-        create_blank_annualUsageCollectionTracking_CSV_file,
+        path_to_fixture,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=df_dtypes,
         encoding='utf-8',
