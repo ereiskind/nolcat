@@ -522,6 +522,8 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
 def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    print(f"`dir(sample_COUNTER_report_workbooks)`: {dir(sample_COUNTER_report_workbooks)}")
+    print(f"`vars(sample_COUNTER_report_workbooks)`: {vars(sample_COUNTER_report_workbooks)}")
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
@@ -529,6 +531,8 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
         },
         encoding='utf-8',
     )
+    print(f"`dir(form_submissions)`: {dir(form_submissions)}")
+    print(f"`vars(form_submissions)`: {vars(form_submissions)}")
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/initialization/initialization-page-3',
