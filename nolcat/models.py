@@ -667,7 +667,7 @@ class ResourceSources(db.Model):
     Attributes:
         self.resource_source_ID (int): the primary key
         self.resource_source_name (str): the resource source name
-        self.source_in_use (bool): indicates if we currently have access to resources at the resource source
+        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values
         self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
@@ -767,7 +767,7 @@ class StatisticsResourceSources(db.Model):
     Attributes:
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
+        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values
     """
     __tablename__ = 'statisticsResourceSources'
 
@@ -787,10 +787,10 @@ class AnnualUsageCollectionTracking(db.Model):
     Attributes:
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
-        self.usage_is_being_collected (bool): indicates if usage needs to be collected
-        self.manual_collection_required (bool): indicates if usage needs to be collected manually
-        self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
-        self.is_COUNTER_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.usage_is_being_collected (boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
+        self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year

@@ -257,10 +257,10 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
     df = df.astype({
         "Statistics Source": 'string',
         "Fiscal Year": 'string',
-        "usage_is_being_collected": 'bool',
-        "manual_collection_required": 'bool',
-        "collection_via_email": 'bool',
-        "is_COUNTER_compliant": 'bool',
+        "usage_is_being_collected": 'boolean',
+        "manual_collection_required": 'boolean',
+        "collection_via_email": 'boolean',
+        "is_COUNTER_compliant": 'boolean',
         "collection_status": 'string',
         "usage_file_path": 'string',
         "notes": 'string',
@@ -476,7 +476,7 @@ def test_resourceSources_relation_to_database(engine, resourceSources_relation):
     )
     resourceSources_relation_data = resourceSources_relation_data.astype({
         "resource_source_name": 'string',
-        "source_in_use": 'bool',
+        "source_in_use": 'boolean',
         "vendor_ID": 'int',
     })
     resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
@@ -516,7 +516,7 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
     )
     statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
-        "current_statistics_source": 'bool',
+        "current_statistics_source": 'boolean',
     })
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
@@ -528,10 +528,10 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, create
     df_dtypes = {  # Initialized here for reusability
         "Statistics Source": 'string',
         "Fiscal Year": 'string',
-        "usage_is_being_collected": 'bool',
-        "manual_collection_required": 'bool',
-        "collection_via_email": 'bool',
-        "is_COUNTER_compliant": 'bool',
+        "usage_is_being_collected": 'boolean',
+        "manual_collection_required": 'boolean',
+        "collection_via_email": 'boolean',
+        "is_COUNTER_compliant": 'boolean',
         "collection_status": 'string',  # For `enum` data type
         "usage_file_path": 'string',
         "notes": 'string',  # For `text` data type
@@ -583,10 +583,10 @@ def test_annualUsageCollectionTracking_relation_to_database(engine, annualUsageC
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
-        "usage_is_being_collected": 'bool',
-        "manual_collection_required": 'bool',
-        "collection_via_email": 'bool',
-        "is_COUNTER_compliant": 'bool',
+        "usage_is_being_collected": 'boolean',
+        "manual_collection_required": 'boolean',
+        "collection_via_email": 'boolean',
+        "is_COUNTER_compliant": 'boolean',
         "collection_status": 'string',  # For `enum` data type
         "usage_file_path": 'string',
         "notes": 'string',  # For `text` data type
