@@ -283,11 +283,14 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 @pytest.mark.dependency()
 def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, header_value, client):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
-    CSV_files = MultipartEncoder({
-        'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
-        'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
-        'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
-    })
+    CSV_files = MultipartEncoder(
+        fields={
+            'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
+            'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
+            'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
+        },
+        encoding='utf-8',
+    )
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/',
@@ -365,13 +368,16 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
 @pytest.mark.dependency()
 def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, header_value, client):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
-    CSV_files = MultipartEncoder({
-        'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
-        'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
-        'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
-        'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
-        'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
-    })
+    CSV_files = MultipartEncoder(
+        fields={
+            'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
+            'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
+            'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
+            'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
+            'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
+        },
+        encoding='utf-8',
+    )
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
@@ -516,10 +522,13 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
 def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
-    form_submissions = MultipartEncoder({
-        'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
-        'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
-    })
+    form_submissions = MultipartEncoder(
+        fields={
+            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
+            'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
+        },
+        encoding='utf-8',
+    )
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/initialization/initialization-page-3',
