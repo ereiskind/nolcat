@@ -15,6 +15,7 @@
         <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
         <li>Fill out the CSV from existing documentation:
             <ul>
+                <li>For statistics source and year combinations which don't exist (meaning either the statistics source didn't exist that year or no resource sources which used that statistics source were provided that year), delete the corresponding row in the CSV</li>
                 <li>For statistics source and year combinations not requiring usage collection, set `usage_is_being_collected` to false and choose the appropriate `collection_status`</li>
                 <li>For statistics source and year combinations which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `usage_is_being_collected` and `manual_collection_required` to true, `is_COUNTER_compliant` to false, choose the appropriate `collection_status`, and if a file with the usage exists, put "true" in `usage_file_path`</li>
                 <li>For statistics source and year combinations with R5 SUSHI, set `usage_is_being_collected` and `is_COUNTER_compliant` to true and `collection_status` to "Collection not started"</li>

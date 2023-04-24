@@ -114,7 +114,7 @@ def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSource
 def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
-    The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. Since this fixture is used to test the CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function, which contains fields for the fiscal year and statistics source name and no values in any other fields, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
+    The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. The dataframe and subsequent CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function contains null values in the relation's non-index fields, extra fields for the statistics source and fiscal year name, and records for statistics source and fiscal year combinations that don't actually exist. To test the CSV creation, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
     """
     multiindex = pd.DataFrame(
         [
@@ -175,9 +175,18 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
             ["Ebook Central", "2017", None, None, None, None, None, None, None],
             ["Ebook Central", "2018", None, None, None, None, None, None, None],
             ["Ebook Central", "2019", None, None, None, None, None, None, None],
+            ["Ebook Central", "2020", None, None, None, None, None, None, None],
+            ["Ebook Central", "2021", None, None, None, None, None, None, None],
+            ["Ebook Central", "2022", None, None, None, None, None, None, None],
             ["Peterson's Career Prep", "2017", None, None, None, None, None, None, None],
             ["Peterson's Career Prep", "2018", None, None, None, None, None, None, None],
             ["Peterson's Career Prep", "2019", None, None, None, None, None, None, None],
+            ["Peterson's Career Prep", "2020", None, None, None, None, None, None, None],
+            ["Peterson's Career Prep", "2021", None, None, None, None, None, None, None],
+            ["Peterson's Career Prep", "2022", None, None, None, None, None, None, None],
+            ["Peterson's Test Prep", "2017", None, None, None, None, None, None, None],
+            ["Peterson's Test Prep", "2018", None, None, None, None, None, None, None],
+            ["Peterson's Test Prep", "2019", None, None, None, None, None, None, None],
             ["Peterson's Test Prep", "2020", None, None, None, None, None, None, None],
             ["Peterson's Test Prep", "2021", None, None, None, None, None, None, None],
             ["Peterson's Test Prep", "2022", None, None, None, None, None, None, None],
@@ -501,10 +510,6 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    print(f"`AUCT_template_df` index:\n{AUCT_template_df.index}")
-    print(f"`AUCT_fixture_df` index:\n{AUCT_fixture_df.index}")
-    extras = [x for x in AUCT_template_df.index.to_list() if x not in AUCT_fixture_df.index.to_list()]
-    print(f"Values only in `AUCT_template_df` index:\n{extras}")
     assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
