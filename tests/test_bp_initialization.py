@@ -114,7 +114,7 @@ def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSource
 def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
-    The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. Since this fixture is used to test the CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function, which contains fields for the fiscal year and statistics source name and no values in any other fields, a new dataframe meeting those criteria needed to be created for conversion to the CSV.
+    The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. Since this fixture is used to test the CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function, which contains fields for the fiscal year and statistics source name and no values in any other fields, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
     """
     multiindex = pd.DataFrame(
         [
