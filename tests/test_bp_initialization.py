@@ -501,8 +501,10 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    print(f"`AUCT_template_df`:\n{AUCT_template_df}")
-    print(f"`AUCT_fixture_df`:\n{AUCT_fixture_df}")
+    print(f"`AUCT_template_df` index:\n{AUCT_template_df.index}")
+    print(f"`AUCT_fixture_df` index:\n{AUCT_fixture_df.index}")
+    extras = [x for x in AUCT_template_df.index.to_list() if x not in AUCT_fixture_df.index.to_list()]
+    print(f"Values only in `AUCT_template_df` index:\n{extras}")
     assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
