@@ -32,6 +32,8 @@
         <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
     </ol>
 
+    <!--ToDo: Add COUNTER tabular workbook consolidation and renaming instructions-->
+
     <h2>7. Submit the `annualUsageCollectionTracking` Relation CSV and COUNTER Workbooks</h2>
     <ol><form action="{{ url_for('initialization.collect_AUCT_and_historical_COUNTER_data') }}" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
