@@ -538,7 +538,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     print(f"Status: {POST_response.status}")
     print(f"Headers: {POST_response.headers}")
-    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-5">' in POST_response.text  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
+    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-5">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
 
 
 @pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
