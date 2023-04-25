@@ -13,8 +13,6 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Write ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` *In process*
-* Write ``tests.test_bp_initialization.test_annualUsageCollectionTracking_relation_to_database()`` *In process*
 * Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
 * Write ``tests.test_FiscalYears.test_create_usage_tracking_records_for_fiscal_year()``
 * Update all functions calling ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
