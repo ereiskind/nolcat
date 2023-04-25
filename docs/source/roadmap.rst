@@ -13,22 +13,17 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
-* Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
-* Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
 * Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
 * Write ``tests.test_FiscalYears.test_create_usage_tracking_records_for_fiscal_year()``
 * Update all functions calling ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
-* Allow for ISBNs in ``nolcat.modules.COUNTERData.online_ISSN`` field
 * Create "ingest_usage/index.html"
 
 Iteration 2: COUNTER Only Product
 =================================
-* Remove commenting out from "initialization/initial-data-upload-2.html"
+* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create "ingest_usage/upload-COUNTER-reports.html" page
@@ -36,8 +31,9 @@ Iteration 2: COUNTER Only Product
 Iteration 3: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
+* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-3.html" page
+* Write "initialization/initial-data-upload-4.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
@@ -72,6 +68,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
 
 Basic Enhancement Iterations
 ****************************
@@ -186,7 +183,7 @@ Iteration 1: Create Downloadable AUCT Template
 
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
-* Get Jinja download to work in "initialization/index.html" and "initialization/initial-data-upload-2.html"
+* Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
 * Write ``tests.test_bp_initialization.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
@@ -263,7 +260,7 @@ Iteration: Add User Accounts to Restrict Access
 * Write ``tests.test_bp_login.test_logging_in()``
 * Write ``tests.test_bp_login.test_logging_in_as_admin()``
 * Write ``tests.test_bp_login.test_creating_an_account()``
-* Create redirect to ``nolcat.initialization.views.collect_initial_relation_data()`` after the creation of the first account with data ingest permissions
+* Create redirect to ``nolcat.initialization.views.collect_FY_and_vendor_data()`` after the creation of the first account with data ingest permissions
 
 Iteration: Deduplicate Resources
 ================================

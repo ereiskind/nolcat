@@ -5,7 +5,7 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
-from numpy import datetime64
+from numpy import datetime64, squeeze
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -203,3 +203,20 @@ def return_string_of_dataframe_info(df):
     in_memory_stream = io.StringIO()
     df.info(buf=in_memory_stream)
     return in_memory_stream.getvalue()
+
+
+def change_multiindex_single_field_dataframe_into_series(df):
+    """The function for changing a dataframe with a multiindex and a single field not in the index into a series with that same multiindex.
+
+    Args:
+        df (dataframe): the dataframe to be transformed
+    
+    Returns:
+        pd.Series: a series object with the same exact data as the initial dataframe
+    """
+    return pd.Series(
+        data=squeeze(df.values),  # `squeeze` converts the numpy array from one column with n elements to an array with n elements
+        index=df.index,
+        dtype=df[df.columns[0]].dtype,
+        name=df.columns[0],
+    )

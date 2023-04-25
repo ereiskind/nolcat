@@ -16,11 +16,27 @@ Test modules are designed to be run from the root folder with the command ``pyth
 
 * To run the tests in a single module, end the command with the path from the root directory (which is the present working directory) to the module.
 
-Using the Test Container
-========================
-The script "run_nolcat_tests.py" clones a given branch and runs either a given test script or all test scripts at a specified level of detail. The command, which should be run in the root folder, is ``python tests/run_nolcat_tests.py branch log_level test_script`` where ``branch`` is the name of the Git branch to be cloned, ``log_level`` is the descriptor for the level of logging detail that should be used (generally "info" or "debug" when details are needed), and ``test_script`` is optionally the test script that should run; if left off, all the test scripts will run.
+Working with the Database Within the Container
+----------------------------------------------
+The MySQL command line is accessible through the instance command line with the command ``mysql -h ${DATABASE_HOST} -u ${DATABASE_USERNAME} -p${DATABASE_PASSWORD} ${DATABASE_SCHEMA_NAME}`` (with environment variable substitutions as appropriate), but the data can also be viewed using SQLAlchemy on Python's command line within the NoLCAT container:
 
-The container was created because NoLCAT can only be used with Python versions 3.7 or 3.8; versions below that don't support f-strings and versions above that have a problem with installing numpy, a pandas dependency (see https://github.com/numpy/numpy/issues/17569). To accommodate this narrow range of comparable versions, neither of which is available with the binary installer (aka wizard), this script creates an image with Python 3.8 for testing.
+1. Enter the Python command line with ``python``
+2. Import the needed SQLAlchemy methods with ``from sqlalchemy import create_engine`` and ``from sqlalchemy.orm import sessionmaker``
+3. Import the variables used in the engine with ``from nolcat.app import *`` when entering the Python CLI from the main "nolcat" folder
+4. Initialize the engine object with ``engine = create_engine(f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}')``
+5. Create a factory for session objects (sessionmaker) with ``Session = sessionmaker(bind=engine)``
+6. Initialize a session object with ``session = Session()``
+7. Run any given SQL query with ``session.execute("SQL").fetchall()`` where ``SQL`` is the SQL statement
+
+With an initialized session, it's possible to display the relations as dataframes:
+
+1. Import pandas with ``import pandas as pd``
+2. Initialize a variable ``relation`` with the name of the relation to be displayed
+3. Initialize a list for the field names with ``field_names=[]``
+4. Start the loop to get the field names with ``for field in session.execute(f"DESCRIBE {relation};").fetchall():``
+5. Write the iteration to get the field names with a tab followed by ``field_names.append(field[0])``
+6. Create the dataframe with ``df=pd.DataFrame(session.execute(f"SELECT" * FROM {relation};"),columns=field_names)``
+7. Set the index with ``df=df.set_index(field_names[0])`` or, for relations with multiindexes, ``df=df.set_index([field_names[0], field_names[1]])``
 
 Test Data
 *********

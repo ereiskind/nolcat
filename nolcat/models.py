@@ -403,7 +403,7 @@ class StatisticsSources(db.Model):
     def __repr__(self):
         """The printable representation of a `StatisticsSources` instance.
         
-        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item form that list.
+        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item from that list.
         """
         return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
 
@@ -667,7 +667,7 @@ class ResourceSources(db.Model):
     Attributes:
         self.resource_source_ID (int): the primary key
         self.resource_source_name (str): the resource source name
-        self.source_in_use (bool): indicates if we currently have access to resources at the resource source
+        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values
         self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
@@ -767,7 +767,7 @@ class StatisticsResourceSources(db.Model):
     Attributes:
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
+        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values
     """
     __tablename__ = 'statisticsResourceSources'
 
@@ -787,10 +787,10 @@ class AnnualUsageCollectionTracking(db.Model):
     Attributes:
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
-        self.usage_is_being_collected (bool): indicates if usage needs to be collected
-        self.manual_collection_required (bool): indicates if usage needs to be collected manually
-        self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
-        self.is_COUNTER_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.usage_is_being_collected (boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
+        self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
@@ -839,24 +839,47 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: start_date = start date for FY
-        #ToDo: end_date = end date for FY
-        #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
-        #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: try:
-            #ToDo: df.to_sql(
-            #ToDo:     'COUNTERData',
-            #ToDo:     con=db.engine,
-            #ToDo:     if_exists='append',
-            #ToDo: )
-            #ToDo: logging.info(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success.")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success."
-        #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}"
-        pass
+        #Section: Get Data from Relations Corresponding to Composite Key
+        #Subsection: Get Data from `fiscalYears`
+        fiscal_year_data = pd.read_sql(
+            sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
+            con=db.engine,  #ALERT: This method has no test; running it from command line raises `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` which seems to be common to all hybrid methods run from the command line
+        )
+        start_date = fiscal_year_data['start_date'][0]
+        end_date = fiscal_year_data['end_date'][0]
+        fiscal_year = fiscal_year_data['fiscal_year'][0]
+        logging.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)})")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        
+        #Subsection: Get Data from `statisticsSources`
+        # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
+        statistics_source_data = pd.read_sql(
+            sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
+            con=db.engine,
+        )
+        statistics_source_name = statistics_source_data['statistics_source_name'][0]
+        statistics_source = StatisticsSources(
+            statistics_source_ID = self.AUCT_statistics_source,
+            statistics_source_name = statistics_source_name,
+            statistics_source_retrieval_code = statistics_source_data['statistics_source_retrieval_code'][0],
+            vendor_ID = statistics_source_data['vendor_ID'][0],
+        )
+        logging.debug(f"The `StatisticsSources` object is {statistics_source}")
+
+        #Section: Collect and Load SUSHI Data
+        df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            logging.info(f"The load for {statistics_source_name} for FY {fiscal_year} was a success.")
+            self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            return f"The load for {statistics_source_name} for FY {fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
+            return f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method

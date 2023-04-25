@@ -3,8 +3,13 @@
 The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
 """
 
+from pathlib import Path
+import os
+import io
 import pytest
 from sqlalchemy import create_engine
+from wtforms import MultipleFileField
+from wtforms.validators import DataRequired
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
@@ -97,12 +102,6 @@ def session(engine, db):
     session.remove()
 
 
-@pytest.fixture
-def header_value():
-    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
-    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
-
-
 #Section: Test Data for Relations
 @pytest.fixture
 def fiscalYears_relation():
@@ -162,3 +161,35 @@ def annualUsageCollectionTracking_relation():
 def COUNTERData_relation():
     """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
     yield relations.COUNTERData_relation()
+
+
+#Section: Other Fixtures Used in Multiple Test Modules
+@pytest.fixture
+def header_value():
+    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
+    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+
+
+@pytest.fixture
+def sample_COUNTER_report_workbooks():
+    """Creates a Flask-WTF File object for use in testing the `UploadCOUNTERReports` class.
+    
+    While this fixture would ideally create a MultipleFileField object containing all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`, it actually creates an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. At this point, appropriate values for the above parameters are unknown, so the fixture is used as-is, and the `UploadCOUNTERReports.create_dataframe()` method repeats the loop for gathering the workbook names seen below.
+    """
+    folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+    data_attribute = []
+
+    for workbook in os.listdir(folder_path):
+        file_path = folder_path / workbook
+        with open(file_path, mode='rb') as file:
+            data_attribute.append(io.BytesIO(file.read()))
+
+    fixture = MultipleFileField({
+        'data': data_attribute,
+        'id': 'COUNTER_reports',
+        'label': "Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.",
+        'name': 'COUNTER_reports',
+        'type': 'MultipleFileField',
+        'validators': DataRequired(),
+    })
+    return fixture
