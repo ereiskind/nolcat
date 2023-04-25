@@ -225,6 +225,13 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def create_usage_tracking_records_for_fiscal_year(self):
+        """Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
+
+        Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
+
+        Returns:
+            None: no return value is needed, so the default `None` is used
+        """
         #ToDo: For every record in statisticsSources
             #ToDo: For all of its statisticsResourceSources records
                 #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
