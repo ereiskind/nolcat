@@ -25,6 +25,7 @@ Iteration 2: COUNTER Only Product
 =================================
 * Remove commenting out from "initialization/initial-data-upload-3.html"
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
@@ -33,6 +34,7 @@ Iteration 2: COUNTER Only Product
 Iteration 3: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
+* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Write form class for non-COUNTER usage downloads
 * Write "initialization/initial-data-upload-4.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``

@@ -525,7 +525,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
-            #'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
+            #'COUNTER_reports': sample_COUNTER_report_workbooks,  #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
         },
         encoding='utf-8',
     )
