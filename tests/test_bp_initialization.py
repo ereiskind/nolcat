@@ -529,8 +529,6 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
         },
         encoding='utf-8',
     )
-    print(f"`dir(form_submissions)`: {dir(form_submissions)}")
-    print(f"`vars(form_submissions)`: {vars(form_submissions)}")
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/initialization/initialization-page-3',
