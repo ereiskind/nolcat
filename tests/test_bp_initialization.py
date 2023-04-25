@@ -522,12 +522,37 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
 def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
-    print(f"`dir(sample_COUNTER_report_workbooks)`: {dir(sample_COUNTER_report_workbooks)}")
-    print(f"`vars(sample_COUNTER_report_workbooks)`: {vars(sample_COUNTER_report_workbooks)}")
+    ####################  #ALERT: Recreation of `sample_COUNTER_report_workbooks` in conftest
+    import io
+    folder_path = Path(os.getcwd(), 'tests', 'bin', 'COUNTER_workbooks_for_tests')  # CWD is where the tests are being run (root for this suite)
+    print(f"Get the data from the files in {folder_path}")
+    data_attribute = []
+
+    for workbook in os.listdir(folder_path):
+        file_path = folder_path / workbook
+        print(f"`file_path` (type {type(file_path)}): {file_path}")
+        with open(file_path, mode='rb') as file:
+            print(f"`file` (type {type(file)}): {file}")
+            data_attribute.append(io.BytesIO(file.read()))
+            print(f"`io.BytesIO(file.read())` (type {type(io.BytesIO(file.read()))}): {io.BytesIO(file.read())}")
+
+    print(f"`data_attribute` (type {type(data_attribute)}): {data_attribute}")
+    from wtforms import MultipleFileField
+    from wtforms.validators import DataRequired
+    fixture = MultipleFileField({
+        'data': data_attribute,
+        'id': 'COUNTER_reports',
+        'label': "Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.",
+        'name': 'COUNTER_reports',
+        'type': 'MultipleFileField',
+        'validators': DataRequired(),
+    })
+    print(f"`fixture` (type {type(fixture)}): {fixture}")
+    ####################
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
-            'COUNTER_reports': sample_COUNTER_report_workbooks,  # A MultipleFileField fixture
+            'COUNTER_reports': fixture,  # A MultipleFileField fixture
         },
         encoding='utf-8',
     )
