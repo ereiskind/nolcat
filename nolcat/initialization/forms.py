@@ -23,4 +23,4 @@ class SourcesDataForm(FlaskForm):
 class AUCTAndCOUNTERForm(FlaskForm):
     """Creates a form for uploading the `annualUsageCollectionTracking` relation data and Excel workbooks containing COUNTER reports."""
     annualUsageCollectionTracking_CSV = FileField("Select the filled out \"initialize_annualUsageCollectionTracking.csv\" file here.", validators=[DataRequired()])
-    COUNTER_reports = MultipleFileField("Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
+    COUNTER_reports = MultipleFileField("Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.")
