@@ -8,10 +8,11 @@ import re
 import datetime
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+from numpy import ndarray
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
-from .app import first_new_PK_value
+from .app import return_string_of_dataframe_info, first_new_PK_value
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -225,10 +226,58 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def create_usage_tracking_records_for_fiscal_year(self):
-        #ToDo: For every record in statisticsSources
-            #ToDo: For all of its statisticsResourceSources records
-                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
-        pass
+        """Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
+
+        Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
+
+        Returns:
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
+        """
+        #Section: Get PKs of the Fiscal Year's Statistics Sources
+        current_statistics_sources = pd.read_sql(
+            sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            con=db.engine,
+        )
+        logging.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
+        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].uniques().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+
+        #Section: Create Dataframe to Load into Relation
+        multiindex = pd.MultiIndex.from_tuples(
+            current_statistics_sources_PKs,
+            names=["SRS_statistics_source", "SRS_resource_source"],
+        )
+        all_records = []
+        for i in range(len(multiindex)):
+            all_records.append([None, None, None, None, None, None, None])  # All seven of the non-PK fields in the relation should contain null values at creation
+        df = pd.DataFrame(
+            all_records,
+            index=multiindex,
+            columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
+        )
+        df = df.astype({
+            "usage_is_being_collected": 'boolean',
+            "manual_collection_required": 'boolean',
+            "collection_via_email": 'boolean',
+            "is_COUNTER_compliant": 'boolean',
+            "collection_status": 'string',  # For `enum` data type
+            "usage_file_path": 'string',
+            "notes": 'string',  # For `text` data type
+        })
+        logging.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
+
+        #Section: Load Data into `annualUsageCollectionTracking` Relation
+        try:
+            df.to_sql(
+                'annualUsageCollectionTracking',
+                con=db.engine,
+                if_exists='append',
+                index_label=["SRS_statistics_source", "SRS_resource_source"],
+            )
+            logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
+            return f"The AUCT records load for FY {self.fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
+            return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
