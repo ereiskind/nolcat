@@ -38,7 +38,7 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year():
+def test_create_usage_tracking_records_for_fiscal_year(engine):
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
     
     The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
@@ -68,10 +68,19 @@ def test_create_usage_tracking_records_for_fiscal_year():
         columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
-    #ToDo: Load dataframe for new record into `fiscalYears`
-    #ToDo: method_result = run method on `FiscalYears` object
-    #ToDo: if "error" in method_result:
-        #ToDo: test failed--know it won't pass, so stopping before any more database I/O
+
+    #Section: Update Relation and Run Method
+    FY_df.to_sql(
+        name='annualUsageCollectionTracking',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index=True,
+        index_label='fiscal_year_ID',
+    )
+    method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
+    if "error" in method_result:  # If this is true,  pass
+        assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
     #ToDo: retrieved_data = read AUCT relation out of database
     #ToDo: expected_output_data = dataframe of what AUCT relation should contain
     #ToDo: assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
