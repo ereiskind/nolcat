@@ -354,6 +354,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             'annualUsageCollectionTracking',
             con=db.engine,
             if_exists='append',
+            index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
         logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
