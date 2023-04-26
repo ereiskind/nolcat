@@ -12,7 +12,7 @@ from numpy import ndarray
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
-from .app import first_new_PK_value
+from .app import return_string_of_dataframe_info, first_new_PK_value
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -242,20 +242,28 @@ class FiscalYears(db.Model):
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].uniques().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
-        #ToDo: multiindex = pd.MultiIndex.from_tuples(
-        #ToDo:     list_comprehension,
-        #ToDo:     names=["SRS_statistics_source", "SRS_resource_source"],
-        #ToDo: )
-        #ToDo: record_of_null_values = [None, None, None, None, None, None, None]  # All seven of the non-PK fields in the relation should contain null values at creation
-        #ToDo: all_records = []
-        #ToDo: for i in range(len(multiindex)):
-            #ToDo: all_records.append(record_of_null_values)
-        #ToDo: df = pd.DataFrame(
-        #ToDo:     all_records,
-        #ToDo:     index=multiindex,
-        #ToDo:     columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
-        #ToDo: )
-        #ToDo: logging.info
+        multiindex = pd.MultiIndex.from_tuples(
+            current_statistics_sources_PKs,
+            names=["SRS_statistics_source", "SRS_resource_source"],
+        )
+        all_records = []
+        for i in range(len(multiindex)):
+            all_records.append([None, None, None, None, None, None, None])  # All seven of the non-PK fields in the relation should contain null values at creation
+        df = pd.DataFrame(
+            all_records,
+            index=multiindex,
+            columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
+        )
+        df = df.astype({
+            "usage_is_being_collected": 'boolean',
+            "manual_collection_required": 'boolean',
+            "collection_via_email": 'boolean',
+            "is_COUNTER_compliant": 'boolean',
+            "collection_status": 'string',  # For `enum` data type
+            "usage_file_path": 'string',
+            "notes": 'string',  # For `text` data type
+        })
+        logging.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
         #ToDo: try:
