@@ -230,11 +230,44 @@ class FiscalYears(db.Model):
         Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
 
         Returns:
-            None: no return value is needed, so the default `None` is used
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: For every record in statisticsSources
-            #ToDo: For all of its statisticsResourceSources records
-                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
+        #Section: Get PKs of the Fiscal Year's Statistics Sources
+        #ToDo: current_statistics_sources = pd.read_sql(
+        #ToDo:     sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+        #ToDo:     con=db.engine,
+        #ToDo: )
+        #ToDo: logging.debug
+        #ToDo: [(item_in_list, self.fiscal_year_ID) for item_in_list in series_from_df.uniques().tolist()]  # Requires `from numpy.ndarray import tolist` because the `uniques` method returns a numpy array
+
+        #Section: Create Dataframe to Load into Relation
+        #ToDo: multiindex = pd.MultiIndex.from_tuples(
+        #ToDo:     list_comprehension,
+        #ToDo:     names=["SRS_statistics_source", "SRS_resource_source"],
+        #ToDo: )
+        #ToDo: record_of_null_values = [None, None, None, None, None, None, None]  # All seven of the non-PK fields in the relation should contain null values at creation
+        #ToDo: all_records = []
+        #ToDo: for i in range(len(multiindex)):
+            #ToDo: all_records.append(record_of_null_values)
+        #ToDo: df = pd.DataFrame(
+        #ToDo:     all_records,
+        #ToDo:     index=multiindex,
+        #ToDo:     columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
+        #ToDo: )
+        #ToDo: logging.info
+
+        #Section: Load Data into `annualUsageCollectionTracking` Relation
+        #ToDo: try:
+        #ToDo:     df.to_sql(
+        #ToDo:         'annualUsageCollectionTracking',
+        #ToDo:         con=db.engine,
+        #ToDo:         if_exists='append',
+        #ToDo:     )
+        #ToDo:     logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
+        #ToDo:     return f"The AUCT records load for FY {self.fiscal_year} was a success."
+        #ToDo: except Exception as error:
+        #ToDo:     logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
+        #ToDo:     return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
         pass
 
 
