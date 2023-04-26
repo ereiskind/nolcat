@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Finish ``nolcat.models.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
 * Write ``tests.test_FiscalYears.test_create_usage_tracking_records_for_fiscal_year()``
 * Update all functions calling ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
 * Create "ingest_usage/index.html"

@@ -266,18 +266,18 @@ class FiscalYears(db.Model):
         logging.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
-        #ToDo: try:
-        #ToDo:     df.to_sql(
-        #ToDo:         'annualUsageCollectionTracking',
-        #ToDo:         con=db.engine,
-        #ToDo:         if_exists='append',
-        #ToDo:     )
-        #ToDo:     logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
-        #ToDo:     return f"The AUCT records load for FY {self.fiscal_year} was a success."
-        #ToDo: except Exception as error:
-        #ToDo:     logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
-        #ToDo:     return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
-        pass
+        try:
+            df.to_sql(
+                'annualUsageCollectionTracking',
+                con=db.engine,
+                if_exists='append',
+                index_label=["SRS_statistics_source", "SRS_resource_source"],
+            )
+            logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
+            return f"The AUCT records load for FY {self.fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
+            return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
