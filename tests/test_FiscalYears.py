@@ -37,8 +37,15 @@ def test_calculate_ARL_20():
 
 
 def test_create_usage_tracking_records_for_fiscal_year():
-    """Create a test for adding records to the annualUsageCollectionTracking relation for the instance's FY for every current statistics source."""
-    #ToDo: Write test and docstring
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    #ToDo: Load dataframe for new record into `fiscalYears`
+    #ToDo: Initialize `FiscalYears` object
+    #ToDo: method_result = run method on `FiscalYears` object
+    #ToDo: if "error" in method_result:
+        #ToDo: test failed--know it won't pass, so stopping before any more database I/O
+    #ToDo: retrieved_data = read AUCT relation out of database
+    #ToDo: expected_output_data = dataframe of what AUCT relation should contain
+    #ToDo: assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
     pass
 
 
