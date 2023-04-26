@@ -1,6 +1,8 @@
 """Tests the methods in FiscalYears."""
 
 import pytest
+from datetime import date
+import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import FiscalYears
@@ -37,9 +39,36 @@ def test_calculate_ARL_20():
 
 
 def test_create_usage_tracking_records_for_fiscal_year():
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
+    
+    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
+    """
+    #Section: Create `FiscalYears` Object and `fiscalYears` Record
+    primary_key_value = 6
+    fiscal_year_value = "2023"
+    start_date_value = date.fromisoformat('2022-07-01')
+    end_date_value = date.fromisoformat('2023-06-30')
+
+    FY_instance = FiscalYears(
+        fiscal_year_ID = primary_key_value,
+        fiscal_year = fiscal_year_value,
+        start_date = start_date_value,
+        end_date = end_date_value,
+        ACRL_60b = None,
+        ACRL_63 = None,
+        ARL_18 = None,
+        ARL_19 = None,
+        ARL_20 = None,
+        notes_on_statisticsSources_used = None,
+        notes_on_corrections_after_submission = None,
+    )
+    FY_df = pd.DataFrame(
+        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
+        index=[primary_key_value],
+        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+    )
+    FY_df.index.name = "fiscal_year_ID"
     #ToDo: Load dataframe for new record into `fiscalYears`
-    #ToDo: Initialize `FiscalYears` object
     #ToDo: method_result = run method on `FiscalYears` object
     #ToDo: if "error" in method_result:
         #ToDo: test failed--know it won't pass, so stopping before any more database I/O
