@@ -8,6 +8,7 @@ import re
 import datetime
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+from numpy import ndarray
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
@@ -233,12 +234,12 @@ class FiscalYears(db.Model):
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         #Section: Get PKs of the Fiscal Year's Statistics Sources
-        #ToDo: current_statistics_sources = pd.read_sql(
-        #ToDo:     sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
-        #ToDo:     con=db.engine,
-        #ToDo: )
-        #ToDo: logging.debug
-        #ToDo: [(item_in_list, self.fiscal_year_ID) for item_in_list in series_from_df.uniques().tolist()]  # Requires `from numpy.ndarray import tolist` because the `uniques` method returns a numpy array
+        current_statistics_sources = pd.read_sql(
+            sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            con=db.engine,
+        )
+        logging.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
+        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].uniques().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
         #ToDo: multiindex = pd.MultiIndex.from_tuples(
