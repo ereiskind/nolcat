@@ -74,9 +74,9 @@ class FiscalYears(db.Model):
     __tablename__ = 'fiscalYears'
 
     fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    fiscal_year = db.Column(db.String(4))
-    start_date = db.Column(db.Date)
-    end_date = db.Column(db.Date)
+    fiscal_year = db.Column(db.String(4), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     ACRL_60b = db.Column(db.SmallInteger)
     ACRL_63 = db.Column(db.SmallInteger)
     ARL_18 = db.Column(db.SmallInteger)
@@ -278,7 +278,7 @@ class Vendors(db.Model):
     __tablename__ = 'vendors'
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    vendor_name = db.Column(db.String(80))
+    vendor_name = db.Column(db.String(80), nullable=False)
     alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
@@ -363,7 +363,7 @@ class VendorNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
 
     def __repr__(self):
@@ -390,9 +390,9 @@ class StatisticsSources(db.Model):
     __tablename__ = 'statisticsSources'
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_name = db.Column(db.String(100))
+    statistics_source_name = db.Column(db.String(100), nullable=False)
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
@@ -650,7 +650,7 @@ class StatisticsSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     
 
     def __repr__(self):
@@ -667,7 +667,7 @@ class ResourceSources(db.Model):
     Attributes:
         self.resource_source_ID (int): the primary key
         self.resource_source_name (str): the resource source name
-        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values
+        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
         self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
@@ -680,10 +680,10 @@ class ResourceSources(db.Model):
     __tablename__ = 'resourceSources'
 
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    resource_source_name = db.Column(db.String(100))
-    source_in_use = db.Column(db.Boolean)
+    resource_source_name = db.Column(db.String(100), nullable=False)
+    source_in_use = db.Column(db.Boolean, nullable=False)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
@@ -750,7 +750,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), nullable=False)
     
 
     def __repr__(self):
@@ -767,13 +767,13 @@ class StatisticsResourceSources(db.Model):
     Attributes:
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values
+        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
     """
     __tablename__ = 'statisticsResourceSources'
 
     SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
     SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True, autoincrement=False)
-    current_statistics_source = db.Column(db.Boolean)
+    current_statistics_source = db.Column(db.Boolean, nullable=False)
 
 
     def __repr__(self):
@@ -933,7 +933,7 @@ class COUNTERData(db.Model):
     __tablename__ = 'COUNTERData'
 
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
     publisher = db.Column(db.String(PUBLISHER_LENGTH))
@@ -964,9 +964,9 @@ class COUNTERData(db.Model):
     parent_print_ISSN = db.Column(db.String(10))
     parent_online_ISSN = db.Column(db.String(10))
     parent_URI = db.Column(db.String(URI_LENGTH))
-    metric_type = db.Column(db.String(75))
-    usage_date = db.Column(db.Date)
-    usage_count = db.Column(db.Integer)
+    metric_type = db.Column(db.String(75), nullable=False)
+    usage_date = db.Column(db.Date, nullable=False)
+    usage_count = db.Column(db.Integer, nullable=False)
     report_creation_date = db.Column(db.DateTime)
 
 
