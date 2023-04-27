@@ -10,6 +10,82 @@ from nolcat.app import return_string_of_dataframe_info
 from nolcat.models import FiscalYears
 
 
+@pytest.fixture(scope='module')
+def load_relation_data(engine, fiscalYears_relation, vendors_relation,  vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, AUCT_relation, COUNTERData_relation):
+    """This fixture loads data into all the relations because all of the methods being tested in this module require there to be data in the database."""
+    fiscalYears_relation.to_sql(
+        'fiscalYears',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='fiscal_year_ID',
+    )
+    vendors_relation.to_sql(
+        'vendors',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='vendor_ID',
+    )
+    vendorNotes_relation.to_sql(
+        'vendorNotes',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='vendor_notes_ID',
+    )
+    statisticsSources_relation.to_sql(
+        'statisticsSources',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='statistics_source_ID',
+    )
+    statisticsSourceNotes_relation.to_sql(
+        'statisticsSourceNotes',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='statistics_source_notes_ID',
+    )
+    resourceSources_relation.to_sql(
+        'resourceSources',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='resource_source_ID',
+    )
+    resourceSourceNotes_relation.to_sql(
+        'resourceSourceNotes',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='resource_source_notes_ID',
+    )
+    statisticsResourceSources_relation.to_sql(
+        'statisticsResourceSources',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label=['SRS_statistics_source', 'SRS_resource_source'],
+    )
+    AUCT_relation.to_sql(
+        'annualUsageCollectionTracking',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+    )
+    COUNTERData_relation.to_sql(
+        'COUNTERData',
+        con=engine,
+        if_exists='append',
+        chunksize=1000,
+        index_label='COUNTER_data_ID',
+    )
+    # Nothing is being returned, so no `yield` statement
+
+
 def test_calculate_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
