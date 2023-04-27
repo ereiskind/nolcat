@@ -15,7 +15,7 @@ from nolcat.models import PATH_TO_CREDENTIALS_FILE
 
 
 #Section: Fixtures
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def first_day_of_most_recent_month_with_usage():
     """Creates the value that will be used for the `begin_date` SUSHI parameter.
 
@@ -34,7 +34,7 @@ def first_day_of_most_recent_month_with_usage():
         yield begin_month.replace(day=1)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def last_day_of_month(first_day_of_most_recent_month_with_usage):
     """The last day of the month identified in the `first_day_of_month_with_usage` fixture.
 
@@ -53,7 +53,7 @@ def last_day_of_month(first_day_of_most_recent_month_with_usage):
     )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
