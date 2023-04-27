@@ -4,9 +4,10 @@ import pytest
 from datetime import date
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import return_string_of_dataframe_info
+from nolcat.app import change_multiindex_single_field_dataframe_into_series, return_string_of_dataframe_info
 from nolcat.models import FiscalYears
 
 
@@ -84,6 +85,174 @@ def load_relation_data(engine, fiscalYears_relation, vendors_relation,  vendorNo
         index_label='COUNTER_data_ID',
     )
     # Nothing is being returned, so no `yield` statement
+
+
+@pytest.mark.dependency()
+def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation, vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, annualUsageCollectionTracking_relation, COUNTERData_relation):
+    """Tests that the relations were successfully loaded into the database."""
+    fiscalYears_relation_data = pd.read_sql(
+        sql="SELECT * FROM fiscalYears;",
+        con=engine,
+        index_col='fiscal_year_ID',
+    )
+    fiscalYears_relation_data = fiscalYears_relation_data.astype({
+        "fiscal_year": 'string',
+        "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
+        "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
+        "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
+        "notes_on_statisticsSources_used": 'string',  # For `text` data type
+        "notes_on_corrections_after_submission": 'string',  # For `text` data type
+    })
+    fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
+    fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
+
+    vendors_relation_data = pd.read_sql(
+        sql="SELECT * FROM vendors;",
+        con=engine,
+        index_col='vendor_ID',
+    )
+    vendors_relation_data = vendors_relation_data.astype({
+        "vendor_name": 'string',
+        "alma_vendor_code": 'string',
+    })
+
+    vendorNotes_relation_data = pd.read_sql(
+        sql="SELECT * FROM vendorNotes;",
+        con=engine,
+        index_col='vendor_notes_ID',
+    )
+    vendorNotes_relation_data = vendorNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "vendor_ID": 'int',
+    })
+    vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
+
+    statisticsSources_relation_data = pd.read_sql(
+        sql="SELECT * FROM statisticsSources;",
+        con=engine,
+        index_col='statistics_source_ID',
+    )
+    statisticsSources_relation_data = statisticsSources_relation_data.astype({
+        "statistics_source_name": 'string',
+        "statistics_source_retrieval_code": 'string',
+        "vendor_ID": 'int',
+    })
+
+    statisticsSourceNotes_relation_data = pd.read_sql(
+        sql="SELECT * FROM statisticsSourceNotes;",
+        con=engine,
+        index_col='statistics_source_notes_ID',
+    )
+    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "statistics_source_ID": 'int',
+    })
+    statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
+
+    resourceSources_relation_data = pd.read_sql(
+        sql="SELECT * FROM resourceSources;",
+        con=engine,
+        index_col='resource_source_ID',
+    )
+    resourceSources_relation_data = resourceSources_relation_data.astype({
+        "resource_source_name": 'string',
+        "source_in_use": 'boolean',
+        "vendor_ID": 'int',
+    })
+    resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
+
+    resourceSourceNotes_relation_data = pd.read_sql(
+        sql="SELECT * FROM resourceSourceNotes;",
+        con=engine,
+        index_col='resource_source_notes_ID',
+    )
+    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype({
+        "note": 'string',  # For `text` data type
+        "written_by": 'string',
+        "resource_source_ID": 'int',
+    })
+    resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
+
+    statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
+        sql="SELECT * FROM statisticsResourceSources;",
+        con=engine,
+        index_col=['SRS_statistics_source', 'SRS_resource_source'],
+    )
+    statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
+    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
+        "current_statistics_source": 'boolean',
+    })
+
+    annualUsageCollectionTracking_relation_data = pd.read_sql(
+        sql="SELECT * FROM annualUsageCollectionTracking;",
+        con=engine,
+        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    )
+    annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
+        "usage_is_being_collected": 'boolean',
+        "manual_collection_required": 'boolean',
+        "collection_via_email": 'boolean',
+        "is_COUNTER_compliant": 'boolean',
+        "collection_status": 'string',  # For `enum` data type
+        "usage_file_path": 'string',
+        "notes": 'string',  # For `text` data type
+    })
+
+    COUNTERData_relation_data = pd.read_sql(
+        sql="SELECT * FROM COUNTERData;",
+        con=engine,
+        index_col="COUNTER_data_ID",
+    )
+    COUNTERData_relation_data = COUNTERData_relation_data.astype({
+        "statistics_source_ID": 'int',
+        "report_type": 'string',
+        "resource_name": 'string',
+        "publisher": 'string',
+        "publisher_ID": 'string',
+        "platform": 'string',
+        "authors": 'string',
+        "article_version": 'string',
+        "DOI": 'string',
+        "proprietary_ID": 'string',
+        "ISBN": 'string',
+        "print_ISSN": 'string',
+        "online_ISSN": 'string',
+        "URI": 'string',
+        "data_type": 'string',
+        "section_type": 'string',
+        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
+        "access_type": 'string',
+        "access_method": 'string',
+        "parent_title": 'string',
+        "parent_authors": 'string',
+        "parent_article_version": 'string',
+        "parent_data_type": 'string',
+        "parent_DOI": 'string',
+        "parent_proprietary_ID": 'string',
+        "parent_ISBN": 'string',
+        "parent_print_ISSN": 'string',
+        "parent_online_ISSN": 'string',
+        "parent_URI": 'string',
+        "metric_type": 'string',
+    })
+    COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
+    COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
+    COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+
+    assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
+    assert_frame_equal(vendors_relation_data, vendors_relation)
+    assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
+    assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
+    assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
+    assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
+    assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
+    assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
+    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
+    assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
 
 def test_calculate_ACRL_60b():
