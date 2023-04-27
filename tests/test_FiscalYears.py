@@ -11,9 +11,12 @@ from nolcat.app import change_multiindex_single_field_dataframe_into_series, ret
 from nolcat.models import FiscalYears
 
 
-@pytest.fixture(scope='module')
-def load_relation_data(engine, fiscalYears_relation, vendors_relation,  vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, AUCT_relation, COUNTERData_relation):
-    """This fixture loads data into all the relations because all of the methods being tested in this module require there to be data in the database."""
+@pytest.mark.dependency()
+def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation, vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, annualUsageCollectionTracking_relation, COUNTERData_relation):
+    """This test loads data into all the relations and confirms the data ingest was successful.
+    
+    All of the methods being tested in this module require there to be data in the database, so the database needs to be filled with the test data if any of the tests are going to pass. Placing the `to_sql` statements in a fixture scoped for the module didn't load them successfully, so both the methods to load them and the checks to ensure they were loaded are contained in this test function.
+    """
     fiscalYears_relation.to_sql(
         'fiscalYears',
         con=engine,
@@ -70,7 +73,7 @@ def load_relation_data(engine, fiscalYears_relation, vendors_relation,  vendorNo
         chunksize=1000,
         index_label=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    AUCT_relation.to_sql(
+    annualUsageCollectionTracking_relation.to_sql(
         'annualUsageCollectionTracking',
         con=engine,
         if_exists='append',
@@ -84,12 +87,7 @@ def load_relation_data(engine, fiscalYears_relation, vendors_relation,  vendorNo
         chunksize=1000,
         index_label='COUNTER_data_ID',
     )
-    # Nothing is being returned, so no `yield` statement
 
-
-@pytest.mark.dependency()
-def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation, vendorNotes_relation, statisticsSources_relation, statisticsSourceNotes_relation, resourceSources_relation, resourceSourceNotes_relation, statisticsResourceSources_relation, annualUsageCollectionTracking_relation, COUNTERData_relation):
-    """Tests that the relations were successfully loaded into the database."""
     fiscalYears_relation_data = pd.read_sql(
         sql="SELECT * FROM fiscalYears;",
         con=engine,
