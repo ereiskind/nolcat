@@ -443,6 +443,15 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         index=multiindex,
         columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
     )
+    expected_output_data = expected_output_data.astype({
+        "usage_is_being_collected": 'boolean',
+        "manual_collection_required": 'boolean',
+        "collection_via_email": 'boolean',
+        "is_COUNTER_compliant": 'boolean',
+        "collection_status": 'string',  # For `enum` data type
+        "usage_file_path": 'string',
+        "notes": 'string',  # For `text` data type
+    })
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
