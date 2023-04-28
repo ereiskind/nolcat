@@ -330,7 +330,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine):
     
     #Section: Create and Compare Dataframes
     retrieved_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageStatisticsTracking;",
+        sql="SELECT * FROM annualUsageCollectionTracking;",
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
