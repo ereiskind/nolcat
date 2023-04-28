@@ -239,7 +239,7 @@ class FiscalYears(db.Model):
             con=db.engine,
         )
         logging.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
-        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources.uniques().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
         multiindex = pd.MultiIndex.from_tuples(
