@@ -251,8 +251,7 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
     assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    print(f"`COUNTERData_relation_data`:\n{return_string_of_dataframe_info(COUNTERData_relation_data)}")
-    print(f"`COUNTERData_relation`:\n{return_string_of_dataframe_info(COUNTERData_relation)}")
+    print(f"Comparing `COUNTERData_relation_data` as `self` and `COUNTERData_relation` as `other`:\n{COUNTERData_relation_data.compare(COUNTERData_relation)}")
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
 
@@ -316,7 +315,6 @@ def test_create_usage_tracking_records_for_fiscal_year(engine):
         columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
-    print(f"Dataframe to load into database:\n{FY_df}\nand its info:\n{return_string_of_dataframe_info(FY_df)}")
 
     #Section: Update Relation and Run Method
     FY_df.to_sql(
