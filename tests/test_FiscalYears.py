@@ -240,6 +240,7 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
     COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+    COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
 
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)

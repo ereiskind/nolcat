@@ -608,6 +608,7 @@ def test_COUNTERData_relation_to_database(engine, COUNTERData_relation):
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+    #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
     pass
 
