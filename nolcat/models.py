@@ -244,7 +244,7 @@ class FiscalYears(db.Model):
         #Section: Create Dataframe to Load into Relation
         multiindex = pd.MultiIndex.from_tuples(
             current_statistics_sources_PKs,
-            names=["SRS_statistics_source", "SRS_resource_source"],
+            names=["AUCT_statistics_source", "AUCT_fiscal_year"],
         )
         all_records = []
         for i in range(len(multiindex)):
