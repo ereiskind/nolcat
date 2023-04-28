@@ -284,7 +284,7 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine):
+def test_create_usage_tracking_records_for_fiscal_year(engine, app):
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
     
     The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
@@ -324,9 +324,17 @@ def test_create_usage_tracking_records_for_fiscal_year(engine):
         index=True,
         index_label='fiscal_year_ID',
     )
+    try:
+        with app.app_context():  # https://stackoverflow.com/a/51240884
+            method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
+            print(f"`app.app_context()` (type {app.app_context()}) successful")
+    except:
+        with app.test_client() as client:  # https://stackoverflow.com/a/67314104
+            method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
+            print(f"`app.test_client()` (type {client}) successful")
     #method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()  #ALERT: `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
-    #if "error" in method_result:  # If this is true,  pass
-    #    assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
+    if "error" in method_result:  # If this is true,  pass
+        assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
     
     #Section: Create and Compare Dataframes
     retrieved_data = pd.read_sql(
