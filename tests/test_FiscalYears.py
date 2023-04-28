@@ -251,7 +251,6 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
     assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
-    print(f"Comparing `COUNTERData_relation_data` as `self` and `COUNTERData_relation` as `other`:\n{COUNTERData_relation_data.compare(COUNTERData_relation)}")
     assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
 
