@@ -801,7 +801,7 @@
             "mode": "row-based"
         },
         "baseColumnName": "Statistics_Source_ID",
-        "expression": "grel:'['+forEach(row.columnNames,field,if(isBlank(cells[field].value),'None',if(cells[field].value.type()=='date','\"'+cells[field].value.toString('yyyy-MM-dd')+'\"',if(cells[field].value.type()=='string','\"'+cells[field].value.replace('\"','\\\\\"')+'\"',cells[field].value.round())))).join(', ')+', None]'",
+        "expression": "grel:'['+forEach(row.columnNames,field,if(isBlank(cells[field].value),'None',if(cells[field].value.type()=='date','\"'+cells[field].value.toString('yyyy-MM-dd')+'\"',if(cells[field].value.type()=='string','\"'+cells[field].value.replace('\"','\\\\\"')+'\"',cells[field].value.round())))).join(', ')+', None],'",
         "onError": "set-to-blank",
         "newColumnName": "df",
         "columnInsertIndex": 0,
