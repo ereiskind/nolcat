@@ -320,7 +320,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine):
 
     #Section: Update Relation and Run Method
     FY_df.to_sql(
-        name='annualUsageCollectionTracking',
+        name='fiscalYears',
         con=engine,
         if_exists='append',
         chunksize=1000,
