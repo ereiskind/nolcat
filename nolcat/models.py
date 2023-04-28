@@ -998,7 +998,7 @@ class COUNTERData(db.Model):
     online_ISSN = db.Column(db.String(20))  # Some R4 book reports put another ISBN in the report's ISSN field, the contents of which go into this field, so the field must be large enough to store ISBNs
     URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
+    section_type = db.Column(db.String(25))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
