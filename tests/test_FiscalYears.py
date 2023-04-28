@@ -324,15 +324,8 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, app):
         index=True,
         index_label='fiscal_year_ID',
     )
-    try:
-        with app.app_context():  # https://stackoverflow.com/a/51240884
-            method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
-            print(f"`app.app_context()` (type {app.app_context()}) successful")
-    except:
-        with app.test_client() as client:  # https://stackoverflow.com/a/67314104
-            method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
-            print(f"`app.test_client()` (type {client}) successful")
-    #method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()  #ALERT: `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
+        method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
     if "error" in method_result:  # If this is true,  pass
         assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
     
