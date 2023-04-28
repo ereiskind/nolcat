@@ -271,7 +271,7 @@ class FiscalYears(db.Model):
                 'annualUsageCollectionTracking',
                 con=db.engine,
                 if_exists='append',
-                index_label=["SRS_statistics_source", "SRS_resource_source"],
+                index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
             )
             logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
