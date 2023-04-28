@@ -336,10 +336,20 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
-    multiindex = pd.MultiIndex.from_tuples(
+    multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order
         [
-            (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 3), (8, 4), (8, 5), (9, 0), (9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (10, 0), (10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (11, 0), (11, 1), (11, 2), (11, 3), (11, 4), (11, 5),  # Multiindex before method
-            (0, 6), (1, 6), (2, 6), (3, 6), (4, 6), (5, 6), (6, 6), (9, 6), (10, 6), (11, 6),  # New values in multiindex
+            (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6),
+            (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6),
+            (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
+            (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6),
+            (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (4, 6),
+            (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6),
+            (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6),
+            (7, 0), (7, 1), (7, 2),
+            (8, 0), (8, 1), (8, 2),
+            (9, 3), (9, 4), (9, 5), (9, 6),
+            (10, 0), (10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6),
+            (11, 0), (11, 1), (11, 2), (11, 3), (11, 4), (11, 5), (11, 6),
         ],
         names=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
@@ -351,6 +361,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
@@ -358,6 +369,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
@@ -365,6 +377,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
@@ -372,6 +385,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, False, False, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, "Simulating a resource that's become COUNTER compliant"],
@@ -379,6 +393,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, True, "Collection complete", None, None],
             [True, True, False, True, "Collection complete", None, "Ended subscription, only Med has content now"],
             [False, False, False, False, "N/A: Paid by Med", None, "Still have access to content through Med"],
+            [None, None, None, None, None, None, None],
 
             [True, True, True, False, "Collection complete", None, "Simulating a resource with usage requested by sending an email"],
             [True, True, True, False, "Collection in process (see notes)", None, "When sending the email, note the date sent and who it was sent to"],
@@ -386,25 +401,28 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
             [True, True, True, False, "Collection in process (see notes)", None, "Email info"],
             [True, True, True, False, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, False, True, "Collection complete", None, "Simulating a resource that becomes OA at the start of a calendar year"],
             [True, True, False, True, "Collection complete", None, "Resource became OA at start of calendar year 2018"],
             [False, False, False, False, "N/A: Open access", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [False, False, False, False, "N/A: Open access", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, True, False, "Collection not started", None, None],
             [True, True, True, False, "Collection complete", None, None],
             [True, True, True, False, "Collection complete", None, None],
 
-            [False, False, False, False, "N/A: Open access", None, None],
-            [False, False, False, False, "N/A: Open access", None, None],
-            [False, False, False, False, "N/A: Open access", None, None],
-
             [True, True, True, False, "Collection not started", None, None],
             [True, True, True, False, "Collection complete", None, None],
             [True, True, True, False, "Collection complete", None, None],
+
             [True, True, False, False, "Collection complete", None, None],
             [True, True, False, False, "Collection complete", None, None],
             [True, True, False, False, "Collection not started", None, None],
+            [None, None, None, None, None, None, None],
 
             [False, False, False, False, "N/A: Open access", None, None],
             [False, False, False, False, "N/A: Open access", None, None],
@@ -412,6 +430,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [False, False, False, False, "N/A: Open access", None, None],
             [False, False, False, False, "N/A: Open access", None, None],
             [False, False, False, False, "N/A: Open access", None, None],
+            [None, None, None, None, None, None, None],
 
             [True, True, True, False, "Usage not provided", None, "Simulating a resource that starts offering usage statistics"],
             [True, True, True, False, "Usage not provided", None, None],
@@ -419,16 +438,6 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
             [True, True, False, False, "Collection complete", None, None],
             [True, True, False, False, "Collection complete", None, None],
             [True, True, False, False, "Collection not started", None, None],
-
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None],
         ],
         index=multiindex,
