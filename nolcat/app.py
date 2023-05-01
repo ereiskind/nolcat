@@ -220,3 +220,20 @@ def change_multiindex_single_field_dataframe_into_series(df):
         dtype=df[df.columns[0]].dtype,
         name=df.columns[0],
     )
+
+
+def restore_Boolean_values_to_Boolean_field(series):
+    """The function for converting the integer field used for Booleans in MySQL into a pandas `boolean` field.
+
+    MySQL stores Boolean values in a `TINYINT(1)` field, so any Boolean fields read from the database into a pandas dataframe appear as integer or float fields with the values `1`, `0`, and, if nulls are allowed, `NaN`. For simplicity, clarity, and consistency, turning these fields back into pandas Boolean fields is often a good idea.
+
+    Args:
+        series (pd.Series): a Boolean field with numeric values and a numeric dtype from MySQL
+    
+    Returns:
+        pd.Series: a series object with the same information as the initial series but with Boolean values and a Boolean dtype
+    """
+    return series.replace({
+        0: False,
+        1: True,
+    }).astype('boolean')
