@@ -340,6 +340,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
     retrieved_data['collection_via_email'] = restore_Boolean_values_to_Boolean_field(retrieved_data['collection_via_email'])
     retrieved_data['is_COUNTER_compliant'] = restore_Boolean_values_to_Boolean_field(retrieved_data['is_COUNTER_compliant'])
     print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
+    
     multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order
         [
             (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6),
@@ -456,6 +457,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         "usage_file_path": 'string',
         "notes": 'string',  # For `text` data type
     })
+    
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
