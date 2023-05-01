@@ -365,7 +365,7 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
-@pytest.mark.dependency()
+@pytest.mark.dependency(depends=['test_fiscalYears_relation_to_database', 'test_vendors_relation_to_database', 'test_vendorNotes_relation_to_database'])  # Test will fail without primary keys found in these relations
 def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, header_value, client):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
     CSV_files = MultipartEncoder(
@@ -485,7 +485,7 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
+@pytest.mark.dependency(depends=['test_statisticsSources_relation_to_database'])  # Test will fail without data from this relation in the database
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
@@ -519,7 +519,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
-@pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
+@pytest.mark.dependency(depends=['test_fiscalYears_relation_to_database', 'test_statisticsSources_relation_to_database'])  # Test will fail without primary keys found in these relations
 def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     form_submissions = MultipartEncoder(
@@ -608,11 +608,12 @@ def test_COUNTERData_relation_to_database(engine, COUNTERData_relation):
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
+    #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
     pass
 
 
-@pytest.mark.dependency(depends=['test_GET_request_for_collect_AUCT_and_historical_COUNTER_data'])
+@pytest.mark.dependency(depends=['test_annualUsageCollectionTracking_relation_to_database'])  # Test will fail without data from this relation in the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage():
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
     #ToDo: Render the page
@@ -620,7 +621,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage():
     pass
 
 
-@pytest.mark.dependency(depends=['test_GET_request_for_upload_historical_non_COUNTER_usage'])
+@pytest.mark.dependency(depends=['test_annualUsageCollectionTracking_relation_to_database'])  # Test will fail without data from this relation in the database
 def test_upload_historical_non_COUNTER_usage():
     """Tests uploading the files with non-COUNTER usage statistics."""
     #ToDo: Get the file paths out of the AUCT relation

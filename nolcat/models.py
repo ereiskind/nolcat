@@ -69,7 +69,7 @@ class FiscalYears(db.Model):
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
-        create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
+        create_usage_tracking_records_for_fiscal_year: Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
         collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
     __tablename__ = 'fiscalYears'
@@ -239,12 +239,12 @@ class FiscalYears(db.Model):
             con=db.engine,
         )
         logging.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
-        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].uniques().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
         multiindex = pd.MultiIndex.from_tuples(
             current_statistics_sources_PKs,
-            names=["SRS_statistics_source", "SRS_resource_source"],
+            names=["AUCT_statistics_source", "AUCT_fiscal_year"],
         )
         all_records = []
         for i in range(len(multiindex)):
@@ -271,7 +271,7 @@ class FiscalYears(db.Model):
                 'annualUsageCollectionTracking',
                 con=db.engine,
                 if_exists='append',
-                index_label=["SRS_statistics_source", "SRS_resource_source"],
+                index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
             )
             logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
@@ -998,7 +998,7 @@ class COUNTERData(db.Model):
     online_ISSN = db.Column(db.String(20))  # Some R4 book reports put another ISBN in the report's ISSN field, the contents of which go into this field, so the field must be large enough to store ISBNs
     URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
+    section_type = db.Column(db.String(25))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))

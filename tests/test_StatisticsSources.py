@@ -95,6 +95,7 @@ def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage)
 
 
 #Section: Tests
+@pytest.mark.dependency()
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
@@ -108,6 +109,7 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
     pass
 
 
+@pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
     begin_test = datetime.datetime.now()
@@ -120,6 +122,7 @@ def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_mo
     assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>" and SUSHI_data['statistics_source_ID'].eq(1).all()  #ToDo: and time collected value is equal to one of the above if possible
 
 
+@pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 def test_collect_usage_statistics(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
     #ToDo: to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, last_day_of_month)
