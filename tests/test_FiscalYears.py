@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_multiindex_single_field_dataframe_into_series, return_string_of_dataframe_info
+from nolcat.app import change_multiindex_single_field_dataframe_into_series, return_string_of_dataframe_info, restore_Boolean_values_to_Boolean_field
 from nolcat.models import FiscalYears
 
 
@@ -335,6 +335,10 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         con=engine,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    retrieved_data['usage_is_being_collected'] = restore_Boolean_values_to_Boolean_field(retrieved_data['usage_is_being_collected'])
+    retrieved_data['manual_collection_required'] = restore_Boolean_values_to_Boolean_field(retrieved_data['manual_collection_required'])
+    retrieved_data['collection_via_email'] = restore_Boolean_values_to_Boolean_field(retrieved_data['collection_via_email'])
+    retrieved_data['is_COUNTER_compliant'] = restore_Boolean_values_to_Boolean_field(retrieved_data['is_COUNTER_compliant'])
     print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
     multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order
         [
