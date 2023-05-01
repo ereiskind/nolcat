@@ -35,7 +35,7 @@ With an initialized session, it's possible to display the relations as dataframe
 3. Initialize a list for the field names with ``field_names=[]``
 4. Start the loop to get the field names with ``for field in session.execute(f"DESCRIBE {relation};").fetchall():``
 5. Write the iteration to get the field names with a tab followed by ``field_names.append(field[0])``
-6. Create the dataframe with ``df=pd.DataFrame(session.execute(f"SELECT" * FROM {relation};"),columns=field_names)``
+6. Create the dataframe with ``df=pd.DataFrame(session.execute(f"SELECT * FROM {relation};"),columns=field_names)``
 7. Set the index with ``df=df.set_index(field_names[0])`` or, for relations with multiindexes, ``df=df.set_index([field_names[0], field_names[1]])``
 
 Test Data
