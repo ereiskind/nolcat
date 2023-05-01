@@ -293,6 +293,9 @@ class FiscalYears(db.Model):
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            #ToDo: if repr(type(df)) == "<class 'str'>":
+                #ToDo: Use Flask message flashing to display message `df`
+                #ToDo: return f"SUSHI harvesting returned the following error: {df}"
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
@@ -542,7 +545,7 @@ class StatisticsSources(db.Model):
         #ToDo: Allen Press raises error `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?customer_id=786-26-602&requestor_id=lib-eresources%40fsu.edu&begin_date=2023-01&end_date=2023-01 (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`; can requests ignore the specific error?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
-            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
         else:
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
@@ -561,10 +564,10 @@ class StatisticsSources(db.Model):
             logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
         elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
-            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
         else:
             logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
-            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
 
         #Subsection: Get List of Master Reports
         available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
@@ -663,6 +666,9 @@ class StatisticsSources(db.Model):
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        if repr(type(df)) == "<class 'str'>":
+            #ToDo: Use Flask message flashing to display message `df`
+            return f"SUSHI harvesting returned the following error: {df}"
         df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(
@@ -916,6 +922,9 @@ class AnnualUsageCollectionTracking(db.Model):
 
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        if repr(type(df)) == "<class 'str'>":
+            #ToDo: Use Flask message flashing to display message `df`
+            return f"SUSHI harvesting returned the following error: {df}"
         df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(

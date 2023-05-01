@@ -13,7 +13,6 @@ Planned Iterations
 
 Iteration 1: SUSHI Only Product
 ===============================
-* Update all functions calling ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
 * Create "ingest_usage/index.html"
 
 Iteration 2: COUNTER Only Product
