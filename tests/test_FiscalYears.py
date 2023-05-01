@@ -335,6 +335,11 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         con=engine,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    retrieved_data = retrieved_data.astype({
+        "collection_status": 'string',  # For `enum` data type
+        "usage_file_path": 'string',
+        "notes": 'string',  # For `text` data type
+    })
     retrieved_data['usage_is_being_collected'] = restore_Boolean_values_to_Boolean_field(retrieved_data['usage_is_being_collected'])
     retrieved_data['manual_collection_required'] = restore_Boolean_values_to_Boolean_field(retrieved_data['manual_collection_required'])
     retrieved_data['collection_via_email'] = restore_Boolean_values_to_Boolean_field(retrieved_data['collection_via_email'])
