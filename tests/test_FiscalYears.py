@@ -158,9 +158,9 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
     )
     resourceSources_relation_data = resourceSources_relation_data.astype({
         "resource_source_name": 'string',
-        "source_in_use": 'boolean',
         "vendor_ID": 'int',
     })
+    resourceSources_relation_data['source_in_use'] = restore_Boolean_values_to_Boolean_field(resourceSources_relation_data['source_in_use'])
     resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
 
     resourceSourceNotes_relation_data = pd.read_sql(
@@ -181,9 +181,7 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
     statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
-    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
-        "current_statistics_source": 'boolean',
-    })
+    statisticsResourceSources_relation_data['current_statistics_source'] = restore_Boolean_values_to_Boolean_field(statisticsResourceSources_relation_data['current_statistics_source'])
 
     annualUsageCollectionTracking_relation_data = pd.read_sql(
         sql="SELECT * FROM annualUsageCollectionTracking;",
