@@ -56,6 +56,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client):
 def test_harvest_SUSHI_statistics():
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form."""
     #ToDo: Write test
+    #ToDo: Make one of the `assert` conditions the appearance of the flashed message
     pass
 
 

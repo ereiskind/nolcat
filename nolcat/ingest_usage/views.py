@@ -66,31 +66,38 @@ def harvest_SUSHI_statistics():
         form.statistics_source.choices = list(statistics_source_options[['statistics_source_ID', 'statistics_source_name']].itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
-        df = pd.read_sql(
-            sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
-            con=db.engine,
-        )
-        stats_source = StatisticsSources(
-            statistics_source_ID = df['statistics_source_ID'],
-            statistics_source_name = df['statistics_source_name'],
-            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
-            vendor_ID = df['vendor_ID'],
-        )
+        try:
+            df = pd.read_sql(
+                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+                con=db.engine,
+            )
+            stats_source = StatisticsSources(
+                statistics_source_ID = df['statistics_source_ID'],
+                statistics_source_name = df['statistics_source_name'],
+                statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
+                vendor_ID = df['vendor_ID'],
+            )
 
-        begin_date = form.begin_date.data
-        end_date = form.end_date.data
-        if end_date < begin_date:
-            return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))  #ToDo: Add message flashing that the end date was before the begin date
-        end_date = datetime.date(
-            end_date.year,
-            end_date.month,
-            calendar.monthrange(end_date.year, end_date.month)[1],
-        )
-        logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+            begin_date = form.begin_date.data
+            end_date = form.end_date.data
+            if end_date < begin_date:
+                flash(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
+                return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
+            end_date = datetime.date(
+                end_date.year,
+                end_date.month,
+                calendar.monthrange(end_date.year, end_date.month)[1],
+            )
+            logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
 
-        result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
-        logging.info(result_message)
-        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Flash `result_message` with message flashing
+            result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
+            flash(result_message)
+            logging.info(result_message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        except Exception as error:
+            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")
+            flash(f"The SUSHI request form submission failed due to the following error: {error}")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         return abort(404)
 
