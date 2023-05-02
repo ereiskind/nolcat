@@ -166,11 +166,11 @@ Iteration 11: Switch Message Display from Stdout to Flask
 * Make return statements with strings in ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
 * Make return statements with key "ERROR" in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse.make_SUSHI_call()`` display in Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
-* Add message flashing of returned redirects in ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()``
 
 Iteration 12: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
+* Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
 Open Source Iterations
