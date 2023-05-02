@@ -13,10 +13,10 @@ from sqlalchemy.sql import text
 from sqlalchemy import exc
 
 from . import bp
-from ..app import db, date_parser
 from .forms import FYAndVendorsDataForm, SourcesDataForm, AUCTAndCOUNTERForm
-from ..upload_COUNTER_reports import UploadCOUNTERReports
+from ..app import db, date_parser
 #from ..models import <name of SQLAlchemy classes used in views below>
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages

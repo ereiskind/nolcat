@@ -11,8 +11,8 @@ from flask import Response
 import pandas as pd
 
 from . import bp
-from ..app import db
 from .forms import CustomSQLQueryForm, QueryWizardForm, ChooseNonCOUNTERDownloadForm
+from ..app import db
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 

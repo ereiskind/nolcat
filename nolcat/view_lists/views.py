@@ -7,8 +7,8 @@ from flask import url_for
 import pandas as pd
 
 from . import bp
-from ..app import db
 #from .forms import <name of form classes>
+from ..app import db
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 

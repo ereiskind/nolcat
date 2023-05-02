@@ -9,9 +9,10 @@ from flask import url_for
 import pandas as pd
 
 from . import bp
-from ..app import db
 from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
+from ..app import db
 from ..models import StatisticsSources
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
