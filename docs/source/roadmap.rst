@@ -17,12 +17,12 @@ Iteration 1: SUSHI Only Product
 
 Iteration 2: COUNTER Only Product
 =================================
+* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Create "ingest_usage/upload-COUNTER-reports.html" page
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
-* Create "ingest_usage/upload-COUNTER-reports.html" page
 
 Iteration 3: Minimum Viable Product
 ===================================
