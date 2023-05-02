@@ -6,6 +6,7 @@ from flask import request
 from flask import abort
 from flask import redirect
 from flask import url_for
+from flask import flash
 import pandas as pd
 
 from . import bp
@@ -31,15 +32,21 @@ def upload_COUNTER_reports():
     if request.method == 'GET':
         return render_template('upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
-        df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
-        df['report_creation_date'] = pd.to_datetime(None)
-        df.index += first_new_PK_value('COUNTERData')
-        df.to_sql(
-            'COUNTERData',
-            con=db.engine,
-            if_exists='append',
-        )
-        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        try:
+            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+            df['report_creation_date'] = pd.to_datetime(None)
+            df.index += first_new_PK_value('COUNTERData')
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+            )
+            flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        except Exception as error:
+            logging.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
+            flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         return abort(404)
 
