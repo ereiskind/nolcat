@@ -13,5 +13,11 @@
         ToDo: Create link to page for getting start and end dates for custom SUSHI range, then putting them into StatisticsSources.collect_usage_statistics
         ToDo: Create link to page for adding non-COUNTER compliant usage
     -->
+
+    <ul>
+        <li>To upload a tabular COUNTER report, <a href="{{ url_for('ingest_usage.upload_COUNTER_reports') }}">click here</a>.</li>
+        <li>To make a SUSHI call, <a href="{{ url_for('ingest_usage.harvest_SUSHI_statistics') }}">click here</a>.</li>
+        <li>To save a non-COUNTER usage file, <a href="{{ url_for('ingest_usage.upload_non_COUNTER_reports') }}">click here</a>.</li>
+    </ul>
 </body>
 </html>
