@@ -38,6 +38,7 @@ def view_lists_homepage(list):
     #ToDo:     sql=SQL_query,
     #ToDo:     con=db.engine,
     #ToDo: )
+    #ToDo: df = df.astype({dict setting correct dtypes})
     #ToDo: Add field with links to see details for each record
     #ToDo: Display the returned dataframe
         # https://stackoverflow.com/q/52644035
@@ -62,6 +63,7 @@ def view_list_record(list, PK):
         #ToDo:     sql=SQL_query,
         #ToDo:     con=db.engine,
         #ToDo: )
+        #ToDo: df = df.astype({dict setting correct dtypes})
         #ToDo: Display the returned data
         return render_template('view_lists/page.html')#ToDo, :form=form)
     #ToDo: elif form.validate_on_submit():
@@ -93,6 +95,7 @@ def edit_list_record(list, PK):
             #ToDo:     sql=SQL_query,
             #ToDo:     con=db.engine,
             #ToDo: )
+            #ToDo: df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
                 # https://stackoverflow.com/q/35892144
                 # https://stackoverflow.com/q/23712986

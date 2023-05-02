@@ -71,6 +71,10 @@ def test_loading_data_into_relation(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
+    retrieved_vendors_data = retrieved_vendors_data.astype({
+        "vendor_name": 'string',
+        "alma_vendor_code": 'string',
+    })
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
@@ -98,6 +102,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
+    retrieved_data = retrieved_data.astype({
+        "statistics_source_name": 'string',
+        "statistics_source_retrieval_code": 'string',
+        "vendor_ID": 'int',
+    })
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
     expected_output_data = pd.DataFrame(

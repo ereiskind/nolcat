@@ -47,12 +47,31 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             sql=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
             con=db.engine,
         )
+        fiscal_year_details = fiscal_year_details.astype({
+            "fiscal_year": 'string',
+            "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
+            "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
+            "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
+            "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
+            "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
+            "notes_on_statisticsSources_used": 'string',  # For `text` data type
+            "notes_on_corrections_after_submission": 'string',  # For `text` data type
+        })
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
         fiscal_year_reporting = pd.read_sql(
             sql=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
             con=db.engine,
             index_col='AUCT_statistics_source',
         )
+        fiscal_year_reporting = fiscal_year_reporting.astype({
+            "usage_is_being_collected": 'boolean',
+            "manual_collection_required": 'boolean',
+            "collection_via_email": 'boolean',
+            "is_COUNTER_compliant": 'boolean',
+            "collection_status": 'string',  # For `enum` data type
+            "usage_file_path": 'string',
+            "notes": 'string',  # For `text` data type
+        })
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
         return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
     elif run_annual_stats_methods_form.validate_on_submit():

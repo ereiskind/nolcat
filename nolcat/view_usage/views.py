@@ -36,6 +36,7 @@ def run_custom_SQL_query():
             sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
             con=db.engine,
         )
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         return Response(
             df.to_csv(
                 index_label="index",
@@ -161,6 +162,7 @@ def use_predefined_SQL_query():
             sql=query,
             con=db.engine,
         )
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         return Response(
             df.to_csv(
                 index_label="index",

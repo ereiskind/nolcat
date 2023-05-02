@@ -142,6 +142,43 @@ def test_collect_usage_statistics(StatisticsSources_fixture, first_day_of_most_r
     #ToDo:     con=engine,
     #ToDo: )
     #ToDo: most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
+    #ToDo: most_recently_loaded_records = most_recently_loaded_records.astype({
+    #ToDo:     "statistics_source_ID": 'int',
+    #ToDo:     "report_type": 'string',
+    #ToDo:     "resource_name": 'string',
+    #ToDo:     "publisher": 'string',
+    #ToDo:     "publisher_ID": 'string',
+    #ToDo:     "platform": 'string',
+    #ToDo:     "authors": 'string',
+    #ToDo:     "article_version": 'string',
+    #ToDo:     "DOI": 'string',
+    #ToDo:     "proprietary_ID": 'string',
+    #ToDo:     "ISBN": 'string',
+    #ToDo:     "print_ISSN": 'string',
+    #ToDo:     "online_ISSN": 'string',
+    #ToDo:     "URI": 'string',
+    #ToDo:     "data_type": 'string',
+    #ToDo:     "section_type": 'string',
+    #ToDo:     "YOP": 'Int64',  # Using the pandas data type here because it allows null values
+    #ToDo:     "access_type": 'string',
+    #ToDo:     "access_method": 'string',
+    #ToDo:     "parent_title": 'string',
+    #ToDo:     "parent_authors": 'string',
+    #ToDo:     "parent_article_version": 'string',
+    #ToDo:     "parent_data_type": 'string',
+    #ToDo:     "parent_DOI": 'string',
+    #ToDo:     "parent_proprietary_ID": 'string',
+    #ToDo:     "parent_ISBN": 'string',
+    #ToDo:     "parent_print_ISSN": 'string',
+    #ToDo:     "parent_online_ISSN": 'string',
+    #ToDo:     "parent_URI": 'string',
+    #ToDo:     "metric_type": 'string',
+    #ToDo:     # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
+    #ToDo: })
+    #ToDo: most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
+    #ToDo: most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
+    #ToDo: most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
+    #ToDo: most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
     #ToDo: assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
     pass
 
