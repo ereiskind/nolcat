@@ -10,7 +10,7 @@ import pandas as pd
 
 from . import bp
 from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
-from ..app import db
+from ..app import db, first_new_PK_value
 from ..models import StatisticsSources
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
@@ -29,17 +29,16 @@ def upload_COUNTER_reports():
     """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
     form = COUNTERReportsForm()
     if request.method == 'GET':
-        #ToDo: return render_template('upload-COUNTER-reports.html', form=form)
-        pass
+        return render_template('upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
-        #ToDo: df['report_creation_date'] = pd.to_datetime(None)
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: df.to_sql(
-        #     'COUNTERData',
-        #     con=db.engine,
-        #     if_exists='append',
-        # )
+        df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        df['report_creation_date'] = pd.to_datetime(None)
+        df.index += first_new_PK_value('COUNTERData')
+        df.to_sql(
+            'COUNTERData',
+            con=db.engine,
+            if_exists='append',
+        )
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
     else:
         return abort(404)

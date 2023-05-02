@@ -21,7 +21,6 @@ Iteration 2: COUNTER Only Product
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create "ingest_usage/upload-COUNTER-reports.html" page
 
