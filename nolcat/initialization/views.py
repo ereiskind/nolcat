@@ -332,6 +332,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
+        #ToDo: remove file at `template_save_location`?
         #Subsection: Load `annualUsageCollectionTracking` into Database
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
@@ -359,6 +360,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
         #Subsection: Load COUNTER Reports into Database
+        #ToDo: Uncomment this subsection during Planned Iteration 2
         # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
         #ToDo: Does there need to be a warning here about if the above method returns no data?
         # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
@@ -371,7 +373,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         # logging.debug("Relation `COUNTERData` loaded into the database")
         logging.info("All relations loaded into the database")
 
-        # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))
+        # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
 
     else:

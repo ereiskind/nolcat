@@ -54,6 +54,11 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
     * https://spotofdata.com/flask-testing/
     * http://alexmic.net/flask-sqlalchemy-pytest/
     * https://www.patricksoftwareblog.com/unit-testing-a-flask-application/ (this uses unittest instead of pytest)
+    * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
+    * Possibly https://github.com/ClearcodeHQ/pytest-mysql
+    * Possibly https://pypi.org/project/pytest-sqlalchemy/
+    * Add https://pypi.org/project/pycodestyle/ at this point?
+    * Possibly use https://pypi.org/project/pytest-order/ ?
 
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
 * Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
