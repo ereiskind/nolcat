@@ -137,7 +137,8 @@ def upload_non_COUNTER_reports():
         form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Save uploaded file to location `file_path_of_record` in container
+        try:
+            #ToDo: file_path_of_record = Path(file path to folder where non-COUNTER usage files will be saved)
             #ToDo: Uploaded files must be of extension types
                 # "xlsx"
                 # "csv"
@@ -155,14 +156,20 @@ def upload_non_COUNTER_reports():
                 # "htm"
                 # "xml"
                 # "zip"
-        #ToDo: series_data_type = non_COUNTER_files_needed.loc[form.AUCT_options.data]
-        #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_statistics_source'] = int_PK_for_stats_source
-        #ToDo: series_data_type['annualUsageCollectionTracking.AUCT_fiscal_year'] = int_PK_for_fiscal_year
-        #ToDo: SQL_query = f'''
-        #ToDo:     UPDATE annualUsageCollectionTracking
-        #ToDo:     SET usage_file_path = {file_path_of_record}
-        #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
-        #ToDo: '''
-        return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+            #ToDo: record_matching_uploaded_file = non_COUNTER_files_needed.loc[form.AUCT_options.data]
+            #ToDo: int_PK_for_stats_source = record_matching_uploaded_file['AUCT_statistics_source']
+            #ToDo: int_PK_for_fiscal_year = record_matching_uploaded_file['AUCT_fiscal_year']
+            #ToDo: SQL_query = f'''
+            #ToDo:     UPDATE annualUsageCollectionTracking
+            #ToDo:     SET usage_file_path = {file_path_of_record}
+            #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
+            #ToDo: '''
+            #ToDo: Run SQL query
+            #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+        except Exception as error:
+            logging.error(f"The file upload failed due to the following error: {error}")
+            flash(f"The file upload failed due to the following error: {error}")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         return abort(404)

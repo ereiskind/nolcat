@@ -83,4 +83,5 @@ def test_GET_request_for_upload_non_COUNTER_reports(client):
 def test_upload_non_COUNTER_reports():
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     #ToDo: Write test
+    #ToDo: Make one of the `assert` conditions the appearance of the flashed message
     pass
