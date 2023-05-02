@@ -30,7 +30,7 @@ def upload_COUNTER_reports():
     """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
     form = COUNTERReportsForm()
     if request.method == 'GET':
-        return render_template('upload-COUNTER-reports.html', form=form)
+        return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
