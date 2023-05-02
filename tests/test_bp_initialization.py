@@ -324,6 +324,8 @@ def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
     })
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
+    print(f"`fiscalYears_relation_data`:\n{fiscalYears_relation_data}")
+    print(f"`fiscalYears_relation`:\n{fiscalYears_relation}")
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
 
 
