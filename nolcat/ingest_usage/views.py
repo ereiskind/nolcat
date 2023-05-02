@@ -60,10 +60,12 @@ def harvest_SUSHI_statistics():
     form = SUSHIParametersForm()
     if request.method == 'GET':
         statistics_source_options = pd.read_sql(
-            sql="SELECT * FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
             con=db.engine,
         )
-        form.statistics_source.choices = list(statistics_source_options[['statistics_source_ID', 'statistics_source_name']].itertuples(index=False, name=None))
+        form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
+        logging.info(f"`form.statistics_source.choices` (type {type(form.statistics_source.choices)}) is {form.statistics_source.choices}")
+        logging.info(f"`list(statistics_source_options.itertuples(index=False, name=None))` (type {type(list(statistics_source_options.itertuples(index=False, name=None)))}) is {list(statistics_source_options.itertuples(index=False, name=None))}")
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         try:
