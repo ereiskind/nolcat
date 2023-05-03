@@ -48,8 +48,7 @@ def upload_COUNTER_reports():
             flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -101,10 +100,7 @@ def harvest_SUSHI_statistics():
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
-        logging.warning(f"`form.statistics_source`: {form.statistics_source}")
-        logging.warning(f"`form.statistics_source.data`: {form.statistics_source.data}")
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -178,6 +174,5 @@ def upload_non_COUNTER_reports():
             flash(f"The file upload failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
-        logging.warning(f"`form.validate()`: {form.validate()}")
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
