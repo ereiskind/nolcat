@@ -33,23 +33,32 @@ def test_upload_COUNTER_reports():
     pass
 
 
-def test_GET_request_for_harvest_SUSHI_statistics(client):
+def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     #Section: Get Data from `GET` Requested Page
     page = client.get('/ingest_usage/harvest')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
+    GET_select_field_options = []
+    for child in GET_soup.find(name='select', id='statistics_source').children:
+        print(f"`child.string` (type {type(child.string)}): {child.string}")
+        print(f"`child['value'] (type {type(child['value'])}): {child['value']}")
 
-    #Section: Get Data from HTML File
+    #Section: Get Data from HTML File and Database
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-        #ToDo: Get the list of options presented for populating the drop-down
+    db_select_field_options = pd.read_sql(
+        sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    )
+    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
+    print(f"`db_select_field_options`: {db_select_field_options}")
 
-    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title  #ToDo: Compare the possible upload options
+    print(page.status)
+    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title  #ToDo: Compare `GET_select_field_options` and `db_select_field_options`
     assert HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title # `page.status` may be 404 until route is completed
 
 
