@@ -4,6 +4,7 @@ import pytest
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
+import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
