@@ -1,23 +1,23 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import SelectField
 from wtforms.validators import InputRequired
+from wtforms.validators import DataRequired
 
 
 class ChooseFiscalYearForm(FlaskForm):
     """Creates a form for choosing the fiscal year when viewing details about a fiscal year."""
-    fiscal_year = SelectField("View the details for the fiscal year (fiscal years are represented by the year they end in):", coerce=int, validators=[InputRequired()])
+    fiscal_year = SelectField("View the details for the fiscal year (fiscal years are represented by the year they end in):", coerce=int, validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
 
 
 class RunAnnualStatsMethodsForm(FlaskForm):
     """Creates a form for running the annual usage statistics methods in the `FiscalYears` relation class."""
-    annual_stats_method = SelectField(
-        #ToDo: Create select field with choices
-            # calculate_ACRL_60b()
-            # calculate_ACRL_63()
-            # calculate_ARL_18()
-            # calculate_ARL_19()
-            # calculate_ARL_20()
-    )
+    #annual_stats_method = SelectField(#ToDo: Write label for field, choices=[
+        # calculate_ACRL_60b()
+        # calculate_ACRL_63()
+        # calculate_ARL_18()
+        # calculate_ARL_19()
+        # calculate_ARL_20()
+    #], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
 
 
 class EditFiscalYearForm(FlaskForm):
