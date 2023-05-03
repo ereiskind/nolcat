@@ -103,6 +103,9 @@ def harvest_SUSHI_statistics():
     else:
         logging.warning(f"`form.is_submitted()`: {form.is_submitted()}")
         logging.warning(f"`form.validate()`: {form.validate()}")
+        logging.warning(f"`form.statistics_source.validate()`: {form.statistics_source.validate()}")
+        logging.warning(f"`form.begin_date.validate()`: {form.begin_date.validate()}")
+        logging.warning(f"`form.end_date.validate()`: {form.end_date.validate()}")
         return abort(404)
 
 
