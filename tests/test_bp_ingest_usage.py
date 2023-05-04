@@ -44,7 +44,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='statistics_source').children:
         print(f"PK element\n`int(child['value'])` (type {type(int(child['value']))}): {int(child['value'])}")
-        print(f"Statistics source name element\n`unicode(child.string)` (type {type(unicode(child.string))}): {unicode(child.string)}\n`str(child.string)` (type {type(str(child.string))}): {str(child.string)}\n`str(unicode(child.string))` (type {type(str(unicode(child.string)))}): {str(unicode(child.string))}")
+        print(f"`str(child.string)` (type {type(str(child.string))}): {str(child.string)}")
         #ToDo: GET_select_field_options.append(tuple(
             #ToDo: PK (int)
             #ToDo: statistics_source_name (str)
