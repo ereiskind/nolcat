@@ -3,11 +3,9 @@
 import pytest
 import json
 import datetime
-import calendar
 from random import choice
 import re
 import pandas as pd
-from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import StatisticsSources

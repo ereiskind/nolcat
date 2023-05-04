@@ -6,10 +6,13 @@ The fixtures for connecting to the database are primarily based upon the fixture
 from pathlib import Path
 import os
 import io
+import datetime
+import calendar
 import pytest
 from sqlalchemy import create_engine
 from wtforms import MultipleFileField
 from wtforms.validators import DataRequired
+from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
