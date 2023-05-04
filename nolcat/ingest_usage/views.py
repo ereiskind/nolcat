@@ -67,6 +67,7 @@ def harvest_SUSHI_statistics():
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
+        logging.debug(f"`statistics_source` (type {type(form.statistics_source.data)}): {form.statistics_source.data}\n`begin_date` (type {type(form.begin_date.data)}): {form.begin_date.data}\n`end_date` (type {type(form.end_date.data)}): {form.end_date.data}")
         try:
             df = pd.read_sql(
                 sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",

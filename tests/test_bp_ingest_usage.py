@@ -109,11 +109,26 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics():
+def test_harvest_SUSHI_statistics(StatisticsSources_primary_key_fixture, most_recent_month_with_usage, client, header_value):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form."""
-    #ToDo: Write test
-    #ToDo: Make one of the `assert` conditions the appearance of the flashed message
-    pass
+    form_input = {
+        'statistics_source': StatisticsSources_primary_key_fixture,
+        'begin_date': most_recent_month_with_usage[0],
+        'end_date': most_recent_month_with_usage[1],
+    }
+    POST_response = client.post(
+        '/ingest_usage/harvest',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    #ToDo: Find a way to assert that `POST_response` includes the message `The load was a success.` to be flashed on the redirect destination page
+    print(f"`POST_response.content` (type {type(POST_response.content)}): {POST_response.content}")
+    print(f"`POST_response.headers` (type {type(POST_response.headers)}): {POST_response.headers}")
+    print(f"`POST_response.text` (type {type(POST_response.text)}): {POST_response.text}")
+    print(f"`POST_response.next` (type {type(POST_response.next)}): {POST_response.next}")
+    assert POST_response.status == "302 FOUND"
+    assert b'<a href="/ingest_usage">' in POST_response.data  # The `in` operator checks that the redirect location is correct
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client):
