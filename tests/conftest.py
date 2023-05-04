@@ -202,7 +202,7 @@ def sample_COUNTER_report_workbooks():
 def most_recent_month_with_usage():
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
 
-    Many methods and functions call the `SUSHICallAndResponse.make_SUSHI_call()` method, so proper testing requires making a SUSHI call; for the PR, DR, TR, and IR, the call requires dates. As the most recent month with usage is unlikely to raise any errors, cause a problem with the check for previously loaded data, or return an overly large amount of data, its first and last day are used in the SUSHI API call. The two dates are returned together in a tuple and separated in the test function with multiple assignment
+    Many methods and functions call the `SUSHICallAndResponse.make_SUSHI_call()` method, so proper testing requires making a SUSHI call; for the PR, DR, TR, and IR, the call requires dates. As the most recent month with usage is unlikely to raise any errors, cause a problem with the check for previously loaded data, or return an overly large amount of data, its first and last day are used in the SUSHI API call. The two dates are returned together in a tuple and separated in the test function with index operators.
 
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
