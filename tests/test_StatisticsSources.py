@@ -73,14 +73,10 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 @pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    begin_test = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    before_data_collection = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    data_collected = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
     assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>"
     assert SUSHI_data['statistics_source_ID'].eq(1).all()
-    #ToDo: and time collected value is equal to one of the above if possible
+    assert SUSHI_data['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])

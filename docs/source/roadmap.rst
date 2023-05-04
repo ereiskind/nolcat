@@ -60,7 +60,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
     * Possibly use https://pypi.org/project/pytest-order/ ?
 
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
-* Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
 * Write ``tests.test_StatisticsSources.test_collect_usage_statistics()``
 * Write ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
