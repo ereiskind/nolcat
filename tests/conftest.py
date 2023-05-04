@@ -198,7 +198,7 @@ def sample_COUNTER_report_workbooks():
     return fixture
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def most_recent_month_with_usage():
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
 
