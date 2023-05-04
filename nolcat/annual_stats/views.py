@@ -7,8 +7,8 @@ from flask import url_for
 import pandas as pd
 
 from . import bp
-from ..app import db
 from .forms import ChooseFiscalYearForm, RunAnnualStatsMethodsForm, EditFiscalYearForm, EditAUCTForm
+from ..app import db
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -31,6 +31,7 @@ def annual_stats_homepage():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -99,4 +100,6 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         #ToDo: Set up message flashing that change was made
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
+        #ToDo: Get values below for the form submitted
+        #ToDo: logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)

@@ -294,7 +294,6 @@ class FiscalYears(db.Model):
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: if repr(type(df)) == "<class 'str'>":
-                #ToDo: Use Flask message flashing to display message `df`
                 #ToDo: return f"SUSHI harvesting returned the following error: {df}"
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
@@ -667,7 +666,6 @@ class StatisticsSources(db.Model):
         """
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if repr(type(df)) == "<class 'str'>":
-            #ToDo: Use Flask message flashing to display message `df`
             return f"SUSHI harvesting returned the following error: {df}"
         df.index += first_new_PK_value('COUNTERData')
         try:
@@ -923,7 +921,6 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         if repr(type(df)) == "<class 'str'>":
-            #ToDo: Use Flask message flashing to display message `df`
             return f"SUSHI harvesting returned the following error: {df}"
         df.index += first_new_PK_value('COUNTERData')
         try:

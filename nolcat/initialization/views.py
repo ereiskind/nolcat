@@ -13,10 +13,10 @@ from sqlalchemy.sql import text
 from sqlalchemy import exc
 
 from . import bp
-from ..app import db, date_parser
 from .forms import FYAndVendorsDataForm, SourcesDataForm, AUCTAndCOUNTERForm
-from ..upload_COUNTER_reports import UploadCOUNTERReports
+from ..app import db, date_parser
 #from ..models import <name of SQLAlchemy classes used in views below>
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -132,6 +132,7 @@ def collect_FY_and_vendor_data():
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -278,6 +279,7 @@ def collect_sources_data():
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -377,6 +379,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -400,6 +403,7 @@ def upload_historical_non_COUNTER_usage():
             #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
     '''
     pass

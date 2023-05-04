@@ -9,6 +9,12 @@
 <body>
     <h1>Make SUSHI Call</h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <form action="{{ url_for('ingest_usage.harvest_SUSHI_statistics') }}" method="POST">
         {{ form.csrf_token }}
         <li><label>

@@ -14,8 +14,8 @@ def test_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
     #Section: Get Data from `GET` Requested Page
-    #homepage = client.get('/view_lists/')  #ToDo: Add variable route element
-    #GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    #page = client.get('/view_lists/')  #ToDo: Add variable route element
+    #GET_soup = BeautifulSoup(page.data, 'lxml')
     #GET_response_title = GET_soup.head.title
     #GET_response_page_title = GET_soup.body.h1
 
@@ -25,7 +25,7 @@ def test_view_lists_homepage(client):
     #    HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
     #    HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
 
-    #assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
     pass
 
 

@@ -8,11 +8,12 @@
 </head>
 <body>
     <h1>Ingest Usage Homepage</h1>
-    <!--
-        ToDo: Create link to page for uploading COUNTER reports
-        ToDo: Create link to page for getting start and end dates for custom SUSHI range, then putting them into StatisticsSources.collect_usage_statistics
-        ToDo: Create link to page for adding non-COUNTER compliant usage
-    -->
+
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
 
     <ul>
         <li>To upload a tabular COUNTER report, <a href="{{ url_for('ingest_usage.upload_COUNTER_reports') }}">click here</a>.</li>

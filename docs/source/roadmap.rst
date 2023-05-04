@@ -17,13 +17,12 @@ Iteration 1: SUSHI Only Product
 
 Iteration 2: COUNTER Only Product
 =================================
+* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Create "ingest_usage/upload-COUNTER-reports.html" page
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
-* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
-* Create "ingest_usage/upload-COUNTER-reports.html" page
 
 Iteration 3: Minimum Viable Product
 ===================================
@@ -130,8 +129,7 @@ Iteration 6: Create Drop-Down Lists
 ===================================
 * If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
 * If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field and adjust ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()`` accordingly
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_harvest_SUSHI_statistics()``
+* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field
 
 Iteration 7: Create Query Wizard
 ================================
@@ -167,11 +165,11 @@ Iteration 11: Switch Message Display from Stdout to Flask
 * Make return statements with strings in ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
 * Make return statements with key "ERROR" in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse.make_SUSHI_call()`` display in Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
-* Add message flashing of returned redirects in ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()``
 
 Iteration 12: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
+* Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
 Open Source Iterations
