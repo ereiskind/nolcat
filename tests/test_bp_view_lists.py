@@ -25,7 +25,9 @@ def test_view_lists_homepage(client):
     #    HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
     #    HTML_file_page_title = file_soup.body.h1  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route
 
-    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    #assert page.status == "200 OK"
+    #assertHTML_file_title == GET_response_title
+    #assertHTML_file_page_title == GET_response_page_title
     pass
 
 

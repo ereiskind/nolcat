@@ -25,7 +25,9 @@ def test_ingest_usage_homepage(client):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
 
-    assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_upload_COUNTER_reports():
@@ -88,8 +90,9 @@ def test_GET_request_for_upload_non_COUNTER_reports(client):
         HTML_file_page_title = file_soup.body.h1
         #ToDo: Get the list of AUCT options presented for populating the drop-down
 
-    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title  #ToDo: Compare the possible upload options; `page.status` may be 404 until route is completed
-    assert HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title # `page.status` may be 404 until route is completed
+    #ToDo: `assert page.status == "200 OK"` when route is completed
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_upload_non_COUNTER_reports():

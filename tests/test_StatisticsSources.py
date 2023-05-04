@@ -99,7 +99,8 @@ def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage)
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
-    assert repr(type(credentials)) == "<class 'dict'>" and re.match(r"https?:\/\/.*\/", string=credentials['URL'])
+    assert repr(type(credentials)) == "<class 'dict'>"
+    assert re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -119,7 +120,9 @@ def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_mo
     print(SUSHI_data)
     print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
     print(type(SUSHI_data))
-    assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>" and SUSHI_data['statistics_source_ID'].eq(1).all()  #ToDo: and time collected value is equal to one of the above if possible
+    assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>"
+    assert SUSHI_data['statistics_source_ID'].eq(1).all()
+    #ToDo: and time collected value is equal to one of the above if possible
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])

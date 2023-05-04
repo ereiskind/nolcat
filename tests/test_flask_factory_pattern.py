@@ -36,7 +36,9 @@ def test_homepage(client):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
     
-    assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_404_page(client):
@@ -46,7 +48,8 @@ def test_404_page(client):
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
-    assert nonexistent_page.status == "404 NOT FOUND" and nonexistent_page.data == HTML_markup
+    assert nonexistent_page.status == "404 NOT FOUND"
+    assert nonexistent_page.data == HTML_markup
 
 
 @pytest.mark.dependency()
