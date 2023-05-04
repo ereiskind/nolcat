@@ -43,12 +43,10 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='statistics_source').children:
-        print(f"PK element\n`int(child['value'])` (type {type(int(child['value']))}): {int(child['value'])}")
-        print(f"`str(child.string)` (type {type(str(child.string))}): {str(child.string)}")
-        #ToDo: GET_select_field_options.append(tuple(
-            #ToDo: PK (int)
-            #ToDo: statistics_source_name (str)
-        #ToDo: ))
+        GET_select_field_options.append(tuple(
+            int(child['value']),
+            str(child.string),
+        ))
 
     #Section: Get Data from HTML File and Database
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
@@ -61,9 +59,10 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     )
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
-    print(page.status)
-    #assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title  #ToDo: Compare `GET_select_field_options` and `db_select_field_options`
-    assert HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title # `page.status` may be 404 until route is completed
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
+    assert GET_select_field_options == db_select_field_options
 
 
 def test_harvest_SUSHI_statistics():
