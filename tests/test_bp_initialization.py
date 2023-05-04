@@ -277,12 +277,15 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
 
-    assert page.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, create_vendors_CSV_file, create_vendorNotes_CSV_file, header_value, client):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+    #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
             'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
@@ -298,15 +301,8 @@ def test_collect_FY_and_vendor_data(tmp_path, create_fiscalYears_CSV_file, creat
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-2">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
 
-
-@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
-def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
-    """Tests that the `fiscalYears` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
+    #Section: Get Relations from Database for Comparison
     fiscalYears_relation_data = pd.read_sql(
         sql="SELECT * FROM fiscalYears;",
         con=engine,
@@ -324,15 +320,7 @@ def test_fiscalYears_relation_to_database(engine, fiscalYears_relation):
     })
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
-    assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
-def test_vendors_relation_to_database(engine, vendors_relation):
-    """Tests that the `vendors` relation was was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     vendors_relation_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
@@ -342,15 +330,7 @@ def test_vendors_relation_to_database(engine, vendors_relation):
         "vendor_name": 'string',
         "alma_vendor_code": 'string',
     })
-    assert_frame_equal(vendors_relation_data, vendors_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])
-def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
-    """Tests that the `vendorNotes` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_FY_and_vendor_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     vendorNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM vendorNotes;",
         con=engine,
@@ -362,12 +342,19 @@ def test_vendorNotes_relation_to_database(engine, vendorNotes_relation):
         "vendor_ID": 'int',
     })
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
+
+    #Section: Assert Statements
+    assert POST_response.status == "302 FOUND"
+    assert b'<a href="/initialization/initialization-page-2">' in POST_response.data  # The `in` operator checks that the redirect location is correct
+    assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
+    assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
-@pytest.mark.dependency(depends=['test_fiscalYears_relation_to_database', 'test_vendors_relation_to_database', 'test_vendorNotes_relation_to_database'])  # Test will fail without primary keys found in these relations
-def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, create_statisticsSourceNotes_CSV_file, create_resourceSources_CSV_file, create_resourceSourceNotes_CSV_file, create_statisticsResourceSources_CSV_file, header_value, client):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
+def test_collect_sources_data(tmp_path, header_value, client, engine, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+    #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
             'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
@@ -385,15 +372,8 @@ def test_collect_sources_data(tmp_path, create_statisticsSources_CSV_file, creat
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-3">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests
 
-
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_statisticsSources_relation_to_database(engine, statisticsSources_relation):
-    """Tests that the `statisticsSources` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
+    #Section: Get Relations from Database for Comparison
     statisticsSources_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSources;",
         con=engine,
@@ -404,15 +384,7 @@ def test_statisticsSources_relation_to_database(engine, statisticsSources_relati
         "statistics_source_retrieval_code": 'string',
         "vendor_ID": 'int',
     })
-    assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNotes_relation):
-    """Tests that the `statisticsSourceNotes` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
         con=engine,
@@ -424,15 +396,7 @@ def test_statisticsSourceNotes_relation_to_database(engine, statisticsSourceNote
         "statistics_source_ID": 'int',
     })
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
-    assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_resourceSources_relation_to_database(engine, resourceSources_relation):
-    """Tests that the `resourceSources` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     resourceSources_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSources;",
         con=engine,
@@ -444,15 +408,7 @@ def test_resourceSources_relation_to_database(engine, resourceSources_relation):
         "vendor_ID": 'int',
     })
     resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
-    assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_relation):
-    """Tests that the `resourceSourceNotes` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     resourceSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM resourceSourceNotes;",
         con=engine,
@@ -464,15 +420,7 @@ def test_resourceSourceNotes_relation_to_database(engine, resourceSourceNotes_re
         "resource_source_ID": 'int',
     })
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
-    assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_sources_data'])
-def test_statisticsResourceSources_relation_to_database(engine, statisticsResourceSources_relation):
-    """Tests that the `statisticsResourceSources` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_sources_data()` test function because a single test function can't support multiple `assert_frame_equal` (or, in this case, `assert_series_equal`) comparisons.
-    """
     statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
         sql="SELECT * FROM statisticsResourceSources;",
         con=engine,
@@ -482,10 +430,18 @@ def test_statisticsResourceSources_relation_to_database(engine, statisticsResour
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
         "current_statistics_source": 'boolean',
     })
+
+    #Section: Assert Statements
+    assert POST_response.status == "302 FOUND"
+    assert b'<a href="/initialization/initialization-page-3">' in POST_response.data  # The `in` operator checks that the redirect location is correct
+    assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
+    assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
+    assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
+    assert_frame_equal(resourceSourceNotes_relation_data, resourceSourceNotes_relation)
     assert_series_equal(statisticsResourceSources_relation_data, statisticsResourceSources_relation)
 
 
-@pytest.mark.dependency(depends=['test_statisticsSources_relation_to_database'])  # Test will fail without data from this relation in the database
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
@@ -519,9 +475,10 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     assert_frame_equal(AUCT_template_df, AUCT_fixture_df)  #ToDo: Does this work in lieu of a direct comparison between the text file contents?
 
 
-@pytest.mark.dependency(depends=['test_fiscalYears_relation_to_database', 'test_statisticsSources_relation_to_database'])  # Test will fail without primary keys found in these relations
-def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCollectionTracking_CSV_file, sample_COUNTER_report_workbooks, header_value, client):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+@pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
+def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client, engine, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, sample_COUNTER_report_workbooks, COUNTERData_relation):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
@@ -536,15 +493,8 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, create_annualUsageCo
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    assert POST_response.status == "302 FOUND"  and b'<a href="/initialization/initialization-page-5">' in POST_response.data  # The `in` operator checks that the redirect location is correct; the success of the dataframe processing and relation uploads is checked in the subsequent tests  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
 
-
-@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
-def test_annualUsageCollectionTracking_relation_to_database(engine, annualUsageCollectionTracking_relation):
-    """Tests that the `annualUsageCollectionTracking` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_AUCT_and_historical_COUNTER_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
+    #Section: Get Relations from Database for Comparison
     annualUsageCollectionTracking_relation_data = pd.read_sql(
         sql="SELECT * FROM annualUsageCollectionTracking;",
         con=engine,
@@ -559,15 +509,7 @@ def test_annualUsageCollectionTracking_relation_to_database(engine, annualUsageC
         "usage_file_path": 'string',
         "notes": 'string',  # For `text` data type
     })
-    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
 
-
-@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])
-def test_COUNTERData_relation_to_database(engine, COUNTERData_relation):
-    """Tests that the `COUNTERData` relation was successfully loaded into the database.
-    
-    This test is separate from the `test_collect_AUCT_and_historical_COUNTER_data()` test function because a single test function can't support multiple `assert_frame_equal` comparisons.
-    """
     #COUNTERData_relation_data = pd.read_sql(
     #    sql="SELECT * FROM COUNTERData;",
     #    con=engine,
@@ -609,11 +551,15 @@ def test_COUNTERData_relation_to_database(engine, COUNTERData_relation):
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])
     #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
+
+    #Section: Assert Statements
+    assert POST_response.status == "302 FOUND"
+    assert b'<a href="/initialization/initialization-page-5">' in POST_response.data  # The `in` operator checks that the redirect location is correct  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
-    pass
 
 
-@pytest.mark.dependency(depends=['test_annualUsageCollectionTracking_relation_to_database'])  # Test will fail without data from this relation in the database
+@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_GET_request_for_upload_historical_non_COUNTER_usage():
     """Tests creating a form with the option to upload a file for each statistics source and fiscal year combination that's not COUNTER-compliant."""
     #ToDo: Render the page
@@ -621,7 +567,7 @@ def test_GET_request_for_upload_historical_non_COUNTER_usage():
     pass
 
 
-@pytest.mark.dependency(depends=['test_annualUsageCollectionTracking_relation_to_database'])  # Test will fail without data from this relation in the database
+@pytest.mark.dependency(depends=['test_collect_AUCT_and_historical_COUNTER_data'])  # Test will fail without primary keys found in the `annualUsageCollectionTracking` relation; this test passes only if this relation is successfully loaded into the database
 def test_upload_historical_non_COUNTER_usage():
     """Tests uploading the files with non-COUNTER usage statistics."""
     #ToDo: Get the file paths out of the AUCT relation
