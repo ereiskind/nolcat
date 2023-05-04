@@ -50,6 +50,7 @@ def StatisticsSources_primary_key_fixture(engine, most_recent_month_with_usage):
         sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={choice(retrieval_codes)}",
         con=engine,
     )
+    print(primary_key)
     yield primary_key.iloc[0][0]
 
 
