@@ -43,7 +43,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
     for child in GET_soup.find(name='select', id='statistics_source').children:
-        GET_select_field_options.append(tuple(
+        GET_select_field_options.append((
             int(child['value']),
             str(child.string),
         ))
