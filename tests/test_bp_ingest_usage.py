@@ -1,6 +1,8 @@
 """Tests the routes in the `ingest_usage` blueprint."""
 
 import pytest
+import json
+from random import choice
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
@@ -8,7 +10,47 @@ import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
+from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from nolcat.ingest_usage import *
+
+
+@pytest.fixture(scope='module')
+def StatisticsSources_primary_key_fixture(engine, most_recent_month_with_usage):
+    """A fixture selecting a random `StatisticsSources` primary key value to perpetuate a real SUSHI call.
+    
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. The `test_harvest_SUSHI_statistics()` tests a POST request sending data from a form that's ultimately used to make a SUSHI call; one of those fields is the primary key value of the `statisticsSources` record for which the call should be made, and this fixture serves to randomly select one such value. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
+
+    Args:
+        PATH_TO_CREDENTIALS_FILE (str): the file path for "R5_SUSHI_credentials.json"
+        most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
+
+    Yields:
+        int: the primary key value for a StatisticsSources object connected to valid SUSHI data
+    """
+    retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
+    with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
+        SUSHI_data_file = json.load(JSON_file)
+        for vendor in SUSHI_data_file:
+            for stats_source in vendor['interface']:
+                if "interface_id" in list(stats_source.keys()):
+                        retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
+    print(f"Possible retrieval code choices:\n{retrieval_codes_as_interface_IDs}")
+    
+    retrieval_codes = []
+    for interface in retrieval_codes_as_interface_IDs:
+        query_result = pd.read_sql(
+            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')}",
+            con=engine,
+        )
+        if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
+            retrieval_codes.append(interface)
+    print(f"Retrieval code choices:\n{retrieval_codes}")
+    
+    primary_key = pd.read_sql(
+        sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={choice(retrieval_codes)}",
+        con=engine,
+    )
+    yield primary_key.iloc[0][0]
 
 
 def test_ingest_usage_homepage(client):
