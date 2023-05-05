@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.ingest_usage import *
 
 
@@ -68,10 +69,19 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(StatisticsSources_primary_key_fixture, most_recent_month_with_usage, client, header_value):
-    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form."""
+def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, header_value):
+    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
+    
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. The limited number of possible SUSHI credentials means statistics sources current with the available usage statistics are not filtered out, meaning this test may fail because it fails the check preventing SUSHI calls to stats source/date combos already in the database.
+    """
+    primary_key_list = pd.read_sql(
+        sql="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    )
+    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).to_list()
+    print(f"Possible primary keys in form: {primary_key_list}")
     form_input = {
-        'statistics_source': StatisticsSources_primary_key_fixture,
+        'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
