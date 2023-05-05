@@ -481,6 +481,8 @@ class StatisticsSources(db.Model):
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
                     logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
+                    logging.debug(f"`stats_source['interface_id']` (type {type(stats_source['interface_id'])}): {stats_source['interface_id']}")
+                    logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
