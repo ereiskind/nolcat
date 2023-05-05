@@ -78,11 +78,11 @@ def harvest_SUSHI_statistics():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-            statistics_source_ID = df['statistics_source_ID'][0],
-            statistics_source_name = df['statistics_source_name'][0],
+            statistics_source_ID = int(df['statistics_source_ID'][0]),
+            statistics_source_name = str(df['statistics_source_name'][0]),
             statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]),
-            vendor_ID = df['vendor_ID'][0],
-        )
+            vendor_ID = int(df['vendor_ID'][0]),
+        )  # Without the `int` constructors, a numpy int type is used
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
