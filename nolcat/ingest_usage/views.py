@@ -86,6 +86,11 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
             vendor_ID = df['vendor_ID'],
         )
+        logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
+        logging.debug(f"`stats_source['statistics_source_ID']` (type {type(stats_source['statistics_source_ID'])}): {stats_source['statistics_source_ID']}")
+        logging.debug(f"`stats_source['statistics_source_name']` (type {type(stats_source['statistics_source_name'])}): {stats_source['statistics_source_name']}")
+        logging.debug(f"`stats_source['statistics_source_retrieval_code']` (type {type(stats_source['statistics_source_retrieval_code'])}): {stats_source['statistics_source_retrieval_code']}")
+        logging.debug(f"`stats_source['vendor_ID']` (type {type(stats_source['vendor_ID'])}): {stats_source['vendor_ID']}")
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data

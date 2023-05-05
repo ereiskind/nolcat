@@ -532,6 +532,11 @@ class StatisticsSources(db.Model):
         """
         #Section: Get API Call URL and Parameters
         logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
+        logging.debug(f"`self` (type {type(self)}): {self}")
+        logging.debug(f"`self.statistics_source_ID` (type {type(self.statistics_source_ID)}): {self.statistics_source_ID}")
+        logging.debug(f"`self.statistics_source_name` (type {type(self.statistics_source_name)}): {self.statistics_source_name}")
+        logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
+        logging.debug(f"`self.vendor_ID` (type {type(self.vendor_ID)}): {self.vendor_ID}")
         SUSHI_info = self.fetch_SUSHI_information()
         logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -666,6 +671,11 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        logging.debug(f"At start of `StatisticsSources.collect_usage_statistics`, `self` (type {type(self)}): {self}")
+        logging.debug(f"`self.statistics_source_ID` (type {type(self.statistics_source_ID)}): {self.statistics_source_ID}")
+        logging.debug(f"`self.statistics_source_name` (type {type(self.statistics_source_name)}): {self.statistics_source_name}")
+        logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
+        logging.debug(f"`self.vendor_ID` (type {type(self.vendor_ID)}): {self.vendor_ID}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
