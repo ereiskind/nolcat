@@ -61,6 +61,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
+        logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
         records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
         logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
