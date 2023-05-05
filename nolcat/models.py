@@ -452,11 +452,8 @@ class StatisticsSources(db.Model):
 
 
     def __repr__(self):
-        """The printable representation of a `StatisticsSources` instance.
-        
-        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item from that list.
-        """
-        return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
+        """The printable representation of a `StatisticsSources` instance."""
+        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
     @hybrid_method
