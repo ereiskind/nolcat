@@ -40,6 +40,7 @@ def upload_COUNTER_reports():
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))

@@ -306,6 +306,7 @@ class FiscalYears(db.Model):
             #ToDo:     'COUNTERData',
             #ToDo:     con=db.engine,
             #ToDo:     if_exists='append',
+            #ToDo:     index_label='COUNTER_data_ID',
             #ToDo: )
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
@@ -676,6 +677,7 @@ class StatisticsSources(db.Model):
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             logging.info("The load was a success.")
             return "The load was a success."
@@ -932,6 +934,7 @@ class AnnualUsageCollectionTracking(db.Model):
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             logging.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT

@@ -110,12 +110,14 @@ def collect_FY_and_vendor_data():
                 'fiscalYears',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `fiscal_year_ID`
             )
             logging.debug("Relation `fiscalYears` loaded into the database")
             vendors_dataframe.to_sql(
                 'vendors',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `vendor_ID`
             )
             logging.debug("Relation `vendors` loaded into the database")
             vendorNotes_dataframe.to_sql(
@@ -244,6 +246,7 @@ def collect_sources_data():
                 'statisticsSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `statistics_source_ID`
             )
             logging.debug("Relation `statisticsSources` loaded into the database")
             statisticsSourceNotes_dataframe.to_sql(
@@ -257,6 +260,7 @@ def collect_sources_data():
                 'resourceSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `resource_source_ID`
             )
             logging.debug("Relation `resourceSources` loaded into the database")
             resourceSourceNotes_dataframe.to_sql(
@@ -270,6 +274,7 @@ def collect_sources_data():
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
             )
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
@@ -371,6 +376,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         #     'COUNTERData',
         #     con=db.engine,
         #     if_exists='append',
+        #     index_label='COUNTER_data_ID',
         # )
         # logging.debug("Relation `COUNTERData` loaded into the database")
         logging.info("All relations loaded into the database")
