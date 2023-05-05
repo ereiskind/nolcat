@@ -6,6 +6,7 @@ import datetime
 from random import choice
 import re
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import StatisticsSources
@@ -80,63 +81,63 @@ def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usag
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
-def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage):
+def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
-    #ToDo: to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    #ToDo: number_of_records = to_check_against.shape[0]
-    #ToDo: StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    #ToDo: SQL_query = f"""
-    #ToDo:     SELECT *
-    #ToDo:     FROM (
-    #ToDo:         SELECT * FROM COUNTERData
-    #ToDo:         ORDER BY COUNTER_data_ID DESC
-    #ToDo:         LIMIT {number_of_records}
-    #ToDo:     ) subquery
-    #ToDo:     ORDER BY COUNTER_data_ID ASC;
-    #ToDo: """
-    #ToDo: most_recently_loaded_records = pd.read_sql(
-    #ToDo:     sql=SQL_query,
-    #ToDo:     con=engine,
-    #ToDo: )
-    #ToDo: most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    #ToDo: most_recently_loaded_records = most_recently_loaded_records.astype({
-    #ToDo:     "statistics_source_ID": 'int',
-    #ToDo:     "report_type": 'string',
-    #ToDo:     "resource_name": 'string',
-    #ToDo:     "publisher": 'string',
-    #ToDo:     "publisher_ID": 'string',
-    #ToDo:     "platform": 'string',
-    #ToDo:     "authors": 'string',
-    #ToDo:     "article_version": 'string',
-    #ToDo:     "DOI": 'string',
-    #ToDo:     "proprietary_ID": 'string',
-    #ToDo:     "ISBN": 'string',
-    #ToDo:     "print_ISSN": 'string',
-    #ToDo:     "online_ISSN": 'string',
-    #ToDo:     "URI": 'string',
-    #ToDo:     "data_type": 'string',
-    #ToDo:     "section_type": 'string',
-    #ToDo:     "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-    #ToDo:     "access_type": 'string',
-    #ToDo:     "access_method": 'string',
-    #ToDo:     "parent_title": 'string',
-    #ToDo:     "parent_authors": 'string',
-    #ToDo:     "parent_article_version": 'string',
-    #ToDo:     "parent_data_type": 'string',
-    #ToDo:     "parent_DOI": 'string',
-    #ToDo:     "parent_proprietary_ID": 'string',
-    #ToDo:     "parent_ISBN": 'string',
-    #ToDo:     "parent_print_ISSN": 'string',
-    #ToDo:     "parent_online_ISSN": 'string',
-    #ToDo:     "parent_URI": 'string',
-    #ToDo:     "metric_type": 'string',
-    #ToDo:     # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
-    #ToDo: })
-    #ToDo: most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
-    #ToDo: most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
-    #ToDo: most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
-    #ToDo: most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
-    #ToDo: assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
+    to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    number_of_records = to_check_against.shape[0]
+    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    SQL_query = f"""
+        SELECT *
+        FROM (
+            SELECT * FROM COUNTERData
+            ORDER BY COUNTER_data_ID DESC
+            LIMIT {number_of_records}
+        ) subquery
+        ORDER BY COUNTER_data_ID ASC;
+    """
+    most_recently_loaded_records = pd.read_sql(
+        sql=SQL_query,
+        con=engine,
+    )
+    most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
+    most_recently_loaded_records = most_recently_loaded_records.astype({
+        "statistics_source_ID": 'int',
+        "report_type": 'string',
+        "resource_name": 'string',
+        "publisher": 'string',
+        "publisher_ID": 'string',
+        "platform": 'string',
+        "authors": 'string',
+        "article_version": 'string',
+        "DOI": 'string',
+        "proprietary_ID": 'string',
+        "ISBN": 'string',
+        "print_ISSN": 'string',
+        "online_ISSN": 'string',
+        "URI": 'string',
+        "data_type": 'string',
+        "section_type": 'string',
+        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
+        "access_type": 'string',
+        "access_method": 'string',
+        "parent_title": 'string',
+        "parent_authors": 'string',
+        "parent_article_version": 'string',
+        "parent_data_type": 'string',
+        "parent_DOI": 'string',
+        "parent_proprietary_ID": 'string',
+        "parent_ISBN": 'string',
+        "parent_print_ISSN": 'string',
+        "parent_online_ISSN": 'string',
+        "parent_URI": 'string',
+        "metric_type": 'string',
+        # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
+    })
+    most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
+    most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
+    most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
+    most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
+    assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
     pass
 
 
