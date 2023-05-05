@@ -921,10 +921,9 @@ class AnnualUsageCollectionTracking(db.Model):
             sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
             con=db.engine,
         )
-        statistics_source_name = statistics_source_data['statistics_source_name'][0]
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
-            statistics_source_name = statistics_source_name,
+            statistics_source_name = statistics_source_data['statistics_source_name'][0],
             statistics_source_retrieval_code = statistics_source_data['statistics_source_retrieval_code'][0],
             vendor_ID = statistics_source_data['vendor_ID'][0],
         )
