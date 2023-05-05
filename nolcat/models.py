@@ -505,9 +505,6 @@ class StatisticsSources(db.Model):
                         except:
                             pass
 
-                        break  # The SUSHI credentials variable is initialized, so there's no need to continue iterating through credentials
-                    break  # The earlier break stops looping through the StatisticsSources/SUSHI credentials for a given vendor; this break stops looping through the vendors
-
         #Subsection: Retrieve Data from Alma
         #ToDo: When credentials are in Alma, create this functionality
 
