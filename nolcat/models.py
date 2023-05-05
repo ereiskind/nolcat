@@ -671,7 +671,20 @@ class StatisticsSources(db.Model):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
             logging.debug("The SUSHI harvest was a success")
+        #######################
+        logging.debug(f"The dataframe:\n{df}")
+        largest_PK_value = pd.read_sql(
+            sql=f'''
+                SELECT COUNTER_data_ID FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT 1;
+            ''',
+            con=db.engine,
+        )
+        logging.debug(f"The largest PK value in `COUNTERData` is {largest_PK_value}")
+        #######################
         df.index += first_new_PK_value('COUNTERData')
+        logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
                 'COUNTERData',
