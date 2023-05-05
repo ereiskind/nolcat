@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import create_app, return_string_of_dataframe_info
 from nolcat.models import PATH_TO_CREDENTIALS_FILE
 from nolcat.ingest_usage import *
 
@@ -46,11 +46,20 @@ def StatisticsSources_primary_key_fixture(engine, most_recent_month_with_usage):
             retrieval_codes.append(interface)
     print(f"Retrieval code choices:\n{retrieval_codes}")
     
-    primary_key = pd.read_sql(
-        sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={choice(retrieval_codes)};",
+    ###############
+    df = pd.read_sql(
+        sql=f"SELECT * FROM statisticsSources;",
         con=engine,
     )
-    print(primary_key)
+    print(f"`statisticsSources` summary:\n{return_string_of_dataframe_info(df)}")
+    i = choice(retrieval_codes)
+    print(f"Selected retrieval code is `{i}` (type {type(i)})")
+    ###############
+    primary_key = pd.read_sql(
+        sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={i};",
+        con=engine,
+    )
+    print(f"The dataframe requesting the PK corresponding to the selected retrieval code:\n{primary_key}")
     yield primary_key.iloc[0][0]
 
 
