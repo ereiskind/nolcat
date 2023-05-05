@@ -558,7 +558,7 @@ class StatisticsSources(db.Model):
                 for report_details_dict in report_call_response:
                     for report_detail_keys, report_detail_values in report_details_dict.items():
                         logging.debug(f"Report detail key-value pair: {report_detail_keys} | {report_detail_values}")
-                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                        if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                             logging.debug(f"{report_detail_keys} is a match to the regex for `Report_ID`")
                             all_available_reports.append(report_detail_values)
             logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
