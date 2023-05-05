@@ -479,9 +479,6 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
-                    logging.debug(f"`stats_source['interface_id']` (type {type(stats_source['interface_id'])}): {stats_source['interface_id']}")
-                    logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
@@ -531,11 +528,6 @@ class StatisticsSources(db.Model):
         """
         #Section: Get API Call URL and Parameters
         logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
-        logging.debug(f"`self` (type {type(self)}): {self}")
-        logging.debug(f"`self.statistics_source_ID` (type {type(self.statistics_source_ID)}): {self.statistics_source_ID}")
-        logging.debug(f"`self.statistics_source_name` (type {type(self.statistics_source_name)}): {self.statistics_source_name}")
-        logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
-        logging.debug(f"`self.vendor_ID` (type {type(self.vendor_ID)}): {self.vendor_ID}")
         SUSHI_info = self.fetch_SUSHI_information()
         logging.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -672,11 +664,7 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        logging.debug(f"At start of `StatisticsSources.collect_usage_statistics`, `self` (type {type(self)}): {self}")
-        logging.debug(f"`self.statistics_source_ID` (type {type(self.statistics_source_ID)}): {self.statistics_source_ID}")
-        logging.debug(f"`self.statistics_source_name` (type {type(self.statistics_source_name)}): {self.statistics_source_name}")
-        logging.debug(f"`self.statistics_source_retrieval_code` (type {type(self.statistics_source_retrieval_code)}): {self.statistics_source_retrieval_code}")
-        logging.debug(f"`self.vendor_ID` (type {type(self.vendor_ID)}): {self.vendor_ID}")
+        logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
