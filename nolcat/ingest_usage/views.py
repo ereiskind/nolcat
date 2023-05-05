@@ -80,11 +80,11 @@ def harvest_SUSHI_statistics():
             flash(f"The query for the statistics source record failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
-        stats_source = StatisticsSources(
-            statistics_source_ID = df['statistics_source_ID'],
-            statistics_source_name = df['statistics_source_name'],
-            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
-            vendor_ID = df['vendor_ID'],
+        stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+            statistics_source_ID = df['statistics_source_ID'].iloc[0][0],
+            statistics_source_name = df['statistics_source_name'].iloc[0][0],
+            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'].iloc[0][0]),
+            vendor_ID = df['vendor_ID'].iloc[0][0],
         )
         logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
         logging.debug(f"`stats_source.statistics_source_ID` (type {type(stats_source.statistics_source_ID)}): {stats_source.statistics_source_ID}")
