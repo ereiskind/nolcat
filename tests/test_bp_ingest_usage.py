@@ -79,7 +79,6 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         con=engine,
     )
     primary_key_list = change_single_field_dataframe_into_series(primary_key_list).to_list()
-    print(f"Possible primary keys in form: {primary_key_list}")
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
