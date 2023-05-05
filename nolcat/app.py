@@ -205,8 +205,10 @@ def return_string_of_dataframe_info(df):
     return in_memory_stream.getvalue()
 
 
-def change_multiindex_single_field_dataframe_into_series(df):
-    """The function for changing a dataframe with a multiindex and a single field not in the index into a series with that same multiindex.
+def change_single_field_dataframe_into_series(df):
+    """The function for changing a dataframe with a single field into a series.
+
+    This function transforms any dataframe with a single non-index field into a series with the same index. Dataframes with multiindexes are accepted and those indexes are preserved.
 
     Args:
         df (dataframe): the dataframe to be transformed
