@@ -540,7 +540,7 @@ class StatisticsSources(db.Model):
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
-        #ToDo: Allen Press raises error `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?customer_id=786-26-602&requestor_id=lib-eresources%40fsu.edu&begin_date=2023-01&end_date=2023-01 (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`; can requests ignore the specific error?
+        #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
             return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
