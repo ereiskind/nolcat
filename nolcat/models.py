@@ -945,12 +945,12 @@ class AnnualUsageCollectionTracking(db.Model):
                 con=db.engine,
                 if_exists='append',
             )
-            logging.info(f"The load for {statistics_source_name} for FY {fiscal_year} was a success.")
+            logging.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            return f"The load for {statistics_source_name} for FY {fiscal_year} was a success."
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
-            return f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
