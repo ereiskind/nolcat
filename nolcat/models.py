@@ -503,6 +503,8 @@ class StatisticsSources(db.Model):
                         except:
                             pass
 
+                        break  # The SUSHI credentials variable is initialized, so there's no need to continue iterating through credentials
+
         #Subsection: Retrieve Data from Alma
         #ToDo: When credentials are in Alma, create this functionality
 
