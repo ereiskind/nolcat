@@ -47,7 +47,7 @@ def StatisticsSources_primary_key_fixture(engine, most_recent_month_with_usage):
     print(f"Retrieval code choices:\n{retrieval_codes}")
     
     primary_key = pd.read_sql(
-        sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={choice(retrieval_codes)}",
+        sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code={choice(retrieval_codes)};",
         con=engine,
     )
     print(primary_key)
