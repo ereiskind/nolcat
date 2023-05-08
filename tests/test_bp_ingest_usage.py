@@ -95,10 +95,8 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     # This is the HTML file of the page the redirect goes to
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = file_soup.head.title
-        HTML_file_page_title = file_soup.body.h1
-    print(f"`HTML_file_title.string.encode('utf-8')` (type {type(HTML_file_title.string.encode('utf-8'))}): {HTML_file_title.string.encode('utf-8')}")
-    print(f"`HTML_file_page_title.string.encode('utf-8')` (type {type(HTML_file_page_title.string.encode('utf-8'))}): {HTML_file_page_title.string.encode('utf-8')}")
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
