@@ -96,8 +96,8 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
+        logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         try:
-            logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
             logging.info(result_message)
             flash(result_message)
