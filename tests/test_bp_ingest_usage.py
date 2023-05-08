@@ -87,15 +87,14 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     POST_response = client.post(
         '/ingest_usage/harvest',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     #ToDo: Find a way to assert that `POST_response` includes the message `The load was a success.` to be flashed on the redirect destination page
     print(f"`POST_response` (type {type(POST_response)}): {POST_response}")
-    #print(f"`POST_response.content` (type {type(POST_response.content)}): {POST_response.content}")  # `AttributeError: 'WrapperTestResponse' object has no attribute 'content'`
     print(f"`POST_response.headers` (type {type(POST_response.headers)}): {POST_response.headers}")
-    #print(f"`POST_response.text` (type {type(POST_response.text)}): {POST_response.text}")  # `AttributeError: 'WrapperTestResponse' object has no attribute 'text'`
-    #print(f"`POST_response.next` (type {type(POST_response.next)}): {POST_response.next}")  # `AttributeError: 'WrapperTestResponse' object has no attribute 'next'`
+    print(f"`POST_response.history` (type {type(POST_response.history)}): {POST_response.history}")
     print(f"`POST_response.data` (type {type(POST_response.data)}): {POST_response.data}")
     assert POST_response.status == "302 FOUND"
     assert b'<a href="/ingest_usage">' in POST_response.data  # The `in` operator checks that the redirect location is correct
