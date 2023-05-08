@@ -7,6 +7,11 @@ To Investigate
 This is a list of issues encountered over the course of development that require further investigation.
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
+* Certificate issues raising errors with
+
+  * *Allen Press/Pinnacle Hosting*: ``HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))``
+  * *Grain Science Library*: ``HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))``
+  * *Adam matthew*: ``HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))``
 
 Planned Iterations
 ******************
@@ -56,13 +61,11 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
     * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
     * Possibly https://github.com/ClearcodeHQ/pytest-mysql
     * Possibly https://pypi.org/project/pytest-sqlalchemy/
+    * https://medium.com/@geoffreykoh/fun-with-fixtures-for-database-applications-8253eaf1a6d
     * Add https://pypi.org/project/pycodestyle/ at this point?
     * Possibly use https://pypi.org/project/pytest-order/ ?
 
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
-* Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
-* Write ``tests.test_StatisticsSources.test_collect_usage_statistics()``
-* Write ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``

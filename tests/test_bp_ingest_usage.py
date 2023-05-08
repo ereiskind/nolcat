@@ -1,13 +1,15 @@
 """Tests the routes in the `ingest_usage` blueprint."""
 
 import pytest
+import json
+from random import choice
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 import pandas as pd
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.ingest_usage import *
 
 
@@ -67,11 +69,39 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics():
-    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form."""
-    #ToDo: Write test
-    #ToDo: Make one of the `assert` conditions the appearance of the flashed message
-    pass
+def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, header_value):
+    """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
+    
+    The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. The limited number of possible SUSHI credentials means statistics sources current with the available usage statistics are not filtered out, meaning this test may fail because it fails the check preventing SUSHI calls to stats source/date combos already in the database.
+    """
+    primary_key_list = pd.read_sql(
+        sql="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    )
+    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).to_list()
+    form_input = {
+        'statistics_source': choice(primary_key_list),
+        'begin_date': most_recent_month_with_usage[0],
+        'end_date': most_recent_month_with_usage[1],
+    }
+    POST_response = client.post(
+        '/ingest_usage/harvest',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    # This is the HTML file of the page the redirect goes to
+    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
+    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client):

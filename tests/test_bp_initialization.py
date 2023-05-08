@@ -9,7 +9,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 from pandas.testing import assert_frame_equal, assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import date_parser, change_multiindex_single_field_dataframe_into_series
+from nolcat.app import date_parser, change_single_field_dataframe_into_series
 from nolcat.initialization import *
 
 
@@ -426,7 +426,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
+    statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
         "current_statistics_source": 'boolean',
     })

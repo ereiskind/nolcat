@@ -40,6 +40,7 @@ def upload_COUNTER_reports():
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -77,12 +78,12 @@ def harvest_SUSHI_statistics():
             flash(f"The query for the statistics source record failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
-        stats_source = StatisticsSources(
-            statistics_source_ID = df['statistics_source_ID'],
-            statistics_source_name = df['statistics_source_name'],
-            statistics_source_retrieval_code = df['statistics_source_retrieval_code'],
-            vendor_ID = df['vendor_ID'],
-        )
+        stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+            statistics_source_ID = int(df['statistics_source_ID'][0]),
+            statistics_source_name = str(df['statistics_source_name'][0]),
+            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]),
+            vendor_ID = int(df['vendor_ID'][0]),
+        )  # Without the `int` constructors, a numpy int type is used
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
@@ -95,8 +96,8 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
+        logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         try:
-            logging.info(f"Preparing to make to SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
             logging.info(result_message)
             flash(result_message)

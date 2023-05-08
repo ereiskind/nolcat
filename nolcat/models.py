@@ -295,6 +295,8 @@ class FiscalYears(db.Model):
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: if repr(type(df)) == "<class 'str'>":
                 #ToDo: return f"SUSHI harvesting returned the following error: {df}"
+            #ToDo: else:
+                #ToDo: logging.debug("The SUSHI harvest was a success")
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
@@ -304,6 +306,7 @@ class FiscalYears(db.Model):
             #ToDo:     'COUNTERData',
             #ToDo:     con=db.engine,
             #ToDo:     if_exists='append',
+            #ToDo:     index_label='COUNTER_data_ID',
             #ToDo: )
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
@@ -452,11 +455,8 @@ class StatisticsSources(db.Model):
 
 
     def __repr__(self):
-        """The printable representation of a `StatisticsSources` instance.
-        
-        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item from that list.
-        """
-        return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
+        """The printable representation of a `StatisticsSources` instance."""
+        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
     @hybrid_method
@@ -480,7 +480,6 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
@@ -541,7 +540,7 @@ class StatisticsSources(db.Model):
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
-        #ToDo: Allen Press raises error `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?customer_id=786-26-602&requestor_id=lib-eresources%40fsu.edu&begin_date=2023-01&end_date=2023-01 (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`; can requests ignore the specific error?
+        #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
             return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
@@ -558,7 +557,7 @@ class StatisticsSources(db.Model):
             for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                 for report_details_dict in report_call_response:
                     for report_detail_keys, report_detail_values in report_details_dict.items():
-                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                        if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                             all_available_reports.append(report_detail_values)
             logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
         elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
@@ -648,7 +647,7 @@ class StatisticsSources(db.Model):
         
 
         #Section: Return a Single Dataframe
-        return pd.concat(master_report_dataframes)
+        return pd.concat(master_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
@@ -664,15 +663,21 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
+        else:
+            logging.debug(f"The SUSHI harvest was a success")
+        logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
         df.index += first_new_PK_value('COUNTERData')
+        logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             logging.info("The load was a success.")
             return "The load was a success."
@@ -909,12 +914,11 @@ class AnnualUsageCollectionTracking(db.Model):
             sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
             con=db.engine,
         )
-        statistics_source_name = statistics_source_data['statistics_source_name'][0]
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
-            statistics_source_name = statistics_source_name,
-            statistics_source_retrieval_code = statistics_source_data['statistics_source_retrieval_code'][0],
-            vendor_ID = statistics_source_data['vendor_ID'][0],
+            statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
+            vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         logging.debug(f"The `StatisticsSources` object is {statistics_source}")
 
@@ -922,19 +926,22 @@ class AnnualUsageCollectionTracking(db.Model):
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
+        else:
+            logging.debug("The SUSHI harvest was a success")
         df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
-            logging.info(f"The load for {statistics_source_name} for FY {fiscal_year} was a success.")
+            logging.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            return f"The load for {statistics_source_name} for FY {fiscal_year} was a success."
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
-            return f"The load for {statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method

@@ -3,11 +3,10 @@
 import pytest
 import json
 import datetime
-import calendar
 from random import choice
 import re
 import pandas as pd
-from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import StatisticsSources
@@ -16,52 +15,14 @@ from nolcat.models import PATH_TO_CREDENTIALS_FILE
 
 #Section: Fixtures
 @pytest.fixture(scope='module')
-def first_day_of_most_recent_month_with_usage():
-    """Creates the value that will be used for the `begin_date` SUSHI parameter.
-
-    Some StatisticsSources methods call other parts of the code that make SUSHI calls, but since that testing isn't the focus of this module, values unlikely to raise errors are supplied to be passed to the SUSHI API calls. In the case of the dates, the most recent month for which usage is likely to be available is used as both the start and end of the available date range, as more recent data is less likely to be in the database and thus cause a problem with the check for previously loaded data.
-
-    Yields:
-        datetime.date: the first day of a month
-    """
-    
-    current_date = datetime.date.today()
-    if current_date.day < 10:
-        begin_month = current_date + relativedelta(months=-2)
-        yield begin_month.replace(day=1)
-    else:
-        begin_month = current_date + relativedelta(months=-1)
-        yield begin_month.replace(day=1)
-
-
-@pytest.fixture(scope='module')
-def last_day_of_month(first_day_of_most_recent_month_with_usage):
-    """The last day of the month identified in the `first_day_of_month_with_usage` fixture.
-
-    When including the day in the `end_date` value for a SUSHI API call, that date must be the last day of the month. This fixture creates the last day of the month that corresponds to the first day of the month from the `first_day_of_month_with_usage` fixture.
-
-    Args:
-        first_day_of_most_recent_month_with_usage (datetime.date): the first day of the most recent month for which COUNTER data is available
-
-    Yields:
-        datetime.date: the last day of a month
-    """
-    yield datetime.date(
-        first_day_of_most_recent_month_with_usage.year,
-        first_day_of_most_recent_month_with_usage.month,
-        calendar.monthrange(first_day_of_most_recent_month_with_usage.year, first_day_of_most_recent_month_with_usage.month)[1],
-    )
-
-
-@pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage):
+def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
 
     Args:
         PATH_TO_CREDENTIALS_FILE (str): the file path for "R5_SUSHI_credentials.json"
-        first_day_of_most_recent_month_with_usage (datetime.date): the first day of the most recent month for which COUNTER data is available
+        most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
@@ -78,7 +39,7 @@ def StatisticsSources_fixture(engine, first_day_of_most_recent_month_with_usage)
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         query_result = pd.read_sql(
-            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={first_day_of_most_recent_month_with_usage.strftime('%Y-%m-%d')}",
+            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')}",
             con=engine,
         )
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
@@ -111,78 +72,72 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 
 
 @pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
-def test_harvest_R5_SUSHI(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
+def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    begin_test = datetime.datetime.now()
-    before_data_collection = datetime.datetime.now()
-    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, last_day_of_month)
-    data_collected = datetime.datetime.now()
-    print(SUSHI_data)
-    print(f"The test function start is at {begin_test}, the data collection start is at {before_data_collection}, and the data collection end is at {data_collected}; can any of these be compared to the timestamp in the report to further confirm accuracy?")
-    print(type(SUSHI_data))
+    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>"
     assert SUSHI_data['statistics_source_ID'].eq(1).all()
-    #ToDo: and time collected value is equal to one of the above if possible
+    assert SUSHI_data['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
-def test_collect_usage_statistics(StatisticsSources_fixture, first_day_of_most_recent_month_with_usage, last_day_of_month):
+def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
-    #ToDo: to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(first_day_of_most_recent_month_with_usage, last_day_of_month)
-    #ToDo: number_of_records = to_check_against.shape[0]
-    #ToDo: StatisticsSources_fixture.collect_usage_statistics(first_day_of_most_recent_month_with_usage, last_day_of_month)
-    #ToDo: SQL_query = f"""
-    #ToDo:     SELECT *
-    #ToDo:     FROM (
-    #ToDo:         SELECT * FROM COUNTERData
-    #ToDo:         ORDER BY COUNTER_data_ID DESC
-    #ToDo:         LIMIT {number_of_records}
-    #ToDo:     ) subquery
-    #ToDo:     ORDER BY COUNTER_data_ID ASC;
-    #ToDo: """
-    #ToDo: most_recently_loaded_records = pd.read_sql(
-    #ToDo:     sql=SQL_query,
-    #ToDo:     con=engine,
-    #ToDo: )
-    #ToDo: most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    #ToDo: most_recently_loaded_records = most_recently_loaded_records.astype({
-    #ToDo:     "statistics_source_ID": 'int',
-    #ToDo:     "report_type": 'string',
-    #ToDo:     "resource_name": 'string',
-    #ToDo:     "publisher": 'string',
-    #ToDo:     "publisher_ID": 'string',
-    #ToDo:     "platform": 'string',
-    #ToDo:     "authors": 'string',
-    #ToDo:     "article_version": 'string',
-    #ToDo:     "DOI": 'string',
-    #ToDo:     "proprietary_ID": 'string',
-    #ToDo:     "ISBN": 'string',
-    #ToDo:     "print_ISSN": 'string',
-    #ToDo:     "online_ISSN": 'string',
-    #ToDo:     "URI": 'string',
-    #ToDo:     "data_type": 'string',
-    #ToDo:     "section_type": 'string',
-    #ToDo:     "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-    #ToDo:     "access_type": 'string',
-    #ToDo:     "access_method": 'string',
-    #ToDo:     "parent_title": 'string',
-    #ToDo:     "parent_authors": 'string',
-    #ToDo:     "parent_article_version": 'string',
-    #ToDo:     "parent_data_type": 'string',
-    #ToDo:     "parent_DOI": 'string',
-    #ToDo:     "parent_proprietary_ID": 'string',
-    #ToDo:     "parent_ISBN": 'string',
-    #ToDo:     "parent_print_ISSN": 'string',
-    #ToDo:     "parent_online_ISSN": 'string',
-    #ToDo:     "parent_URI": 'string',
-    #ToDo:     "metric_type": 'string',
-    #ToDo:     # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
-    #ToDo: })
-    #ToDo: most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
-    #ToDo: most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
-    #ToDo: most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
-    #ToDo: most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
-    #ToDo: assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
+    to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    number_of_records = to_check_against.shape[0]
+    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    SQL_query = f"""
+        SELECT *
+        FROM (
+            SELECT * FROM COUNTERData
+            ORDER BY COUNTER_data_ID DESC
+            LIMIT {number_of_records}
+        ) subquery
+        ORDER BY COUNTER_data_ID ASC;
+    """
+    most_recently_loaded_records = pd.read_sql(
+        sql=SQL_query,
+        con=engine,
+    )
+    most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
+    most_recently_loaded_records = most_recently_loaded_records.astype({
+        "statistics_source_ID": 'int',
+        "report_type": 'string',
+        "resource_name": 'string',
+        "publisher": 'string',
+        "publisher_ID": 'string',
+        "platform": 'string',
+        "authors": 'string',
+        "article_version": 'string',
+        "DOI": 'string',
+        "proprietary_ID": 'string',
+        "ISBN": 'string',
+        "print_ISSN": 'string',
+        "online_ISSN": 'string',
+        "URI": 'string',
+        "data_type": 'string',
+        "section_type": 'string',
+        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
+        "access_type": 'string',
+        "access_method": 'string',
+        "parent_title": 'string',
+        "parent_authors": 'string',
+        "parent_article_version": 'string',
+        "parent_data_type": 'string',
+        "parent_DOI": 'string',
+        "parent_proprietary_ID": 'string',
+        "parent_ISBN": 'string',
+        "parent_print_ISSN": 'string',
+        "parent_online_ISSN": 'string',
+        "parent_URI": 'string',
+        "metric_type": 'string',
+        # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
+    })
+    most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
+    most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
+    most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
+    most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
+    assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
     pass
 
 

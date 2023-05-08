@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_multiindex_single_field_dataframe_into_series, return_string_of_dataframe_info, restore_Boolean_values_to_Boolean_field
+from nolcat.app import change_single_field_dataframe_into_series, return_string_of_dataframe_info, restore_Boolean_values_to_Boolean_field
 from nolcat.models import FiscalYears
 
 
@@ -180,7 +180,7 @@ def test_data_loaded_successfully(engine, fiscalYears_relation, vendors_relation
         con=engine,
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
-    statisticsResourceSources_relation_data = change_multiindex_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
+    statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = restore_Boolean_values_to_Boolean_field(statisticsResourceSources_relation_data)  # The relation is a series, so an index reference on its only non-index field raises a KeyError
 
     annualUsageCollectionTracking_relation_data = pd.read_sql(

@@ -6,10 +6,13 @@ The fixtures for connecting to the database are primarily based upon the fixture
 from pathlib import Path
 import os
 import io
+import datetime
+import calendar
 import pytest
 from sqlalchemy import create_engine
 from wtforms import MultipleFileField
 from wtforms.validators import DataRequired
+from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
@@ -193,3 +196,28 @@ def sample_COUNTER_report_workbooks():
         'validators': DataRequired(),
     })
     return fixture
+
+
+@pytest.fixture(scope='session')
+def most_recent_month_with_usage():
+    """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
+
+    Many methods and functions call the `SUSHICallAndResponse.make_SUSHI_call()` method, so proper testing requires making a SUSHI call; for the PR, DR, TR, and IR, the call requires dates. As the most recent month with usage is unlikely to raise any errors, cause a problem with the check for previously loaded data, or return an overly large amount of data, its first and last day are used in the SUSHI API call. The two dates are returned together in a tuple and separated in the test function with index operators.
+
+    Yields:
+        tuple: two datetime.date values, representing the first and last day of a month respectively
+    """
+    current_date = datetime.date.today()
+    if current_date.day < 10:
+        begin_month = current_date + relativedelta(months=-2)
+        begin_date = begin_month.replace(day=1)
+    else:
+        begin_month = current_date + relativedelta(months=-1)
+        begin_date = begin_month.replace(day=1)
+    
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
+    yield (begin_date, end_date)
