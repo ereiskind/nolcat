@@ -647,7 +647,7 @@ class StatisticsSources(db.Model):
         
 
         #Section: Return a Single Dataframe
-        return pd.concat(master_report_dataframes)
+        return pd.concat(master_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
