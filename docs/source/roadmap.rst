@@ -16,6 +16,10 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
+* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
+* Create new test data JSONs (will occur alongside above)
+* Update ``ConvertJSONDictToDataframe`` to handle R5.1 reports
+
 Iteration 2: COUNTER Only Product
 =================================
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
