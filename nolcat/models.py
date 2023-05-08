@@ -688,7 +688,7 @@ class StatisticsSources(db.Model):
         #)
         #logging.debug(f"The largest PK value in `COUNTERData` is {largest_PK_value.iloc[0][0]}")
         #######################
-        logging.debug(f"The index field of the SUSHI harvest result dataframe is\n{df.index}")
+        logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
         df.index += first_new_PK_value('COUNTERData')
         logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
