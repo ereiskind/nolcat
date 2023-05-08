@@ -16,10 +16,6 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-Iteration 1: SUSHI Only Product
-===============================
-* Create "ingest_usage/index.html"
-
 Iteration 2: COUNTER Only Product
 =================================
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
