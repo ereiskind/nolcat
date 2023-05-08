@@ -94,7 +94,7 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     print(f"`POST_response` (type {type(POST_response)}): {POST_response}")
     #print(f"`POST_response.content` (type {type(POST_response.content)}): {POST_response.content}")  # `AttributeError: 'WrapperTestResponse' object has no attribute 'content'`
     print(f"`POST_response.headers` (type {type(POST_response.headers)}): {POST_response.headers}")
-    print(f"`POST_response.text` (type {type(POST_response.text)}): {POST_response.text}")
+    #print(f"`POST_response.text` (type {type(POST_response.text)}): {POST_response.text}")  # `AttributeError: 'WrapperTestResponse' object has no attribute 'text'`
     print(f"`POST_response.next` (type {type(POST_response.next)}): {POST_response.next}")
     assert POST_response.status == "302 FOUND"
     assert b'<a href="/ingest_usage">' in POST_response.data  # The `in` operator checks that the redirect location is correct
