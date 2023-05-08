@@ -1,4 +1,6 @@
 import logging
+import os
+from pathlib import Path
 from flask import render_template
 from flask import redirect
 from flask import url_for
@@ -11,10 +13,10 @@ from sqlalchemy.sql import text
 from sqlalchemy import exc
 
 from . import bp
+from .forms import FYAndVendorsDataForm, SourcesDataForm, AUCTAndCOUNTERForm
 from ..app import db, date_parser
-from .forms import InitialRelationDataForm, AUCTAndCOUNTERForm
-from ..upload_COUNTER_reports import UploadCOUNTERReports
 #from ..models import <name of SQLAlchemy classes used in views below>
+from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
@@ -29,12 +31,12 @@ def download_file(filename):
 
 #Section: Database Initialization Wizard
 @bp.route('/', methods=['GET', 'POST'])
-def collect_initial_relation_data():
-    """This route function ingests the files containing data going into the initial relations, then loads that data into the database.
+def collect_FY_and_vendor_data():
+    """This route function ingests the files containing data going into the `fiscalYears`, `vendors`, and `vendorNotes` relations, then loads that data into the database.
     
-    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, `vendorNotes`, `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function.
+    The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
-    form = InitialRelationDataForm()
+    form = FYAndVendorsDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form)
     elif form.validate_on_submit():
@@ -101,6 +103,52 @@ def collect_initial_relation_data():
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
+
+        #Section: Load Data into Database
+        try:
+            fiscalYears_dataframe.to_sql(
+                'fiscalYears',
+                con=db.engine,
+                if_exists='append',
+                # Dataframe index and primary key field both named `fiscal_year_ID`
+            )
+            logging.debug("Relation `fiscalYears` loaded into the database")
+            vendors_dataframe.to_sql(
+                'vendors',
+                con=db.engine,
+                if_exists='append',
+                # Dataframe index and primary key field both named `vendor_ID`
+            )
+            logging.debug("Relation `vendors` loaded into the database")
+            vendorNotes_dataframe.to_sql(
+                'vendorNotes',
+                con=db.engine,
+                if_exists='append',
+                index=False,
+            )
+            logging.debug("Relation `vendorNotes` loaded into the database")
+            logging.info("All relations loaded into the database")
+        except Exception as error:
+            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+        
+        return redirect(url_for('initialization.collect_sources_data'))
+
+    else:
+        logging.warning(f"`form.errors`: {form.errors}")
+        return abort(404)
+
+
+@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+def collect_sources_data():
+    """This route function ingests the files containing data going into the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations, then loads that data into the database.
+
+    The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
+    """
+    form = SourcesDataForm()
+    if request.method == 'GET':
+        return render_template('initialization/initial-data-upload-2.html', form=form)
+    elif form.validate_on_submit():
+        #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
         logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
@@ -194,29 +242,11 @@ def collect_initial_relation_data():
 
         #Section: Load Data into Database
         try:
-            fiscalYears_dataframe.to_sql(
-                'fiscalYears',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `fiscalYears` loaded into the database")
-            vendors_dataframe.to_sql(
-                'vendors',
-                con=db.engine,
-                if_exists='append',
-            )
-            logging.debug("Relation `vendors` loaded into the database")
-            vendorNotes_dataframe.to_sql(
-                'vendorNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            logging.debug("Relation `vendorNotes` loaded into the database")
             statisticsSources_dataframe.to_sql(
                 'statisticsSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `statistics_source_ID`
             )
             logging.debug("Relation `statisticsSources` loaded into the database")
             statisticsSourceNotes_dataframe.to_sql(
@@ -230,6 +260,7 @@ def collect_initial_relation_data():
                 'resourceSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe index and primary key field both named `resource_source_ID`
             )
             logging.debug("Relation `resourceSources` loaded into the database")
             resourceSourceNotes_dataframe.to_sql(
@@ -243,17 +274,21 @@ def collect_initial_relation_data():
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
+                # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
             )
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
-            return redirect(url_for('collect_AUCT_and_historical_COUNTER_data'))
         except Exception as error:
             logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+        
+        return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
-@bp.route('/initialization-page-2', methods=['GET', 'POST'])
+@bp.route('/initialization-page-3', methods=['GET', 'POST'])
 def collect_AUCT_and_historical_COUNTER_data():
     """This route function creates the template for the `annualUsageCollectionTracking` relation and lets the user download it, then lets the user upload the `annualUsageCollectionTracking` relation data and the historical COUNTER reports into the database.
 
@@ -264,51 +299,47 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        SELECT_statement = text('SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;')
-        #ToDo: AUCT_values = db.engine.execute(SELECT_statement).values()  # Unable to determine exactly what is in the lists output by each method of https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy
-        #ToDo: From `AUCT_values`, generate the below
-        #ToDo: AUCT_index_array = [
-        #    [record1 statisticsSources.statistics_source_ID, record1 fiscalYears.fiscal_year_ID],
-        #    [record2 statisticsSources.statistics_source_ID, record2 fiscalYears.fiscal_year_ID],
-        #    ...
-        #]
-        #ToDo: AUCT_value_array = [
-        #    [record1 statisticsSources.statistics_source_name, record1 fiscalYears.fiscal_year],
-        #    [record2 statisticsSources.statistics_source_name, record2 fiscalYears.fiscal_year],
-        #    ...
-        #]
+        df = pd.read_sql(
+            sql='SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;',
+            con=db.engine,
+            index_col=["statistics_source_ID", "fiscal_year_ID"],
+        )
+        logging.debug(f"AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
-        #ToDo: multiindex = pd.DataFrame(
-        #    AUCT_index_array,
-        #    columns=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        #)
-        #ToDo: multiindex = pd.MultiIndex.from_frame(multiindex)
-        #ToDo: df = pd.DataFrame(
-        #    AUCT_value_array,
-        #    index=multiindex,
-        #    columns=["Statistics Source", "Fiscal Year"],
-        #)
+        df = df.rename_axis(index={
+            "statistics_source_ID": "AUCT_statistics_source",
+            "fiscal_year_ID": "AUCT_fiscal_year",
+        })
+        df = df.rename(columns={
+            "statistics_source_name": "Statistics Source",
+            "fiscal_year": "Fiscal Year",
+        })
+        logging.debug(f"AUCT dataframe with fields renamed:\n{df}")
 
-        #ToDo: df['usage_is_being_collected'] = None
-        #ToDo: df['manual_collection_required'] = None
-        #ToDo: df['collection_via_email'] = None
-        #ToDo: df['is_COUNTER_compliant'] = None
-        #ToDo: df['collection_status'] = None
-        #ToDo: df['usage_file_path'] = None
-        #ToDo: df['notes'] = None
+        df['usage_is_being_collected'] = None
+        df['manual_collection_required'] = None
+        df['collection_via_email'] = None
+        df['is_COUNTER_compliant'] = None
+        df['collection_status'] = None
+        df['usage_file_path'] = None
+        df['notes'] = None
+        logging.info(f"AUCT template dataframe:\n{df}")
 
-        #ToDo: df.to_csv(
-        #    'initialize_annualUsageCollectionTracking.csv',  #ToDo: Should it be saved in the `nolcat_db_data` folder instead?
-        #    index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        #    encoding='utf-8',
-        #    errors='backslashreplace',  # For encoding errors
-        #)
+        template_save_location = Path(os.path.dirname(os.path.realpath(__file__)), 'initialize_annualUsageCollectionTracking.csv')
+        df.to_csv(
+            template_save_location,
+            index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+            encoding='utf-8',
+            errors='backslashreplace',  # For encoding errors
+        )
+        logging.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
         #ToDo: Confirm above downloads successfully
-        #ToDo: return render_template('initialization/initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-3.html', form=form)
 
     #Section: After Form Submission
     elif form.validate_on_submit():
+        #ToDo: remove file at `template_save_location`?
         #Subsection: Load `annualUsageCollectionTracking` into Database
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
@@ -331,10 +362,12 @@ def collect_AUCT_and_historical_COUNTER_data():
             'annualUsageCollectionTracking',
             con=db.engine,
             if_exists='append',
+            index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
         logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
         #Subsection: Load COUNTER Reports into Database
+        #ToDo: Uncomment this subsection during Planned Iteration 2
         # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
         #ToDo: Does there need to be a warning here about if the above method returns no data?
         # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
@@ -343,18 +376,20 @@ def collect_AUCT_and_historical_COUNTER_data():
         #     'COUNTERData',
         #     con=db.engine,
         #     if_exists='append',
+        #     index_label='COUNTER_data_ID',
         # )
         # logging.debug("Relation `COUNTERData` loaded into the database")
-        # logging.info("All relations loaded into the database")
+        logging.info("All relations loaded into the database")
 
-        # return redirect(url_for('upload_historical_non_COUNTER_usage'))
-        return redirect(url_for('data_load_complete'))
+        # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
+        return redirect(url_for('initialization.data_load_complete'))
 
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
-@bp.route('/initialization-page-3', methods=['GET', 'POST'])
+@bp.route('/initialization-page-4', methods=['GET', 'POST'])
 def upload_historical_non_COUNTER_usage():
     """This route function allows the user to upload files containing non-COUNTER usage reports to the container hosting this program, placing the file paths within the COUNTER usage statistics database for easy retrieval in the future.
     #Alert: The procedure below is based on non-COUNTER compliant usage being in files saved in container and retrieved by having their paths saved in the database; if the files themselves are saved in the database as BLOB objects, this will need to change
@@ -367,19 +402,20 @@ def upload_historical_non_COUNTER_usage():
         #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
         #ToDo: Create an iterable to pass all the records returned by the above to a form
         #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
-        return render_template('blueprint_name/initial-data-upload-3.html', form=form)
+        return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
         #ToDo: For each file uploaded in the form
             #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
             #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
-        return redirect(url_for('name of the route function for the page that user should go to once form is submitted'))
+        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
     '''
     pass
 
 
-@bp.route('/initialization-page-4', methods=['GET', 'POST'])
+@bp.route('/initialization-page-5', methods=['GET', 'POST'])
 def data_load_complete():
     """This route function indicates the successful completion of the wizard and initialization of the database."""
     return render_template('initialization/show-loaded-data.html')

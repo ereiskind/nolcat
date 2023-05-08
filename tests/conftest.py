@@ -3,8 +3,16 @@
 The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
 """
 
+from pathlib import Path
+import os
+import io
+import datetime
+import calendar
 import pytest
 from sqlalchemy import create_engine
+from wtforms import MultipleFileField
+from wtforms.validators import DataRequired
+from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 from nolcat.app import db as _db
 from nolcat.app import create_app
@@ -23,9 +31,9 @@ def app():
     app.debug = True
     app.testing = True  # Lets exceptions come through to test client
     app.env = 'test'
-    app.testing = True
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Explicitly set to disable warning in tests
+    app.config['WTF_CSRF_ENABLED'] = False  # Without this, tests involving forms return a HTTP 400 error with the message `The CSRF token is missing.`
     context = app.app_context()  # Creates an application context
     context.push()  # Binds the application context to the current context/Flask application
     yield app
@@ -156,3 +164,60 @@ def annualUsageCollectionTracking_relation():
 def COUNTERData_relation():
     """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
     yield relations.COUNTERData_relation()
+
+
+#Section: Other Fixtures Used in Multiple Test Modules
+@pytest.fixture
+def header_value():
+    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
+    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+
+
+@pytest.fixture
+def sample_COUNTER_report_workbooks():
+    """Creates a Flask-WTF File object for use in testing the `UploadCOUNTERReports` class.
+    
+    While this fixture would ideally create a MultipleFileField object containing all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`, it actually creates an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. At this point, appropriate values for the above parameters are unknown, so the fixture is used as-is, and the `UploadCOUNTERReports.create_dataframe()` method repeats the loop for gathering the workbook names seen below.
+    """
+    folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+    data_attribute = []
+
+    for workbook in os.listdir(folder_path):
+        file_path = folder_path / workbook
+        with open(file_path, mode='rb') as file:
+            data_attribute.append(io.BytesIO(file.read()))
+
+    fixture = MultipleFileField({
+        'data': data_attribute,
+        'id': 'COUNTER_reports',
+        'label': "Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.",
+        'name': 'COUNTER_reports',
+        'type': 'MultipleFileField',
+        'validators': DataRequired(),
+    })
+    return fixture
+
+
+@pytest.fixture(scope='session')
+def most_recent_month_with_usage():
+    """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
+
+    Many methods and functions call the `SUSHICallAndResponse.make_SUSHI_call()` method, so proper testing requires making a SUSHI call; for the PR, DR, TR, and IR, the call requires dates. As the most recent month with usage is unlikely to raise any errors, cause a problem with the check for previously loaded data, or return an overly large amount of data, its first and last day are used in the SUSHI API call. The two dates are returned together in a tuple and separated in the test function with index operators.
+
+    Yields:
+        tuple: two datetime.date values, representing the first and last day of a month respectively
+    """
+    current_date = datetime.date.today()
+    if current_date.day < 10:
+        begin_month = current_date + relativedelta(months=-2)
+        begin_date = begin_month.replace(day=1)
+    else:
+        begin_month = current_date + relativedelta(months=-1)
+        begin_date = begin_month.replace(day=1)
+    
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
+    yield (begin_date, end_date)

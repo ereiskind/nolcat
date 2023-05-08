@@ -7,42 +7,34 @@ To Investigate
 This is a list of issues encountered over the course of development that require further investigation.
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
+* Certificate issues raising errors with
+
+  * *Allen Press/Pinnacle Hosting*: ``HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))``
+  * *Grain Science Library*: ``HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))``
+  * *Adam matthew*: ``HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))``
 
 Planned Iterations
 ******************
 
-Iteration 1: SUSHI Only Product
-===============================
-* Finish ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Write ``tests.test_bp_initialization.test_collect_initial_relation_data()``
-* Write ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
-* Write AUCT form part of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``nolcat.models.AnnualUsageCollectionTracking.collect_annual_usage_statistics()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``
-* Finish ``nolcat.modules.FiscalYears.create_usage_tracking_records_for_fiscal_year()``
-* Write ``tests.test_FiscalYears.test_create_usage_tracking_records_for_fiscal_year()``
-* Update all functions calling ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` to handle possible string output in the event of an error
-* Allow for ISBNs in ``nolcat.modules.COUNTERData.online_ISSN`` field
-* Create "ingest_usage/index.html"
-
 Iteration 2: COUNTER Only Product
 =================================
-* Remove commenting out from "initialization/initial-data-upload-2.html"
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``nolcat.ingest_usage.views.upload_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create "ingest_usage/upload-COUNTER-reports.html" page
+* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
+* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 
 Iteration 3: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
+* Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Write form class for non-COUNTER usage downloads
-* Write "initialization/initial-data-upload-3.html" page
+* Write "initialization/initial-data-upload-4.html" page
 * Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Write ``nolcat.modules.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
+* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` as two separate int fields if needed
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
@@ -50,7 +42,7 @@ Iteration 3: Minimum Viable Product
 * Create "ingest_usage/save-non-COUNTER-usage.html" page
 * Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` to work
+* Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
 
 Iteration 4: Minimum Viable Product with Tests and Test Database
 ================================================================
@@ -62,17 +54,21 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
     * https://spotofdata.com/flask-testing/
     * http://alexmic.net/flask-sqlalchemy-pytest/
     * https://www.patricksoftwareblog.com/unit-testing-a-flask-application/ (this uses unittest instead of pytest)
+    * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
+    * Possibly https://github.com/ClearcodeHQ/pytest-mysql
+    * Possibly https://pypi.org/project/pytest-sqlalchemy/
+    * https://medium.com/@geoffreykoh/fun-with-fixtures-for-database-applications-8253eaf1a6d
+    * Add https://pypi.org/project/pycodestyle/ at this point?
+    * Possibly use https://pypi.org/project/pytest-order/ ?
 
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
-* Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
-* Write ``tests.test_StatisticsSources.test_collect_usage_statistics()``
-* Write ``tests.test_bp_ingest_usage.test_harvest_SUSHI_statistics()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
 
 Basic Enhancement Iterations
 ****************************
@@ -113,7 +109,7 @@ Iteration 4: Add Notes
 * Write form class for adding notes
 * Add form for adding notes to "view_lists/view_record.html"
 * Write ``tests.test_bp_view_list.test_view_list_record()``
-* Write ``nolcat.modules.StatisticsSources.add_note()``
+* Write ``nolcat.models.StatisticsSources.add_note()``
 * Write ``tests.test_StatisticsSources.test_add_note()``
 * Write ``nolcat.models.Vendors.add_note()``
 * Write ``tests.test_Vendors.test_add_note()``
@@ -132,8 +128,7 @@ Iteration 6: Create Drop-Down Lists
 ===================================
 * If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
 * If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field and adjust ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()`` accordingly
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_harvest_SUSHI_statistics()``
+* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field
 
 Iteration 7: Create Query Wizard
 ================================
@@ -159,21 +154,21 @@ Iteration 9: Show Annual Usage Collection Tracking Information
 
 Iteration 10: Initiate All SUSHI Collection for Fiscal Year
 ===========================================================
-* Finish ``nolcat.modules.FiscalYears.collect_fiscal_year_usage_statistics()``
+* Finish ``nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 
 Iteration 11: Switch Message Display from Stdout to Flask
 =========================================================
-* Make second return statement in ``nolcat.modules.StatisticsSources.fetch_SUSHI_information()`` display in Flask
+* Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
-* Make return statements with strings in ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
+* Make return statements with strings in ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
 * Make return statements with key "ERROR" in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse.make_SUSHI_call()`` display in Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
-* Add message flashing of returned redirects in ``nolcat.ingest_usage.views.harvest_SUSHI_statistics()``
 
 Iteration 12: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
+* Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
 Open Source Iterations
@@ -187,7 +182,7 @@ Iteration 1: Create Downloadable AUCT Template
 
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
-* Get Jinja download to work in "initialization/index.html" and "initialization/initial-data-upload-2.html"
+* Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
 * Write ``tests.test_bp_initialization.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
@@ -219,7 +214,7 @@ Iteration 6: Correct 500 Error Function
 
 Iteration 7: Confirm Flask-SQLAlchemy Enum
 ==========================================
-* Confirm that ``nolcat.modules.AnnualUsageCollectionTracking.collection_status`` properly creates and behaves as an enum
+* Confirm that ``nolcat.models.AnnualUsageCollectionTracking.collection_status`` properly creates and behaves as an enum
 
 Aspirational Iterations
 ***********************
@@ -254,8 +249,8 @@ Iteration: Display Data Visualization of Usage Data Requests in Browser
 
 Iteration: Get SUSHI Credentials from Alma
 ==========================================
-* Add way to determine if data should be fetched from Alma or the JSON file at the beginning of ``nolcat.modules.StatisticsSources.fetch_SUSHI_information()``
-* Write "Retrieve Data from Alma" subsection of ``nolcat.modules.StatisticsSources.fetch_SUSHI_information()``
+* Add way to determine if data should be fetched from Alma or the JSON file at the beginning of ``nolcat.models.StatisticsSources.fetch_SUSHI_information()``
+* Write "Retrieve Data from Alma" subsection of ``nolcat.models.StatisticsSources.fetch_SUSHI_information()``
 
 Iteration: Add User Accounts to Restrict Access
 ===============================================
@@ -264,7 +259,7 @@ Iteration: Add User Accounts to Restrict Access
 * Write ``tests.test_bp_login.test_logging_in()``
 * Write ``tests.test_bp_login.test_logging_in_as_admin()``
 * Write ``tests.test_bp_login.test_creating_an_account()``
-* Create redirect to ``nolcat.initialization.views.collect_initial_relation_data()`` after the creation of the first account with data ingest permissions
+* Create redirect to ``nolcat.initialization.views.collect_FY_and_vendor_data()`` after the creation of the first account with data ingest permissions
 
 Iteration: Deduplicate Resources
 ================================
@@ -273,7 +268,7 @@ Iteration: Deduplicate Resources
 
 Iteration: Handle Reports Without Corresponding Master Reports
 ==============================================================
-* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Master Report" of ``nolcat.modules.StatisticsSources._harvest_R5_SUSHI()``
+* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Master Report" of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()``
 
 Iteration: Incorporate Springshare Databases A-Z Statistics
 ===========================================================

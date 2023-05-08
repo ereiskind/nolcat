@@ -1,11 +1,12 @@
 from pathlib import Path
 import io
+import logging
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
-from numpy import datetime64
+from numpy import datetime64, squeeze
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -160,6 +161,7 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
     """
+    logging.debug("Starting `first_new_PK_value`")
     if relation == 'fiscalYears':
         PK_field = 'fiscal_year_ID'
     elif relation == 'vendors':
@@ -185,6 +187,10 @@ def first_new_PK_value(relation):
         ''',
         con=db.engine,
     )
+    if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+        logging.debug(f"The {relation} relation is empty")
+        return 0
+    logging.debug(f"Result of query for largest primary key value:\n{largest_PK_value}")
     largest_PK_value = largest_PK_value.iloc[0][0]
     return int(largest_PK_value) + 1
 
@@ -203,3 +209,39 @@ def return_string_of_dataframe_info(df):
     in_memory_stream = io.StringIO()
     df.info(buf=in_memory_stream)
     return in_memory_stream.getvalue()
+
+
+def change_single_field_dataframe_into_series(df):
+    """The function for changing a dataframe with a single field into a series.
+
+    This function transforms any dataframe with a single non-index field into a series with the same index. Dataframes with multiindexes are accepted and those indexes are preserved.
+
+    Args:
+        df (dataframe): the dataframe to be transformed
+    
+    Returns:
+        pd.Series: a series object with the same exact data as the initial dataframe
+    """
+    return pd.Series(
+        data=squeeze(df.values),  # `squeeze` converts the numpy array from one column with n elements to an array with n elements
+        index=df.index,
+        dtype=df[df.columns[0]].dtype,
+        name=df.columns[0],
+    )
+
+
+def restore_Boolean_values_to_Boolean_field(series):
+    """The function for converting the integer field used for Booleans in MySQL into a pandas `boolean` field.
+
+    MySQL stores Boolean values in a `TINYINT(1)` field, so any Boolean fields read from the database into a pandas dataframe appear as integer or float fields with the values `1`, `0`, and, if nulls are allowed, `NaN`. For simplicity, clarity, and consistency, turning these fields back into pandas Boolean fields is often a good idea.
+
+    Args:
+        series (pd.Series): a Boolean field with numeric values and a numeric dtype from MySQL
+    
+    Returns:
+        pd.Series: a series object with the same information as the initial series but with Boolean values and a Boolean dtype
+    """
+    return series.replace({
+        0: False,
+        1: True,
+    }).astype('boolean')

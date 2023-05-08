@@ -29,10 +29,10 @@ class QueryWizardForm(FlaskForm):
         ('IR_A1', ""),
         ('IR_M1', ""),
         ('w', "Create a query with the wizard options below:")
-    ], validators=[DataRequired()])
+    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     #ToDo: Add wizard option fields
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
     """Creates a form allowing the download of all saved non-COUNTER usage files."""
-    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired()])
+    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`

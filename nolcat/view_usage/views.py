@@ -11,8 +11,8 @@ from flask import Response
 import pandas as pd
 
 from . import bp
-from ..app import db
 from .forms import CustomSQLQueryForm, QueryWizardForm, ChooseNonCOUNTERDownloadForm
+from ..app import db
 #from ..models import <name of SQLAlchemy classes used in views below>
 
 
@@ -36,6 +36,7 @@ def run_custom_SQL_query():
             sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
             con=db.engine,
         )
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         return Response(
             df.to_csv(
                 index_label="index",
@@ -46,6 +47,7 @@ def run_custom_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -59,7 +61,7 @@ def use_predefined_SQL_query():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            return redirect(url_for('use_predefined_SQL_query'))  #ToDo: Add message flashing that the end date was before the begin date
+            return redirect(url_for('view_usage.use_predefined_SQL_query'))  #ToDo: Add message flashing that the end date was before the begin date
         end_date = datetime.date(
             end_date.year,
             end_date.month,
@@ -161,6 +163,7 @@ def use_predefined_SQL_query():
             sql=query,
             con=db.engine,
         )
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         return Response(
             df.to_csv(
                 index_label="index",
@@ -171,6 +174,7 @@ def use_predefined_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -234,4 +238,5 @@ def download_non_COUNTER_usage():
             headers={'Content-disposition': f'attachment; filename={download_name}'},
         )
     else:
+        logging.warning(f"`form.errors`: {form.errors}")
         return abort(404)

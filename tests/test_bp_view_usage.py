@@ -1,4 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
+########## Data in all relations ##########
 
 import pytest
 from pathlib import Path
@@ -13,8 +14,8 @@ from nolcat.view_usage import *
 def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/view_usage/')
-    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    page = client.get('/view_usage/')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
@@ -24,7 +25,9 @@ def test_view_usage_homepage(client):
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
     
-    assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_run_custom_SQL_query():
@@ -48,8 +51,8 @@ def test_use_predefined_SQL_query_with_wizard():
 def test_GET_request_for_download_non_COUNTER_usage(client):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     #Section: Get Data from `GET` Requested Page
-    homepage = client.get('/view_usage/non-COUNTER-downloads')
-    GET_soup = BeautifulSoup(homepage.data, 'lxml')
+    page = client.get('/view_usage/non-COUNTER-downloads')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
@@ -61,8 +64,10 @@ def test_GET_request_for_download_non_COUNTER_usage(client):
         HTML_file_page_title = file_soup.body.h1
         #ToDo: Get the list of file path options presented for populating the drop-down
 
-    #assert homepage.status == "200 OK" and HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title  #ToDo: Compare the possible file download options; `homepage.status` may be 404 until route is completed
-    assert HTML_file_title == GET_response_title and HTML_file_page_title == GET_response_page_title # `homepage.status` may be 404 until route is completed
+    #ToDo: `assert page.status == "200 OK"` when route is completed
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
+    #ToDo: Compare the possible file download options
 
 
 def test_download_non_COUNTER_usage():

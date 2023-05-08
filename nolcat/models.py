@@ -8,10 +8,11 @@ import re
 import datetime
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
+from numpy import ndarray
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
-from .app import first_new_PK_value
+from .app import return_string_of_dataframe_info, first_new_PK_value
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -68,15 +69,15 @@ class FiscalYears(db.Model):
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
-        create_usage_tracking_records_for_fiscal_year: #ToDo: Copy first line of docstring here
+        create_usage_tracking_records_for_fiscal_year: Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
         collect_fiscal_year_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for all of a fiscal year's usage.
     """
     __tablename__ = 'fiscalYears'
 
     fiscal_year_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    fiscal_year = db.Column(db.String(4))
-    start_date = db.Column(db.Date)
-    end_date = db.Column(db.Date)
+    fiscal_year = db.Column(db.String(4), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     ACRL_60b = db.Column(db.SmallInteger)
     ACRL_63 = db.Column(db.SmallInteger)
     ARL_18 = db.Column(db.SmallInteger)
@@ -225,10 +226,58 @@ class FiscalYears(db.Model):
 
     @hybrid_method
     def create_usage_tracking_records_for_fiscal_year(self):
-        #ToDo: For every record in statisticsSources
-            #ToDo: For all of its statisticsResourceSources records
-                #ToDo: If statisticsResourceSources.Current_Statistics_Source for any of those records is `True`, create a record in annualUsageCollectionTracking where annualUsageCollectionTracking.AUCT_Statistics_Source is the statisticsSources.Statistics_Source_ID for the statisticsSource record for this iteration and annualUsageCollectionTracking.AUCT_Fiscal_Year is the FiscalYears.fiscal_year_ID of the instance this method is being run on
-        pass
+        """Create the records for the given fiscal year in the `annualUsageCollectionTracking` relation.
+
+        Scheduling a function to run within Python requires a module that calls that function to be running, making programmatically adding new records at the start of each fiscal year an aspirational iteration. For the `fiscalYears` relation, only one record needs to be added each year, so manually adding the record isn't problematic. For `annualUsageCollectionTracking`, which requires hundreds of new records which are identified through a field in the `statisticsResourceSources` relation, a method to create the new records is necessary.
+
+        Returns:
+            str: the logging statement to indicate if calling and loading the data succeeded or failed
+        """
+        #Section: Get PKs of the Fiscal Year's Statistics Sources
+        current_statistics_sources = pd.read_sql(
+            sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            con=db.engine,
+        )
+        logging.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
+        current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+
+        #Section: Create Dataframe to Load into Relation
+        multiindex = pd.MultiIndex.from_tuples(
+            current_statistics_sources_PKs,
+            names=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+        all_records = []
+        for i in range(len(multiindex)):
+            all_records.append([None, None, None, None, None, None, None])  # All seven of the non-PK fields in the relation should contain null values at creation
+        df = pd.DataFrame(
+            all_records,
+            index=multiindex,
+            columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
+        )
+        df = df.astype({
+            "usage_is_being_collected": 'boolean',
+            "manual_collection_required": 'boolean',
+            "collection_via_email": 'boolean',
+            "is_COUNTER_compliant": 'boolean',
+            "collection_status": 'string',  # For `enum` data type
+            "usage_file_path": 'string',
+            "notes": 'string',  # For `text` data type
+        })
+        logging.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
+
+        #Section: Load Data into `annualUsageCollectionTracking` Relation
+        try:
+            df.to_sql(
+                'annualUsageCollectionTracking',
+                con=db.engine,
+                if_exists='append',
+                index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+            )
+            logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
+            return f"The AUCT records load for FY {self.fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
+            return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
@@ -244,6 +293,10 @@ class FiscalYears(db.Model):
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            #ToDo: if repr(type(df)) == "<class 'str'>":
+                #ToDo: return f"SUSHI harvesting returned the following error: {df}"
+            #ToDo: else:
+                #ToDo: logging.debug("The SUSHI harvest was a success")
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
@@ -253,6 +306,7 @@ class FiscalYears(db.Model):
             #ToDo:     'COUNTERData',
             #ToDo:     con=db.engine,
             #ToDo:     if_exists='append',
+            #ToDo:     index_label='COUNTER_data_ID',
             #ToDo: )
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
@@ -278,7 +332,7 @@ class Vendors(db.Model):
     __tablename__ = 'vendors'
 
     vendor_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    vendor_name = db.Column(db.String(80))
+    vendor_name = db.Column(db.String(80), nullable=False)
     alma_vendor_code = db.Column(db.String(10))
 
     FK_in_VendorNotes = db.relationship('VendorNotes', backref='vendors')
@@ -363,7 +417,7 @@ class VendorNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
 
     def __repr__(self):
@@ -390,9 +444,9 @@ class StatisticsSources(db.Model):
     __tablename__ = 'statisticsSources'
 
     statistics_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_name = db.Column(db.String(100))
+    statistics_source_name = db.Column(db.String(100), nullable=False)
     statistics_source_retrieval_code = db.Column(db.String(30))
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_StatisticsSourceNotes = db.relationship('StatisticsSourceNotes', backref='statisticsSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='statisticsSources')
@@ -401,11 +455,8 @@ class StatisticsSources(db.Model):
 
 
     def __repr__(self):
-        """The printable representation of a `StatisticsSources` instance.
-        
-        For some reason, direct references to attributes of Flask-SQLAlchemy relation classes return a pandas series object with an autonumbered index, the name of the attribute as the name of the series, and an `object` dtype. To get the attribute values themselves, the series' `to_list()` method is used to turn the series into a single-item list, then an index operator extracts the sole item form that list.
-        """
-        return f"<'statistics_source_ID': '{self.statistics_source_ID.to_list()[0]}', 'statistics_source_name': '{self.statistics_source_name.to_list()[0]}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code.to_list()[0]}', 'vendor_ID': '{self.vendor_ID.to_list()[0]}'>"
+        """The printable representation of a `StatisticsSources` instance."""
+        return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
 
 
     @hybrid_method
@@ -429,7 +480,6 @@ class StatisticsSources(db.Model):
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    logging.debug(f"`stats_source` (type {type(stats_source)}): {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
@@ -490,10 +540,10 @@ class StatisticsSources(db.Model):
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
-        #ToDo: Allen Press raises error `HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?customer_id=786-26-602&requestor_id=lib-eresources%40fsu.edu&begin_date=2023-01&end_date=2023-01 (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))`; can requests ignore the specific error?
+        #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
-            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
         else:
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
@@ -507,15 +557,15 @@ class StatisticsSources(db.Model):
             for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                 for report_details_dict in report_call_response:
                     for report_detail_keys, report_detail_values in report_details_dict.items():
-                        if re.match(r'^[Rr]eport_[(ID)|(id)|(Id)]', report_detail_keys):
+                        if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                             all_available_reports.append(report_detail_values)
             logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
         elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
-            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
         else:
             logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
-            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."  #ToDo: Change so this displays in Flask without overwriting any other similar messages
+            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
 
         #Subsection: Get List of Master Reports
         available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
@@ -597,7 +647,7 @@ class StatisticsSources(db.Model):
         
 
         #Section: Return a Single Dataframe
-        return pd.concat(master_report_dataframes)
+        return pd.concat(master_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
@@ -613,13 +663,21 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        if repr(type(df)) == "<class 'str'>":
+            return f"SUSHI harvesting returned the following error: {df}"
+        else:
+            logging.debug(f"The SUSHI harvest was a success")
+        logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
         df.index += first_new_PK_value('COUNTERData')
+        logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
                 'COUNTERData',
                 con=db.engine,
                 if_exists='append',
+                index_label='COUNTER_data_ID',
             )
             logging.info("The load was a success.")
             return "The load was a success."
@@ -650,7 +708,7 @@ class StatisticsSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     
 
     def __repr__(self):
@@ -667,7 +725,7 @@ class ResourceSources(db.Model):
     Attributes:
         self.resource_source_ID (int): the primary key
         self.resource_source_name (str): the resource source name
-        self.source_in_use (bool): indicates if we currently have access to resources at the resource source
+        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
         self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
@@ -680,10 +738,10 @@ class ResourceSources(db.Model):
     __tablename__ = 'resourceSources'
 
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    resource_source_name = db.Column(db.String(100))
-    source_in_use = db.Column(db.Boolean)
+    resource_source_name = db.Column(db.String(100), nullable=False)
+    source_in_use = db.Column(db.Boolean, nullable=False)
     use_stop_date = db.Column(db.Date)
-    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'))
+    vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
     FK_in_StatisticsResourceSources = db.relationship('StatisticsResourceSources', backref='resourceSources')
@@ -750,7 +808,7 @@ class ResourceSourceNotes(db.Model):
     note = db.Column(db.Text)
     written_by = db.Column(db.String(100))
     date_written = db.Column(db.Date)
-    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'))
+    resource_source_ID = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), nullable=False)
     
 
     def __repr__(self):
@@ -767,13 +825,13 @@ class StatisticsResourceSources(db.Model):
     Attributes:
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
+        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
     """
     __tablename__ = 'statisticsResourceSources'
 
     SRS_statistics_source = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), primary_key=True, autoincrement=False)
     SRS_resource_source = db.Column(db.Integer, db.ForeignKey('resourceSources.resource_source_ID'), primary_key=True, autoincrement=False)
-    current_statistics_source = db.Column(db.Boolean)
+    current_statistics_source = db.Column(db.Boolean, nullable=False)
 
 
     def __repr__(self):
@@ -787,10 +845,10 @@ class AnnualUsageCollectionTracking(db.Model):
     Attributes:
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
-        self.usage_is_being_collected (bool): indicates if usage needs to be collected
-        self.manual_collection_required (bool): indicates if usage needs to be collected manually
-        self.collection_via_email (bool): indicates if usage needs to be requested by sending an email
-        self.is_COUNTER_compliant (bool): indicates if usage is COUNTER R4 or R5 compliant
+        self.usage_is_being_collected (boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
+        self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
@@ -839,24 +897,51 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        #ToDo: start_date = start date for FY
-        #ToDo: end_date = end date for FY
-        #ToDo: statistics_source = StatisticSources object for self.auct_statistics_source value
-        #ToDo: df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        #ToDo: Change `collection_status` to "Collection complete"
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: try:
-            #ToDo: df.to_sql(
-            #ToDo:     'COUNTERData',
-            #ToDo:     con=db.engine,
-            #ToDo:     if_exists='append',
-            #ToDo: )
-            #ToDo: logging.info(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success.")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} was a success."
-        #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}")
-            #ToDo: return f"The load for {StatisticsSources.statistics_source_name corresponding to self.AUCT_statistics_source} for FY {FiscalYears.fiscal_year corresponding to self.AUCT_fiscal_year} had an error: {format(error)}"
-        pass
+        #Section: Get Data from Relations Corresponding to Composite Key
+        #Subsection: Get Data from `fiscalYears`
+        fiscal_year_data = pd.read_sql(
+            sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
+            con=db.engine,  #ALERT: This method has no test; running it from command line raises `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` which seems to be common to all hybrid methods run from the command line
+        )
+        start_date = fiscal_year_data['start_date'][0]
+        end_date = fiscal_year_data['end_date'][0]
+        fiscal_year = fiscal_year_data['fiscal_year'][0]
+        logging.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)})")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        
+        #Subsection: Get Data from `statisticsSources`
+        # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
+        statistics_source_data = pd.read_sql(
+            sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
+            con=db.engine,
+        )
+        statistics_source = StatisticsSources(
+            statistics_source_ID = self.AUCT_statistics_source,
+            statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
+            vendor_ID = int(statistics_source_data['vendor_ID'][0]),
+        )
+        logging.debug(f"The `StatisticsSources` object is {statistics_source}")
+
+        #Section: Collect and Load SUSHI Data
+        df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        if repr(type(df)) == "<class 'str'>":
+            return f"SUSHI harvesting returned the following error: {df}"
+        else:
+            logging.debug("The SUSHI harvest was a success")
+        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.to_sql(
+                'COUNTERData',
+                con=db.engine,
+                if_exists='append',
+                index_label='COUNTER_data_ID',
+            )
+            logging.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
+            self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
+        except Exception as error:
+            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
 
 
     @hybrid_method
@@ -910,7 +995,7 @@ class COUNTERData(db.Model):
     __tablename__ = 'COUNTERData'
 
     COUNTER_data_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'))
+    statistics_source_ID = db.Column(db.Integer, db.ForeignKey('statisticsSources.statistics_source_ID'), nullable=False)
     report_type = db.Column(db.String(5))
     resource_name = db.Column(db.String(RESOURCE_NAME_LENGTH))
     publisher = db.Column(db.String(PUBLISHER_LENGTH))
@@ -926,7 +1011,7 @@ class COUNTERData(db.Model):
     online_ISSN = db.Column(db.String(20))  # Some R4 book reports put another ISBN in the report's ISSN field, the contents of which go into this field, so the field must be large enough to store ISBNs
     URI = db.Column(db.String(URI_LENGTH))
     data_type = db.Column(db.String(25))
-    section_type = db.Column(db.String(10))
+    section_type = db.Column(db.String(25))
     YOP = db.Column(db.SmallInteger)
     access_type = db.Column(db.String(20))
     access_method = db.Column(db.String(10))
@@ -941,9 +1026,9 @@ class COUNTERData(db.Model):
     parent_print_ISSN = db.Column(db.String(10))
     parent_online_ISSN = db.Column(db.String(10))
     parent_URI = db.Column(db.String(URI_LENGTH))
-    metric_type = db.Column(db.String(75))
-    usage_date = db.Column(db.Date)
-    usage_count = db.Column(db.Integer)
+    metric_type = db.Column(db.String(75), nullable=False)
+    usage_date = db.Column(db.Date, nullable=False)
+    usage_count = db.Column(db.Integer, nullable=False)
     report_creation_date = db.Column(db.DateTime)
 
 
