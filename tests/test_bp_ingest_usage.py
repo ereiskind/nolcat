@@ -97,12 +97,12 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    print(f"`HTML_file_title.string` (type {type(HTML_file_title.string)}): {HTML_file_title.string}")
-    print(f"`HTML_file_page_title.string` (type {type(HTML_file_page_title.string)}): {HTML_file_page_title.string}")
+    print(f"`HTML_file_title.string.encode('utf-8')` (type {type(HTML_file_title.string.encode('utf-8'))}): {HTML_file_title.string.encode('utf-8')}")
+    print(f"`HTML_file_page_title.string.encode('utf-8')` (type {type(HTML_file_page_title.string.encode('utf-8'))}): {HTML_file_page_title.string.encode('utf-8')}")
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title == '<title>Ingest Usage</title>'
-    assert HTML_file_page_title == '<h1>Ingest Usage Homepage</h1>'
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
