@@ -13,40 +13,40 @@ from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 #Section: Fixtures
 @pytest.fixture(scope='session')
-def sample_SUSHI_PR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+def sample_SUSHI_PR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI PR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'R5_COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
-def sample_SUSHI_DR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+def sample_SUSHI_DR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI DR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'R5_COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
-def sample_SUSHI_TR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+def sample_SUSHI_TR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI TR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'R5_COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
-def sample_SUSHI_IR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+def sample_SUSHI_IR_response_R5_JSON_dict():
+    """Creates a dictionary like the ones derived from the JSONs received in response to R5 SUSHI IR API calls."""
+    with open(Path(os.getcwd(), 'tests', 'data', 'R5_COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture(scope='session')
 def sample_SUSHI_PR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the PR JSON fixtures into a dataframe."""
     df = pd.DataFrame(
         [
             ["Duke University Press", "Book", "Regular", "Total_Item_Investigations", "2019-07-01", 14, "2019-07-01"],
@@ -156,7 +156,7 @@ def sample_SUSHI_PR_response_dataframe():
 
 @pytest.fixture(scope='session')
 def sample_SUSHI_DR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the DR JSON fixtures into a dataframe."""
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database", "Regular", "Searches_Automated", "2019-10-01", 4942, "2019-07-01"],
@@ -580,7 +580,7 @@ def sample_SUSHI_DR_response_dataframe():
 
 @pytest.fixture(scope='session')
 def sample_SUSHI_TR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the TR JSON fixtures into a dataframe."""
     df = pd.DataFrame(
         [
             ["Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>", "Duke University Press", "Duke University Press", "10.1215/9780822387046", "Silverchair:989", "978-0-8223-8704-6", "Book", "Chapter", 2005, "Controlled", "Regular", "Total_Item_Investigations", "2019-12-01", 10, "2019-07-01"],
@@ -624,7 +624,7 @@ def sample_SUSHI_TR_response_dataframe():
 
 @pytest.fixture(scope='session')
 def sample_SUSHI_IR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the IR JSON fixtures into a dataframe."""
     df = pd.DataFrame(
         [
             ["(Com)Post-Capitalism<subtitle>Cultivating a More-than-Human Economy in the Appalachian Anthropocene</subtitle>", "Duke University Press", "Duke University Press", "Bradley M. Jones", "2019-05-01", "VoR", "10.1215/22011919-7349347", "Silverchair:138280", None, "Article", 2019, "OA_Gold", "Regular", "Environmental Humanities", None, None, "Journal", None, "Silverchair:1000015", None, "2201-1919", "2201-1919", "Total_Item_Investigations", "2019-10-01", 6, "2019-07-01"],
@@ -4463,27 +4463,27 @@ def sample_SUSHI_IR_response_dataframe():
 
 
 #Section: Tests
-def test_create_dataframe_from_PR(sample_SUSHI_PR_response_JSON_dict, sample_SUSHI_PR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_PR(sample_SUSHI_PR_response_R5_JSON_dict, sample_SUSHI_PR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_PR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_PR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
-def test_create_dataframe_from_DR(sample_SUSHI_DR_response_JSON_dict, sample_SUSHI_DR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_DR(sample_SUSHI_DR_response_R5_JSON_dict, sample_SUSHI_DR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_DR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_DR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
-def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUSHI_TR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_TR(sample_SUSHI_TR_response_R5_JSON_dict, sample_SUSHI_TR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_TR_response_R5_JSON_dict).create_dataframe()
     assert_frame_equal(df, sample_SUSHI_TR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
-def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
-    """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
-    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
+def test_create_dataframe_from_R5_IR(sample_SUSHI_IR_response_R5_JSON_dict, sample_SUSHI_IR_response_dataframe):
+    """Tests transforming dictionaries derived from R5 SUSHI PR JSONs into dataframes."""
+    df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_R5_JSON_dict).create_dataframe()
     df1 = sample_SUSHI_IR_response_dataframe.compare(
         df[['resource_name', 'publisher', 'platform', 'authors', 'publication_date', 'article_version', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'YOP', 'access_type', 'access_method', 'parent_title', 'parent_authors', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_proprietary_ID', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date']],
         align_axis='index',
