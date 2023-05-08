@@ -668,7 +668,7 @@ class StatisticsSources(db.Model):
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
         else:
-            logging.debug("The SUSHI harvest was a success")
+            logging.debug("The SUSHI harvest was a success, returning the following dataframe:\n{df}")
         #######################
         #print_df = pd.read_sql(
         #    sql=f'''
