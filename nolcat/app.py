@@ -187,6 +187,9 @@ def first_new_PK_value(relation):
         ''',
         con=db.engine,
     )
+    if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+        logging.debug(f"The {relation} relation is empty")
+        return 0
     logging.debug(f"Result of query for largest primary key value:\n{largest_PK_value}")
     largest_PK_value = largest_PK_value.iloc[0][0]
     return int(largest_PK_value) + 1
