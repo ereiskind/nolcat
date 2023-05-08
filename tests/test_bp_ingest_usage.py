@@ -91,12 +91,21 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #ToDo: Find a way to assert that `POST_response` includes the message `The load was a success.` to be flashed on the redirect destination page
+
+    # This is the HTML file of the page the redirect goes to
+    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+
     print(f"`POST_response` (type {type(POST_response)}): {POST_response}")
-    print(f"`POST_response.headers` (type {type(POST_response.headers)}): {POST_response.headers}")
-    print(f"`POST_response.history` (type {type(POST_response.history)}): {POST_response.history}")
+    print(f"`POST_response.history[0].status` (type {type(POST_response.history[0].status)}): {POST_response.history[0].status}")
+    print(f"`POST_response.history[0].data` (type {type(POST_response.history[0].data)}): {POST_response.history[0].data}")
+    print(f"`HTML_file_title` (type {type(HTML_file_title)}): {HTML_file_title}")
+    print(f"`HTML_file_page_title` (type {type(HTML_file_page_title)}): {HTML_file_page_title}")
     print(f"`POST_response.data` (type {type(POST_response.data)}): {POST_response.data}")
-    assert POST_response.status == "302 FOUND"
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
     assert b'<a href="/ingest_usage">' in POST_response.data  # The `in` operator checks that the redirect location is correct
 
 
