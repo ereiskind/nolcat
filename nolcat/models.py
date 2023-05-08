@@ -668,26 +668,7 @@ class StatisticsSources(db.Model):
         if repr(type(df)) == "<class 'str'>":
             return f"SUSHI harvesting returned the following error: {df}"
         else:
-            logging.debug(f"The SUSHI harvest was a success, returning the following dataframe:\n{df}")
-        #######################
-        #print_df = pd.read_sql(
-        #    sql=f'''
-        #        SELECT * FROM COUNTERData
-        #        ORDER BY COUNTER_data_ID DESC;
-        #    ''',
-        #    con=db.engine,
-        #)
-        #logging.debug(f"The dataframe ordered by `COUNTER_data_ID` descending:\n{print_df}")
-        #largest_PK_value = pd.read_sql(
-        #    sql=f'''
-        #        SELECT COUNTER_data_ID FROM COUNTERData
-        #        ORDER BY COUNTER_data_ID DESC
-        #        LIMIT 1;
-        #    ''',
-        #    con=db.engine,  #ALERT: In testing, causing `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
-        #)
-        #logging.debug(f"The largest PK value in `COUNTERData` is {largest_PK_value.iloc[0][0]}")
-        #######################
+            logging.debug(f"The SUSHI harvest was a success")
         logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
         df.index += first_new_PK_value('COUNTERData')
         logging.debug(f"The dataframe after adjusting the index:\n{df}")
