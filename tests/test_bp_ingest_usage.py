@@ -97,16 +97,13 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-
-    print(f"`POST_response` (type {type(POST_response)}): {POST_response}")
-    print(f"`POST_response.history[0].status` (type {type(POST_response.history[0].status)}): {POST_response.history[0].status}")
-    print(f"`POST_response.history[0].data` (type {type(POST_response.history[0].data)}): {POST_response.history[0].data}")
-    print(f"`HTML_file_title` (type {type(HTML_file_title)}): {HTML_file_title}")
-    print(f"`HTML_file_page_title` (type {type(HTML_file_page_title)}): {HTML_file_page_title}")
-    print(f"`POST_response.data` (type {type(POST_response.data)}): {POST_response.data}")
+    print(f"`HTML_file_title.string` (type {type(HTML_file_title.string)}): {HTML_file_title.string}")
+    print(f"`HTML_file_page_title.string` (type {type(HTML_file_page_title.string)}): {HTML_file_page_title.string}")
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert b'<a href="/ingest_usage">' in POST_response.data  # The `in` operator checks that the redirect location is correct
+    assert HTML_file_title == '<title>Ingest Usage</title>'
+    assert HTML_file_page_title == '<h1>Ingest Usage Homepage</h1>'
+    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client):
