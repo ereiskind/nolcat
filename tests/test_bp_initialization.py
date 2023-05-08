@@ -299,6 +299,7 @@ def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, crea
     POST_response = client.post(
         '/initialization/',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
@@ -345,8 +346,15 @@ def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, crea
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
     #Section: Assert Statements
-    assert POST_response.status == "302 FOUND"
-    assert b'<a href="/initialization/initialization-page-2">' in POST_response.data  # The `in` operator checks that the redirect location is correct
+    # This is the HTML file of the page the redirect goes to
+    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
@@ -370,6 +378,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     POST_response = client.post(
         '/initialization/initialization-page-2',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
         headers=header_value,
         data=CSV_files,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
@@ -433,8 +442,15 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     })
 
     #Section: Assert Statements
-    assert POST_response.status == "302 FOUND"
-    assert b'<a href="/initialization/initialization-page-3">' in POST_response.data  # The `in` operator checks that the redirect location is correct
+    # This is the HTML file of the page the redirect goes to
+    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
@@ -491,6 +507,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
     POST_response = client.post(
         '/initialization/initialization-page-3',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
@@ -554,8 +571,15 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
     #COUNTERData_relation_data["report_creation_date"] = pd.to_datetime(COUNTERData_relation_data["report_creation_date"])
 
     #Section: Assert Statements
-    assert POST_response.status == "302 FOUND"
-    assert b'<a href="/initialization/initialization-page-5">' in POST_response.data  # The `in` operator checks that the redirect location is correct  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    # This is the HTML file of the page the redirect goes to
+    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
