@@ -1,4 +1,5 @@
 """Tests the routes in the `annual_stats` blueprint."""
+########## Data in all relations ##########
 
 import pytest
 from pathlib import Path

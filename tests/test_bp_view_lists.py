@@ -1,4 +1,5 @@
 """Tests the routes in the `view_lists` blueprint."""
+########## Data in all relations but `COUNTERData` ##########
 
 import pytest
 from pathlib import Path

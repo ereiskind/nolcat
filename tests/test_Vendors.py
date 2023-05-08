@@ -1,4 +1,5 @@
 """Tests the methods in Vendors."""
+########## Data in all relations but `COUNTERData` ##########
 
 import pytest
 

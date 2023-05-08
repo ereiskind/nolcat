@@ -1,4 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
+########## No database interaction ##########
 
 import pytest
 from pathlib import Path
