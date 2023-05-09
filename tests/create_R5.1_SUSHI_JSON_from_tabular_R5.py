@@ -136,7 +136,7 @@ fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Da
 join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
 ####################
 output = join_multiindex_df.copy()
-number = 2
+number = number + 1
 output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
     output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=False)
@@ -174,7 +174,7 @@ metadata_inside_attribute_performance = [field for field in df_field_names if fi
 outside_attribute_performance_df = join_multiindex_df[metadata_outside_attribute_performance]
 ####################
 output = outside_attribute_performance_df.copy()
-number = 3
+number = number + 1
 output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
     output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
