@@ -115,13 +115,14 @@ df = df.replace(
 logging.debug(f"Dataframe after initial updates:\n{df}")
 ####################
 output = df
-output.to_csv(directory_with_final_JSONs / '_1_test.csv', encoding='utf-8', errors='backslashreplace')
+number = 1
+output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
-    output.to_json(directory_with_final_JSONs / '_1_test.json', force_ascii=False, indent=4, orient='table', index=False)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=False)
 except ValueError:
     new_index_names = {name:f"index_{name}" for name in output.index.names}
     output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / '_1_test.json', force_ascii=False, indent=4, orient='table', index=True)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
 
@@ -135,13 +136,14 @@ fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations 
 performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
 ####################
 output = performance_join_multiindex_df
-output.to_csv(directory_with_final_JSONs / '_2_test.csv', encoding='utf-8', errors='backslashreplace')
+number = 2
+output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
-    output.to_json(directory_with_final_JSONs / '_2_test.json', force_ascii=False, indent=4, orient='table', index=False)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=False)
 except ValueError:
     new_index_names = {name:f"index_{name}" for name in output.index.names}
     output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / '_2_test.json', force_ascii=False, indent=4, orient='table', index=True)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 fields_to_drop_at_end = []
 possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']  # List defined here because it's used in two separate `if` blocks
