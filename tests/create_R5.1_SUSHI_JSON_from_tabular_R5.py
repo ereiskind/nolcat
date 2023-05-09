@@ -158,6 +158,21 @@ record_sorting_dict = record_sorting_strings.to_dict()
 record_sorting_dict = {metadata_string: order_number for (order_number, metadata_string) in record_sorting_dict.items()}
 logging.info(f"Metadata strings with ordering numbers:\n{record_sorting_dict}")
 
+
+#Section: Outside `Attribute_Performance`
+fields_outside_attribute_performance = [
+    "Platform",  # PR
+]
+
+
+#Section: Inside `Attribute_Performance`
+fields_in_attribute_performance = [
+    "Data_Type",  # PR
+    "Access_Method",  # PR
+]
+
+
+#####################################
 #Section: Create Nested JSON Section for Publisher IDs
 
 
