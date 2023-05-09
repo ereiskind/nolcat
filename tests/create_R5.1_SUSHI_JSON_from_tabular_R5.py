@@ -170,7 +170,19 @@ fields_inside_attribute_performance = [
 ]
 metadata_inside_attribute_performance = [field for field in df_field_names if field in fields_inside_attribute_performance]
 
-#Section: Organize Metadata Outside `Attribute_Performance` Metadata
+#Section: Organize Metadata Outside `Attribute_Performance`
+outside_attribute_performance_df = join_multiindex_df[metadata_outside_attribute_performance]
+####################
+output = outside_attribute_performance_df.copy()
+number = 3
+output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
 
 #Section: Organize Metadata Inside `Attribute_Performance` Metadata
 
