@@ -115,14 +115,15 @@ df = df.replace(
 logging.debug(f"Dataframe after initial updates:\n{df}")
 ####################
 output = df.copy()
+purpose = "after-initial-updates"
 number = 1
-output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
+output.to_csv(directory_with_final_JSONs / f'_{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
-    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=False)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
 except ValueError:
     new_index_names = {name:f"index_{name}" for name in output.index.names}
     output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
 
@@ -136,14 +137,15 @@ fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Da
 join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
 ####################
 #output = join_multiindex_df.copy()
+#purpose = "multiindex-for-joining"
 #number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
+#output.to_csv(directory_with_final_JSONs / f'_{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 #try:
-#    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=False)
+#    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
 #except ValueError:
 #    new_index_names = {name:f"index_{name}" for name in output.index.names}
 #    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+#    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 fields_to_drop_at_end = []
 
@@ -174,14 +176,15 @@ metadata_inside_attribute_performance = [field for field in df_field_names if fi
 outside_attribute_performance_df = join_multiindex_df[metadata_outside_attribute_performance]
 ####################
 output = outside_attribute_performance_df.copy()
+purpose = "create-outside-attribute-df"
 number = number + 1
-output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
+output.to_csv(directory_with_final_JSONs / f'_{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
-    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 except ValueError:
     new_index_names = {name:f"index_{name}" for name in output.index.names}
     output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
+    output.to_json(directory_with_final_JSONs / f'_{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
 #Section: Organize Metadata Inside `Attribute_Performance` Metadata
