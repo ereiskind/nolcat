@@ -111,6 +111,7 @@ Code of Practice 5.1 was released on 2023-05-05, featuring minor changes in the 
 
 1. For each file in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder, create a copy in the "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests" folder.
 2. Using the example schemas from the R5.1 Code of Practice, create the report header based on the data from the R5 JSON report header and leave a sample of the formatted data for all of the files created above.
+3. Use each workbook in "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" as input into "tests\\create_R5.1_SUSHI_JSON_from_tabular_R5.py"
 
 Create ``ConvertJSONDictToDataframe`` Test Fixtures
 ---------------------------------------------------
