@@ -173,7 +173,8 @@ fields_inside_attribute_performance = [
 metadata_inside_attribute_performance = [field for field in df_field_names if field in fields_inside_attribute_performance]
 
 #Section: Organize Metadata Outside `Attribute_Performance`
-outside_attribute_performance_df = join_multiindex_df[metadata_outside_attribute_performance]
+outside_attribute_performance_df = join_multiindex_df.copy()
+outside_attribute_performance_df = outside_attribute_performance_df[metadata_outside_attribute_performance]
 ####################
 output = outside_attribute_performance_df.copy()
 purpose = "create-outside-attribute-df"
