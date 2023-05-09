@@ -170,13 +170,11 @@ fields_inside_attribute_performance = [
 ]
 metadata_inside_attribute_performance = [field for field in df_field_names if field in fields_inside_attribute_performance]
 
-#Section: Outside `Attribute_Performance`
+#Section: Organize Metadata Outside `Attribute_Performance` Metadata
 
+#Section: Organize Metadata Inside `Attribute_Performance` Metadata
 
-#Section: Inside `Attribute_Performance`
-
-
-#Section: Create `Performance` Section
+#Section: Organize Metadata in `Performance`
 
 
 #####################################
