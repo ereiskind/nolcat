@@ -109,6 +109,9 @@ Create R5.1 SUSHI Response JSON Reports
 ---------------------------------------
 Code of Practice 5.1 was released on 2023-05-05, featuring minor changes in the way the data is captured and a change to the JSON schema. The latter change required the creation of a second set of test data JSONs matching this new schema.
 
+1. For each file in the "\\tests\\data\\R5_COUNTER_JSONs_for_tests" folder, create a copy in the "\\tests\\data\\R5.1_COUNTER_JSONs_for_tests" folder.
+2. Using the example schemas from the R5.1 Code of Practice, create the report header based on the data from the R5 JSON report header and leave a sample of the formatted data for all of the files created above.
+
 Create ``ConvertJSONDictToDataframe`` Test Fixtures
 ---------------------------------------------------
 1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
