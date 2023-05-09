@@ -128,7 +128,34 @@ except ValueError:
 ######Section: CHANGE DATAFRAME INTO JSON #####
 
 #Section: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
+fields_used_in_performance_nested_groups = ['Begin_Date', 'Metric_Type', 'Count']
+fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance_nested_groups]
 
+fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
+performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
+####################
+output = performance_join_multiindex_df
+output.to_csv(directory_with_final_JSONs / '_2_test.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / '_2_test.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / '_2_test.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+fields_to_drop_at_end = []
+possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']  # List defined here because it's used in two separate `if` blocks
+
+# The default text sorting methods in OpenRefine and Pandas order non-letter characters differently, meaning applying a pandas sort to the resource names won't put them in the same order as they were in openRefine after the sort; to return the records to their same order at the end of the module, their order must be saved at this point
+record_sorting_strings = df[fields_used_for_groupby_operations].apply(
+    lambda cell_value: '|'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
+    axis='columns',
+)
+record_sorting_strings = record_sorting_strings.drop_duplicates().reset_index(drop=True)
+logging.debug(f"Complete metadata in order from OpenRefine:\n{record_sorting_strings}")
+record_sorting_dict = record_sorting_strings.to_dict()
+record_sorting_dict = {metadata_string: order_number for (order_number, metadata_string) in record_sorting_dict.items()}
+logging.info(f"Metadata strings with ordering numbers:\n{record_sorting_dict}")
 
 #Section: Create Nested JSON Section for Publisher IDs
 
