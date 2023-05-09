@@ -129,8 +129,8 @@ except ValueError:
 ######Section: CHANGE DATAFRAME INTO JSON #####
 
 #Section: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
-fields_used_in_performance = ['Begin_Date', 'Metric_Type', 'Count']
-fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance]
+fields_in_performance = ['Begin_Date', 'Metric_Type', 'Count']
+fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_in_performance]
 
 fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
@@ -174,6 +174,9 @@ metadata_inside_attribute_performance = [field for field in df_field_names if fi
 
 
 #Section: Inside `Attribute_Performance`
+
+
+#Section: Create `Performance` Section
 
 
 #####################################
