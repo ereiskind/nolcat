@@ -129,13 +129,13 @@ except ValueError:
 ######Section: CHANGE DATAFRAME INTO JSON #####
 
 #Section: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
-fields_used_in_performance_nested_groups = ['Begin_Date', 'Metric_Type', 'Count']
-fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance_nested_groups]
+fields_used_in_performance = ['Begin_Date', 'Metric_Type', 'Count']
+fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_used_in_performance]
 
-fields_used_in_performance_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
-performance_join_multiindex_df = df[fields_used_in_performance_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)
+fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
+join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
 ####################
-output = performance_join_multiindex_df
+output = join_multiindex_df
 number = 2
 output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -146,7 +146,6 @@ except ValueError:
     output.to_json(directory_with_final_JSONs / f'_{number}_test.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 fields_to_drop_at_end = []
-possible_fields_in_item_ID = ['DOI', 'Proprietary_ID', 'ISBN', 'Print_ISSN', 'Online_ISSN', 'URI']  # List defined here because it's used in two separate `if` blocks
 
 # The default text sorting methods in OpenRefine and Pandas order non-letter characters differently, meaning applying a pandas sort to the resource names won't put them in the same order as they were in openRefine after the sort; to return the records to their same order at the end of the module, their order must be saved at this point
 record_sorting_strings = df[fields_used_for_groupby_operations].apply(
