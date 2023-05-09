@@ -116,7 +116,12 @@ logging.debug(f"Dataframe after initial updates:\n{df}")
 ####################
 output = df
 output.to_csv(directory_with_final_JSONs / '_1_test.csv', encoding='utf-8', errors='backslashreplace')
-output.to_json(directory_with_final_JSONs / '_1_test.json', force_ascii=False, indent=4, orient='table', index=False)
+try:
+    output.to_json(directory_with_final_JSONs / '_1_test.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / '_1_test.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
 
