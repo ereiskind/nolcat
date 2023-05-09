@@ -114,7 +114,7 @@ df = df.replace(
 )
 logging.debug(f"Dataframe after initial updates:\n{df}")
 ####################
-output = df
+output = df.copy()
 number = 1
 output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -135,7 +135,7 @@ fields_used_for_groupby_operations = [field_name for field_name in df_field_name
 fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
 join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
 ####################
-output = join_multiindex_df
+output = join_multiindex_df.copy()
 number = 2
 output.to_csv(directory_with_final_JSONs / f'_{number}_test.csv', encoding='utf-8', errors='backslashreplace')
 try:
