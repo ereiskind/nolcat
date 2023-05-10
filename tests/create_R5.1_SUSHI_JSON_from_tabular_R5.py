@@ -230,7 +230,7 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
+outside_attribute_performance_df = outside_attribute_performance_df.set_index([field_name for field_name in outside_attribute_performance_index_names.values()])
 ####################
 output = outside_attribute_performance_df.copy()
 purpose = "outside-attribute-df-restore-index"
