@@ -192,7 +192,7 @@ outside_attribute_performance_index_names = {field_name:f"_index_{field_name}" f
 outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
 ####################
 output = outside_attribute_performance_df.copy()
-purpose = "rename-index"
+purpose = "outside-attribute-df-rename-index"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -205,7 +205,7 @@ except ValueError:
 outside_attribute_performance_df = outside_attribute_performance_df.reset_index()
 ####################
 output = outside_attribute_performance_df.copy()
-purpose = "index-reset"
+purpose = "outside-attribute-df-index-reset"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -220,7 +220,7 @@ outside_attribute_performance_df =  outside_attribute_performance_df.loc[outside
 outside_attribute_performance_df =  outside_attribute_performance_df.drop(columns=['repeat'])
 ####################
 output = outside_attribute_performance_df.copy()
-purpose = "remove-duplicate-records"
+purpose = "outside-attribute-df-remove-duplicate-records"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -233,7 +233,7 @@ except ValueError:
 outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
 ####################
 output = outside_attribute_performance_df.copy()
-purpose = "restore-index"
+purpose = "outside-attribute-df-restore-index"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
