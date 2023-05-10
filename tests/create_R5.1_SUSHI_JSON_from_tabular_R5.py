@@ -246,6 +246,63 @@ except ValueError:
 logging.debug(f"`outside_attribute_performance_df`\n{outside_attribute_performance_df}")
 
 #Section: Organize Metadata Inside `Attribute_Performance` Metadata
+inside_attribute_performance_df = join_multiindex_df.copy()
+inside_attribute_performance_df = inside_attribute_performance_df[metadata_inside_attribute_performance]
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "create-inside-attribute-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+inside_attribute_performance_df = inside_attribute_performance_df.replace({"`None`": None})
+inside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names}
+inside_attribute_performance_df.index = inside_attribute_performance_df.index.set_names(inside_attribute_performance_index_names)
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-rename-index"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+inside_attribute_performance_df = inside_attribute_performance_df.reset_index()
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-index-reset"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+inside_attribute_performance_df['repeat'] = inside_attribute_performance_df.duplicated(keep='first')
+inside_attribute_performance_df =  inside_attribute_performance_df.loc[inside_attribute_performance_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
+inside_attribute_performance_df =  inside_attribute_performance_df.drop(columns=['repeat'])
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-remove-duplicate-records"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
 
 #Section: Organize Metadata in `Performance`
 
