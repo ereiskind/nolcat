@@ -131,10 +131,10 @@ except ValueError:
 
 #Section: Create Field Lists and Dataframes for Multiindexes, Groupby Operations, and Dataframe Recombination
 fields_in_performance = ['Begin_Date', 'Metric_Type', 'Count']
-fields_used_for_groupby_operations = [field_name for field_name in df_field_names if field_name not in fields_in_performance]
+metadata_multiindex_fields = [field_name for field_name in df_field_names if field_name not in fields_in_performance]
 
-fields_used_in_join_multiindex = fields_used_for_groupby_operations + ['Begin_Date']
-join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_for_groupby_operations, drop=False)  #ALERT: All other dataframes should copy from this
+fields_used_in_join_multiindex = metadata_multiindex_fields + ['Begin_Date']
+join_multiindex_df = df[fields_used_in_join_multiindex].set_index(metadata_multiindex_fields, drop=False)
 ####################
 #output = join_multiindex_df.copy()
 #purpose = "multiindex-for-joining"
@@ -147,10 +147,11 @@ join_multiindex_df = df[fields_used_in_join_multiindex].set_index(fields_used_fo
 #    output.index = output.index.set_names(new_index_names)
 #    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+groupby_multiindex = [f"index_{field_name}" for field_name in metadata_multiindex_fields]  # All sections have `index_` appended to the beginning of the index field names before the index reset for record deduplication, so `index_` needs to be at the beginning of the fields in the list in the groupby operation
 fields_to_drop_at_end = []
 
 # The default text sorting methods in OpenRefine and Pandas order non-letter characters differently, meaning applying a pandas sort to the resource names won't put them in the same order as they were in openRefine after the sort; to return the records to their same order at the end of the module, their order must be saved at this point
-record_sorting_strings = df[fields_used_for_groupby_operations].apply(
+record_sorting_strings = df[metadata_multiindex_fields].apply(
     lambda cell_value: '|'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
     axis='columns',
 )
