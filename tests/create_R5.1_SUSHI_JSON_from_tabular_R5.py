@@ -243,6 +243,7 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+logging.debug(f"`outside_attribute_performance_df`\n{outside_attribute_performance_df}")
 
 #Section: Organize Metadata Inside `Attribute_Performance` Metadata
 
