@@ -188,7 +188,7 @@ except ValueError:
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 outside_attribute_performance_df = outside_attribute_performance_df.replace({"`None`": None})
-outside_attribute_performance_index_names = {field_name:f"_index_{field_name}" for field_name in outside_attribute_performance_df.index.names}
+outside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in outside_attribute_performance_df.index.names}
 outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
 ####################
 output = outside_attribute_performance_df.copy()
