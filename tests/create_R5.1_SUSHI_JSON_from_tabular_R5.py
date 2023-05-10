@@ -322,3 +322,17 @@ logging.debug(f"`inside_attribute_performance_df`\n{inside_attribute_performance
 logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_performance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 #Section: Organize Metadata in `Performance`
+performance_df = df.copy()
+performance_df = performance_df.set_index(metadata_multiindex_fields)
+####################
+output = performance_df.copy()
+purpose = "create-performance-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
