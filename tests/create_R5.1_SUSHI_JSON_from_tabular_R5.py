@@ -304,6 +304,22 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
+inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance].to_dict('records')).rename("Attribute_Performance")
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-groupby"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+logging.debug(f"`inside_attribute_performance_df`\n{inside_attribute_performance_df}")
+logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_performance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 #Section: Organize Metadata in `Performance`
 
