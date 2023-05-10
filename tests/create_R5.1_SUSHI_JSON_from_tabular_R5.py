@@ -187,6 +187,21 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+outside_attribute_performance_df = outside_attribute_performance_df.replace({"`None`": None})
+new_index_names = {field_name:f"_index_{field_name}" for field_name in outside_attribute_performance_df.index.names}
+outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(new_index_names)
+####################
+output = outside_attribute_performance_df.copy()
+purpose = "rename-index"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
 
 #Section: Organize Metadata Inside `Attribute_Performance` Metadata
 
