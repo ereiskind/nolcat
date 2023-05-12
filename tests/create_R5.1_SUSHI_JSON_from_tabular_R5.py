@@ -34,6 +34,27 @@ def last_day_of_month(first_day_of_month):
     return year_and_month_string + str(first_day_of_month.days_in_month)
 
 
+def remove_null_counts(JSON):
+    """This function removes the date and count key-value pairs when the count value is null.
+
+    Part of the dataframe manipulation used to turn the tabular data into a JSON matching the `Performance` section of a SUSHI 5.1 JSON is a pivot, which automatically places null values in cells that don't have any corresponding data values. These are retained through the `to_dict()` method, placing them in the JSON, but since null values aren't included in any COUNTER 5.x reports, they need to be removed.
+
+    Args:
+        JSON (dict): the `Performance` section of a SUSHI 5.1 report for a given metadata combination
+    
+    Returns:
+        dict: the argument value sans the date and count key-value pairs where the value is null
+    """
+    outer_dict = dict()
+    for metric_type, date_and_count in JSON.items():
+        inner_dict = dict()
+        for date, count in date_and_count.items():
+            if pd.notnull(count):
+                inner_dict[date] = count
+        outer_dict[metric_type] = inner_dict
+    return outer_dict
+
+
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
 file_path = pathlib.Path(file_path)
