@@ -339,3 +339,20 @@ except ValueError:
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 logging.debug(f"`performance_df` after pivot:\n{performance_df}")
+
+#Subsection: Set Field Names
+performance_df = performance_df.reset_index().set_index('Metric_Type')
+remove_day_from_field_names = {field_name:field_name[:-3] for field_name in performance_df.columns.to_list() if field_name not in metadata_multiindex_fields}
+performance_df = performance_df.rename(columns=remove_day_from_field_names)
+####################
+output = performance_df.copy()
+purpose = "performance-df-field-names"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
