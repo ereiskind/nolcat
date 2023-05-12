@@ -363,8 +363,9 @@ logging.debug(f"`performance_df` after pivot:\n{performance_df}")
 
 #Subsection: Set Field Names
 performance_df = performance_df.reset_index().set_index('Metric_Type')
-remove_day_from_field_names = {field_name:field_name[:-3] for field_name in performance_df.columns.to_list() if field_name not in metadata_multiindex_fields}
-performance_df = performance_df.rename(columns=remove_day_from_field_names)
+performance_index_names = {field_name:field_name[:-3] for field_name in performance_df.columns.to_list() if field_name not in metadata_multiindex_fields}
+performance_index_names.update({field_name:f"index_{field_name}" for field_name in performance_df.columns.to_list() if field_name in metadata_multiindex_fields})  # The method makes the change in place
+performance_df = performance_df.rename(columns=performance_index_names)
 ####################
 output = performance_df.copy()
 purpose = "performance-df-field-names"
