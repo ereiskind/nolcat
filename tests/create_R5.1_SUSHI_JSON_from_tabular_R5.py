@@ -323,7 +323,9 @@ logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_pe
 
 #Section: Organize Metadata in `Performance`
 performance_df = df.copy()
-performance_df = performance_df.set_index(metadata_multiindex_fields)
+#Subsection: Pivot Data
+pivot_index = metadata_multiindex_fields + ['Metric_Type']
+performance_df = performance_df.pivot(index=pivot_index, columns='Begin_Date', values='Count')
 ####################
 output = performance_df.copy()
 purpose = "create-performance-df"
@@ -336,3 +338,4 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+logging.debug(f"`performance_df` after pivot:\n{performance_df}")
