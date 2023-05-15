@@ -348,6 +348,38 @@ except ValueError:
 #ToDo: Create other nested subsections
 
 #Subsection: Add `Performance` Section as Key-Value Pair
+inside_attribute_performance_df = inside_attribute_performance_df.set_index(groupby_multiindex)
+inside_attribute_performance_df = pd.concat([inside_attribute_performance_df, performance_df], axis='columns', ignore_index=False)
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-add-performance"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+
+#Subsection: Create JSON Field
+inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
+inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance + ['Performance']].to_dict('records')[0]).rename("Attribute_Performance")
+####################
+output = inside_attribute_performance_df.copy()
+purpose = "final-inside-attribute-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+logging.debug(f"`inside_attribute_performance_df`\n{inside_attribute_performance_df}")
+logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_performance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Organize Metadata Outside `Attribute_Performance`
@@ -439,80 +471,6 @@ except ValueError:
 ####################
 logging.debug(f"`outside_attribute_performance_df`\n{outside_attribute_performance_df}")
 
-#Section: Organize Metadata Inside `Attribute_Performance`
-inside_attribute_performance_df = join_multiindex_df.copy()
-inside_attribute_performance_df = inside_attribute_performance_df[metadata_inside_attribute_performance]
-####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "create-inside-attribute-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-inside_attribute_performance_df = inside_attribute_performance_df.replace({"`None`": None})
-inside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names}
-inside_attribute_performance_df.index = inside_attribute_performance_df.index.set_names(inside_attribute_performance_index_names)
-####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-rename-index"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-inside_attribute_performance_df = inside_attribute_performance_df.reset_index()
-####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-index-reset"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-inside_attribute_performance_df['repeat'] = inside_attribute_performance_df.duplicated(keep='first')
-inside_attribute_performance_df =  inside_attribute_performance_df.loc[inside_attribute_performance_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
-inside_attribute_performance_df =  inside_attribute_performance_df.drop(columns=['repeat'])
-####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-remove-duplicate-records"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
-inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance].to_dict('records')[0]).rename("Attribute_Performance")
-####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "final-inside-attribute-df-via-groupby"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-logging.debug(f"`inside_attribute_performance_df`\n{inside_attribute_performance_df}")
-logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_performance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
 
 #Section: Combine Nested JSON Groupings
