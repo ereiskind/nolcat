@@ -214,59 +214,59 @@ metadata_inside_attribute_performance = [field for field in df_field_names if fi
 outside_attribute_performance_df = join_multiindex_df.copy()
 outside_attribute_performance_df = outside_attribute_performance_df[metadata_outside_attribute_performance]
 ####################
-#output = outside_attribute_performance_df.copy()
-#purpose = "create-outside-attribute-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = outside_attribute_performance_df.copy()
+purpose = "create-outside-attribute-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 outside_attribute_performance_df = outside_attribute_performance_df.replace({"`None`": None})
 outside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in outside_attribute_performance_df.index.names}
 outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
 ####################
-#output = outside_attribute_performance_df.copy()
-#purpose = "outside-attribute-df-rename-index"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = outside_attribute_performance_df.copy()
+purpose = "outside-attribute-df-rename-index"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 outside_attribute_performance_df = outside_attribute_performance_df.reset_index()
 ####################
-#output = outside_attribute_performance_df.copy()
-#purpose = "outside-attribute-df-index-reset"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = outside_attribute_performance_df.copy()
+purpose = "outside-attribute-df-index-reset"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 outside_attribute_performance_df['repeat'] = outside_attribute_performance_df.duplicated(keep='first')
 outside_attribute_performance_df =  outside_attribute_performance_df.loc[outside_attribute_performance_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 outside_attribute_performance_df =  outside_attribute_performance_df.drop(columns=['repeat'])
 ####################
-#output = outside_attribute_performance_df.copy()
-#purpose = "outside-attribute-df-remove-duplicate-records"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = outside_attribute_performance_df.copy()
+purpose = "outside-attribute-df-remove-duplicate-records"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 outside_attribute_performance_df = outside_attribute_performance_df.set_index([field_name for field_name in outside_attribute_performance_index_names.values()])
 ####################
@@ -287,59 +287,59 @@ logging.debug(f"`outside_attribute_performance_df`\n{outside_attribute_performan
 inside_attribute_performance_df = join_multiindex_df.copy()
 inside_attribute_performance_df = inside_attribute_performance_df[metadata_inside_attribute_performance]
 ####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "create-inside-attribute-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = inside_attribute_performance_df.copy()
+purpose = "create-inside-attribute-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 inside_attribute_performance_df = inside_attribute_performance_df.replace({"`None`": None})
 inside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names}
 inside_attribute_performance_df.index = inside_attribute_performance_df.index.set_names(inside_attribute_performance_index_names)
 ####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-rename-index"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-rename-index"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 inside_attribute_performance_df = inside_attribute_performance_df.reset_index()
 ####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-index-reset"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-index-reset"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 inside_attribute_performance_df['repeat'] = inside_attribute_performance_df.duplicated(keep='first')
 inside_attribute_performance_df =  inside_attribute_performance_df.loc[inside_attribute_performance_df['repeat'] == False]  # Where the Boolean indicates if the record is the same as an earlier record
 inside_attribute_performance_df =  inside_attribute_performance_df.drop(columns=['repeat'])
 ####################
-#output = inside_attribute_performance_df.copy()
-#purpose = "inside-attribute-df-remove-duplicate-records"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = inside_attribute_performance_df.copy()
+purpose = "inside-attribute-df-remove-duplicate-records"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=False)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
 inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance].to_dict('records')[0]).rename("Attribute_Performance")
@@ -364,16 +364,16 @@ performance_df = df.copy()
 pivot_index = metadata_multiindex_fields + ['Metric_Type']
 performance_df = performance_df.pivot(index=pivot_index, columns='Begin_Date', values='Count')
 ####################
-#output = performance_df.copy()
-#purpose = "create-performance-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = performance_df.copy()
+purpose = "create-performance-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 logging.debug(f"`performance_df` after pivot:\n{performance_df}")
 
@@ -383,31 +383,31 @@ performance_index_names = {field_name:field_name[:-3] for field_name in performa
 performance_index_names.update({field_name:f"index_{field_name}" for field_name in performance_df.columns.to_list() if field_name in metadata_multiindex_fields})  # The method makes the change in place
 performance_df = performance_df.rename(columns=performance_index_names)
 ####################
-#output = performance_df.copy()
-#purpose = "performance-df-field-names"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = performance_df.copy()
+purpose = "performance-df-field-names"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
 #Subsection: Create JSON Field
 performance_df = (performance_df.groupby(groupby_multiindex)).apply(lambda x: x[[field_name for field_name in performance_df.columns.to_list() if field_name not in groupby_multiindex]].to_dict('index')).rename("Performance")
 ####################
-#output = performance_df.copy()
-#purpose = "performance-df-JSON-series"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = performance_df.copy()
+purpose = "performance-df-JSON-series"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 performance_df = performance_df.apply(lambda performance_JSON: remove_null_counts(performance_JSON))
 ####################
@@ -428,30 +428,30 @@ logging.debug(f"JSON with `Performance` nesting:\n{performance_df.to_json(force_
 #Section: Combine Nested JSON Groupings
 combined_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df, performance_df], axis='columns', ignore_index=False)
 ####################
-#output = combined_df.copy()
-#purpose = "create-combined-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = combined_df.copy()
+purpose = "create-combined-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 combined_df['Attribute_Performance'] = combined_df['Attribute_Performance'].apply(lambda attribute_performance_pairs: update_method_with_return_value(attribute_performance_pairs,{k:v[0] for k,v in combined_df.to_dict('list').items() if k=="Performance"}))
 combined_df = combined_df.drop(columns='Performance')
 ####################
-#output = combined_df.copy()
-#purpose = "combined-df-attribute-performance"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = combined_df.copy()
+purpose = "combined-df-attribute-performance"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 #Subsection: Deduplicate Records
 #Subsection: Add Other JSON Groupings
@@ -479,30 +479,30 @@ final_df['sort'] = final_df[groupby_multiindex].apply(
 )
 fields_to_drop_at_end.append('sort')  # So this field is removed in the next subsection
 ####################
-#output = final_df.copy()
-#purpose = "create-final-df"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = final_df.copy()
+purpose = "create-final-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 record_reordering_dict = {metadata_string: record_sorting_dict[metadata_string] for metadata_string in final_df['sort'].tolist()}
 final_df['sort'] = final_df['sort'].replace(record_reordering_dict)
 ####################
-#output = final_df.copy()
-#purpose = "final-df-with-sort"
-#number = number + 1
-#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-#try:
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-#except ValueError:
-#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-#    output.index = output.index.set_names(new_index_names)
-#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+output = final_df.copy()
+purpose = "final-df-with-sort"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 final_df = final_df.sort_values(
     by='sort',
