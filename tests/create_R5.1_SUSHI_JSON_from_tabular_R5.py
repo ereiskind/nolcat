@@ -287,7 +287,7 @@ except ValueError:
 ####################
 logging.debug(f"`outside_attribute_performance_df`\n{outside_attribute_performance_df}")
 
-#Section: Organize Metadata Inside `Attribute_Performance` Metadata
+#Section: Organize Metadata Inside `Attribute_Performance`
 inside_attribute_performance_df = join_multiindex_df.copy()
 inside_attribute_performance_df = inside_attribute_performance_df[metadata_inside_attribute_performance]
 ####################
