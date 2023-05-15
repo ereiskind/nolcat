@@ -55,6 +55,22 @@ def remove_null_counts(JSON):
     return outer_dict
 
 
+def update_method_with_return_value(dict1, dict2):
+    """This function performs the Python `dictionary.update()` method and returns the modified dictionary.
+
+    The Python `dictionary.update()` method modifies the dictionary in place and returns `None`; this function is a way to get the result of that method as a return value.
+
+    Args:
+        dict1 (dict): a dictionary running the `update()` method
+        dict2 (dict): a dictionary fed into the `update()` method
+
+    Returns:
+        dict: the combination of all the key-value pairs in `dict1` and `dict2`
+    """
+    dict1.update(dict2)
+    return dict1
+
+
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
 file_path = pathlib.Path(file_path)
