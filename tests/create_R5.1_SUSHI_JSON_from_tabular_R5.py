@@ -214,6 +214,41 @@ fields_inside_attribute_performance = [
 ]
 metadata_inside_attribute_performance = [field for field in df_field_names if field in fields_inside_attribute_performance]
 
+
+#Section: Organize Metadata in `Performance`
+#Subsection: Pivot Data
+
+#Subsection: Set Field Names
+
+#Subsection: Create JSON Field
+
+
+#Section: Organize Metadata in `Attribute_Performance`
+#Subsection: Update Null Values and Index Field Names
+
+#Subsection: Deduplicate Records
+
+#ToDo: Create other nested subsections
+
+#Subsection: Add `Performance` Section as Key-Value Pair
+
+
+#Section: Organize Metadata Outside `Attribute_Performance`
+#Subsection: Update Null Values and Index Field Names
+
+#Subsection: Deduplicate Records
+
+#ToDo: Create other nested subsections
+
+#Subsection: Add `Attribute-Performance` Section as Key-Value Pair
+
+
+#Section: Create Final JSON
+#Subsection: Restore Initial Record Order
+
+#Subsection: Organize Fields and Data Types
+
+
 #Section: Organize Metadata Outside `Attribute_Performance`
 outside_attribute_performance_df = join_multiindex_df.copy()
 outside_attribute_performance_df = outside_attribute_performance_df[metadata_outside_attribute_performance]
