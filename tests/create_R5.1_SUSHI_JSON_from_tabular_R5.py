@@ -200,13 +200,17 @@ logging.info(f"Metadata strings with ordering numbers:\n{record_sorting_dict}")
 
 #Subsection: Create `Attribute_Performance` Metadata Field Lists
 fields_outside_attribute_performance = [
-    "Platform",  # PR
+    "Platform",  # PR, DR
+    "Database",  # DR
+    "Publisher",  # DR
+    "Publisher_ID",  # DR
+    "Proprietary_ID", # DR
 ]
 metadata_outside_attribute_performance = [field for field in df_field_names if field in fields_outside_attribute_performance]
 
 fields_inside_attribute_performance = [
-    "Data_Type",  # PR
-    "Access_Method",  # PR
+    "Data_Type",  # PR, DR
+    "Access_Method",  # PR, DR
 ]
 metadata_inside_attribute_performance = [field for field in df_field_names if field in fields_inside_attribute_performance]
 
