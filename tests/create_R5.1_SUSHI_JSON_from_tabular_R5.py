@@ -521,3 +521,28 @@ except ValueError:
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 logging.info(f"`final_df` with original record order restored:\n{final_df}")
+
+#Subsection: Organize Fields and Data Types
+index_field_names = [field_name for field_name in final_df.columns.to_list() if field_name[6:] in metadata_multiindex_fields]
+fields_to_drop_at_end = fields_to_drop_at_end + index_field_names
+final_df = final_df.drop(columns=fields_to_drop_at_end)
+final_df = final_df.replace({"`None`": None})
+fields_to_update_dtypes = [field for field in metadata_multiindex_fields if field in final_df.columns.to_list()]
+df_dtypes = {key: value for (key, value) in df_dtypes.items() if key in fields_to_update_dtypes}  # JSON uses strings for dates
+final_df = final_df.astype(df_dtypes)
+logging.info(f"`final_df` summary info:\n{return_string_of_dataframe_info(final_df)}")
+####################
+output = final_df.copy()
+purpose = "final-final-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+logging.debug(f"`final_df`:\n{final_df}")
+logging.info(f"Final JSON:\n{final_df.to_json(force_ascii=False, indent=4, orient='table', index=False)}")
+final_df.to_json(directory_with_final_JSONs / f'{report_name}_final.json', force_ascii=False, indent=4, orient='table', index=False)
