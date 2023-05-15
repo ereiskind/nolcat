@@ -342,7 +342,7 @@ inside_attribute_performance_df =  inside_attribute_performance_df.drop(columns=
 #    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
-inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance].to_dict('records')).rename("Attribute_Performance")
+inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance].to_dict('records')[0]).rename("Attribute_Performance")
 ####################
 output = inside_attribute_performance_df.copy()
 purpose = "final-inside-attribute-df-via-groupby"
