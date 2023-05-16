@@ -463,57 +463,8 @@ except ValueError:
 
 
 #Section: Create Final JSON
-#Subsection: Restore Initial Record Order
-
-#Subsection: Organize Fields and Data Types
-
-
-#Section: Combine Nested JSON Groupings
-combined_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df, performance_df], axis='columns', ignore_index=False)
-####################
-output = combined_df.copy()
-purpose = "create-combined-df"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-combined_df['Attribute_Performance'] = combined_df['Attribute_Performance'].apply(lambda attribute_performance_pairs: update_method_with_return_value(attribute_performance_pairs,{k:v[0] for k,v in combined_df.to_dict('list').items() if k=="Performance"}))
-combined_df = combined_df.drop(columns='Performance')
-####################
-output = combined_df.copy()
-purpose = "combined-df-attribute-performance"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
 #Subsection: Deduplicate Records
-#Subsection: Add Other JSON Groupings
-####################
-output = combined_df.copy()
-purpose = "final-combined-df"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-####################
-logging.debug(f"`combined_df`\n{performance_df}")
-logging.debug(f"JSON with `Attribute_Performance` nesting:\n{performance_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
 
-#Section: Create Final JSON
 #Subsection: Restore Initial Record Order
 final_df = combined_df.reset_index()
 final_df['sort'] = final_df[groupby_multiindex].apply(
