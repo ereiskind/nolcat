@@ -365,7 +365,6 @@ inside_attribute_performance_df = pd.concat([inside_attribute_performance_df, pe
 ####################
 
 #Subsection: Create JSON Field
-inside_attribute_performance_df['temp'] = "temp"  # To retain the fields being used by the groupby as an index, there needs to be a field that isn't used in the groupby or in the lambda
 inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance + ['Performance']].to_dict('records')[0]).rename("Attribute_Performance")
 ####################
 output = inside_attribute_performance_df.copy()
