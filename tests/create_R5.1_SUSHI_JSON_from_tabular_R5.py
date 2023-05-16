@@ -298,6 +298,7 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
+
 #Subsection: Update Null Values and Index Field Names
 inside_attribute_performance_df = inside_attribute_performance_df.replace({"`None`": None})
 inside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names}
@@ -389,7 +390,7 @@ logging.debug(f"JSON with `Attribute_Performance` nesting:\n{inside_attribute_pe
 
 #ToDo: Create other nested subsections
 
-#Subsection: Add `Attribute-Performance` Section as Key-Value Pair
+#Subsection: Add `Attribute_Performance` Section as Key-Value Pair
 
 
 #Section: Create Final JSON
