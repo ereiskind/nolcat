@@ -301,8 +301,7 @@ except ValueError:
 
 #Subsection: Update Null Values and Index Field Names
 inside_attribute_performance_df = inside_attribute_performance_df.replace({"`None`": None})
-inside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names}
-inside_attribute_performance_df.index = inside_attribute_performance_df.index.set_names(inside_attribute_performance_index_names)
+inside_attribute_performance_df.index = inside_attribute_performance_df.index.set_names({field_name:f"index_{field_name}" for field_name in inside_attribute_performance_df.index.names})
 ####################
 output = inside_attribute_performance_df.copy()
 purpose = "inside-attribute-df-rename-index"
@@ -401,8 +400,7 @@ except ValueError:
 
 #Subsection: Update Null Values and Index Field Names
 outside_attribute_performance_df = outside_attribute_performance_df.replace({"`None`": None})
-outside_attribute_performance_index_names = {field_name:f"index_{field_name}" for field_name in outside_attribute_performance_df.index.names}
-outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names(outside_attribute_performance_index_names)
+outside_attribute_performance_df.index = outside_attribute_performance_df.index.set_names({field_name:f"index_{field_name}" for field_name in outside_attribute_performance_df.index.names})
 ####################
 output = outside_attribute_performance_df.copy()
 purpose = "outside-attribute-df-rename-index"
@@ -449,7 +447,7 @@ except ValueError:
 #ToDo: Create other nested subsections
 
 #Subsection: Add `Attribute_Performance` Section as Key-Value Pair
-outside_attribute_performance_df = outside_attribute_performance_df.set_index([field_name for field_name in outside_attribute_performance_index_names.values()])
+outside_attribute_performance_df = outside_attribute_performance_df.set_index(groupby_multiindex)
 ####################
 output = outside_attribute_performance_df.copy()
 purpose = "outside-attribute-df-restore-index"
