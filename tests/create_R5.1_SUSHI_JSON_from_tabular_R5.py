@@ -446,11 +446,16 @@ outside_attribute_performance_df =  outside_attribute_performance_df.drop(column
 
 #ToDo: Create other nested subsections
 
-#Subsection: Add `Attribute_Performance` Section as Key-Value Pair
+#Subsection: Add Nested Subsections to Dataframe for Metadata Outside `Attribute_Performance`
 outside_attribute_performance_df = outside_attribute_performance_df.set_index(groupby_multiindex)
+
+
+#Section: Create Final JSON
+#Subsection: Combine Fields Inside and Outside `Attribute_Performance`
+outside_attribute_performance_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df], axis='columns', ignore_index=False)
 ####################
 output = outside_attribute_performance_df.copy()
-purpose = "outside-attribute-df-restore-index"
+purpose = "outside-attribute-df-add-performance-attributes"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -461,8 +466,6 @@ except ValueError:
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
-
-#Section: Create Final JSON
 #Subsection: Deduplicate Records
 
 #Subsection: Restore Initial Record Order
