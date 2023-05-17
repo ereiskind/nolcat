@@ -452,10 +452,36 @@ outside_attribute_performance_df = outside_attribute_performance_df.set_index(gr
 
 #Section: Create Final JSON
 #Subsection: Combine Fields Inside and Outside `Attribute_Performance`
-outside_attribute_performance_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df], axis='columns', ignore_index=False)
+combined_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df], axis='columns', ignore_index=False)
 ####################
-output = outside_attribute_performance_df.copy()
-purpose = "outside-attribute-df-add-performance-attributes"
+output = combined_df.copy()
+purpose = "create-combined-df"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+combined_df = (combined_df.groupby([f"index_{field_name}" for field_name in metadata_outside_attribute_performance])).apply(lambda x: x[['Attribute_Performance']].to_dict('list')).rename("temp_Attribute_Performance")
+####################
+output = combined_df.copy()
+purpose = "combined-df-grouping-attribute-performance"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+combined_df = outside_attribute_performance_df.join(combined_df)
+####################
+output = combined_df.copy()
+purpose = "combined-df-recombine-data"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
