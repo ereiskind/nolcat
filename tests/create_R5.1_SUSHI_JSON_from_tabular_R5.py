@@ -444,6 +444,83 @@ outside_attribute_performance_df =  outside_attribute_performance_df.drop(column
 #    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 
+#Subsection: Organize Metadata in `Item_ID`
+if report_type == "DR":
+    if 'Proprietary_ID' in list(join_multiindex_df.columns):  # If the proprietary ID field, the only item ID field in DR, exists
+        fields_to_drop_at_end.append('Proprietary_ID')  #ToDo: How is this used, if it's used at all?
+        if not join_multiindex_df['Proprietary_ID'].eq("`None`").all():  # If the proprietary ID field has values
+            item_ID_values_df = join_multiindex_df.drop(columns=[field_name for field_name in metadata_multiindex_fields if field_name != "Proprietary_ID"])  # This leaves `Begin_Date` for the sake of the groupby later on
+            ####################
+            output = item_ID_values_df.copy()
+            purpose = "create-item-ID-df"
+            number = number + 1
+            output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+            try:
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            except ValueError:
+                new_index_names = {name:f"_index_{name}" for name in output.index.names}
+                output.index = output.index.set_names(new_index_names)
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            ####################
+            item_ID_values_df = item_ID_values_df.replace({"`None`": None})
+            item_ID_values_df = item_ID_values_df.rename(columns={"Proprietary_ID": "Proprietary"})
+            item_ID_values_df.index = item_ID_values_df.index.set_names({field_name:f"index_{field_name}" for field_name in item_ID_values_df.index.names})
+            ####################
+            output = item_ID_values_df.copy()
+            purpose = "create-item-ID-rename-fields"
+            number = number + 1
+            output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+            try:
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            except ValueError:
+                new_index_names = {name:f"_index_{name}" for name in output.index.names}
+                output.index = output.index.set_names(new_index_names)
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            ####################
+            item_ID_values_df = item_ID_values_df.reset_index()
+            ####################
+            output = item_ID_values_df.copy()
+            purpose = "create-item-ID-reset-index-before-dedupe"
+            number = number + 1
+            output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+            try:
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            except ValueError:
+                new_index_names = {name:f"_index_{name}" for name in output.index.names}
+                output.index = output.index.set_names(new_index_names)
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            ####################
+            item_ID_values_df['repeat'] = item_ID_values_df.duplicated(subset=groupby_multiindex, keep='first')
+            item_ID_values_df = item_ID_values_df.loc[item_ID_values_df['repeat'] == False]
+            item_ID_values_df = item_ID_values_df.drop(columns=['repeat'])
+            ####################
+            output = item_ID_values_df.copy()
+            purpose = "item-ID-df-deduped"
+            number = number + 1
+            output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+            try:
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            except ValueError:
+                new_index_names = {name:f"_index_{name}" for name in output.index.names}
+                output.index = output.index.set_names(new_index_names)
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            ####################
+            item_ID_values_df = (item_ID_values_df.groupby(groupby_multiindex)).apply(lambda item_ID_groupby: item_ID_groupby[['Proprietary']].to_dict('records')[0]).rename("Item_ID")
+            ####################
+            output = item_ID_values_df.copy()
+            purpose = "final-item-ID-df"
+            number = number + 1
+            output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+            try:
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            except ValueError:
+                new_index_names = {name:f"_index_{name}" for name in output.index.names}
+                output.index = output.index.set_names(new_index_names)
+                output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+            ####################
+            logging.debug(f"`item_ID_values_df`:\n{item_ID_values_df}")
+            logging.debug(f"JSON with `Item_ID` nesting:\n{item_ID_values_df.to_json(force_ascii=False, indent=4, orient='table', index=True)}")
+
 #ToDo: Create other nested subsections
 
 #Subsection: Add Nested Subsections to Dataframe for Metadata Outside `Attribute_Performance`
