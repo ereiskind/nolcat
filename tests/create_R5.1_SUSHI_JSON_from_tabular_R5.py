@@ -365,7 +365,7 @@ inside_attribute_performance_df = pd.concat([inside_attribute_performance_df, pe
 ####################
 
 #Subsection: Create JSON Field
-inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance + ['Performance']].to_dict('records')[0]).rename("Attribute_Performance")
+inside_attribute_performance_df = (inside_attribute_performance_df.groupby(groupby_multiindex)).apply(lambda inside_groupby_df: inside_groupby_df[metadata_inside_attribute_performance + ['Performance']].to_dict('records')[0]).rename("temp_Attribute_Performance")
 ####################
 output = inside_attribute_performance_df.copy()
 purpose = "final-inside-attribute-df"
@@ -609,7 +609,7 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-combined_df = (combined_df.groupby([f"index_{field_name}" for field_name in metadata_outside_attribute_performance])).apply(lambda x: x[['Attribute_Performance']].to_dict('list')).rename("temp_Attribute_Performance")
+combined_df = (combined_df.groupby([f"index_{field_name}" for field_name in metadata_outside_attribute_performance])).apply(lambda x: x[['temp_Attribute_Performance']].to_dict('list')['temp_Attribute_Performance']).rename("Attribute_Performance")
 ####################
 output = combined_df.copy()
 purpose = "combined-df-grouping-attribute-performance"
