@@ -594,6 +594,42 @@ except ValueError:
 logging.info(f"`combined_df` with original record order restored:\n{combined_df}")
 
 #Subsection: Deduplicate Records
+# Using pandas' `duplicated` method on dict data type fields raises a TypeError, so their contents must be compared as equivalent strings
+fields_used_in_deduping = [field_name for field_name in fields_used_in_join_multiindex if field_name in combined_df.columns.to_list()]
+for field_name in combined_df.columns.to_list():
+    if combined_df[field_name].apply(lambda cell_value: repr(type(cell_value))).eq("<class 'dict'>").all():
+        string_field_name = f"{field_name}_string"
+        combined_df[string_field_name] = combined_df[field_name].astype('string')
+        fields_used_in_deduping.append(string_field_name)
+combined_df['repeat'] = combined_df.duplicated(subset=fields_used_in_deduping, keep='first')
+####################
+output = combined_df.copy()
+purpose = "combined-df-with-fields-for-final-dedupe"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+combined_df = combined_df.loc[combined_df['repeat'] == False]
+combined_df = combined_df.drop(columns=fields_used_in_deduping + ['repeat'])
+combined_df = combined_df.set_index(groupby_multiindex)
+####################
+output = combined_df.copy()
+purpose = "combined-df-after-final-dedupe"
+number = number + 1
+output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+try:
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+except ValueError:
+    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+    output.index = output.index.set_names(new_index_names)
+    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+####################
+logging.debug(f"`combined_df` after deduping:\n{combined_df}")
 
 #Subsection: Combine Fields Inside and Outside `Attribute_Performance`
 combined_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df], axis='columns', ignore_index=False)
@@ -635,8 +671,6 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-
-#Subsection: Deduplicate Records
 
 #Subsection: Organize Fields and Data Types
 index_field_names = [field_name for field_name in final_df.columns.to_list() if field_name[6:] in metadata_multiindex_fields]
