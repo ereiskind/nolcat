@@ -632,10 +632,10 @@ except ValueError:
 logging.debug(f"`combined_df` after deduping:\n{combined_df}")
 
 #Subsection: Combine Fields Inside and Outside `Attribute_Performance`
-combined_df = pd.concat([outside_attribute_performance_df, inside_attribute_performance_df], axis='columns', ignore_index=False)
+combined_df = pd.merge(outside_attribute_performance_df, combined_df, suffixes=(None, "_DELETE"), on=groupby_multiindex)
 ####################
 output = combined_df.copy()
-purpose = "create-combined-df"
+purpose = "combined-df-all-fields"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -645,10 +645,10 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-combined_df = (combined_df.groupby([f"index_{field_name}" for field_name in metadata_outside_attribute_performance])).apply(lambda x: x[['temp_Attribute_Performance']].to_dict('list')['temp_Attribute_Performance']).rename("Attribute_Performance")
+combined_df = combined_df.drop(columns=[field_name for field_name in combined_df.columns.to_list() if field_name.endswith("_DELETE")] + fields_to_drop_at_end)  # Any fields using the values from merge's `suffix` argument are duplicates; this removes one of the duplicates
 ####################
 output = combined_df.copy()
-purpose = "combined-df-grouping-attribute-performance"
+purpose = "combined-df-fields-pruned"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
