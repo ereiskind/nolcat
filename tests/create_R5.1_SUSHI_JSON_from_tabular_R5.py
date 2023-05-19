@@ -643,10 +643,15 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-final_df = final_df.drop(columns=[field_name for field_name in final_df.columns.to_list() if field_name.endswith("_DELETE")] + fields_to_drop_at_end)  # Any fields using the values from merge's `suffix` argument are duplicates; this removes one of the duplicates
+final_df = pd.merge(
+    outside_attribute_performance_df,
+    final_df,  # This argument can be a series, so `final_df` is in the secondary position
+    on=[field_name for field_name in groupby_multiindex if field_name[6:] in metadata_outside_attribute_performance],
+    suffixes=("_DELETE", None)
+)
 ####################
 output = final_df.copy()
-purpose = "final-df-fields-pruned"
+purpose = "final-df-all-fields"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -656,10 +661,13 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-combined_df = outside_attribute_performance_df.join(combined_df)
+# The merge operation creates a record for each unique combination of all the metadata fields, but a record for each unique combination of the metadata fields outside `Attribute_Performance` is needed at this point; since those metadata fields are the index fields, deduplication by the index is used
+final_df['repeat'] = final_df.index.duplicated(keep='first')
+final_df = final_df.loc[final_df['repeat'] == False]
+final_df = final_df.drop(columns=[field_name for field_name in final_df.columns.to_list() if field_name.endswith("_DELETE")] + fields_to_drop_at_end + ['repeat'])  # Any fields using the values from merge's `suffix` argument are duplicates; this removes one of the duplicates
 ####################
-output = combined_df.copy()
-purpose = "combined-df-recombine-data"
+output = final_df.copy()
+purpose = "final-df-pruned"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
