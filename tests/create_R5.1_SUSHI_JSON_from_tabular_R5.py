@@ -447,7 +447,7 @@ outside_attribute_performance_df =  outside_attribute_performance_df.drop(column
 #Subsection: Organize Metadata in `Item_ID`
 if report_type == "DR":
     if 'Proprietary_ID' in list(join_multiindex_df.columns):  # If the proprietary ID field, the only item ID field in DR, exists
-        fields_to_drop_at_end.append('Proprietary_ID')  #ToDo: How is this used, if it's used at all?
+        fields_to_drop_at_end.append('Proprietary_ID')
         if not join_multiindex_df['Proprietary_ID'].eq("`None`").all():  # If the proprietary ID field has values
             item_ID_values_df = join_multiindex_df.drop(columns=[field_name for field_name in metadata_multiindex_fields if field_name != "Proprietary_ID"])  # This leaves `Begin_Date` for the sake of the groupby later on
             ####################
@@ -548,48 +548,47 @@ combined_df['sort'] = combined_df[groupby_multiindex].apply(
     lambda cell_value: '|'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
     axis='columns',
 )
-fields_to_drop_at_end.append('sort')  # So this field is removed in the next subsection
 ####################
-output = combined_df.copy()
-purpose = "combined-df-add-sort-field"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#output = combined_df.copy()
+#purpose = "combined-df-add-sort-field"
+#number = number + 1
+#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+#try:
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#except ValueError:
+#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+#    output.index = output.index.set_names(new_index_names)
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 record_reordering_dict = {metadata_string: record_sorting_dict[metadata_string] for metadata_string in combined_df['sort'].tolist()}
 combined_df['sort'] = combined_df['sort'].replace(record_reordering_dict)
 ####################
-output = combined_df.copy()
-purpose = "combined-df-with-sort"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#output = combined_df.copy()
+#purpose = "combined-df-with-sort"
+#number = number + 1
+#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+#try:
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#except ValueError:
+#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+#    output.index = output.index.set_names(new_index_names)
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 combined_df = combined_df.sort_values(
     by='sort',
     ignore_index=True,  # This resets the record index
 )
 ####################
-output = combined_df.copy()
-purpose = "combined-df-sorted"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#output = combined_df.copy()
+#purpose = "combined-df-sorted"
+#number = number + 1
+#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+#try:
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#except ValueError:
+#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+#    output.index = output.index.set_names(new_index_names)
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 logging.info(f"`combined_df` with original record order restored:\n{combined_df}")
 
@@ -603,16 +602,16 @@ for field_name in combined_df.columns.to_list():
         fields_used_in_deduping.append(string_field_name)
 combined_df['repeat'] = combined_df.duplicated(subset=fields_used_in_deduping, keep='first')
 ####################
-output = combined_df.copy()
-purpose = "combined-df-with-fields-for-final-dedupe"
-number = number + 1
-output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
-try:
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
-except ValueError:
-    new_index_names = {name:f"_index_{name}" for name in output.index.names}
-    output.index = output.index.set_names(new_index_names)
-    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#output = combined_df.copy()
+#purpose = "combined-df-with-fields-for-final-dedupe"
+#number = number + 1
+#output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
+#try:
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
+#except ValueError:
+#    new_index_names = {name:f"_index_{name}" for name in output.index.names}
+#    output.index = output.index.set_names(new_index_names)
+#    output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
 combined_df = combined_df.loc[combined_df['repeat'] == False]
 combined_df = combined_df.drop(columns=fields_used_in_deduping + ['repeat'])
@@ -631,11 +630,11 @@ except ValueError:
 ####################
 logging.debug(f"`combined_df` after deduping:\n{combined_df}")
 
-#Subsection: Combine Fields Inside and Outside `Attribute_Performance`
-combined_df = pd.merge(outside_attribute_performance_df, combined_df, suffixes=(None, "_DELETE"), on=groupby_multiindex)
+#Subsection: Combine All Fields with Proper Nesting
+final_df = (combined_df.groupby([f"index_{field_name}" for field_name in metadata_outside_attribute_performance])).apply(lambda x: x[['temp_Attribute_Performance']].to_dict('list')['temp_Attribute_Performance']).rename("Attribute_Performance")
 ####################
-output = combined_df.copy()
-purpose = "combined-df-all-fields"
+output = final_df.copy()
+purpose = "create-final-df"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
@@ -645,10 +644,10 @@ except ValueError:
     output.index = output.index.set_names(new_index_names)
     output.to_json(directory_with_final_JSONs / f'__{number}_test_{purpose}.json', force_ascii=False, indent=4, orient='table', index=True)
 ####################
-combined_df = combined_df.drop(columns=[field_name for field_name in combined_df.columns.to_list() if field_name.endswith("_DELETE")] + fields_to_drop_at_end)  # Any fields using the values from merge's `suffix` argument are duplicates; this removes one of the duplicates
+final_df = final_df.drop(columns=[field_name for field_name in final_df.columns.to_list() if field_name.endswith("_DELETE")] + fields_to_drop_at_end)  # Any fields using the values from merge's `suffix` argument are duplicates; this removes one of the duplicates
 ####################
-output = combined_df.copy()
-purpose = "combined-df-fields-pruned"
+output = final_df.copy()
+purpose = "final-df-fields-pruned"
 number = number + 1
 output.to_csv(directory_with_final_JSONs / f'__{number}_test_{purpose}.csv', encoding='utf-8', errors='backslashreplace')
 try:
