@@ -217,11 +217,11 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        #Subsection: Check Master Reports for Data
-        # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
+        #Subsection: Check Reports for Data
+        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors.
         #ToDo: Rework subsection to ask if empty reports are errors--when there's no usage or when a resource with no databases offers a DR, the empty report is appropriate
-        master_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
-        if master_report_regex.search(self.call_path):
+        custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
+        if custom_report_regex.search(self.call_path):
             try:
                 if len(API_response['Report_Items']) == 0:
                     logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
@@ -242,7 +242,7 @@ class SUSHICallAndResponse:
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
 
-        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
+        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for report calls returning usage data, it means not loading the report data into the database.
         
         Args:
             error_contents (dict or list): the contents of the error message(s)
