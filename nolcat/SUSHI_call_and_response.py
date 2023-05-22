@@ -64,35 +64,11 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response or an error message
         """
-        #Section: Make API Call
-        logging.info(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
-        API_call_URL = self.call_URL + self.call_path
-
-        #Subsection: Make GET Request
-        try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
-            time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
-            API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
-            logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
-            API_response.raise_for_status()
-        
-        except Timeout as error:
-            try:  # Timeout errors seem to be random, so going to try get request again with more time
-                logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
-                time.sleep(1)
-                API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
-                API_response.raise_for_status()
-            except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
-                logging.warning(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}")
-                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
-            except Exception as error_after_timeout:
-                logging.warning(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}")
-                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
-        except Exception as error:
-            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            logging.warning(f"Call to {self.calling_to} raised error {error}")
-            return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
-
-        logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
+        logging.info(f"Making SUSHI call to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        API_response = self._make_API_call()
+        if repr(type(API_response)) == "<class 'dict'>":  # Meaning the SUSHI API call couldn't be made
+            logging.warning(API_response)
+            return API_response
 
         #Subsection: Convert Response to Python Data Types
         if API_response.text == "":
@@ -247,7 +223,32 @@ class SUSHICallAndResponse:
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
         """
-        pass
+        logging.debug(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        API_call_URL = self.call_URL + self.call_path
+
+        try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
+            time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
+            API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
+            logging.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
+            API_response.raise_for_status()
+
+        except Timeout as error:
+            try:  # Timeout errors seem to be random, so going to try get request again with more time
+                logging.debug(f"Calling {self.calling_to} for {self.call_path} again.")
+                time.sleep(1)
+                API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
+                API_response.raise_for_status()
+            except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
+            except Exception as error_after_timeout:
+                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
+
+        except Exception as error:
+            #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
+            return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
+
+        logging.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
+        return API_response
 
 
     def _convert_Response_to_JSON(self, API_call_response):
