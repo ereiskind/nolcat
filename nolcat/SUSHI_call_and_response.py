@@ -13,21 +13,21 @@ logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asct
 class SUSHICallAndResponse:
     """A class that makes SUSHI API calls in the StatisticsSources._harvest_R5_SUSHI method.
 
-    This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call` method, which has two major results:
-    * Objects of the SUSHICallAndResponse type are never instantiated; a dictionary, the return value of `make_SUSHI_call`, is returned instead.
+    This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call()` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call()` method, which has two major results:
+    * Objects of the `SUSHICallAndResponse` type are never instantiated; a dictionary, the return value of `make_SUSHI_call()`, is returned instead.
     * With multiple return statements, a single item dictionary with the key `ERROR` and a value with a message about the problem can be returned if there's a problem with the API call or the returned SUSHI value.
 
     Attributes:
         self.header_value (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
-        self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
+        self.calling_to (str): the name of statistics source the SUSHI API call is going to (the `StatisticsSources.statistics_source_name` attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         self.parameters (dict): the parameter values for the API call
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
-        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
-        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
+        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the `StatisticsSources._harvest_R5_SUSHI()` method should continue.
+        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
