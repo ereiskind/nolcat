@@ -16,13 +16,23 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 
-* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-* Create new test data JSONs (will occur alongside above)
-* Update ``ConvertJSONDictToDataframe`` to handle R5.1 reports
+* Split ``SUSHICallAndResponse.make_SUSHI_call()`` into two private methods, one making the API call and the other performing the Requests response to Python dictionary conversion, where an error in the latter method causes the Requests ``response.text`` attribute to be saved as a plain text file
+* Move most of ``ConvertJSONDictToDataframe.create_dataframe()`` into new method ``ConvertJSONDictToDataframe._create_dataframe_from_R5_JSON()``
+* Use ``ConvertJSONDictToDataframe.create_dataframe()`` to send into private methods ``ConvertJSONDictToDataframe._create_dataframe_from_R5_JSON()`` and ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()`` and to save JSONs fed into methods as is if the methods return an error
+* Create R5.1 test data JSONs
+
+  * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
+  * Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
+  * Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
+  * Add test for the new files in ``tests.test_ConvertJSONDictToDataframe``
+
+* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
+* Investigate ways to get list of plain text and JSON files saved in S3 bucket due to inability to load into database, load files with ``json.load(<class '_io.TextIOWrapper'>)``, and manipulate contents so they can be added to database
 
 Iteration 2: COUNTER Only Product
 =================================
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Create ability to ingest SQL file with proper insert statements [Line starts with ``INSERT INTO `COUNTERData` VALUES (`` and ends with ``);``, in between should be split at each instance of ``),(`` to create the individual insert statements, which can be turned into records in a dataframe that can go into the database via ``to_sql()``]
 * Create "ingest_usage/upload-COUNTER-reports.html" page
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
