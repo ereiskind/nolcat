@@ -279,9 +279,9 @@ Iteration: Deduplicate Resources
 * Review the main branch of the repo as of commit 207c4a14b521b7f247f5249a080b4a725963b599 (made 2023-01-20)
 * Remove hyphens from all ISBNs to handle their inconsistency in usage and placement
 
-Iteration: Handle Reports Without Corresponding Master Reports
-==============================================================
-* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Master Report" of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()``
+Iteration: Handle Reports Without Corresponding Customizable Reports
+====================================================================
+* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Customizable Report" of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()``
 
 Iteration: Incorporate Springshare Databases A-Z Statistics
 ===========================================================

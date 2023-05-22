@@ -13,21 +13,21 @@ logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asct
 class SUSHICallAndResponse:
     """A class that makes SUSHI API calls in the StatisticsSources._harvest_R5_SUSHI method.
 
-    This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call` method, which has two major results:
-    * Objects of the SUSHICallAndResponse type are never instantiated; a dictionary, the return value of `make_SUSHI_call`, is returned instead.
+    This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call()` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call()` method, which has two major results:
+    * Objects of the `SUSHICallAndResponse` type are never instantiated; a dictionary, the return value of `make_SUSHI_call()`, is returned instead.
     * With multiple return statements, a single item dictionary with the key `ERROR` and a value with a message about the problem can be returned if there's a problem with the API call or the returned SUSHI value.
 
     Attributes:
         self.header_value (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
-        self.calling_to (str): the name of statistics source the SUSHI API call is going to (the StatisticsSources.statistics_source_name attribute)
+        self.calling_to (str): the name of statistics source the SUSHI API call is going to (the `StatisticsSources.statistics_source_name` attribute)
         self.call_URL (str): the root URL for the SUSHI API call
         self.call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         self.parameters (dict): the parameter values for the API call
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
-        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
-        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions` dialog box.
+        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the `StatisticsSources._harvest_R5_SUSHI()` method should continue.
+        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -77,15 +77,15 @@ class SUSHICallAndResponse:
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
-                logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}"}
+                logging.warning(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}")
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
             except Exception as error_after_timeout:
-                logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
+                logging.warning(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}")
+                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-            return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
+            logging.warning(f"Call to {self.calling_to} raised error {error}")
+            return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
 
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
@@ -217,11 +217,11 @@ class SUSHICallAndResponse:
         except:
             pass
 
-        #Subsection: Check Master Reports for Data
-        # Some master reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, master reports containing no data should be caught as potential errors.
+        #Subsection: Check Reports for Data
+        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors.
         #ToDo: Rework subsection to ask if empty reports are errors--when there's no usage or when a resource with no databases offers a DR, the empty report is appropriate
-        master_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
-        if master_report_regex.search(self.call_path):
+        custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
+        if custom_report_regex.search(self.call_path):
             try:
                 if len(API_response['Report_Items']) == 0:
                     logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
@@ -242,7 +242,7 @@ class SUSHICallAndResponse:
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
         """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
 
-        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for master report calls, it means not loading the master report data into the database.
+        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for report calls returning usage data, it means not loading the report data into the database.
         
         Args:
             error_contents (dict or list): the contents of the error message(s)
