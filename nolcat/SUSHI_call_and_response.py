@@ -26,6 +26,8 @@ class SUSHICallAndResponse:
     
     Methods:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
+        _make_API_call: Makes a call to the SUSHI API.
+        _convert_Response_to_JSON: Converts the `text` attribute of a `requests.Response` object to native Python data types.
         _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the `StatisticsSources._harvest_R5_SUSHI()` method should continue.
         _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
     """
@@ -49,12 +51,15 @@ class SUSHICallAndResponse:
         self.parameters = {key: (requests.utils.unquote(value) if repr(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
     
 
+    def __repr__(self):
+        """The printable representation of the class, determining what appears when `{self}` is used in an f-string."""
+        return
+    
+
     def make_SUSHI_call(self):
         """Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
 
-        This API call method handles all the possible calls in the SUSHI standard, converting their JSON responses into native Python data types. Errors in both the API call process and the SUSHI response are handled here, and in those instances where there is an error, a single-item dictionary with the key `ERROR` and a value describing the error is returned instead of SUSHI data.
-
-        To handle statistics sources that respond to SUSHI API calls by downloading a JSON file with the requested data without using Selenium, the API call is in a block for writing binary data to a file, so when the response object contains binary data, it's written to a file. Another block for reading a text file copies the data if a JSON file in the response object into a new file. At this point, the response data is written to a file regardless of how it was initially delivered, so the method can read the data from the file and move on to processing it.
+        This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
 
         Returns:
             dict: the API call response or an error message
@@ -234,9 +239,27 @@ class SUSHICallAndResponse:
         return API_response
 
 
-    def __repr__(self):
-        """The printable representation of the class, determining what appears when `{self}` is used in an f-string."""
-        return
+    def _make_API_call(self):
+        """Makes a call to the SUSHI API.
+
+        This method uses the requests library to handle all the possible calls in the SUSHI standard
+
+        Returns:
+            requests.Response: the complete Response object returned by the GET request to the API
+        """
+        pass
+
+
+    def _convert_Response_to_JSON(self, API_call_response):
+        """Converts the `text` attribute of a `requests.Response` object to native Python data types.
+
+        Args:
+            API_call_response (requests.Response): the response returned by the SUSHI API call
+
+        Returns:
+            dict: the API call response in native Python data types
+        """
+        pass
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
