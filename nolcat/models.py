@@ -276,8 +276,8 @@ class FiscalYears(db.Model):
             logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
-            return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
+            return f"The AUCT records load for FY {self.fiscal_year} had an error: {error}"
 
 
     @hybrid_method
@@ -311,8 +311,8 @@ class FiscalYears(db.Model):
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {format(error)}")
-            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {format(error)}"
+            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {error}")
+            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {error}"
         pass
 
 
@@ -682,8 +682,8 @@ class StatisticsSources(db.Model):
             logging.info("The load was a success.")
             return "The load was a success."
         except Exception as error:
-            logging.warning(f"The load had an error: {format(error)}")
-            return f"The load had an error: {format(error)}"
+            logging.warning(f"The load had an error: {error}")
+            return f"The load had an error: {error}"
 
 
     @hybrid_method
@@ -940,8 +940,8 @@ class AnnualUsageCollectionTracking(db.Model):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}"
 
 
     @hybrid_method

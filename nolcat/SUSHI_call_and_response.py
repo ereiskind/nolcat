@@ -82,15 +82,15 @@ class SUSHICallAndResponse:
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
-                logging.warning(f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {format(error)} and {format(error_after_timeout)}"}
+                logging.warning(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}")
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
             except Exception as error_after_timeout:
-                logging.warning(f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}")
-                return {"ERROR": f"Call to {self.calling_to} raised errors {format(error)} and {format(error_after_timeout)}"}
+                logging.warning(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}")
+                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            logging.warning(f"Call to {self.calling_to} raised error {format(error)}")
-            return {"ERROR": f"Call to {self.calling_to} raised error {format(error)}"}
+            logging.warning(f"Call to {self.calling_to} raised error {error}")
+            return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
 
         logging.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
 
