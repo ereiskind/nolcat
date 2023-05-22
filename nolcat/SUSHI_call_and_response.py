@@ -64,18 +64,19 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response or an error message
         """
+        #Section: Make API Call
         logging.info(f"Making SUSHI call to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_response = self._make_API_call()
         if repr(type(API_response)) == "<class 'dict'>":  # Meaning the SUSHI API call couldn't be made
             logging.warning(API_response)
             return API_response
 
-        #Subsection: Convert Response to Python Data Types
+        #Section: Confirm Usage Data in Response
         if API_response.text == "":
             logging.warning(f"Call to {self.calling_to} returned an empty string")
             return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
-        else:
-            pass  # The response contained SUSHI data
+        
+        #Section: Convert Response to Python Data Types
 
         if repr(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
             logging.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
@@ -251,11 +252,11 @@ class SUSHICallAndResponse:
         return API_response
 
 
-    def _convert_Response_to_JSON(self, API_call_response):
+    def _convert_Response_to_JSON(self, API_response):
         """Converts the `text` attribute of a `requests.Response` object to native Python data types.
 
         Args:
-            API_call_response (requests.Response): the response returned by the SUSHI API call
+            API_response (requests.Response): the response returned by the SUSHI API call
         
         Returns:
             dict: the API call response in native Python data types
