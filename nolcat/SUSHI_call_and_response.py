@@ -3,9 +3,13 @@ import time
 import re
 import json
 import ast
+from datetime import datetime
 import requests
 from requests import Timeout
+import pandas as pd
 import pyinputplus
+
+from .app import db
 
 logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
@@ -28,6 +32,7 @@ class SUSHICallAndResponse:
         make_SUSHI_call: Makes a SUSHI API call and packages the response in a JSON-like Python dictionary.
         _make_API_call: Makes a call to the SUSHI API.
         _convert_Response_to_JSON: Converts the `text` attribute of a `requests.Response` object to native Python data types.
+        _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
         _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the `StatisticsSources._harvest_R5_SUSHI()` method should continue.
         _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
     """
@@ -80,9 +85,11 @@ class SUSHICallAndResponse:
         try:
             converted_API_response = self._convert_Response_to_JSON(API_response)
         except Exception as error:
-            logging.warning(f"")
-            #ToDo: Save `Response.text` to S3 bucket
-            return {"ERROR": ""}
+            return_dict_value = self._save_raw_Response_text(error, API_response.text, exception=True)
+            return {"ERROR": return_dict_value}
+        if len(converted_API_response.keys()) == 1 and list(converted_API_response.keys()) == "ERROR":
+            return_dict_value = self._save_raw_Response_text(converted_API_response['ERROR'], API_response.text)
+            return {"ERROR": return_dict_value}
 
 
         #Section: Check for SUSHI Error Codes
@@ -214,7 +221,7 @@ class SUSHICallAndResponse:
             API_response (requests.Response): the response returned by the SUSHI API call
         
         Returns:
-            dict: the API call response in native Python data types
+            dict: the API call response in native Python data types or an error message
         """
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
@@ -226,13 +233,13 @@ class SUSHICallAndResponse:
                 logging.debug(f"The returned text is in list format and is the list of reports.")
                 API_response = json.loads(API_response.content.decode('utf-8'))
             else:
-                raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
+                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
                 
             if repr(type(API_response)) == "<class 'list'>":
                 API_response = dict(reports = API_response)
                 logging.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
             else:
-                raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
+                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
         
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
@@ -251,7 +258,7 @@ class SUSHICallAndResponse:
                     API_response = API_response[0]
                 
                 else:
-                    raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
+                    return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
             
             elif repr(type(API_response.text)) == "<class 'dict'>":
                 logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
@@ -262,11 +269,39 @@ class SUSHICallAndResponse:
                 API_response = json.loads(API_response[0].content.decode('utf-8'))
             
             else:
-                raise TypeError(f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
+                return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
         
         logging.info(f"SUSHI data converted to {repr(type(API_response))}")
         logging.debug(f"SUSHI data:\n{API_response}")
         return API_response
+    
+
+    def _save_raw_Response_text(self, error_message, Response_text, exception=False):
+        """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
+
+        Args:
+            error_message (str): either details of the situation that raised the error if an expected situation or the name of a Python error if an unexpected situation
+            Response_text (str): the Unicode string that couldn't be converted to native Python data types
+            exception (bool): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
+        
+        Returns:
+            bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
+        """
+        if exception:
+            error_message = f"The `SUSHICallAndResponse._convert_Response_to_JSON()` method unexpectedly raised a(n) `{error_message}` error, meaning the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
+        logging.warning(error_message)
+        
+        statistics_source_ID = pd.read_sql(
+            sql=f'SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to}',
+            con=db.engine,
+        )
+        file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{datetime.now().isoformat()}.txt"
+        #ToDo: If a more specific path is needed, add `from pathlib import Path` and create a variable for that path
+        with open(file_name, 'x', encoding='utf-8', errors='backslashreplace') as file:  # Mode `x` exclusively creates the file, failing if a file of the same name already exists; with a timestamp down to milliseconds in the file name, that shouldn't happen
+            file.write(Response_text)
+        
+        #ToDo: Save the file at `file_name` to the S3 bucket
+        return error_message
 
 
 
