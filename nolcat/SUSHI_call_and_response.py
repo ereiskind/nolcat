@@ -77,57 +77,12 @@ class SUSHICallAndResponse:
             return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
         
         #Section: Convert Response to Python Data Types
-
-        if repr(type(API_response.text)) == "<class 'str'>" and self.call_path == "reports":
-            logging.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
-            API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-            if repr(type(API_response)) == "<class 'list'>":
-                API_response = dict(reports = API_response)
-                logging.debug("The returned text was a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
-            else:
-                logging.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types.")
-                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types."}
-
-        elif repr(type(API_response.text)) == "<class 'str'>":
-            logging.debug("The returned text was read from a downloaded JSON file.")
-            try:
-                API_response = json.loads(API_response.content.decode('utf-8'))
-            except:
-                API_response = ast.literal_eval(API_response.content.decode('utf-8'))  # This will transform values that don't decode as JSONs (generally lists)
-
-            if repr(type(API_response)) == "<class 'dict'>":
-                logging.debug("The returned text was converted to a dictionary.")
-            elif repr(type(API_response)) == "<class 'list'>" and self.call_path == "reports":
-                logging.debug(f"The returned text was converted to a list and is the list of reports, so it will be made the value of an one-item dictionary.")
-                API_response = dict(reports = API_response)
-            elif repr(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
-                logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
-                API_response = API_response[0]
-            else:
-                # Only calls to the `reports` endpoints should return lists; as both `reports` calls and dicts wrapped in a list have been previously handled, any response reaching this point is an error
-                logging.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types.")
-                return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."}
-
-        elif repr(type(API_response.text)) == "<class 'dict'>":
-            logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
-            API_response = json.loads(API_response.content.decode('utf-8'))
-            # Old note says above creates a JSON from the first item in Report_Items rather than the complete content
-        
-        elif repr(type(API_response.text)) == "<class 'list'>" and self.call_path == "reports":
-            logging.debug(f"The returned text is in list format and is the list of reports, so it will be converted into a {repr(type(json.loads(API_response.content.decode('utf-8'))))} and, to match the other reports' data types, made the value of an one-item dictionary.")
-            API_response = json.loads(API_response.content.decode('utf-8'))
-            API_response = dict(reports = API_response)
-        
-        elif repr(type(API_response.text)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0].text)) == "<class 'dict'>":
-            logging.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
-            API_response = json.loads(API_response[0].content.decode('utf-8'))
-        
-        else:
-            logging.warning(f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types.")
-            return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."}
-      
-        logging.info(f"SUSHI data converted to {repr(type(API_response))}")
-        logging.debug(f"SUSHI data:\n{API_response}")
+        try:
+            converted_API_response = self._convert_Response_to_JSON(API_response)
+        except Exception as error:
+            logging.warning(f"")
+            #ToDo: Save `Response.text` to S3 bucket
+            return {"ERROR": ""}
 
 
         #Section: Check for SUSHI Error Codes
@@ -261,7 +216,57 @@ class SUSHICallAndResponse:
         Returns:
             dict: the API call response in native Python data types
         """
-        pass
+        #Section: Convert Text Attributes for Calls to `reports` Endpoint
+        # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
+        if self.call_path == "reports":
+            if repr(type(API_response.text)) == "<class 'str'>":
+                logging.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
+                API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+            elif repr(type(API_response.text)) == "<class 'list'>":
+                logging.debug(f"The returned text is in list format and is the list of reports.")
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            else:
+                raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
+                
+            if repr(type(API_response)) == "<class 'list'>":
+                API_response = dict(reports = API_response)
+                logging.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
+            else:
+                raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
+        
+        #Section: Convert Text Attributes for Calls to Other Endpoints
+        else:
+            if repr(type(API_response.text)) == "<class 'str'>":
+                logging.debug("The returned text was read from a downloaded JSON file.")
+                try:
+                    API_response = json.loads(API_response.content.decode('utf-8'))
+                except:  # This will transform values that don't decode as JSONs (generally lists)
+                    API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+                
+                if repr(type(API_response)) == "<class 'dict'>":
+                    logging.debug("The returned text was converted to a dictionary.")
+                
+                elif repr(type(API_response)) == "<class 'list'>" and len(API_response.text) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
+                    logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                    API_response = API_response[0]
+                
+                else:
+                    raise TypeError(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
+            
+            elif repr(type(API_response.text)) == "<class 'dict'>":
+                logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
+                API_response = json.loads(API_response.content.decode('utf-8'))
+            
+            elif repr(type(API_response.text)) == "<class 'list'>" and len(API_response.text) == 1 and repr(type(API_response[0].text)) == "<class 'dict'>":
+                logging.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                API_response = json.loads(API_response[0].content.decode('utf-8'))
+            
+            else:
+                raise TypeError(f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
+        
+        logging.info(f"SUSHI data converted to {repr(type(API_response))}")
+        logging.debug(f"SUSHI data:\n{API_response}")
+        return API_response
 
 
 
