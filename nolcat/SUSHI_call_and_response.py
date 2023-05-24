@@ -162,19 +162,18 @@ class SUSHICallAndResponse:
             pass
 
         #Subsection: Check Reports for Data
-        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some vendors offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors.
-        #ToDo: Rework subsection to ask if empty reports are errors--when there's no usage or when a resource with no databases offers a DR, the empty report is appropriate
+        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data. 
         custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if custom_report_regex.search(self.call_path):
             try:
                 if len(API_response['Report_Items']) == 0:
-                    logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
-                    return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
+                    logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate.")
+                    return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate."}
             except TypeError:
-                logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no data.")
-                return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no data."}
+                logging.warning(f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate.")
+                return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate."}
         
-        logging.info(f"The SUSHI API response:\n{API_response}")
+        logging.info(f"The SUSHI API response as a JSON:\n{API_response}")
         return API_response
 
 

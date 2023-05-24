@@ -15,7 +15,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Split ``SUSHICallAndResponse.make_SUSHI_call()`` into two private methods, one making the API call and the other performing the Requests response to Python dictionary conversion, where an error in the latter method causes the Requests ``response.text`` attribute to be saved as a plain text file
 * Move most of ``ConvertJSONDictToDataframe.create_dataframe()`` into new method ``ConvertJSONDictToDataframe._create_dataframe_from_R5_JSON()``
 * Use ``ConvertJSONDictToDataframe.create_dataframe()`` to send into private methods ``ConvertJSONDictToDataframe._create_dataframe_from_R5_JSON()`` and ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()`` and to save JSONs fed into methods as is if the methods return an error
 * Create R5.1 test data JSONs
