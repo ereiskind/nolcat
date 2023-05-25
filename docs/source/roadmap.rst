@@ -15,7 +15,8 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Use ``ConvertJSONDictToDataframe.create_dataframe()`` to send into private methods ``ConvertJSONDictToDataframe._create_dataframe_from_R5_JSON()`` and ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()`` and to save JSONs fed into methods as is if the methods return an error
+* Rename Flask factory pattern test module for ``nolcat.app``
+* Write ``nolcat.app.upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
@@ -42,7 +43,7 @@ Iteration 3: Minimum Viable Product
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Write form class for non-COUNTER usage downloads
 * Write "initialization/initial-data-upload-4.html" page
-* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
+* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.app.upload_file_to_S3_bucket()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
@@ -80,6 +81,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
+* Write test for ``nolcat.app.upload_file_to_S3_bucket()``
 
 Basic Enhancement Iterations
 ****************************

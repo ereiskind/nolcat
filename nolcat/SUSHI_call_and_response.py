@@ -9,7 +9,7 @@ from requests import Timeout
 import pandas as pd
 import pyinputplus
 
-from .app import db
+from .app import db, upload_file_to_S3_bucket
 
 logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
@@ -299,7 +299,7 @@ class SUSHICallAndResponse:
         with open(file_name, 'x', encoding='utf-8', errors='backslashreplace') as file:  # Mode `x` exclusively creates the file, failing if a file of the same name already exists; with a timestamp down to milliseconds in the file name, that shouldn't happen
             file.write(Response_text)
         
-        #ToDo: Save the file at `file_name` to the S3 bucket
+        #ToDo: upload_file_to_S3_bucket(file_name)
         return error_message
 
 
