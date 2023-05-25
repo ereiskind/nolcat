@@ -6,11 +6,14 @@ import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
+import numpy as np
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
+from nolcat.app import change_single_field_dataframe_into_series
+from nolcat.app import restore_Boolean_values_to_Boolean_field
 
 
 #Section: Test Flask Factory Pattern
