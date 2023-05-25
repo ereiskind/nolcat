@@ -639,8 +639,10 @@ class StatisticsSources(db.Model):
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-            if df.empty:
-                continue  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database; a `return` statement here would keep any other valid reports from being pulled and processed
+            if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                file_name = f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json"
+                #ToDo: upload_file_to_S3_bucket(self.SUSHI_JSON_dictionary)
+                continue  # A `return` statement here would keep any other reports from being pulled and processed
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report_name
             custom_report_dataframes.append(df)
