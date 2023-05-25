@@ -15,8 +15,8 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Rename Flask factory pattern test module for ``nolcat.app``
 * Write ``nolcat.app.upload_file_to_S3_bucket()``
+* Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation

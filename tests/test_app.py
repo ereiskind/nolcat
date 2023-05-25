@@ -13,6 +13,7 @@ from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
 
 
+#Section: Test Flask Factory Pattern
 def test_flask_app_creation(app):
     """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
     assert repr(app) == "<Flask 'nolcat.app'>"
@@ -131,7 +132,17 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
+#Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_first_new_PK_value():
     """Tests the retrieval of a relation's next primary key value."""
     assert first_new_PK_value('vendors') == 8
+
+
+#ToDo: Write test for `nolcat.app.change_single_field_dataframe_into_series()`
+
+
+#ToDo: Write test for `nolcat.app.restore_Boolean_values_to_Boolean_field()`
+
+
+#ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`
