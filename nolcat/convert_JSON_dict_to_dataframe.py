@@ -66,6 +66,22 @@ class ConvertJSONDictToDataframe:
         logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
         logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
+        COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
+        if COUNTER_release == "5":
+            try:
+                df = self._transform_R5_JSON(report_header_creation_date)
+            except Exception as error:
+                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+        elif COUNTER_release == "5.1":
+            try:
+                df = self._transform_R5b1_JSON()
+            except:
+                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+        else:
+            logging.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+            return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
 
 
     def _transform_R5_JSON(self, report_creation_date):
