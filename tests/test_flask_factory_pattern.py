@@ -25,13 +25,11 @@ def test_flask_client_creation(client):
 
 def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    #Section: Get Data from `GET` Requested Page
     page = client.get('/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     
-    #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
