@@ -134,7 +134,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     expected_output_data = expected_output_data.astype(df_dtypes)
 
     print(retrieved_data.compare(expected_output_data))
-    assert_frame_equal(retrieved_data, expected_output_data)
+    assert_frame_equal(retrieved_data, expected_output_data)  #ToDo: `AssertionError: ExtensionArray NA mask are different`
 
 
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
