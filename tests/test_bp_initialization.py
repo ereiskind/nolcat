@@ -391,11 +391,10 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     )
     statisticsSources_relation_data = statisticsSources_relation_data.astype({
         "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'int',
+        "statistics_source_retrieval_code": 'string',  # String is of a float (aka `n.0`)
         "vendor_ID": 'int',
     })
-    temp = statisticsSources_relation_data.astype({"statistics_source_retrieval_code": 'string',})
-    print(f"*******************\nRetrieval code needs to end as strings of int\nAfter first dtype conversion:\n{statisticsSources_relation_data}\n{statisticsSources_relation_data.dtypes}\n\nAfter second dtype conversion:\n{temp}\n{temp.dtypes}\n*******************")
+    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0])
 
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
