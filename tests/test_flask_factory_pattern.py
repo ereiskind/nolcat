@@ -104,11 +104,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
-    print(f"`retrieved_data` immediately after retrieval: {retrieved_data}")
     retrieved_data = retrieved_data.astype({
         "statistics_source_name": 'string',
         "statistics_source_retrieval_code": 'string',
-        "vendor_ID": 'int',
+        "vendor_name": 'string',
+        "alma_vendor_code": 'string',
     })
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
