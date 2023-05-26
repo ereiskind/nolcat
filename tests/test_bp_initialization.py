@@ -391,10 +391,11 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     )
     statisticsSources_relation_data = statisticsSources_relation_data.astype({
         "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
+        "statistics_source_retrieval_code": 'int',
         "vendor_ID": 'int',
     })
-    print(f"*******************\nDtypes for `` after dtype conversion (confirm retrieval code is string):\n{statisticsSources_relation_data.dtypes}\n*******************")
+    temp = statisticsSources_relation_data.astype({"statistics_source_retrieval_code": 'string',})
+    print(f"*******************\nRetrieval code needs to end as strings of int\nAfter first dtype conversion:\n{statisticsSources_relation_data}\n{statisticsSources_relation_data.dtypes}\n\nAfter second dtype conversion:\n{temp}\n{temp.dtypes}\n*******************")
 
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
@@ -452,7 +453,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    print(f"Compare `statisticsSources`:\n{statisticsSources_relation_data.dtypes.compare(statisticsSources_relation.dtypes)}")
+    print(f"Compare `statisticsSources`:\n{statisticsSources_relation_data.compare(statisticsSources_relation)}")
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
