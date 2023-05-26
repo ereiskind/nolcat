@@ -395,6 +395,9 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         "vendor_ID": 'int',
     })
     statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float)
+    print(f"*************\nBefore second astype:\n{statisticsSources_relation_data.dtypes}\n*************")
+    statisticsSources_relation_data = statisticsSources_relation_data.astype({"statistics_source_retrieval_code": 'string'})
+    print(f"*************\nAfter second astype:\n{statisticsSources_relation_data.dtypes}\n*************")
 
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
@@ -452,7 +455,6 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    print(f"Compare `statisticsSources`:\n{statisticsSources_relation_data.compare(statisticsSources_relation)}")
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
