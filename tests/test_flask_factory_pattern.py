@@ -74,6 +74,7 @@ def test_loading_data_into_relation(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
+    print(f"`retrieved_vendors_data` before dtype conversions:\n{retrieved_vendors_data}")
     retrieved_vendors_data = retrieved_vendors_data.astype({
         "vendor_name": 'string',
         "alma_vendor_code": 'string',

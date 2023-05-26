@@ -451,6 +451,12 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
+    print(f"`statisticsSources` field names: {statisticsSources_relation_data.columns}\n------\n{statisticsSources_relation.columns}")
+    print(f"`statisticsSources` index: {statisticsSources_relation_data.index}\n------\n{statisticsSources_relation.index}")
+    print(f"`statisticsSourceNotes` field names: {statisticsSourceNotes_relation_data.columns}\n------\n{statisticsSourceNotes_relation.columns}")
+    print(f"`statisticsSourceNotes` index: {statisticsSourceNotes_relation_data.index}\n------\n{statisticsSourceNotes_relation.index}")
+    print(f"Compare `statisticsSources`:\n{statisticsSources_relation_data.compare(statisticsSources_relation)}")
+    print(f"Compare `StatisticsSourceNotes`:\n{statisticsSourceNotes_relation_data.compare(statisticsSourceNotes_relation)}")
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)

@@ -670,7 +670,7 @@ class StatisticsSources(db.Model):
         else:
             logging.debug(f"The SUSHI harvest was a success")
         logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
-        df.index += first_new_PK_value('COUNTERData')
+        df.index += first_new_PK_value('COUNTERData')  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` (The `nolcat.app.first_new_PK_value()` method makes a call to the database and thus invokes the engine.)
         logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
@@ -901,7 +901,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
             sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
-            con=db.engine,  #ALERT: This method has no test; running it from command line raises `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` which seems to be common to all hybrid methods run from the command line
+            con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
         )
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
