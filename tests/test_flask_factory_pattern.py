@@ -74,7 +74,6 @@ def test_loading_data_into_relation(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
-    print(f"`retrieved_vendors_data` before dtype conversions:\n{retrieved_vendors_data}")
     retrieved_vendors_data = retrieved_vendors_data.astype({
         "vendor_name": 'string',
         "alma_vendor_code": 'string',
@@ -105,6 +104,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
+    print(f"`retrieved_data` immediately after retrieval: {retrieved_data}")
     retrieved_data = retrieved_data.astype({
         "statistics_source_name": 'string',
         "statistics_source_retrieval_code": 'string',
