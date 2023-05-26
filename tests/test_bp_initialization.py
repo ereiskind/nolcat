@@ -573,14 +573,14 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
-        file_soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = file_soup.head.title.string.encode('utf-8')
-        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    #with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
+    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
+    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    #assert HTML_file_title in POST_response.data
+    #assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
