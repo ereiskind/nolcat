@@ -394,7 +394,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         "statistics_source_retrieval_code": 'string',  # String is of a float (aka `n.0`)
         "vendor_ID": 'int',
     })
-    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0])
+    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float)
 
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
