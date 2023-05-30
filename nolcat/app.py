@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
 from numpy import datetime64, squeeze
+import boto3
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` maintained in the AWS instance, copied to the Docker container during the build process, and imported into this file. This import has been problematic; copying the file into this directory and providing multiple possible import statements in try-except blocks are used to handle the problem."""
 try:
@@ -33,6 +34,14 @@ AWS_SESSION_TOKEN = secrets.Session_Token
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
+
+S3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY,
+    aws_session_token=AWS_SESSION_TOKEN,
+)
+
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""
