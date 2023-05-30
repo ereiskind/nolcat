@@ -276,7 +276,7 @@ class FiscalYears(db.Model):
             logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
+            logging.error(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
             return f"The AUCT records load for FY {self.fiscal_year} had an error: {error}"
 
 
@@ -311,7 +311,7 @@ class FiscalYears(db.Model):
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {error}")
+            #ToDo: logging.error(f"The load for FY {self.fiscal_year} had an error: {error}")
             #ToDo: return f"The load for FY {self.fiscal_year} had an error: {error}"
         pass
 
@@ -628,14 +628,14 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
             else:
-                logging.error(f"This placeholder for potentially calling non-customizable reports caught a {report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                logging.warning(f"This placeholder for potentially calling non-customizable reports caught a {report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.debug(f"Making SUSHI calls for {report_name} report from {self.statistics_source_name}.")
             
             #Subsection: Make API Call
             SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                logging.error(f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                logging.warning(f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
@@ -942,7 +942,7 @@ class AnnualUsageCollectionTracking(db.Model):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
+            logging.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}"
 
 

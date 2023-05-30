@@ -49,7 +49,7 @@ def upload_COUNTER_reports():
             flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        logging.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -107,7 +107,7 @@ def harvest_SUSHI_statistics():
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        logging.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -181,5 +181,5 @@ def upload_non_COUNTER_reports():
             flash(f"The file upload failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        logging.error(f"`form.errors`: {form.errors}")
         return abort(404)
