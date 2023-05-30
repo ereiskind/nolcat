@@ -8,10 +8,7 @@ from flask_wtf.csrf import CSRFProtect
 import pandas as pd
 from numpy import datetime64, squeeze
 
-"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
-
-The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multiple possible import statements in try-except blocks are used to handle the problem.
-"""
+"""Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` maintained in the AWS instance, copied to the Docker container during the build process, and imported into this file. This import has been problematic; copying the file into this directory and providing multiple possible import statements in try-except blocks are used to handle the problem."""
 try:
     import nolcat_secrets as secrets
 except:
@@ -29,6 +26,9 @@ DATABASE_HOST = secrets.Host
 DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
+AWS_ACCESS_KEY = secrets.Access_Key_ID
+AWS_SECRET_KEY = secrets.Secret_Access_Key
+AWS_SESSION_TOKEN = secrets.Session_Token
 
 
 csrf = CSRFProtect()
