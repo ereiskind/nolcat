@@ -69,13 +69,13 @@ class ConvertJSONDictToDataframe:
         COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
         if COUNTER_release == "5":
             try:
-                df = self._transform_R5_JSON(report_header_creation_date)
+                return self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
                 logging.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         elif COUNTER_release == "5.1":
             try:
-                df = self._transform_R5b1_JSON()
+                return self._transform_R5b1_JSON()
             except:
                 logging.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
