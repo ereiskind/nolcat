@@ -1,6 +1,7 @@
 from pathlib import Path
 import io
 import logging
+import os
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -30,6 +31,7 @@ SECRET_KEY = secrets.Secret
 AWS_ACCESS_KEY = secrets.Access_Key_ID
 AWS_SECRET_KEY = secrets.Secret_Access_Key
 AWS_SESSION_TOKEN = secrets.Session_Token
+BUCKET_NAME = secrets.Bucket
 
 
 csrf = CSRFProtect()
@@ -256,15 +258,42 @@ def restore_Boolean_values_to_Boolean_field(series):
     }).astype('boolean')
 
 
-def upload_file_to_S3_bucket(file):
+def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NAME):
     """The function for uploading files to an S3 bucket.
 
-    _extended_summary_
-
     Args:
-        file (_type_): _description_
+        file (file-like object): the file being uploaded to the S3 bucket as a Python object
+        file_name (str): the name the file will be saved under in the S3 bucket
+        client (S3.Client): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
+        bucket (str): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
     
     Returns:
-        _type_: _description_
+        str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    pass
+    try:
+        client.upload_fileobj(
+            Fileobj=file,
+            Bucket=bucket,
+            Key=file_name,
+        )
+        return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+    except Exception as error:
+        logging.warning(f"Trying to upload the object `{file}` as a file-like object raised the error `{error}`.")
+        try:
+            file_path = Path.cwd() / file_name
+            file.save(file_path)  # `upload_file()` takes a file from a saved location, so the file must be saved first
+            
+            try:
+                client.upload_file(
+                    Filename=file_path,
+                    Bucket=bucket,
+                    Key=file_name,
+                )
+            except Exception as error:
+                return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`"
+            
+            os.unlink(file_path)  # This deletes the temporarily saved file
+            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+
+        except Exception as error:
+            return f"Trying to save the object `{file}` raised the error `{error}`."
