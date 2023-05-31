@@ -287,8 +287,8 @@ def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NA
                     Key=file_name,
                 )
             except Exception as error:
-                logging.error(f"Trying to upload the file saved at `{file}` raised the error `{error}`")
-                return f"Trying to upload the file saved at `{file}` raised the error `{error}`"
+                logging.error(f"Trying to upload the file saved at `{file}` raised the error `{error}`.")
+                return f"Trying to upload the file saved at `{file}` raised the error `{error}`."
         
         else:
             try:
@@ -302,8 +302,8 @@ def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NA
                         Key=file_name,
                     )
                 except Exception as error:
-                    logging.error(f"Trying to upload the file saved at `{file_path}` raised the error `{error}`")
-                    return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`"
+                    logging.error(f"Trying to upload the file saved at `{file_path}` raised the error `{error}`.")
+                    return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`."
             
             except Exception as error:
                 logging.error(f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`.")
