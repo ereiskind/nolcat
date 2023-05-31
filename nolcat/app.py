@@ -1,7 +1,6 @@
 from pathlib import Path
 import io
 import logging
-import os
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -262,7 +261,7 @@ def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NA
     """The function for uploading files to an S3 bucket.
 
     Args:
-        file (file-like object): the file being uploaded to the S3 bucket as a Python object
+        file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
         client (S3.Client): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
         bucket (str): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
@@ -279,21 +278,36 @@ def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NA
         return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
     except Exception as error:
         logging.warning(f"Trying to upload the object `{file}` as a file-like object raised the error `{error}`.")
-        try:
-            file_path = Path.cwd() / file_name
-            file.save(file_path)  # `upload_file()` takes a file from a saved location, so the file must be saved first
-            
+
+        if file.is_file():  # Meaning `file` is a path-like object referencing an existing file
             try:
                 client.upload_file(
-                    Filename=file_path,
+                    Filename=file,
                     Bucket=bucket,
                     Key=file_name,
                 )
             except Exception as error:
-                return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`"
+                logging.error(f"Trying to upload the file saved at `{file}` raised the error `{error}`")
+                return f"Trying to upload the file saved at `{file}` raised the error `{error}`"
+        
+        else:
+            try:
+                file_path = Path() / file_name
+                file.save(file_path)  # `upload_file()` takes a file from a saved location, so the file must be saved first
+                
+                try:
+                    client.upload_file(
+                        Filename=file_path,
+                        Bucket=bucket,
+                        Key=file_name,
+                    )
+                except Exception as error:
+                    logging.error(f"Trying to upload the file saved at `{file_path}` raised the error `{error}`")
+                    return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`"
             
-            os.unlink(file_path)  # This deletes the temporarily saved file
+            except Exception as error:
+                logging.error(f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`.")
+                return f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`."
+                
+            file_path.unlink()  # This deletes the file created and saved above; if this file wasn't created, the function would've ended at the return statement above
             return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
-
-        except Exception as error:
-            return f"Trying to save the object `{file}` raised the error `{error}`."
