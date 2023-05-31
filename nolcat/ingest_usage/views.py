@@ -148,35 +148,51 @@ def upload_non_COUNTER_reports():
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         try:
-            #ToDo: file_path_of_record = Path(file path to folder where non-COUNTER usage files will be saved)
-            #ToDo: Uploaded files must be of extension types
-                # "xlsx"
-                # "csv"
-                # "tsv"
-                # "pdf"
-                # "docx"
-                # "pptx"
-                # "txt"
-                # "jpeg"
-                # "jpg"
-                # "png"
-                # "svg"
-                # "json"
-                # "html"
-                # "htm"
-                # "xml"
-                # "zip"
-            #ToDo: record_matching_uploaded_file = non_COUNTER_files_needed.loc[form.AUCT_options.data]
-            #ToDo: int_PK_for_stats_source = record_matching_uploaded_file['AUCT_statistics_source']
-            #ToDo: int_PK_for_fiscal_year = record_matching_uploaded_file['AUCT_fiscal_year']
+            #ToDo: valid_file_extensions = (  # File types allowed are limited to those that can be downloaded in `nolcat.view_usage.views.download_non_COUNTER_usage()`
+                # "xlsx",
+                # "csv",
+                # "tsv",
+                # "pdf",
+                # "docx",
+                # "pptx",
+                # "txt",
+                # "jpeg",
+                # "jpg",
+                # "png",
+                # "svg",
+                # "json",
+                # "html",
+                # "htm",
+                # "xml",
+                # "zip",
+            # )
+            #ToDo: statistics_source_ID, fiscal_year_ID = form.AUCT_options.data  # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+            #ToDo: file_extension = file extension of `form.usage_file.data`
+            #ToDo: if file_extension not in valid_file_extensions:
+                #ToDo: `logging.error(f"")` with message saying the file type is invalid and suggesting conversion to a permissable type
+                #ToDo: `flash(f"")` with message saying the file type is invalid and suggesting conversion to a permissable type
+                #ToDo: return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            #ToDo: file_name = f"{statistics_source_ID}_{fiscal_year_ID}.{file_extension}"
+            #ToDo: logging.debug(f"The non-COUNTER usage file will be named `{file_name}`.")
+            
+            #ToDo: logging_message = upload_file_to_S3_bucket(
+                #form.usage_file.data,
+                #file_name,
+            # )
+            #ToDo: if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+                #ToDo: logging.error(f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved.")
+                #ToDo: `flash(f"{logging_message} As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved.")
+                #ToDo: return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            
             #ToDo: SQL_query = f'''
             #ToDo:     UPDATE annualUsageCollectionTracking
-            #ToDo:     SET usage_file_path = {file_path_of_record}
-            #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
+            #ToDo:     SET usage_file_path = {file_name}
+            #ToDo:     WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
             #ToDo: '''
             #ToDo: Run SQL query
-            #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+            #ToDo: logging.debug(f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully.")
+            #ToDo: flash(f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully.")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             logging.error(f"The file upload failed due to the following error: {error}")
             flash(f"The file upload failed due to the following error: {error}")
