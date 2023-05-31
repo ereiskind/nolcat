@@ -12,7 +12,7 @@ from numpy import ndarray
 from dateutil.rrule import rrule, MONTHLY
 
 from .app import db
-from .app import return_string_of_dataframe_info, first_new_PK_value
+from .app import return_string_of_dataframe_info, first_new_PK_value, upload_file_to_S3_bucket
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -639,9 +639,17 @@ class StatisticsSources(db.Model):
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
             logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-            if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                file_name = f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json"
-                #ToDo: upload_file_to_S3_bucket(self.SUSHI_JSON_dictionary)
+            if df.empty:
+                logging.warning(f"JSON-like dictionary of {report_name} for {self.statistics_source_name}couldn't be converted into a dataframe.")
+                temp_file_path = Path().resolve() / 'temp.json'
+                with open(temp_file_path, 'x', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                    json.dump(SUSHI_data_response, JSON_file)
+                log_message = upload_file_to_S3_bucket(
+                    temp_file_path,
+                    f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json",
+                )
+                temp_file_path.unlink()
+                logging.debug(log_message)
                 continue  # A `return` statement here would keep any other reports from being pulled and processed
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report_name
