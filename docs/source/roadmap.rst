@@ -15,6 +15,15 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Split ``nolcat.models.StatisticsSources._harvest_R5_SUSHI`` into two methods--one for all available custom reports and one for a specified report--and add parameter to indicate which method to use that defaults to all available reports
+* Write ``nolcat.models.StatisticsSources._harvest_custom_report()``
+* Write ``nolcat.models.StatisticsSources._harvest_all_reports()``
+* Add field for report to ``ingest_usage.forms.SUSHIParametersForm()`` and corresponding form on "ingest_usage/make-SUSHI-call.html"
+* Update ``ingest_usage.views.harvest_SUSHI_statistics()`` to handle the new field created above
+* Update ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
+* Write ``tests.test_StatisticsSources.test_harvest_custom_report()``
+* Write ``tests.test_StatisticsSources.test_harvest_all_reports()``
+
 * Write ``nolcat.app.upload_file_to_S3_bucket()``
 * Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
