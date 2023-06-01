@@ -174,7 +174,19 @@ def test_change_single_field_dataframe_into_series():
     assert_series_equal(change_single_field_dataframe_into_series(df), s)
 
 
-#ToDo: Write test for `nolcat.app.restore_Boolean_values_to_Boolean_field()`
+def test_restore_Boolean_values_to_Boolean_field():
+    """Tests the replacement of MySQL's single-bit int data type with Python's Boolean data type."""
+    tinyint_s = pd.Series(
+        [1, 0, np.NaN, 1],
+        dtype='int64',
+        name="boolean_values",
+    )
+    boolean_s = pd.Series(
+        [True, False, np.NaN, True],
+        dtype='boolean',
+        name="boolean_values",
+    )
+    assert_series_equal(restore_Boolean_values_to_Boolean_field(tinyint_s), boolean_s)
 
 
 #ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`
