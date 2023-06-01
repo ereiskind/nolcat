@@ -240,6 +240,9 @@ digraph erd_and_classes {
 
         // Methods
         make_SUSHI_call [shape="Mrecord"]
+        _make_API_call [shape="Mrecord"]
+        _convert_Response_to_JSON [shape="Mrecord"]
+        _save_raw_Response_text [shape="Mrecord"]
         _handle_SUSHI_exceptions [shape="Mrecord"]
         _create_error_query_text [shape="Mrecord"]
     }
@@ -260,10 +263,21 @@ digraph erd_and_classes {
         label="CLASS: ConvertJSONDictToDataframe"
 
         // Attributes
+        RESOURCE_NAME_LENGTH
+        PUBLISHER_LENGTH
+        PUBLISHER_ID_LENGTH
+        PLATFORM_LENGTH
+        AUTHORS_LENGTH
+        DOI_LENGTH
+        PROPRIETARY_ID_LENGTH
+        URI_LENGTH
         SUSHI_JSON_dictionary
 
         // Methods
         create_dataframe [shape="Mrecord"]
+        _transform_R5_JSON [shape="Mrecord"]
+        _transform_R5b1_JSON [shape="Mrecord"]
+        _serialize_dates [shape="Mrecord"]
     }
 
 

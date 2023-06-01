@@ -29,7 +29,9 @@ class ConvertJSONDictToDataframe:
         self.SUSHI_JSON_dictionary (dict): The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
 
     Methods:
-        create_dataframe: This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+       create_dataframe: This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
+        _transform_R5_JSON: This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+        _transform_R5b1_JSON: This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
@@ -54,17 +56,44 @@ class ConvertJSONDictToDataframe:
     
 
     def create_dataframe(self):
-        """This method transforms the data from the dictionary derived from the SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+        """This method applies the appropriate private method to the dictionary derived from the SUSHI call response JSON to make it into a single dataframe ready to be loaded into the `COUNTERData` relation or saves the JSON as a file if it cannot be successfully converted into a dataframe.
 
-        This method prepares the dictionaries containing all the data from the SUSHI API responses for upload into the database. The `statistics_source_ID` and `report_type` are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
+        This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToDataframe._transform_R5_JSON()` or the `ConvertJSONDictToDataframe._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
 
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
         logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
-        records_orient_list = []
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
         logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
+        COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
+        if COUNTER_release == "5":
+            try:
+                df = self._transform_R5_JSON(report_header_creation_date)
+            except Exception as error:
+                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+        elif COUNTER_release == "5.1":
+            try:
+                df = self._transform_R5b1_JSON()
+            except:
+                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+        else:
+            logging.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+            return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+
+
+    def _transform_R5_JSON(self, report_creation_date):
+        """This method transforms the data from the dictionary derived from a R5 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+
+        Args:
+            report_creation_date (datetime.date): The date the report was created
+
+        Returns:
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+        """
+        records_orient_list = []
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
         include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
@@ -101,7 +130,7 @@ class ConvertJSONDictToDataframe:
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
             logging.debug(f"Starting iteration for new JSON record {record}")
-            record_dict = {"report_creation_date": report_header_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
+            record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
                 #Subsection: Capture `resource_name` Value
@@ -497,6 +526,15 @@ class ConvertJSONDictToDataframe:
 
         logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
         return df
+
+
+    def _transform_R5b1_JSON(self):
+        """This method transforms the data from the dictionary derived from a R5.1 SUSHI call response JSON into a single dataframe ready to be loaded into the `COUNTERData` relation.
+
+        Returns:
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+        """
+        pass
     
 
     def _serialize_dates(dates):

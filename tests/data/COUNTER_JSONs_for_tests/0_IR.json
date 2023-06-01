@@ -30,7 +30,7 @@
         "Report_Attributes": [
             {
                 "Name": "Attributes_To_Show",
-                "Value": "Data_Type|Access_Method|YOP|Access_Type"
+                "Value": "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
             },
             {
                 "Name": "Include_Parent_Details",

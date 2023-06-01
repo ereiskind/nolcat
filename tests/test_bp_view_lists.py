@@ -14,13 +14,12 @@ from nolcat.view_lists import *
 def test_view_lists_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     #ToDo: Either randomly choose from or iterate through the route options = ["resources", "statistics", "vendors"]
-    #Section: Get Data from `GET` Requested Page
+
     #page = client.get('/view_lists/')  #ToDo: Add variable route element
     #GET_soup = BeautifulSoup(page.data, 'lxml')
     #GET_response_title = GET_soup.head.title
     #GET_response_page_title = GET_soup.body.h1
 
-    #Section: Get Data from HTML File
     #with open(Path(os.getcwd(), 'nolcat', 'view_lists', 'templates', 'view_lists', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title  #ToDo: Replace `{{ title }}` with value from route function corresponding to the string in the homepage route

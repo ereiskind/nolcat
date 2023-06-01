@@ -129,7 +129,7 @@ def collect_FY_and_vendor_data():
             logging.debug("Relation `vendorNotes` loaded into the database")
             logging.info("All relations loaded into the database")
         except Exception as error:
-            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+            logging.warning(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_sources_data'))
 
@@ -279,7 +279,7 @@ def collect_sources_data():
             logging.debug("Relation `statisticsResourceSources` loaded into the database")
             logging.info("All relations loaded into the database")
         except Exception as error:
-            logging.warning(f"The `to_sql` methods raised an error: {format(error)}")
+            logging.warning(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 

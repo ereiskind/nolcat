@@ -15,10 +15,22 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Write ``nolcat.app.upload_file_to_S3_bucket()``
+* Write ``tests.test_app.test_upload_file_to_S3_bucket()``
+* Create R5.1 test data JSONs
+
+  * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
+  * Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
+  * Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
+  * Add test for the new files in ``tests.test_ConvertJSONDictToDataframe``
+
+* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
+* Investigate ways to get list of plain text and JSON files saved in S3 bucket due to inability to load into database, load files with ``json.load(<class '_io.TextIOWrapper'>)``, and manipulate contents so they can be added to database
 
 Iteration 2: COUNTER Only Product
 =================================
 * Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Create ability to ingest SQL file with proper insert statements [Line starts with ``INSERT INTO `COUNTERData` VALUES (`` and ends with ``);``, in between should be split at each instance of ``),(`` to create the individual insert statements, which can be turned into records in a dataframe that can go into the database via ``to_sql()``]
 * Create "ingest_usage/upload-COUNTER-reports.html" page
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
@@ -31,7 +43,7 @@ Iteration 3: Minimum Viable Product
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Write form class for non-COUNTER usage downloads
 * Write "initialization/initial-data-upload-4.html" page
-* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
+* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.app.upload_file_to_S3_bucket()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
@@ -69,6 +81,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
+* Write test for ``nolcat.app.upload_file_to_S3_bucket()``
 
 Basic Enhancement Iterations
 ****************************
@@ -266,9 +279,9 @@ Iteration: Deduplicate Resources
 * Review the main branch of the repo as of commit 207c4a14b521b7f247f5249a080b4a725963b599 (made 2023-01-20)
 * Remove hyphens from all ISBNs to handle their inconsistency in usage and placement
 
-Iteration: Handle Reports Without Corresponding Master Reports
-==============================================================
-* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Master Report" of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()``
+Iteration: Handle Reports Without Corresponding Customizable Reports
+====================================================================
+* Figure out how to view reports found in subsection "Add Any Standard Reports Not Corresponding to a Customizable Report" of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()``
 
 Iteration: Incorporate Springshare Databases A-Z Statistics
 ===========================================================

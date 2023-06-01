@@ -6,13 +6,17 @@ import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
+import numpy as np
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
+from nolcat.app import change_single_field_dataframe_into_series
+from nolcat.app import restore_Boolean_values_to_Boolean_field
 
 
+#Section: Test Flask Factory Pattern
 def test_flask_app_creation(app):
     """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
     assert repr(app) == "<Flask 'nolcat.app'>"
@@ -25,13 +29,11 @@ def test_flask_client_creation(client):
 
 def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    #Section: Get Data from `GET` Requested Page
     page = client.get('/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     
-    #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
@@ -137,7 +139,17 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)  #ToDo: `AssertionError: ExtensionArray NA mask are different`
 
 
+#Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_first_new_PK_value():
     """Tests the retrieval of a relation's next primary key value."""
     assert first_new_PK_value('vendors') == 8
+
+
+#ToDo: Write test for `nolcat.app.change_single_field_dataframe_into_series()`
+
+
+#ToDo: Write test for `nolcat.app.restore_Boolean_values_to_Boolean_field()`
+
+
+#ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`

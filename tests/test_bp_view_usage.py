@@ -13,13 +13,11 @@ from nolcat.view_usage import *
 
 def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    #Section: Get Data from `GET` Requested Page
     page = client.get('/view_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'view_usage', 'templates', 'view_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
@@ -50,14 +48,12 @@ def test_use_predefined_SQL_query_with_wizard():
 
 def test_GET_request_for_download_non_COUNTER_usage(client):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    #Section: Get Data from `GET` Requested Page
     page = client.get('/view_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
 
-    #Section: Get Data from HTML File
     with open(Path(os.getcwd(), 'nolcat', 'view_usage', 'templates', 'view_usage', 'download-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title

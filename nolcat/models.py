@@ -276,8 +276,8 @@ class FiscalYears(db.Model):
             logging.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}")
-            return f"The AUCT records load for FY {self.fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
+            return f"The AUCT records load for FY {self.fiscal_year} had an error: {error}"
 
 
     @hybrid_method
@@ -311,8 +311,8 @@ class FiscalYears(db.Model):
             #ToDo: logging.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {format(error)}")
-            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {format(error)}"
+            #ToDo: logging.warning(f"The load for FY {self.fiscal_year} had an error: {error}")
+            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {error}"
         pass
 
 
@@ -567,32 +567,32 @@ class StatisticsSources(db.Model):
             logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
             return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
 
-        #Subsection: Get List of Master Reports
+        #Subsection: Get List of Available Customizable Reports
         available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
-        available_master_reports = [master_report for master_report in available_reports if "_" not in master_report]
-        logging.debug(f"Master reports provided by {self.statistics_source_name}: {available_master_reports}")
+        available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
+        logging.debug(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}")
 
-        #Subsection: Add Any Standard Reports Not Corresponding to a Master Report
-        represented_by_master_report = set()
-        for master_report in available_master_reports:
+        #Subsection: Add Any Standard Reports Not Corresponding to a Customizable Report
+        represented_by_custom_report = set()
+        for custom_report in available_custom_reports:
             for report in available_reports:
-                if report[0:2] == master_report:
-                    represented_by_master_report.add(report)
-        not_represented_by_master_report = [report for report in available_reports if report not in represented_by_master_report]
-        if len(not_represented_by_master_report) > 0:  # Logging statement only appears if it would include content
-            logging.debug(f"Standard reports lacking corresponding master reports provided by {self.statistics_source_name}: {not_represented_by_master_report}")
+                if report[0:2] == custom_report:
+                    represented_by_custom_report.add(report)
+        not_represented_by_custom_report = [report for report in available_reports if report not in represented_by_custom_report]
+        if len(not_represented_by_custom_report) > 0:  # Logging statement only appears if it would include content
+            logging.debug(f"Standard reports lacking corresponding customizable reports provided by {self.statistics_source_name}: {not_represented_by_custom_report}")
 
 
-        #Section: Make Master Report SUSHI Calls
+        #Section: Make Customizable Report SUSHI Calls
         #Subsection: Add Date Parameters
         SUSHI_parameters['begin_date'] = usage_start_date
         SUSHI_parameters['end_date'] = usage_end_date
 
-        #Subsection: Set Up Loop Through Master Reports
-        master_report_dataframes = []
-        for master_report in available_master_reports:
-            master_report_name = master_report.upper()
-            logging.info(f"Making SUSHI calls for {self.statistics_source_name} for report {master_report_name}.")
+        #Subsection: Set Up Loop Through Customizable Reports
+        custom_report_dataframes = []
+        for custom_report in available_custom_reports:
+            report_name = custom_report.upper()
+            logging.info(f"Making SUSHI calls for {self.statistics_source_name} for report {report_name}.")
 
             #Subsection: Check if Usage Is Already in Database
             #ToDo: months_to_exclude_from_harvest = []
@@ -601,7 +601,7 @@ class StatisticsSources(db.Model):
             #    number_of_records = pd.read_sql(
             #        sql=f'''
             #            SELECT COUNT(*) FROM COUNTERData
-            #            WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{master_report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
+            #            WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
             #        ''',
             #        con=db.engine,  #ALERT: In testing, causing `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
             #    )
@@ -614,40 +614,42 @@ class StatisticsSources(db.Model):
                 #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
                 #ToDo: If it's multiple ranges, how will that iteration be initiated from here?
 
-            #Subsection: Add Parameters for Master Report Type
+            #Subsection: Add Parameters for Customizable Report Type
             if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
                 del SUSHI_parameters["include_parent_details"]
             
-            if master_report_name == "PR":
+            if report_name == "PR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            elif master_report_name == "DR":
+            elif report_name == "DR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            elif master_report_name == "TR":
+            elif report_name == "TR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-            elif master_report_name == "IR":
+            elif report_name == "IR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
             else:
-                logging.error(f"This placeholder for potentially calling non-master reports caught a {master_report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                logging.error(f"This placeholder for potentially calling non-customizable reports caught a {report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-            logging.debug(f"Making SUSHI calls for {master_report_name} report from {self.statistics_source_name}.")
+            logging.debug(f"Making SUSHI calls for {report_name} report from {self.statistics_source_name}.")
             
-            #Subsection: Make Master Report API Call
-            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{master_report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
+            #Subsection: Make API Call
+            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
             if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                logging.error(f"The call to the `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
+                logging.error(f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
                 continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-            logging.info(f"Call to `reports/{master_report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
+            logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-            if df.empty:
-                continue  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database; a `return` statement here would keep any other valid reports from being pulled and processed
+            if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                file_name = f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json"
+                #ToDo: upload_file_to_S3_bucket(self.SUSHI_JSON_dictionary)
+                continue  # A `return` statement here would keep any other reports from being pulled and processed
             df['statistics_source_ID'] = self.statistics_source_ID
-            df['report_type'] = master_report_name
-            master_report_dataframes.append(df)
+            df['report_type'] = report_name
+            custom_report_dataframes.append(df)
         
 
         #Section: Return a Single Dataframe
-        return pd.concat(master_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+        return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
@@ -682,8 +684,8 @@ class StatisticsSources(db.Model):
             logging.info("The load was a success.")
             return "The load was a success."
         except Exception as error:
-            logging.warning(f"The load had an error: {format(error)}")
-            return f"The load had an error: {format(error)}"
+            logging.warning(f"The load had an error: {error}")
+            return f"The load had an error: {error}"
 
 
     @hybrid_method
@@ -940,8 +942,8 @@ class AnnualUsageCollectionTracking(db.Model):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}")
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {format(error)}"
+            logging.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}"
 
 
     @hybrid_method

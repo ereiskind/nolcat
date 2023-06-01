@@ -245,3 +245,17 @@ def restore_Boolean_values_to_Boolean_field(series):
         0: False,
         1: True,
     }).astype('boolean')
+
+
+def upload_file_to_S3_bucket(file):
+    """The function for uploading files to an S3 bucket.
+
+    _extended_summary_
+
+    Args:
+        file (_type_): _description_
+    
+    Returns:
+        _type_: _description_
+    """
+    pass
