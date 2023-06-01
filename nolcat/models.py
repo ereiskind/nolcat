@@ -692,7 +692,7 @@ class StatisticsSources(db.Model):
             logging.info("The load was a success.")
             return "The load was a success."
         except Exception as error:
-            logging.warning(f"The load had an error: {error}")
+            logging.error(f"The load had an error: {error}")
             return f"The load had an error: {error}"
 
 
