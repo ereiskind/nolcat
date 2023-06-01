@@ -29,7 +29,6 @@ Planned Iterations
 
 Iteration 2: COUNTER Only Product
 =================================
-* Write ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 * Create ability to ingest SQL file with proper insert statements [Line starts with ``INSERT INTO `COUNTERData` VALUES (`` and ends with ``);``, in between should be split at each instance of ``),(`` to create the individual insert statements, which can be turned into records in a dataframe that can go into the database via ``to_sql()``]
 * Create "ingest_usage/upload-COUNTER-reports.html" page
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
