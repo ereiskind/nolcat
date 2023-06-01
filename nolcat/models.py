@@ -438,7 +438,7 @@ class StatisticsSources(db.Model):
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
-        _harvest_custom_report: Makes a single API call for a customizable report with all possible attributes and converts the result into a dataframe.
+        _harvest_custom_report: Makes a single API call for a customizable report with all possible attributes.
         _check_if_data_in_database: Checks if any usage for the given date and statistics source combination is already in the database.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
@@ -658,7 +658,7 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def _harvest_custom_report(self, report, SUSHI_URL, SUSHI_parameters):
-        """Makes a single API call for a customizable report with all possible attributes and converts the result into a dataframe.
+        """Makes a single API call for a customizable report with all possible attributes.
 
         Args:
             report (str): the two-letter abbreviation for the report being called
@@ -666,10 +666,14 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
 
         Returns:
-            dataframe: a dataframe containing all of the R5 COUNTER data
-            str: an error message indicating the harvest failed
+            dict: the API call response or an error message
         """
-        pass
+        SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+        if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+            logging.error(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
+        else:
+            logging.info(f"Call to `reports/{report.lower()}` endpoint for {self.statistics_source_name} successful.")
+        return SUSHI_data_response
 
 
     @hybrid_method
