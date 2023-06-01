@@ -672,7 +672,7 @@ class StatisticsSources(db.Model):
         else:
             logging.debug(f"The SUSHI harvest was a success")
         logging.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
-        df.index += first_new_PK_value('COUNTERData')  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.` (The `nolcat.app.first_new_PK_value()` method makes a call to the database and thus invokes the engine.)
+        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error; the test module can't help because pytest calls to `db.engine` raise `RuntimeError`
         logging.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
