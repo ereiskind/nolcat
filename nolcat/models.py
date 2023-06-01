@@ -688,13 +688,24 @@ class StatisticsSources(db.Model):
         Returns:
             list: the date ranges that should be harvested; a null value means the full range should be harvested
         """
-        #ToDo: if there are months with data already in database:
-            #ToDo: months_to_harvest = []
-            #ToDo: Add all months that don't have data already in database to months_to_harvest
-            #ToDo: return months_to_harvest
-        #ToDo: else:
-            #ToDo: return None
-        pass
+        months_in_date_range = list(rrule(MONTHLY, dtstart=start_date, until=end_date))  # Creates a list of datetime objects representing the first day of the month of every month in the date range
+        months_to_harvest = []
+        
+        for month_being_checked in months_in_date_range:
+            number_of_records = pd.read_sql(
+                sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
+                con=db.engine,
+            )
+            logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
+            if number_of_records.iloc[0][0] == 0:
+                months_to_harvest.append(month_being_checked.date())
+            else:
+                logging.warning(f"There were records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database; {month_being_checked.strftime('%Y-%m')} won't be included in the harvested date range.")
+        
+        if months_in_date_range == months_to_harvest:
+            return None  # Indicating the complete date range should be harvested
+        else:
+            return months_to_harvest
     
     
     @hybrid_method

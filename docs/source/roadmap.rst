@@ -15,7 +15,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Write ``nolcat.models.StatisticsSources._check_if_data_in_database()``
 * Reconfigure ``nolcat.models.StatisticsSources._harvest_R5_SUSHI`` to use the new methods
 * Add field for report to ``ingest_usage.forms.SUSHIParametersForm()`` and corresponding form on "ingest_usage/make-SUSHI-call.html"
 * Update ``ingest_usage.views.harvest_SUSHI_statistics()`` to handle the new field created above
