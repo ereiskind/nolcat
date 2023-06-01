@@ -437,7 +437,9 @@ class StatisticsSources(db.Model):
     
     Methods:
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
-        _harvest_R5_SUSHI: Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
+        _harvest_R5_SUSHI: Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
+        _harvest_custom_report: Makes a single API call for a customizable report with all possible attributes and converts the result into a dataframe.
+        _check_if_data_in_database: Checks if any usage for the given date and statistics source combination is already in the database.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
     """
@@ -515,17 +517,19 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date):
-        """Collects the COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
+    def _harvest_R5_SUSHI(self, usage_start_date, usage_end_date, report_to_harvest=None):
+        """Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
 
-        For a given statistics source and date range, this method uses SUSHI to harvest all available COUNTER R5 reports at their most granular level, then combines them in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
+        For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
 
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             dataframe: a dataframe containing all of the R5 COUNTER data
+            str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
         logging.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
@@ -652,6 +656,43 @@ class StatisticsSources(db.Model):
         return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
+    @hybrid_method
+    def _harvest_custom_report(self, report, SUSHI_URL, SUSHI_parameters):
+        """Makes a single API call for a customizable report with all possible attributes and converts the result into a dataframe.
+
+        Args:
+            report (str): the two-letter abbreviation for the report being called
+            SUSHI_URL (str): the root URL for the SUSHI API call
+            SUSHI_parameters (str): the parameter values for the API call
+
+        Returns:
+            dataframe: a dataframe containing all of the R5 COUNTER data
+            str: an error message indicating the harvest failed
+        """
+        pass
+
+
+    @hybrid_method
+    def _check_if_data_in_database(self, report, start_date, end_date):
+        """Checks if any usage for the given date and statistics source combination is already in the database.
+
+        Args:
+            report_code (str): the two-letter abbreviation for the report being called
+            start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+
+        Returns:
+            list: the date ranges that should be harvested; a null value means the full range should be harvested
+        """
+        #ToDo: if there are months with data already in database:
+            #ToDo: months_to_harvest = []
+            #ToDo: Add all months that don't have data already in database to months_to_harvest
+            #ToDo: return months_to_harvest
+        #ToDo: else:
+            #ToDo: return None
+        pass
+    
+    
     @hybrid_method
     def collect_usage_statistics(self, usage_start_date, usage_end_date):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
