@@ -91,6 +91,12 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
+    df_dtypes = {
+        "statistics_source_name": 'string',
+        "statistics_source_retrieval_code": 'string',
+        "vendor_name": 'string',
+        "alma_vendor_code": 'string',
+    }
     print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
     statisticsSources_relation.to_sql(
         name='statisticsSources',
@@ -106,11 +112,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
-    retrieved_data = retrieved_data.astype({
-        "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
-        "vendor_ID": 'int',
-    })
+    retrieved_data = retrieved_data.astype(df_dtypes)
     print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
     expected_output_data = pd.DataFrame(
@@ -131,8 +133,10 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         columns=["statistics_source_name", "statistics_source_retrieval_code", "vendor_name", "alma_vendor_code"],
     )
     expected_output_data.index.name = "statistics_source_ID"
+    expected_output_data = expected_output_data.astype(df_dtypes)
 
-    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
+    print(retrieved_data.compare(expected_output_data))
+    assert_frame_equal(retrieved_data, expected_output_data)  #ToDo: `AssertionError: ExtensionArray NA mask are different`
 
 
 #Section: Test Helper Functions

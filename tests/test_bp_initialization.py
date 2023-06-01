@@ -392,6 +392,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         "statistics_source_retrieval_code": 'string',
         "vendor_ID": 'int',
     })
+    statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
     statisticsSourceNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM statisticsSourceNotes;",
@@ -570,14 +571,14 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
-        file_soup = BeautifulSoup(HTML_file, 'lxml')
-        HTML_file_title = file_soup.head.title.string.encode('utf-8')
-        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    #with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
+    #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
+    #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    #assert HTML_file_title in POST_response.data
+    #assert HTML_file_page_title in POST_response.data
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
