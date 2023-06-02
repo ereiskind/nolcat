@@ -6,6 +6,7 @@ import sys
 import json
 import re
 import datetime
+import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
 from numpy import ndarray
@@ -552,108 +553,278 @@ class StatisticsSources(db.Model):
             logging.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
 
-        #Section: Get List of Resources
-        #Subsection: Make API Call
-        SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
-        if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-            logging.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
-            all_available_reports = []
-            for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
-                for report_details_dict in report_call_response:
-                    for report_detail_keys, report_detail_values in report_details_dict.items():
-                        if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
-                            all_available_reports.append(report_detail_values)
-            logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
-        elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
-            logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
-            return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
-        else:
-            logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
-            return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
 
-        #Subsection: Get List of Available Customizable Reports
-        available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
-        available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
-        logging.debug(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}")
-
-        #Subsection: Add Any Standard Reports Not Corresponding to a Customizable Report
-        represented_by_custom_report = set()
-        for custom_report in available_custom_reports:
-            for report in available_reports:
-                if report[0:2] == custom_report:
-                    represented_by_custom_report.add(report)
-        not_represented_by_custom_report = [report for report in available_reports if report not in represented_by_custom_report]
-        if len(not_represented_by_custom_report) > 0:  # Logging statement only appears if it would include content
-            logging.debug(f"Standard reports lacking corresponding customizable reports provided by {self.statistics_source_name}: {not_represented_by_custom_report}")
-
-
-        #Section: Make Customizable Report SUSHI Calls
-        #Subsection: Add Date Parameters
-        SUSHI_parameters['begin_date'] = usage_start_date
-        SUSHI_parameters['end_date'] = usage_end_date
-
-        #Subsection: Set Up Loop Through Customizable Reports
-        custom_report_dataframes = []
-        for custom_report in available_custom_reports:
-            report_name = custom_report.upper()
-            logging.info(f"Making SUSHI calls for {self.statistics_source_name} for report {report_name}.")
-
-            #Subsection: Check if Usage Is Already in Database
-            #ToDo: months_to_exclude_from_harvest = []
-            #for month_being_checked in list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date'])):  # rrule generates a object that can be unpacked into a list of datetime objects representing dates and/or times occurring on a recurring schedule
-            #    date_for_query = datetime.date(month_being_checked.year, month_being_checked.month, 1)
-            #    number_of_records = pd.read_sql(
-            #        sql=f'''
-            #            SELECT COUNT(*) FROM COUNTERData
-            #            WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report_name}' AND usage_date='{date_for_query.strftime('%Y-%m-%d')}';
-            #        ''',
-            #        con=db.engine,  #ALERT: In testing, causing `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
-            #    )
-            #    logging.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database.")
-            #    if number_of_records.iloc[0][0] > 0:
-            #        logging.warning(f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication.")
-            #        return f"There were records for {self.statistics_source_name} in {date_for_query.strftime('%Y-%m')} already loaded in the database. Since {date_for_query.strftime('%Y-%m')} is in the requested time interval, the usage wasn't requested to avoid duplication."
-                    #ToDo: Use Flask to ask if data should be loaded, and if not, `months_to_exclude_from_harvest.append(month_being_checked)`
-            #ToDo: if len(months_to_exclude_from_harvest) > 0:
-                #ToDo: Use position of items in `months_to_exclude_from_harvest` within `list(rrule(MONTHLY, dtstart=SUSHI_parameters['begin_date'], until=SUSHI_parameters['end_date']))` to come up with the range or ranges that need to be checked
-                #ToDo: If it's multiple ranges, how will that iteration be initiated from here?
-
-            #Subsection: Add Parameters for Customizable Report Type
-            if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
-                del SUSHI_parameters["include_parent_details"]
-            
-            if report_name == "PR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            elif report_name == "DR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            elif report_name == "TR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-            elif report_name == "IR":
-                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
-                SUSHI_parameters["include_parent_details"] = "True"
+        #Section: Harvest Individual Report if Specified
+        if report_to_harvest == "PR":
+            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
+            if subset_of_months_to_harvest:
+                custom_report_dataframes = []
+                for month_to_harvest in subset_of_months_to_harvest:
+                    SUSHI_parameters['begin_date'] = month_to_harvest
+                    SUSHI_parameters['end_date'] = datetime.date(
+                        month_to_harvest.year,
+                        month_to_harvest.month,
+                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                    )
+                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                        #ToDo: upload_file_to_S3_bucket()
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report_to_harvest
+                    logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                    custom_report_dataframes.append(df)
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             else:
-                logging.error(f"This placeholder for potentially calling non-customizable reports caught a {report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
-                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-            logging.debug(f"Making SUSHI calls for {report_name} report from {self.statistics_source_name}.")
-            
+                SUSHI_parameters['begin_date'] = usage_start_date
+                SUSHI_parameters['end_date'] = usage_end_date
+                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    return SUSHI_data_response  # The error message
+                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                    #ToDo: upload_file_to_S3_bucket()
+                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need logging.error before
+                df['statistics_source_ID'] = self.statistics_source_ID
+                df['report_type'] = report_to_harvest
+                logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                return df
+        
+        elif report_to_harvest == "DR":
+            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
+            if subset_of_months_to_harvest:
+                custom_report_dataframes = []
+                for month_to_harvest in subset_of_months_to_harvest:
+                    SUSHI_parameters['begin_date'] = month_to_harvest
+                    SUSHI_parameters['end_date'] = datetime.date(
+                        month_to_harvest.year,
+                        month_to_harvest.month,
+                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                    )
+                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                        #ToDo: upload_file_to_S3_bucket()
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report_to_harvest
+                    logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                    custom_report_dataframes.append(df)
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            else:
+                SUSHI_parameters['begin_date'] = usage_start_date
+                SUSHI_parameters['end_date'] = usage_end_date
+                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    return SUSHI_data_response  # The error message
+                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                    #ToDo: upload_file_to_S3_bucket()
+                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need logging.error before
+                df['statistics_source_ID'] = self.statistics_source_ID
+                df['report_type'] = report_to_harvest
+                logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                return df
+        
+        elif report_to_harvest == "TR":
+            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
+            if subset_of_months_to_harvest:
+                custom_report_dataframes = []
+                for month_to_harvest in subset_of_months_to_harvest:
+                    SUSHI_parameters['begin_date'] = month_to_harvest
+                    SUSHI_parameters['end_date'] = datetime.date(
+                        month_to_harvest.year,
+                        month_to_harvest.month,
+                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                    )
+                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                        #ToDo: upload_file_to_S3_bucket()
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report_to_harvest
+                    logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                    custom_report_dataframes.append(df)
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            else:
+                SUSHI_parameters['begin_date'] = usage_start_date
+                SUSHI_parameters['end_date'] = usage_end_date
+                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    return SUSHI_data_response  # The error message
+                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                    #ToDo: upload_file_to_S3_bucket()
+                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need logging.error before
+                df['statistics_source_ID'] = self.statistics_source_ID
+                df['report_type'] = report_to_harvest
+                logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                return df
+        
+        elif report_to_harvest == "IR":
+            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+            SUSHI_parameters["include_parent_details"] = "True"
+            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
+            if subset_of_months_to_harvest:
+                custom_report_dataframes = []
+                for month_to_harvest in subset_of_months_to_harvest:
+                    SUSHI_parameters['begin_date'] = month_to_harvest
+                    SUSHI_parameters['end_date'] = datetime.date(
+                        month_to_harvest.year,
+                        month_to_harvest.month,
+                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                    )
+                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                        #ToDo: upload_file_to_S3_bucket()
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report_to_harvest
+                    logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                    custom_report_dataframes.append(df)
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            else:
+                SUSHI_parameters['begin_date'] = usage_start_date
+                SUSHI_parameters['end_date'] = usage_end_date
+                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
+                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    return SUSHI_data_response  # The error message
+                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                    #ToDo: upload_file_to_S3_bucket()
+                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need logging.error before
+                df['statistics_source_ID'] = self.statistics_source_ID
+                df['report_type'] = report_to_harvest
+                logging.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                return df
+        
+        
+        else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
+            #Section: Get List of Resources
             #Subsection: Make API Call
-            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], f"reports/{report_name.lower()}", SUSHI_parameters).make_SUSHI_call()
-            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                logging.error(f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #ToDo: Change so this also displays in Flask without overwriting any other similar messages
-                continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-            logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
-            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-            if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                file_name = f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json"
-                #ToDo: upload_file_to_S3_bucket(self.SUSHI_JSON_dictionary)
-                continue  # A `return` statement here would keep any other reports from being pulled and processed
-            df['statistics_source_ID'] = self.statistics_source_ID
-            df['report_type'] = report_name
-            custom_report_dataframes.append(df)
+            SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+            if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
+                logging.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
+                all_available_reports = []
+                for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
+                    for report_details_dict in report_call_response:
+                        for report_detail_keys, report_detail_values in report_details_dict.items():
+                            if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
+                                all_available_reports.append(report_detail_values)
+                logging.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
+            elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
+                logging.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
+                return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
+            else:
+                logging.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
+                return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
+
+            #Subsection: Get List of Available Customizable Reports
+            available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+            available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
+            logging.debug(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}")
+
+            #Subsection: Add Any Standard Reports Not Corresponding to a Customizable Report
+            represented_by_custom_report = set()
+            for custom_report in available_custom_reports:
+                for report in available_reports:
+                    if report[0:2] == custom_report:
+                        represented_by_custom_report.add(report)
+            not_represented_by_custom_report = [report for report in available_reports if report not in represented_by_custom_report]
+            if len(not_represented_by_custom_report) > 0:  # Logging statement only appears if it would include content
+                logging.debug(f"Standard reports lacking corresponding customizable reports provided by {self.statistics_source_name}: {not_represented_by_custom_report}")
+
+
+            #Section: Make Customizable Report SUSHI Calls
+            #Subsection: Set Up Loop Through Customizable Reports
+            custom_report_dataframes = []
+            for custom_report in available_custom_reports:
+                report_name = custom_report.upper()
+                logging.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
+
+                #Subsection: Add Parameters for Customizable Report Type
+                if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
+                    del SUSHI_parameters["include_parent_details"]
+                
+                if report_name == "PR":
+                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                elif report_name == "DR":
+                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+                elif report_name == "TR":
+                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+                elif report_name == "IR":
+                    SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                    SUSHI_parameters["include_parent_details"] = "True"
+                else:
+                    logging.warning(f"This placeholder for potentially calling non-customizable reports caught a {report_name} report for {self.statistics_source_name}. Without knowing the appropriate parameters to add to the SUSHI call, this report wasn't pulled.")
+                    continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+
+                #Subsection: Make API Call(s)
+                subset_of_months_to_harvest = self._check_if_data_in_database(report_name, usage_start_date, usage_end_date)
+                if subset_of_months_to_harvest:
+                    logging.info(f"Calling `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
+                    for month_to_harvest in subset_of_months_to_harvest:
+                        SUSHI_parameters['begin_date'] = month_to_harvest
+                        SUSHI_parameters['end_date'] = datetime.date(
+                            month_to_harvest.year,
+                            month_to_harvest.month,
+                            calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                        )
+                        SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
+                        if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                            continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                        logging.debug(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for the month {month_to_harvest.strftime('%Y-%m')} successful.")
+                        df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                        if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                            #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                            #ToDo: upload_file_to_S3_bucket()
+                            continue  # A `return` statement here would keep any other reports from being pulled and processed
+                        df['statistics_source_ID'] = self.statistics_source_ID
+                        df['report_type'] = report_name
+                        custom_report_dataframes.append(df)  # All dataframes are combined at the end, so individual month dataframes don't need to be combined at this point
+                    logging.info(f"Calls to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months completed; see error log to confirm success.")
+                
+                else:
+                    SUSHI_parameters['begin_date'] = usage_start_date
+                    SUSHI_parameters['end_date'] = usage_end_date
+                    SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
+                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                    logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
+                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
+                        #ToDo: upload_file_to_S3_bucket()
+                        continue  # A `return` statement here would keep any other reports from being pulled and processed
+                    df['statistics_source_ID'] = self.statistics_source_ID
+                    df['report_type'] = report_name
+                    custom_report_dataframes.append(df)
         
 
-        #Section: Return a Single Dataframe
-        return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            #Section: Return a Single Dataframe
+            return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
@@ -666,14 +837,16 @@ class StatisticsSources(db.Model):
             SUSHI_parameters (str): the parameter values for the API call
 
         Returns:
-            dict: the API call response or an error message
+            dict: the API call response data
+            str: an error message indicating the harvest failed
         """
         SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
         if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
             logging.error(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
+            return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."
         else:
             logging.info(f"Call to `reports/{report.lower()}` endpoint for {self.statistics_source_name} successful.")
-        return SUSHI_data_response
+            return SUSHI_data_response
 
 
     @hybrid_method

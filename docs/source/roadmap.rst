@@ -15,10 +15,9 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Reconfigure ``nolcat.models.StatisticsSources._harvest_R5_SUSHI`` to use the new methods
 * Add field for report to ``ingest_usage.forms.SUSHIParametersForm()`` and corresponding form on "ingest_usage/make-SUSHI-call.html"
 * Update ``ingest_usage.views.harvest_SUSHI_statistics()`` to handle the new field created above
-* Update ``tests.test_StatisticsSources.test_harvest_R5_SUSHI()``
+* Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()``, which tests ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` when a report is specified
 * Write ``tests.test_StatisticsSources.test_harvest_custom_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
 
