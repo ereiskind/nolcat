@@ -258,7 +258,7 @@ def restore_Boolean_values_to_Boolean_field(series):
 
 
 def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NAME):
-    """The function for uploading files to an S3 bucket.
+    """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
 
