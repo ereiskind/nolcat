@@ -4,6 +4,7 @@
 from pathlib import Path
 import os
 import pytest
+from random import choice
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
@@ -14,6 +15,20 @@ from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
 from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.app import restore_Boolean_values_to_Boolean_field
+
+
+@pytest.fixture(params=[Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests'), Path(os.getcwd(), 'tests', 'bin', 'sample_COUNTER_R4_reports')])
+def files_to_upload_to_S3_bucket(request):
+    """Handles the selection and removal of files for testing uploads to a S3 bucket.
+    
+    This fixture uses parameterization to randomly select two files--one text and one binary--to upload into a S3 bucket, then, upon completion of the test, removes those files from the bucket. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+    """
+    #ToDo: file_path = request.param
+    #ToDo: file_names = tuple(os.walk(file_path))[0][2]
+    #ToDo: file_to_upload = file_path / choice(file_names)
+    #ToDo: yield file_to_upload
+    #ToDo: remove file from S3
+    pass
 
 
 #Section: Test Flask Factory Pattern
@@ -148,4 +163,12 @@ def test_first_new_PK_value():
 #ToDo: Write test for `nolcat.app.restore_Boolean_values_to_Boolean_field()`
 
 
-#ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`
+def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
+    """Tests uploading files to a S3 bucket."""
+    #ToDo: upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
+    #ToDo:     files_to_upload_to_S3_bucket.name,
+    #ToDo:     files_to_upload_to_S3_bucket,
+    #ToDo: )
+    #ToDo: bucket_contents =  list of contents of S3 bucket
+    #ToDo: assert files_to_upload_to_S3_bucket.name in bucket_contents
+    pass
