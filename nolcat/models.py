@@ -641,15 +641,15 @@ class StatisticsSources(db.Model):
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:
                 logging.warning(f"JSON-like dictionary of {report_name} for {self.statistics_source_name}couldn't be converted into a dataframe.")
-                temp_file_path = Path().resolve() / 'temp.json'
-                with open(temp_file_path, 'x', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                    json.dump(SUSHI_data_response, JSON_file)
-                log_message = upload_file_to_S3_bucket(
-                    temp_file_path,
-                    f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                )
-                temp_file_path.unlink()
-                logging.debug(log_message)
+                #temp_file_path = Path().resolve() / 'temp.json'
+                #with open(temp_file_path, 'x', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                #    json.dump(SUSHI_data_response, JSON_file)
+                #log_message = upload_file_to_S3_bucket(
+                #    temp_file_path,
+                #    f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                #)
+                #temp_file_path.unlink()
+                #logging.debug(log_message)
                 continue  # A `return` statement here would keep any other reports from being pulled and processed
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report_name

@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
 from numpy import datetime64, squeeze
-import boto3
+#import boto3
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` maintained in the AWS instance, copied to the Docker container during the build process, and imported into this file. This import has been problematic; copying the file into this directory and providing multiple possible import statements in try-except blocks are used to handle the problem."""
 try:
@@ -27,21 +27,21 @@ DATABASE_HOST = secrets.Host
 DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
-AWS_ACCESS_KEY = secrets.Access_Key_ID
-AWS_SECRET_KEY = secrets.Secret_Access_Key
-AWS_SESSION_TOKEN = secrets.Session_Token
-BUCKET_NAME = secrets.Bucket
+#AWS_ACCESS_KEY = secrets.Access_Key_ID
+#AWS_SECRET_KEY = secrets.Secret_Access_Key
+#AWS_SESSION_TOKEN = secrets.Session_Token
+#BUCKET_NAME = secrets.Bucket
 
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
 
-S3_client = boto3.client(
-    's3',
-    aws_access_key_id=AWS_ACCESS_KEY,
-    aws_secret_access_key=AWS_SECRET_KEY,
-    aws_session_token=AWS_SESSION_TOKEN,
-)
+#S3_client = boto3.client(
+#    's3',
+#    aws_access_key_id=AWS_ACCESS_KEY,
+#    aws_secret_access_key=AWS_SECRET_KEY,
+#    aws_session_token=AWS_SESSION_TOKEN,
+#)
 
 
 def page_not_found(error):
@@ -257,59 +257,59 @@ def restore_Boolean_values_to_Boolean_field(series):
     }).astype('boolean')
 
 
-def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NAME):
-    """The function for uploading files to a S3 bucket.
-
-    SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
-
-    Args:
-        file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
-        file_name (str): the name the file will be saved under in the S3 bucket
-        client (S3.Client): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
-        bucket (str): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
-    
-    Returns:
-        str: the logging statement to indicate if uploading the data succeeded or failed
-    """
-    try:
-        client.upload_fileobj(
-            Fileobj=file,
-            Bucket=bucket,
-            Key=file_name,
-        )
-        return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
-    except Exception as error:
-        logging.warning(f"Trying to upload the object `{file}` as a file-like object raised the error `{error}`.")
-
-        if file.is_file():  # Meaning `file` is a path-like object referencing an existing file
-            try:
-                client.upload_file(
-                    Filename=file,
-                    Bucket=bucket,
-                    Key=file_name,
-                )
-            except Exception as error:
-                logging.error(f"Trying to upload the file saved at `{file}` raised the error `{error}`.")
-                return f"Trying to upload the file saved at `{file}` raised the error `{error}`."
-        
-        else:
-            try:
-                file_path = Path() / file_name
-                file.save(file_path)  # `upload_file()` takes a file from a saved location, so the file must be saved first
-                
-                try:
-                    client.upload_file(
-                        Filename=file_path,
-                        Bucket=bucket,
-                        Key=file_name,
-                    )
-                except Exception as error:
-                    logging.error(f"Trying to upload the file saved at `{file_path}` raised the error `{error}`.")
-                    return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`."
-            
-            except Exception as error:
-                logging.error(f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`.")
-                return f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`."
-                
-            file_path.unlink()  # This deletes the file created and saved above; if this file wasn't created, the function would've ended at the return statement above
-            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+#def upload_file_to_S3_bucket(file, file_name, client=S3_client, bucket=BUCKET_NAME):
+#    """The function for uploading files to a S3 bucket.
+#
+#    SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
+#
+#    Args:
+#        file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
+#        file_name (str): the name the file will be saved under in the S3 bucket
+#        client (S3.Client): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
+#        bucket (str): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+#    
+#    Returns:
+#        str: the logging statement to indicate if uploading the data succeeded or failed
+#    """
+#    try:
+#        client.upload_fileobj(
+#            Fileobj=file,
+#            Bucket=bucket,
+#            Key=file_name,
+#        )
+#        return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+#    except Exception as error:
+#        logging.warning(f"Trying to upload the object `{file}` as a file-like object raised the error `{error}`.")
+#
+#        if file.is_file():  # Meaning `file` is a path-like object referencing an existing file
+#            try:
+#                client.upload_file(
+#                    Filename=file,
+#                    Bucket=bucket,
+#                    Key=file_name,
+#                )
+#            except Exception as error:
+#                logging.error(f"Trying to upload the file saved at `{file}` raised the error `{error}`.")
+#                return f"Trying to upload the file saved at `{file}` raised the error `{error}`."
+#        
+#        else:
+#            try:
+#                file_path = Path() / file_name
+#                file.save(file_path)  # `upload_file()` takes a file from a saved location, so the file must be saved first
+#                
+#                try:
+#                    client.upload_file(
+#                        Filename=file_path,
+#                        Bucket=bucket,
+#                        Key=file_name,
+#                    )
+#                except Exception as error:
+#                    logging.error(f"Trying to upload the file saved at `{file_path}` raised the error `{error}`.")
+#                    return f"Trying to upload the file saved at `{file_path}` raised the error `{error}`."
+#            
+#            except Exception as error:
+#                logging.error(f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`.")
+#                return f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error `{error}`."
+#                
+#            file_path.unlink()  # This deletes the file created and saved above; if this file wasn't created, the function would've ended at the return statement above
+#            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
