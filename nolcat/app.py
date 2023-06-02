@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
 from numpy import datetime64, squeeze
+import boto3
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
@@ -33,6 +34,7 @@ SECRET_KEY = secrets.Secret
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
+s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
 
 def page_not_found(error):
     """Returns the 404 page when a HTTP 404 error is raised."""

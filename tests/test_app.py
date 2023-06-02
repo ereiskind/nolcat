@@ -8,12 +8,30 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import numpy as np
+import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 # `conftest.py` fixtures are imported automatically
+from nolcat.app import s3_client
 from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
 from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.app import restore_Boolean_values_to_Boolean_field
+
+
+def test_S3_bucket_connection():
+    """Tests the connection between NoLCAT and the S3 bucket created by the instantiated client.
+    
+    Because S3 authentication is handled via CloudFormation, the bucket name isn't in the container; it must be pulled from the list of buckets the client has access to, which should contain only one item. Using the `list_buckets()` method requires the client to have the `s3:ListAllMyBuckets` permission.
+    """
+    try:
+        bucket_list = s3_client.list_buckets()['Buckets']
+    except botocore.exceptions.ClientError as error:
+        pytest.skip(f"The client raised the error `{error}`. Please request any missing permission from the S3 user account administrator.")
+    
+    if len(bucket_list) > 1:
+        pytest.skip("The client has access to multiple buckets, which could cause problems with the upload and download features. Please remove the client's permission to buckets other than the ones being used to store usage statistics.")
+    bucket_header = s3_client.head_bucket(Bucket=bucket_list[0]['Name'])
+    assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
 #Section: Test Flask Factory Pattern
