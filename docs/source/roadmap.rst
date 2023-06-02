@@ -15,7 +15,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Ensure SUSHI file names contain date range of harvest
 * Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 

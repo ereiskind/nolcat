@@ -303,11 +303,10 @@ class SUSHICallAndResponse:
         
         upload_file_to_S3_bucket(
             temp_file_path,
-            f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{datetime.now().isoformat()}.txt",
+            f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt",
         )
         temp_file_path.unlink()
         return error_message
-
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):

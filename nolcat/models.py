@@ -646,7 +646,7 @@ class StatisticsSources(db.Model):
                     json.dump(SUSHI_data_response, JSON_file)
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
-                    f"{self.statistics_source_ID}_reports-{report_name.lower()}_{datetime.now().isoformat()}.json",
+                    f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
                 )
                 temp_file_path.unlink()
                 logging.debug(log_message)
