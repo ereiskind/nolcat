@@ -517,6 +517,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
         con=engine,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    print(f"After `read_sql()`:\n{annualUsageCollectionTracking_relation_data}")
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
         "usage_is_being_collected": 'boolean',
         "manual_collection_required": 'boolean',
@@ -526,6 +527,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
         "usage_file_path": 'string',
         "notes": 'string',  # For `text` data type
     })
+    print(f"After `astype()`:\n{annualUsageCollectionTracking_relation_data}")
 
     #COUNTERData_relation_data = pd.read_sql(
     #    sql="SELECT * FROM COUNTERData;",
