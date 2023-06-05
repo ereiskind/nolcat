@@ -196,12 +196,12 @@ def test_change_single_field_dataframe_into_series():
 def test_restore_Boolean_values_to_Boolean_field():
     """Tests the replacement of MySQL's single-bit int data type with Python's Boolean data type."""
     tinyint_s = pd.Series(
-        [1, 0, np.NaN, 1],
+        [1, 0, pd.NA, 1],
         dtype='int64',
         name="boolean_values",
     )
     boolean_s = pd.Series(
-        [True, False, np.NaN, True],
+        [True, False, pd.NA, True],
         dtype='boolean',
         name="boolean_values",
     )
