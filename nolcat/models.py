@@ -65,6 +65,7 @@ class FiscalYears(db.Model):
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
     Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
         calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
         calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
@@ -94,6 +95,15 @@ class FiscalYears(db.Model):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
     @hybrid_method
@@ -326,6 +336,7 @@ class Vendors(db.Model):
         self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
 
     Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
         get_statisticsSources_records: Shows the records for all the statistics sources associated with the vendor.
         get_resourceSources_records: Shows the records for all the resource sources associated with the vendor.
         add_note: #ToDo: Copy first line of docstring here
@@ -345,6 +356,15 @@ class Vendors(db.Model):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
     @hybrid_method
@@ -411,6 +431,9 @@ class VendorNotes(db.Model):
         self.written_by (str): the note author
         self.date_written (date): the day the note was last edited
         self.vendor_ID (int): the foreign key for `vendors`
+    
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
     """
     __tablename__ = 'vendorNotes'
 
@@ -427,6 +450,15 @@ class VendorNotes(db.Model):
         pass
 
 
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
+
+
 class StatisticsSources(db.Model):
     """The class representation of the `statisticsSources` relation, which contains a list of all the possible sources of usage statistics.
     
@@ -437,6 +469,7 @@ class StatisticsSources(db.Model):
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
         _harvest_custom_report: Makes a single API call for a customizable report with all possible attributes.
@@ -460,6 +493,15 @@ class StatisticsSources(db.Model):
     def __repr__(self):
         """The printable representation of a `StatisticsSources` instance."""
         return f"<'statistics_source_ID': '{self.statistics_source_ID}', 'statistics_source_name': '{self.statistics_source_name}', 'statistics_source_retrieval_code': '{self.statistics_source_retrieval_code}', 'vendor_ID': '{self.vendor_ID}'>"
+    
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
     @hybrid_method
@@ -932,6 +974,9 @@ class StatisticsSourceNotes(db.Model):
         self.written_by (str): the note author
         self.date_written (date): the day the note was last edited
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
     """
     __tablename__ = 'statisticsSourceNotes'
 
@@ -948,6 +993,15 @@ class StatisticsSourceNotes(db.Model):
         pass
 
 
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
+
+
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
 
@@ -961,6 +1015,7 @@ class ResourceSources(db.Model):
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
         add_access_stop_date: #ToDo: Copy first line of docstring here
         remove_access_stop_date:  #ToDo: Copy first line of docstring here
         change_StatisticsSource: Change the current statistics source for the resource source.
@@ -981,6 +1036,15 @@ class ResourceSources(db.Model):
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
     @hybrid_method
@@ -1032,6 +1096,9 @@ class ResourceSourceNotes(db.Model):
         self.written_by (str): the note author
         self.date_written (date): the day the note was last edited
         self.resource_source_ID (int): the foreign key for `resourceSources`
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
     """
     __tablename__ = 'resourceSourceNotes'
 
@@ -1048,6 +1115,15 @@ class ResourceSourceNotes(db.Model):
         pass
 
 
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
+
+
 class StatisticsResourceSources(db.Model):
     """The class representation of the `statisticsResourceSources` relation, which functions as the junction table between `statisticsSources` and `resourceSources`.
 
@@ -1057,6 +1133,9 @@ class StatisticsResourceSources(db.Model):
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
         self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
     """
     __tablename__ = 'statisticsResourceSources'
 
@@ -1068,6 +1147,15 @@ class StatisticsResourceSources(db.Model):
     def __repr__(self):
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
 class AnnualUsageCollectionTracking(db.Model):
@@ -1085,6 +1173,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
     """
@@ -1117,6 +1206,15 @@ class AnnualUsageCollectionTracking(db.Model):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }
 
 
     @hybrid_method
@@ -1222,6 +1320,9 @@ class COUNTERData(db.Model):
         self.usage_date (date): the month when the use occurred, represented by the first day of that month
         self.usage_count (int): the number of uses
         self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
+
+    Methods:
+        state_data_types: This method provides a dictionary of the attributes and their data types.
     """
     __tablename__ = 'COUNTERData'
 
@@ -1267,3 +1368,12 @@ class COUNTERData(db.Model):
         """The printable representation of the record."""
         #ToDo: Create an f-string to serve as a printable representation of the record
         pass
+
+
+    @hybrid_method
+    @classmethod
+    def state_data_types(self):
+        """This method provides a dictionary of the attributes and their data types."""
+        return {
+            #
+        }

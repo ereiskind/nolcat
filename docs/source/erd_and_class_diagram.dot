@@ -33,6 +33,7 @@ digraph erd_and_classes {
 
         // Methods
         // Should each number have its own method, or should all of them be calculated at the same time?
+        state_data_types [shape="Mrecord"]
         calculate_ACRL_60b [shape="Mrecord"]
         calculate_ACRL_63 [shape="Mrecord"]
         calculate_ARL_18 [shape="Mrecord"]
@@ -52,6 +53,7 @@ digraph erd_and_classes {
         alma_vendor_code
 
         //Methods
+        state_data_types [shape="Mrecord"]
         get_statisticsSources_records [shape="Mrecord"]
         get_resourceSources_records [shape="Mrecord"]
         add_note [shape="Mrecord"]
@@ -72,6 +74,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -88,8 +91,11 @@ digraph erd_and_classes {
         ]
 
         // Methods
+        state_data_types [shape="Mrecord"]
         fetch_SUSHI_information [shape="Mrecord"]
         _harvest_R5_SUSHI [shape="Mrecord"]
+        _harvest_custom_report [shape="Mrecord"]
+        _check_if_data_in_database [shape="Mrecord"]
         collect_usage_statistics [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
@@ -109,6 +115,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -126,8 +133,10 @@ digraph erd_and_classes {
         ]
 
         // Methods
+        state_data_types [shape="Mrecord"]
         add_access_stop_date [shape="Mrecord"]
         remove_access_stop_date [shape="Mrecord"]
+        change_StatisticsSource [shape="Mrecord"]
         add_note [shape="Mrecord"]
     }
 
@@ -146,6 +155,7 @@ digraph erd_and_classes {
         ]
 
         //Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -158,6 +168,7 @@ digraph erd_and_classes {
         current_statistics_source // This indicates if the given statistics source is the active source for the resourceSource's usage. Every resourceSource in use must have a current statisticsSource regardless of if usage is actually provided for the resourceSource because the current statisticsSource is how the intentional omission of resourceSources that don't provide usage is tracked.
 
         // Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
@@ -176,6 +187,7 @@ digraph erd_and_classes {
         notes
 
         // Methods
+        state_data_types [shape="Mrecord"]
         collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
     }
@@ -190,8 +202,8 @@ digraph erd_and_classes {
             label="statistics_source_ID"
             shape="folder"
         ]
-        resource_name
         __report_type
+        resource_name
         publisher
         publisher_ID
         platform
@@ -226,6 +238,7 @@ digraph erd_and_classes {
         __report_creation_date
 
         // Methods
+        state_data_types [shape="Mrecord"]
     }
 
 
