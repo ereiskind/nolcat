@@ -341,8 +341,8 @@ class Vendors(db.Model):
     
     Attributes:
         self. vendor_ID (int): the primary key
-        self.vendor_name (str): the name of the vendor= db.Column(db.String(80))
-        self.alma_vendor_code (str): the code used to identify vendors in the Alma API return value
+        self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
+        self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -372,7 +372,8 @@ class Vendors(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "vendor_name": 'string',
+            "alma_vendor_code": 'string',
         }
 
 
