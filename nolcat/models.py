@@ -1156,7 +1156,7 @@ class StatisticsResourceSources(db.Model):
     Attributes:
         self.SRS_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.SRS_resource_source (int): part of the composite primary key; the foreign key for `resourceSources`
-        self.current_statistics_source (boolean): indicates if the statistics source currently provides the usage for the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
+        self.current_statistics_source (bool): indicates if the statistics source currently provides the usage for the resource source
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -1178,7 +1178,7 @@ class StatisticsResourceSources(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "current_statistics_source": 'bool',  # Python's `bool` is used to reinforce that this is a non-null field
         }
 
 
