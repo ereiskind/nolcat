@@ -233,9 +233,9 @@ def change_single_field_dataframe_into_series(df):
 
 
 def restore_Boolean_values_to_Boolean_field(series):
-    """The function for converting the integer field used for Booleans in MySQL into a pandas `boolean` field.
+    """The function for converting the integer field used for Booleans in MySQL into a pandas `Boolean` field.
 
-    MySQL stores Boolean values in a `TINYINT(1)` field, so any Boolean fields read from the database into a pandas dataframe appear as integer or float fields with the values `1`, `0`, and, if nulls are allowed, `NaN`. For simplicity, clarity, and consistency, turning these fields back into pandas Boolean fields is often a good idea.
+    MySQL stores Boolean values in a `TINYINT(1)` field, so any Boolean fields read from the database into a pandas dataframe appear as integer or float fields with the values `1`, `0`, and, if nulls are allowed, `pd.NA`. For simplicity, clarity, and consistency, turning these fields back into pandas `Boolean` fields is often a good idea.
 
     Args:
         series (pd.Series): a Boolean field with numeric values and a numeric dtype from MySQL
@@ -246,7 +246,7 @@ def restore_Boolean_values_to_Boolean_field(series):
     return series.replace({
         0: False,
         1: True,
-    }).astype('boolean')
+    }).astype('Boolean')
 
 
 def upload_file_to_S3_bucket(file):
