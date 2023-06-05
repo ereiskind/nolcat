@@ -53,14 +53,14 @@ class FiscalYears(db.Model):
     
     Attributes:
         self.fiscal_year_ID (int): the primary key
-        self.fiscal_year (str): the fiscal year in "yyyy" format; the ending year of the range is used
-        self.start_date (date): the first day of the fiscal year
-        self.end_date (date) the last day of the fiscal year
-        self.ACRL_60b (smallInt): the reported value for ACRL 60b
-        self.ACRL_63 (smallInt): the reported value for ACRL 63
-        self.ARL_18 (smallInt): the reported value for ARL 18
-        self.ARL_19 (smallInt): the reported value for ARL 19
-        self.ARL_20 (smallInt): the reported value for ARL 20
+        self.fiscal_year (string): the fiscal year in "yyyy" format; the ending year of the range is used
+        self.start_date (datetime64[ns]): the first day of the fiscal year
+        self.end_date (datetime64[ns]) the last day of the fiscal year
+        self.ACRL_60b (Int64): the reported value for ACRL 60b
+        self.ACRL_63 (Int64): the reported value for ACRL 63
+        self.ARL_18 (Int64): the reported value for ARL 18
+        self.ARL_19 (Int64): the reported value for ARL 19
+        self.ARL_20 (Int64): the reported value for ARL 20
         self.notes_on_statisticsSources_used (text): notes on data sources used to collect ARL and ACRL/IPEDS numbers
         self.notes_on_corrections_after_submission (text): information on any corrections to usage data done by vendors after initial harvest, especially if later corrected numbers were used in national reporting statistics
 
@@ -80,11 +80,11 @@ class FiscalYears(db.Model):
     fiscal_year = db.Column(db.String(4), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    ACRL_60b = db.Column(db.SmallInteger)
-    ACRL_63 = db.Column(db.SmallInteger)
-    ARL_18 = db.Column(db.SmallInteger)
-    ARL_19 = db.Column(db.SmallInteger)
-    ARL_20 = db.Column(db.SmallInteger)
+    ACRL_60b = db.Column(db.Integer)
+    ACRL_63 = db.Column(db.Integer)
+    ARL_18 = db.Column(db.Integer)
+    ARL_19 = db.Column(db.Integer)
+    ARL_20 = db.Column(db.Integer)
     notes_on_statisticsSources_used = db.Column(db.Text)
     notes_on_corrections_after_submission = db.Column(db.Text)
 
@@ -102,7 +102,16 @@ class FiscalYears(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "fiscal_year": 'string',
+            "start_date": 'datetime64[ns]',
+            "end_date": 'datetime64[ns]',
+            "ACRL_60b": 'Int64',
+            "ACRL_63": 'Int64',
+            "ARL_18": 'Int64',
+            "ARL_19": 'Int64',
+            "ARL_20": 'Int64',
+            "notes_on_statisticsSources_used": 'string',
+            "notes_on_corrections_after_submission": 'string',
         }
 
 
