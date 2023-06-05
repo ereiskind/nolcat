@@ -1316,40 +1316,40 @@ class COUNTERData(db.Model):
     Attributes:
         self.COUNTER_data_ID (int): the primary key
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
-        self.report_type (str): the type of COUNTER report, represented by the official report abbreviation
-        self.resource_name (str): the name of the resource
-        self.publisher (str): the name of the publisher
-        self.publisher_ID (str): the statistics source's ID for the publisher
-        self.platform (str): the name of the resource's platform in the COUNTER report
-        self.authors (str): the authors of the resource
-        self.publication_date (datetime): the resource publication date in the COUNTER IR
-        self.article_version (str): version of article within the publication life cycle from the COUNTER IR
-        self.DOI (str): the DOI for the resource
-        self.proprietary_ID (str): the statistics source's ID for the resource
-        self.ISBN (str): the ISBN for the resource
-        self.print_ISSN (str): the print ISSN for the resource
-        self.online_ISSN (str): the online ISSN for the resource
-        self.URI (str): the statistics source's permalink to the resource
-        self.data_type (str): the COUNTER data type
-        self.section_type (str): the COUNTER section type
-        self.YOP (smallInt): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
-        self.access_type (str): the COUNTER access type
-        self.access_method (str): the COUNTER access method
-        self.parent_title (str): the name of the resource's host
-        self.parent_authors (str): the authors of the resource's host
-        self.parent_publication_date (datetime): the resource's host's publication date in the COUNTER IR
-        self.parent_article_version (str): version of article's host within the publication life cycle from the COUNTER IR
-        self.parent_data_type (str): the COUNTER data type for the resource's host
-        self.parent_DOI (str): the DOI for the resource's host
-        self.parent_proprietary_ID (str): the statistics source's ID for the resource's host
-        self.parent_ISBN (str): the ISBN for the resource's host
-        self.parent_print_ISSN (str): the print ISSN for the resource's host
-        self.parent_online_ISSN (str): the online ISSN for the resource's host
-        self.parent_URI (str): the statistics source's permalink to the resource's host
-        self.metric_type (str): the COUNTER metric type
-        self.usage_date (date): the month when the use occurred, represented by the first day of that month
+        self.report_type (string): the type of COUNTER report, represented by the official report abbreviation
+        self.resource_name (string): the name of the resource
+        self.publisher (string): the name of the publisher
+        self.publisher_ID (string): the statistics source's ID for the publisher
+        self.platform (string): the name of the resource's platform in the COUNTER report
+        self.authors (string): the authors of the resource
+        self.publication_date (datetime64[ns]): the resource publication date in the COUNTER IR
+        self.article_version (string): version of article within the publication life cycle from the COUNTER IR
+        self.DOI (string): the DOI for the resource
+        self.proprietary_ID (string): the statistics source's ID for the resource
+        self.ISBN (string): the ISBN for the resource
+        self.print_ISSN (string): the print ISSN for the resource
+        self.online_ISSN (string): the online ISSN for the resource
+        self.URI (string): the statistics source's permalink to the resource
+        self.data_type (string): the COUNTER data type
+        self.section_type (string): the COUNTER section type
+        self.YOP (Int16): the year the resource used was published, where an unknown year is represented with `0001` and articles in press are assigned `9999`
+        self.access_type (string): the COUNTER access type
+        self.access_method (string): the COUNTER access method
+        self.parent_title (string): the name of the resource's host
+        self.parent_authors (string): the authors of the resource's host
+        self.parent_publication_date (datetime64[ns]): the resource's host's publication date in the COUNTER IR
+        self.parent_article_version (string): version of article's host within the publication life cycle from the COUNTER IR
+        self.parent_data_type (string): the COUNTER data type for the resource's host
+        self.parent_DOI (string): the DOI for the resource's host
+        self.parent_proprietary_ID (string): the statistics source's ID for the resource's host
+        self.parent_ISBN (string): the ISBN for the resource's host
+        self.parent_print_ISSN (string): the print ISSN for the resource's host
+        self.parent_online_ISSN (string): the online ISSN for the resource's host
+        self.parent_URI (string): the statistics source's permalink to the resource's host
+        self.metric_type (string): the COUNTER metric type
+        self.usage_date (datetime64[ns]): the month when the use occurred, represented by the first day of that month
         self.usage_count (int): the number of uses
-        self.report_creation_date (datetime): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
+        self.report_creation_date (datetime64[ns]): the date and time when the SUSHI call for the COUNTER report which provided the data was downloaded
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -1405,5 +1405,39 @@ class COUNTERData(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "statistics_source_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
+            "report_type": 'string',
+            "resource_name": 'string',
+            "publisher": 'string',
+            "publisher_ID": 'string',
+            "platform": 'string',
+            "authors": 'string',
+            "publication_date": 'datetime64[ns]',
+            "article_version": 'string',
+            "DOI": 'string',
+            "proprietary_ID": 'string',
+            "ISBN": 'string',
+            "print_ISSN": 'string',
+            "online_ISSN": 'string',
+            "URI": 'string',
+            "data_type": 'string',
+            "section_type": 'string',
+            "YOP": 'Int16',  # Relation uses two-byte integer type, so code uses two-byte integer data type from pandas, which allows nulls
+            "access_type": 'string',
+            "access_method": 'string',
+            "parent_title": 'string',
+            "parent_authors": 'string',
+            "parent_publication_date": 'datetime64[ns]',
+            "parent_article_version": 'string',
+            "parent_data_type": 'string',
+            "parent_DOI": 'string',
+            "parent_proprietary_ID": 'string',
+            "parent_ISBN": 'string',
+            "parent_print_ISSN": 'string',
+            "parent_online_ISSN": 'string',
+            "parent_URI": 'string',
+            "metric_type": 'string',
+            "usage_date": 'datetime64[ns]',
+            "usage_count": 'int',  # Python's `int` is used to reinforce that this is a non-null field
+            "report_creation_date": 'datetime64[ns]',
         }
