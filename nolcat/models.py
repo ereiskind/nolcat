@@ -1027,9 +1027,9 @@ class ResourceSources(db.Model):
     
     Attributes:
         self.resource_source_ID (int): the primary key
-        self.resource_source_name (str): the resource source name
-        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source; uses the pandas Boolean dtype, which allows null values, but null values disallowed through field restraint
-        self.use_stop_date (date): if we don't have access to resources at this source, the last date we had access
+        self.resource_source_name (string): the resource source name
+        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source
+        self.use_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -1061,7 +1061,10 @@ class ResourceSources(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "resource_source_name": 'string',
+            "source_in_use": 'boolean',
+            "use_stop_date": 'datetime64[ns]',
+            "vendor_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
 
 
