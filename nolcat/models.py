@@ -986,8 +986,8 @@ class StatisticsSourceNotes(db.Model):
     Attributes:
         self.statistics_source_notes_ID (int): the primary key
         self.note (text): the content of the note
-        self.written_by (str): the note author
-        self.date_written (date): the day the note was last edited
+        self.written_by (string): the note author
+        self.date_written (datetime64[ns]): the day the note was last edited
         self.statistics_source_ID (int): the foreign key for `statisticsSources`
 
     Methods:
@@ -1013,7 +1013,10 @@ class StatisticsSourceNotes(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "note": 'string',
+            "written_by": 'string',
+            "date_written": 'datetime64[ns]',
+            "statistics_source_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
 
 
