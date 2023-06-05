@@ -1188,13 +1188,13 @@ class AnnualUsageCollectionTracking(db.Model):
     Attributes:
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
-        self.usage_is_being_collected (boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
-        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
-        self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
-        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
+        self.usage_is_being_collected (Boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
+        self.manual_collection_required (Boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
+        self.collection_via_email (Boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
+        self.is_COUNTER_compliant (Boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
         self.collection_status (enum): the status of the usage statistics collection
-        self.usage_file_path (str): the path to the file containing the non-COUNTER usage statistics
-        self.notes (test): notes about collecting usage statistics for the particular statistics source and fiscal year
+        self.usage_file_path (string): the path to the file containing the non-COUNTER usage statistics
+        self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
@@ -1237,7 +1237,13 @@ class AnnualUsageCollectionTracking(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "usage_is_being_collected": 'Boolean',
+            "manual_collection_required": 'Boolean',
+            "collection_via_email": 'Boolean',
+            "is_COUNTER_compliant": 'Boolean',
+            "collection_status": 'string',  # Using Python's `enum` standard library would add complexity
+            "usage_file_path": 'string',
+            "notes": 'string',
         }
 
 
