@@ -477,8 +477,8 @@ class StatisticsSources(db.Model):
     
     Attributes:
         self.statistics_source_ID (int): the primary key
-        self.statistics_source_name (str): the name of the statistics source
-        self.statistics_source_retrieval_code (str): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
+        self.statistics_source_name (string): the name of the statistics source
+        self.statistics_source_retrieval_code (string): the ID used to uniquely identify each set of SUSHI credentials in the SUSHI credentials JSON
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -513,7 +513,9 @@ class StatisticsSources(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            #
+            "statistics_source_name": 'string',
+            "statistics_source_retrieval_code": 'string',
+            "vendor_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
 
 
