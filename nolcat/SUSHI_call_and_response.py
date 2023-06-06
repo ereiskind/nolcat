@@ -83,12 +83,12 @@ class SUSHICallAndResponse:
         
         #Section: Convert Response to Python Data Types
         try:
-            converted_API_response = self._convert_Response_to_JSON(API_response)
+            API_response = self._convert_Response_to_JSON(API_response)
         except Exception as error:
             return_dict_value = self._save_raw_Response_text(error, API_response.text, exception=True)
             return {"ERROR": return_dict_value}
-        if len(converted_API_response.keys()) == 1 and list(converted_API_response.keys()) == "ERROR":
-            return_dict_value = self._save_raw_Response_text(converted_API_response['ERROR'], API_response.text)
+        if len(API_response.keys()) == 1 and list(API_response.keys()) == "ERROR":
+            return_dict_value = self._save_raw_Response_text(API_response['ERROR'], API_response.text)
             return {"ERROR": return_dict_value}
 
         #Section: Check for SUSHI Error Codes
