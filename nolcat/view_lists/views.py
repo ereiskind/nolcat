@@ -9,7 +9,7 @@ import pandas as pd
 from . import bp
 #from .forms import <name of form classes>
 from ..app import db
-#from ..models import <name of SQLAlchemy classes used in views below>
+from ..models import *
 
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages

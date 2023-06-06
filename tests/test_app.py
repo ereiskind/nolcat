@@ -16,6 +16,7 @@ from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
 from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.app import restore_Boolean_values_to_Boolean_field
+from nolcat.models import *
 
 
 def test_S3_bucket_connection():
@@ -94,10 +95,7 @@ def test_loading_data_into_relation(engine, vendors_relation):
         con=engine,
         index_col='vendor_ID',
     )
-    retrieved_vendors_data = retrieved_vendors_data.astype({
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
-    })
+    retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
 
     assert_frame_equal(vendors_relation, retrieved_vendors_data)

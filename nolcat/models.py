@@ -274,15 +274,7 @@ class FiscalYears(db.Model):
             index=multiindex,
             columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
         )
-        df = df.astype({
-            "usage_is_being_collected": 'boolean',
-            "manual_collection_required": 'boolean',
-            "collection_via_email": 'boolean',
-            "is_COUNTER_compliant": 'boolean',
-            "collection_status": 'string',  # For `enum` data type
-            "usage_file_path": 'string',
-            "notes": 'string',  # For `text` data type
-        })
+        df = df.astype(AnnualUsageCollectionTracking.state_data_types())
         logging.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation

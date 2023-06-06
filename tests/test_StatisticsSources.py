@@ -10,8 +10,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import StatisticsSources
-from nolcat.models import PATH_TO_CREDENTIALS_FILE
+from nolcat.models import *
 
 
 #Section: Fixtures
@@ -101,39 +100,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_w
         con=engine,
     )
     most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    most_recently_loaded_records = most_recently_loaded_records.astype({
-        "statistics_source_ID": 'int',
-        "report_type": 'string',
-        "resource_name": 'string',
-        "publisher": 'string',
-        "publisher_ID": 'string',
-        "platform": 'string',
-        "authors": 'string',
-        "article_version": 'string',
-        "DOI": 'string',
-        "proprietary_ID": 'string',
-        "ISBN": 'string',
-        "print_ISSN": 'string',
-        "online_ISSN": 'string',
-        "URI": 'string',
-        "data_type": 'string',
-        "section_type": 'string',
-        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-        "access_type": 'string',
-        "access_method": 'string',
-        "parent_title": 'string',
-        "parent_authors": 'string',
-        "parent_article_version": 'string',
-        "parent_data_type": 'string',
-        "parent_DOI": 'string',
-        "parent_proprietary_ID": 'string',
-        "parent_ISBN": 'string',
-        "parent_print_ISSN": 'string',
-        "parent_online_ISSN": 'string',
-        "parent_URI": 'string',
-        "metric_type": 'string',
-        # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
-    })
+    most_recently_loaded_records = most_recently_loaded_records.astype(COUNTERData.state_data_types())
     most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
     most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
     most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])

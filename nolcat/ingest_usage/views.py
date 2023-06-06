@@ -12,7 +12,7 @@ import pandas as pd
 from . import bp
 from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
 from ..app import db, first_new_PK_value
-from ..models import StatisticsSources
+from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
