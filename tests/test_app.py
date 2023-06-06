@@ -133,10 +133,10 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     expected_output_data = pd.DataFrame(
         [
-            ["ProQuest", None, "ProQuest", None],
-            ["EBSCOhost", None, "EBSCO", None],
+            ["ProQuest", "1", "ProQuest", None],
+            ["EBSCOhost", "2", "EBSCO", None],
             ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", None, "Duke UP", None],
+            ["Duke UP", "3", "Duke UP", None],
             ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
             ["DemographicsNow", None, "Gale", None],
             ["Ebook Central", None, "ProQuest", None],
