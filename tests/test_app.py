@@ -15,7 +15,7 @@ from nolcat.app import s3_client
 from nolcat.app import create_app
 from nolcat.app import first_new_PK_value
 from nolcat.app import change_single_field_dataframe_into_series
-from nolcat.app import restore_Boolean_values_to_Boolean_field
+from nolcat.app import restore_boolean_values_to_boolean_field
 from nolcat.models import *
 
 
@@ -191,8 +191,8 @@ def test_change_single_field_dataframe_into_series():
     assert_series_equal(change_single_field_dataframe_into_series(df), s)
 
 
-def test_restore_Boolean_values_to_Boolean_field():
-    """Tests the replacement of MySQL's single-bit int data type with pandas's Boolean data type."""
+def test_restore_boolean_values_to_boolean_field():
+    """Tests the replacement of MySQL's single-bit int data type with pandas's `boolean` data type."""
     tinyint_s = pd.Series(
         [1, 0, pd.NA, 1],
         dtype='Int8',  # pandas' single-bit int data type is used because it allows nulls; using the Python data type raises an error
@@ -200,10 +200,10 @@ def test_restore_Boolean_values_to_Boolean_field():
     )
     boolean_s = pd.Series(
         [True, False, pd.NA, True],
-        dtype='Boolean',
+        dtype='boolean',
         name="boolean_values",
     )
-    assert_series_equal(restore_Boolean_values_to_Boolean_field(tinyint_s), boolean_s)
+    assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
 #ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`

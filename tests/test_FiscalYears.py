@@ -8,7 +8,7 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import return_string_of_dataframe_info, restore_Boolean_values_to_Boolean_field
+from nolcat.app import return_string_of_dataframe_info, restore_boolean_values_to_boolean_field
 from nolcat.models import *
 
 
@@ -98,10 +98,10 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
         "notes": AnnualUsageCollectionTracking.state_data_types()["notes"],
     })
-    retrieved_data['usage_is_being_collected'] = restore_Boolean_values_to_Boolean_field(retrieved_data['usage_is_being_collected'])
-    retrieved_data['manual_collection_required'] = restore_Boolean_values_to_Boolean_field(retrieved_data['manual_collection_required'])
-    retrieved_data['collection_via_email'] = restore_Boolean_values_to_Boolean_field(retrieved_data['collection_via_email'])
-    retrieved_data['is_COUNTER_compliant'] = restore_Boolean_values_to_Boolean_field(retrieved_data['is_COUNTER_compliant'])
+    retrieved_data['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(retrieved_data['usage_is_being_collected'])
+    retrieved_data['manual_collection_required'] = restore_boolean_values_to_boolean_field(retrieved_data['manual_collection_required'])
+    retrieved_data['collection_via_email'] = restore_boolean_values_to_boolean_field(retrieved_data['collection_via_email'])
+    retrieved_data['is_COUNTER_compliant'] = restore_boolean_values_to_boolean_field(retrieved_data['is_COUNTER_compliant'])
     print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
     
     multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order

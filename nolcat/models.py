@@ -1020,7 +1020,7 @@ class ResourceSources(db.Model):
     Attributes:
         self.resource_source_ID (int): the primary key
         self.resource_source_name (string): the resource source name
-        self.source_in_use (boolean): indicates if we currently have access to resources at the resource source
+        self.source_in_use (bool): indicates if we currently have access to resources at the resource source
         self.use_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
@@ -1054,7 +1054,7 @@ class ResourceSources(db.Model):
         """This method provides a dictionary of the attributes and their data types."""
         return {
             "resource_source_name": 'string',
-            "source_in_use": 'boolean',
+            "source_in_use": 'bool',  # Python's `bool` is used to reinforce that this is a non-null field
             "use_stop_date": 'datetime64[ns]',
             "vendor_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
@@ -1180,10 +1180,10 @@ class AnnualUsageCollectionTracking(db.Model):
     Attributes:
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
-        self.usage_is_being_collected (Boolean): indicates if usage needs to be collected; uses the pandas Boolean dtype, which allows null values
-        self.manual_collection_required (Boolean): indicates if usage needs to be collected manually; uses the pandas Boolean dtype, which allows null values
-        self.collection_via_email (Boolean): indicates if usage needs to be requested by sending an email; uses the pandas Boolean dtype, which allows null values
-        self.is_COUNTER_compliant (Boolean): indicates if usage is COUNTER R4 or R5 compliant; uses the pandas Boolean dtype, which allows null values
+        self.usage_is_being_collected (boolean): indicates if usage needs to be collected
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually
+        self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (string): the path to the file containing the non-COUNTER usage statistics
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
@@ -1229,10 +1229,10 @@ class AnnualUsageCollectionTracking(db.Model):
     def state_data_types(self):
         """This method provides a dictionary of the attributes and their data types."""
         return {
-            "usage_is_being_collected": 'Boolean',
-            "manual_collection_required": 'Boolean',
-            "collection_via_email": 'Boolean',
-            "is_COUNTER_compliant": 'Boolean',
+            "usage_is_being_collected": 'boolean',
+            "manual_collection_required": 'boolean',
+            "collection_via_email": 'boolean',
+            "is_COUNTER_compliant": 'boolean',
             "collection_status": 'string',  # Using Python's `enum` standard library would add complexity
             "usage_file_path": 'string',
             "notes": 'string',
