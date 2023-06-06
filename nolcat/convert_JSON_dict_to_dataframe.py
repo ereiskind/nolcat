@@ -61,7 +61,7 @@ class ConvertJSONDictToDataframe:
         This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToDataframe._transform_R5_JSON()` or the `ConvertJSONDictToDataframe._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
 
         Returns:
-            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation or an empty dataframe to indicate an error
         """
         logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
@@ -82,6 +82,7 @@ class ConvertJSONDictToDataframe:
         else:
             logging.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
+        return df  # The method will only get here if one of the private harvest methods was successful
 
 
     def _transform_R5_JSON(self, report_creation_date):
