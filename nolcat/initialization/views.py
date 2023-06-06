@@ -58,9 +58,7 @@ def collect_FY_and_vendor_data():
             logging.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
-        fiscalYears_dataframe['fiscal_year'] = fiscalYears_dataframe['fiscal_year'].astype("string")
-        fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].astype("string")
-        fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].astype("string")
+        fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v is not "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
@@ -78,8 +76,7 @@ def collect_FY_and_vendor_data():
             logging.error("The `vendors` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendors`")
         
-        vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].astype("string")
-        vendors_dataframe['alma_vendor_code'] = vendors_dataframe['alma_vendor_code'].astype("string")
+        vendors_dataframe = vendors_dataframe.astype({k: v for (k, v) in Vendors.state_data_types().items()})
         logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
@@ -97,8 +94,7 @@ def collect_FY_and_vendor_data():
             logging.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
-        vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].astype("string")
-        vendorNotes_dataframe['written_by'] = vendorNotes_dataframe['written_by'].astype("string")
+        vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v is not "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
@@ -161,8 +157,7 @@ def collect_sources_data():
             logging.error("The `statisticsSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSources`")
         
-        statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].astype("string")
-        statisticsSources_dataframe['statistics_source_retrieval_code'] = statisticsSources_dataframe['statistics_source_retrieval_code'].astype("string")
+        statisticsSources_dataframe = statisticsSources_dataframe.astype({k: v for (k, v) in StatisticsSources.state_data_types().items()})
         logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
@@ -180,8 +175,7 @@ def collect_sources_data():
             logging.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
-        statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].astype("string")
-        statisticsSourceNotes_dataframe['written_by'] = statisticsSourceNotes_dataframe['written_by'].astype("string")
+        statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v is not "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
@@ -200,7 +194,7 @@ def collect_sources_data():
             logging.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
-        resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].astype("string")
+        resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v is not "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
@@ -218,8 +212,7 @@ def collect_sources_data():
             logging.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
-        resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].astype("string")
-        resourceSourceNotes_dataframe['written_by'] = resourceSourceNotes_dataframe['written_by'].astype("string")
+        resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v is not "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
@@ -351,8 +344,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             logging.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
-        AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].astype("string")
-        AUCT_dataframe['notes'] = AUCT_dataframe['notes'].astype("string")
+        AUCT_dataframe = AUCT_dataframe.astype({k: v for (k, v) in AnnualUsageCollectionTracking.state_data_types().items()})
         logging.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
         AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         AUCT_dataframe['notes'] = AUCT_dataframe['notes'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))

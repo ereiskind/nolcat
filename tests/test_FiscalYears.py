@@ -94,9 +94,9 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     retrieved_data = retrieved_data.astype({
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
+        "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
+        "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
+        "notes": AnnualUsageCollectionTracking.state_data_types()["notes"],
     })
     retrieved_data['usage_is_being_collected'] = restore_Boolean_values_to_Boolean_field(retrieved_data['usage_is_being_collected'])
     retrieved_data['manual_collection_required'] = restore_Boolean_values_to_Boolean_field(retrieved_data['manual_collection_required'])

@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 import pandas as pd
 
 from .app import return_string_of_dataframe_info
+from .models import *
 
 logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
@@ -217,31 +218,7 @@ class UploadCOUNTERReports:
                 #Section: Create Dataframe
                 #Subsection: Ensure String Data Type for Potentially Numeric Metadata Fields
                 # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be set as strings at the creation of the dataframe to head off problems.
-                df_dtypes = dict()
-                if "resource_name" in df_field_names:  # Dates and numbers, especially years, can be used as titles
-                    df_dtypes['resource_name'] = 'string'
-                if "publisher_ID" in df_field_names:
-                    df_dtypes['publisher_ID'] = 'string'
-                if "DOI" in df_field_names:
-                    df_dtypes['DOI'] = 'string'
-                if "proprietary_ID" in df_field_names:
-                    df_dtypes['proprietary_ID'] = 'string'
-                if "ISBN" in df_field_names:
-                    df_dtypes['ISBN'] = 'string'
-                if "print_ISSN" in df_field_names:
-                    df_dtypes['print_ISSN'] = 'string'
-                if "online_ISSN" in df_field_names:
-                    df_dtypes['online_ISSN'] = 'string'
-                if "parent_DOI" in df_field_names:
-                    df_dtypes['parent_DOI'] = 'string'
-                if "parent_proprietary_ID" in df_field_names:
-                    df_dtypes['parent_proprietary_ID'] = 'string'
-                if "parent_ISBN" in df_field_names:
-                    df_dtypes['parent_ISBN'] = 'string'
-                if "parent_print_ISSN" in df_field_names:
-                    df_dtypes['parent_print_ISSN'] = 'string'
-                if "parent_online_ISSN" in df_field_names:
-                    df_dtypes['parent_online_ISSN'] = 'string'
+                df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names}
                 
                 #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
@@ -378,17 +355,10 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                non_string_fields = ["index", "usage_date", "usage_count"]  # Unable to combine not equal to clauses in list comprehension below
-                fields_to_convert_to_string_dtype = [field_name for field_name in df.columns.values.tolist() if field_name not in non_string_fields]
-                string_dtype_conversion_dict = {'usage_count': 'int'}
-                for field_name in fields_to_convert_to_string_dtype:
-                    string_dtype_conversion_dict[field_name] = 'string'
-                df = df.astype(string_dtype_conversion_dict)
-
+                df = df.astype({k: v for (k, v) in COUNTERData.state_data_types() if k in df.columns.values.tolist()})
+                df['usage_date'] = pd.to_datetime(df['usage_date'])
                 # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
                 df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
-
-                df['usage_date'] = pd.to_datetime(df['usage_date'])
                 logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
 
                 #Subsection: Add Fields Missing from R4 Reports
@@ -441,69 +411,10 @@ class UploadCOUNTERReports:
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
-
-        combined_df_dtypes = {
-            'platform': 'string',
-            # usage_date retains datetime64[ns] type from heading conversion
-            # usage_count is a numpy int type, let the program determine the number of bits used for storage
-            'statistics_source_ID': 'int',
-        }
-        if "resource_name" in combined_df_field_names:
-            combined_df_dtypes['resource_name'] = 'string'
-        if "publisher" in combined_df_field_names:
-            combined_df_dtypes['publisher'] = 'string'
-        if "publisher_ID" in combined_df_field_names:
-            combined_df_dtypes['publisher_ID'] = 'string'
-        if "authors" in combined_df_field_names:
-            combined_df_dtypes['authors'] = 'string'
-        if "article_version" in combined_df_field_names:
-            combined_df_dtypes['article_version'] = 'string'
-        if "DOI" in combined_df_field_names:
-            combined_df_dtypes['DOI'] = 'string'
-        if "proprietary_ID" in combined_df_field_names:
-            combined_df_dtypes['proprietary_ID'] = 'string'
-        if "ISBN" in combined_df_field_names:
-            combined_df_dtypes['ISBN'] = 'string'
-        if "print_ISSN" in combined_df_field_names:
-            combined_df_dtypes['print_ISSN'] = 'string'
-        if "online_ISSN" in combined_df_field_names:
-            combined_df_dtypes['online_ISSN'] = 'string'
-        if "URI" in combined_df_field_names:
-            combined_df_dtypes['URI'] = 'string'
-        if "data_type" in combined_df_field_names:
-            combined_df_dtypes['data_type'] = 'string'
-        if "section_type" in combined_df_field_names:
-            combined_df_dtypes['section_type'] = 'string'
-        if "YOP" in combined_df_field_names:
-            combined_df_dtypes['YOP'] = 'Int64'  # `smallint` in database; using the pandas data type here because it allows null values
-        if "access_type" in combined_df_field_names:
-            combined_df_dtypes['access_type'] = 'string'
-        if "access_method" in combined_df_field_names:
-            combined_df_dtypes['access_method'] = 'string'
-        if "parent_title" in combined_df_field_names:
-            combined_df_dtypes['parent_title'] = 'string'
-        if "parent_authors" in combined_df_field_names:
-            combined_df_dtypes['parent_authors'] = 'string'
-        if "parent_article_version" in combined_df_field_names:
-            combined_df_dtypes['parent_article_version'] = 'string'
-        if "parent_data_Type" in combined_df_field_names:
-            combined_df_dtypes['parent_data_Type'] = 'string'
-        if "parent_DOI" in combined_df_field_names:
-            combined_df_dtypes['parent_DOI'] = 'string'
-        if "parent_proprietary_ID" in combined_df_field_names:
-            combined_df_dtypes['parent_proprietary_ID'] = 'string'
-        if "parent_ISBN" in combined_df_field_names:
-            combined_df_dtypes['parent_ISBN'] = 'string'
-        if "parent_print_ISSN" in combined_df_field_names:
-            combined_df_dtypes['parent_print_ISSN'] = 'string'
-        if "parent_online_ISSN" in combined_df_field_names:
-            combined_df_dtypes['parent_online_ISSN'] = 'string'
-        if "parent_URI" in combined_df_field_names:
-            combined_df_dtypes['parent_URI'] = 'string'
-        if "metric_type" in combined_df_field_names:
-            combined_df_dtypes['metric_type'] = 'string'
-        
-        combined_df = combined_df.astype(combined_df_dtypes, errors='ignore')
+        combined_df = combined_df.astype(
+            {k: v for (k, v) in COUNTERData.state_data_types() if k in combined_df_field_names},
+            errors='ignore',
+        )
         if "publication_date" in combined_df_field_names:
             combined_df['publication_date'] = pd.to_datetime(
                 combined_df['publication_date'],
