@@ -4,7 +4,7 @@
 import pytest
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import ResourceSources
+from nolcat.models import *
 
 
 def test_add_access_stop_date():

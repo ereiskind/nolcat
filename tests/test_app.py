@@ -6,8 +6,8 @@ import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
-from pandas.testing import assert_frame_equal, assert_series_equal
-import numpy as np
+from pandas.testing import assert_frame_equal
+from pandas.testing import assert_series_equal
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 # `conftest.py` fixtures are imported automatically

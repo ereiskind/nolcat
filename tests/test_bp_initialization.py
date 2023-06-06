@@ -7,10 +7,11 @@ import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from pandas.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal
+from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import date_parser, change_single_field_dataframe_into_series
+from nolcat.app import change_single_field_dataframe_into_series
 from nolcat.models import *
 from nolcat.initialization import *
 

@@ -2,7 +2,7 @@ import logging
 from flask import render_template
 
 from . import bp
-#from .forms import <name of form classes>
+#from .forms import *
 from ..app import db
 from ..models import *
 

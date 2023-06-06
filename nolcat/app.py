@@ -1,4 +1,3 @@
-from pathlib import Path
 import io
 import logging
 from flask import Flask
@@ -6,7 +5,7 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
-from numpy import datetime64, squeeze
+from numpy import squeeze
 import boto3
 
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.

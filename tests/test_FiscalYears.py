@@ -8,7 +8,8 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import return_string_of_dataframe_info, restore_boolean_values_to_boolean_field
+from nolcat.app import return_string_of_dataframe_info
+from nolcat.app import restore_boolean_values_to_boolean_field
 from nolcat.models import *
 
 
