@@ -142,7 +142,7 @@ def last_day_of_month(first_day_of_month):
     When COUNTER date ranges include the day, the "End_Date" value is for the last day of the month. This function consolidates that functionality in a single location and facilitates its use in pandas `map` functions.
 
     Args:
-        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[n] data type, but within this function, the data type is Timestamp
+        first_day_of_month (pd.Timestamp): the first day of the month; the dataframe of origin will have the date in a datetime64[ns] data type, but within this function, the data type is Timestamp
     
     Returns:
         str: the last day of the given month in ISO format
