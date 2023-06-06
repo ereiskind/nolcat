@@ -17,6 +17,16 @@ from nolcat.initialization import *
 
 #Section: Fixtures
 @pytest.fixture
+def blank_annualUsageCollectionTracking_data_types():
+    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types."""
+    yield {
+        **AnnualUsageCollectionTracking.state_data_types(),  # The double asterisk is the dictionary unpacking operator
+        "Statistics Source": StatisticsSources.state_data_types()['statistics_source_name'],
+        "Fiscal Year": FiscalYears.state_data_types()['fiscal_year'],
+    }
+
+
+@pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test."""
     yield fiscalYears_relation.to_csv(
@@ -113,7 +123,7 @@ def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSource
 
 
 @pytest.fixture
-def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
+def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUsageCollectionTracking_data_types):
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
     The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. The dataframe and subsequent CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function contains null values in the relation's non-index fields, extra fields for the statistics source and fiscal year name, and records for statistics source and fiscal year combinations that don't actually exist. To test the CSV creation, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
@@ -214,17 +224,7 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
         index=multiindex,
         columns=["Statistics Source", "Fiscal Year", "usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
     )
-    df = df.astype({
-        "Statistics Source": 'string',
-        "Fiscal Year": 'string',
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',
-        "usage_file_path": 'string',
-        "notes": 'string',
-    })
+    df = df.astype(blank_annualUsageCollectionTracking_data_types)
     yield df.to_csv(
         tmp_path / 'annualUsageCollectionTracking_relation.csv',
         index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
@@ -425,25 +425,14 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file):
+def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
-    df_dtypes = {  # Initialized here for reusability
-        "Statistics Source": 'string',
-        "Fiscal Year": 'string',
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
-    }
     path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
     AUCT_template_df = pd.read_csv(
         path_to_template,  #ToDo: When download functionality is set up, download CSV and read it into dataframe
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        dtype=df_dtypes,
+        dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -451,7 +440,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     AUCT_fixture_df = pd.read_csv(
         path_to_fixture,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        dtype=df_dtypes,
+        dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )

@@ -108,10 +108,10 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
     df_dtypes = {
-        "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
+        "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
+        "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
+        "vendor_name": Vendors.state_data_types()['vendor_name'],
+        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
     print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
     statisticsSources_relation.to_sql(
