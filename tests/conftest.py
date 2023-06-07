@@ -10,8 +10,7 @@ import datetime
 import calendar
 import pytest
 from sqlalchemy import create_engine
-from wtforms import MultipleFileField
-from wtforms.validators import DataRequired
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 from nolcat.app import db as _db
@@ -196,3 +195,19 @@ def most_recent_month_with_usage():
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
     yield (begin_date, end_date)
+
+
+    @pytest.fixture
+    def sample_COUNTER_reports_for_MultipartEncoder():
+        """Creates a `MultipartEncoder.fields` dictionary value for a `MultipleFileField`.
+        
+        When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
+        """
+        folder_path = Path(os.getcwd(), 'tests', 'bin', 'COUNTER_workbooks_for_tests')
+        file_names = []
+        for workbook in os.listdir(folder_path):
+            file_names.append(workbook)
+        yield tuple((
+            file,
+            open(file, 'rb', encoding='utf-8')
+        ) for file in file_names)
