@@ -7,7 +7,7 @@ from copy import deepcopy
 import pandas as pd
 
 from .app import return_string_of_dataframe_info
-from .models import *
+from .models import COUNTERData
 
 
 logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
