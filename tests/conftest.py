@@ -173,31 +173,6 @@ def header_value():
     return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
-@pytest.fixture
-def sample_COUNTER_report_workbooks():
-    """Creates a Flask-WTF File object for use in testing the `UploadCOUNTERReports` class.
-    
-    While this fixture would ideally create a MultipleFileField object containing all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`, it actually creates an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. At this point, appropriate values for the above parameters are unknown, so the fixture is used as-is, and the `UploadCOUNTERReports.create_dataframe()` method repeats the loop for gathering the workbook names seen below.
-    """
-    folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
-    data_attribute = []
-
-    for workbook in os.listdir(folder_path):
-        file_path = folder_path / workbook
-        with open(file_path, mode='rb') as file:
-            data_attribute.append(io.BytesIO(file.read()))
-
-    fixture = MultipleFileField({
-        'data': data_attribute,
-        'id': 'COUNTER_reports',
-        'label': "Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.",
-        'name': 'COUNTER_reports',
-        'type': 'MultipleFileField',
-        'validators': DataRequired(),
-    })
-    return fixture
-
-
 @pytest.fixture(scope='session')
 def most_recent_month_with_usage():
     """Creates `begin_date` and `end_date` SUSHI parameter values representing the most recent month with available data.
