@@ -306,7 +306,7 @@ class FiscalYears(db.Model):
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #ToDo: if repr(type(df)) == "<class 'str'>":
+            #ToDo: if isinstance(df, str):
                 #ToDo: return f"SUSHI harvesting returned the following error: {df}"
             #ToDo: else:
                 #ToDo: logging.debug("The SUSHI harvest was a success")
@@ -618,7 +618,7 @@ class StatisticsSources(db.Model):
                         calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                     )
                     SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -634,7 +634,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['begin_date'] = usage_start_date
                 SUSHI_parameters['end_date'] = usage_end_date
                 SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                if isinstance(SUSHI_data_response, str):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -659,7 +659,7 @@ class StatisticsSources(db.Model):
                         calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                     )
                     SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -675,7 +675,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['begin_date'] = usage_start_date
                 SUSHI_parameters['end_date'] = usage_end_date
                 SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                if isinstance(SUSHI_data_response, str):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -700,7 +700,7 @@ class StatisticsSources(db.Model):
                         calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                     )
                     SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -716,7 +716,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['begin_date'] = usage_start_date
                 SUSHI_parameters['end_date'] = usage_end_date
                 SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                if isinstance(SUSHI_data_response, str):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -742,7 +742,7 @@ class StatisticsSources(db.Model):
                         calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                     )
                     SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -758,7 +758,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters['begin_date'] = usage_start_date
                 SUSHI_parameters['end_date'] = usage_end_date
                 SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                if isinstance(SUSHI_data_response, str):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -843,7 +843,7 @@ class StatisticsSources(db.Model):
                             calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                         )
                         SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
-                        if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                        if isinstance(SUSHI_data_response, str):
                             continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                         logging.debug(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for the month {month_to_harvest.strftime('%Y-%m')} successful.")
                         df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
@@ -860,7 +860,7 @@ class StatisticsSources(db.Model):
                     SUSHI_parameters['begin_date'] = usage_start_date
                     SUSHI_parameters['end_date'] = usage_end_date
                     SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
-                    if repr(type(SUSHI_data_response)) == "<class 'str'>":
+                    if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     logging.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
@@ -946,7 +946,7 @@ class StatisticsSources(db.Model):
         """
         logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
-        if repr(type(df)) == "<class 'str'>":
+        if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
             logging.debug(f"The SUSHI harvest was a success")
@@ -1276,7 +1276,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        if repr(type(df)) == "<class 'str'>":
+        if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
             logging.debug("The SUSHI harvest was a success")

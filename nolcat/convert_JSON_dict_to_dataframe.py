@@ -348,7 +348,7 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
-                    if repr(type(value)) == "<class 'list'>" and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
+                    if isinstance(value, list) and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
                         value = value[0]
                     for key_for_parent, value_for_parent in value.items():
 

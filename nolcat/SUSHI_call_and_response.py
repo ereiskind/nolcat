@@ -53,7 +53,7 @@ class SUSHICallAndResponse:
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        self.parameters = {key: (requests.utils.unquote(value) if repr(type(value)) == "<class 'str'>" else value.strftime("%Y-%m")) for key, value in parameters.items()}
+        self.parameters = {key: (requests.utils.unquote(value) if isinstance(value, str) else value.strftime("%Y-%m")) for key, value in parameters.items()}
     
 
     def __repr__(self):
@@ -72,7 +72,7 @@ class SUSHICallAndResponse:
         #Section: Make API Call
         logging.info(f"Making SUSHI call to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_response = self._make_API_call()
-        if repr(type(API_response)) == "<class 'dict'>":  # Meaning the SUSHI API call couldn't be made
+        if isinstance(API_response, dict):  # Meaning the SUSHI API call couldn't be made
             logging.warning(API_response)
             return API_response
 
@@ -225,16 +225,16 @@ class SUSHICallAndResponse:
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
-            if repr(type(API_response.text)) == "<class 'str'>":
+            if isinstance(API_response.text, str):
                 logging.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
                 API_response = ast.literal_eval(API_response.content.decode('utf-8'))
-            elif repr(type(API_response.text)) == "<class 'list'>":
+            elif isinstance(API_response.text, list):
                 logging.debug(f"The returned text is in list format and is the list of reports.")
                 API_response = json.loads(API_response.content.decode('utf-8'))
             else:
                 return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
                 
-            if repr(type(API_response)) == "<class 'list'>":
+            if isinstance(API_response, list):
                 API_response = dict(reports = API_response)
                 logging.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
             else:
@@ -242,28 +242,28 @@ class SUSHICallAndResponse:
         
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
-            if repr(type(API_response.text)) == "<class 'str'>":
+            if isinstance(API_response.text, str):
                 logging.debug("The returned text was read from a downloaded JSON file.")
                 try:
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except:  # This will transform values that don't decode as JSONs (generally lists)
                     API_response = ast.literal_eval(API_response.content.decode('utf-8'))
                 
-                if repr(type(API_response)) == "<class 'dict'>":
+                if isinstance(API_response, dict):
                     logging.debug("The returned text was converted to a dictionary.")
                 
-                elif repr(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
+                elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
                     logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = API_response[0]
                 
                 else:
                     return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
             
-            elif repr(type(API_response.text)) == "<class 'dict'>":
+            elif isinstance(API_response.text, dict):
                 logging.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
                 API_response = json.loads(API_response.content.decode('utf-8'))
             
-            elif repr(type(API_response.text)) == "<class 'list'>" and len(API_response.text) == 1 and repr(type(API_response[0].text)) == "<class 'dict'>":
+            elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
                 logging.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                 API_response = json.loads(API_response[0].content.decode('utf-8'))
             
@@ -319,13 +319,13 @@ class SUSHICallAndResponse:
         """
         #Section: Create Error Message(s)
         #Subsection: Detail Each SUSHI Error
-        if repr(type(error_contents)) == "<class 'dict'>":
+        if isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
             logging.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self._create_error_query_text(error_contents)
-        elif repr(type(error_contents)) == "<class 'list'>":
+        elif isinstance(error_contents, list):
             if len(error_contents) == 0:
                 logging.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
@@ -370,7 +370,7 @@ class SUSHICallAndResponse:
             str: a line of `handle_SUSHI_exceptions` dialog box text describing a single error
         """
         #Section: Confirm a Valid Error
-        if repr(type(error_contents['Code'])) == "<class 'int'>":
+        if isinstance(error_contents['Code'], int):
             str_code = str(error_contents['Code'])
         elif error_contents['Code'].isnumeric():
             str_code = error_contents['Code']

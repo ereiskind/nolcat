@@ -5,6 +5,7 @@ import re
 import sys
 import datetime
 import html
+import wtforms
 from flask import request
 from openpyxl import load_workbook
 import pandas as pd
@@ -54,7 +55,7 @@ class UploadCOUNTERReports:
 
 
         #Section: Load the Workbook(s)
-        if repr(type(self.COUNTER_report_files)) == "<class 'wtforms.fields.core.UnboundField'>":
+        if isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):
             # The MultipleFileField fixture created for testing is an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. While that fixture would ideally be an actual MultipleFileField object, without appropriate values for the above parameters, the test will feature the rarely-occurring UnboundField instead, at which point, the list of file names will be reconstructed through reuse of the loop found in the fixture.
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
@@ -91,9 +92,9 @@ class UploadCOUNTERReports:
                 while looking_for_header_row:
                     count_of_month_labels = 0
                     for cell in sheet[header_row_number]:
-                        if cell.value is None or repr(type(cell.value)) == "<class 'int'>":
+                        if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
-                        elif repr(type(cell.value)) == "<class 'datetime.datetime'>" or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
+                        elif isinstance(cell.value, datetime.datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
@@ -160,7 +161,7 @@ class UploadCOUNTERReports:
                                 month_int = 12
                             df_field_names.append(datetime.date(int(date_tuple[1]), month_int, 1))
                             df_date_field_names.append(datetime.date(int(date_tuple[1]), month_int, 1))
-                        elif repr(type(field_name)) == "<class 'datetime.datetime'>":
+                        elif isinstance(field_name, datetime.datetime):
                             df_field_names.append(datetime.date(field_name.year, field_name.month, 1))  # This both ensures the date is the first of the month and removes the unneeded time data
                             df_date_field_names.append(datetime.date(field_name.year, field_name.month, 1))
                         

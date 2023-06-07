@@ -58,7 +58,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
-    assert repr(type(credentials)) == "<class 'dict'>"
+    assert isinstance(credentials, dict)
     assert re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
@@ -73,7 +73,7 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
     SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>"
+    assert isinstance(SUSHI_data, pd.core.frame.DataFrame)
     assert SUSHI_data['statistics_source_ID'].eq(1).all()
     assert SUSHI_data['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
