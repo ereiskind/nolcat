@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Data in no relations ##########
+########## Passing 2023-06-07 ##########
 
 import pytest
 from pathlib import Path

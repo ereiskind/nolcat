@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Data in no relations ##########
+########## Passing 2023-06-07 ##########
 
 from pathlib import Path
 import os
@@ -80,7 +80,6 @@ def test_loading_data_into_relation(engine, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
     vendors_relation.to_sql(
         name='vendors',
         con=engine,
@@ -89,15 +88,12 @@ def test_loading_data_into_relation(engine, vendors_relation):
         chunksize=1000,
         index_label='vendor_ID',
     )
-
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_ID',
     )
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
-    print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
-
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
@@ -113,7 +109,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "vendor_name": Vendors.state_data_types()['vendor_name'],
         "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
-    print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
+
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=engine,
@@ -121,7 +117,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         chunksize=1000,
         index_label='statistics_source_ID',
     )
-
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID ORDER BY statisticsSources.statistics_source_ID;",
         con=engine,
@@ -129,7 +124,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     retrieved_data = retrieved_data.astype(df_dtypes)
-    print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
     expected_output_data = pd.DataFrame(
         [
@@ -150,10 +144,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     )
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
-    print(f"`expected_output_data`:\n{expected_output_data}")
-
-    print(retrieved_data.compare(expected_output_data))
-    assert_frame_equal(retrieved_data, expected_output_data)  #ToDo: `AssertionError: ExtensionArray NA mask are different`
+    assert_frame_equal(retrieved_data, expected_output_data)
 
 
 #Section: Test Helper Functions

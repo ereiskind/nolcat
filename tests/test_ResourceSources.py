@@ -1,5 +1,5 @@
 """Tests the methods in ResourceSources."""
-########## Data in all relations but `COUNTERData` ##########
+########## No tests written 2023-06-07 ##########
 
 import pytest
 

@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Data in all relations ##########
+########## Passing 2023-06-07 ##########
 
 import pytest
 from datetime import date
@@ -103,7 +103,6 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
     retrieved_data['manual_collection_required'] = restore_boolean_values_to_boolean_field(retrieved_data['manual_collection_required'])
     retrieved_data['collection_via_email'] = restore_boolean_values_to_boolean_field(retrieved_data['collection_via_email'])
     retrieved_data['is_COUNTER_compliant'] = restore_boolean_values_to_boolean_field(retrieved_data['is_COUNTER_compliant'])
-    print(f"Info on `retrieved_data` dataframe;\n{return_string_of_dataframe_info(retrieved_data)}")
     
     multiindex = pd.MultiIndex.from_tuples(  # MySQL returns results sorted by index; the order of the dataframe elements below copies that order
         [

@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Data in all relations but `COUNTERData` ##########
+########## Failing 2023-06-07 ##########
 
 import pytest
 import json
