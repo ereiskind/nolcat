@@ -355,7 +355,7 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                df = df.astype({k: v for (k, v) in COUNTERData.state_data_types() if k in df.columns.values.tolist()})
+                df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()})
                 df['usage_date'] = pd.to_datetime(df['usage_date'])
                 # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
                 df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
@@ -412,7 +412,7 @@ class UploadCOUNTERReports:
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
         combined_df = combined_df.astype(
-            {k: v for (k, v) in COUNTERData.state_data_types() if k in combined_df_field_names},
+            {k: v for (k, v) in COUNTERData.state_data_types().items() if k in combined_df_field_names},
             errors='ignore',
         )
         if "publication_date" in combined_df_field_names:
