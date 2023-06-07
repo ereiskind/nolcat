@@ -9,6 +9,7 @@ import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import change_single_field_dataframe_into_series
@@ -32,14 +33,21 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_reports(client, header_value, sample_COUNTER_report_workbooks, engine, COUNTERData_relation):
+def test_upload_COUNTER_reports(client, header_value, sample_COUNTER_reports_for_MultipartEncoder, engine, COUNTERData_relation):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
+    form_submissions = MultipartEncoder(
+        fields={
+            'COUNTER_reports': sample_COUNTER_reports_for_MultipartEncoder,
+        },
+        encoding='utf-8',
+    )
+    header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data=sample_COUNTER_report_workbooks
+        data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to

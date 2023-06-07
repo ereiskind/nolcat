@@ -449,13 +449,13 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client, engine, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, sample_COUNTER_report_workbooks, COUNTERData_relation):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client, engine, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, sample_COUNTER_reports_for_MultipartEncoder, COUNTERData_relation):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
-            #'COUNTER_reports': sample_COUNTER_report_workbooks,  #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
+            #'COUNTER_reports': sample_COUNTER_reports_for_MultipartEncoder,  #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
         },
         encoding='utf-8',
     )
