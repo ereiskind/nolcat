@@ -252,7 +252,7 @@ class SUSHICallAndResponse:
                 if repr(type(API_response)) == "<class 'dict'>":
                     logging.debug("The returned text was converted to a dictionary.")
                 
-                elif repr(type(API_response)) == "<class 'list'>" and len(API_response.text) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
+                elif repr(type(API_response)) == "<class 'list'>" and len(API_response) == 1 and repr(type(API_response[0])) == "<class 'dict'>":
                     logging.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = API_response[0]
                 
