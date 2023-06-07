@@ -95,6 +95,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
+        logging.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`")
         records_orient_list = []
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
@@ -536,6 +537,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
+        logging.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`")
         pass
     
 
