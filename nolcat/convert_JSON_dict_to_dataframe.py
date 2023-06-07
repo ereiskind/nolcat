@@ -97,38 +97,8 @@ class ConvertJSONDictToDataframe:
         """
         logging.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`")
         records_orient_list = []
+        include_in_df_dtypes = {k: False for k in COUNTERData.state_data_types().keys()}  # This tracks what fields contain non-null values; `COUNTERData.state_data_types()` is also a dictionary where they keys are all the fields in the `COUNTERData` relation, so a comprehension based on it can create another dictionary with the same keys and the same value for all keys
 
-        #Section: Set Up Tracking of Fields to Include in `df_dtypes`
-        include_in_df_dtypes = {  # Using `record_dict.get()` at the end doesn't work because any field with a null value in the last record won't be included
-            'resource_name': False,
-            'publisher': False,
-            'publisher_ID': False,
-            'authors': False,
-            'publication_date': False,
-            'article_version': False,
-            'DOI': False,
-            'proprietary_ID': False,
-            'ISBN': False,
-            'print_ISSN': False,
-            'online_ISSN': False,
-            'URI': False,
-            'data_type': False,
-            'section_type': False,
-            'YOP': False,
-            'access_type': False,
-            'access_method': False,
-            'parent_title': False,
-            'parent_authors': False,
-            'parent_publication_date': False,
-            'parent_article_version': False,
-            'parent_data_type': False,
-            'parent_DOI': False,
-            'parent_proprietary_ID': False,
-            'parent_ISBN': False,
-            'parent_print_ISSN': False,
-            'parent_online_ISSN': False,
-            'parent_URI': False,
-        }
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
