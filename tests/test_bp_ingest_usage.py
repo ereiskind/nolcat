@@ -33,11 +33,15 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_reports(client, header_value, sample_COUNTER_reports_for_MultipartEncoder, engine, COUNTERData_relation):
+def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relation):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
+    path_to_COUNTER_reports = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+    file_names = []
+    for workbook in os.listdir(path_to_COUNTER_reports):
+        file_names.append(workbook)
     form_submissions = MultipartEncoder(
         fields={
-            'COUNTER_reports': sample_COUNTER_reports_for_MultipartEncoder,
+            'COUNTER_reports': tuple((file, open(file, 'rb', encoding='utf-8')) for file in file_names),
         },
         encoding='utf-8',
     )
