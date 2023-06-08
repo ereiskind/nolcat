@@ -108,7 +108,7 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         sql="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         con=engine,
     )
-    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string').to_list()  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
+    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string').to_list()  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
