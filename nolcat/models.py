@@ -946,6 +946,10 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        logging.basicConfig(
+            format="%(asctime)s||%(module)s -- %(message)s",
+            level=logging.DEBUG,  # This can be overwritten with the `--log-cli-level` argument on the command line
+        )
         logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if isinstance(df, str):

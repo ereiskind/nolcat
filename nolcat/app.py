@@ -121,7 +121,7 @@ def create_app():
     
     #Section: Configure Logging
     logging.basicConfig(
-        format="[%(asctime)s] %(module)s -- %(message)s",
+        format="%(asctime)s %(module)s -- %(message)s",
         level=logging.DEBUG,  # This can be overwritten with the `--log-cli-level` argument on the command line
     )
 
