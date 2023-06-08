@@ -61,8 +61,8 @@ def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relati
         index_col='COUNTER_data_ID',
     )
 
-    print(f"`POST_response.history`: {POST_response.history}")
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    print(f"`POST_response`: (type {repr(type(POST_response))}){POST_response}")
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST: Test failed due to raising `IndexError: tuple index out of range`
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data

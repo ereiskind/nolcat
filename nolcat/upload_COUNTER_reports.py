@@ -356,13 +356,12 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()})
-                logging.info(f"After `df.astype`:\n{return_string_of_dataframe_info(df)}")
+                logging.info(f"The desired dtypes are\n{COUNTERData.state_data_types()}\nwhile the current dtypes are\n")
+                logging.info(return_string_of_dataframe_info(df))
+                df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()})  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
                 df['usage_date'] = pd.to_datetime(df['usage_date'])
-                logging.info(f"After `pd.to_datetime`:\n{return_string_of_dataframe_info(df)}")
                 # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
                 df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
-                logging.info(f"After `df.replace`:\n{return_string_of_dataframe_info(df)}")
                 logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
 
                 #Subsection: Add Fields Missing from R4 Reports
