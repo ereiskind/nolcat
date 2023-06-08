@@ -119,6 +119,13 @@ def create_app():
         return render_template('index.html')
     
     
+    #Section: Configure Logging
+    logging.basicConfig(
+        format="[%(asctime)s] %(module)s -- %(message)s",
+        level=logging.WARNING,  # This can be overwritten with the `--log-cli-level` argument on the command line
+    )
+
+    
     return app
 
 

@@ -13,7 +13,7 @@ import pandas as pd
 from .app import return_string_of_dataframe_info
 from .models import *
 
-logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
+#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
 
 
 class UploadCOUNTERReports:

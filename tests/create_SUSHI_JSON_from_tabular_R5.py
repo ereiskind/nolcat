@@ -14,7 +14,7 @@ import pandas as pd
 # `from .nolcat import app` raises `ImportError: attempted relative import with no known parent package`
 # `from nolcat.app import return_string_of_dataframe_info` raises `ModuleNotFoundError: No module named 'nolcat'`
 
-logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")
+#TEST: Commenting out logging: logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(message)s")
 
 absolute_path_to_tests_directory = pathlib.Path(__file__).parent.resolve()
 directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'

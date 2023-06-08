@@ -11,7 +11,7 @@ import pyinputplus
 
 from .app import db, upload_file_to_S3_bucket
 
-logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
+#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
 
 
 class SUSHICallAndResponse:
