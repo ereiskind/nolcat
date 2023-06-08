@@ -85,7 +85,6 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]),
             vendor_ID = int(df['vendor_ID'][0]),
         )  # Without the `int` constructors, a numpy int type is used
-        print(f"The type of the ID in the statistics source object is {repr(type(stats_source.statistics_source_ID))}")
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
@@ -99,7 +98,6 @@ def harvest_SUSHI_statistics():
         )
 
         logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
-        logging.info(f"The `StatisticsSources.statistics_source_retrieval_code` is {repr(type(stats_source.statistics_source_retrieval_code))} (type {repr(type(stats_source.statistics_source_retrieval_code))})")
         try:
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
             logging.info(result_message)
