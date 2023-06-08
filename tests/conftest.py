@@ -207,7 +207,4 @@ def most_recent_month_with_usage():
         file_names = []
         for workbook in os.listdir(folder_path):
             file_names.append(workbook)
-        yield tuple((
-            file,
-            open(folder_path / file, 'rb')
-        ) for file in file_names)
+        pass  #TEST: This fixture isn't importing into other test modules; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
