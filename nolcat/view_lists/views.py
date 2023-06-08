@@ -12,9 +12,6 @@ from ..app import db
 from ..models import *
 
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
-
-
 @bp.route('/<string:list>')
 def view_lists_homepage(list):
     """Returns the homepage for the `view_lists` blueprint, which shows the list of resource sources, statistics sources, or vendors depending on the variable route value.

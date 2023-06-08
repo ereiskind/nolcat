@@ -11,8 +11,6 @@ import pyinputplus
 
 from .app import db, upload_file_to_S3_bucket
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="SUSHICallAndResponse - - [%(asctime)s] %(message)s")
-
 
 class SUSHICallAndResponse:
     """A class that makes SUSHI API calls in the StatisticsSources._harvest_R5_SUSHI method.

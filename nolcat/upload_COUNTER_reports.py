@@ -13,8 +13,6 @@ import pandas as pd
 from .app import return_string_of_dataframe_info
 from .models import *
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="UploadCOUNTERReports - - [%(asctime)s] %(message)s")
-
 
 class UploadCOUNTERReports:
     """A class for transforming uploaded Excel workbook(s) with tabular COUNTER data for loading into the `COUNTERData` relation.

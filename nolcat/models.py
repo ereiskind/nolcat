@@ -19,9 +19,6 @@ from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.DEBUG, format="DB models - - [%(asctime)s] %(message)s")  # This formats logging messages like Flask's logging messages, but with the class name where Flask put the server info
-
-
 # Using field length constants ensures the lengths being checked for in `ConvertJSONDictToDataframe` are the lengths used in the database
 RESOURCE_NAME_LENGTH = ConvertJSONDictToDataframe.RESOURCE_NAME_LENGTH
 PUBLISHER_LENGTH = ConvertJSONDictToDataframe.PUBLISHER_LENGTH
@@ -946,10 +943,6 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        logging.basicConfig(
-            format="%(asctime)s||%(module)s -- %(message)s",
-            level=logging.DEBUG,  # This can be overwritten with the `--log-cli-level` argument on the command line
-        )
         logging.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if isinstance(df, str):

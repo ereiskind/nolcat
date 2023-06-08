@@ -10,9 +10,6 @@ from .app import return_string_of_dataframe_info
 # `from .models import *` to use `COUNTERData.state_data_types()` causes a circular import error
 
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="ConvertJSONDictToDataframe - - [%(asctime)s] %(message)s")
-
-
 class ConvertJSONDictToDataframe:
     """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into dataframes.
 

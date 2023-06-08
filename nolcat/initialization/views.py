@@ -18,9 +18,6 @@ from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
-
-
 #Section: Uploads and Downloads
 @bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
 def download_file(filename):

@@ -17,9 +17,6 @@ from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 
-#TEST: Commenting out logging: logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
-
-
 @bp.route('/')
 def ingest_usage_homepage():
     """Returns the homepage for the `ingest_usage` blueprint, which has links to the different usage upload options."""
