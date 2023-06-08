@@ -356,13 +356,14 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
+                logging.info(f"Dataframe fields: {df.columns.values.tolist()}")
                 x = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 y = {k: v for (k, v) in x.items() if re.search(r'[Ii]nt\d*', v)}
                 logging.info(f"Placing the following pairs in `astype()` individually:{y}")
                 for k, v in y.items():
-                    logging.info(f"`{k}` before change:\n{df['k']}")
+                    logging.info(f"`{k}` before change:\n{df[k]}")
                     df = df.astype({k: v})
-                    logging.info(f"`{k}` after change:\n{df['k']}")
+                    logging.info(f"`{k}` after change:\n{df[k]}")
                 #df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()})  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
                 df['usage_date'] = pd.to_datetime(df['usage_date'])
                 # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
