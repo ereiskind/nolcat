@@ -104,7 +104,7 @@ def harvest_SUSHI_statistics():
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")
+            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_harvest_SUSHI_statistics()` raises `local variable 'credentials' referenced before assignment`
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:

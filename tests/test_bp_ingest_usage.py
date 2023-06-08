@@ -61,6 +61,7 @@ def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relati
         index_col='COUNTER_data_ID',
     )
 
+    print(f"`POST_response.history`: {POST_response.history}")
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
@@ -130,7 +131,7 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  #TEST: Test fails due to raising `The SUSHI request form submission failed due to the following error: local variable 'credentials' referenced before assignment` for all three possible SUSHI credentials
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client):

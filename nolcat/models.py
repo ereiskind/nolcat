@@ -532,7 +532,9 @@ class StatisticsSources(db.Model):
             SUSHI_data_file = json.load(JSON_file)
             logging.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
+                logging.debug(f"Iterating through `vendor` {vendor}")
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
+                    logging.debug(f"Iterating through `stats_source` {stats_source}")
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
                         logging.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(

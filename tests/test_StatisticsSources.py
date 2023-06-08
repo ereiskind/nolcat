@@ -72,7 +72,7 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 @pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Test fails due to raising `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
     assert isinstance(SUSHI_data, pd.core.frame.DataFrame)
     assert SUSHI_data['statistics_source_ID'].eq(1).all()
     assert SUSHI_data['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
