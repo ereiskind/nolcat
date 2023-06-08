@@ -209,5 +209,5 @@ def most_recent_month_with_usage():
             file_names.append(workbook)
         yield tuple((
             file,
-            open(file, 'rb', encoding='utf-8')
+            open(folder_path / file, 'rb')
         ) for file in file_names)

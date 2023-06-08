@@ -41,7 +41,7 @@ def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relati
         file_names.append(workbook)
     form_submissions = MultipartEncoder(
         fields={
-            'COUNTER_reports': tuple((file, open(file, 'rb')) for file in file_names),
+            'COUNTER_reports': tuple((file, open(path_to_COUNTER_reports / file, 'rb')) for file in file_names),
         },
         encoding='utf-8',
     )
