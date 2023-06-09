@@ -74,8 +74,8 @@ class UploadCOUNTERReports:
         elif isinstance(self.COUNTER_report_files, list):  # From the `tests.test_bp_ingest_usage` and `tests.test_bp_initialization` modules
             log.info(f"From the blueprint test modules, `self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
         else:
-            list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
-            log.debug(f"File names: {list_of_file_names}")
+            log.error(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
+            raise TypeError(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
         
         for file_name in list_of_file_names:
             try:
