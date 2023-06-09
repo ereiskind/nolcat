@@ -375,6 +375,7 @@ class UploadCOUNTERReports:
                     years_df = years.to_frame('years').transpose()
                     log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
                     for x in years.index.to_list():
+                        log.info(f"Changing {years_df[x]} to {df_dtypes['YOP']} dtype")
                         years_df=years_df.astype({x:df_dtypes['YOP']})
                         log.info(f"After iteration {x}:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
