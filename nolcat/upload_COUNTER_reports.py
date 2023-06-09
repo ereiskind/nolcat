@@ -48,12 +48,13 @@ class UploadCOUNTERReports:
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
-        logging.info("Starting `UploadCOUNTERReports.create_dataframe()`")
+        logging.info("Starting `UploadCOUNTERReports.create_dataframe()`")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
+        logging.debug(f"The `self.COUNTER_report_files` is a {repr(type(self.COUNTER_report_files))} object")
         if isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):
             # The MultipleFileField fixture created for testing is an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. While that fixture would ideally be an actual MultipleFileField object, without appropriate values for the above parameters, the test will feature the rarely-occurring UnboundField instead, at which point, the list of file names will be reconstructed through reuse of the loop found in the fixture.
             list_of_file_names = []
@@ -352,14 +353,15 @@ class UploadCOUNTERReports:
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
+                logging.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
-                    logging.info(f"Removing null placeholders in {field}")  #Test: Temporary logging statement
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
-                logging.info(f"Updated dataframe dtypes before conversion:\n{df.dtypes}")  #Test: Temporary logging statement
-                df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
-                logging.info(f"Updated dataframe dtypes after conversion:\n{df.dtypes}")  #Test: Temporary logging statement
+                    logging.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
+                logging.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")
+                df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`--YOP field
+                logging.debug(f"After dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
-                logging.info(f"Updated dataframe dtypes:\n{df.dtypes}")  #Test: Set logging level back to `debug`
+                logging.debug(f"Updated dataframe dtypes and null counts:\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
