@@ -364,6 +364,17 @@ class UploadCOUNTERReports:
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
+                #TEST: Below is to try and figure out why YOP object to Int16 conversion fails
+                if "YOP" in df.columns.values.tolist():
+                    years = pd.Series(
+                        data=df['YOP'].unique(),
+                        dtype=df['YOP'].dtype,
+                    )
+                    years_df = years.to_frame('years').transpose()
+                    log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
+                    for x in years.index.to_list():
+                        years_df=years_df.astype({x:df_dtypes['YOP']})
+                        log.info(f"After iteration {x}:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
