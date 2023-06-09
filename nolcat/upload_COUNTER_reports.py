@@ -216,10 +216,6 @@ class UploadCOUNTERReports:
 
 
                 #Section: Create Dataframe
-                #Subsection: Ensure String Data Type for Potentially Numeric Metadata Fields
-                # Strings will be pandas object dtype at this point, but object to string conversion is fairly simple; string fields that pandas might automatically assign a numeric dtype to should be set as strings at the creation of the dataframe to head off problems.
-                df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names}
-                
                 #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
                     file_name,
@@ -227,7 +223,7 @@ class UploadCOUNTERReports:
                     engine='openpyxl',
                     header=header_row_number-1,  # This gives the row number with the headings in Excel, which is also the row above where the data starts
                     names=df_field_names,
-                    dtype=df_dtypes,
+                    dtype={k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
                 logging.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
@@ -355,19 +351,15 @@ class UploadCOUNTERReports:
                 logging.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                logging.info(f"Dataframe fields: {df.columns.values.tolist()}")
-                x = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
-                y = {k: v for (k, v) in x.items() if re.search(r'[Ii]nt\d*', v)}
-                logging.info(f"Placing the following pairs in `astype()` individually:{y}")
-                for k, v in y.items():
-                    logging.info(f"`{k}` before change:\n{df[k]}")
-                    df = df.astype({k: v})
-                    logging.info(f"`{k}` after change:\n{df[k]}")
-                #df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()})  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
-                df['usage_date'] = pd.to_datetime(df['usage_date'])
-                # Placing this before the data type conversion can cause it to fail due to `NoneType` values in fields being converted to strings
-                df = df.replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
-                logging.debug(f"Updated dataframe dtypes:\n{df.dtypes}")
+                df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
+                for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
+                    logging.info(f"Removing null placeholders in {field}")  #Test: Temporary logging statement
+                    df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
+                logging.info(f"Updated dataframe dtypes before conversion:\n{df.dtypes}")  #Test: Temporary logging statement
+                df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
+                logging.info(f"Updated dataframe dtypes after conversion:\n{df.dtypes}")  #Test: Temporary logging statement
+                df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
+                logging.info(f"Updated dataframe dtypes:\n{df.dtypes}")  #Test: Set logging level back to `debug`
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
