@@ -63,7 +63,8 @@ class UploadCOUNTERReports:
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--The MultipleFileField fixture actually returns an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction.
             log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
-            log.info(f"`self.COUNTER_report_files.data` is {self.COUNTER_report_files.data} (type {repr(type(self.COUNTER_report_files.data))})")
+            log.info(f"`self.COUNTER_report_files.__dict__` is {self.COUNTER_report_files.__dict__}")
+            log.info(f"`self.COUNTER_report_files.__dict__.keys()` is {self.COUNTER_report_files.__dict__.keys()}")
             # This is a copy of the code used to construct the `data` attribute of the `tests.test_UploadCOUNTERReports.sample_COUNTER_report_workbooks()` fixture
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
