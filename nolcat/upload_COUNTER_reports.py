@@ -372,7 +372,11 @@ class UploadCOUNTERReports:
                         data=df['YOP'].unique(),
                         dtype=df['YOP'].dtype,
                     )
-                    years_df = years.to_frame('years').transpose()
+                    log.info(f"`years` series:\n{years}")
+                    years_df = years.to_frame('y')
+                    log.info(f"`years_df` dataframe:\n{years_df}")
+                    years_df = years_df.transpose()
+                    log.info(f"`years_df` dataframe after being transposed:\n{years_df}")
                     log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
                     for x in years.index.to_list():
                         log.info(f"Changing\n{years_df[x]}\nto {df_dtypes['YOP']} dtype")
