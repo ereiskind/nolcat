@@ -50,21 +50,29 @@ class UploadCOUNTERReports:
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
-        log.info(f"The `self.COUNTER_report_files` is a {repr(type(self.COUNTER_report_files))} object")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
+        log.info("Starting `UploadCOUNTERReports.create_dataframe()`")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
+        log.debug("and this is a debug")
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
-        log.debug(f"The `self.COUNTER_report_files` is a {repr(type(self.COUNTER_report_files))} object")
-        if isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):
-            # The MultipleFileField fixture created for testing is an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. While that fixture would ideally be an actual MultipleFileField object, without appropriate values for the above parameters, the test will feature the rarely-occurring UnboundField instead, at which point, the list of file names will be reconstructed through reuse of the loop found in the fixture.
+        # The `UploadCOUNTERReports.create_dataframe()` method processes a MultipleFileField object from the web application, but the tests that call this method must use different objects to provide the data.
+        if isinstance(self.COUNTER_report_files, wtforms.fields.simple.MultipleFileField):  # From the web application
+            list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
+            log.debug(f"File names: {list_of_file_names}")
+        elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--The MultipleFileField fixture actually returns an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction.
+            log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
+            log.info(f"`self.COUNTER_report_files.data` is {self.COUNTER_report_files.data} (type {repr(type(self.COUNTER_report_files.data))})")
+            # This is a copy of the code used to construct the `data` attribute of the `tests.test_UploadCOUNTERReports.sample_COUNTER_report_workbooks()` fixture
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
             for workbook in os.listdir(folder_path):
                 list_of_file_names.append(str(folder_path / workbook))
             list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order
             log.debug(f"File names: {list_of_file_names}")
+        elif isinstance(self.COUNTER_report_files, list):  # From the `tests.test_bp_ingest_usage` and `tests.test_bp_initialization` modules
+            log.info(f"From the blueprint test modules, `self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
         else:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
             log.debug(f"File names: {list_of_file_names}")
