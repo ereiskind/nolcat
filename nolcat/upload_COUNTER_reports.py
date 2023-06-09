@@ -50,7 +50,7 @@ class UploadCOUNTERReports:
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
-        log.info("Starting `UploadCOUNTERReports.create_dataframe()`")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
+        log.info(f"The `self.COUNTER_report_files` is a {repr(type(self.COUNTER_report_files))} object")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
