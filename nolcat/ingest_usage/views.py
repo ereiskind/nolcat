@@ -43,7 +43,7 @@ def upload_COUNTER_reports():
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
+            logging.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'`
             flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
@@ -101,7 +101,7 @@ def harvest_SUSHI_statistics():
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_harvest_SUSHI_statistics()` raises `local variable 'credentials' referenced before assignment`
+            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
