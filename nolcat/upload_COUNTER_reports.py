@@ -73,7 +73,8 @@ class UploadCOUNTERReports:
             list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, list):  # From the `tests.test_bp_ingest_usage` and `tests.test_bp_initialization` modules
-            log.info(f"From the blueprint test modules, `self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
+            log.info(f"From the blueprint test modules, `self.COUNTER_report_files[0]` is {self.COUNTER_report_files[0]} (type {repr(type(self.COUNTER_report_files[0]))})")
+            log.info(f"From the blueprint test modules, `self.COUNTER_report_files[0].__dict__` is {self.COUNTER_report_files[0].__dict__}")
         else:
             log.error(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
             raise TypeError(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
