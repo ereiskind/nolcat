@@ -378,9 +378,9 @@ class UploadCOUNTERReports:
                     years_df = years_df.transpose()
                     log.info(f"`years_df` dataframe after being transposed:\n{years_df}")
                     log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
-                    for x in years.index.to_list():
-                        log.info(f"Changing\n{years_df[x]}\nto {df_dtypes['YOP']} dtype")
-                        years_df=years_df.astype({x:df_dtypes['YOP']})
+                    for x in years_df.columns.to_list():
+                        log.info(f"Changing\n{years_df[x]}\nto Int64 dtype")
+                        years_df=years_df.astype({x:'Int64'})
                         log.info(f"After iteration {x}:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
