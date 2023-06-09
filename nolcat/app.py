@@ -30,6 +30,8 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
+log = logging.getLogger(__name__)
+
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
@@ -56,6 +58,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = './relation_initialization_template'  # This config sets the file that handles both Flask file downloads adn uploads, but since all input, including file uploads, is handled with WTForms, this folder is only used for storing content the user will need to download.
     csrf.init_app(app)
     db.init_app(app)
+    configure_logging(app)
 
     #Section: Create Command to Build Schema
     # Documentation for decorator at https://flask.palletsprojects.com/en/2.1.x/appcontext/
@@ -122,6 +125,15 @@ def create_app():
     return app
 
 
+def configure_logging(app):
+    """Create single logging configuration for entire program."""
+    logging.basicConfig(format="[%(asctime)s] %(name)s - %(message)s")
+    if app.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+    else:  # Production
+        logging.getLogger().setLevel(logging.INFO)
+
+
 def date_parser(dates):
     """The function for parsing dates as part of converting ingested data into a dataframe.
     
@@ -162,7 +174,7 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
     """
-    logging.debug("Starting `first_new_PK_value`")
+    log.debug("Starting `first_new_PK_value`")
     if relation == 'fiscalYears':
         PK_field = 'fiscal_year_ID'
     elif relation == 'vendors':
@@ -189,9 +201,9 @@ def first_new_PK_value(relation):
         con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
     )
     if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
-        logging.debug(f"The {relation} relation is empty")
+        log.debug(f"The {relation} relation is empty")
         return 0
-    logging.debug(f"Result of query for largest primary key value:\n{largest_PK_value}")
+    log.debug(f"Result of query for largest primary key value:\n{largest_PK_value}")
     largest_PK_value = largest_PK_value.iloc[0][0]
     return int(largest_PK_value) + 1
 

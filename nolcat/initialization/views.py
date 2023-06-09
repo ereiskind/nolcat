@@ -17,6 +17,8 @@ from ..app import date_parser
 from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
+log = logging.getLogger(__name__)
+
 
 #Section: Uploads and Downloads
 @bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
@@ -41,7 +43,7 @@ def collect_FY_and_vendor_data():
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
-        logging.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
+        log.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -51,17 +53,17 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if fiscalYears_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `fiscalYears` relation data file was read in with no data.")
+            log.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
         fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        logging.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        log.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
+        log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         #Subsection: Upload `vendors` CSV File
-        logging.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
+        log.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_CSV.data,
             index_col='vendor_ID',
@@ -69,16 +71,16 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if vendors_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `vendors` relation data file was read in with no data.")
+            log.error("The `vendors` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendors`")
         
         vendors_dataframe = vendors_dataframe.astype({k: v for (k, v) in Vendors.state_data_types().items()})
-        logging.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
+        log.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
+        log.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         #Subsection: Upload `vendorNotes` CSV File
-        logging.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
+        log.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
             parse_dates=['date_written'],
@@ -87,13 +89,13 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if vendorNotes_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `vendorNotes` relation data file was read in with no data.")
+            log.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
         vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        logging.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
+        log.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
+        log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
 
         #Section: Load Data into Database
@@ -104,29 +106,29 @@ def collect_FY_and_vendor_data():
                 if_exists='append',
                 # Dataframe index and primary key field both named `fiscal_year_ID`
             )
-            logging.debug("Relation `fiscalYears` loaded into the database")
+            log.debug("Relation `fiscalYears` loaded into the database")
             vendors_dataframe.to_sql(
                 'vendors',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe index and primary key field both named `vendor_ID`
             )
-            logging.debug("Relation `vendors` loaded into the database")
+            log.debug("Relation `vendors` loaded into the database")
             vendorNotes_dataframe.to_sql(
                 'vendorNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            logging.debug("Relation `vendorNotes` loaded into the database")
-            logging.info("All relations loaded into the database")
+            log.debug("Relation `vendorNotes` loaded into the database")
+            log.info("All relations loaded into the database")
         except Exception as error:
-            logging.warning(f"The `to_sql` methods raised an error: {error}")
+            log.warning(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -142,7 +144,7 @@ def collect_sources_data():
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
-        logging.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
+        log.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_CSV.data,
             index_col='statistics_source_ID',
@@ -150,16 +152,16 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsSources_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `statisticsSources` relation data file was read in with no data.")
+            log.error("The `statisticsSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSources`")
         
         statisticsSources_dataframe = statisticsSources_dataframe.astype({k: v for (k, v) in StatisticsSources.state_data_types().items()})
-        logging.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
+        log.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
+        log.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         #Subsection: Upload `statisticsSourceNotes` CSV File
-        logging.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
+        log.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
@@ -168,16 +170,16 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `statisticsSourceNotes` relation data file was read in with no data.")
+            log.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
         statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        logging.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
+        log.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
+        log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` CSV File
-        logging.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
+        log.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
@@ -187,16 +189,16 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if resourceSources_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `resourceSources` relation data file was read in with no data.")
+            log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        logging.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
+        log.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
+        log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         #Subsection: Upload `resourceSourceNotes` CSV File
-        logging.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
+        log.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
@@ -205,16 +207,16 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `resourceSourceNotes` relation data file was read in with no data.")
+            log.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
         resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        logging.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
+        log.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
+        log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsResourceSources` CSV File
-        logging.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
+        log.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
@@ -222,11 +224,11 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `statisticsResourceSources` relation data file was read in with no data.")
+            log.error("The `statisticsResourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsResourceSources`")
         
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
-        logging.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
+        log.info(f"`statisticsResourceSources` dtypes and dataframe:\n{statisticsResourceSources_dataframe.dtypes}\n{statisticsResourceSources_dataframe}\n")
 
 
         #Section: Load Data into Database
@@ -237,43 +239,43 @@ def collect_sources_data():
                 if_exists='append',
                 # Dataframe index and primary key field both named `statistics_source_ID`
             )
-            logging.debug("Relation `statisticsSources` loaded into the database")
+            log.debug("Relation `statisticsSources` loaded into the database")
             statisticsSourceNotes_dataframe.to_sql(
                 'statisticsSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            logging.debug("Relation `statisticsSourceNotes` loaded into the database")
+            log.debug("Relation `statisticsSourceNotes` loaded into the database")
             resourceSources_dataframe.to_sql(
                 'resourceSources',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe index and primary key field both named `resource_source_ID`
             )
-            logging.debug("Relation `resourceSources` loaded into the database")
+            log.debug("Relation `resourceSources` loaded into the database")
             resourceSourceNotes_dataframe.to_sql(
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            logging.debug("Relation `resourceSourceNotes` loaded into the database")
+            log.debug("Relation `resourceSourceNotes` loaded into the database")
             statisticsResourceSources_dataframe.to_sql(
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
             )
-            logging.debug("Relation `statisticsResourceSources` loaded into the database")
-            logging.info("All relations loaded into the database")
+            log.debug("Relation `statisticsResourceSources` loaded into the database")
+            log.info("All relations loaded into the database")
         except Exception as error:
-            logging.warning(f"The `to_sql` methods raised an error: {error}")
+            log.warning(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -293,7 +295,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             con=db.engine,
             index_col=["statistics_source_ID", "fiscal_year_ID"],
         )
-        logging.debug(f"AUCT Cartesian product dataframe:\n{df}")
+        log.debug(f"AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={
@@ -304,7 +306,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             "statistics_source_name": "Statistics Source",
             "fiscal_year": "Fiscal Year",
         })
-        logging.debug(f"AUCT dataframe with fields renamed:\n{df}")
+        log.debug(f"AUCT dataframe with fields renamed:\n{df}")
 
         df['usage_is_being_collected'] = None
         df['manual_collection_required'] = None
@@ -313,7 +315,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['collection_status'] = None
         df['usage_file_path'] = None
         df['notes'] = None
-        logging.info(f"AUCT template dataframe:\n{df}")
+        log.info(f"AUCT template dataframe:\n{df}")
 
         template_save_location = Path(os.path.dirname(os.path.realpath(__file__)), 'initialize_annualUsageCollectionTracking.csv')
         df.to_csv(
@@ -322,7 +324,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             encoding='utf-8',
             errors='backslashreplace',  # For encoding errors
         )
-        logging.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
+        log.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
         #ToDo: Confirm above downloads successfully
         return render_template('initialization/initial-data-upload-3.html', form=form)
 
@@ -337,14 +339,14 @@ def collect_AUCT_and_historical_COUNTER_data():
             encoding_errors='backslashreplace',
         )
         if AUCT_dataframe.isnull().all(axis=None) == True:
-            logging.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
+            log.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
         AUCT_dataframe = AUCT_dataframe.astype({k: v for (k, v) in AnnualUsageCollectionTracking.state_data_types().items()})
-        logging.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
+        log.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
         AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         AUCT_dataframe['notes'] = AUCT_dataframe['notes'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
-        logging.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
+        log.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
         AUCT_dataframe.to_sql(
             'annualUsageCollectionTracking',
@@ -352,7 +354,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             if_exists='append',
             index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
-        logging.debug("Relation `annualUsageCollectionTracking` loaded into the database")
+        log.debug("Relation `annualUsageCollectionTracking` loaded into the database")
 
         #Subsection: Load COUNTER Reports into Database
         #ToDo: Uncomment this subsection during Planned Iteration 2
@@ -366,14 +368,14 @@ def collect_AUCT_and_historical_COUNTER_data():
         #     if_exists='append',
         #     index_label='COUNTER_data_ID',
         # )
-        # logging.debug("Relation `COUNTERData` loaded into the database")
-        logging.info("All relations loaded into the database")
+        # log.debug("Relation `COUNTERData` loaded into the database")
+        log.info("All relations loaded into the database")
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -397,7 +399,7 @@ def upload_historical_non_COUNTER_usage():
             #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
     '''
     pass

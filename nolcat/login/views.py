@@ -6,6 +6,8 @@ from . import bp
 from ..app import db
 from ..models import *
 
+log = logging.getLogger(__name__)
+
 
 @bp.route('/')
 def login_homepage():

@@ -9,6 +9,8 @@ import pandas as pd
 from .app import return_string_of_dataframe_info
 # `from .models import *` to use `COUNTERData.state_data_types()` causes a circular import error
 
+log = logging.getLogger(__name__)
+
 
 class ConvertJSONDictToDataframe:
     """A class for transforming the Python dictionary versions of JSONs returned by a SUSHI API call into dataframes.
@@ -61,24 +63,24 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation or an empty dataframe to indicate an error
         """
-        logging.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
+        log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
-        logging.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
+        log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
         COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
         if COUNTER_release == "5":
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         elif COUNTER_release == "5.1":
             try:
                 df = self._transform_R5b1_JSON()
             except:
-                logging.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         else:
-            logging.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+            log.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         return df  # The method will only get here if one of the private harvest methods was successful
 
@@ -92,7 +94,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
-        logging.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`")
+        log.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`")
         records_orient_list = []
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
@@ -129,7 +131,7 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            logging.debug(f"Starting iteration for new JSON record {record}")
+            log.debug(f"Starting iteration for new JSON record {record}")
             record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
@@ -137,51 +139,51 @@ class ConvertJSONDictToDataframe:
                 if key == "Database" or key == "Title" or key == "Item":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['resource_name'] = value
-                        logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        logging.error(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.error(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['resource_name'] = value
                         include_in_df_dtypes['resource_name'] = 'string'
-                        logging.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher'] = value
-                        logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                     elif len(value) > self.PUBLISHER_LENGTH:
-                        logging.error(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.error(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['publisher'] = value
                         include_in_df_dtypes['publisher'] = 'string'
-                        logging.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher_ID'] = value
-                        logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
-                            logging.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
+                            log.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                         else:
                             record_dict['publisher_ID'] = value[0]['Value']
                             include_in_df_dtypes['publisher_ID'] = 'string'
-                            logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     else:
                         for type_and_value in value:
                             if re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                                 if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
-                                    logging.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                    log.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['publisher_ID'] = type_and_value['Value']
                                     include_in_df_dtypes['publisher_ID'] = 'string'
-                                    logging.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                             else:
                                 continue  # The `for type_and_value in value` loop
                 
@@ -189,13 +191,13 @@ class ConvertJSONDictToDataframe:
                 elif key == "Platform":
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['platform'] = value
-                        logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                     elif len(value) > self.PLATFORM_LENGTH:
-                        logging.error(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.error(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['platform'] = value
-                        logging.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
+                        log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                 
                 #Subsection: Capture `authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
@@ -206,22 +208,22 @@ class ConvertJSONDictToDataframe:
                                     continue  # The `for type_and_value in value` loop
                                 elif len(record_dict['authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
                                     record_dict['authors'] = record_dict['authors'] + " et al."
-                                    logging.debug(f"Updated `COUNTERData.authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                    log.debug(f"Updated `COUNTERData.authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                 else:
                                     record_dict['authors'] = record_dict['authors'] + "; " + type_and_value['Name']
-                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                             
                             else:
                                 if type_and_value['Name'] is None:  # This value handled first because `len()` of null value raises an error
                                     record_dict['authors'] = type_and_value['Name']
-                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                    logging.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
+                                    log.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['authors'] = type_and_value['Name']
                                     include_in_df_dtypes['authors'] = 'string'
-                                    logging.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                 
                 #Subsection: Capture `publication_date` Value
                 elif key == "Item_Dates":
@@ -232,7 +234,7 @@ class ConvertJSONDictToDataframe:
                             try:
                                 record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
                                 include_in_df_dtypes['publication_date'] = True
-                                logging.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
                             except:  # In case `type_and_value['Value']` is null, which would cause the conversion to a datetime data type to return a TypeError
                                 continue  # The `for type_and_value in value` loop
                 
@@ -242,7 +244,7 @@ class ConvertJSONDictToDataframe:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
                             include_in_df_dtypes['article_version'] = 'string'
-                            logging.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.article_version` value {record_dict['article_version']} to `record_dict`.")
                 
                 #Subsection: Capture Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
@@ -252,60 +254,60 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `DOI` Value
                         if type_and_value['Type'] == "DOI":
                             if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                logging.error(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.error(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['DOI'] = type_and_value['Value']
                                 include_in_df_dtypes['DOI'] = 'string'
-                                logging.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
                         
                         #Subsection: Capture `proprietary_ID` Value
                         elif re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                             if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                logging.error(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.error(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
                                 include_in_df_dtypes['proprietary_ID'] = 'string'
-                                logging.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
                             record_dict['ISBN'] = str(type_and_value['Value'])
                             include_in_df_dtypes['ISBN'] = 'string'
-                            logging.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
                             if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                 record_dict['print_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['print_ISSN'] = 'string'
-                                logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
                             else:
                                 record_dict['print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
                                 include_in_df_dtypes['print_ISSN'] = 'string'
-                                logging.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
                         
                         #Subsection: Capture `online_ISSN` Value
                         elif type_and_value['Type'] == "Online_ISSN":
                             if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                 record_dict['online_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['online_ISSN'] = 'string'
-                                logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
                             else:
                                 record_dict['online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
                                 include_in_df_dtypes['online_ISSN'] = 'string'
-                                logging.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
                         
                         #Subsection: Capture `URI` Value
                         elif type_and_value['Type'] == "URI":
                             if len(type_and_value['Value']) > self.URI_LENGTH:
-                                logging.error(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.error(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['URI'] = type_and_value['Value']
                                 include_in_df_dtypes['URI'] = 'string'
-                                logging.debug(f"Added `COUNTERData.URI` value {record_dict['URI']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.URI` value {record_dict['URI']} to `record_dict`.")
                         else:
                             continue  # The `for type_and_value in value` loop
                 
@@ -313,13 +315,13 @@ class ConvertJSONDictToDataframe:
                 elif key == "Data_Type":
                     record_dict['data_type'] = value
                     include_in_df_dtypes['data_type'] = 'string'
-                    logging.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
                 
                 #Subsection: Capture `section_Type` Value
                 elif key == "Section_Type":
                     record_dict['section_type'] = value
                     include_in_df_dtypes['section_type'] = 'string'
-                    logging.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
@@ -328,19 +330,19 @@ class ConvertJSONDictToDataframe:
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
                     except:
                         record_dict['YOP'] = None  # The dtype conversion that occurs when this becomes a dataframe will change this to pandas' `NA`
-                    logging.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.YOP` value {record_dict['YOP']} to `record_dict`.")
                 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
                     record_dict['access_type'] = value
                     include_in_df_dtypes['access_type'] = 'string'
-                    logging.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
                 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
                     record_dict['access_method'] = value
                     include_in_df_dtypes['access_method'] = 'string'
-                    logging.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
                 
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
@@ -352,12 +354,12 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `parent_title` Value
                         if key_for_parent == "Item_Name":
                             if len(value_for_parent) > self.RESOURCE_NAME_LENGTH:
-                                logging.error(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
+                                log.error(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['parent_title'] = value_for_parent
                                 include_in_df_dtypes['parent_title'] = 'string'
-                                logging.debug(f"Added `COUNTERData.parent_title` value {record_dict['parent_title']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.parent_title` value {record_dict['parent_title']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_authors` Value
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
@@ -368,18 +370,18 @@ class ConvertJSONDictToDataframe:
                                             continue  # The `for type_and_value in value_for_parent` loop
                                         elif len(record_dict['parent_authors']) + len(type_and_value['Name']) + 8 > self.AUTHORS_LENGTH:
                                             record_dict['parent_authors'] = record_dict['parent_authors'] + " et al."
-                                            logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                            log.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                         else:
                                             record_dict['parent_authors'] = record_dict['parent_authors'] + "; " + type_and_value['Name']
-                                            logging.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
+                                            log.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                     else:
                                         if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                            logging.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
+                                            log.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
                                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                         else:
                                             record_dict['parent_authors'] = type_and_value['Name']
                                             include_in_df_dtypes['parent_authors'] = 'string'
-                                            logging.debug(f"Added `COUNTERData.parent_authors` value {record_dict['parent_authors']} to `record_dict`.")
+                                            log.debug(f"Added `COUNTERData.parent_authors` value {record_dict['parent_authors']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
@@ -389,7 +391,7 @@ class ConvertJSONDictToDataframe:
                                 if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                                     record_dict['parent_publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
                                     include_in_df_dtypes['parent_publication_date'] = True
-                                    logging.debug(f"Added `COUNTERData.parent_publication_date` value {record_dict['parent_publication_date']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.parent_publication_date` value {record_dict['parent_publication_date']} to `record_dict`.")
                         
                         #Subsection: Capture `parent_article_version` Value
                         elif key_for_parent == "Item_Attributes":
@@ -397,13 +399,13 @@ class ConvertJSONDictToDataframe:
                                 if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                                     record_dict['parent_article_version'] = type_and_value['Value']
                                     include_in_df_dtypes['parent_article_version'] = 'string'
-                                    logging.debug(f"Added `COUNTERData.parent_article_version` value {record_dict['parent_article_version']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.parent_article_version` value {record_dict['parent_article_version']} to `record_dict`.")
 
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
                             record_dict['parent_data_type'] = value_for_parent
                             include_in_df_dtypes['parent_data_type'] = 'string'
-                            logging.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
                             for type_and_value in value_for_parent:
@@ -411,60 +413,60 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_DOI` Value
                                 if type_and_value['Type'] == "DOI":
                                     if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                        logging.error(f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.error(f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_DOI'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_DOI'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_DOI` value {record_dict['parent_DOI']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_DOI` value {record_dict['parent_DOI']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
                                 elif re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                                     if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                        logging.error(f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.error(f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_proprietary_ID'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_proprietary_ID'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_proprietary_ID` value {record_dict['parent_proprietary_ID']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_proprietary_ID` value {record_dict['parent_proprietary_ID']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_ISBN` Value
                                 elif type_and_value['Type'] == "ISBN":
                                     record_dict['parent_ISBN'] = str(type_and_value['Value'])
                                     include_in_df_dtypes['parent_ISBN'] = 'string'
-                                    logging.debug(f"Added `COUNTERData.parent_ISBN` value {record_dict['parent_ISBN']} to `record_dict`.")
+                                    log.debug(f"Added `COUNTERData.parent_ISBN` value {record_dict['parent_ISBN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_print_ISSN` Value
                                 elif type_and_value['Type'] == "Print_ISSN":
                                     if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                         record_dict['parent_print_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
                                     else:
                                         record_dict['parent_print_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_online_ISSN` Value
                                 elif type_and_value['Type'] == "Online_ISSN":
                                     if re.match(r'\d{4}\-\d{3}[\dxX]\s*', string=type_and_value['Value']):
                                         record_dict['parent_online_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
                                     else:
                                         record_dict['parent_online_ISSN'] = str(type_and_value['Value'])[:5] + "-" + str(type_and_value['Value']).strip()[-4:]
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_URI` Value
                                 elif type_and_value['Type'] == "URI":
                                     if len(type_and_value['Value']) > self.URI_LENGTH:
-                                        logging.error(f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.error(f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_URI'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_URI'] = 'string'
-                                        logging.debug(f"Added `COUNTERData.parent_URI` value {record_dict['parent_URI']} to `record_dict`.")
+                                        log.debug(f"Added `COUNTERData.parent_URI` value {record_dict['parent_URI']} to `record_dict`.")
 
                         else:
                             continue  # The `for key_for_parent, value_for_parent in value.items()` loop
@@ -473,7 +475,7 @@ class ConvertJSONDictToDataframe:
                     record_dict['temp'] = value
 
                 else:
-                    logging.warning(f"The unexpected key `{key}` was found in the JSON response to a SUSHI API call.")
+                    log.warning(f"The unexpected key `{key}` was found in the JSON response to a SUSHI API call.")
                     pass
             
             #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
@@ -484,20 +486,20 @@ class ConvertJSONDictToDataframe:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
                     records_orient_list.append(deepcopy(record_dict))  # Appending `record_dict` directly adds a reference to that variable, which changes with each iteration of the loop, meaning all the records for a given set of metadata have the `usage_date`, `metric_type`, and `usage_count` values of `record_dict` during the final iteration
-                    logging.debug(f"Added record {record_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
+                    log.debug(f"Added record {record_dict} to `COUNTERData` relation.")  # Set to logging level debug because when all these logging statements are sent to AWS stdout, the only pytest output visible is the error summary statements
 
         #Section: Create Dataframe
-        logging.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        log.info(f"Unfiltered `include_in_df_dtypes`: {include_in_df_dtypes}")
         include_in_df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not False}  # Using `is` for comparison because `1 != False` returns `True` in Python
-        logging.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
+        log.debug(f"Filtered `include_in_df_dtypes`: {include_in_df_dtypes}")
         df_dtypes = {k: v for (k, v) in include_in_df_dtypes.items() if v is not True}
         df_dtypes['platform'] = 'string'
         df_dtypes['metric_type'] = 'string'
         df_dtypes['usage_count'] = 'int'
-        logging.info(f"`df_dtypes`: {df_dtypes}")
+        log.info(f"`df_dtypes`: {df_dtypes}")
 
         records_orient_list = json.dumps(records_orient_list, default=ConvertJSONDictToDataframe._serialize_dates)  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
-        logging.debug(f"JSON as a string:\n{records_orient_list}")
+        log.debug(f"JSON as a string:\n{records_orient_list}")
         df = pd.read_json(
             records_orient_list,
             orient='records',
@@ -505,10 +507,10 @@ class ConvertJSONDictToDataframe:
             encoding='utf-8',
             encoding_errors='backslashreplace',
         )
-        logging.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
+        log.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
-        logging.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
+        log.debug(f"Dataframe info after `astype`:\n{return_string_of_dataframe_info(df)}")
         if include_in_df_dtypes.get('publication_date'):  # Meaning the value was changed to `True`
             df['publication_date'] = pd.to_datetime(
                 df['publication_date'],
@@ -524,7 +526,7 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
 
-        logging.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
+        log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
         return df
 
 
@@ -534,7 +536,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
-        logging.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`")
+        log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`")
         pass
     
 

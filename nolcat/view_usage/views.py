@@ -15,6 +15,8 @@ from .forms import *
 from ..app import db
 from ..models import *
 
+log = logging.getLogger(__name__)
+
 
 @bp.route('/')
 def view_usage_homepage():
@@ -44,7 +46,7 @@ def run_custom_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -171,7 +173,7 @@ def use_predefined_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -235,5 +237,5 @@ def download_non_COUNTER_usage():
             headers={'Content-disposition': f'attachment; filename={download_name}'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)

@@ -16,6 +16,8 @@ from ..app import first_new_PK_value
 from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
+log = logging.getLogger(__name__)
+
 
 @bp.route('/')
 def ingest_usage_homepage():
@@ -43,11 +45,11 @@ def upload_COUNTER_reports():
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'`
+            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'`
             flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -72,7 +74,7 @@ def harvest_SUSHI_statistics():
                 con=db.engine,
             )
         except Exception as error:
-            logging.error(f"The query for the statistics source record failed due to the following error: {error}")
+            log.error(f"The query for the statistics source record failed due to the following error: {error}")
             flash(f"The query for the statistics source record failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
@@ -94,18 +96,18 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+        log.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         try:
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
-            logging.info(result_message)
+            log.info(result_message)
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")
+            log.error(f"The SUSHI request form submission failed due to the following error: {error}")
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -140,7 +142,7 @@ def upload_non_COUNTER_reports():
         )
         non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
-        logging.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
+        log.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
         form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
@@ -175,9 +177,9 @@ def upload_non_COUNTER_reports():
             #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
         except Exception as error:
-            logging.error(f"The file upload failed due to the following error: {error}")
+            log.error(f"The file upload failed due to the following error: {error}")
             flash(f"The file upload failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
