@@ -58,21 +58,12 @@ class UploadCOUNTERReports:
 
         #Section: Load the Workbook(s)
         # The `UploadCOUNTERReports.create_dataframe()` method processes a MultipleFileField object from the web application, but the tests that call this method must use different objects to provide the data.
-        if isinstance(self.COUNTER_report_files, wtforms.fields.simple.MultipleFileField):  # From the web application
+        if isinstance(self.COUNTER_report_files, wtforms.fields.simple.MultipleFileField):  # From the web application--Extracting file path strings from the form data
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
             log.debug(f"File names: {list_of_file_names}")
-        elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--The MultipleFileField fixture actually returns an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction.
-            x=self.COUNTER_report_files.args[0]['data']
-            log.info(f"`self.COUNTER_report_files.args[0]['data']` is {x} (type {repr(type(x))})")
-            for y in x:
-                log.info(f"The items in `self.COUNTER_report_files.args[0]['data']` and their components are:\n{y} (type {repr(type(y))})\n{y.__dict__} (type {repr(type(y.__dict__))})")
-            # This is a copy of the code used to construct the `data` attribute of the `tests.test_UploadCOUNTERReports.sample_COUNTER_report_workbooks()` fixture
-            list_of_file_names = []
-            folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
-            for workbook in os.listdir(folder_path):
-                log.info(f"Adding `{str(folder_path / workbook)}` (type {repr(type(str(folder_path / workbook)))}) to list")
-                list_of_file_names.append(str(folder_path / workbook))
-            list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order
+        elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--Extracting BytesIO objects from the MultipleFileField fixture (actually an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction)
+            list_of_file_names = self.COUNTER_report_files.args[0]['data']
+            #ToDo: Unsure if following is needed as order of files is set by the file system and, as BytesIO objects, they may not sort by the name of the file of origin: `list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order`
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, list):  # From the `tests.test_bp_ingest_usage` and `tests.test_bp_initialization` modules
             log.info(f"From the blueprint test modules, `self.COUNTER_report_files[0]` is {self.COUNTER_report_files[0]} (type {repr(type(self.COUNTER_report_files[0]))})")
