@@ -369,35 +369,32 @@ class UploadCOUNTERReports:
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 #TEST: Below is to try and figure out why YOP object to Int16 conversion fails
-                # Individual values can convert to `int` dtype
-                if "YOP" in df.columns.values.tolist():
+                df2 = df.copy()
+                #Test: Removing null placeholders from non-string fields, which raises no errors
+                non_string_fields_and_dtypes = {k: v for (k, v) in df_dtypes.items() if v != "string"}
+                for fields in non_string_fields_and_dtypes.keys():
+                    df2[x] = df2[x].replace(["`None`"], [None])
+                    log.info(f"After replacing the null placeholders in field {x}:\n{return_string_of_dataframe_info(df2)}")
+                log.info("Null placeholder replacement testing complete")
+                
+                #Test: Convert dtype of `YOP`
+                # Individual values can convert to `int` dtype but not `Int16` dtype
+                if "YOP" in df2.columns.values.tolist():
                     years = pd.Series(
-                        data=df['YOP'].unique(),
-                        dtype=df['YOP'].dtype,
+                        data=df2['YOP'].unique(),
+                        dtype=df2['YOP'].dtype,
                     )
                     years_df = years.to_frame('y')
                     years_df = years_df.transpose()
-                    log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
+                    log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(years_df)}")
                     for x in years_df.columns.to_list():
+                        years_df=years_df.astype({x:'int'})
+                        log.info(f"`years_df` dtypes after converting column {x} to `int`:\n{years_df.dtypes}")
                         try:
                             years_df=years_df.astype({x:'Int16'})
-                            log.info(f"`years_df` dtypes after converting column {x}:\n{years_df.dtypes}")
+                            log.info(f"`years_df` dtypes after converting column {x} from `int` to `Int16`:\n{years_df.dtypes}")
                         except Exception as e:
-                            log.info(f"Couldn't convert column {x} to an Int16 dtype because of error {e}")
-                log.info("First testing section complete")
-                
-                #ToDo: Break apart next loop
-                non_string_fields_and_dtypes = {k: v for (k, v) in df_dtypes.items() if v != "string"}
-                log.info(f"`non_string_fields_and_dtypes`: {non_string_fields_and_dtypes}")
-                df2 = df.copy()
-                log.info(return_string_of_dataframe_info(df2))
-                for x in non_string_fields_and_dtypes.keys():
-                    log.info(f"Replacing null placeholders in field {df2[x]}")
-                    try:
-                        df2[x] = df2[x].replace(["`None`"], [None])
-                        log.info(f"After replacing the null placeholders in field {df2[x]}:\n{return_string_of_dataframe_info(df2)}")
-                    except Exception as e:
-                        log.info(f"Couldn't replace null placeholders in field {df2[x]} because of error {e}")
+                            log.info(f"Couldn't convert column {x} from `int` to `Int16` dtype because of error {e}")
                 #TEST: End of testing
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
@@ -444,7 +441,7 @@ class UploadCOUNTERReports:
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
                 
-                log.info(f"Dataframe being used in concatenation:\n{df}")
+                #ToDo: Uncomment later: log.info(f"Dataframe being used in concatenation:\n{df}")
                 all_dataframes_to_concatenate.append(df)
         
         
