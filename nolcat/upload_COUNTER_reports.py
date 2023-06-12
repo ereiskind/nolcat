@@ -62,7 +62,10 @@ class UploadCOUNTERReports:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--The MultipleFileField fixture actually returns an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction.
-            log.info(f"`self.COUNTER_report_files.args[0]['data']` is {self.COUNTER_report_files.args[0]['data']} (type {repr(type(self.COUNTER_report_files.args[0]['data']))})")
+            x=self.COUNTER_report_files.args[0]['data']
+            log.info(f"`self.COUNTER_report_files.args[0]['data']` is {x} (type {repr(type(x))})")
+            for y in x:
+                log.info(f"The items in `self.COUNTER_report_files.args[0]['data']` and their components are:\n{y} (type {repr(type(y))})\n{y.__dict__} (type {repr(type(y.__dict__))})")
             # This is a copy of the code used to construct the `data` attribute of the `tests.test_UploadCOUNTERReports.sample_COUNTER_report_workbooks()` fixture
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
@@ -237,7 +240,7 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype={k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
-                log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
+                #ToDo: Uncomment later: log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -366,21 +369,36 @@ class UploadCOUNTERReports:
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 #TEST: Below is to try and figure out why YOP object to Int16 conversion fails
+                # Individual values can convert to `int` dtype
                 if "YOP" in df.columns.values.tolist():
                     years = pd.Series(
                         data=df['YOP'].unique(),
                         dtype=df['YOP'].dtype,
                     )
-                    log.info(f"`years` series:\n{years}")
                     years_df = years.to_frame('y')
-                    log.info(f"`years_df` dataframe:\n{years_df}")
                     years_df = years_df.transpose()
-                    log.info(f"`years_df` dataframe after being transposed:\n{years_df}")
                     log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
                     for x in years_df.columns.to_list():
-                        log.info(f"Changing\n{years_df[x]}\nto int dtype")
-                        years_df=years_df.astype({x:'int'})
-                        log.info(f"After iteration {x}:\n{return_string_of_dataframe_info(df)}")
+                        try:
+                            years_df=years_df.astype({x:'Int16'})
+                            log.info(f"`years_df` dtypes after converting column {x}:\n{years_df.dtypes}")
+                        except Exception as e:
+                            log.info(f"Couldn't convert column {x} to an Int16 dtype because of error {e}")
+                log.info("First testing section complete")
+                
+                #ToDo: Break apart next loop
+                non_string_fields_and_dtypes = {k: v for (k, v) in df_dtypes.items() if v != "string"}
+                log.info(f"`non_string_fields_and_dtypes`: {non_string_fields_and_dtypes}")
+                df2 = df.copy()
+                log.info(return_string_of_dataframe_info(df2))
+                for x in non_string_fields_and_dtypes.keys():
+                    log.info(f"Replacing null placeholders in field {df2[x]}")
+                    try:
+                        df2[x] = df2[x].replace(["`None`"], [None])
+                        log.info(f"After replacing the null placeholders in field {df2[x]}:\n{return_string_of_dataframe_info(df2)}")
+                    except Exception as e:
+                        log.info(f"Couldn't replace null placeholders in field {df2[x]} because of error {e}")
+                #TEST: End of testing
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
