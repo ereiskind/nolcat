@@ -59,7 +59,27 @@ class UploadCOUNTERReports:
         #Section: Load the Workbook(s)
         # The `UploadCOUNTERReports.create_dataframe()` method processes a MultipleFileField object from the web application, but the tests that call this method must use different objects to provide the data.
         if isinstance(self.COUNTER_report_files, wtforms.fields.simple.MultipleFileField):  # From the web application--Extracting file path strings from the form data
+            try:
+                log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
+            except:
+                pass
+
+            try:
+                log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})")
+            except:
+                pass
+
+            try:
+                log.info(f"`request.files(self.COUNTER_report_files)` is {request.files(self.COUNTER_report_files)} (type {repr(type(request.files(self.COUNTER_report_files)))})")
+            except:
+                pass
+
+            try:
+                log.info(f"`request.files(self.COUNTER_report_files.name)` is {request.files(self.COUNTER_report_files.name)} (type {repr(type(request.files(self.COUNTER_report_files.name)))})")
+            except:
+                pass
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
+            log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {request.files.getlist(self.COUNTER_report_files.name)} (type {repr(type(request.files.getlist(self.COUNTER_report_files.name)))})")
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--Extracting BytesIO objects from the MultipleFileField fixture (actually an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction)
             list_of_file_names = self.COUNTER_report_files.args[0]['data']
