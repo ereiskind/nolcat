@@ -62,11 +62,12 @@ class UploadCOUNTERReports:
             list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
             log.debug(f"File names: {list_of_file_names}")
         elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--The MultipleFileField fixture actually returns an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction.
-            log.info(f"`self.COUNTER_report_files.args` is {self.COUNTER_report_files.args} (type {repr(type(self.COUNTER_report_files.args))})")
+            log.info(f"`self.COUNTER_report_files.args[0].data` is {self.COUNTER_report_files.args[0].data} (type {repr(type(self.COUNTER_report_files.args[0].data))})")
             # This is a copy of the code used to construct the `data` attribute of the `tests.test_UploadCOUNTERReports.sample_COUNTER_report_workbooks()` fixture
             list_of_file_names = []
             folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
             for workbook in os.listdir(folder_path):
+                log.info(f"Adding `{str(folder_path / workbook)}` (type {repr(type(str(folder_path / workbook)))}) to list")
                 list_of_file_names.append(str(folder_path / workbook))
             list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order
             log.debug(f"File names: {list_of_file_names}")
@@ -377,8 +378,8 @@ class UploadCOUNTERReports:
                     log.info(f"`years_df` dataframe after being transposed:\n{years_df}")
                     log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(df)}")
                     for x in years_df.columns.to_list():
-                        log.info(f"Changing\n{years_df[x]}\nto Int64 dtype")
-                        years_df=years_df.astype({x:'Int64'})
+                        log.info(f"Changing\n{years_df[x]}\nto int dtype")
+                        years_df=years_df.astype({x:'int'})
                         log.info(f"After iteration {x}:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
