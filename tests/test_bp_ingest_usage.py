@@ -38,6 +38,7 @@ def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relati
     form_submissions = MultipartEncoder(
         fields={
             'COUNTER_reports': ('0_2017.xlsx', open(Path('tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'))  #TEST: This field is a MultipleFileField, but attempts to upload multiple files at once via the `post()` method have yet to succeed
+            #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
     )

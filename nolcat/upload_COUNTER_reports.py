@@ -19,21 +19,21 @@ log = logging.getLogger(__name__)
 class UploadCOUNTERReports:
     """A class for transforming uploaded Excel workbook(s) with tabular COUNTER data for loading into the `COUNTERData` relation.
 
-    COUNTER reports not delivered by SUSHI are given in a tabular format and usually saved in Excel workbooks. These workbooks can be ingested into this program via a Flask-WTF MultipleFileField form field, but that workbook data requires manipulation and cleaning to become a single dataframe that can be loaded into the `COUNTERData` relation. This class exists to make those changes; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the MultipleFileField object encapsulating the selected Excel workbook(s) as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `UploadCOUNTERReports` type are never instantiated.
+    COUNTER reports not delivered by SUSHI are given in a tabular format and usually saved in Excel workbooks. These workbooks can be ingested into this program via a Flask-WTF MultipleFileField form field, but that workbook data requires manipulation and cleaning to become a single dataframe that can be loaded into the `COUNTERData` relation. This class exists to make those changes; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the list of Werkzeug FileStorage object(s), each of which encapsulates a selected Excel workbook, as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `UploadCOUNTERReports` type are never instantiated.
 
     Attributes:
-        self.COUNTER_report_files (MultipleFileField): The constructor method for `UploadCOUNTERReports`, which instantiates the MultipleFileField object.
+        self.COUNTER_report_files (list): The constructor method for `UploadCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
 
     Methods:
         create_dataframe: This method transforms the data from the tabular COUNTER reports in uploaded Excel workbooks into a single dataframe ready for normalization.
     """
     def __init__(self, COUNTER_report_files):
-        """The constructor method for `UploadCOUNTERReports`, which instantiates the MultipleFileField object.
+        """The constructor method for `UploadCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
 
         This constructor is not meant to be used alone; all class instantiations should have a `create_dataframe()` method call appended to it.
 
         Args:
-            COUNTER_report_files (MultipleFileField): The MultipleFileField object containing the uploaded Excel workbook(s) of tabular COUNTER data
+            COUNTER_report_files (list): The list of Werkzeug FileStorage object(s), each of which encapsulates a single uploaded Excel workbook of tabular COUNTER data
         """
         self.COUNTER_report_files = COUNTER_report_files
     
@@ -50,44 +50,19 @@ class UploadCOUNTERReports:
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
-        log.info("Starting `UploadCOUNTERReports.create_dataframe()`")  #TEST: `test_bp_ingest_usage.py.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'` at some point between now and next logging statement
+        log.info("Starting `UploadCOUNTERReports.create_dataframe()`")
         log.debug("and this is a debug")
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
-        # The `UploadCOUNTERReports.create_dataframe()` method processes a MultipleFileField object from the web application, but the tests that call this method must use different objects to provide the data.
-        if isinstance(self.COUNTER_report_files, wtforms.fields.simple.MultipleFileField):  # From the web application--Extracting file path strings from the form data
-            try:
-                log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
-            except:
-                pass
-
-            try:
-                log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})")
-            except:
-                pass
-
-            try:
-                log.info(f"`request.files(self.COUNTER_report_files)` is {request.files(self.COUNTER_report_files)} (type {repr(type(request.files(self.COUNTER_report_files)))})")
-            except:
-                pass
-
-            try:
-                log.info(f"`request.files(self.COUNTER_report_files.name)` is {request.files(self.COUNTER_report_files.name)} (type {repr(type(request.files(self.COUNTER_report_files.name)))})")
-            except:
-                pass
-            list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
-            log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {request.files.getlist(self.COUNTER_report_files.name)} (type {repr(type(request.files.getlist(self.COUNTER_report_files.name)))})")
+        if isinstance(self.COUNTER_report_files, list):
+            log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
+            log.info(f"`self.COUNTER_report_files[0].__dict__` is {self.COUNTER_report_files[0].__dict__}")
+            log.info(f"`self.COUNTER_report_files[0].__dict__['stream']` is {self.COUNTER_report_files[0].__dict__['stream']} (type {repr(type(self.COUNTER_report_files[0].__dict__['stream']))})")
+            list_of_file_names = self.COUNTER_report_files  #ToDo: Make list items pathlib.Path objects
             log.debug(f"File names: {list_of_file_names}")
-        elif isinstance(self.COUNTER_report_files, wtforms.fields.core.UnboundField):  # From the `tests.test_UploadCOUNTERReports` module--Extracting BytesIO objects from the MultipleFileField fixture (actually an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction)
-            list_of_file_names = self.COUNTER_report_files.args[0]['data']
-            #ToDo: Unsure if following is needed as order of files is set by the file system and, as BytesIO objects, they may not sort by the name of the file of origin: `list_of_file_names.sort()  # The initial list isn't ordered in any way, but to match the result dataframe created for the test, the files must be ingested in the alphanumeric order used by both Python and the Linux file system; enacting the `sort()` method on the list puts the files in the proper order`
-            log.debug(f"File names: {list_of_file_names}")
-        elif isinstance(self.COUNTER_report_files, list):  # From the `tests.test_bp_ingest_usage` and `tests.test_bp_initialization` modules
-            log.info(f"From the blueprint test modules, `self.COUNTER_report_files[0]` is {self.COUNTER_report_files[0]} (type {repr(type(self.COUNTER_report_files[0]))})")
-            log.info(f"From the blueprint test modules, `self.COUNTER_report_files[0].__dict__` is {self.COUNTER_report_files[0].__dict__}")
         else:
             log.error(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
             raise TypeError(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
@@ -100,7 +75,7 @@ class UploadCOUNTERReports:
         #TEST: End of section for testing purposes only
         for file_name in list_of_file_names:
             try:
-                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=Path(file_name).name)[0])  # `findall` always produces a list
+                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name.name)[0])  # `findall` always produces a list
                 file = load_workbook(filename=file_name, read_only=True)
                 log.debug(f"Loading data from workbook {file_name}")
             except Exception:
