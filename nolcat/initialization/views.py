@@ -358,7 +358,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Load COUNTER Reports into Database
         #ToDo: Uncomment this subsection during Planned Iteration 2
-        # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+        # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
         #ToDo: Does there need to be a warning here about if the above method returns no data?
         # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
         # COUNTER_reports_df.index += first_new_PK_value('COUNTERData')

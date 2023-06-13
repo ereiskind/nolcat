@@ -15,9 +15,9 @@ from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
 
 @pytest.fixture
 def sample_COUNTER_report_workbooks():
-    """Creates a Flask-WTF File object for use in testing the `UploadCOUNTERReports` class.
+    """Creates a list of Werkzeug FileStorage object(s) for use in testing the `UploadCOUNTERReports` class.
     
-    While this fixture would ideally create a MultipleFileField object containing all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`, it actually creates an UnboundField object because it uses a constructor for an object that inherits from the WTForms Form base class but lacks the `_form` and `_name` parameters, which are automatically supplied during standard Form object construction. At this point, appropriate values for the above parameters are unknown, so the fixture is used as-is, and the `UploadCOUNTERReports.create_dataframe()` method repeats the loop for gathering the workbook names seen below.
+    The `UploadCOUNTERReports` constructor takes an attribute of the MultipleFileField object that lists each file uploaded to the MultipleFileField object as an individual Werkzeug FileStorage object.
     """
     folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
     data_attribute = []

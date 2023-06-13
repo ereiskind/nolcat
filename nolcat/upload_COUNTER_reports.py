@@ -19,21 +19,21 @@ log = logging.getLogger(__name__)
 class UploadCOUNTERReports:
     """A class for transforming uploaded Excel workbook(s) with tabular COUNTER data for loading into the `COUNTERData` relation.
 
-    COUNTER reports not delivered by SUSHI are given in a tabular format and usually saved in Excel workbooks. These workbooks can be ingested into this program via a Flask-WTF MultipleFileField form field, but that workbook data requires manipulation and cleaning to become a single dataframe that can be loaded into the `COUNTERData` relation. This class exists to make those changes; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the MultipleFileField object encapsulating the selected Excel workbook(s) as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `UploadCOUNTERReports` type are never instantiated.
+    COUNTER reports not delivered by SUSHI are given in a tabular format and usually saved in Excel workbooks. These workbooks can be ingested into this program via a Flask-WTF MultipleFileField form field, but that workbook data requires manipulation and cleaning to become a single dataframe that can be loaded into the `COUNTERData` relation. This class exists to make those changes; since the desired behavior is more that of a function than a class, the would-be function becomes a class by dividing it into the traditional `__init__` method, which instantiates the list of Werkzeug FileStorage object(s), each of which encapsulates a selected Excel workbook, as a class attribute, and the `create_dataframe()` method, which performs the actual transformation. This structure requires all instances of the class constructor to be prepended to a call to the `create_dataframe()` method, which means objects of the `UploadCOUNTERReports` type are never instantiated.
 
     Attributes:
-        self.COUNTER_report_files (MultipleFileField): The constructor method for `UploadCOUNTERReports`, which instantiates the MultipleFileField object.
+        self.COUNTER_report_files (list): The constructor method for `UploadCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
 
     Methods:
         create_dataframe: This method transforms the data from the tabular COUNTER reports in uploaded Excel workbooks into a single dataframe ready for normalization.
     """
     def __init__(self, COUNTER_report_files):
-        """The constructor method for `UploadCOUNTERReports`, which instantiates the MultipleFileField object.
+        """The constructor method for `UploadCOUNTERReports`, which instantiates the list of werkzeug.datastructures.FileStorage objects containing the COUNTER reports to be uploaded.
 
         This constructor is not meant to be used alone; all class instantiations should have a `create_dataframe()` method call appended to it.
 
         Args:
-            COUNTER_report_files (MultipleFileField): The MultipleFileField object containing the uploaded Excel workbook(s) of tabular COUNTER data
+            COUNTER_report_files (list): The list of Werkzeug FileStorage object(s), each of which encapsulates a single uploaded Excel workbook of tabular COUNTER data
         """
         self.COUNTER_report_files = COUNTER_report_files
     
