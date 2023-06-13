@@ -58,21 +58,13 @@ class UploadCOUNTERReports:
 
         #Section: Load the Workbook(s)
         if isinstance(self.COUNTER_report_files, list):
-            log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
-            log.info(f"`self.COUNTER_report_files[0].__dict__` is {self.COUNTER_report_files[0].__dict__}")
-            log.info(f"`self.COUNTER_report_files[0].__dict__['stream']` is {self.COUNTER_report_files[0].__dict__['stream']} (type {repr(type(self.COUNTER_report_files[0].__dict__['stream']))})")
+            log.info(f"`self.COUNTER_report_files[0].__dict__['stream'].__dict__` is {self.COUNTER_report_files[0].__dict__['stream'].__dict__}")
             list_of_file_names = self.COUNTER_report_files  #ToDo: Make list items pathlib.Path objects
             log.debug(f"File names: {list_of_file_names}")
         else:
             log.error(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
             raise TypeError(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
         
-        #TEST: Below is for testing purposes only
-        for file_name in list_of_file_names:
-            file = load_workbook(filename=file_name, read_only=True)
-            log.info(f"`file` is {file} (type {repr(type(file))})")
-            log.info(f"`file.__dict__` is {file.__dict__} (type {repr(type(file.__dict__))})")
-        #TEST: End of section for testing purposes only
         for file_name in list_of_file_names:
             try:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name.name)[0])  # `findall` always produces a list
