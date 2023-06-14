@@ -51,31 +51,24 @@ class UploadCOUNTERReports:
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
         log.info("Starting `UploadCOUNTERReports.create_dataframe()`")
-        log.debug("and this is a debug")
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
-        if isinstance(self.COUNTER_report_files, list):
-            log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})")
-            log.info(f"`self.COUNTER_report_files[0].__dict__` is {self.COUNTER_report_files[0].__dict__}")
-            log.info(f"`self.COUNTER_report_files[0].__dict__['stream']` is {self.COUNTER_report_files[0].__dict__['stream']} (type {repr(type(self.COUNTER_report_files[0].__dict__['stream']))})")
-            log.info(f"`self.COUNTER_report_files[0].__dict__['stream'].__dict__` is {self.COUNTER_report_files[0].__dict__['stream'].__dict__}")
-            log.info(f"`self.COUNTER_report_files[0].__dict__['stream'].__dict__['_file'].__dict__` is {self.COUNTER_report_files[0].__dict__['stream'].__dict__['_file'].__dict__}")
-            list_of_file_names = self.COUNTER_report_files  #ToDo: Make list items pathlib.Path objects
-            log.debug(f"File names: {list_of_file_names}")
-        else:
-            log.error(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
-            raise TypeError(f"The `UploadCOUNTERReports.create_dataframe()` method doesn't accept type {repr(type(self.COUNTER_report_files))} objects.")
-        
-        for file_name in list_of_file_names:
+        for FileStorage_object in self.COUNTER_report_files:
+            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
             try:
-                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=file_name.name)[0])  # `findall` always produces a list
-                file = load_workbook(filename=file_name, read_only=True)
-                log.debug(f"Loading data from workbook {file_name}")
-            except Exception:
-                log.warning(f"The workbook {file_name} couldn't be loaded because of a {sys.exc_info()[0]} error: {sys.exc_info()[1]}. Remember the program is looking for a file name beginning with the statistics source ID followed by an underscore and ending with the Excel file extension.")
+                file = load_workbook(filename=FileStorage_object, read_only=True)
+                log.debug(f"Loading data from workbook {str(FileStorage_object['filename'])}")
+            except Exception as error:
+                log.warning(f"The workbook {str(FileStorage_object['filename'])} couldn't be loaded because of the error `{error}`.")
+                continue
+            
+            try:
+                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object['filename']))[0])  # `findall` always produces a list
+            except Exception as error:
+                log.warning(f"The workbook {str(FileStorage_object['filename'])} wasn't be loaded because attempting to extract the statistics source ID from the file name raised `{error}`. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 continue
 
             for report_type in file.sheetnames:
@@ -83,7 +76,7 @@ class UploadCOUNTERReports:
                     log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
-                log.info(f"Loading data from sheet {report_type} from workbook {file_name}.")
+                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object['filename'])}.")
 
 
                 #Section: Identify the Header Row
@@ -221,7 +214,7 @@ class UploadCOUNTERReports:
                 #Section: Create Dataframe
                 #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
-                    file_name,
+                    FileStorage_object,
                     sheet_name=report_type,
                     engine='openpyxl',
                     header=header_row_number-1,  # This gives the row number with the headings in Excel, which is also the row above where the data starts
