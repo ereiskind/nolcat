@@ -59,9 +59,10 @@ class UploadCOUNTERReports:
         for FileStorage_object in self.COUNTER_report_files:
             log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
             try:
-                file = load_workbook(filename=FileStorage_object, read_only=True)
+                file = load_workbook(filename=FileStorage_object.stream, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
             except Exception as error:
+                log.info(f"`FileStorage_object.stream` is {FileStorage_object.stream} (type {repr(type(FileStorage_object.stream))})\n{FileStorage_object.stream.__dict__}")
                 log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
                 continue
             
