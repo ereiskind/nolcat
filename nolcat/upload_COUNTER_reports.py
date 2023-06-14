@@ -62,7 +62,7 @@ class UploadCOUNTERReports:
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
-            x = FileStorage_object.stream
+            x = FileStorage_object.stream._file
             log.info(f"{x} (type {repr(type(x))})")
             try:
                 with open(x, 'b') as f:
