@@ -59,6 +59,9 @@ class UploadCOUNTERReports:
         for FileStorage_object in self.COUNTER_report_files:
             log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
             #TEST: Begin testing section
+            # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
+            # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
+            # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
             log.info(f"`FileStorage_object` is {FileStorage_object} (type {repr(type(FileStorage_object))})\n{FileStorage_object.__dict__}")
             try:
                 file = load_workbook(filename=FileStorage_object, read_only=True)
