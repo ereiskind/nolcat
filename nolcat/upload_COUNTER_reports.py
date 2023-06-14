@@ -60,15 +60,15 @@ class UploadCOUNTERReports:
             log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
             try:
                 file = load_workbook(filename=FileStorage_object, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object['filename'])}")
+                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
             except Exception as error:
-                log.warning(f"The workbook {str(FileStorage_object['filename'])} couldn't be loaded because of the error `{error}`.")
+                log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
                 continue
             
             try:
-                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object['filename']))[0])  # `findall` always produces a list
+                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object.filename))[0])  # `findall` always produces a list
             except Exception as error:
-                log.warning(f"The workbook {str(FileStorage_object['filename'])} wasn't be loaded because attempting to extract the statistics source ID from the file name raised `{error}`. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
+                log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised `{error}`. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 continue
 
             for report_type in file.sheetnames:
@@ -76,7 +76,7 @@ class UploadCOUNTERReports:
                     log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
-                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object['filename'])}.")
+                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")
 
 
                 #Section: Identify the Header Row
