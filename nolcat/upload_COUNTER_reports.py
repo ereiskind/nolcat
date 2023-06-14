@@ -62,24 +62,18 @@ class UploadCOUNTERReports:
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
-            log.info(f"`FileStorage_object` is {FileStorage_object} (type {repr(type(FileStorage_object))})\n{FileStorage_object.__dict__}")
+            x = FileStorage_object
+            log.info(f"{x} (type {repr(type(x))})")
             try:
-                file = load_workbook(filename=FileStorage_object, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-            except Exception as e1:
-                log.warning(f"When using `FileStorage_object`, the workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{e1}`.")
-                log.info(f"`FileStorage_object.stream` is {FileStorage_object.stream} (type {repr(type(FileStorage_object.stream))})\n{FileStorage_object.stream.__dict__}")
-                try:
-                    file = load_workbook(filename=FileStorage_object.stream, read_only=True)
-                    log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-                except Exception as e2:
-                    log.warning(f"When using `FileStorage_object.stream`, the workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{e2}`.")
-                    log.info(f"`FileStorage_object.stream._file` is {FileStorage_object.stream._file} (type {repr(type(FileStorage_object.stream._file))})\n{FileStorage_object.stream._file.__dict__}")
+                with open(x, 'b') as f:
+                    log.info(f"`open()` returned {f} (type {repr(type(f))})")
                     try:
-                        file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
+                        file = load_workbook(filename=f, read_only=True)
                         log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-                    except Exception as e3:
-                        log.warning(f"When using `FileStorage_object.stream._file`, the workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{e3}`.")
+                    except Exception as load_failed_1:
+                        log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{load_failed_1}`.")
+            except Exception as open_file_failed_1:
+                log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be opened because of the error `{open_file_failed_1}`.")
             #TEST: End testing section
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
