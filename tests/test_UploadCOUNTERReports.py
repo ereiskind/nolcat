@@ -22,13 +22,8 @@ def sample_COUNTER_report_workbooks():
     folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
     fixture = []
     for workbook in os.listdir(folder_path):
-        #Test: Start testing section
-        with open(Path(folder_path / workbook), 'rb+') as f:
-            print(f"`with open(p, 'rb+')` is {f} (type {repr(type(f))})")
+        with open(Path(folder_path / workbook), 'rb+'):
             temp_file_object = SpooledTemporaryFile()
-            print(f"`SpooledTemporaryFile()` in block is {temp_file_object} (type {repr(type(temp_file_object))})\n{temp_file_object.__dict__}")
-        print(f"`SpooledTemporaryFile()` out of block is {temp_file_object} (type {repr(type(temp_file_object))})\n{temp_file_object.__dict__}")
-        #Test: End testing section
         FileStorage_object = FileStorage(
             stream = temp_file_object,
             filename=str(workbook),
