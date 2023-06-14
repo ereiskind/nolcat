@@ -3,7 +3,6 @@
 
 import pytest
 from pathlib import Path
-from io import BytesIO
 from tempfile import SpooledTemporaryFile
 import os
 from werkzeug.datastructures import FileStorage
@@ -23,54 +22,14 @@ def sample_COUNTER_report_workbooks():
     fixture = []
     for workbook in os.listdir(folder_path):
         #Test: Start testing section
-        p=Path(folder_path / workbook)
-        x=open(p, 'rb+')
-        print(f"`open(p, 'rb+')` while open is {x} (type {repr(type(x))})\n{x.__dict__}")
-        x.close()
-        print(f"`open(p, 'rb+')` after closing is {x} (type {repr(type(x))})\n{x.__dict__}")
-        with open(p, 'rb+') as f:
-            y=BytesIO(f.read())
-            print(f"`BytesIO(f.read())` in block is {y} (type {repr(type(y))})\n{y.__dict__}")
-        try:
-            print(f"`BytesIO(f.read())` out of block is {y} (type {repr(type(y))})\n{y.__dict__}")
-        except:
-            pass
-
-        try:
-            z=SpooledTemporaryFile(_file=x)
-            print(f"`SpooledTemporaryFile(_file=x)` is {z} (type {repr(type(z))})\n{z.__dict__}")
-        except Exception as e:
-            print(f"`SpooledTemporaryFile(_file=x)` raised {e}")
-        
-        try:
-            z=SpooledTemporaryFile()
-            z._file=x
-            print(f"`SpooledTemporaryFile()` followed by `._file=` is {z} (type {repr(type(z))})\n{z.__dict__}")
-        except Exception as e:
-            print(f"`SpooledTemporaryFile()` followed by `._file=` raised {e}")
-        
-        try:
-            with SpooledTemporaryFile() as t:
-                print(f"`with SpooledTemporaryFile() as t` is {t} (type {repr(type(t))})\n{t.__dict__}")
-                with open(p, 'rb+') as f:
-                    print(f"`with open(p, 'rb+') as f` in block `with SpooledTemporaryFile() as t` is {f} (type {repr(type(f))})\n{f.__dict__}")
-                    try:
-                        z = BytesIO(f)
-                        print(f"`BytesIO(f)` is {z} (type {repr(type(z))})\n{z.__dict__}")
-                    except Exception as e:
-                        print(f"`BytesIO(f)` raised {e}")
-                    
-                    try:
-                        print(f"`f.read()` is {f.read()} (type {repr(type(f.read()))})")
-                        z = BytesIO(f.read())
-                        print(f"`BytesIO(f.read())` is {z} (type {repr(type(z))})\n{z.__dict__}")
-                    except Exception as e:
-                        print(f"`BytesIO(f.read())` raised {e}")
-        except Exception as e:
-            print(f"`with SpooledTemporaryFile() as t` raised {e}")
+        with open(Path(folder_path / workbook), 'rb+') as f:
+            print(f"`with open(p, 'rb+')` is {f} (type {repr(type(f))})")
+            temp_file_object = SpooledTemporaryFile()
+            print(f"`SpooledTemporaryFile()` in block is {temp_file_object} (type {repr(type(temp_file_object))})\n{temp_file_object.__dict__}")
+        print(f"`SpooledTemporaryFile()` out of block is {temp_file_object} (type {repr(type(temp_file_object))})\n{temp_file_object.__dict__}")
         #Test: End testing section
         FileStorage_object = FileStorage(
-            stream = z,  # tempfile.SpooledTemporaryFile object from `workbook`
+            stream = temp_file_object,
             filename=str(workbook),
             name='COUNTER_reports',  # Name of form field, which is the same in both forms
         )
