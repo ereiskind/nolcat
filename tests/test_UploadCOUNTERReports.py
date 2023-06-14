@@ -6,6 +6,7 @@ from pathlib import Path
 from tempfile import SpooledTemporaryFile
 import os
 from werkzeug.datastructures import FileStorage
+from werkzeug.datastructures import Headers
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
@@ -32,6 +33,10 @@ def sample_COUNTER_report_workbooks():
             stream = temp_file_object,
             filename=str(workbook),
             name='COUNTER_reports',  # Name of form field, which is the same in both forms
+            headers=Headers([  # Copied from `FileStorage.__dict__` logging from the `COUNTER_reports` fields
+                ('Content-Disposition', f'form-data; name="COUNTER_reports"; filename="{str(workbook)}"'),
+                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+            ]),
         )
         fixture.append(FileStorage_object)
     return fixture
