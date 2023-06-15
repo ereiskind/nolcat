@@ -63,10 +63,14 @@ class UploadCOUNTERReports:
         log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})\n{self.COUNTER_report_files.__dict__}")
         log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})")
         list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
-        log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {list_of_file_names} (type {repr(type(list_of_file_names))})\n{list_of_file_names.__dict__}")
+        log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {list_of_file_names} (type {repr(type(list_of_file_names))})")
         try:
             for file_name in list_of_file_names:
-                log.info(f"An iteration of `request.files.getlist(self.COUNTER_report_files.name)` is {file_name} (type {repr(type(file_name))})\n{file_name.__dict__}")
+                log.info(f"An iteration of `request.files.getlist(self.COUNTER_report_files.name)` is {file_name} (type {repr(type(file_name))})")
+                try:
+                    log.info(file_name.__dict__)
+                except:
+                    pass
         except Exception as e:
             log.warning(f"Trying to iterate through `request.files.getlist(self.COUNTER_report_files.name)` raised `{e}`")
         #TEST: End testing section
