@@ -74,7 +74,7 @@ class UploadCOUNTERReports:
             log.info(f"After `open()` block, the `open()` object is {f} (type {repr(type(f))})")
 
             try:
-                file = load_workbook(filename=f, read_only=True)
+                file = load_workbook(filename='temp.xlsx', read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
             except Exception as load_failed:
                 log.warning(f"Using {f} in `load_workbook()` raised `{load_failed}`")
