@@ -62,20 +62,23 @@ class UploadCOUNTERReports:
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
-            log.info(f"Before any actions, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
+            log.info(f"Before any actions, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
             with open('temp.xlsx', 'wb') as f:
-                log.info(f"In `open()` block, the `open()` object is {f} (type {repr(type(f))})\n{f.__dict__}")
+                log.info(f"In `open()` block, the `open()` object is {f} (type {repr(type(f))})")
                 try:
                     f.write(FileStorage_object.stream._file.getvalue())
-                    log.info(f"In `open()` block, the `open()` object after `.write(_io.BytesIO.getvalue())` is {f} (type {repr(type(f))})\n{f.__dict__}")
-                    try:
-                        file = load_workbook(filename=f, read_only=True)
-                        log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-                    except Exception as load_failed:
-                        log.warning(f"Using {f} in `load_workbook()` raised `{load_failed}`")
+                    log.info(f"In `open()` block, the `open()` object after `.write(_io.BytesIO.getvalue())` is {f} (type {repr(type(f))})")
                 except Exception as write_failed:
                     log.warning(f"The function `{f}.write({FileStorage_object.stream._file}.getvalue())` raised `{write_failed}`")
-            log.info(f"Immediately after closing the `open()` block, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
+            log.info(f"Immediately after closing the `open()` block, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
+            log.info(f"After `open()` block, the `open()` object is {f} (type {repr(type(f))})")
+
+            try:
+                file = load_workbook(filename=f, read_only=True)
+                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
+            except Exception as load_failed:
+                log.warning(f"Using {f} in `load_workbook()` raised `{load_failed}`")
+
             try:
                 os.remove('temp.xlsx')
             except Exception as e:
