@@ -61,7 +61,7 @@ class UploadCOUNTERReports:
         # When `self.COUNTER_report_files` is a list of Werkzeug FileStorage object(s), `item_in_the_list.stream` is <class 'tempfile.SpooledTemporaryFile'>
         # When `self.COUNTER_report_files` is a list of Werkzeug FileStorage object(s), `item_in_the_list.stream._file` is <class '_io.BytesIO'>
         log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})\n{self.COUNTER_report_files.__dict__}")
-        log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})\n{self.COUNTER_report_files.name.__dict__}")
+        log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})")
         list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
         log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {list_of_file_names} (type {repr(type(list_of_file_names))})\n{list_of_file_names.__dict__}")
         try:
