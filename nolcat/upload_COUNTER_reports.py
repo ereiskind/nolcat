@@ -62,18 +62,25 @@ class UploadCOUNTERReports:
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
-            x = FileStorage_object.stream._file
-            log.info(f"{x} (type {repr(type(x))})")
-            try:
-                with open(x, 'b') as f:
-                    log.info(f"`open()` returned {f} (type {repr(type(f))})")
+            log.info(f"Before any actions, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
+            with open('temp.xlsx', 'wb') as f:
+                log.info(f"In `open()` block, the `open()` object is {f} (type {repr(type(f))})\n{f.__dict__}")
+                try:
+                    f.write(FileStorage_object.stream._file.getvalue())
+                    log.info(f"In `open()` block, the `open()` object after `.write(_io.BytesIO.getvalue())` is {f} (type {repr(type(f))})\n{f.__dict__}")
                     try:
                         file = load_workbook(filename=f, read_only=True)
                         log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-                    except Exception as load_failed_1:
-                        log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{load_failed_1}`.")
-            except Exception as open_file_failed_1:
-                log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be opened because of the error `{open_file_failed_1}`.")
+                    except Exception as load_failed:
+                        log.warning(f"Using {f} in `load_workbook()` raised `{load_failed}`")
+                except Exception as write_failed:
+                    log.warning(f"The function `{f}.write({FileStorage_object.stream._file}.getvalue())` raised `{write_failed}`")
+            log.info(f"Immediately after closing the `open()` block, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
+            try:
+                os.remove('temp.xlsx')
+            except Exception as e:
+                log.warning(f"`os.remove('temp.xlsx')` raised `{e}`")
+            log.info(f"Immediately after attempting `os.remove('temp.xlsx')`, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
             #TEST: End testing section
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
