@@ -33,6 +33,7 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
+            log.info(f"`form.COUNTER_reports` is {form.COUNTER_reports} (type {repr(type(form.COUNTER_reports))})\n{form.COUNTER_reports.__dict__}")
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
             df.index += first_new_PK_value('COUNTERData')
