@@ -65,7 +65,6 @@ class UploadCOUNTERReports:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
             except Exception as error:
-                log.info(f"`FileStorage_object.stream._file` is {FileStorage_object.stream._file} (type {repr(type(FileStorage_object.stream._file))})\n{FileStorage_object.stream._file.__dict__}")
                 log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
                 continue
             
@@ -225,7 +224,7 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype={k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
-                #ToDo: Uncomment later: log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
+                log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -426,7 +425,7 @@ class UploadCOUNTERReports:
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
                 
-                #ToDo: Uncomment later: log.info(f"Dataframe being used in concatenation:\n{df}")
+                log.info(f"Dataframe being used in concatenation:\n{df}")
                 all_dataframes_to_concatenate.append(df)
         
         
