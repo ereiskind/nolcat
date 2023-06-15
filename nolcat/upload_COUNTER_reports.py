@@ -58,37 +58,9 @@ class UploadCOUNTERReports:
         #Section: Load the Workbook(s)
         for FileStorage_object in self.COUNTER_report_files:
             log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
-            #TEST: Begin testing section
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
-            log.info(f"Before any actions, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
-            tmp_workbook = Path(os.getcwd(), 'temp.xlsx')
-            try:
-                FileStorage_object.save(tmp_workbook)
-                log.info(f"`FileStorage_object.save(tmp_workbook)` is type {repr(type(FileStorage_object.save(tmp_workbook)))}")
-            except Exception as e1:
-                log.warning(f"`FileStorage_object.save(tmp_workbook)` raised `{e1}`")
-            log.info(f"After `FileStorage_object.save(tmp_workbook)`, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
-
-            try:
-                file = load_workbook(filename=tmp_workbook, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
-            except Exception as e2:
-                log.warning(f"Using {tmp_workbook} in `load_workbook()` with `read_only=True` argument raised `{e2}`")
-                try:
-                    file = load_workbook(filename=tmp_workbook)
-                    log.debug(f"Loading data from workbook {str(FileStorage_object.filename)} with no `read_only=True` argument")
-                except Exception as e3:
-                    log.warning(f"Using {tmp_workbook} in `load_workbook()` raised `{e3}`")
-            log.info(f"After `load_workbook()`, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
-
-            try:
-                tmp_workbook.unlink()
-            except Exception as e4:
-                log.warning(f"`tmp_workbook.unlink()` raised `{e4}`")
-            log.info(f"Immediately after attempting `tmp_workbook.unlink()`, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
-            #TEST: End testing section
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
