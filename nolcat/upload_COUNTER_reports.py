@@ -352,39 +352,11 @@ class UploadCOUNTERReports:
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
-                #TEST: Below is to try and figure out why YOP object to Int16 conversion fails
-                df2 = df.copy()
-                #Test: Removing null placeholders from non-string fields, which raises no errors
-                non_string_fields_and_dtypes = {k: v for (k, v) in df_dtypes.items() if v != "string"}
-                for fields in non_string_fields_and_dtypes.keys():
-                    df2[x] = df2[x].replace(["`None`"], [None])
-                    log.info(f"After replacing the null placeholders in field {x}:\n{return_string_of_dataframe_info(df2)}")
-                log.info("Null placeholder replacement testing complete")
-                
-                #Test: Convert dtype of `YOP`
-                # Individual values can convert to `int` dtype but not `Int16` dtype
-                if "YOP" in df2.columns.values.tolist():
-                    years = pd.Series(
-                        data=df2['YOP'].unique(),
-                        dtype=df2['YOP'].dtype,
-                    )
-                    years_df = years.to_frame('y')
-                    years_df = years_df.transpose()
-                    log.info(f"Before any dtype conversions:\n{return_string_of_dataframe_info(years_df)}")
-                    for x in years_df.columns.to_list():
-                        years_df=years_df.astype({x:'int'})
-                        log.info(f"`years_df` dtypes after converting column {x} to `int`:\n{years_df.dtypes}")
-                        try:
-                            years_df=years_df.astype({x:'Int16'})
-                            log.info(f"`years_df` dtypes after converting column {x} from `int` to `Int16`:\n{years_df.dtypes}")
-                        except Exception as e:
-                            log.info(f"Couldn't convert column {x} from `int` to `Int16` dtype because of error {e}")
-                #TEST: End of testing
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")
-                df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`--YOP field
+                df = df.astype(df_dtypes)
                 log.debug(f"After dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
                 log.debug(f"Updated dataframe dtypes and null counts:\n{return_string_of_dataframe_info(df)}")
