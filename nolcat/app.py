@@ -129,7 +129,7 @@ def create_app():
 def configure_logging(app):
     """Create single logging configuration for entire program. (Based on tutorial at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/.)"""
     logging.basicConfig(format="[%(asctime)s] %(name)s - %(message)s")
-    logging.getLogger().setLevel(logging.INFO)  # This sets the logging output level for stdout display; when running tests, logging output is set with the `log-cli-level` argument at the command line
+    logging.getLogger().setLevel(logging.DEBUG)  # This sets the logging output level for stdout display; when running tests, logging output is set with the `log-cli-level` argument at the command line
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
     if app.debug:
         logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
