@@ -56,25 +56,34 @@ class UploadCOUNTERReports:
 
 
         #Section: Load the Workbook(s)
-        #TEST: Begin testing section
-        # When `self.COUNTER_report_files` is a list of Werkzeug FileStorage object(s), `item_in_the_list` is <class 'werkzeug.datastructures.FileStorage'>
-        # When `self.COUNTER_report_files` is a list of Werkzeug FileStorage object(s), `item_in_the_list.stream` is <class 'tempfile.SpooledTemporaryFile'>
-        # When `self.COUNTER_report_files` is a list of Werkzeug FileStorage object(s), `item_in_the_list.stream._file` is <class '_io.BytesIO'>
-        log.info(f"`self.COUNTER_report_files` is {self.COUNTER_report_files} (type {repr(type(self.COUNTER_report_files))})\n{self.COUNTER_report_files.__dict__}")
-        log.info(f"`self.COUNTER_report_files.name` is {self.COUNTER_report_files.name} (type {repr(type(self.COUNTER_report_files.name))})")
-        list_of_file_names = request.files.getlist(self.COUNTER_report_files.name)
-        log.info(f"`request.files.getlist(self.COUNTER_report_files.name)` is {list_of_file_names} (type {repr(type(list_of_file_names))})")
-        try:
-            for file_name in list_of_file_names:
-                log.info(f"An iteration of `request.files.getlist(self.COUNTER_report_files.name)` is {file_name} (type {repr(type(file_name))})")
-                try:
-                    log.info(file_name.__dict__)
-                except:
-                    pass
-        except Exception as e:
-            log.warning(f"Trying to iterate through `request.files.getlist(self.COUNTER_report_files.name)` raised `{e}`")
-        #TEST: End testing section
         for FileStorage_object in self.COUNTER_report_files:
+            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
+            #TEST: Begin testing section
+            # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
+            # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
+            # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
+            log.info(f"Before any actions, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
+            with open('temp.xlsx', 'wb') as f:
+                log.info(f"In `open()` block, the `open()` object is {f} (type {repr(type(f))})")
+                try:
+                    f.write(FileStorage_object.stream._file.getvalue())
+                    log.info(f"In `open()` block, the `open()` object after `.write(_io.BytesIO.getvalue())` is {f} (type {repr(type(f))})")
+                except Exception as write_failed:
+                    log.warning(f"The function `{f}.write({FileStorage_object.stream._file}.getvalue())` raised `{write_failed}`")
+            log.info(f"Immediately after closing the `open()` block, the current folder is {os.getcwd()} and its contents are {os.listdir(os.getcwd())}")
+
+            try:
+                file = load_workbook(filename=Path('temp.xlsx'), read_only=True)
+                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
+            except Exception as load_failed:
+                log.warning(f"Using {Path('temp.xlsx')} in `load_workbook()` raised `{load_failed}`")
+
+            try:
+                os.remove('temp.xlsx')
+            except Exception as e:
+                log.warning(f"`os.remove('temp.xlsx')` raised `{e}`")
+            log.info(f"Immediately after attempting `os.remove('temp.xlsx')`, the current folder is {os.getcwd()} and its contents are\n{os.listdir(os.getcwd())}")
+            #TEST: End testing section
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
