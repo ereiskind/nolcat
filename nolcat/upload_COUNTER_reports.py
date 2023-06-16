@@ -353,54 +353,7 @@ class UploadCOUNTERReports:
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
-                log.info(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")  #ToDo: Revert to `debug`
-                #TEST: Start testing section: Why YOP object to Int16 conversion fails
-                df2 = df.copy()
-                if "YOP" in df2.columns.values.tolist():
-                    years = pd.Series(
-                        data=df2['YOP'].unique(),
-                        dtype=df2['YOP'].dtype,
-                    )
-                    years_df = years.to_frame('y')
-                    years_df = years_df.transpose()
-                    log.info(f"Single-record dataframe of all `YOP` values before any dtype conversions:\n{return_string_of_dataframe_info(years_df)}")
-                    for field in years_df.columns.to_list():
-                        try:  # object -> Int16
-                            years_df=years_df.astype({field: 'Int16'})
-                            log.info(f"Converting `{field}` from `object` to `Int16` successful")
-                        except Exception as e1:
-                            log.warning(f"Converting `{field}` from `object` to `Int16` raised {e1}")
-                            try:  # object -> int16
-                                years_df=years_df.astype({field: 'int16'})
-                                log.info(f"Converting `{field}` from `object` to `int16` successful")
-                                try:  # int16 -> Int16
-                                    years_df=years_df.astype({field: 'Int16'})
-                                    log.info(f"Converting `{field}` from `int16` to `Int16` successful")
-                                except Exception as e2:
-                                    log.warning(f"Converting`{field}` from `int16` to `Int16` raised {e2}")
-                            except Exception as e3:
-                                log.warning(f"Converting `{field}` from `object` to `int16` raised {e3}")
-                                try:  # object -> int
-                                    years_df=years_df.astype({field: 'int'})
-                                    log.info(f"Converting `{field}` from `object` to `int` successful")
-                                    try:  # int -> Int16
-                                        years_df=years_df.astype({field: 'Int16'})
-                                        log.info(f"Converting `{field}` from `int` to `Int16` successful")
-                                    except Exception as e4:
-                                        log.warning(f"Converting`{field}` from `int` to `Int16` raised {e4}")
-                                        try:  # int -> int16
-                                            years_df=years_df.astype({field: 'int16'})
-                                            log.info(f"Converting `{field}` from `int` to `int16` successful")
-                                            try:
-                                                years_df=years_df.astype({field: 'Int16'})
-                                                log.info(f"Converting `{field}` from `int16` to `Int16` after converting from `int` to `int16` successful")
-                                            except Exception as e5:
-                                                log.warning(f"Converting`{field}` from `int16` to `Int16` after converting from `int` to `int16` raised {e5}")
-                                        except Exception as e6:
-                                            log.warning(f"Converting`{field}` from `int` to `int16` raised {e6}")
-                                except Exception as e7:
-                                    log.warning(f"Converting`{field}` from `object` to `int` raised {e7}")
-                #TEST: End testing section
+                log.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
                 log.debug(f"After dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
