@@ -357,7 +357,7 @@ class UploadCOUNTERReports:
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")
-                df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
+                df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     log.info(f"`COUNTERData.state_data_types()['YOP']` is {COUNTERData.state_data_types()['YOP']} (type {repr(type(COUNTERData.state_data_types()['YOP']))})")  #ToDo: For testing only
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
