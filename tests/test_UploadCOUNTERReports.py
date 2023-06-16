@@ -60,7 +60,8 @@ def sample_COUNTER_report_workbooks():
     fixture = []
     for workbook in os.listdir(folder_path):
         fixture.append(mock_FileStorage_object(folder_path / workbook))
-    return fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)
+    fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)  # Modifying list in place returns `None`, so making modification in `return` statement makes fixture value `None`
+    return fixture
 
 
 #Section: Test
