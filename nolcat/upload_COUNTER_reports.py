@@ -222,7 +222,7 @@ class UploadCOUNTERReports:
                 #Section: Create Dataframe
                 #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
-                    FileStorage_object,
+                    FileStorage_object.stream._file,  #Test: When `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>, value can be `FileStorage_object`
                     sheet_name=report_type,
                     engine='openpyxl',
                     header=header_row_number-1,  # This gives the row number with the headings in Excel, which is also the row above where the data starts
