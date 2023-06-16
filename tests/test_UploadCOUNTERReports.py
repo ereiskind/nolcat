@@ -1,12 +1,9 @@
 """Test using `UploadCOUNTERReports`."""
-########## Failing 2023-06-07 ##########
+########## Passing 2023-06-16 ##########
 
 import pytest
 from pathlib import Path
-from tempfile import SpooledTemporaryFile
 import os
-from werkzeug.datastructures import FileStorage
-from werkzeug.datastructures import Headers
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
