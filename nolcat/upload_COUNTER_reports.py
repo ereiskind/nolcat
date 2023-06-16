@@ -349,12 +349,18 @@ class UploadCOUNTERReports:
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
+                if "YOP" in df_dtypes.keys():
+                    log.info(f"`df_dtypes['YOP'].lower()` is {df_dtypes['YOP'].lower()} (type {repr(type(df_dtypes['YOP'].lower()))})")  #ToDo: For testing only
+                    df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.astype(df_dtypes)  #TEST: `test_UploadCOUNTERReports.test_create_dataframe()` raises `TypeError: object cannot be converted to an IntegerDtype`
+                if "YOP" in df_dtypes.keys():
+                    log.info(f"`COUNTERData.state_data_types()['YOP']` is {COUNTERData.state_data_types()['YOP']} (type {repr(type(COUNTERData.state_data_types()['YOP']))})")  #ToDo: For testing only
+                    df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
                 log.debug(f"After dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
                 log.debug(f"Updated dataframe dtypes and null counts:\n{return_string_of_dataframe_info(df)}")
