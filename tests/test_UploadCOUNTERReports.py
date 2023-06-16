@@ -60,7 +60,6 @@ def sample_COUNTER_report_workbooks():
     fixture = []
     for workbook in os.listdir(folder_path):
         fixture.append(mock_FileStorage_object(folder_path / workbook))
-        print(f"{mock_FileStorage_object(folder_path / workbook)} added to the fixture")
     return fixture
 
 
