@@ -227,7 +227,15 @@ class UploadCOUNTERReports:
                     dtype={k: v for (k, v) in df_dtypes.items() if v != "datetime64[ns]"},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
                 log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
-                df = df.astype(date_dtype_fields)
+                #TEST: ValueError: Tz-aware datetime.datetime cannot be converted to datetime64 unless utc=True
+                for field in date_dtype_fields.keys():
+                    df[field] = pd.to_datetime(
+                        df[field],
+                        errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+                        infer_datetime_format=True,
+                        utc=True,  # This must be set to `True` to convert timezone-aware datetime objects
+                    )
+                    df[field] = df[field].dt.tz_localize(None)
                 log.info(f"Dataframe after all initial dtypes set\n{return_string_of_dataframe_info(df)}")
 
 
