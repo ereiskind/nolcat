@@ -52,25 +52,15 @@ class mock_FileStorage_object:
 #Section: Fixture
 @pytest.fixture
 def sample_COUNTER_report_workbooks():
-    """Creates a list of Werkzeug FileStorage object(s) for use in testing the `UploadCOUNTERReports` class.
+    """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
     
-    The `UploadCOUNTERReports` constructor takes an attribute of the MultipleFileField object that lists each file uploaded to the MultipleFileField object as an individual Werkzeug FileStorage object.
+    The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
     """
     folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
     fixture = []
     for workbook in os.listdir(folder_path):
-        with open(Path(folder_path / workbook), 'rb+'):
-            temp_file_object = SpooledTemporaryFile()
-        FileStorage_object = FileStorage(
-            stream = temp_file_object,
-            filename=str(workbook),
-            name='COUNTER_reports',  # Name of form field, which is the same in both forms
-            headers=Headers([  # Copied from `FileStorage.__dict__` logging from the `COUNTER_reports` fields
-                ('Content-Disposition', f'form-data; name="COUNTER_reports"; filename="{str(workbook)}"'),
-                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-            ]),
-        )
-        fixture.append(FileStorage_object)
+        fixture.append(mock_FileStorage_object(folder_path / workbook))
+        print(f"{mock_FileStorage_object(folder_path / workbook)} added to the fixture")
     return fixture
 
 
