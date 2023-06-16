@@ -213,6 +213,10 @@ class UploadCOUNTERReports:
 
 
                 #Section: Create Dataframe
+                #Subsection: Create Data Type Dictionary
+                df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names}
+                date_dtype_fields = {k: v for (k, v) in df_dtypes.items() if v == "datetime64[ns]"}
+
                 #Subsection: Create Dataframe from Excel Worksheet
                 df = pd.read_excel(
                     FileStorage_object.stream._file,  # The method accepts the string and BytesIO objects this variable provides when using the test module and the web app respectively
@@ -220,9 +224,11 @@ class UploadCOUNTERReports:
                     engine='openpyxl',
                     header=header_row_number-1,  # This gives the row number with the headings in Excel, which is also the row above where the data starts
                     names=df_field_names,
-                    dtype={k: v for (k, v) in COUNTERData.state_data_types().items() if k in df_field_names},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
+                    dtype={k: v for (k, v) in df_dtypes.items() if v != "datetime64[ns]"},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
                 log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
+                df = df.astype(date_dtype_fields)
+                log.info(f"Dataframe after all initial dtypes set\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -348,7 +354,6 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
-                df_dtypes = {k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.values.tolist()}
                 if "YOP" in df_dtypes.keys():
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
                 log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
