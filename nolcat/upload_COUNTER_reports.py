@@ -61,6 +61,11 @@ class UploadCOUNTERReports:
             # `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>
             # `FileStorage_object.stream` is <class 'tempfile.SpooledTemporaryFile'>
             # `FileStorage_object.stream._file` is <class '_io.BytesIO'>
+            #TEST: Testing data types start
+            log.info(f"`FileStorage_object` ``{FileStorage_object}`` is type {repr(type(FileStorage_object))}")
+            log.info(f"`FileStorage_object.stream` ``{FileStorage_object.stream}`` is type {repr(type(FileStorage_object.stream))}")
+            log.info(f"`FileStorage_object.stream._file` ``{FileStorage_object.stream._file}`` is type {repr(type(FileStorage_object.stream._file))}")
+            #TEST: Testing data types end
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
