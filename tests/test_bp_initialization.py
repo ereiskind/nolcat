@@ -254,7 +254,7 @@ def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
         tmp_path / 'COUNTERData_relation.csv',
         index_label="COUNTER_data_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'COUNTERData_relation.csv')
 

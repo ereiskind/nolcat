@@ -39,7 +39,7 @@ def collect_FY_and_vendor_data():
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
-        # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used. 
+        # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used.
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
         log.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")

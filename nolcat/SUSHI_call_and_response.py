@@ -162,7 +162,7 @@ class SUSHICallAndResponse:
             pass
 
         #Subsection: Check Reports for Data
-        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data. 
+        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
         custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if custom_report_regex.search(self.call_path):
             try:

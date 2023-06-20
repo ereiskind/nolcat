@@ -519,7 +519,7 @@ class StatisticsSources(db.Model):
             for_API_call (bool, optional): a Boolean indicating if the return value should be formatted for use in an API call, which is the default; the other option is formatting the return value for display to the user
         
         Returns:
-            dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL` 
+            dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
         log.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
@@ -572,7 +572,7 @@ class StatisticsSources(db.Model):
         For a given statistics source and date range, this method uses SUSHI to harvest the specified COUNTER R5 report(s) at their most granular level, then combines all gathered report(s) in a single dataframe. This is a private method where the calling method provides the parameters and loads the results into the `COUNTERData` relation.
 
         Args:
-            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
             report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
@@ -903,7 +903,7 @@ class StatisticsSources(db.Model):
 
         Args:
             report_code (str): the two-letter abbreviation for the report being called
-            start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
 
         Returns:
@@ -936,7 +936,7 @@ class StatisticsSources(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Args:
-            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month 
+            usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
         
         Returns:
@@ -1014,7 +1014,7 @@ class StatisticsSourceNotes(db.Model):
 class ResourceSources(db.Model):
     """The class representation of the `resourceSources` relation, which contains a list of the places where e-resources are available.
 
-    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains. 
+    Resource sources are often called platforms; Alma calls them interfaces. Resource sources are often declared distinct by virtue of having different HTTP domains.
     
     Attributes:
         self.resource_source_ID (int): the primary key
@@ -1084,7 +1084,7 @@ class ResourceSources(db.Model):
             None: no return value is needed, so the default `None` is used
         """
         #ToDo: SQL_query = f'''
-        #ToDo:     UPDATE 
+        #ToDo:     UPDATE
         #ToDo:     SET current_statistics_source = false
         #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
         #ToDo: '''
