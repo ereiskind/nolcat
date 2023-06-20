@@ -41,6 +41,7 @@ def upload_COUNTER_reports():
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
+            log.info("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
@@ -87,6 +88,7 @@ def harvest_SUSHI_statistics():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
+            log.error(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             flash(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
         end_date = datetime.date(
@@ -173,6 +175,7 @@ def upload_non_COUNTER_reports():
             #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
             #ToDo: '''
             #ToDo: Run SQL query
+            #ToDo: log.info(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
             #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
         except Exception as error:
