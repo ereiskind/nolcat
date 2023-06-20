@@ -9,7 +9,7 @@ from requests import Timeout
 import pandas as pd
 import pyinputplus
 
-from .app import db, upload_file_to_S3_bucket
+from .app import *
 
 log = logging.getLogger(__name__)
 

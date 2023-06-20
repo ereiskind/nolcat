@@ -12,7 +12,7 @@ from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_single_field_dataframe_into_series
+from nolcat.app import *
 from nolcat.ingest_usage import *
 
 

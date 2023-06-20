@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
-from nolcat.app import db as _db
+from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
 from nolcat.app import create_app
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations

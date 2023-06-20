@@ -12,7 +12,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import db
+from ..app import *
 from ..models import *
 
 log = logging.getLogger(__name__)

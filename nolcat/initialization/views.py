@@ -12,8 +12,7 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import db
-from ..app import date_parser
+from ..app import *
 from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
