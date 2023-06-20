@@ -35,7 +35,7 @@ def configure_logging(app):
     """Create single logging configuration for entire program."""
     logging.basicConfig(
         level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
-        format= "[%(asctime)s] %(name)s - %(message)s [%(filename)s::%(lineno)d]",  # "[timestamp] module name - error message [file name::file line number]"
+        format= "[%(asctime)s] %(name)s [%(filename)s::%(lineno)d] - %(message)s",  # "[timestamp] module name [file name::file line number] - error message"
     )
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
     if app.debug:
