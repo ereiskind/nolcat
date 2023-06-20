@@ -30,6 +30,16 @@ DATABASE_PORT = secrets.Port
 DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 
+
+def configure_logging(app):
+    """Create single logging configuration for entire program."""
+    logging.basicConfig(
+        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
+        format= "[%(asctime)s] %(name)s - %(message)s [%(filename)s::%(lineno)d]",  # "[timestamp] module name - error message [file name::file line number]"
+    )
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    if app.debug:
+        logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
 log = logging.getLogger(__name__)
 
 
@@ -124,17 +134,6 @@ def create_app():
     
     
     return app
-
-
-def configure_logging(app):
-    """Create single logging configuration for entire program."""
-    logging.basicConfig(
-        level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
-        format= "[%(asctime)s] %(name)s - %(message)s [%(filename)s::%(lineno)d]",  # "[timestamp] module name - error message [file name::file line number]"
-    )
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    if app.debug:
-        logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
 
 
 def date_parser(dates):
