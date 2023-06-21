@@ -1,5 +1,6 @@
 import io
 import logging
+from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -48,6 +49,7 @@ def configure_logging(app):
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     if app.debug:
         logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
 log = logging.getLogger(__name__)
