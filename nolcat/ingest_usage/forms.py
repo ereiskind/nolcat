@@ -5,7 +5,6 @@ from wtforms.fields import MultipleFileField
 from wtforms.fields import FileField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
-import pandas as pd
 
 
 class COUNTERReportsForm(FlaskForm):

@@ -1,21 +1,18 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Data in no relations ##########
+########## Passing 2023-06-07 ##########
 
 from pathlib import Path
 import os
 import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
-from pandas.testing import assert_frame_equal, assert_series_equal
-import numpy as np
+from pandas.testing import assert_frame_equal
+from pandas.testing import assert_series_equal
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import s3_client
-from nolcat.app import create_app
-from nolcat.app import first_new_PK_value
-from nolcat.app import change_single_field_dataframe_into_series
-from nolcat.app import restore_Boolean_values_to_Boolean_field
+from nolcat.app import *
+from nolcat.models import *
 
 
 def test_S3_bucket_connection():
@@ -79,7 +76,6 @@ def test_loading_data_into_relation(engine, vendors_relation):
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
-    print(f"\n`vendors_relation` dataframe:\n{vendors_relation}")
     vendors_relation.to_sql(
         name='vendors',
         con=engine,
@@ -88,18 +84,12 @@ def test_loading_data_into_relation(engine, vendors_relation):
         chunksize=1000,
         index_label='vendor_ID',
     )
-
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_ID',
     )
-    retrieved_vendors_data = retrieved_vendors_data.astype({
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
-    })
-    print(f"`retrieved_vendors_data`:\n{retrieved_vendors_data}")
-
+    retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
@@ -110,12 +100,12 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
     df_dtypes = {
-        "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
+        "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
+        "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
+        "vendor_name": Vendors.state_data_types()['vendor_name'],
+        "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
-    print(f"\n`statisticsSources_relation` dataframe:\n{statisticsSources_relation}")
+
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=engine,
@@ -123,7 +113,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         chunksize=1000,
         index_label='statistics_source_ID',
     )
-
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID ORDER BY statisticsSources.statistics_source_ID;",
         con=engine,
@@ -131,14 +120,13 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     retrieved_data = retrieved_data.astype(df_dtypes)
-    print(f"`retrieved_JOIN_query_data`:\n{retrieved_data}")
 
     expected_output_data = pd.DataFrame(
         [
-            ["ProQuest", None, "ProQuest", None],
-            ["EBSCOhost", None, "EBSCO", None],
+            ["ProQuest", "1", "ProQuest", None],
+            ["EBSCOhost", "2", "EBSCO", None],
             ["Gale Cengage Learning", None, "Gale", None],
-            ["Duke UP", None, "Duke UP", None],
+            ["Duke UP", "3", "Duke UP", None],
             ["iG Library/Business Expert Press (BEP)", None, "iG Publishing/BEP", None],
             ["DemographicsNow", None, "Gale", None],
             ["Ebook Central", None, "ProQuest", None],
@@ -152,10 +140,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     )
     expected_output_data.index.name = "statistics_source_ID"
     expected_output_data = expected_output_data.astype(df_dtypes)
-    print(f"`expected_output_data`:\n{expected_output_data}")
-
-    print(retrieved_data.compare(expected_output_data))
-    assert_frame_equal(retrieved_data, expected_output_data)  #ToDo: `AssertionError: ExtensionArray NA mask are different`
+    assert_frame_equal(retrieved_data, expected_output_data)
 
 
 #Section: Test Helper Functions
@@ -193,11 +178,11 @@ def test_change_single_field_dataframe_into_series():
     assert_series_equal(change_single_field_dataframe_into_series(df), s)
 
 
-def test_restore_Boolean_values_to_Boolean_field():
-    """Tests the replacement of MySQL's single-bit int data type with Python's Boolean data type."""
+def test_restore_boolean_values_to_boolean_field():
+    """Tests the replacement of MySQL's single-bit int data type with pandas's `boolean` data type."""
     tinyint_s = pd.Series(
         [1, 0, pd.NA, 1],
-        dtype='int64',
+        dtype='Int8',  # pandas' single-bit int data type is used because it allows nulls; using the Python data type raises an error
         name="boolean_values",
     )
     boolean_s = pd.Series(
@@ -205,7 +190,7 @@ def test_restore_Boolean_values_to_Boolean_field():
         dtype='boolean',
         name="boolean_values",
     )
-    assert_series_equal(restore_Boolean_values_to_Boolean_field(tinyint_s), boolean_s)
+    assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
 #ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`

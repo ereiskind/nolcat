@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Data in all relations ##########
+########## Failing 2023-06-07 ##########
 
 import pytest
 import json
@@ -10,8 +10,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import StatisticsSources
-from nolcat.models import PATH_TO_CREDENTIALS_FILE
+from nolcat.models import *
 
 
 #Section: Fixtures
@@ -35,7 +34,6 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             for stats_source in vendor['interface']:
                 if "interface_id" in list(stats_source.keys()):
                         retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
-    print(f"Possible retrieval code choices:\n{retrieval_codes_as_interface_IDs}")
     
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
@@ -45,7 +43,6 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         )
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
-    print(f"Retrieval code choices:\n{retrieval_codes}")
     
     fixture = StatisticsSources(
         statistics_source_ID = 1,
@@ -61,7 +58,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
-    assert repr(type(credentials)) == "<class 'dict'>"
+    assert isinstance(credentials, dict)
     assert re.match(r"https?:\/\/.*\/", string=credentials['URL'])
 
 
@@ -75,8 +72,8 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 @pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    assert repr(type(SUSHI_data)) == "<class 'pandas.core.frame.DataFrame'>"
+    SUSHI_data = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Test fails due to raising `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+    assert isinstance(SUSHI_data, pd.core.frame.DataFrame)
     assert SUSHI_data['statistics_source_ID'].eq(1).all()
     assert SUSHI_data['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
@@ -101,39 +98,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_w
         con=engine,
     )
     most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    most_recently_loaded_records = most_recently_loaded_records.astype({
-        "statistics_source_ID": 'int',
-        "report_type": 'string',
-        "resource_name": 'string',
-        "publisher": 'string',
-        "publisher_ID": 'string',
-        "platform": 'string',
-        "authors": 'string',
-        "article_version": 'string',
-        "DOI": 'string',
-        "proprietary_ID": 'string',
-        "ISBN": 'string',
-        "print_ISSN": 'string',
-        "online_ISSN": 'string',
-        "URI": 'string',
-        "data_type": 'string',
-        "section_type": 'string',
-        "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-        "access_type": 'string',
-        "access_method": 'string',
-        "parent_title": 'string',
-        "parent_authors": 'string',
-        "parent_article_version": 'string',
-        "parent_data_type": 'string',
-        "parent_DOI": 'string',
-        "parent_proprietary_ID": 'string',
-        "parent_ISBN": 'string',
-        "parent_print_ISSN": 'string',
-        "parent_online_ISSN": 'string',
-        "parent_URI": 'string',
-        "metric_type": 'string',
-        # `usage_count` is a numpy int type, let the program determine the number of bits used for storage
-    })
+    most_recently_loaded_records = most_recently_loaded_records.astype(COUNTERData.state_data_types())
     most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
     most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
     most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])

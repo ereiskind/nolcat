@@ -1,10 +1,10 @@
 """Tests the methods in ResourceSources."""
-########## Data in all relations but `COUNTERData` ##########
+########## No tests written 2023-06-07 ##########
 
 import pytest
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import ResourceSources
+from nolcat.models import *
 
 
 def test_add_access_stop_date():
