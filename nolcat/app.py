@@ -52,6 +52,8 @@ def configure_logging(app):
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
     if app.debug:
         logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
+
+
 log = logging.getLogger(__name__)
 
 
