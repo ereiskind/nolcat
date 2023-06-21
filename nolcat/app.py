@@ -32,7 +32,16 @@ SECRET_KEY = secrets.Secret
 
 
 def configure_logging(app):
-    """Create single logging configuration for entire program."""
+    """Create single logging configuration for entire program.
+
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
+
+    Args:
+        app (flask.Flask): the Flask object
+
+    Returns:
+        None: no return value is needed, so the default `None` is used
+    """
     logging.basicConfig(
         level=logging.DEBUG,  # This sets the logging level displayed in stdout and the minimum logging level available with pytest's `log-cli-level` argument at the command line
         format= "[%(asctime)s] %(name)s [%(filename)s::%(lineno)d] - %(message)s",  # "[timestamp] module name [file name::file line number] - error message"
