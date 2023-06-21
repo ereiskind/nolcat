@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2023-06-07 ##########
+########## Passing 2023-06-16 ##########
 
 import pytest
 import json
@@ -12,7 +12,7 @@ from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_single_field_dataframe_into_series
+from nolcat.app import *
 from nolcat.ingest_usage import *
 
 
@@ -35,19 +35,24 @@ def test_ingest_usage_homepage(client):
 
 def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relation):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    #form_submissions = MultipartEncoder(
-    #    fields={
-    #        'COUNTER_reports': #TEST: Unable to find way to submit multiple files to a single MultipleFileFields field
-    #    },
-    #    encoding='utf-8',
-    #)
-    #TEST: `header_value['Content-Type'] = form_submissions.content_type` references commented-out variable
+    form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
+        #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
+            # Multiple items in the value of a MultipartEncoder.fields key-value pair doesn't work
+            # Should a MultipleFileField object be instantiated?
+            # Could the classes in "test_UploadCOUNTERReports.py" be used?
+            # Can a direct list of Werkzeug FileStorage object(s) be used?
+        fields={
+            'COUNTER_reports': ('0_2017.xlsx', open(Path('tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'))
+        },
+        encoding='utf-8',
+    )
+    header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        #TEST: `data=form_submissions,` references commented-out variable
+        data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
@@ -61,13 +66,12 @@ def test_upload_COUNTER_reports(client, header_value, engine, COUNTERData_relati
         index_col='COUNTER_data_ID',
     )
 
-    print(f"`POST_response`: (type {repr(type(POST_response))}){POST_response}")
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST: Test failed due to raising `IndexError: tuple index out of range`
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert b'Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #TEST: Because no data is being loaded, `assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail` won't pass
+    #TEST: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
@@ -108,7 +112,7 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
         sql="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         con=engine,
     )
-    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).to_list()
+    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').to_list()
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
@@ -131,7 +135,7 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  #TEST: Test fails due to raising `The SUSHI request form submission failed due to the following error: local variable 'credentials' referenced before assignment` for all three possible SUSHI credentials
+    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client):

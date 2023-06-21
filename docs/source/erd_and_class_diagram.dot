@@ -6,12 +6,12 @@ digraph erd_and_classes {
         folder = FK
         component = FK that makes up a composite PK
         Mrecord = methods
-        
+
         Starting with two underscores means not from user stories
     */
 
     /* *** ESTABLISHED RELATIONS/CLASSES *** */
-    
+
 
     subgraph cluster_fiscalYears {
         label="fiscalYears"
@@ -59,7 +59,7 @@ digraph erd_and_classes {
         add_note [shape="Mrecord"]
     }
 
-    
+
     subgraph cluster_vendorNotes {
         label="vendorNotes"
 
@@ -330,7 +330,7 @@ digraph erd_and_classes {
         table --------(can connect to)---------[optionality]--(and)--[cardinality]-->other table
         arrowhead = how PK table can connect to FK table
         arrowtail = how FK table can connect to PK table
-        
+
         teeodot = 0..1 (unique but optional)
         crowodot = 0..N (optional, not unique)
         teetee = 1..1 (exactly one)

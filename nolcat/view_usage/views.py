@@ -12,11 +12,10 @@ import pandas as pd
 
 from . import bp
 from .forms import *
-from ..app import db
+from ..app import *
 from ..models import *
 
-
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/')
@@ -47,7 +46,7 @@ def run_custom_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -174,7 +173,7 @@ def use_predefined_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -238,5 +237,5 @@ def download_non_COUNTER_usage():
             headers={'Content-disposition': f'attachment; filename={download_name}'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.warning(f"`form.errors`: {form.errors}")
         return abort(404)

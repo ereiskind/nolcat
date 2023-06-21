@@ -3,10 +3,10 @@ from flask import render_template
 
 from . import bp
 #from .forms import *
-from ..app import db
+from ..app import *
 from ..models import *
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/')
