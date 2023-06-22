@@ -31,6 +31,7 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
+        log.error(f"The route function didn't understand the argument `{list}`")
         return abort(404)
     
     #ToDo: df = pd.read_sql(
@@ -69,7 +70,7 @@ def view_list_record(list, PK):
         #ToDo: Add the form data to the relevant notes relation
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
-        #ToDo: log.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)
     
 
@@ -107,5 +108,5 @@ def edit_list_record(list, PK):
         #ToDo: Changing a statisticsSources-resourceSources connection means changing the non-PK field in statisticsResourceSources from true to false and creating a new record with the PKs of the new sources--does it makes sense to have a "if stats source changes, pick new one here" drop-down listing all stats sources but the current one on a resource source details page?
         #ToDo: return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
-        #ToDo: log.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)

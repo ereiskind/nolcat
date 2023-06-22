@@ -56,7 +56,7 @@ def collect_FY_and_vendor_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
         fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        log.info(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
+        log.debug(f"`fiscalYears` dataframe dtypes before encoding conversions:\n{fiscalYears_dataframe.dtypes}\n")
         fiscalYears_dataframe['notes_on_statisticsSources_used'] = fiscalYears_dataframe['notes_on_statisticsSources_used'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         fiscalYears_dataframe['notes_on_corrections_after_submission'] = fiscalYears_dataframe['notes_on_corrections_after_submission'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
@@ -74,7 +74,7 @@ def collect_FY_and_vendor_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendors`")
         
         vendors_dataframe = vendors_dataframe.astype({k: v for (k, v) in Vendors.state_data_types().items()})
-        log.info(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
+        log.debug(f"`vendors` dataframe dtypes before encoding conversions:\n{vendors_dataframe.dtypes}\n")
         vendors_dataframe['vendor_name'] = vendors_dataframe['vendor_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
@@ -92,7 +92,7 @@ def collect_FY_and_vendor_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
         vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        log.info(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
+        log.debug(f"`vendorNotes` dataframe dtypes before encoding conversions:\n{vendorNotes_dataframe.dtypes}\n")
         vendorNotes_dataframe['note'] = vendorNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`vendorNotes` dataframe:\n{vendorNotes_dataframe}\n")
 
@@ -122,12 +122,12 @@ def collect_FY_and_vendor_data():
             log.debug("Relation `vendorNotes` loaded into the database")
             log.info("All relations loaded into the database")
         except Exception as error:
-            log.warning(f"The `to_sql` methods raised an error: {error}")
+            log.error(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -155,7 +155,7 @@ def collect_sources_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSources`")
         
         statisticsSources_dataframe = statisticsSources_dataframe.astype({k: v for (k, v) in StatisticsSources.state_data_types().items()})
-        log.info(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
+        log.debug(f"`statisticsSources` dataframe dtypes before encoding conversions:\n{statisticsSources_dataframe.dtypes}\n")
         statisticsSources_dataframe['statistics_source_name'] = statisticsSources_dataframe['statistics_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
@@ -173,7 +173,7 @@ def collect_sources_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
         statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        log.info(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
+        log.debug(f"`statisticsSourceNotes` dataframe dtypes before encoding conversions:\n{statisticsSourceNotes_dataframe.dtypes}\n")
         statisticsSourceNotes_dataframe['note'] = statisticsSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
@@ -192,7 +192,7 @@ def collect_sources_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        log.info(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
+        log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
@@ -210,7 +210,7 @@ def collect_sources_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
         resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
-        log.info(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
+        log.debug(f"`resourceSourceNotes` dataframe dtypes before encoding conversions:\n{resourceSourceNotes_dataframe.dtypes}\n")
         resourceSourceNotes_dataframe['note'] = resourceSourceNotes_dataframe['note'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
@@ -269,12 +269,12 @@ def collect_sources_data():
             log.debug("Relation `statisticsResourceSources` loaded into the database")
             log.info("All relations loaded into the database")
         except Exception as error:
-            log.warning(f"The `to_sql` methods raised an error: {error}")
+            log.error(f"The `to_sql` methods raised an error: {error}")
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -316,21 +316,32 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['notes'] = None
         log.info(f"AUCT template dataframe:\n{df}")
 
-        template_save_location = Path(os.path.dirname(os.path.realpath(__file__)), 'initialize_annualUsageCollectionTracking.csv')
-        df.to_csv(
-            template_save_location,
-            index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
-            encoding='utf-8',
-            errors='backslashreplace',  # For encoding errors
-        )
-        log.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
-        #ToDo: Confirm above downloads successfully
+        try:
+            template_save_location = Path(os.path.dirname(os.path.realpath(__file__)), 'initialize_annualUsageCollectionTracking.csv')
+            df.to_csv(
+                template_save_location,
+                index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
+                encoding='utf-8',
+                errors='backslashreplace',  # For encoding errors
+            )
+            log.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
+        except Exception as error:
+            log.error(f"The AUCT template CSV wasn't created because of the error `{error}`.")
+            if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
+                log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
+                #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
+                return redirect(url_for('initialization.collect_sources_data'))
+            infinite_loop_error = True
+            return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
+        
+        #ToDo: Confirm AUCT template CSV downloads successfully
         return render_template('initialization/initial-data-upload-3.html', form=form)
 
     #Section: After Form Submission
     elif form.validate_on_submit():
         #ToDo: remove file at `template_save_location`?
-        #Subsection: Load `annualUsageCollectionTracking` into Database
+        #Subsection: Ingest `annualUsageCollectionTracking` Data
+        log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
             index_col=['AUCT_statistics_source', 'AUCT_fiscal_year'],
@@ -342,39 +353,47 @@ def collect_AUCT_and_historical_COUNTER_data():
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
         AUCT_dataframe = AUCT_dataframe.astype({k: v for (k, v) in AnnualUsageCollectionTracking.state_data_types().items()})
-        log.info(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
+        log.debug(f"`annualUsageCollectionTracking` dataframe dtypes before encoding conversions:\n{AUCT_dataframe.dtypes}\n")
         AUCT_dataframe['usage_file_path'] = AUCT_dataframe['usage_file_path'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         AUCT_dataframe['notes'] = AUCT_dataframe['notes'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
         log.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
-        AUCT_dataframe.to_sql(
-            'annualUsageCollectionTracking',
-            con=db.engine,
-            if_exists='append',
-            index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-        )
-        log.debug("Relation `annualUsageCollectionTracking` loaded into the database")
-
-        #Subsection: Load COUNTER Reports into Database
+        #Subsection: Ingest COUNTER Reports
         #ToDo: Uncomment this subsection during Planned Iteration 2
         # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+        # log.debug(COUNTER_reports_df)
         #ToDo: Does there need to be a warning here about if the above method returns no data?
         # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
         # COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        # COUNTER_reports_df.to_sql(
-        #     'COUNTERData',
-        #     con=db.engine,
-        #     if_exists='append',
-        #     index_label='COUNTER_data_ID',
-        # )
-        # log.debug("Relation `COUNTERData` loaded into the database")
-        log.info("All relations loaded into the database")
+        # log.info(COUNTER_reports_df.head())
+        # log.debug(COUNTER_reports_df)
+
+        #Subsection: Load Data into Database
+        try:
+            AUCT_dataframe.to_sql(
+                'annualUsageCollectionTracking',
+                con=db.engine,
+                if_exists='append',
+                index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+            )
+            log.debug("Relation `annualUsageCollectionTracking` loaded into the database")
+
+            # COUNTER_reports_df.to_sql(
+            #     'COUNTERData',
+            #     con=db.engine,
+            #     if_exists='append',
+            #     index_label='COUNTER_data_ID',
+            # )
+            # log.debug("Relation `COUNTERData` loaded into the database")
+            log.info("All relations loaded into the database")
+        except Exception as error:
+            log.error(f"The `to_sql` methods raised an error: {error}")
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -398,7 +417,7 @@ def upload_historical_non_COUNTER_usage():
             #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
     '''
     pass

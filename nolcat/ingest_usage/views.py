@@ -45,11 +45,11 @@ def upload_COUNTER_reports():
             flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")  #TEST: `test_bp_ingest_usage.test_upload_COUNTER_reports()` raises `'list' object has no attribute 'name'`
+            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -88,7 +88,7 @@ def harvest_SUSHI_statistics():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            log.error(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
+            log.warning(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             flash(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
         end_date = datetime.date(
@@ -97,18 +97,18 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        log.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+        log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         try:
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
             log.info(result_message)
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            log.error(f"The SUSHI request form submission failed due to the following error: {error}")
+            log.warning(f"The SUSHI request form submission failed due to the following error: {error}")
             flash(f"The SUSHI request form submission failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -183,5 +183,5 @@ def upload_non_COUNTER_reports():
             flash(f"The file upload failed due to the following error: {error}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)

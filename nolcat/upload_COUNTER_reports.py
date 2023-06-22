@@ -63,7 +63,7 @@ class UploadCOUNTERReports:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
                 log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
             except Exception as error:
-                log.warning(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
+                log.error(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
                 continue
             
             try:
@@ -226,7 +226,8 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype={k: v for (k, v) in df_dtypes.items() if v != "datetime64[ns]"},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
-                log.info(f"Dataframe immediately after creation:\n{df}\n{return_string_of_dataframe_info(df)}")
+                log.info(f"Dataframe immediately after creation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Complete dataframe:\n{df}")
                 for field in date_dtype_fields.keys():
                     df[field] = pd.to_datetime(
                         df[field],
@@ -411,7 +412,8 @@ class UploadCOUNTERReports:
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
                 
-                log.info(f"Dataframe being used in concatenation:\n{df}")
+                log.info(f"Dataframe being used in concatenation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Complete dataframe:\n{df}")
                 all_dataframes_to_concatenate.append(df)
         
         
@@ -421,7 +423,8 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        log.info(f"Combined dataframe:\n{combined_df}\n{return_string_of_dataframe_info(combined_df)}")
+        log.info(f"Combined dataframe info:\n{return_string_of_dataframe_info(combined_df)}")
+        log.debug(f"Combined dataframe:\n{combined_df}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()

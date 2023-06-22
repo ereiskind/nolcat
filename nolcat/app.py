@@ -36,6 +36,26 @@ def configure_logging(app):
     """Create single logging configuration for entire program.
 
     This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
+    Logging statement levels:
+        * Debug
+            * Starting an iteration
+            * Adding an item to a dictionary
+            * Logging values returned from other functions that provide INFO-level logging statements with the values they return
+        * Info
+            * "Starting `function_name()`" statements
+            * The statement with the value a function is returning
+            * Status messages duplicated with message flashing
+            * HTTP response code for API call
+        * Warning
+            * Statements triggered by failing API call
+            * SUSHI report errors
+        * Error
+            * A problem with MySQL I/O
+            * A problem with file I/O
+            * Failed API call
+            * 404 Page not found
+        * Critical
+            * Finding values for a given field are longer than the field's max length
 
     Args:
         app (flask.Flask): the Flask object
@@ -190,7 +210,7 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
     """
-    log.debug("Starting `first_new_PK_value`")
+    log.info("Starting `first_new_PK_value()`")
     if relation == 'fiscalYears':
         PK_field = 'fiscal_year_ID'
     elif relation == 'vendors':
@@ -219,8 +239,8 @@ def first_new_PK_value(relation):
     if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty")
         return 0
-    log.debug(f"Result of query for largest primary key value:\n{largest_PK_value}")
     largest_PK_value = largest_PK_value.iloc[0][0]
+    log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")
     return int(largest_PK_value) + 1
 
 

@@ -70,10 +70,10 @@ class SUSHICallAndResponse:
             dict: the API call response or an error message
         """
         #Section: Make API Call
-        log.info(f"Making SUSHI call to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_response = self._make_API_call()
         if isinstance(API_response, dict):  # Meaning the SUSHI API call couldn't be made
-            log.warning(API_response)
+            log.error(API_response)
             return API_response
 
         #Section: Confirm Usage Data in Response
@@ -185,31 +185,34 @@ class SUSHICallAndResponse:
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
         """
-        log.debug(f"Calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        log.info(f"Starting `_make_API_call()` by calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
 
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
             time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
-            log.debug(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
+            log.info(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
 
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
-                log.debug(f"Calling {self.calling_to} for {self.call_path} again.")
+                log.info(f"Calling {self.calling_to} for {self.call_path} again.")
                 time.sleep(1)
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
+                log.info(f"`API_response` HTTP code: {API_response}")
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
+                log.error(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}")
                 return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
             except Exception as error_after_timeout:
+                log.error(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}")
                 return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
             return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
 
-        log.debug(f"GET request for {self.calling_to} at {self.call_path} successful.")
+        log.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
         return API_response
 
 
@@ -226,51 +229,53 @@ class SUSHICallAndResponse:
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
             if isinstance(API_response.text, str):
-                log.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
+                log.info("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
                 API_response = ast.literal_eval(API_response.content.decode('utf-8'))
             elif isinstance(API_response.text, list):
-                log.debug(f"The returned text is in list format and is the list of reports.")
+                log.info(f"The returned text is in list format and is the list of reports.")
                 API_response = json.loads(API_response.content.decode('utf-8'))
             else:
+                log.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
                 return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
                 
             if isinstance(API_response, list):
                 API_response = dict(reports = API_response)
-                log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
+                log.info("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
             else:
                 return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
         
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
             if isinstance(API_response.text, str):
-                log.debug("The returned text was read from a downloaded JSON file.")
+                log.info("The returned text was read from a downloaded JSON file.")
                 try:
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except:  # This will transform values that don't decode as JSONs (generally lists)
                     API_response = ast.literal_eval(API_response.content.decode('utf-8'))
                 
                 if isinstance(API_response, dict):
-                    log.debug("The returned text was converted to a dictionary.")
+                    log.info("The returned text was converted to a dictionary.")
                 
                 elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
-                    log.debug(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                    log.info(f"The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = API_response[0]
                 
                 else:
                     return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
             
             elif isinstance(API_response.text, dict):
-                log.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
+                log.info("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
                 API_response = json.loads(API_response.content.decode('utf-8'))
             
             elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
-                log.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                log.info("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                 API_response = json.loads(API_response[0].content.decode('utf-8'))
             
             else:
                 return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}")
+        log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
         log.debug(f"SUSHI data:\n{API_response}")
         return API_response
     
@@ -288,7 +293,7 @@ class SUSHICallAndResponse:
         """
         if exception:
             error_message = f"The `SUSHICallAndResponse._convert_Response_to_JSON()` method unexpectedly raised a(n) `{error_message}` error, meaning the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
-        log.warning(error_message)
+        log.error(error_message)
         
         statistics_source_ID = pd.read_sql(
             sql=f'SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to}',
@@ -321,16 +326,16 @@ class SUSHICallAndResponse:
         #Subsection: Detail Each SUSHI Error
         if isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
-                log.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
+                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
-            log.info(f"Handling a SUSHI error for a {report_type} in dictionary format.")
+            log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             dialog_box_text = self._create_error_query_text(error_contents)
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
-                log.debug(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
+                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
             dialog_box_text = []
-            log.info(f"Handling a SUSHI error for a {report_type} in list format.")
+            log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             for error in error_contents:
                 dialog_box_text.append(self._create_error_query_text(error))
             dialog_box_text = "\n".join(dialog_box_text)

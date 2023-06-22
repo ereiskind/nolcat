@@ -141,7 +141,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['resource_name'] = value
                         log.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        log.error(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.critical(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['resource_name'] = value
@@ -154,7 +154,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['publisher'] = value
                         log.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                     elif len(value) > self.PUBLISHER_LENGTH:
-                        log.error(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.critical(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['publisher'] = value
@@ -168,7 +168,7 @@ class ConvertJSONDictToDataframe:
                         log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
-                            log.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
+                            log.critical(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                         else:
                             record_dict['publisher_ID'] = value[0]['Value']
@@ -178,7 +178,7 @@ class ConvertJSONDictToDataframe:
                         for type_and_value in value:
                             if re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                                 if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
-                                    log.error(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                    log.critical(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['publisher_ID'] = type_and_value['Value']
@@ -193,7 +193,7 @@ class ConvertJSONDictToDataframe:
                         record_dict['platform'] = value
                         log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                     elif len(value) > self.PLATFORM_LENGTH:
-                        log.error(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
+                        log.critical(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                     else:
                         record_dict['platform'] = value
@@ -218,7 +218,7 @@ class ConvertJSONDictToDataframe:
                                     record_dict['authors'] = type_and_value['Name']
                                     log.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                    log.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
+                                    log.critical(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
                                     return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                 else:
                                     record_dict['authors'] = type_and_value['Name']
@@ -254,7 +254,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `DOI` Value
                         if type_and_value['Type'] == "DOI":
                             if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                log.error(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.critical(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['DOI'] = type_and_value['Value']
@@ -264,7 +264,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `proprietary_ID` Value
                         elif re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                             if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                log.error(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.critical(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
@@ -302,7 +302,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `URI` Value
                         elif type_and_value['Type'] == "URI":
                             if len(type_and_value['Value']) > self.URI_LENGTH:
-                                log.error(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                log.critical(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['URI'] = type_and_value['Value']
@@ -354,7 +354,7 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `parent_title` Value
                         if key_for_parent == "Item_Name":
                             if len(value_for_parent) > self.RESOURCE_NAME_LENGTH:
-                                log.error(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
+                                log.critical(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                             else:
                                 record_dict['parent_title'] = value_for_parent
@@ -376,7 +376,7 @@ class ConvertJSONDictToDataframe:
                                             log.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                     else:
                                         if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                            log.error(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
+                                            log.critical(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
                                             return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                         else:
                                             record_dict['parent_authors'] = type_and_value['Name']
@@ -413,7 +413,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_DOI` Value
                                 if type_and_value['Type'] == "DOI":
                                     if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                        log.error(f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.critical(f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_DOI'] = type_and_value['Value']
@@ -423,7 +423,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_proprietary_ID` Value
                                 elif re.match(r'[Pp]roprietary(_ID)?', string=type_and_value['Type']):
                                     if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                        log.error(f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.critical(f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_proprietary_ID'] = type_and_value['Value']
@@ -461,7 +461,7 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_URI` Value
                                 elif type_and_value['Type'] == "URI":
                                     if len(type_and_value['Value']) > self.URI_LENGTH:
-                                        log.error(f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
+                                        log.critical(f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
                                         return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
                                     else:
                                         record_dict['parent_URI'] = type_and_value['Value']

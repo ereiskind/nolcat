@@ -40,7 +40,7 @@ def PATH_TO_CREDENTIALS_FILE():
     """
     file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
     if file_path.exists():
-        log.debug(f"The R5 SUSHI credentials file was found at at `{file_path}`.")
+        log.info(f"The R5 SUSHI credentials file was found at at `{file_path}`.")
         return str(file_path)
     log.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()
@@ -273,7 +273,8 @@ class FiscalYears(db.Model):
             columns=["usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
         )
         df = df.astype(AnnualUsageCollectionTracking.state_data_types())
-        log.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df}\nAnd a summary of the dataframe:\n{return_string_of_dataframe_info(df)}")
+        log.info(f"Records being loaded into `annualUsageCollectionTracking`:\n{df.index}")
+        log.debug(f"And a summary of the dataframe the above records are in:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
         try:
@@ -286,7 +287,7 @@ class FiscalYears(db.Model):
             log.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
         except Exception as error:
-            log.warning(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
+            log.error(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
             return f"The AUCT records load for FY {self.fiscal_year} had an error: {error}"
 
 
@@ -321,7 +322,7 @@ class FiscalYears(db.Model):
             #ToDo: log.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: log.warning(f"The load for FY {self.fiscal_year} had an error: {error}")
+            #ToDo: log.error(f"The load for FY {self.fiscal_year} had an error: {error}")
             #ToDo: return f"The load for FY {self.fiscal_year} had an error: {error}"
         pass
 
@@ -522,8 +523,8 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.debug("Starting the `StatisticsSources.fetch_SUSHI_information()` method.")
-        log.info(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))})")
+        log.info("Starting `StatisticsSources.fetch_SUSHI_information()`")
+        log.debug(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))})")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
@@ -532,7 +533,7 @@ class StatisticsSources(db.Model):
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
                     if stats_source['interface_id'] == self.statistics_source_retrieval_code:
-                        log.info(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
+                        log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
                             URL = stats_source['statistics']['online_location'],
                             customer_id = stats_source['statistics']['user_id']
@@ -559,7 +560,7 @@ class StatisticsSources(db.Model):
 
         #Section: Return Data in Requested Format
         if for_API_call:
-            log.debug(f"Returning the credentials {credentials} for a SUSHI API call.")
+            log.info(f"Returning the credentials {credentials} for a SUSHI API call.")
             return credentials
         else:
             return f"ToDo: Display {credentials} in Flask"  #ToDo: Change to a way to display the `credentials` values to the user via Flask
@@ -581,7 +582,7 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
-        log.debug("Starting the `StatisticsSources._harvest_R5_SUSHI()` method.")
+        log.info("Starting `StatisticsSources._harvest_R5_SUSHI()`")
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -595,7 +596,7 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
-            log.error(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
+            log.warning(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
             return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
         else:
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
@@ -620,6 +621,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                         #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                         #ToDo: upload_file_to_S3_bucket()
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
@@ -627,6 +629,7 @@ class StatisticsSources(db.Model):
                     df['report_type'] = report_to_harvest
                     log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                     custom_report_dataframes.append(df)
+                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
                 return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             else:
                 SUSHI_parameters['begin_date'] = usage_start_date
@@ -636,12 +639,13 @@ class StatisticsSources(db.Model):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                     #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                     #ToDo: upload_file_to_S3_bucket()
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
-                log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                 return df
         
         elif report_to_harvest == "DR":
@@ -661,6 +665,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                         #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                         #ToDo: upload_file_to_S3_bucket()
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
@@ -668,6 +673,7 @@ class StatisticsSources(db.Model):
                     df['report_type'] = report_to_harvest
                     log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                     custom_report_dataframes.append(df)
+                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
                 return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             else:
                 SUSHI_parameters['begin_date'] = usage_start_date
@@ -677,12 +683,13 @@ class StatisticsSources(db.Model):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                     #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                     #ToDo: upload_file_to_S3_bucket()
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
-                log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                 return df
         
         elif report_to_harvest == "TR":
@@ -702,6 +709,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                         #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                         #ToDo: upload_file_to_S3_bucket()
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
@@ -709,6 +717,7 @@ class StatisticsSources(db.Model):
                     df['report_type'] = report_to_harvest
                     log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                     custom_report_dataframes.append(df)
+                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
                 return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             else:
                 SUSHI_parameters['begin_date'] = usage_start_date
@@ -718,12 +727,13 @@ class StatisticsSources(db.Model):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                     #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                     #ToDo: upload_file_to_S3_bucket()
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
-                log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                 return df
         
         elif report_to_harvest == "IR":
@@ -744,6 +754,7 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                         #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                         #ToDo: upload_file_to_S3_bucket()
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
@@ -751,6 +762,7 @@ class StatisticsSources(db.Model):
                     df['report_type'] = report_to_harvest
                     log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                     custom_report_dataframes.append(df)
+                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
                 return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             else:
                 SUSHI_parameters['begin_date'] = usage_start_date
@@ -760,12 +772,13 @@ class StatisticsSources(db.Model):
                     return SUSHI_data_response  # The error message
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                     #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
                     #ToDo: upload_file_to_S3_bucket()
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
-                log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
+                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
                 return df
         
         
@@ -783,7 +796,7 @@ class StatisticsSources(db.Model):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
             elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
-                log.error(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
+                log.warning(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
                 return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
             else:
                 log.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
@@ -832,7 +845,7 @@ class StatisticsSources(db.Model):
                 #Subsection: Make API Call(s)
                 subset_of_months_to_harvest = self._check_if_data_in_database(report_name, usage_start_date, usage_end_date)
                 if subset_of_months_to_harvest:
-                    log.info(f"Calling `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
+                    log.debug(f"Calling `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
                     for month_to_harvest in subset_of_months_to_harvest:
                         SUSHI_parameters['begin_date'] = month_to_harvest
                         SUSHI_parameters['end_date'] = datetime.date(
@@ -860,7 +873,6 @@ class StatisticsSources(db.Model):
                     SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
                     if isinstance(SUSHI_data_response, str):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    log.info(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} successful.")
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                         #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
@@ -890,7 +902,7 @@ class StatisticsSources(db.Model):
         """
         SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
         if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-            log.error(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
+            log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
             return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."
         else:
             log.info(f"Call to `reports/{report.lower()}` endpoint for {self.statistics_source_name} successful.")
@@ -917,7 +929,7 @@ class StatisticsSources(db.Model):
                 sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
                 con=db.engine,
             )
-            log.debug(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
+            log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
             if number_of_records.iloc[0][0] == 0:
                 months_to_harvest.append(month_being_checked.date())
             else:
@@ -942,13 +954,12 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        log.debug(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
+        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
             log.debug(f"The SUSHI harvest was a success")
-        log.debug(f"The index field of the SUSHI harvest result dataframe has duplicates: {df.index.has_duplicates}")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error; the test module can't help because pytest calls to `db.engine` raise `RuntimeError`
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
@@ -961,7 +972,7 @@ class StatisticsSources(db.Model):
             log.info("The load was a success.")
             return "The load was a success."
         except Exception as error:
-            log.warning(f"The load had an error: {error}")
+            log.error(f"The load had an error: {error}")
             return f"The load had an error: {error}"
 
 
@@ -1270,7 +1281,7 @@ class AnnualUsageCollectionTracking(db.Model):
             statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
-        log.debug(f"The `StatisticsSources` object is {statistics_source}")
+        log.info(f"The `StatisticsSources` object is {statistics_source}")
 
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
@@ -1290,7 +1301,7 @@ class AnnualUsageCollectionTracking(db.Model):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            log.warning(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
+            log.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}"
 
 

@@ -30,7 +30,7 @@ def annual_stats_homepage():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
-        log.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -83,5 +83,5 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
         #ToDo: Get values below for the form submitted
-        #ToDo: log.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)
