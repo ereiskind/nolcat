@@ -596,8 +596,8 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
-            log.warning(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}.")
-            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
+            log.warning(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}.")
+            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}."
         else:
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
@@ -796,8 +796,8 @@ class StatisticsSources(db.Model):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
             elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
-                log.warning(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}.")
-                return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
+                log.warning(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}.")
+                return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}."
             else:
                 log.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
                 return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
@@ -902,8 +902,8 @@ class StatisticsSources(db.Model):
         """
         SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
         if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-            log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
-            return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."
+            log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
+            return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
         else:
             log.info(f"Call to `reports/{report.lower()}` endpoint for {self.statistics_source_name} successful.")
             return SUSHI_data_response
