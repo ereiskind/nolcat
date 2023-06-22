@@ -50,18 +50,18 @@ class UploadCOUNTERReports:
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
             * iG Press/BEP reports have multiple ISBNs and ISSNs in the fields for those values
         '''
-        log.info("Starting `UploadCOUNTERReports.create_dataframe()`")
+        log.info("Starting `UploadCOUNTERReports.create_dataframe()`.")
         all_dataframes_to_concatenate = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
         #Section: Load the Workbook(s)
         for FileStorage_object in self.COUNTER_report_files:
-            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}")
+            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}.")
             # When using the web app, `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>; `FileStorage_object.stream._file` is <class '_io.BytesIO'>
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}")
+                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}.")
             except Exception as error:
                 log.error(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error `{error}`.")
                 continue
@@ -112,7 +112,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)})")
+                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:

@@ -63,9 +63,9 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation or an empty dataframe to indicate an error
         """
-        log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`")
+        log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
         report_header_creation_date = parser.isoparse(self.SUSHI_JSON_dictionary['Report_Header']['Created']).date()  # Saving as datetime.date data type removes the time data
-        log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}")
+        log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}.")
         COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
         if COUNTER_release == "5":
             try:
@@ -94,7 +94,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
-        log.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`")
+        log.info("Starting `ConvertJSONDictToDataframe._transform_R5_JSON()`.")
         records_orient_list = []
 
         #Section: Set Up Tracking of Fields to Include in `df_dtypes`
@@ -131,7 +131,7 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.debug(f"Starting iteration for new JSON record {record}")
+            log.debug(f"Starting iteration for new JSON record {record}.")
             record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
@@ -526,7 +526,7 @@ class ConvertJSONDictToDataframe:
         df['usage_date'] = pd.to_datetime(df['usage_date'])
         df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])#.dt.tz_localize(None)
 
-        log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}\n")
+        log.info(f"Dataframe info:\n{return_string_of_dataframe_info(df)}")
         return df
 
 
@@ -536,7 +536,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
         """
-        log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`")
+        log.info("Starting `ConvertJSONDictToDataframe._transform_R5b1_JSON()`.")
         pass
     
 

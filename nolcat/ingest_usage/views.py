@@ -41,12 +41,12 @@ def upload_COUNTER_reports():
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            log.info("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
-            flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
+            log.info("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation.")
+            flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
-            flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
+            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}.")
+            flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")
@@ -74,8 +74,8 @@ def harvest_SUSHI_statistics():
                 con=db.engine,
             )
         except Exception as error:
-            log.error(f"The query for the statistics source record failed due to the following error: {error}")
-            flash(f"The query for the statistics source record failed due to the following error: {error}")
+            log.error(f"The query for the statistics source record failed due to the error {error}.")
+            flash(f"The query for the statistics source record failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -104,8 +104,8 @@ def harvest_SUSHI_statistics():
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            log.warning(f"The SUSHI request form submission failed due to the following error: {error}")
-            flash(f"The SUSHI request form submission failed due to the following error: {error}")
+            log.warning(f"The SUSHI request form submission failed due to the error {error}.")
+            flash(f"The SUSHI request form submission failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")
@@ -175,12 +175,12 @@ def upload_non_COUNTER_reports():
             #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
             #ToDo: '''
             #ToDo: Run SQL query
-            #ToDo: log.info(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
-            #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
+            #ToDo: log.info(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully.")
+            #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
         except Exception as error:
-            log.error(f"The file upload failed due to the following error: {error}")
-            flash(f"The file upload failed due to the following error: {error}")
+            log.error(f"The file upload failed due to the error {error}.")
+            flash(f"The file upload failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")

@@ -31,7 +31,7 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
-        log.error(f"The route function didn't understand the argument `{list}`")
+        log.error(f"The route function didn't understand the argument `{list}`.")
         return abort(404)
     
     #ToDo: df = pd.read_sql(

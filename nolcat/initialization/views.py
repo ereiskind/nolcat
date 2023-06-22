@@ -105,24 +105,24 @@ def collect_FY_and_vendor_data():
                 if_exists='append',
                 # Dataframe index and primary key field both named `fiscal_year_ID`
             )
-            log.debug("Relation `fiscalYears` loaded into the database")
+            log.debug("Relation `fiscalYears` loaded into the database.")
             vendors_dataframe.to_sql(
                 'vendors',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe index and primary key field both named `vendor_ID`
             )
-            log.debug("Relation `vendors` loaded into the database")
+            log.debug("Relation `vendors` loaded into the database.")
             vendorNotes_dataframe.to_sql(
                 'vendorNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            log.debug("Relation `vendorNotes` loaded into the database")
-            log.info("All relations loaded into the database")
+            log.debug("Relation `vendorNotes` loaded into the database.")
+            log.info("All relations loaded into the database.")
         except Exception as error:
-            log.error(f"The `to_sql` methods raised an error: {error}")
+            log.error(f"The `to_sql` methods raised the error {error}.")
         
         return redirect(url_for('initialization.collect_sources_data'))
 
@@ -238,38 +238,38 @@ def collect_sources_data():
                 if_exists='append',
                 # Dataframe index and primary key field both named `statistics_source_ID`
             )
-            log.debug("Relation `statisticsSources` loaded into the database")
+            log.debug("Relation `statisticsSources` loaded into the database.")
             statisticsSourceNotes_dataframe.to_sql(
                 'statisticsSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            log.debug("Relation `statisticsSourceNotes` loaded into the database")
+            log.debug("Relation `statisticsSourceNotes` loaded into the database.")
             resourceSources_dataframe.to_sql(
                 'resourceSources',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe index and primary key field both named `resource_source_ID`
             )
-            log.debug("Relation `resourceSources` loaded into the database")
+            log.debug("Relation `resourceSources` loaded into the database.")
             resourceSourceNotes_dataframe.to_sql(
                 'resourceSourceNotes',
                 con=db.engine,
                 if_exists='append',
                 index=False,
             )
-            log.debug("Relation `resourceSourceNotes` loaded into the database")
+            log.debug("Relation `resourceSourceNotes` loaded into the database.")
             statisticsResourceSources_dataframe.to_sql(
                 'statisticsResourceSources',
                 con=db.engine,
                 if_exists='append',
                 # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
             )
-            log.debug("Relation `statisticsResourceSources` loaded into the database")
-            log.info("All relations loaded into the database")
+            log.debug("Relation `statisticsResourceSources` loaded into the database.")
+            log.info("All relations loaded into the databas")
         except Exception as error:
-            log.error(f"The `to_sql` methods raised an error: {error}")
+            log.error(f"The `to_sql` methods raised the error {error}.")
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
@@ -326,7 +326,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             )
             log.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
         except Exception as error:
-            log.error(f"The AUCT template CSV wasn't created because of the error `{error}`.")
+            log.error(f"The AUCT template CSV wasn't created because of the error {error}.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
                 #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
@@ -376,7 +376,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                 if_exists='append',
                 index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
             )
-            log.debug("Relation `annualUsageCollectionTracking` loaded into the database")
+            log.debug("Relation `annualUsageCollectionTracking` loaded into the database.")
 
             # COUNTER_reports_df.to_sql(
             #     'COUNTERData',
@@ -384,10 +384,10 @@ def collect_AUCT_and_historical_COUNTER_data():
             #     if_exists='append',
             #     index_label='COUNTER_data_ID',
             # )
-            # log.debug("Relation `COUNTERData` loaded into the database")
-            log.info("All relations loaded into the database")
+            # log.debug("Relation `COUNTERData` loaded into the database.")
+            log.info("All relations loaded into the database.")
         except Exception as error:
-            log.error(f"The `to_sql` methods raised an error: {error}")
+            log.error(f"The `to_sql` methods raised the error {error}.")
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))

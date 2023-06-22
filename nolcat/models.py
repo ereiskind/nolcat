@@ -287,8 +287,8 @@ class FiscalYears(db.Model):
             log.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
             return f"The AUCT records load for FY {self.fiscal_year} was a success."
         except Exception as error:
-            log.error(f"The AUCT records load for FY {self.fiscal_year} had an error: {error}")
-            return f"The AUCT records load for FY {self.fiscal_year} had an error: {error}"
+            log.error(f"The AUCT records load for FY {self.fiscal_year} had the error {error}.")
+            return f"The AUCT records load for FY {self.fiscal_year} had the error {error}."
 
 
     @hybrid_method
@@ -322,8 +322,8 @@ class FiscalYears(db.Model):
             #ToDo: log.info(f"The load for FY {self.fiscal_year} was a success.")
             #ToDo: return f"The load for FY {self.fiscal_year} was a success."
         #ToDo: except Exception as e:
-            #ToDo: log.error(f"The load for FY {self.fiscal_year} had an error: {error}")
-            #ToDo: return f"The load for FY {self.fiscal_year} had an error: {error}"
+            #ToDo: log.error(f"The load for FY {self.fiscal_year} had the error {error}.")
+            #ToDo: return f"The load for FY {self.fiscal_year} had the error {error}."
         pass
 
 
@@ -523,8 +523,8 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.info("Starting `StatisticsSources.fetch_SUSHI_information()`")
-        log.debug(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))})")
+        log.info("Starting `StatisticsSources.fetch_SUSHI_information()`.")
+        log.debug(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
@@ -563,7 +563,7 @@ class StatisticsSources(db.Model):
             log.info(f"Returning the credentials {credentials} for a SUSHI API call.")
             return credentials
         else:
-            return f"ToDo: Display {credentials} in Flask"  #ToDo: Change to a way to display the `credentials` values to the user via Flask
+            return f"ToDo: Display {credentials} in Flask."  #ToDo: Change to a way to display the `credentials` values to the user via Flask
 
 
     @hybrid_method
@@ -582,7 +582,7 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
-        log.info("Starting `StatisticsSources._harvest_R5_SUSHI()`")
+        log.info("Starting `StatisticsSources._harvest_R5_SUSHI()`.")
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -954,12 +954,12 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}")
+        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}.")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
         if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
-            log.debug(f"The SUSHI harvest was a success")
+            log.debug(f"The SUSHI harvest was a success.")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error; the test module can't help because pytest calls to `db.engine` raise `RuntimeError`
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
@@ -972,8 +972,8 @@ class StatisticsSources(db.Model):
             log.info("The load was a success.")
             return "The load was a success."
         except Exception as error:
-            log.error(f"The load had an error: {error}")
-            return f"The load had an error: {error}"
+            log.error(f"The load had the error {error}.")
+            return f"The load had the error {error}."
 
 
     @hybrid_method
@@ -1267,7 +1267,7 @@ class AnnualUsageCollectionTracking(db.Model):
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        log.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)})")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        log.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)}).")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
@@ -1281,14 +1281,14 @@ class AnnualUsageCollectionTracking(db.Model):
             statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
-        log.info(f"The `StatisticsSources` object is {statistics_source}")
+        log.info(f"The `StatisticsSources` object is {statistics_source}.")
 
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
-            log.debug("The SUSHI harvest was a success")
+            log.debug("The SUSHI harvest was a success.")
         df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(
@@ -1301,8 +1301,8 @@ class AnnualUsageCollectionTracking(db.Model):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
         except Exception as error:
-            log.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}")
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had an error: {error}"
+            log.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}.")
+            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
 
 
     @hybrid_method

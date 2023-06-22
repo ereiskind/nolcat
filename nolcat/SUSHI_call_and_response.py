@@ -78,8 +78,8 @@ class SUSHICallAndResponse:
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
-            log.warning(f"Call to {self.calling_to} returned an empty string")
-            return {"ERROR": f"Call to {self.calling_to} returned an empty string"}
+            log.warning(f"Call to {self.calling_to} returned an empty string.")
+            return {"ERROR": f"Call to {self.calling_to} returned an empty string."}
         
         #Section: Convert Response to Python Data Types
         try:
@@ -203,11 +203,11 @@ class SUSHICallAndResponse:
                 log.info(f"`API_response` HTTP code: {API_response}")
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
-                log.error(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}")
-                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}"}
+                log.error(f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}.")
+                return {"ERROR": f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."}
             except Exception as error_after_timeout:
-                log.error(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}")
-                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}"}
+                log.error(f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}.")
+                return {"ERROR": f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}."}
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
@@ -275,7 +275,7 @@ class SUSHICallAndResponse:
             else:
                 return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
         
-        log.info(f"SUSHI data converted to {repr(type(API_response))}")
+        log.info(f"SUSHI data converted to {repr(type(API_response))}.")
         log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
         log.debug(f"SUSHI data:\n{API_response}")
         return API_response
