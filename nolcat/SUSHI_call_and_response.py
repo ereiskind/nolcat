@@ -4,6 +4,7 @@ import re
 import json
 import ast
 from datetime import datetime
+from pathlib import Path
 import requests
 from requests import Timeout
 import pandas as pd
@@ -290,7 +291,7 @@ class SUSHICallAndResponse:
             exception (bool): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
         
         Returns:
-            bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
+            str: the error message for the value section of the single-item `ERROR` dictionary
         """
         if exception:
             error_message = f"The `SUSHICallAndResponse._convert_Response_to_JSON()` method unexpectedly raised a(n) `{error_message}` error, meaning the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
@@ -300,14 +301,16 @@ class SUSHICallAndResponse:
             sql=f'SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to}',
             con=db.engine,
         )
-        file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{datetime.now().isoformat()}.txt"
-        #ToDo: If a more specific path is needed, add `from pathlib import Path` and create a variable for that path
-        with open(file_name, 'x', encoding='utf-8', errors='backslashreplace') as file:  # Mode `x` exclusively creates the file, failing if a file of the same name already exists; with a timestamp down to milliseconds in the file name, that shouldn't happen
+        temp_file_path = Path().resolve() / 'temp.txt'
+        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
             file.write(Response_text)
         
-        #ToDo: upload_file_to_S3_bucket(file_name)
+        upload_file_to_S3_bucket(
+            temp_file_path,
+            f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt",
+        )
+        temp_file_path.unlink()
         return error_message
-
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):

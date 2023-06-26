@@ -622,8 +622,15 @@ class StatisticsSources(db.Model):
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                         log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                        #ToDo: upload_file_to_S3_bucket()
+                        temp_file_path = Path().resolve() / 'temp.json'
+                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                            json.dump(SUSHI_data_response, JSON_file)
+                        log_message = upload_file_to_S3_bucket(
+                            temp_file_path,
+                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        )
+                        temp_file_path.unlink()
+                        logging.debug(log_message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
                     df['statistics_source_ID'] = self.statistics_source_ID
                     df['report_type'] = report_to_harvest
@@ -640,8 +647,15 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                    #ToDo: upload_file_to_S3_bucket()
+                    temp_file_path = Path().resolve() / 'temp.json'
+                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                        json.dump(SUSHI_data_response, JSON_file)
+                    log_message = upload_file_to_S3_bucket(
+                        temp_file_path,
+                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    )
+                    temp_file_path.unlink()
+                    logging.debug(log_message)
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
@@ -666,8 +680,15 @@ class StatisticsSources(db.Model):
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                         log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                        #ToDo: upload_file_to_S3_bucket()
+                        temp_file_path = Path().resolve() / 'temp.json'
+                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                            json.dump(SUSHI_data_response, JSON_file)
+                        log_message = upload_file_to_S3_bucket(
+                            temp_file_path,
+                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        )
+                        temp_file_path.unlink()
+                        logging.debug(log_message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
                     df['statistics_source_ID'] = self.statistics_source_ID
                     df['report_type'] = report_to_harvest
@@ -684,8 +705,15 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                    #ToDo: upload_file_to_S3_bucket()
+                    temp_file_path = Path().resolve() / 'temp.json'
+                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                        json.dump(SUSHI_data_response, JSON_file)
+                    log_message = upload_file_to_S3_bucket(
+                        temp_file_path,
+                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    )
+                    temp_file_path.unlink()
+                    logging.debug(log_message)
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
@@ -710,8 +738,15 @@ class StatisticsSources(db.Model):
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                         log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                        #ToDo: upload_file_to_S3_bucket()
+                        temp_file_path = Path().resolve() / 'temp.json'
+                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                            json.dump(SUSHI_data_response, JSON_file)
+                        log_message = upload_file_to_S3_bucket(
+                            temp_file_path,
+                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        )
+                        temp_file_path.unlink()
+                        logging.debug(log_message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
                     df['statistics_source_ID'] = self.statistics_source_ID
                     df['report_type'] = report_to_harvest
@@ -728,8 +763,15 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                    #ToDo: upload_file_to_S3_bucket()
+                    temp_file_path = Path().resolve() / 'temp.json'
+                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                        json.dump(SUSHI_data_response, JSON_file)
+                    log_message = upload_file_to_S3_bucket(
+                        temp_file_path,
+                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    )
+                    temp_file_path.unlink()
+                    logging.debug(log_message)
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
@@ -755,8 +797,15 @@ class StatisticsSources(db.Model):
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                         log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                        #ToDo: upload_file_to_S3_bucket()
+                        temp_file_path = Path().resolve() / 'temp.json'
+                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                            json.dump(SUSHI_data_response, JSON_file)
+                        log_message = upload_file_to_S3_bucket(
+                            temp_file_path,
+                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        )
+                        temp_file_path.unlink()
+                        logging.debug(log_message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
                     df['statistics_source_ID'] = self.statistics_source_ID
                     df['report_type'] = report_to_harvest
@@ -773,8 +822,15 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                    #ToDo: upload_file_to_S3_bucket()
+                    temp_file_path = Path().resolve() / 'temp.json'
+                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                        json.dump(SUSHI_data_response, JSON_file)
+                    log_message = upload_file_to_S3_bucket(
+                        temp_file_path,
+                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    )
+                    temp_file_path.unlink()
+                    logging.debug(log_message)
                     return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report_to_harvest
@@ -859,8 +915,15 @@ class StatisticsSources(db.Model):
                         log.debug(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for the month {month_to_harvest.strftime('%Y-%m')} successful.")
                         df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                         if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                            #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                            #ToDo: upload_file_to_S3_bucket()
+                            temp_file_path = Path().resolve() / 'temp.json'
+                            with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                                json.dump(SUSHI_data_response, JSON_file)
+                            log_message = upload_file_to_S3_bucket(
+                                temp_file_path,
+                                f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                            )
+                            temp_file_path.unlink()
+                            logging.debug(log_message)
                             continue  # A `return` statement here would keep any other reports from being pulled and processed
                         df['statistics_source_ID'] = self.statistics_source_ID
                         df['report_type'] = report_name
@@ -875,8 +938,15 @@ class StatisticsSources(db.Model):
                         continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                     df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                     if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        #ToDo: Create JSON file name with `{self.statistics_source_ID}`, `reports-{report_name.lower()}`, and a date range indicator, ending with `{datetime.now().isoformat()}`
-                        #ToDo: upload_file_to_S3_bucket()
+                        temp_file_path = Path().resolve() / 'temp.json'
+                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                            json.dump(SUSHI_data_response, JSON_file)
+                        log_message = upload_file_to_S3_bucket(
+                            temp_file_path,
+                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        )
+                        temp_file_path.unlink()
+                        logging.debug(log_message)
                         continue  # A `return` statement here would keep any other reports from being pulled and processed
                     df['statistics_source_ID'] = self.statistics_source_ID
                     df['report_type'] = report_name
