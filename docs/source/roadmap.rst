@@ -24,7 +24,6 @@ Planned Iterations
 * Write ``tests.test_StatisticsSources.test_harvest_custom_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
 
-* Write ``nolcat.app.upload_file_to_S3_bucket()``
 * Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 
