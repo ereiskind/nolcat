@@ -24,7 +24,6 @@ Planned Iterations
 * Write ``tests.test_StatisticsSources.test_harvest_custom_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
 
-* Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
@@ -88,7 +87,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
-* Write test for ``nolcat.app.upload_file_to_S3_bucket()``
 
 Basic Enhancement Iterations
 ****************************
