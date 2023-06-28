@@ -21,6 +21,11 @@ def files_to_upload_to_S3_bucket(request):
     
     This fixture uses parameterization to randomly select two files--one text and one binary--to upload into a S3 bucket, then, upon completion of the test, removes those files from the bucket. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
     """
+    file_path = request.param
+    file_names = tuple(os.walk(file_path))
+    print(f"`file_names`: {file_names} (type {type(file_names)})")
+    print(f"`file_names[0]`: {file_names[0]} (type {type(file_names[0])})")
+    print(f"`file_names[0][2]`: {file_names[0][2]} (type {type(file_names[0][2])})")
     pass
 
 
