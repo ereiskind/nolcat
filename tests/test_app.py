@@ -24,7 +24,7 @@ def files_to_upload_to_S3_bucket(request):
     """
     file_path = request.param
     list_of_file_names = tuple(os.walk(file_path))[0][2]
-    file_name = choice(list_of_file_names)
+    file_name = "test_" + choice(list_of_file_names)  # `list_objects_v2()` returns at most 1,000 objects; adding a prefix and filtering by it will prevent the test from failing because the test file is after the truncation point
     file_to_upload = file_path / file_name
     yield file_to_upload
     #ToDo: remove file from S3
@@ -196,3 +196,19 @@ def test_S3_bucket_connection():
     """Tests that the S3 bucket created by the instantiated client exists and can be accessed by NoLCAT."""
     bucket_header = s3_client.head_bucket(BUCKET_NAME)
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
+
+
+def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
+    """Tests uploading files to a S3 bucket."""
+    upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
+        files_to_upload_to_S3_bucket,
+        files_to_upload_to_S3_bucket.name,
+    )
+    list_objects_response = s3_client.list_objects_v2(
+        BUCKET_NAME,
+        Prefix="test_",
+    )
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    assert files_to_upload_to_S3_bucket.name in bucket_contents
