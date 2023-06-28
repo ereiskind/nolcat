@@ -192,4 +192,7 @@ def test_restore_boolean_values_to_boolean_field():
     assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
-#ToDo: Write test for `nolcat.app.upload_file_to_S3_bucket()`
+def test_S3_bucket_connection():
+    """Tests that the S3 bucket created by the instantiated client exists and can be accessed by NoLCAT."""
+    bucket_header = s3_client.head_bucket(BUCKET_NAME)
+    assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
