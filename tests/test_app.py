@@ -200,7 +200,6 @@ def test_S3_bucket_connection():
 
 def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     """Tests uploading files to a S3 bucket."""
-    print(f"`files_to_upload_to_S3_bucket` {files_to_upload_to_S3_bucket} (type {type(files_to_upload_to_S3_bucket)})")
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
         files_to_upload_to_S3_bucket,
         files_to_upload_to_S3_bucket.name,

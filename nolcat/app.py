@@ -325,9 +325,11 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
+    log.info(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
+        log.debug(f"{file} opened successfully to initialize object {file_object}")
         try:
             client.upload_fileobj(
                 Fileobj=file_object,
@@ -357,7 +359,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             log.error(f"Trying to upload the object `{file}` as a path-like object raised the error {error}.")
             return f"Trying to upload the object `{file}` as a path-like object raised the error {error}."
     else:
-        log.info(f"`file` is a {type(file)}")
         try:
             # `upload_file()` takes a file from a saved location, so the file must be saved first
             temp_file_path = Path() / file_name
