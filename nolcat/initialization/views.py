@@ -267,7 +267,7 @@ def collect_sources_data():
                 # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
             )
             log.debug("Relation `statisticsResourceSources` loaded into the database.")
-            log.info("All relations loaded into the databas")
+            log.info("All relations loaded into the database")
         except Exception as error:
             log.error(f"The `to_sql` methods raised the error {error}.")
         
