@@ -15,20 +15,13 @@ from nolcat.app import *
 from nolcat.models import *
 
 
-def test_S3_bucket_connection():
-    """Tests the connection between NoLCAT and the S3 bucket created by the instantiated client.
+@pytest.fixture(params=[Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests'), Path(os.getcwd(), 'tests', 'bin', 'sample_COUNTER_R4_reports')])
+def files_to_upload_to_S3_bucket(request):
+    """Handles the selection and removal of files for testing uploads to a S3 bucket.
     
-    Because S3 authentication is handled via CloudFormation, the bucket name isn't in the container; it must be pulled from the list of buckets the client has access to, which should contain only one item. Using the `list_buckets()` method requires the client to have the `s3:ListAllMyBuckets` permission.
+    This fixture uses parameterization to randomly select two files--one text and one binary--to upload into a S3 bucket, then, upon completion of the test, removes those files from the bucket. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
     """
-    try:
-        bucket_list = s3_client.list_buckets()['Buckets']
-    except botocore.exceptions.ClientError as error:
-        pytest.skip(f"The client raised the error `{error}`. Please request any missing permission from the S3 user account administrator.")
-    
-    if len(bucket_list) > 1:
-        pytest.skip("The client has access to multiple buckets, which could cause problems with the upload and download features. Please remove the client's permission to buckets other than the ones being used to store usage statistics.")
-    bucket_header = s3_client.head_bucket(Bucket=bucket_list[0]['Name'])
-    assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
+    pass
 
 
 #Section: Test Flask Factory Pattern
