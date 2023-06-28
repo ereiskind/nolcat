@@ -194,7 +194,7 @@ def test_restore_boolean_values_to_boolean_field():
 
 def test_S3_bucket_connection():
     """Tests that the S3 bucket created by the instantiated client exists and can be accessed by NoLCAT."""
-    bucket_header = s3_client.head_bucket(BUCKET_NAME)
+    bucket_header = s3_client.head_bucket(Bucket=BUCKET_NAME)
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
@@ -205,7 +205,7 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
         files_to_upload_to_S3_bucket.name,
     )
     list_objects_response = s3_client.list_objects_v2(
-        BUCKET_NAME,
+        Bucket=BUCKET_NAME,
         Prefix="test_",
     )
     bucket_contents = []
