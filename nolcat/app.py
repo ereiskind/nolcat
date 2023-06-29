@@ -325,7 +325,6 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"The current directory is {Path.cwd()}")
     log.info(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
