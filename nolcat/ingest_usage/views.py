@@ -10,13 +10,12 @@ from flask import flash
 import pandas as pd
 
 from . import bp
-from .forms import COUNTERReportsForm, SUSHIParametersForm, UsageFileForm
-from ..app import db, first_new_PK_value
-from ..models import StatisticsSources
+from .forms import *
+from ..app import *
+from ..models import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
-
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/')
@@ -33,7 +32,7 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
-            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()
+            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
@@ -42,14 +41,15 @@ def upload_COUNTER_reports():
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation")
+            log.info("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation.")
+            flash("Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
-            flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the following error: {error}")
+            log.error(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}.")
+            flash(f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -74,20 +74,21 @@ def harvest_SUSHI_statistics():
                 con=db.engine,
             )
         except Exception as error:
-            logging.error(f"The query for the statistics source record failed due to the following error: {error}")
-            flash(f"The query for the statistics source record failed due to the following error: {error}")
+            log.error(f"The query for the statistics source record failed due to the error {error}.")
+            flash(f"The query for the statistics source record failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
             statistics_source_ID = int(df['statistics_source_ID'][0]),
             statistics_source_name = str(df['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]),
+            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(df['vendor_ID'][0]),
         )  # Without the `int` constructors, a numpy int type is used
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
+            log.warning(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             flash(f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date}).")
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
         end_date = datetime.date(
@@ -96,18 +97,18 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        logging.info(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+        log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         try:
             result_message = stats_source.collect_usage_statistics(form.begin_date.data, form.end_date.data)
-            logging.info(result_message)
+            log.info(result_message)
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"The SUSHI request form submission failed due to the following error: {error}")
-            flash(f"The SUSHI request form submission failed due to the following error: {error}")
+            log.warning(f"The SUSHI request form submission failed due to the error {error}.")
+            flash(f"The SUSHI request form submission failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -140,46 +141,65 @@ def upload_non_COUNTER_reports():
             sql=SQL_query,
             con=db.engine,
         )
-        non_COUNTER_files_needed['index'] =  list(non_COUNTER_files_needed[['AUCT_statistics_source', 'AUCT_fiscal_year']].itertuples(index=False, name=None))
+        non_COUNTER_files_needed = non_COUNTER_files_needed.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
-        logging.debug(f"Form choices and their corresponding AUCT multiindex values:\n{non_COUNTER_files_needed[['AUCT_option', 'index']]}")
-        form.AUCT_option.choices = list(non_COUNTER_files_needed[['index', 'AUCT_option']].itertuples(index=False, name=None))
+        non_COUNTER_files_needed = change_single_field_dataframe_into_series(non_COUNTER_files_needed.drop(columns=['statistics_source_name', 'fiscal_year']))
+        logging.debug(f"AUCT multiindex and their corresponding form choices:\n{non_COUNTER_files_needed}")
+        form.AUCT_option.choices = list(non_COUNTER_files_needed.items())
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         try:
-            #ToDo: file_path_of_record = Path(file path to folder where non-COUNTER usage files will be saved)
-            #ToDo: Uploaded files must be of extension types
-                # "xlsx"
-                # "csv"
-                # "tsv"
-                # "pdf"
-                # "docx"
-                # "pptx"
-                # "txt"
-                # "jpeg"
-                # "jpg"
-                # "png"
-                # "svg"
-                # "json"
-                # "html"
-                # "htm"
-                # "xml"
-                # "zip"
-            #ToDo: record_matching_uploaded_file = non_COUNTER_files_needed.loc[form.AUCT_options.data]
-            #ToDo: int_PK_for_stats_source = record_matching_uploaded_file['AUCT_statistics_source']
-            #ToDo: int_PK_for_fiscal_year = record_matching_uploaded_file['AUCT_fiscal_year']
-            #ToDo: SQL_query = f'''
-            #ToDo:     UPDATE annualUsageCollectionTracking
-            #ToDo:     SET usage_file_path = {file_path_of_record}
-            #ToDo:     WHERE AUCT_statistics_source = {int_PK_for_stats_source} AND AUCT_fiscal_year = {int_PK_for_fiscal_year};
-            #ToDo: '''
-            #ToDo: Run SQL query
-            #ToDo: flash(f"Usage file for {record_matching_uploaded_file['statistics_source_name']} during FY {record_matching_uploaded_file['fiscal_year']} uploaded successfully")
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))  #ToDo: Add message flashing about successful upload
+            valid_file_extensions = (  # File types allowed are limited to those that can be downloaded in `nolcat.view_usage.views.download_non_COUNTER_usage()`
+                "xlsx",
+                "csv",
+                "tsv",
+                "pdf",
+                "docx",
+                "pptx",
+                "txt",
+                "jpeg",
+                "jpg",
+                "png",
+                "svg",
+                "json",
+                "html",
+                "htm",
+                "xml",
+                "zip",
+            )
+            statistics_source_ID, fiscal_year_ID = form.AUCT_options.data # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+            file_extension = Path(form.usage_file.data.filename).suffix
+            if file_extension not in valid_file_extensions:
+                log.error(f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}")
+                flash(f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}")
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            file_name = f"{statistics_source_ID}_{fiscal_year_ID}.{file_extension}"
+            log.debug(f"The non-COUNTER usage file will be named `{file_name}`.")
+            
+            logging_message = upload_file_to_S3_bucket(
+                form.usage_file.data,
+                file_name,
+            )
+            if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+                log.error(f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved.")
+                flash(f"{logging_message} As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved.")
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+
+            update_query = pd.read_sql(  #ToDo: Can an UPDATE query be run like this?
+                sql=f'''
+                    UPDATE annualUsageCollectionTracking
+                    SET usage_file_path = {file_name}
+                    WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
+                ''',
+                con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+            )
+            log.debug(f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully.")
+            flash(f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully.")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            logging.error(f"The file upload failed due to the following error: {error}")
-            flash(f"The file upload failed due to the following error: {error}")
+            log.error(f"The file upload failed due to the error {error}.")
+            flash(f"The file upload failed due to the error {error}.")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)

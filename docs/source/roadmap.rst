@@ -7,11 +7,14 @@ To Investigate
 This is a list of issues encountered over the course of development that require further investigation.
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
+* J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
+* JSTOR status call returned ``None`` 2023-06-08
 * Certificate issues raising errors with
 
   * *Allen Press/Pinnacle Hosting*: ``HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))``
   * *Grain Science Library*: ``HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))``
   * *Adam matthew*: ``HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))``
+  * *Sciendo*: ``HTTPSConnectionPool(host='ams.degruyter.com', port=443): Max retries exceeded with url: /rest/COUNTER/v5/status?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fb5414a4520>: Failed to establish a new connection: [Errno -2] Name or service not known'))``
 
 Planned Iterations
 ******************
@@ -21,8 +24,6 @@ Planned Iterations
 * Write ``tests.test_StatisticsSources.test_harvest_custom_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
 
-* Write ``nolcat.app.upload_file_to_S3_bucket()``
-* Write ``tests.test_app.test_upload_file_to_S3_bucket()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
@@ -86,7 +87,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
-* Write test for ``nolcat.app.upload_file_to_S3_bucket()``
 
 Basic Enhancement Iterations
 ****************************

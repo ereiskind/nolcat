@@ -1,5 +1,5 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## Data in all relations but `COUNTERData` ##########
+########## No tests written 2023-06-07 ##########
 
 import pytest
 from pathlib import Path
@@ -7,7 +7,7 @@ import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import *
 from nolcat.view_lists import *
 
 

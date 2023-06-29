@@ -1,5 +1,5 @@
 """Tests the routes in the `login` blueprint."""
-########## Unknown ##########
+########## Passing 2023-06-07 ##########
 
 import pytest
 from pathlib import Path
@@ -7,7 +7,7 @@ import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import *
 from nolcat.login import *
 
 

@@ -7,12 +7,11 @@ from flask import url_for
 import pandas as pd
 
 from . import bp
-#from .forms import <name of form classes>
-from ..app import db
-#from ..models import <name of SQLAlchemy classes used in views below>
+from .forms import *
+from ..app import *
+from ..models import *
 
-
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/<string:list>')
@@ -32,6 +31,7 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
+        log.error(f"The route function didn't understand the argument `{list}`.")
         return abort(404)
     
     #ToDo: df = pd.read_sql(
@@ -70,7 +70,7 @@ def view_list_record(list, PK):
         #ToDo: Add the form data to the relevant notes relation
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
-        #ToDo: logging.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)
     
 
@@ -108,5 +108,5 @@ def edit_list_record(list, PK):
         #ToDo: Changing a statisticsSources-resourceSources connection means changing the non-PK field in statisticsResourceSources from true to false and creating a new record with the PKs of the new sources--does it makes sense to have a "if stats source changes, pick new one here" drop-down listing all stats sources but the current one on a resource source details page?
         #ToDo: return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
-        #ToDo: logging.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)

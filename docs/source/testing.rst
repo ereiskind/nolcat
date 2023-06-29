@@ -111,6 +111,37 @@ Create ``ConvertJSONDictToDataframe`` Test Fixtures
 2. Apply "tests\\data\\create_dataframe_from_JSON.jsonc" to each project, remembering there's a manual step added via comment in the file.
 3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
 
+Transaction Rollbacks
+=====================
+The preferred setup for testing database interactions involves performing all tests as transactions which are rolled back before the completion of the test suite; ideally, this configuration could also be used to accommodate the fact that certain test modules have preconditions involving data in some or all of the relations. To minimize the frequency of database resets during testing, the following order is recommended for running tests:
+
+1. Tests loading data into a limited number of relations, after which the database must be cleared of data
+
+  * ``test_app``
+
+2. Tests loading data into all relations but ``COUNTERData``
+
+  * ``test_bp_initialization``
+
+3. Tests needing data in all relations but ``COUNTERData`` and loading data into ``COUNTERData``
+
+  * ``test_bp_ingest_usage``
+
+4. Tests needing data in all relations and/or capable of running with data in all relations
+
+  * ``test_AnnualUsageCollectionTracking``
+  * ``test_bp_annual_stats``
+  * ``test_bp_login``
+  * ``test_bp_view_lists``
+  * ``test_bp_view_usage``
+  * ``test_ConvertJSONDictToDataframe``
+  * ``test_FiscalYears``
+  * ``test_ResourceSources``
+  * ``test_StatisticsSources``
+  * ``test_SUSHICallAndResponse``
+  * ``test_UploadCOUNTERReports``
+  * ``test_Vendors``
+
 SUSHI Variations
 ****************
 Compliance to the SUSHI standard is often inexact, featuring differences people have no problem reconciling but that computers cannot match. To ensure adequate coverage of fringe cases during testing, statistics sources are listed below with the edge case situations they represent. The list is organized by statistics source to facilitate testing the ``SUSHICallAndResponse`` class; if a particular edge case needs to be tested, an appropriate statistics source can be found via search.
