@@ -59,6 +59,7 @@ def harvest_SUSHI_statistics():
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
     """
+    #ToDo: How to add `StatisticsSources._harvest_single_report()`--add it as a field to the form, and if it's not null, go directly to using it in `StatisticsSources._harvest_R5_SUSHI()`?
     form = SUSHIParametersForm()
     if request.method == 'GET':
         statistics_source_options = pd.read_sql(

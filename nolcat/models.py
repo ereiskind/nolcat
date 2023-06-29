@@ -476,7 +476,7 @@ class StatisticsSources(db.Model):
         state_data_types: This method provides a dictionary of the attributes and their data types.
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
-        _harvest_custom_report: Makes a single API call for a customizable report with all possible attributes.
+        _harvest_single_report: Makes a single API call for a customizable report with all possible attributes.
         _check_if_data_in_database: Checks if any usage for the given date and statistics source combination is already in the database.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
@@ -606,237 +606,48 @@ class StatisticsSources(db.Model):
         #Section: Harvest Individual Report if Specified
         if report_to_harvest == "PR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
-            if subset_of_months_to_harvest:
-                custom_report_dataframes = []
-                for month_to_harvest in subset_of_months_to_harvest:
-                    SUSHI_parameters['begin_date'] = month_to_harvest
-                    SUSHI_parameters['end_date'] = datetime.date(
-                        month_to_harvest.year,
-                        month_to_harvest.month,
-                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                    )
-                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if isinstance(SUSHI_data_response, str):
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        temp_file_path = Path().resolve() / 'temp.json'
-                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                            json.dump(SUSHI_data_response, JSON_file)
-                        log_message = upload_file_to_S3_bucket(
-                            temp_file_path,
-                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                        )
-                        temp_file_path.unlink()
-                        logging.debug(log_message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report_to_harvest
-                    log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                    custom_report_dataframes.append(df)
-                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
-                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            else:
-                SUSHI_parameters['begin_date'] = usage_start_date
-                SUSHI_parameters['end_date'] = usage_end_date
-                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if isinstance(SUSHI_data_response, str):
-                    return SUSHI_data_response  # The error message
-                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
-                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    log_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                    )
-                    temp_file_path.unlink()
-                    logging.debug(log_message)
-                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
-                df['statistics_source_ID'] = self.statistics_source_ID
-                df['report_type'] = report_to_harvest
-                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                return df
+            SUSHI_data_response = self._harvest_single_report(
+                report_to_harvest,
+                SUSHI_info['URL'],
+                SUSHI_parameters,
+                usage_start_date,
+                usage_end_date,
+            )
+            return SUSHI_data_response
         
         elif report_to_harvest == "DR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
-            if subset_of_months_to_harvest:
-                custom_report_dataframes = []
-                for month_to_harvest in subset_of_months_to_harvest:
-                    SUSHI_parameters['begin_date'] = month_to_harvest
-                    SUSHI_parameters['end_date'] = datetime.date(
-                        month_to_harvest.year,
-                        month_to_harvest.month,
-                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                    )
-                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if isinstance(SUSHI_data_response, str):
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        temp_file_path = Path().resolve() / 'temp.json'
-                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                            json.dump(SUSHI_data_response, JSON_file)
-                        log_message = upload_file_to_S3_bucket(
-                            temp_file_path,
-                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                        )
-                        temp_file_path.unlink()
-                        logging.debug(log_message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report_to_harvest
-                    log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                    custom_report_dataframes.append(df)
-                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
-                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            else:
-                SUSHI_parameters['begin_date'] = usage_start_date
-                SUSHI_parameters['end_date'] = usage_end_date
-                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if isinstance(SUSHI_data_response, str):
-                    return SUSHI_data_response  # The error message
-                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
-                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    log_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                    )
-                    temp_file_path.unlink()
-                    logging.debug(log_message)
-                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
-                df['statistics_source_ID'] = self.statistics_source_ID
-                df['report_type'] = report_to_harvest
-                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                return df
+            SUSHI_data_response = self._harvest_single_report(
+                report_to_harvest,
+                SUSHI_info['URL'],
+                SUSHI_parameters,
+                usage_start_date,
+                usage_end_date,
+            )
+            return SUSHI_data_response
         
         elif report_to_harvest == "TR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
-            if subset_of_months_to_harvest:
-                custom_report_dataframes = []
-                for month_to_harvest in subset_of_months_to_harvest:
-                    SUSHI_parameters['begin_date'] = month_to_harvest
-                    SUSHI_parameters['end_date'] = datetime.date(
-                        month_to_harvest.year,
-                        month_to_harvest.month,
-                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                    )
-                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if isinstance(SUSHI_data_response, str):
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        temp_file_path = Path().resolve() / 'temp.json'
-                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                            json.dump(SUSHI_data_response, JSON_file)
-                        log_message = upload_file_to_S3_bucket(
-                            temp_file_path,
-                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                        )
-                        temp_file_path.unlink()
-                        logging.debug(log_message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report_to_harvest
-                    log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                    custom_report_dataframes.append(df)
-                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
-                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            else:
-                SUSHI_parameters['begin_date'] = usage_start_date
-                SUSHI_parameters['end_date'] = usage_end_date
-                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if isinstance(SUSHI_data_response, str):
-                    return SUSHI_data_response  # The error message
-                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
-                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    log_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                    )
-                    temp_file_path.unlink()
-                    logging.debug(log_message)
-                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
-                df['statistics_source_ID'] = self.statistics_source_ID
-                df['report_type'] = report_to_harvest
-                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                return df
+            SUSHI_data_response = self._harvest_single_report(
+                report_to_harvest,
+                SUSHI_info['URL'],
+                SUSHI_parameters,
+                usage_start_date,
+                usage_end_date,
+            )
+            return SUSHI_data_response
         
         elif report_to_harvest == "IR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
             SUSHI_parameters["include_parent_details"] = "True"
-            subset_of_months_to_harvest = self._check_if_data_in_database(report_to_harvest, usage_start_date, usage_end_date)
-            if subset_of_months_to_harvest:
-                custom_report_dataframes = []
-                for month_to_harvest in subset_of_months_to_harvest:
-                    SUSHI_parameters['begin_date'] = month_to_harvest
-                    SUSHI_parameters['end_date'] = datetime.date(
-                        month_to_harvest.year,
-                        month_to_harvest.month,
-                        calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                    )
-                    SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                    if isinstance(SUSHI_data_response, str):
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                        temp_file_path = Path().resolve() / 'temp.json'
-                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                            json.dump(SUSHI_data_response, JSON_file)
-                        log_message = upload_file_to_S3_bucket(
-                            temp_file_path,
-                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                        )
-                        temp_file_path.unlink()
-                        logging.debug(log_message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report_to_harvest
-                    log.debug(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                    custom_report_dataframes.append(df)
-                #ToDo: Is a `log.info()` statement with the concatenated dataframe needed?
-                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
-            else:
-                SUSHI_parameters['begin_date'] = usage_start_date
-                SUSHI_parameters['end_date'] = usage_end_date
-                SUSHI_data_response = self._harvest_custom_report(report_to_harvest, SUSHI_info['URL'], SUSHI_parameters)
-                if isinstance(SUSHI_data_response, str):
-                    return SUSHI_data_response  # The error message
-                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                    log.warning(f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
-                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    log_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                    )
-                    temp_file_path.unlink()
-                    logging.debug(log_message)
-                    return f"JSON-like dictionary of {report_to_harvest} for {self.statistics_source_name}couldn't be converted into a dataframe."  #ToDo: may also need log.error before
-                df['statistics_source_ID'] = self.statistics_source_ID
-                df['report_type'] = report_to_harvest
-                log.info(f"Dataframe for SUSHI call for {report_to_harvest} report from {self.statistics_source_name}:\n{df}")
-                return df
-        
+            SUSHI_data_response = self._harvest_single_report(
+                report_to_harvest,
+                SUSHI_info['URL'],
+                SUSHI_parameters,
+                usage_start_date,
+                usage_end_date,
+            )
+            return SUSHI_data_response
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
@@ -899,84 +710,97 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
                 #Subsection: Make API Call(s)
-                subset_of_months_to_harvest = self._check_if_data_in_database(report_name, usage_start_date, usage_end_date)
-                if subset_of_months_to_harvest:
-                    log.debug(f"Calling `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
-                    for month_to_harvest in subset_of_months_to_harvest:
-                        SUSHI_parameters['begin_date'] = month_to_harvest
-                        SUSHI_parameters['end_date'] = datetime.date(
-                            month_to_harvest.year,
-                            month_to_harvest.month,
-                            calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
-                        )
-                        SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
-                        if isinstance(SUSHI_data_response, str):
-                            continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                        log.debug(f"Call to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for the month {month_to_harvest.strftime('%Y-%m')} successful.")
-                        df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                        if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                            temp_file_path = Path().resolve() / 'temp.json'
-                            with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                                json.dump(SUSHI_data_response, JSON_file)
-                            log_message = upload_file_to_S3_bucket(
-                                temp_file_path,
-                                f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                            )
-                            temp_file_path.unlink()
-                            logging.debug(log_message)
-                            continue  # A `return` statement here would keep any other reports from being pulled and processed
-                        df['statistics_source_ID'] = self.statistics_source_ID
-                        df['report_type'] = report_name
-                        custom_report_dataframes.append(df)  # All dataframes are combined at the end, so individual month dataframes don't need to be combined at this point
-                    log.info(f"Calls to `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} for individual months completed; see error log to confirm success.")
-                
-                else:
-                    SUSHI_parameters['begin_date'] = usage_start_date
-                    SUSHI_parameters['end_date'] = usage_end_date
-                    SUSHI_data_response = self._harvest_custom_report(report_name, SUSHI_info['URL'], SUSHI_parameters)
-                    if isinstance(SUSHI_data_response, str):
-                        continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                    df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                    if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
-                        temp_file_path = Path().resolve() / 'temp.json'
-                        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                            json.dump(SUSHI_data_response, JSON_file)
-                        log_message = upload_file_to_S3_bucket(
-                            temp_file_path,
-                            f"{self.statistics_source_ID}_reports-{report_name.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
-                        )
-                        temp_file_path.unlink()
-                        logging.debug(log_message)
-                        continue  # A `return` statement here would keep any other reports from being pulled and processed
-                    df['statistics_source_ID'] = self.statistics_source_ID
-                    df['report_type'] = report_name
-                    custom_report_dataframes.append(df)
-        
+                SUSHI_data_response = self._harvest_single_report(
+                    report_to_harvest,
+                    SUSHI_info['URL'],
+                    SUSHI_parameters,
+                    usage_start_date,
+                    usage_end_date,
+                )
+                if isinstance(SUSHI_data_response, str):
+                    log.debug(SUSHI_data_response)
+                    continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                custom_report_dataframes.append(SUSHI_data_response)
+
 
             #Section: Return a Single Dataframe
             return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
 
 
     @hybrid_method
-    def _harvest_custom_report(self, report, SUSHI_URL, SUSHI_parameters):
+    def _harvest_single_report(self, report, SUSHI_URL, SUSHI_parameters, start_date, end_date):
         """Makes a single API call for a customizable report with all possible attributes.
 
         Args:
             report (str): the two-letter abbreviation for the report being called
             SUSHI_URL (str): the root URL for the SUSHI API call
             SUSHI_parameters (str): the parameter values for the API call
+            start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
+            end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
 
         Returns:
             dict: the API call response data
             str: an error message indicating the harvest failed
         """
-        SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
-        if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-            log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
-            return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
+        subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        if subset_of_months_to_harvest:
+            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
+            individual_month_dfs = []
+            for month_to_harvest in subset_of_months_to_harvest:
+                SUSHI_parameters['begin_date'] = month_to_harvest
+                SUSHI_parameters['end_date'] = datetime.date(
+                    month_to_harvest.year,
+                    month_to_harvest.month,
+                    calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
+                )
+                SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+                if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
+                    continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                    log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
+                    temp_file_path = Path().resolve() / 'temp.json'
+                    with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                        json.dump(SUSHI_data_response, JSON_file)
+                    log_message = upload_file_to_S3_bucket(
+                        temp_file_path,
+                        f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    )
+                    temp_file_path.unlink()
+                    log.debug(log_message)
+                    continue  # A `return` statement here would keep any other reports from being pulled and processed
+                df['statistics_source_ID'] = self.statistics_source_ID
+                df['report_type'] = report
+                log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
+                individual_month_dfs.append(df)
+            log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+            return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
-            log.info(f"Call to `reports/{report.lower()}` endpoint for {self.statistics_source_name} successful.")
-            return SUSHI_data_response
+            SUSHI_parameters['begin_date'] = start_date
+            SUSHI_parameters['end_date'] = end_date
+            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
+                log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
+                return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
+            df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
+                log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
+                temp_file_path = Path().resolve() / 'temp.json'
+                with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                    json.dump(SUSHI_data_response, JSON_file)
+                log_message = upload_file_to_S3_bucket(
+                    temp_file_path,
+                    f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                )
+                temp_file_path.unlink()
+                log.debug(log_message)
+                return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
+            df['statistics_source_ID'] = self.statistics_source_ID
+            df['report_type'] = report
+            log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
+            log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
+            return df
 
 
     @hybrid_method
