@@ -79,7 +79,7 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
     * Add https://pypi.org/project/pycodestyle/ at this point?
     * Possibly use https://pypi.org/project/pytest-order/ ?
 
-* Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
+* Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
