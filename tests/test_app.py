@@ -202,11 +202,11 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
         files_to_upload_to_S3_bucket,
-        "test_" + files_to_upload_to_S3_bucket.name,  # The prefix will allow filtering that prevents the test from failing
+        f"test_{files_to_upload_to_S3_bucket.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix="test_",
+        Prefix=f"{PATH_WITHIN_BUCKET}test_",
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
