@@ -24,7 +24,7 @@ def files_to_upload_to_S3_bucket(request):
     """
     file_path = request.param
     list_of_file_names = tuple(os.walk(file_path))[0][2]
-    file_name = "test_" + choice(list_of_file_names)  # `list_objects_v2()` returns at most 1,000 objects; adding a prefix and filtering by it will prevent the test from failing because the test file is after the truncation point
+    file_name = choice(list_of_file_names)
     file_to_upload = file_path / file_name
     yield file_to_upload
     #ToDo: remove file from S3
@@ -206,7 +206,7 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix="test_",
+        MaxKeys=2500,  # The default is 1,000; if this value is smaller than the number of objects in the bucket, the test may fail
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
