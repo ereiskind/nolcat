@@ -346,7 +346,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         log.debug(f"The object `{file}` raised {error} when the `open()` method was called. The object `{file}` will now try to be loaded with `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
-    if file.is_file():  # Meaning `file` is a path-like object referencing an existing file
+    if file.is_file():
         try:
             client.upload_file(
                 Filename=file,
@@ -359,22 +359,5 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             log.error(f"Trying to upload the object `{file}` as a path-like object raised the error {error}.")
             return f"Trying to upload the object `{file}` as a path-like object raised the error {error}."
     else:
-        try:
-            # `upload_file()` takes a file from a saved location, so the file must be saved first
-            temp_file_path = Path() / file_name
-            #ToDo: Save the object `file` at the location `temp_file_path`
-            try:
-                client.upload_file(
-                    Filename=temp_file_path,
-                    Bucket=bucket,
-                    Key=bucket_path + file_name,
-                )
-            except Exception as error:
-                logging.error(f"Trying to upload the file saved at `{temp_file_path}` raised the error {error}.")
-                return f"Trying to upload the file saved at `{temp_file_path}` raised the error {error}."
-            temp_file_path.unlink()  # This deletes the file created and saved above; if this file wasn't created, the function would've ended at the return statement above
-            log.info(f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket.")
-            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
-        except Exception as error:
-            logging.error(f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error {error}.")
-            return f"Trying to save the object `{file}` to upload it into the S3 bucket raised the error {error}."
+        log.error(f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket.")
+        return f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."
