@@ -27,7 +27,7 @@ def files_to_upload_to_S3_bucket(request):
     file_name = choice(list_of_file_names)
     file_to_upload = file_path / file_name
     yield file_to_upload
-    #ToDo: remove file from S3
+    #ToDo: remove file named f"test_{file_name}" from S3  # Adding prefix in fixture prevents matching to files required in `upload_file_to_S3_bucket()`
 
 
 #Section: Test Flask Factory Pattern
@@ -202,13 +202,14 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
         files_to_upload_to_S3_bucket,
-        files_to_upload_to_S3_bucket.name,
+        "test_" + files_to_upload_to_S3_bucket.name,  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        MaxKeys=2500,  # The default is 1,000; if this value is smaller than the number of objects in the bucket, the test may fail
+        Prefix="test_",
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
+        print(f"A `contents_dict` object:\n{contents_dict}\n")
         bucket_contents.append(contents_dict['Key'])
     assert files_to_upload_to_S3_bucket.name in bucket_contents
