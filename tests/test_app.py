@@ -210,6 +210,6 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     )
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
-        print(f"A `contents_dict` object:\n{contents_dict}\n")
         bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
     assert files_to_upload_to_S3_bucket.name in bucket_contents
