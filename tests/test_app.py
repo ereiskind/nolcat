@@ -25,9 +25,15 @@ def files_to_upload_to_S3_bucket(request):
     file_path = request.param
     list_of_file_names = tuple(os.walk(file_path))[0][2]
     file_name = choice(list_of_file_names)
-    file_to_upload = file_path / file_name
+    file_to_upload = file_path / file_name  # Adding prefix in fixture prevents matching to files required in `upload_file_to_S3_bucket()`
     yield file_to_upload
-    #ToDo: remove file named f"test_{file_name}" from S3  # Adding prefix in fixture prevents matching to files required in `upload_file_to_S3_bucket()`
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
+        )
+    except botocore.exceptions as error:
+        print(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 #Section: Test Flask Factory Pattern
