@@ -53,6 +53,24 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     yield fixture
 
 
+@pytest.fixture(scope='module')
+def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
+    """A fixture listing all the customizable reports offered by the given statistics source."""
+    SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
+    response = SUSHICallAndResponse(
+        StatisticsSources_fixture.statistics_source_name,
+        SUSHI_data['URL'],
+        "reports",
+        {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
+    ).make_SUSHI_call()
+    reports_offered = []
+    for report in list(response.values())[0]:
+        if "Report_ID" in list(report.keys()):
+            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+                reports_offered.append(report["Report_ID"])
+    yield reports_offered
+
+
 #Section: Tests
 @pytest.mark.dependency()
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
