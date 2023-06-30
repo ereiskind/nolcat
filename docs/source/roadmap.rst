@@ -18,7 +18,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Update ``ingest_usage.views.harvest_SUSHI_statistics()`` to handle the new field created above
 * Write ``tests.test_StatisticsSources.test_harvest_R5_SUSHI_with_report_to_harvest()``, which tests ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` when a report is specified
 * Write ``tests.test_StatisticsSources.test_harvest_single_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
