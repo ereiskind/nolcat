@@ -41,7 +41,15 @@ Iteration 2: COUNTER Only Product
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 
-Iteration 3: Minimum Viable Product
+Iteration 3: Create CSV Downloads from COUNTER Data
+===================================================
+* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
+* Finish "query-wizard.html"
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
+* Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
+
+Iteration 4: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
@@ -60,7 +68,7 @@ Iteration 3: Minimum Viable Product
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 * Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
 
-Iteration 4: Minimum Viable Product with Tests and Test Database
+Iteration 5: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources below have been consulted in multiple attempts to get this set up, but have thus far proven unsuccessful.
 
@@ -132,26 +140,18 @@ Iteration 4: Add Notes
 * Write ``nolcat.models.ResourceSources.add_note()``
 * Write ``tests.test_ResourceSources.test_add_note()``
 
-Iteration 5: Create CSV Downloads from COUNTER Data
-===================================================
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
-* Finish "query-wizard.html"
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
-* Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
-
-Iteration 6: Create Drop-Down Lists
+Iteration 5: Create Drop-Down Lists
 ===================================
 * If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
 * If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field
 
-Iteration 7: Create Query Wizard
+Iteration 6: Create Query Wizard
 ================================
 * Craft queries to use
 * Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
 
-Iteration 8: Show Fiscal Year Information
+Iteration 7: Show Fiscal Year Information
 =========================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.views.show_fiscal_year_details()``
@@ -162,26 +162,24 @@ Iteration 8: Show Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 
-Iteration 9: Show Annual Usage Collection Tracking Information
+Iteration 8: Show Annual Usage Collection Tracking Information
 ==============================================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 10: Initiate All SUSHI Collection for Fiscal Year
+Iteration 9: Initiate All SUSHI Collection for Fiscal Year
 ===========================================================
 * Finish ``nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 
-Iteration 11: Switch Message Display from Stdout to Flask
+Iteration 10: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
-* Make return statements with strings in ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
-* Make return statements with key "ERROR" in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse.make_SUSHI_call()`` display in Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 
-Iteration 12: Create UI Design and Jinja Templates
+Iteration 11: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
