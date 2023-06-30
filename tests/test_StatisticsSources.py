@@ -112,6 +112,27 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
+def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
+    """Tests the method making the API call."""
+    SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
+    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
+    SUSHI_response = StatisticsSources_fixture. _harvest_single_report(
+        choice(reports_offered_by_StatisticsSource_fixture),
+        SUSHI_data['URL'],
+        {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
+        begin_date,
+        end_date
+    )
+    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
+    assert SUSHI_response['statistics_source_ID'].eq(1).all()
+    assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+
+
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""

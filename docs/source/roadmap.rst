@@ -18,7 +18,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Write ``tests.test_StatisticsSources.test_harvest_single_report()``
 * Write ``tests.test_StatisticsSources.test_check_if_data_in_database()``
 
 * Create R5.1 test data JSONs
