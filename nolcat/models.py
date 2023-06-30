@@ -739,7 +739,7 @@ class StatisticsSources(db.Model):
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
 
         Returns:
-            dict: the API call response data
+            dataframe: the API call response data in a dataframe
             str: an error message indicating the harvest failed
         """
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
