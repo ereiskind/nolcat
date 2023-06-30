@@ -836,7 +836,7 @@ class StatisticsSources(db.Model):
     
     
     @hybrid_method
-    def collect_usage_statistics(self, usage_start_date, usage_end_date):
+    def collect_usage_statistics(self, usage_start_date, usage_end_date, report_to_harvest=None):
         """A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
 
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
@@ -844,6 +844,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
+            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed

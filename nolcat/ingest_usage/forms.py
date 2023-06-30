@@ -18,10 +18,10 @@ class SUSHIParametersForm(FlaskForm):
     begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     report_to_harvest = SelectField("If only harvesting a single report, select that report:", choices=[
-        (1, "PR"),
-        (2, "DR"),
-        (3, "TR"),
-        (4, "IR"),
+        ('PR', "PR"),
+        ('DR', "DR"),
+        ('TR', "TR"),
+        ('IR', "IR"),
     ], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
 
 
