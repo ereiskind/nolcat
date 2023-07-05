@@ -822,7 +822,7 @@ class StatisticsSources(db.Model):
         for month_being_checked in months_in_date_range:
             number_of_records = pd.read_sql(
                 sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
-                con=db.engine,
+                con=db.engine,  #TEST: `test_StatisticsSources.test_harvest_R5_SUSHI()`, `test_StatisticsSources.test_harvest_single_report()`, `test_StatisticsSources.test_check_if_data_in_database_no()`, `test_StatisticsSources.test_check_if_data_in_database_yes()` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
             )
             log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
             if number_of_records.iloc[0][0] == 0:

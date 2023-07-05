@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-06-07 ##########
+########## Failing 2023-07--05 ##########
 
 import pytest
 import json
@@ -110,7 +110,7 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 @pytest.mark.dependency(depends=['test_fetch_SUSHI_information_for_API'])
 def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Test fails due to raising `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(1).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
@@ -140,7 +140,7 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
-    SUSHI_response = StatisticsSources_fixture._harvest_single_report(
+    SUSHI_response = StatisticsSources_fixture._harvest_single_report(  #TEST: Raises runtime error at nolcat/models.py:824
         choice(reports_offered_by_StatisticsSource_fixture),
         SUSHI_data['URL'],
         {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
@@ -154,7 +154,7 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
 
 def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if usage for a resource and a month within the given date range is already in the database."""
-    data_check = StatisticsSources_fixture._check_if_data_in_database(
+    data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
         choice(reports_offered_by_StatisticsSource_fixture),
         current_month_like_most_recent_month_with_usage[0],
         current_month_like_most_recent_month_with_usage[1],
@@ -169,7 +169,7 @@ def test_check_if_data_in_database_yes(StatisticsSources_fixture, reports_offere
         last_month = current_month_like_most_recent_month_with_usage[0] + relativedelta(months=-1)
         months_to_harvest.append(last_month)
     
-    data_check = StatisticsSources_fixture._check_if_data_in_database(
+    data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
         choice(reports_offered_by_StatisticsSource_fixture),
         most_recent_month_with_usage[0],
         current_month_like_most_recent_month_with_usage[1],
