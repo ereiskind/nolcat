@@ -152,6 +152,31 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
+def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
+    """Tests if usage for a resource and a month within the given date range is already in the database."""
+    data_check = StatisticsSources_fixture._check_if_data_in_database(
+        choice(reports_offered_by_StatisticsSource_fixture),
+        current_month_like_most_recent_month_with_usage[0],
+        current_month_like_most_recent_month_with_usage[1],
+    )
+    assert data_check is None
+
+
+def test_check_if_data_in_database_yes(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, most_recent_month_with_usage, current_month_like_most_recent_month_with_usage):
+    """Tests if months within a range that don't have usage for a given resource are returned if some months do have usage for that resource."""
+    months_to_harvest = [current_month_like_most_recent_month_with_usage[0]]
+    if datetime.date.today().day < 10:
+        last_month = current_month_like_most_recent_month_with_usage[0] + relativedelta(months=-1)
+        months_to_harvest.append(last_month)
+    
+    data_check = StatisticsSources_fixture._check_if_data_in_database(
+        choice(reports_offered_by_StatisticsSource_fixture),
+        most_recent_month_with_usage[0],
+        current_month_like_most_recent_month_with_usage[1],
+    )
+    assert data_check == months_to_harvest
+
+
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
