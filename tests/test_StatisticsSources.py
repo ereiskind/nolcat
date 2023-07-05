@@ -140,7 +140,7 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
-    SUSHI_response = StatisticsSources_fixture. _harvest_single_report(
+    SUSHI_response = StatisticsSources_fixture._harvest_single_report(
         choice(reports_offered_by_StatisticsSource_fixture),
         SUSHI_data['URL'],
         {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
