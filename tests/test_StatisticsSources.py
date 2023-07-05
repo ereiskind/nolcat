@@ -72,6 +72,25 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     yield reports_offered
 
 
+@pytest.fixture(scope='module')
+def current_month_like_most_recent_month_with_usage():
+    """Creates `begin_date` and `end_date` SUSHI parameter values representing the current month.
+
+    Testing `StatisticsSources._check_if_data_in_database()` requires a month for which the `StatisticsSources_fixture` statistics source won't have SUSHI data loaded. The current month is guaranteed to meet this criteria, as that data isn't available.
+
+    Yields:
+        tuple: two datetime.date values, representing the first and last day of a month respectively
+    """
+    current_date = datetime.date.today()
+    begin_date = current_date.replace(day=1)
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
+    yield (begin_date, end_date)
+
+
 #Section: Tests
 @pytest.mark.dependency()
 def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
