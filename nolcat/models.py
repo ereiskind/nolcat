@@ -742,6 +742,7 @@ class StatisticsSources(db.Model):
             dataframe: the API call response data in a dataframe
             str: an error message indicating the harvest failed
         """
+        log.info("Starting `StatisticsSources._harvest_single_report()`")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
