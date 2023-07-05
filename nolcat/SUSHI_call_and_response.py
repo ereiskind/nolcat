@@ -279,7 +279,8 @@ class SUSHICallAndResponse:
                 return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
-        log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
+        if isinstance(API_response, pd.core.frame.DataFrame):
+            log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
         log.debug(f"SUSHI data:\n{API_response}")
         return API_response
     
