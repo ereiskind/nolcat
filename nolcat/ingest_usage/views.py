@@ -34,6 +34,7 @@ def upload_COUNTER_reports():
         try:
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
+            #ToDo: Confirm that the data isn't already in the database by seeing if each record in `df` matches an existing record
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
                 'COUNTERData',

@@ -18,6 +18,7 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Add duplication check to ``ingest_usage.views.upload_COUNTER_reports()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
