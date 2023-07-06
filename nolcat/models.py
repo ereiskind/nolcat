@@ -819,6 +819,10 @@ class StatisticsSources(db.Model):
         months_in_date_range = list(rrule(MONTHLY, dtstart=start_date, until=end_date))  # Creates a list of datetime objects representing the first day of the month of every month in the date range
         months_to_harvest = []
         
+        log.info(f"`db` is {db} (type {type(db)})")
+        log.info(f"`db.__dict__` is {db.__dict__}")
+        log.info(f"`db.engine` is {db.engine} (type {type(db.engine)})")
+        log.info(f"`db.engine.__dict__` is {db.engine.__dict__}")
         for month_being_checked in months_in_date_range:
             number_of_records = pd.read_sql(
                 sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
