@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 def app():
     """Creates an instance of the Flask object for the test session.
     
-    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection.
+    This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection. This fixture is used in `tests.test_app` and later in this module.
     """
     log.info("Starting `tests.conftest.app()`")
     app = create_app()
@@ -53,7 +53,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server.
+    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
     """
     log.info("Starting `tests.conftest.client()`, which has no lines but the `yield` statement")
     yield app.test_client()
@@ -63,7 +63,7 @@ def client(app):
 def db(app):
     """Creates a temporary copy of the database for testing.
     
-    The variable of the first statement, `_db.app`, is the Flask-SQLAlchemy integration's attribute for the Flask application (context). As a result, the fixture's first statement connects the Flask-SQLAlchemy integration to the Flask application (context) being used for testing.
+    The variable of the first statement, `_db.app`, is the Flask-SQLAlchemy integration's attribute for the Flask application (context). As a result, the fixture's first statement connects the Flask-SQLAlchemy integration to the Flask application (context) being used for testing. #ALERT: This fixture is used later in this module, but not in any tests.
     """
     log.info("Starting `tests.conftest.db()`")
     _db.app = app
@@ -79,12 +79,12 @@ def db(app):
 def engine():
     """Creates a SQLAlchemy engine for testing.
     
-    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database.
+    The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database. This fixture is used in `tests.test_app`, `tests.test_bp_ingest_usage`, `tests.test_bp_initialization`, `tests.test_FiscalYears`, `tests.test_StatisticsSources`, and later in this module.
     """
     log.info("Starting `tests.conftest.engine()`, which has no lines but the `yield` statement")
     yield create_engine(
         f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
-        echo=True,
+        echo=False,  # Logging configuration includes SQLAlchemy engine, so `True` causes repetition
     )
 
 
@@ -92,7 +92,7 @@ def engine():
 def session(engine, db):
     """Creates a database session for each test module, enabling CRUD transactions, then rolling all of them back once the module's tests are complete.
     
-    First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object.
+    First, the scope of the fixture is set to `module` because a scope of `function` would prohibit tests involving primary and foreign key relationships from using data loaded into the database during previous transactions, a more accurate reflection of actual database use. On the other hand, setting the scope to `session` would disallow the reuse of the test data, as loading test data sets multiple times would cause primary key duplication. Second, this fixture instantiates both database connection objects provided by SQLAlchemy. The connection object, used in SQLAlchemy Core and the SQL language, and the session object, used by the SQLAlchemy ORM, are both offered so the fixture can work with tests using the core or the ORM paradigm. The two objects are connected--session objects use connection objects as part of the database connection, and the fixture's session object explicitly uses its connection object. #ALERT: This fixture isn't used anywhere.
     """
     log.info("Starting `tests.conftest.session()`")
     #Section: Create Connections
