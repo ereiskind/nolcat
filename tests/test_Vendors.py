@@ -23,7 +23,7 @@ def test_outputs(conftest_print, session_scope, module_scope):
     log.info("This is the print statement in `test_outputs()`")
     log.info(conftest_print.title())
     log.info(module_scope.title())
-    assert True
+    assert False
 
 def test_get_statisticsSources_records():
     """Create a test for the function."""
