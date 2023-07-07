@@ -18,6 +18,10 @@ from nolcat.app import create_app
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations
 
+@pytest.fixture(scope='session')
+def conftest_print():
+    print("This is the print statement in `conftest_print()`")
+    yield "This is the yield statement for `conftest_print()`"
 
 #Section: Fixtures for Connecting to the Database
 @pytest.fixture(scope='session')
