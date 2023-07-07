@@ -2,6 +2,7 @@
 ########## Passing 2023-06-16 ##########
 
 import pytest
+import logging
 import json
 from random import choice
 from pathlib import Path
@@ -14,6 +15,8 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.ingest_usage import *
+
+log = logging.getLogger(__name__)
 
 
 def test_ingest_usage_homepage(client):

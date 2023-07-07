@@ -2,6 +2,7 @@
 ########## Passing 2023-06-07 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 import json
@@ -11,6 +12,8 @@ from pandas.testing import assert_frame_equal
 # `conftest.py` fixtures are imported automatically
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 #Section: Fixtures
 @pytest.fixture(scope='session')

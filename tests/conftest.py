@@ -3,13 +3,13 @@
 The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
 """
 
+import pytest
 import logging
 from pathlib import Path
 import os
 import io
 import datetime
 import calendar
-import pytest
 from sqlalchemy import create_engine
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt

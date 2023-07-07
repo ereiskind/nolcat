@@ -2,6 +2,7 @@
 ########## Passing 2023-06-07 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
@@ -14,6 +15,8 @@ from pandas.testing import assert_series_equal
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.initialization import *
+
+log = logging.getLogger(__name__)
 
 
 #Section: Fixtures

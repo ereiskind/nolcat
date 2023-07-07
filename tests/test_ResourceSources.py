@@ -2,9 +2,12 @@
 ########## No tests written 2023-06-07 ##########
 
 import pytest
+import logging
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 
 def test_add_access_stop_date():

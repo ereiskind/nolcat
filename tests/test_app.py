@@ -1,10 +1,11 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
 ########## Passing 2023-06-29 ##########
 
+import pytest
+import logging
 from pathlib import Path
 import os
 from random import choice
-import pytest
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -14,6 +15,8 @@ import botocore.exceptions  # `botocore` is a dependency of `boto3`
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 
 @pytest.fixture(params=[Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests'), Path(os.getcwd(), 'tests', 'bin', 'sample_COUNTER_R4_reports')])
@@ -33,7 +36,7 @@ def files_to_upload_to_S3_bucket(request):
             Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
         )
     except botocore.exceptions as error:
-        print(f"Trying to remove the test data files from the S3 bucket raised {error}.")
+        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 #Section: Test Flask Factory Pattern

@@ -2,6 +2,7 @@
 ########## Failing 2023-07--05 ##########
 
 import pytest
+import logging
 import json
 import datetime
 from random import choice
@@ -12,6 +13,8 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 
 #Section: Fixtures

@@ -2,6 +2,7 @@
 ########## Passing 2023-06-07 ##########
 
 import pytest
+import logging
 from datetime import date
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -10,6 +11,8 @@ from pandas.testing import assert_series_equal
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 
 def test_calculate_ACRL_60b():
