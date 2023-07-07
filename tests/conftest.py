@@ -21,11 +21,6 @@ from data import relations
 
 log = logging.getLogger(__name__)
 
-@pytest.fixture(scope='session')
-def conftest_print():
-    log.info("This is the log.info statement in `conftest_print()`")
-    log.debug("This is the log.debug statement in `conftest_print()`")
-    yield "This is the yield statement for `conftest_print()`"
 
 #Section: Fixtures for Connecting to the Database
 @pytest.fixture(scope='session')
