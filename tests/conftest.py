@@ -3,6 +3,7 @@
 The fixtures for connecting to the database are primarily based upon the fixtures at https://github.com/alysivji/flask-family-tree-api/blob/master/tests/conftest.py with some further modifications based on the code at https://spotofdata.com/flask-testing/. The test data is a small subset of the institution's own data, with usage numbers changes for confidentiality, with items selected to contain as many edge cases as possible. All test data is stored in dataframes in other files to remove encoding issues that might arise when reading data in from a tabular file but still allow the data to be exported to a tabular file.
 """
 
+import logging
 from pathlib import Path
 import os
 import io
@@ -18,9 +19,12 @@ from nolcat.app import create_app
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations
 
+log = logging.getLogger(__name__)
+
 @pytest.fixture(scope='session')
 def conftest_print():
-    print("This is the print statement in `conftest_print()`")
+    log.info("This is the log.info statement in `conftest_print()`")
+    log.debug("This is the log.debug statement in `conftest_print()`")
     yield "This is the yield statement for `conftest_print()`"
 
 #Section: Fixtures for Connecting to the Database
