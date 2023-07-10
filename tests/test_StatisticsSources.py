@@ -146,7 +146,7 @@ def test_check_if_data_in_database_yes(StatisticsSources_fixture, reports_offere
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
-def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
+def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, engine):  # Without `engine` fixture, pandas read/write SQL operations use a SQLAlchemy engine with no database URI 
     """Tests the method making the API call."""
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
