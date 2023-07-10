@@ -119,12 +119,13 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
-def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
+def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, engine):
     """Tests if usage for a resource and a month within the given date range is already in the database."""
     data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
         choice(reports_offered_by_StatisticsSource_fixture),
         current_month_like_most_recent_month_with_usage[0],
         current_month_like_most_recent_month_with_usage[1],
+        engine.connect(),
     )
     assert data_check is None
 
@@ -146,7 +147,7 @@ def test_check_if_data_in_database_yes(StatisticsSources_fixture, reports_offere
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
-def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, engine):  # Without `engine` fixture, pandas read/write SQL operations use a SQLAlchemy engine with no database URI 
+def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
     """Tests the method making the API call."""
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
@@ -159,7 +160,7 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
         SUSHI_credentials_fixture['URL'],
         {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
         begin_date,
-        end_date
+        end_date,
     )
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(1).all()
