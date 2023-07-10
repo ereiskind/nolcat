@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-07--05 ##########
+########## Failing 2023-07-05 ##########
 
 import pytest
 import logging
@@ -198,7 +198,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_w
     to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     number_of_records = to_check_against.shape[0]
 
-    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #ToDo: Is a test for calling a single report via the optional `report_to_harvest` argument needed?
+    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     SQL_query = f"""
         SELECT *
         FROM (
