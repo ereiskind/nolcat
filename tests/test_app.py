@@ -51,13 +51,14 @@ def test_flask_app_creation(app):
 def test_flask_client_creation(client):
     """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
     assert isinstance(client, flask.testing.FlaskClient)
-    assert client.__dict__['application'] == "<Flask 'nolcat.app'>"
+    assert isinstance(client.__dict__['application'], flask.app.Flask)
+    assert client.__dict__['application'].__dict__['name'] == 'nolcat.app'
 
 
 def test_SQLAlchemy_engine_creation(engine):
     """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
     assert isinstance(engine, sqlalchemy.engine.base.Engine)
-    assert engine.__dict__['url'] == f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
+    assert engine.__dict__['url'] == f'mysql://{DATABASE_USERNAME}:***@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'  # The password is replaced by three asterisks in the `__dict__` output for security
 
 
 def test_homepage(client):
