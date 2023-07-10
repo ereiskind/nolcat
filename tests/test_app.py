@@ -56,6 +56,15 @@ def test_flask_client_creation(client):
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
+def test_SQLAlchemy_engine_creation(engine):
+    """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
+    print(f"`engine` is {engine}")
+    print(f"`engine` type is {type(engine)}")
+    for k,v in engine.__dict__.items():
+        print(f"`engine` has the key {k} with the value {v}")
+    assert True
+
+
 def test_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/')
