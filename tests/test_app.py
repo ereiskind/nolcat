@@ -42,17 +42,13 @@ def files_to_upload_to_S3_bucket(request):
 #Section: Test Flask Factory Pattern
 def test_flask_app_creation(app):
     """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
-    print(f"`app` type is {type(app)}")
-    for k,v in app.__dict__.items():
-        print(f"`app` has the key {k} with the value {v}")
+    print(f"`app` is {app}")
     assert repr(app) == "<Flask 'nolcat.app'>"
 
 
 def test_flask_client_creation(client):
     """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
-    print(f"`client` type is {type(client)}")
-    for k,v in client.__dict__.items():
-        print(f"`client` has the key {k} with the value {v}")
+    print(f"`client` is {client}")
     assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
 
 
