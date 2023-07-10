@@ -42,23 +42,20 @@ def files_to_upload_to_S3_bucket(request):
 #Section: Test Flask Factory Pattern
 def test_flask_app_creation(app):
     """Tests that the fixture for creating the Flask web app object returns a Flask object for `nolcat.app`."""
-    print(f"`app` is {app}")
-    assert repr(app) == "<Flask 'nolcat.app'>"
+    assert isinstance(app, flask.app.Flask)
+    assert app.__dict__['name'] == 'nolcat.app'
 
 
 def test_flask_client_creation(client):
     """Tests that the fixture for creating the Flask client returned a FlaskClient object for `nolcat.app`."""
-    print(f"`client` is {client}")
-    assert repr(client) == "<FlaskClient <Flask 'nolcat.app'>>"
+    assert isinstance(client, flask.testing.FlaskClient)
+    assert client.__dict__['application'] == "<Flask 'nolcat.app'>"
 
 
 def test_SQLAlchemy_engine_creation(engine):
     """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
-    print(f"`engine` is {engine}")
-    print(f"`engine` type is {type(engine)}")
-    for k,v in engine.__dict__.items():
-        print(f"`engine` has the key {k} with the value {v}")
-    assert True
+    assert isinstance(engine, sqlalchemy.engine.base.Engine)
+    assert engine.__dict__['url'] == f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'
 
 
 def test_homepage(client):
