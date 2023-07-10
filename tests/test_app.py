@@ -57,9 +57,9 @@ def test_flask_client_creation(client):
 
 def test_SQLAlchemy_engine_creation(engine):
     """Tests that the fixture for creating the SQLAlchemy engine returned an engine object for connecting to the NoLCAT database."""
-    print(type(engine.__dict__['url']))
     assert isinstance(engine, sqlalchemy.engine.base.Engine)
-    assert engine.__dict__['url'] == f'mysql://{DATABASE_USERNAME}:***@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'  # The password is replaced by three asterisks in the `__dict__` output for security
+    assert isinstance(engine.__dict__['url'], sqlalchemy.engine.url.URL)
+    assert str(engine.__dict__['url']) == f'mysql://{DATABASE_USERNAME}:***@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}'  # The password is replaced by three asterisks in the `__dict__` output for security
 
 
 def test_homepage(client):
