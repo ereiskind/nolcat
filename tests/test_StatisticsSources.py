@@ -121,7 +121,7 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if usage for a resource and a month within the given date range is already in the database."""
     with client:
-        data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
+        data_check = StatisticsSources_fixture._check_if_data_in_database(
             choice(reports_offered_by_StatisticsSource_fixture),
             current_month_like_most_recent_month_with_usage[0],
             current_month_like_most_recent_month_with_usage[1],
@@ -137,7 +137,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
         months_to_harvest.append(last_month)
     
     with client:
-        data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
+        data_check = StatisticsSources_fixture._check_if_data_in_database(
             choice(reports_offered_by_StatisticsSource_fixture),
             most_recent_month_with_usage[0],
             current_month_like_most_recent_month_with_usage[1],
@@ -156,7 +156,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
     with client:
-        SUSHI_response = StatisticsSources_fixture._harvest_single_report(  #TEST: Raises runtime error at nolcat/models.py:824
+        SUSHI_response = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
             {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},

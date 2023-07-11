@@ -583,7 +583,6 @@ class StatisticsSources(db.Model):
         """
         #Section: Get API Call URL and Parameters
         log.info("Starting `StatisticsSources._harvest_R5_SUSHI()`.")
-        log.info(f"`db` is {db}")  #TEST: For engine testing only
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -744,7 +743,6 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         log.info("Starting `StatisticsSources._harvest_single_report()`")
-        log.info(f"`db` is {db}")  #TEST: For engine testing only
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
@@ -819,14 +817,14 @@ class StatisticsSources(db.Model):
             list: the date ranges that should be harvested; a null value means the full range should be harvested
         """
         log.info("Starting `StatisticsSources._check_if_data_in_database()`")
-        log.info(f"`db` is {db} (type {type(db)})")  #TEST: For engine testing only
         months_in_date_range = list(rrule(MONTHLY, dtstart=start_date, until=end_date))  # Creates a list of datetime objects representing the first day of the month of every month in the date range
+        log.debug(f"The months in the date range are {months_in_date_range}")
         months_to_harvest = []
         
         for month_being_checked in months_in_date_range:
             number_of_records = pd.read_sql(
                 sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={self.statistics_source_ID} AND report_type='{report}' AND usage_date='{month_being_checked.strftime('%Y-%m-%d')}';",
-                con=db.engine,  #TEST: `test_StatisticsSources.test_harvest_R5_SUSHI()`, `test_StatisticsSources.test_harvest_single_report()`, `test_StatisticsSources.test_check_if_data_in_database_no()`, `test_StatisticsSources.test_check_if_data_in_database_yes()` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+                con=db.engine,
             )
             log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
             if number_of_records.iloc[0][0] == 0:
@@ -834,6 +832,7 @@ class StatisticsSources(db.Model):
             else:
                 log.warning(f"There were records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database; {month_being_checked.strftime('%Y-%m')} won't be included in the harvested date range.")
         
+        log.debug(f"The months to harvest are {months_to_harvest}")
         if months_in_date_range == months_to_harvest:
             return None  # Indicating the complete date range should be harvested
         else:
