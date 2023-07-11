@@ -67,21 +67,7 @@ Iteration 4: Minimum Viable Product
 
 Iteration 5: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources below have been consulted in multiple attempts to get this set up, but have thus far proven unsuccessful.
-
-    * https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-    * https://flask.palletsprojects.com/en/2.0.x/testing/
-    * https://porter.codes/2020/07/24/Pytest-Sqlalchemy-Test-Fixutres.html
-    * https://spotofdata.com/flask-testing/
-    * http://alexmic.net/flask-sqlalchemy-pytest/
-    * https://www.patricksoftwareblog.com/unit-testing-a-flask-application/ (this uses unittest instead of pytest)
-    * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
-    * Possibly https://github.com/ClearcodeHQ/pytest-mysql
-    * Possibly https://pypi.org/project/pytest-sqlalchemy/
-    * https://medium.com/@geoffreykoh/fun-with-fixtures-for-database-applications-8253eaf1a6d
-    * Add https://pypi.org/project/pycodestyle/ at this point?
-    * Possibly use https://pypi.org/project/pytest-order/ ?
-
+* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
