@@ -711,7 +711,7 @@ class StatisticsSources(db.Model):
 
                 #Subsection: Make API Call(s)
                 SUSHI_data_response = self._harvest_single_report(
-                    report_to_harvest,
+                    report_name,
                     SUSHI_info['URL'],
                     SUSHI_parameters,
                     usage_start_date,
