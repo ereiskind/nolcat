@@ -672,7 +672,7 @@ class StatisticsSources(db.Model):
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
             available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
-            log.debug(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}")
+            log.info(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}")
 
             #Subsection: Add Any Standard Reports Not Corresponding to a Customizable Report
             represented_by_custom_report = set()
@@ -773,7 +773,7 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
-                log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
+                log.info(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 individual_month_dfs.append(df)
             log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
             return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
