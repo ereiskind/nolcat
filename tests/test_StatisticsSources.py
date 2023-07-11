@@ -119,7 +119,10 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
 def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
-    """Tests if usage for a resource and a month within the given date range is already in the database."""
+    """Tests if a given date and statistics source combination has any usage in the database when there aren't any matches.
+    
+    This test uses the current month as the date; since the current month's data isn't available, it won't be in the database. 
+    """
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             choice(reports_offered_by_StatisticsSource_fixture),
@@ -130,7 +133,10 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
 
 
 def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, most_recent_month_with_usage, current_month_like_most_recent_month_with_usage):
-    """Tests if months within a range that don't have usage for a given resource are returned if some months do have usage for that resource."""
+    """Tests if a given date and statistics source combination has any usage in the database when there are matches.
+    
+    To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
+    """
     months_to_harvest = [current_month_like_most_recent_month_with_usage[0]]
     if datetime.date.today().day < 10:
         last_month = current_month_like_most_recent_month_with_usage[0] + relativedelta(months=-1)
@@ -148,7 +154,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
-    """Tests the method making the API call."""
+    """Tests the method making the API call and turing the result into a dataframe."""
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
         begin_date.year,

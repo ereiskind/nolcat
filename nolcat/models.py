@@ -477,7 +477,7 @@ class StatisticsSources(db.Model):
         fetch_SUSHI_information: A method for fetching the information required to make a SUSHI API call for the statistics source.
         _harvest_R5_SUSHI: Collects the specified COUNTER R5 reports for the given statistics source and converts them into a single dataframe.
         _harvest_single_report: Makes a single API call for a customizable report with all possible attributes.
-        _check_if_data_in_database: Checks if any usage for the given date and statistics source combination is already in the database.
+        _check_if_data_in_database: Checks if any usage report for the given date and statistics source combination is already in the database.
         collect_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for usage in the specified time range.
         add_note: #ToDo: Copy first line of docstring here
     """
@@ -806,7 +806,7 @@ class StatisticsSources(db.Model):
 
     @hybrid_method
     def _check_if_data_in_database(self, report, start_date, end_date):
-        """Checks if any usage for the given date and statistics source combination is already in the database.
+        """Checks if any usage report for the given date and statistics source combination is already in the database.
 
         Args:
             report_code (str): the two-letter abbreviation for the report being called
