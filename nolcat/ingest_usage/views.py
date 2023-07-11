@@ -147,7 +147,8 @@ def upload_non_COUNTER_reports():
         )
         non_COUNTER_files_needed = non_COUNTER_files_needed.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
-        non_COUNTER_files_needed = change_single_field_dataframe_into_series(non_COUNTER_files_needed.drop(columns=['statistics_source_name', 'fiscal_year']))
+        non_COUNTER_files_needed = non_COUNTER_files_needed.drop(columns=['statistics_source_name', 'fiscal_year'])
+        non_COUNTER_files_needed = change_single_field_dataframe_into_series(non_COUNTER_files_needed)
         logging.debug(f"AUCT multiindex and their corresponding form choices:\n{non_COUNTER_files_needed}")
         form.AUCT_option.choices = list(non_COUNTER_files_needed.items())
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
