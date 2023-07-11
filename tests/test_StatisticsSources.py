@@ -119,13 +119,12 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
-def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, engine):
+def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if usage for a resource and a month within the given date range is already in the database."""
     data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
         choice(reports_offered_by_StatisticsSource_fixture),
         current_month_like_most_recent_month_with_usage[0],
         current_month_like_most_recent_month_with_usage[1],
-        engine.connect(),
     )
     assert data_check is None
 

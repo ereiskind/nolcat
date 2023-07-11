@@ -808,7 +808,7 @@ class StatisticsSources(db.Model):
 
 
     @hybrid_method
-    def _check_if_data_in_database(self, report, start_date, end_date, connection):
+    def _check_if_data_in_database(self, report, start_date, end_date):
         """Checks if any usage for the given date and statistics source combination is already in the database.
 
         Args:
@@ -821,15 +821,8 @@ class StatisticsSources(db.Model):
         """
         log.info("Starting `StatisticsSources._check_if_data_in_database()`")
         log.info(f"`db` is {db} (type {type(db)})")  #TEST: For engine testing only
-        log.info(f"`connection` is {connection} (type {type(connection)})")
         months_in_date_range = list(rrule(MONTHLY, dtstart=start_date, until=end_date))  # Creates a list of datetime objects representing the first day of the month of every month in the date range
         months_to_harvest = []
-
-        try:
-            pd.read_sql(sql=f"SELECT COUNT(*) FROM fiscalYears", con=connection)
-            log.info("The connection worked")
-        except:
-            log.info("The connection didn't work")
         
         for month_being_checked in months_in_date_range:
             number_of_records = pd.read_sql(
