@@ -854,7 +854,7 @@ class StatisticsSources(db.Model):
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}.")
-        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date)
+        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
         if isinstance(df, str):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
