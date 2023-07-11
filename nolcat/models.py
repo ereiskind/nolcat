@@ -814,10 +814,10 @@ class StatisticsSources(db.Model):
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
 
         Returns:
-            list: the date ranges that should be harvested; a null value means the full range should be harvested
+            list: the dates that should be harvested; a null value means the full range should be harvested
         """
         log.info("Starting `StatisticsSources._check_if_data_in_database()`")
-        months_in_date_range = list(rrule(MONTHLY, dtstart=start_date, until=end_date))  # Creates a list of datetime objects representing the first day of the month of every month in the date range
+        months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
         log.debug(f"The months in the date range are {months_in_date_range}")
         months_to_harvest = []
         
