@@ -127,7 +127,6 @@ def upload_non_COUNTER_reports():
                 annualUsageCollectionTracking.AUCT_fiscal_year,
                 statisticsSources.statistics_source_name,
                 fiscalYears.fiscal_year,
-                annualUsageCollectionTracking.notes
             FROM annualUsageCollectionTracking
             JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
             JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
