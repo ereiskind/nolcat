@@ -119,34 +119,36 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
 #Subsection: Test `StatisticsSources._check_if_data_in_database()`
-def test_check_if_data_in_database_no(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
+def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if usage for a resource and a month within the given date range is already in the database."""
-    data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
-        choice(reports_offered_by_StatisticsSource_fixture),
-        current_month_like_most_recent_month_with_usage[0],
-        current_month_like_most_recent_month_with_usage[1],
-    )
+    with client:
+        data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
+            choice(reports_offered_by_StatisticsSource_fixture),
+            current_month_like_most_recent_month_with_usage[0],
+            current_month_like_most_recent_month_with_usage[1],
+        )
     assert data_check is None
 
 
-def test_check_if_data_in_database_yes(StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, most_recent_month_with_usage, current_month_like_most_recent_month_with_usage):
+def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, most_recent_month_with_usage, current_month_like_most_recent_month_with_usage):
     """Tests if months within a range that don't have usage for a given resource are returned if some months do have usage for that resource."""
     months_to_harvest = [current_month_like_most_recent_month_with_usage[0]]
     if datetime.date.today().day < 10:
         last_month = current_month_like_most_recent_month_with_usage[0] + relativedelta(months=-1)
         months_to_harvest.append(last_month)
     
-    data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
-        choice(reports_offered_by_StatisticsSource_fixture),
-        most_recent_month_with_usage[0],
-        current_month_like_most_recent_month_with_usage[1],
-    )
+    with client:
+        data_check = StatisticsSources_fixture._check_if_data_in_database(  #TEST: Raises runtime error at nolcat/models.py:824
+            choice(reports_offered_by_StatisticsSource_fixture),
+            most_recent_month_with_usage[0],
+            current_month_like_most_recent_month_with_usage[1],
+        )
     assert data_check == months_to_harvest
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
-def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
+def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
     """Tests the method making the API call."""
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
@@ -154,13 +156,14 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
-    SUSHI_response = StatisticsSources_fixture._harvest_single_report(  #TEST: Raises runtime error at nolcat/models.py:824
-        choice(reports_offered_by_StatisticsSource_fixture),
-        SUSHI_credentials_fixture['URL'],
-        {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-        begin_date,
-        end_date,
-    )
+    with client:
+        SUSHI_response = StatisticsSources_fixture._harvest_single_report(  #TEST: Raises runtime error at nolcat/models.py:824
+            choice(reports_offered_by_StatisticsSource_fixture),
+            SUSHI_credentials_fixture['URL'],
+            {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            begin_date,
+            end_date,
+        )
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(1).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
@@ -168,9 +171,10 @@ def test_harvest_single_report(StatisticsSources_fixture, most_recent_month_with
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
-def test_harvest_R5_SUSHI(StatisticsSources_fixture, most_recent_month_with_usage):
+def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
-    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
+    with client:
+        SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(1).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
