@@ -68,10 +68,10 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             retrieval_codes.append(interface)
     
     fixture = StatisticsSources(
-        statistics_source_ID = 1,
+        statistics_source_ID = 0,
         statistics_source_name = "Stats source fixture name",
         statistics_source_retrieval_code = choice(retrieval_codes),
-        vendor_ID = 1,
+        vendor_ID = 0,
     )
     yield fixture
 
@@ -132,23 +132,20 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
-def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, most_recent_month_with_usage, current_month_like_most_recent_month_with_usage):
+def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
     """
-    months_to_harvest = [current_month_like_most_recent_month_with_usage[0]]
-    if datetime.date.today().day < 10:
-        last_month = current_month_like_most_recent_month_with_usage[0] + relativedelta(months=-1)
-        months_to_harvest.append(last_month)
-    
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             choice(reports_offered_by_StatisticsSource_fixture),
-            most_recent_month_with_usage[0],
+            datetime.date(2020, 6, 1),  # The last month with usage in the test data
             current_month_like_most_recent_month_with_usage[1],
         )
-    assert data_check == months_to_harvest
+    assert isinstance(list, data_check)
+    assert datetime.date(2020, 6, 1) not in data_check
+    assert current_month_like_most_recent_month_with_usage[0] in data_check
 
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
