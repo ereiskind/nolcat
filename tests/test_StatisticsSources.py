@@ -59,7 +59,6 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
                         retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
     
     retrieval_codes = []
-    log.info(f"Fixture `engine` returns {engine} (type {type(engine)})")
     for interface in retrieval_codes_as_interface_IDs:
         query_result = pd.read_sql(
             sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')}",

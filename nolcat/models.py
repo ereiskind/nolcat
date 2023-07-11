@@ -524,7 +524,6 @@ class StatisticsSources(db.Model):
             TBD: a data type that can be passed into Flask for display to the user
         """
         log.info("Starting `StatisticsSources.fetch_SUSHI_information()`.")
-        log.info(f"`db` is {db}")  #TEST: For engine testing only
         log.debug(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
