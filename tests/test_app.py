@@ -91,7 +91,7 @@ def test_404_page(client):
 
 
 @pytest.mark.dependency()
-def test_loading_data_into_relation(engine, vendors_relation):
+def test_loading_data_into_relation(engine, vendors_relation, caplog):  #TEST: `caplog` temporary
     """Tests loading data into and querying data from a relation.
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
