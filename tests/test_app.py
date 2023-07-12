@@ -91,11 +91,12 @@ def test_404_page(client):
 
 
 @pytest.mark.dependency()
-def test_loading_data_into_relation(engine, vendors_relation, caplog):  #TEST: `caplog` temporary
+def test_loading_data_into_relation(engine, vendors_relation):
     """Tests loading data into and querying data from a relation.
     
     This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
     """
+    print("before `to_sql` at debug level")
     vendors_relation.to_sql(
         name='vendors',
         con=engine,
@@ -104,18 +105,20 @@ def test_loading_data_into_relation(engine, vendors_relation, caplog):  #TEST: `
         chunksize=1000,
         index_label='vendor_ID',
     )
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  #TEST: Temporary
+    print("after `to_sql` at debug level")
+    print("before `read_sql` at debug level")
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
         index_col='vendor_ID',
     )
+    print("after `read_sql` at debug level")
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
-def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation):
+def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation, caplog):  #TEST: `caplog` temporary
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
@@ -127,6 +130,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
+    print("before `to_sql` at debug level")
     statisticsSources_relation.to_sql(
         name='statisticsSources',
         con=engine,
@@ -134,12 +138,17 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         chunksize=1000,
         index_label='statistics_source_ID',
     )
+    print("after `to_sql` at debug level")
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  #TEST: Temporary
+    print("caplog switches `sqlalchemy.engine` level to warning")
+    print("before `read_sql` at warning level")
     retrieved_data = pd.read_sql(
         sql="SELECT statisticsSources.statistics_source_ID, statisticsSources.statistics_source_name, statisticsSources.statistics_source_retrieval_code, vendors.vendor_name, vendors.alma_vendor_code FROM statisticsSources JOIN vendors ON statisticsSources.vendor_ID=vendors.vendor_ID ORDER BY statisticsSources.statistics_source_ID;",
         con=engine,
         index_col='statistics_source_ID'
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
+    print("after `read_sql` at warning level")
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
