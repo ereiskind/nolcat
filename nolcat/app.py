@@ -73,7 +73,9 @@ def configure_logging(app):
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    #TEST: SQLAlchemy logging statements appear when when no live log output is requested--investigate and determine if related to the to-do below
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
+    #ToDo: `pd.to_sql()` logging output begins with multiple setup statements with messages of just a pair of parentheses in between; some parentheses-only logging statements also appear in the `pd.read_sql()` output. Is there a way to remove those statements from the logging output?
     logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
     logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
     if app.debug:
