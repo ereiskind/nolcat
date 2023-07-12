@@ -74,7 +74,8 @@ def configure_logging(app):
     )
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
-    logging.getLogger('botocore').setLevel(logging.INFO)
+    logging.getLogger('botocore').setLevel(logging.INFO)  # Without this, `s3transfer` module logging doesn't appear
+    logging.getLogger('s3transfer').setLevel(logging.INFO)
     if app.debug:
         logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
 
