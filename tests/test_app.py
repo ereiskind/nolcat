@@ -104,6 +104,7 @@ def test_loading_data_into_relation(engine, vendors_relation):
         chunksize=1000,
         index_label='vendor_ID',
     )
+    caplog.set_level(log.WARNING, logger='sqlalchemy.engine')  #TEST: Temporary
     retrieved_vendors_data = pd.read_sql(
         sql="SELECT * FROM vendors;",
         con=engine,
