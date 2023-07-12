@@ -16,6 +16,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 
 from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
 from nolcat.app import create_app
+from nolcat.app import configure_logging
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
 from data import relations
 
