@@ -828,7 +828,7 @@ class StatisticsSources(db.Model):
             )
             log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")
             if number_of_records.iloc[0][0] == 0:
-                months_to_harvest.append(month_being_checked.date())
+                months_to_harvest.append(month_being_checked)
             else:
                 log.warning(f"There were records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database; {month_being_checked.strftime('%Y-%m')} won't be included in the harvested date range.")
         
