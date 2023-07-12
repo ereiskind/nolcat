@@ -167,7 +167,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             end_date,
         )
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(1).all()
+    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
@@ -178,7 +178,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     with client:
         SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(1).all()
+    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
@@ -193,7 +193,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     )
     SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(1).all()
+    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
