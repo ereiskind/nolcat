@@ -143,7 +143,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
             datetime.date(2020, 6, 1),  # The last month with usage in the test data
             current_month_like_most_recent_month_with_usage[1],
         )
-    assert isinstance(list, data_check)
+    assert isinstance(data_check, list)
     assert datetime.date(2020, 6, 1) not in data_check
     assert current_month_like_most_recent_month_with_usage[0] in data_check
 
