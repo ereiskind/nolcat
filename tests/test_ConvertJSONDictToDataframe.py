@@ -4488,8 +4488,4 @@ def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUS
 def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
-    df1 = sample_SUSHI_IR_response_dataframe.compare(
-        df[['resource_name', 'publisher', 'platform', 'authors', 'publication_date', 'article_version', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'YOP', 'access_type', 'access_method', 'parent_title', 'parent_authors', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_proprietary_ID', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date']],
-        align_axis='index',
-    )
     assert_frame_equal(df, sample_SUSHI_IR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
