@@ -98,12 +98,15 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        if form.report_to_harvest.data is None:
+        if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
+            report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         else:
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {form.report_to_harvest.data} the date range {begin_date} to {end_date}.")
+            report_to_harvest = form.report_to_harvest.data
+            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
+        
         try:
-            result_message = stats_source.collect_usage_statistics(begin_date, end_date, form.report_to_harvest.data)  #ToDo: Confirm that leaving `SUSHIParametersForm.report_to_harvest` blank returns `None`
+            result_message = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
