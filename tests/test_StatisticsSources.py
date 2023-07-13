@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-07-05 ##########
+########## Failing 2023-07-13 ##########
 
 import pytest
 import logging
@@ -50,7 +50,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O  #TEST: `ScopeMismatch: You tried to access the 'function' scoped fixture 'caplog' with a 'module' scoped request object, involved factories` causes test function to return ERROR
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)

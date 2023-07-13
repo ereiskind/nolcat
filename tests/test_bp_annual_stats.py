@@ -1,5 +1,5 @@
 """Tests the routes in the `annual_stats` blueprint."""
-########## Passing 2023-07-11 ##########
+########## Passing 2023-07-13 ##########
 
 import pytest
 import logging

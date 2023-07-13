@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2023-07-11 ##########
+########## Passing 2023-07-13 ##########
 
 import pytest
 import logging
@@ -454,6 +454,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
 def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    #Test: `caplog` means no logging appears in stdout during tests
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()`
     #Section: Submit Forms via HTTP POST

@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2023-07-10 ##########
+########## Passing 2023-07-13 ##########
 
 import pytest
 import logging
