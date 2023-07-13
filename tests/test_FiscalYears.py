@@ -220,5 +220,6 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
 
 def test_collect_fiscal_year_usage_statistics():
     """Create a test calling the StatisticsSources._harvest_R5_SUSHI method with the FiscalYears.start_date and FiscalYears.end_date as the arguments."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     #ToDo: With each year's results changing, and with each API call having the date and time of the call in it, how can matching be done?
     pass

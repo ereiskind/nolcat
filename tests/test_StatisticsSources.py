@@ -50,6 +50,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
+    #ToDo: caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
@@ -101,6 +102,8 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 @pytest.fixture(scope='module')
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     """A fixture listing all the customizable reports offered by the given statistics source."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     response = SUSHICallAndResponse(
         StatisticsSources_fixture.statistics_source_name,
@@ -152,6 +155,10 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 @pytest.mark.dependency()
 def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
     """Tests the method making the API call and turing the result into a dataframe."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    #ToDo: caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
         begin_date.year,
@@ -175,6 +182,10 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    #ToDo: caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     with client:
         SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
@@ -185,6 +196,10 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
     """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    #ToDo: caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-1)  # Using month before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = datetime.date(
         begin_date.year,
@@ -201,6 +216,10 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    #ToDo: caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     number_of_records = to_check_against.shape[0]
 

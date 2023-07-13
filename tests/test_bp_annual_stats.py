@@ -39,6 +39,7 @@ def test_GET_request_for_show_fiscal_year_details():
 
 def test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm():
     """Tests requesting an annual report."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For annual statistics calculation methods
     #ToDo: Write test
     pass
 
