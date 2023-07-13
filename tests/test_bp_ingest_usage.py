@@ -147,24 +147,35 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
-def test_GET_request_for_upload_non_COUNTER_reports(client):
+def test_GET_request_for_upload_non_COUNTER_reports(client, engine):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()`
     page = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
+    #ToDo: Uncomment below when "ingest_usage/upload-non-COUNTER-usage.html" is finished
+    #GET_select_field_options = []
+    #for child in GET_soup.find(name='select', id='statistics_source').children:
+    #    GET_select_field_options.append((
+    #        int(child['value']),
+    #        str(child.string),
+    #    ))
 
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-        #ToDo: Get the list of AUCT options presented for populating the drop-down
+    db_select_field_options = pd.read_sql(
+        sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    )
+    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     #ToDo: `assert page.status == "200 OK"` when route is completed
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
+    #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
 def test_upload_non_COUNTER_reports():
