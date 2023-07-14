@@ -193,9 +193,8 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             datetime.date(2020, 6, 1),  # The last month with usage in the test data
             datetime.date(2020, 8, 1),
         )
-    usage_dates = change_single_field_dataframe_into_series(SUSHI_response['usage_date'])
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert pd.concat([usage_dates.eq(datetime.date(2020, 7, 1)), usage_dates.eq(datetime.date(2020, 8, 1))], axis='columns').any(axis='columns').all()
+    assert pd.concat([SUSHI_response['usage_date'].eq(datetime.date(2020, 7, 1)), SUSHI_response['usage_date'].eq(datetime.date(2020, 8, 1))], axis='columns').any(axis='columns').all()
 
 
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
