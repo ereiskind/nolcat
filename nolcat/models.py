@@ -773,6 +773,7 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
+                df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
                 log.info(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 individual_month_dfs.append(df)
             log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
@@ -799,6 +800,7 @@ class StatisticsSources(db.Model):
                 return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
+            df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
             log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
             log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
             return df
