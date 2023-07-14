@@ -90,6 +90,10 @@ class SUSHICallAndResponse:
             return_dict_value = self._save_raw_Response_text(error, API_response.text, exception=True)
             log.error(return_dict_value)
             return {"ERROR": return_dict_value}
+        if isinstance(API_response, tuple) and isinstance(API_response[1], Exception):
+            return_dict_value = self._save_raw_Response_text(API_response[1], API_response[0].text, exception=True)
+            log.error(return_dict_value)
+            return {"ERROR": return_dict_value}
         if len(API_response.keys()) == 1 and list(API_response.keys()) == "ERROR":
             return_dict_value = self._save_raw_Response_text(API_response['ERROR'], API_response.text)
             log.error(return_dict_value)
@@ -248,11 +252,19 @@ class SUSHICallAndResponse:
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
             if isinstance(API_response.text, str):
-                log.info("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
-                API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+                try:
+                    log.info("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
+                    API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+                except Exception as error:
+                    log.error(f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}.")
+                    return (API_response, error)
             elif isinstance(API_response.text, list):
-                log.info(f"The returned text is in list format and is the list of reports.")
-                API_response = json.loads(API_response.content.decode('utf-8'))
+                try:
+                    log.info(f"The returned text is in list format and is the list of reports.")
+                    API_response = json.loads(API_response.content.decode('utf-8'))
+                except Exception as error:
+                    log.error(f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}.")
+                    return (API_response, error)
             else:
                 log.warning(f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead.")
                 return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."}
@@ -270,7 +282,11 @@ class SUSHICallAndResponse:
                 try:
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except:  # This will transform values that don't decode as JSONs (generally lists)
-                    API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+                    try:
+                        API_response = ast.literal_eval(API_response.content.decode('utf-8'))
+                    except Exception as error:
+                        log.error(f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}.")
+                        return (API_response, error)
                 
                 if isinstance(API_response, dict):
                     log.info("The returned text was converted to a dictionary.")
@@ -283,12 +299,20 @@ class SUSHICallAndResponse:
                     return {"ERROR": f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
             
             elif isinstance(API_response.text, dict):
-                log.info("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
-                API_response = json.loads(API_response.content.decode('utf-8'))
+                try:
+                    log.info("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
+                    API_response = json.loads(API_response.content.decode('utf-8'))
+                except Exception as error:
+                    log.error(f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}.")
+                    return (API_response, error)
             
             elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
-                log.info("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
-                API_response = json.loads(API_response[0].content.decode('utf-8'))
+                try:
+                    log.info("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
+                    API_response = json.loads(API_response[0].content.decode('utf-8'))
+                except Exception as error:
+                    log.error(f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}.")
+                    return (API_response, error)
             
             else:
                 return {"ERROR": f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."}
