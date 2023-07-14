@@ -38,7 +38,7 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
+def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
@@ -50,7 +50,6 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O  #TEST: `ScopeMismatch: You tried to access the 'function' scoped fixture 'caplog' with a 'module' scoped request object, involved factories` causes test function to return ERROR
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
