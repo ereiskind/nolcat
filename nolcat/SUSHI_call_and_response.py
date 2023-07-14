@@ -186,7 +186,7 @@ class SUSHICallAndResponse:
             # For some custom reports, the complete `API_response` value can be so long that it keeps most of the pytest log from appearing in stdout; the following is meant to prevent that
             number_of_report_items = len(API_response['Report_Items'])
             log.info(f"The SUSHI API response header: {API_response['Report_Header']}")
-            log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(number_of_report_items)]}")
+            log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(range(number_of_report_items))]}")
             if number_of_report_items < 30:
                 log.debug(f"The SUSHI API response as a JSON:\n{API_response}")
             else:
