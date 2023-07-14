@@ -99,10 +99,8 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
-def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, caplog):
+def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     """A fixture listing all the customizable reports offered by the given statistics source."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
-    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     response = SUSHICallAndResponse(
         StatisticsSources_fixture.statistics_source_name,
