@@ -5,6 +5,7 @@ import json
 import ast
 from datetime import datetime
 from pathlib import Path
+import random
 import requests
 from requests import Timeout
 import pandas as pd
@@ -167,16 +168,30 @@ class SUSHICallAndResponse:
         #Subsection: Check Reports for Data
         # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
         custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
+        number_of_report_items = len(API_response['Report_Items'])
         if custom_report_regex.search(self.call_path):
             try:
-                if len(API_response['Report_Items']) == 0:
+                if number_of_report_items == 0:
                     log.warning(f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate.")
                     return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate."}
             except TypeError:
                 log.warning(f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate.")
                 return {"ERROR": f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate."}
         
-        log.info(f"The SUSHI API response as a JSON:\n{API_response}")
+        # The complete `API_response` value can be so long that it keeps most of the pytest log from appearing in stdout; the following is meant to prevent that
+        log.info(f"The SUSHI API response header: {API_response['Report_Header']}")
+        log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(number_of_report_items)]}")
+        if number_of_report_items < 30:
+            log.debug(f"The SUSHI API response as a JSON:\n{API_response}")
+        else:
+            log.debug(f"A sample of the SUSHI API response:")
+            if number_of_report_items > 300:
+                for n in random.sample(range(number_of_report_items), k=30):
+                    log.debug(API_response['Report_Items'][n])
+            else:
+                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
+                    log.debug(API_response['Report_Items'][n])
+        
         return API_response
 
 
