@@ -175,6 +175,29 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
+@pytest.mark.dependency()
+def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
+    """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
+    
+    To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range starts with the last month covered by the test data; for efficiency, the date range only goes another two months past that point.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
+    with client:
+        SUSHI_response = StatisticsSources_fixture._harvest_single_report(
+            choice(reports_offered_by_StatisticsSource_fixture),
+            SUSHI_credentials_fixture['URL'],
+            {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            datetime.date(2020, 6, 1),  # The last month with usage in the test data
+            datetime.date(2020, 8, 1),
+        )
+    usage_dates = change_single_field_dataframe_into_series(SUSHI_response['usage_date'])
+    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
+    assert pd.concat([usage_dates.eq(datetime.date(2020, 7, 1)), usage_dates.eq(datetime.date(2020, 8, 1))], axis='columns').any(axis='columns').all()
+
+
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
 def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
