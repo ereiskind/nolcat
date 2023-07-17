@@ -240,32 +240,40 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, most_recent
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
-    to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    number_of_records = to_check_against.shape[0]
+    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
 
-    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    SQL_query = f"""
-        SELECT *
-        FROM (
-            SELECT * FROM COUNTERData
-            ORDER BY COUNTER_data_ID DESC
-            LIMIT {number_of_records}
-        ) subquery
-        ORDER BY COUNTER_data_ID ASC;
-    """
+    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date)  # This is the same method used to initiate all the SUSHI calls in the `StatisticsSources.collect_usage_statistics()` method being tested, but since the results aren't loaded into the database, the duplication check won't stop the repetition
+    method_response = StatisticsSources_fixture.collect_usage_statistics(begin_date, end_date)
+    method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response)
+
     most_recently_loaded_records = pd.read_sql(
-        sql=SQL_query,
+        sql=f"""
+            SELECT *
+            FROM (
+                SELECT * FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT {method_response_match_object.group(1)}
+            ) subquery
+            ORDER BY COUNTER_data_ID ASC;
+        """,
         con=engine,
     )
-    most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
+    #most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
     most_recently_loaded_records = most_recently_loaded_records.astype(COUNTERData.state_data_types())
     most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
     most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
     most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
     most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
-    log.info(f"`most_recently_loaded_records`:\n{return_string_of_dataframe_info(most_recently_loaded_records)}")
-    log.info(f"`to_check_against`:\n{return_string_of_dataframe_info(to_check_against)}")
-    assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
+
+    assert method_response_match_object is not None
+    log.info(f"Records from dataframe have index {most_recently_loaded_records.index.name} and fields\n{return_string_of_dataframe_info(most_recently_loaded_records)}")
+    log.info(f"Records from SUSHI have index {SUSHI_response.index.name} and fields\n{return_string_of_dataframe_info(SUSHI_response)}")
+    assert_frame_equal(most_recently_loaded_records, SUSHI_response, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
 
 
 #Section: Test `StatisticsSources.add_note()`
