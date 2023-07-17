@@ -861,7 +861,7 @@ class StatisticsSources(db.Model):
             return f"SUSHI harvesting returned the following error: {df}"
         else:
             log.debug(f"The SUSHI harvest was a success.")
-        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error; the test module can't help because pytest calls to `db.engine` raise `RuntimeError`
+        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
@@ -1163,7 +1163,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
             sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
-            con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+            con=db.engine,
         )
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
