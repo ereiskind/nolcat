@@ -4,6 +4,7 @@
 import pytest
 import logging
 from datetime import date
+import re
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
@@ -215,6 +216,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
+    assert method_result == "Successfully loaded 10 AUCT records for FY 2023 into the database."
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 

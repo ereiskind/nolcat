@@ -284,11 +284,13 @@ class FiscalYears(db.Model):
                 if_exists='append',
                 index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
             )
-            log.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
-            return f"The AUCT records load for FY {self.fiscal_year} was a success."
+            message = f"Successfully loaded {df.shape[0]} AUCT records for FY {self.fiscal_year} into the database."
+            log.info(message)
+            return message
         except Exception as error:
-            log.error(f"The AUCT records load for FY {self.fiscal_year} had the error {error}.")
-            return f"The AUCT records load for FY {self.fiscal_year} had the error {error}."
+            message = f"The AUCT records load for FY {self.fiscal_year} had the error {error}."
+            log.error(message)
+            return message
 
 
     @hybrid_method
@@ -319,11 +321,13 @@ class FiscalYears(db.Model):
             #ToDo:     if_exists='append',
             #ToDo:     index_label='COUNTER_data_ID',
             #ToDo: )
-            #ToDo: log.info(f"The load for FY {self.fiscal_year} was a success.")
-            #ToDo: return f"The load for FY {self.fiscal_year} was a success."
+            #ToDo: message = f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
+            #ToDo: log.info(message)
+            #ToDo: return message
         #ToDo: except Exception as e:
-            #ToDo: log.error(f"The load for FY {self.fiscal_year} had the error {error}.")
-            #ToDo: return f"The load for FY {self.fiscal_year} had the error {error}."
+        #ToDo: message = f"The load for FY {self.fiscal_year} had the error {error}."
+            #ToDo: log.error(message)
+            #ToDo: return message
         pass
 
 
@@ -870,12 +874,13 @@ class StatisticsSources(db.Model):
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            log.info("The load was a success.")
-            return "The load was a success."
+            message = f"Successfully loaded {df.shape[0]} records into the database."
+            log.info(message)
+            return message
         except Exception as error:
-            log.error(f"The load had the error {error}.")
-            return f"The load had the error {error}."
-
+            message = f"The load had the error {error}."
+            log.error(message)
+            return message
 
     @hybrid_method
     def add_note(self):
@@ -1198,12 +1203,14 @@ class AnnualUsageCollectionTracking(db.Model):
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            log.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
+            message = f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
+            log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
+            return message
         except Exception as error:
-            log.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}.")
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
+            message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
+            log.error(message)
+            return message
 
 
     @hybrid_method

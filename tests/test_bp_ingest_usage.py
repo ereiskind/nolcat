@@ -7,6 +7,7 @@ import json
 from random import choice
 from pathlib import Path
 import os
+import re
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -144,7 +145,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(client, engine, caplog):
