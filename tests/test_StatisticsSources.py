@@ -262,6 +262,8 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, most_recent
     most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
     most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
     most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
+    log.info(f"`most_recently_loaded_records`:\n{return_string_of_dataframe_info(most_recently_loaded_records)}")
+    log.info(f"`to_check_against`:\n{return_string_of_dataframe_info(to_check_against)}")
     assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
 
 
