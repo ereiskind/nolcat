@@ -347,7 +347,7 @@ class SUSHICallAndResponse:
             con=db.engine,
         )
         temp_file_path = Path().resolve() / 'temp.txt'
-        with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+        with open(temp_file_path, 'xb', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
             file.write(Response_text)
         
         upload_file_to_S3_bucket(
