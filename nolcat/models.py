@@ -728,7 +728,12 @@ class StatisticsSources(db.Model):
 
 
             #Section: Return a Single Dataframe
-            return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            try:
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            except ValueError as error:
+                message = f"The harvested reports couldn't be combined because of the error {error}."
+                log.warning(message)
+                return message
 
 
     @hybrid_method
@@ -781,8 +786,13 @@ class StatisticsSources(db.Model):
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-            log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
-            return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            if len(individual_month_dfs) == 0:
+                message = f""
+                log.warning(message)
+                return message
+            else:
+                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+                return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
