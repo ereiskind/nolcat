@@ -35,14 +35,14 @@ class ConvertJSONDictToDataframe:
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
-    RESOURCE_NAME_LENGTH = 2000
-    PUBLISHER_LENGTH = 225
+    RESOURCE_NAME_LENGTH = 3600
+    PUBLISHER_LENGTH = 425
     PUBLISHER_ID_LENGTH = 50
-    PLATFORM_LENGTH = 75
-    AUTHORS_LENGTH = 1000
+    PLATFORM_LENGTH = 135
+    AUTHORS_LENGTH = 1800
     DOI_LENGTH = 75
     PROPRIETARY_ID_LENGTH = 100
-    URI_LENGTH = 250
+    URI_LENGTH = 450
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
