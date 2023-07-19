@@ -1,7 +1,8 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## No database interaction ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 import json
@@ -10,9 +11,12 @@ from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
+from nolcat.models import *
+
+log = logging.getLogger(__name__)
 
 #Section: Fixtures
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_PR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -20,7 +24,7 @@ def sample_SUSHI_PR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_DR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -28,7 +32,7 @@ def sample_SUSHI_DR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_TR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -36,7 +40,7 @@ def sample_SUSHI_TR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_IR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -44,7 +48,7 @@ def sample_SUSHI_IR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_PR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -143,18 +147,18 @@ def sample_SUSHI_PR_response_dataframe():
         columns=['platform', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],
     )
     df = df.astype({
-        'platform': 'string',
-        'data_type': 'string',
-        'access_method': 'string',
-        'metric_type': 'string',
-        'usage_count': 'int',
+        'platform': COUNTERData.state_data_types()['platform'],
+        'data_type': COUNTERData.state_data_types()['data_type'],
+        'access_method': COUNTERData.state_data_types()['access_method'],
+        'metric_type': COUNTERData.state_data_types()['metric_type'],
+        'usage_count': COUNTERData.state_data_types()['usage_count'],
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_DR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -564,21 +568,21 @@ def sample_SUSHI_DR_response_dataframe():
         columns=['resource_name', 'publisher', 'platform', 'proprietary_ID', 'data_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],  # All of the values in the `publisher_ID` field were null values, so the field isn't created
     )
     df = df.astype({
-        'resource_name': 'string',
-        'publisher': 'string',
-        'platform': 'string',
-        'proprietary_ID': 'string',
-        'data_type': 'string',
-        'access_method': 'string',
-        'metric_type': 'string',
-        'usage_count': 'int',
+        'resource_name': COUNTERData.state_data_types()['resource_name'],
+        'publisher': COUNTERData.state_data_types()['publisher'],
+        'platform': COUNTERData.state_data_types()['platform'],
+        'proprietary_ID': COUNTERData.state_data_types()['proprietary_ID'],
+        'data_type': COUNTERData.state_data_types()['data_type'],
+        'access_method': COUNTERData.state_data_types()['access_method'],
+        'metric_type': COUNTERData.state_data_types()['metric_type'],
+        'usage_count': COUNTERData.state_data_types()['usage_count'],
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_TR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -603,26 +607,26 @@ def sample_SUSHI_TR_response_dataframe():
         columns=['resource_name', 'publisher', 'platform', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'section_type', 'YOP', 'access_type', 'access_method', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],  # Fields where all values are null removed from dataframe
     )
     df = df.astype({
-        'resource_name': 'string',
-        'publisher': 'string',
-        'platform': 'string',
-        'DOI': 'string',
-        'proprietary_ID': 'string',
-        'ISBN': 'string',
-        'data_type': 'string',
-        'section_type': 'string',
-        'YOP': 'Int64',
-        'access_type': 'string',
-        'access_method': 'string',
-        'metric_type': 'string',
-        'usage_count': 'int',
+        'resource_name': COUNTERData.state_data_types()['resource_name'],
+        'publisher': COUNTERData.state_data_types()['publisher'],
+        'platform': COUNTERData.state_data_types()['platform'],
+        'DOI': COUNTERData.state_data_types()['DOI'],
+        'proprietary_ID': COUNTERData.state_data_types()['proprietary_ID'],
+        'ISBN': COUNTERData.state_data_types()['ISBN'],
+        'data_type': COUNTERData.state_data_types()['data_type'],
+        'section_type': COUNTERData.state_data_types()['section_type'],
+        'YOP': COUNTERData.state_data_types()['YOP'],
+        'access_type': COUNTERData.state_data_types()['access_type'],
+        'access_method': COUNTERData.state_data_types()['access_method'],
+        'metric_type': COUNTERData.state_data_types()['metric_type'],
+        'usage_count': COUNTERData.state_data_types()['usage_count'],
     })
     df['usage_date'] = pd.to_datetime(df['usage_date'])
     df['report_creation_date'] = pd.to_datetime(df['report_creation_date'])
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_IR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -4432,28 +4436,28 @@ def sample_SUSHI_IR_response_dataframe():
         columns=['resource_name', 'publisher', 'platform', 'authors', 'publication_date', 'article_version', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'YOP', 'access_type', 'access_method', 'parent_title', 'parent_authors', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_proprietary_ID', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date'],  # Fields where all values are null removed from dataframe
     )
     df = df.astype({
-        'resource_name': 'string',
-        'publisher': 'string',
-        'platform': 'string',
-        'authors': 'string',
-        'article_version': 'string',
-        'DOI': 'string',
-        'proprietary_ID': 'string',
-        'ISBN': 'string',
-        'data_type': 'string',
-        'YOP': 'Int64',
-        'access_type': 'string',
-        'access_method': 'string',
-        'parent_title': 'string',
-        'parent_authors': 'string',
-        'parent_data_type': 'string',
-        'parent_DOI': 'string',
-        'parent_proprietary_ID': 'string',
-        'parent_ISBN': 'string',
-        'parent_print_ISSN': 'string',
-        'parent_online_ISSN': 'string',
-        'metric_type': 'string',
-        'usage_count': 'int',
+        'resource_name': COUNTERData.state_data_types()['resource_name'],
+        'publisher': COUNTERData.state_data_types()['publisher'],
+        'platform': COUNTERData.state_data_types()['platform'],
+        'authors': COUNTERData.state_data_types()['authors'],
+        'article_version': COUNTERData.state_data_types()['article_version'],
+        'DOI': COUNTERData.state_data_types()['DOI'],
+        'proprietary_ID': COUNTERData.state_data_types()['proprietary_ID'],
+        'ISBN': COUNTERData.state_data_types()['ISBN'],
+        'data_type': COUNTERData.state_data_types()['data_type'],
+        'YOP': COUNTERData.state_data_types()['YOP'],
+        'access_type': COUNTERData.state_data_types()['access_type'],
+        'access_method': COUNTERData.state_data_types()['access_method'],
+        'parent_title': COUNTERData.state_data_types()['parent_title'],
+        'parent_authors': COUNTERData.state_data_types()['parent_authors'],
+        'parent_data_type': COUNTERData.state_data_types()['parent_data_type'],
+        'parent_DOI': COUNTERData.state_data_types()['parent_DOI'],
+        'parent_proprietary_ID': COUNTERData.state_data_types()['parent_proprietary_ID'],
+        'parent_ISBN': COUNTERData.state_data_types()['parent_ISBN'],
+        'parent_print_ISSN': COUNTERData.state_data_types()['parent_print_ISSN'],
+        'parent_online_ISSN': COUNTERData.state_data_types()['parent_online_ISSN'],
+        'metric_type': COUNTERData.state_data_types()['metric_type'],
+        'usage_count': COUNTERData.state_data_types()['usage_count'],
     })
     df['publication_date'] = pd.to_datetime(df['publication_date'])
     df['parent_publication_date'] = pd.to_datetime(df['parent_publication_date'])
@@ -4484,8 +4488,4 @@ def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUS
 def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
-    df1 = sample_SUSHI_IR_response_dataframe.compare(
-        df[['resource_name', 'publisher', 'platform', 'authors', 'publication_date', 'article_version', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'YOP', 'access_type', 'access_method', 'parent_title', 'parent_authors', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_proprietary_ID', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date']],
-        align_axis='index',
-    )
     assert_frame_equal(df, sample_SUSHI_IR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order

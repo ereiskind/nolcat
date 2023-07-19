@@ -7,16 +7,19 @@ To Investigate
 This is a list of issues encountered over the course of development that require further investigation.
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
+* J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
+* JSTOR status call returned ``None`` 2023-06-08
+* Morgan & Claypool raised ``HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))``
 * Certificate issues raising errors with
 
   * *Allen Press/Pinnacle Hosting*: ``HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))``
   * *Grain Science Library*: ``HTTPSConnectionPool(host='aaccipublications.aaccnet.org', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'aaccipublications.aaccnet.org' doesn't match either of '*.scientificsocieties.org', 'scientificsocieties.org'")))``
   * *Adam matthew*: ``HTTPSConnectionPool(host='www.counter.amdigital.co.uk', port=443): Max retries exceeded with url: /CounterSushi5Api/status?... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1131)')))``
+  * *Sciendo*: ``HTTPSConnectionPool(host='ams.degruyter.com', port=443): Max retries exceeded with url: /rest/COUNTER/v5/status?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fb5414a4520>: Failed to establish a new connection: [Errno -2] Name or service not known'))``
 
 Planned Iterations
 ******************
-* Write ``nolcat.app.upload_file_to_S3_bucket()``
-* Write ``tests.test_app.test_upload_file_to_S3_bucket()``
+* Add duplication check to ``ingest_usage.views.upload_COUNTER_reports()``
 * Create R5.1 test data JSONs
 
   * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
@@ -36,7 +39,15 @@ Iteration 2: COUNTER Only Product
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 
-Iteration 3: Minimum Viable Product
+Iteration 3: Create CSV Downloads from COUNTER Data
+===================================================
+* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
+* Finish "query-wizard.html"
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
+* Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
+
+Iteration 4: Minimum Viable Product
 ===================================
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
@@ -55,24 +66,10 @@ Iteration 3: Minimum Viable Product
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 * Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
 
-Iteration 4: Minimum Viable Product with Tests and Test Database
+Iteration 5: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources below have been consulted in multiple attempts to get this set up, but have thus far proven unsuccessful.
-
-    * https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-    * https://flask.palletsprojects.com/en/2.0.x/testing/
-    * https://porter.codes/2020/07/24/Pytest-Sqlalchemy-Test-Fixutres.html
-    * https://spotofdata.com/flask-testing/
-    * http://alexmic.net/flask-sqlalchemy-pytest/
-    * https://www.patricksoftwareblog.com/unit-testing-a-flask-application/ (this uses unittest instead of pytest)
-    * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
-    * Possibly https://github.com/ClearcodeHQ/pytest-mysql
-    * Possibly https://pypi.org/project/pytest-sqlalchemy/
-    * https://medium.com/@geoffreykoh/fun-with-fixtures-for-database-applications-8253eaf1a6d
-    * Add https://pypi.org/project/pycodestyle/ at this point?
-    * Possibly use https://pypi.org/project/pytest-order/ ?
-
-* Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``
+* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
+* Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
@@ -80,7 +77,6 @@ Iteration 4: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
-* Write test for ``nolcat.app.upload_file_to_S3_bucket()``
 
 Basic Enhancement Iterations
 ****************************
@@ -128,26 +124,18 @@ Iteration 4: Add Notes
 * Write ``nolcat.models.ResourceSources.add_note()``
 * Write ``tests.test_ResourceSources.test_add_note()``
 
-Iteration 5: Create CSV Downloads from COUNTER Data
-===================================================
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
-* Finish "query-wizard.html"
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
-* Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
-
-Iteration 6: Create Drop-Down Lists
+Iteration 5: Create Drop-Down Lists
 ===================================
 * If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
 * If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field
 
-Iteration 7: Create Query Wizard
+Iteration 6: Create Query Wizard
 ================================
 * Craft queries to use
 * Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
 
-Iteration 8: Show Fiscal Year Information
+Iteration 7: Show Fiscal Year Information
 =========================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.views.show_fiscal_year_details()``
@@ -158,26 +146,24 @@ Iteration 8: Show Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 
-Iteration 9: Show Annual Usage Collection Tracking Information
+Iteration 8: Show Annual Usage Collection Tracking Information
 ==============================================================
 * Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 10: Initiate All SUSHI Collection for Fiscal Year
+Iteration 9: Initiate All SUSHI Collection for Fiscal Year
 ===========================================================
 * Finish ``nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 
-Iteration 11: Switch Message Display from Stdout to Flask
+Iteration 10: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
-* Make return statements with strings in ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` display in Flask
-* Make return statements with key "ERROR" in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse.make_SUSHI_call()`` display in Flask
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 
-Iteration 12: Create UI Design and Jinja Templates
+Iteration 11: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages

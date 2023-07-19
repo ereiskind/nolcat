@@ -1,14 +1,17 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## No database interaction ##########
+########## Passing 2023-07-19 ##########
 
+import pytest
+import logging
 import calendar
 from datetime import date
 import re
-import pytest
 import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
+
+log = logging.getLogger(__name__)
 
 """ About this test module:
 There are two ways in which the result of an API call made via the `SUSHICallAndResponse` class can be considered to be an error: there can be a Python run-time error which causes the program to crash, or there can be an invalid response to the API call resulting from either a run-time error handled in the program or a SUSHI error. This test module contains tests for both conditions: `test_status_call` and `test_reports_call` test that API calls to the `status` and `reports` endpoints can be made without run-time errors, while the `test_status_call_validity`, `test_reports_call_validity`, `test_PR_call_validity`, `test_DR_call_validity`, and `test_IR_call_validity` tests check that the API call returns a valid SUSHI response that the rest of the program can use. The customizable report calls aren't checked for run-time errors because 1) the chance of a run-time error for a customizable report call when the status and reports calls were file is low and 2) the conditional expression that would trigger a `skipif` decorator if another test was skipped couldn't be found.
@@ -71,16 +74,18 @@ def SUSHI_credentials_fixture():
 
 
 @pytest.mark.dependency()
-def test_status_call(SUSHI_credentials_fixture):
+def test_status_call(SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
-    assert repr(type(response)) == "<class 'dict'>" or repr(type(response[0])) == "<class 'dict'>"  # EBSCO's is a dict inside a list as of 2022-12-14
+    assert isinstance(response, dict) or isinstance(response[0], dict)  # EBSCO's is a dict inside a list as of 2022-12-14
 
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
-def test_status_call_validity(SUSHI_credentials_fixture):
+def test_status_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``status`` endpoint return a valid SUSHI status response."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
@@ -92,16 +97,18 @@ def test_status_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency()
-def test_reports_call(SUSHI_credentials_fixture):
+def test_reports_call(SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    assert repr(type(response)) == "<class 'dict'>"
+    assert isinstance(response, dict)
 
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
-def test_reports_call_validity(SUSHI_credentials_fixture):
+def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports`` endpoint return a valid SUSHI list of reports."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     list_of_reports = [report for report in list(response.values())[0]]
@@ -115,8 +122,9 @@ def test_reports_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_PR_call_validity(SUSHI_credentials_fixture):
+def test_PR_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
@@ -131,8 +139,9 @@ def test_PR_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_DR_call_validity(SUSHI_credentials_fixture):
+def test_DR_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
@@ -147,8 +156,9 @@ def test_DR_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_TR_call_validity(SUSHI_credentials_fixture):
+def test_TR_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
@@ -163,8 +173,9 @@ def test_TR_call_validity(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_IR_call_validity(SUSHI_credentials_fixture):
+def test_IR_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False

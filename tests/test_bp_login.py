@@ -1,14 +1,17 @@
 """Tests the routes in the `login` blueprint."""
-########## Unknown ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import *
 from nolcat.login import *
+
+log = logging.getLogger(__name__)
 
 
 def test_login_homepage(client):

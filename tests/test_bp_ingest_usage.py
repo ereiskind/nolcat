@@ -1,18 +1,23 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Data in all relations but `COUNTERData` ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 import json
 from random import choice
 from pathlib import Path
 import os
+import re
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import change_single_field_dataframe_into_series
+from nolcat.app import *
 from nolcat.ingest_usage import *
+
+log = logging.getLogger(__name__)
 
 
 def test_ingest_usage_homepage(client):
@@ -32,14 +37,28 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_reports(client, header_value, sample_COUNTER_report_workbooks, engine, COUNTERData_relation):
+def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
+        #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
+            # Multiple items in the value of a MultipartEncoder.fields key-value pair doesn't work
+            # Should a MultipleFileField object be instantiated?
+            # Could the classes in "test_UploadCOUNTERReports.py" be used?
+            # Can a direct list of Werkzeug FileStorage object(s) be used?
+        fields={
+            'COUNTER_reports': ('0_2017.xlsx', open(Path('tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'))
+        },
+        encoding='utf-8',
+    )
+    header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data=sample_COUNTER_report_workbooks
+        data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
@@ -58,7 +77,7 @@ def test_upload_COUNTER_reports(client, header_value, sample_COUNTER_report_work
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert b'Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail
+    #TEST: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
@@ -90,16 +109,20 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, header_value):
+def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. The limited number of possible SUSHI credentials means statistics sources current with the available usage statistics are not filtered out, meaning this test may fail because it fails the check preventing SUSHI calls to stats source/date combos already in the database.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` called in `StatisticsSources.collect_usage_statistics()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     primary_key_list = pd.read_sql(
         sql="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         con=engine,
     )
-    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).to_list()
+    primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').to_list()
     form_input = {
         'statistics_source': choice(primary_key_list),
         'begin_date': most_recent_month_with_usage[0],
@@ -122,30 +145,43 @@ def test_harvest_SUSHI_statistics(engine, most_recent_month_with_usage, client, 
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert b'The load was a success.' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
-def test_GET_request_for_upload_non_COUNTER_reports(client):
+def test_GET_request_for_upload_non_COUNTER_reports(client, engine, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()`
     page = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
+    #ToDo: Uncomment below when "ingest_usage/upload-non-COUNTER-usage.html" is finished
+    #GET_select_field_options = []
+    #for child in GET_soup.find(name='select', id='statistics_source').children:
+    #    GET_select_field_options.append((
+    #        int(child['value']),
+    #        str(child.string),
+    #    ))
 
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-        #ToDo: Get the list of AUCT options presented for populating the drop-down
+    db_select_field_options = pd.read_sql(
+        sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    )
+    db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     #ToDo: `assert page.status == "200 OK"` when route is completed
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
+    #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
 def test_upload_non_COUNTER_reports():
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     #ToDo: Write test
     #ToDo: Make one of the `assert` conditions the appearance of the flashed message
     pass

@@ -1,10 +1,13 @@
 """Tests the methods in Vendors."""
-########## Data in all relations but `COUNTERData` ##########
+########## No tests written 2023-07-11 ##########
 
 import pytest
+import logging
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import Vendors
+
+log = logging.getLogger(__name__)
 
 
 def test_get_statisticsSources_records():

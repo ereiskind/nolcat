@@ -7,12 +7,11 @@ from flask import url_for
 import pandas as pd
 
 from . import bp
-from .forms import ChooseFiscalYearForm, RunAnnualStatsMethodsForm, EditFiscalYearForm, EditAUCTForm
-from ..app import db
-#from ..models import <name of SQLAlchemy classes used in views below>
+from .forms import *
+from ..app import *
+from ..models import *
 
-
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -31,7 +30,7 @@ def annual_stats_homepage():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -48,31 +47,14 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             sql=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
             con=db.engine,
         )
-        fiscal_year_details = fiscal_year_details.astype({
-            "fiscal_year": 'string',
-            "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
-            "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
-            "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
-            "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
-            "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
-            "notes_on_statisticsSources_used": 'string',  # For `text` data type
-            "notes_on_corrections_after_submission": 'string',  # For `text` data type
-        })
+        fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
         fiscal_year_reporting = pd.read_sql(
             sql=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
             con=db.engine,
             index_col='AUCT_statistics_source',
         )
-        fiscal_year_reporting = fiscal_year_reporting.astype({
-            "usage_is_being_collected": 'boolean',
-            "manual_collection_required": 'boolean',
-            "collection_via_email": 'boolean',
-            "is_COUNTER_compliant": 'boolean',
-            "collection_status": 'string',  # For `enum` data type
-            "usage_file_path": 'string',
-            "notes": 'string',  # For `text` data type
-        })
+        fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
         return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
     elif run_annual_stats_methods_form.validate_on_submit():
@@ -101,5 +83,5 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
         #ToDo: Get values below for the form submitted
-        #ToDo: logging.warning(f"`form.errors`: {form.errors}")
+        #ToDo: log.error(f"`form.errors`: {form.errors}")
         return abort(404)

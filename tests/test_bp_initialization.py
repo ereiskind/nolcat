@@ -1,20 +1,35 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Data in no relations ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from pandas.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal
+from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import date_parser, change_single_field_dataframe_into_series
+from nolcat.app import *
+from nolcat.models import *
 from nolcat.initialization import *
+
+log = logging.getLogger(__name__)
 
 
 #Section: Fixtures
+@pytest.fixture
+def blank_annualUsageCollectionTracking_data_types():
+    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types."""
+    yield {
+        **AnnualUsageCollectionTracking.state_data_types(),  # The double asterisk is the dictionary unpacking operator
+        "Statistics Source": StatisticsSources.state_data_types()['statistics_source_name'],
+        "Fiscal Year": FiscalYears.state_data_types()['fiscal_year'],
+    }
+
+
 @pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
     """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test."""
@@ -112,7 +127,7 @@ def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSource
 
 
 @pytest.fixture
-def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
+def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUsageCollectionTracking_data_types):
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
     The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. The dataframe and subsequent CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function contains null values in the relation's non-index fields, extra fields for the statistics source and fiscal year name, and records for statistics source and fiscal year combinations that don't actually exist. To test the CSV creation, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
@@ -213,17 +228,7 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path):
         index=multiindex,
         columns=["Statistics Source", "Fiscal Year", "usage_is_being_collected", "manual_collection_required", "collection_via_email", "is_COUNTER_compliant", "collection_status", "usage_file_path", "notes"],
     )
-    df = df.astype({
-        "Statistics Source": 'string',
-        "Fiscal Year": 'string',
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',
-        "usage_file_path": 'string',
-        "notes": 'string',
-    })
+    df = df.astype(blank_annualUsageCollectionTracking_data_types)
     yield df.to_csv(
         tmp_path / 'annualUsageCollectionTracking_relation.csv',
         index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
@@ -252,7 +257,7 @@ def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
         tmp_path / 'COUNTERData_relation.csv',
         index_label="COUNTER_data_ID",
         encoding='utf-8',
-        errors='backslashreplace',  
+        errors='backslashreplace',
     )
     os.remove(tmp_path / 'COUNTERData_relation.csv')
 
@@ -282,7 +287,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -308,16 +313,7 @@ def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, crea
         con=engine,
         index_col='fiscal_year_ID',
     )
-    fiscalYears_relation_data = fiscalYears_relation_data.astype({
-        "fiscal_year": 'string',
-        "ACRL_60b": 'Int64',  # Using the pandas data type here because it allows null values
-        "ACRL_63": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_18": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_19": 'Int64',  # Using the pandas data type here because it allows null values
-        "ARL_20": 'Int64',  # Using the pandas data type here because it allows null values
-        "notes_on_statisticsSources_used": 'string',  # For `text` data type
-        "notes_on_corrections_after_submission": 'string',  # For `text` data type
-    })
+    fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
@@ -326,21 +322,14 @@ def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, crea
         con=engine,
         index_col='vendor_ID',
     )
-    vendors_relation_data = vendors_relation_data.astype({
-        "vendor_name": 'string',
-        "alma_vendor_code": 'string',
-    })
+    vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
     vendorNotes_relation_data = pd.read_sql(
         sql="SELECT * FROM vendorNotes;",
         con=engine,
         index_col='vendor_notes_ID',
     )
-    vendorNotes_relation_data = vendorNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "vendor_ID": 'int',
-    })
+    vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
     #Section: Assert Statements
@@ -359,7 +348,7 @@ def test_collect_FY_and_vendor_data(tmp_path, header_value, client, engine, crea
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(tmp_path, header_value, client, engine, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_sources_data(client, engine, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -387,11 +376,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         con=engine,
         index_col='statistics_source_ID',
     )
-    statisticsSources_relation_data = statisticsSources_relation_data.astype({
-        "statistics_source_name": 'string',
-        "statistics_source_retrieval_code": 'string',
-        "vendor_ID": 'int',
-    })
+    statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
     statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
     statisticsSourceNotes_relation_data = pd.read_sql(
@@ -399,11 +384,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         con=engine,
         index_col='statistics_source_notes_ID',
     )
-    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "statistics_source_ID": 'int',
-    })
+    statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
     resourceSources_relation_data = pd.read_sql(
@@ -411,11 +392,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         con=engine,
         index_col='resource_source_ID',
     )
-    resourceSources_relation_data = resourceSources_relation_data.astype({
-        "resource_source_name": 'string',
-        "source_in_use": 'boolean',
-        "vendor_ID": 'int',
-    })
+    resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
 
     resourceSourceNotes_relation_data = pd.read_sql(
@@ -423,11 +400,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         con=engine,
         index_col='resource_source_notes_ID',
     )
-    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype({
-        "note": 'string',  # For `text` data type
-        "written_by": 'string',
-        "resource_source_ID": 'int',
-    })
+    resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
     statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
@@ -436,9 +409,7 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
         index_col=['SRS_statistics_source', 'SRS_resource_source'],
     )
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
-    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype({
-        "current_statistics_source": 'boolean',
-    })
+    statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
@@ -458,25 +429,14 @@ def test_collect_sources_data(tmp_path, header_value, client, engine, create_sta
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file):
+def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
-    df_dtypes = {  # Initialized here for reusability
-        "Statistics Source": 'string',
-        "Fiscal Year": 'string',
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
-    }
     path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
     AUCT_template_df = pd.read_csv(
         path_to_template,  #ToDo: When download functionality is set up, download CSV and read it into dataframe
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        dtype=df_dtypes,
+        dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -484,7 +444,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     AUCT_fixture_df = pd.read_csv(
         path_to_fixture,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
-        dtype=df_dtypes,
+        dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -492,13 +452,17 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client, engine, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, sample_COUNTER_report_workbooks, COUNTERData_relation):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
+    caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()`
     #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
-            #'COUNTER_reports': sample_COUNTER_report_workbooks,  #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
+            #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
+            #'COUNTER_reports': #TEST: Unable to find way to submit multiple files to a single MultipleFileFields field; commented-out sections won't work or pass until a method is found
+            #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
     )
@@ -517,53 +481,14 @@ def test_collect_AUCT_and_historical_COUNTER_data(tmp_path, header_value, client
         con=engine,
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
-    annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype({
-        "usage_is_being_collected": 'boolean',
-        "manual_collection_required": 'boolean',
-        "collection_via_email": 'boolean',
-        "is_COUNTER_compliant": 'boolean',
-        "collection_status": 'string',  # For `enum` data type
-        "usage_file_path": 'string',
-        "notes": 'string',  # For `text` data type
-    })
+    annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
     #COUNTERData_relation_data = pd.read_sql(
     #    sql="SELECT * FROM COUNTERData;",
     #    con=engine,
     #    index_col="COUNTER_data_ID",
     #)
-    #COUNTERData_relation_data = COUNTERData_relation_data.astype({
-    #    "statistics_source_ID": 'int',
-    #    "report_type": 'string',
-    #    "resource_name": 'string',
-    #    "publisher": 'string',
-    #    "publisher_ID": 'string',
-    #    "platform": 'string',
-    #    "authors": 'string',
-    #    "article_version": 'string',
-    #    "DOI": 'string',
-    #    "proprietary_ID": 'string',
-    #    "ISBN": 'string',
-    #    "print_ISSN": 'string',
-    #    "online_ISSN": 'string',
-    #    "URI": 'string',
-    #    "data_type": 'string',
-    #    "section_type": 'string',
-    #    "YOP": 'Int64',  # Using the pandas data type here because it allows null values
-    #    "access_type": 'string',
-    #    "access_method": 'string',
-    #    "parent_title": 'string',
-    #    "parent_authors": 'string',
-    #    "parent_article_version": 'string',
-    #    "parent_data_type": 'string',
-    #    "parent_DOI": 'string',
-    #    "parent_proprietary_ID": 'string',
-    #    "parent_ISBN": 'string',
-    #    "parent_print_ISSN": 'string',
-    #    "parent_online_ISSN": 'string',
-    #    "parent_URI": 'string',
-    #    "metric_type": 'string',
-    #})
+    #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
     #COUNTERData_relation_data["usage_date"] = pd.to_datetime(COUNTERData_relation_data["usage_date"])

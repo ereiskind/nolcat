@@ -11,12 +11,11 @@ from flask import Response
 import pandas as pd
 
 from . import bp
-from .forms import CustomSQLQueryForm, QueryWizardForm, ChooseNonCOUNTERDownloadForm
-from ..app import db
-#from ..models import <name of SQLAlchemy classes used in views below>
+from .forms import *
+from ..app import *
+from ..models import *
 
-
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")  # This formatting puts the appearance of these logging messages largely in line with those of the Flask logging messages
+log = logging.getLogger(__name__)
 
 
 @bp.route('/')
@@ -47,7 +46,7 @@ def run_custom_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -174,7 +173,7 @@ def use_predefined_SQL_query():
             headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)
 
 
@@ -197,7 +196,7 @@ def download_non_COUNTER_usage():
             sql=SQL_query,
             con=db.engine,
         )
-        file_download_options['field_display'] = file_download_options[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices`
+        file_download_options['field_display'] = file_download_options[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
         form.file_download.choices = list(file_download_options[['usage_file_path', 'field_display']].itertuples(index=False, name=None))
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
@@ -238,5 +237,5 @@ def download_non_COUNTER_usage():
             headers={'Content-disposition': f'attachment; filename={download_name}'},
         )
     else:
-        logging.warning(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")
         return abort(404)

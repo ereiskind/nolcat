@@ -1,14 +1,17 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Data in all relations ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.app import create_app
+from nolcat.app import *
 from nolcat.view_usage import *
+
+log = logging.getLogger(__name__)
 
 
 def test_view_usage_homepage(client):
@@ -68,5 +71,6 @@ def test_GET_request_for_download_non_COUNTER_usage(client):
 
 def test_download_non_COUNTER_usage():
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
+    #ToDo: In the test data, all `annualUsageCollectionTracking.usage_file_path` values are null, so nothing is available to select in the form
     #ToDo: Write test
     pass
