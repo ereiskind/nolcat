@@ -193,6 +193,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             datetime.date(2020, 6, 1),  # The last month with usage in the test data
             datetime.date(2020, 8, 1),
         )
+    #Test: Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
