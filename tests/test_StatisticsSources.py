@@ -319,13 +319,11 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
     recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
 
-    log.info(f"Records from dataframe have fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
-    log.info(f"Records from SUSHI have fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result)}")
     try:
         log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
     except:
-        log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index}")
-        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index}")
+        log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
+        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
     assert_frame_equal(recently_loaded_records_for_comparison, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 #Section: Test `StatisticsSources.add_note()`
