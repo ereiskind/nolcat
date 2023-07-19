@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 
 def test_collect_annual_usage_statistics():
     """Test calling the StatisticsSources._harvest_R5_SUSHI method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     #ToDo: Get the data from the other relations, then call the method
     pass
 

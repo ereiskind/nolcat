@@ -122,6 +122,7 @@ class FiscalYears(db.Model):
         Returns:
             int: the answer to ACRL 60b
         """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = pd.read_sql(
             sql=f'''
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -167,6 +168,7 @@ class FiscalYears(db.Model):
         Returns:
             int: the answer to ACRL 63
         """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
         df = pd.read_sql(
             sql=f'''
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -188,6 +190,7 @@ class FiscalYears(db.Model):
         Returns:
             int: the answer to ARL 18
         """
+        log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
         df = pd.read_sql(
             sql=f'''
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -209,6 +212,7 @@ class FiscalYears(db.Model):
         Returns:
             int: the answer to ARL 19
         """
+        log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
         df = pd.read_sql(
             sql=f'''
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -230,6 +234,7 @@ class FiscalYears(db.Model):
         Returns:
             int: the answer to ARL 20
         """
+        log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
         df = pd.read_sql(
             sql=f'''
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -251,6 +256,7 @@ class FiscalYears(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
         current_statistics_sources = pd.read_sql(
             sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
@@ -284,11 +290,13 @@ class FiscalYears(db.Model):
                 if_exists='append',
                 index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
             )
-            log.info(f"The AUCT records load for FY {self.fiscal_year} was a success.")
-            return f"The AUCT records load for FY {self.fiscal_year} was a success."
+            message = f"Successfully loaded {df.shape[0]} AUCT records for FY {self.fiscal_year} into the database."
+            log.info(message)
+            return message
         except Exception as error:
-            log.error(f"The AUCT records load for FY {self.fiscal_year} had the error {error}.")
-            return f"The AUCT records load for FY {self.fiscal_year} had the error {error}."
+            message = f"The AUCT records load for FY {self.fiscal_year} had the error {error}."
+            log.error(message)
+            return message
 
 
     @hybrid_method
@@ -300,14 +308,16 @@ class FiscalYears(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #ToDo: dfs = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
             #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: if isinstance(df, str):
-                #ToDo: return f"SUSHI harvesting returned the following error: {df}"
+                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {df}")
+                #ToDo: continue
             #ToDo: else:
-                #ToDo: log.debug("The SUSHI harvest was a success")
+                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
         #ToDo: df = pd.concat(dfs)
@@ -319,11 +329,13 @@ class FiscalYears(db.Model):
             #ToDo:     if_exists='append',
             #ToDo:     index_label='COUNTER_data_ID',
             #ToDo: )
-            #ToDo: log.info(f"The load for FY {self.fiscal_year} was a success.")
-            #ToDo: return f"The load for FY {self.fiscal_year} was a success."
+            #ToDo: message = f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
+            #ToDo: log.info(message)
+            #ToDo: return message
         #ToDo: except Exception as e:
-            #ToDo: log.error(f"The load for FY {self.fiscal_year} had the error {error}.")
-            #ToDo: return f"The load for FY {self.fiscal_year} had the error {error}."
+        #ToDo: message = f"The load for FY {self.fiscal_year} had the error {error}."
+            #ToDo: log.error(message)
+            #ToDo: return message
         pass
 
 
@@ -375,6 +387,7 @@ class Vendors(db.Model):
         Returns:
             dataframe: a filtered copy of the `statisticsSources` relation
         """
+        log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
         #ToDo:     sql=f'''
@@ -399,6 +412,7 @@ class Vendors(db.Model):
         Returns:
             dataframe: a filtered copy of the `resourceSources` relation
         """
+        log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
         #ToDo:     sql=f'''
@@ -419,6 +433,7 @@ class Vendors(db.Model):
 
     @hybrid_method
     def add_note(self):
+        log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
         pass
 
@@ -523,7 +538,7 @@ class StatisticsSources(db.Model):
             dict: the SUSHI API parameters as a dictionary with the API call URL added as a value with the key `URL`
             TBD: a data type that can be passed into Flask for display to the user
         """
-        log.info("Starting `StatisticsSources.fetch_SUSHI_information()`.")
+        log.info(f"Starting `StatisticsSources.fetch_SUSHI_information()` for {self.statistics_source_name}.")
         log.debug(f"The `StatisticsSources.statistics_source_retrieval_code` in `fetch_SUSHI_information()` is {self.statistics_source_retrieval_code} (type {repr(type(self.statistics_source_retrieval_code))}).")
         #Section: Retrieve Data
         #Subsection: Retrieve Data from JSON
@@ -582,7 +597,7 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
-        log.info("Starting `StatisticsSources._harvest_R5_SUSHI()`.")
+        log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -596,8 +611,9 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
-            log.warning(f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}.")
-            return f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}."
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}."
+            log.warning(message)
+            return message
         else:
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
@@ -663,11 +679,13 @@ class StatisticsSources(db.Model):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
             elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
-                log.warning(f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}.")
-                return f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}."
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}."
+                log.warning(message)
+                return message
             else:
-                log.error(f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required.")
-                return f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
+                message = f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
+                log.error(message)
+                return message
 
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
@@ -724,7 +742,12 @@ class StatisticsSources(db.Model):
 
 
             #Section: Return a Single Dataframe
-            return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            try:
+                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            except ValueError as error:
+                message = f"The harvested reports couldn't be combined because of the error {error}."
+                log.warning(message)
+                return message
 
 
     @hybrid_method
@@ -742,7 +765,7 @@ class StatisticsSources(db.Model):
             dataframe: the API call response data in a dataframe
             str: an error message indicating the harvest failed
         """
-        log.info("Starting `StatisticsSources._harvest_single_report()`")
+        log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
@@ -773,22 +796,30 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
-                log.info(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
+                df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
+                log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
+                log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-            log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
-            return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+            if len(individual_month_dfs) == 0:
+                message = f""
+                log.warning(message)
+                return message
+            else:
+                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+                return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
             SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
             if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
-                return f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
+                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
+                log.warning(message)
+                return message
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                 temp_file_path = Path().resolve() / 'temp.json'
-                with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                with open(temp_file_path, 'xb', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
@@ -799,6 +830,7 @@ class StatisticsSources(db.Model):
                 return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
+            df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
             log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
             log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
             return df
@@ -816,7 +848,7 @@ class StatisticsSources(db.Model):
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
         """
-        log.info("Starting `StatisticsSources._check_if_data_in_database()`")
+        log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
         log.debug(f"The months in the date range are {months_in_date_range}")
         months_to_harvest = []
@@ -853,13 +885,15 @@ class StatisticsSources(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
-        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name}.")
+        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
         if isinstance(df, str):
-            return f"SUSHI harvesting returned the following error: {df}"
+            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {df}"
+            log.warning(message)
+            return message
         else:
-            log.debug(f"The SUSHI harvest was a success.")
-        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error; the test module can't help because pytest calls to `db.engine` raise `RuntimeError`
+            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")
+        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         try:
             df.to_sql(
@@ -868,15 +902,17 @@ class StatisticsSources(db.Model):
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            log.info("The load was a success.")
-            return "The load was a success."
+            message = f"Successfully loaded {df.shape[0]} records into the database."
+            log.info(message)
+            return message
         except Exception as error:
-            log.error(f"The load had the error {error}.")
-            return f"The load had the error {error}."
-
+            message = f"The load had the error {error}."
+            log.error(message)
+            return message
 
     @hybrid_method
     def add_note(self):
+        log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
         pass
 
@@ -971,12 +1007,14 @@ class ResourceSources(db.Model):
 
     @hybrid_method
     def add_access_stop_date(self):
+        log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Put value in access_stop_date when current_access goes from True to False
         pass
 
 
     @hybrid_method
     def remove_access_stop_date(self):
+        log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Null value in access_stop_date when current_access goes from False to True
         pass
 
@@ -993,6 +1031,7 @@ class ResourceSources(db.Model):
         Returns:
             None: no return value is needed, so the default `None` is used
         """
+        log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
         #ToDo: SQL_query = f'''
         #ToDo:     UPDATE
         #ToDo:     SET current_statistics_source = false
@@ -1005,6 +1044,7 @@ class ResourceSources(db.Model):
 
     @hybrid_method
     def add_note(self):
+        log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
         pass
 
@@ -1157,11 +1197,12 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
+        log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
             sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
-            con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+            con=db.engine,
         )
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
@@ -1185,9 +1226,11 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Collect and Load SUSHI Data
         df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         if isinstance(df, str):
-            return f"SUSHI harvesting returned the following error: {df}"
+            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {df}"
+            log.warning(message)
+            return message
         else:
-            log.debug("The SUSHI harvest was a success.")
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
         df.index += first_new_PK_value('COUNTERData')
         try:
             df.to_sql(
@@ -1196,12 +1239,14 @@ class AnnualUsageCollectionTracking(db.Model):
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            log.info(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
+            message = f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
+            log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} was a success."
+            return message
         except Exception as error:
-            log.error(f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}.")
-            return f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
+            message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
+            log.error(message)
+            return message
 
 
     @hybrid_method

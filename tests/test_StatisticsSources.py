@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-07-05 ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
 import logging
@@ -150,8 +150,12 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
 
 #Subsection: Test `StatisticsSources._harvest_single_report()`
 @pytest.mark.dependency()
-def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture):
+def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
     """Tests the method making the API call and turing the result into a dataframe."""
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
     end_date = datetime.date(
         begin_date.year,
@@ -171,21 +175,55 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
+@pytest.mark.dependency()
+def test_harvest_single_report_with_partial_date_range(client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, SUSHI_credentials_fixture, caplog):
+    """Tests the method making the API call and turing the result into a dataframe when the given date range includes dates for which the date and statistics source combination already has usage in the database.
+    
+    To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range starts with the last month covered by the test data; for efficiency, the date range only goes another two months past that point.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
+    with client:
+        SUSHI_response = StatisticsSources_fixture._harvest_single_report(
+            choice(reports_offered_by_StatisticsSource_fixture),
+            SUSHI_credentials_fixture['URL'],
+            {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
+            datetime.date(2020, 6, 1),  # The last month with usage in the test data
+            datetime.date(2020, 8, 1),
+        )
+    #Test: Many statistics source providers don't have usage going back this far
+    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
+    assert pd.concat([
+        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
+        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
+    ], axis='columns').any(axis='columns').all()
+
+
 #Subsection: Test `StatisticsSources._harvest_R5_SUSHI()`
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
-def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage):
+def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_with_usage, caplog):
     """Tests collecting all available R5 reports for a `StatisticsSources.statistics_source_retrieval_code` value and combining them into a single dataframe."""
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     with client:
-        SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])  #TEST: Raises runtime error at nolcat/models.py:824
+        SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
-def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
+def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture, caplog):
     """Tests collecting a single R5 report for a `StatisticsSources.statistics_source_retrieval_code` value."""
-    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-1)  # Using month before `most_recent_month_with_usage` to avoid being stopped by duplication check
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
+    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
     end_date = datetime.date(
         begin_date.year,
         begin_date.month,
@@ -198,34 +236,95 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
 
 
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`
-@pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
-def test_collect_usage_statistics(StatisticsSources_fixture, most_recent_month_with_usage, engine):
-    """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
-    to_check_against = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    number_of_records = to_check_against.shape[0]
+@pytest.fixture(scope='module')
+def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_usage):
+    """Creates `begin_date` and `end_date` SUSHI parameter values representing the month before the month in `most_recent_month_with_usage`.
 
-    StatisticsSources_fixture.collect_usage_statistics(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    SQL_query = f"""
-        SELECT *
-        FROM (
-            SELECT * FROM COUNTERData
-            ORDER BY COUNTER_data_ID DESC
-            LIMIT {number_of_records}
-        ) subquery
-        ORDER BY COUNTER_data_ID ASC;
+    Testing `StatisticsSources.check_usage_statistics()` requires a month for which the `StatisticsSources_fixture` statistics source won't have SUSHI data loaded. The month before the month in `most_recent_month_with_usage` is likely to meet this criteria even after `test_StatisticsSources.test_harvest_R5_SUSHI()` loads data for the month in `most_recent_month_with_usage`. The dates are in a fixture so they can be used by both the test function and the `test_StatisticsSources.SUSHI_result()` fixture.
+
+    Args:
+        most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
+
+    Yields:
+        tuple: two datetime.date values, representing the first and last day of a month respectively
     """
+    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-1)
+    end_date = datetime.date(
+        begin_date.year,
+        begin_date.month,
+        calendar.monthrange(begin_date.year, begin_date.month)[1],
+    )
+    yield (begin_date, end_date)
+
+
+@pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
+def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, caplog):
+    """A fixture with the result of all the SUSHI calls that will be made in `test_collect_usage_statistics()`.
+
+    The `StatisticsSources.collect_usage_statistics()` method loads the data collected by the SUSHI call(s) made in `StatisticsSources._harvest_R5_SUSHI()` into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `StatisticsSources.collect_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `StatisticsSources.collect_usage_statistics()`.
+
+    Args:
+        StatisticsSources_fixture (nolcat.models.StatisticsSources): a class instantiation via fixture containing the necessary data to make a real SUSHI call
+        month_before_month_like_most_recent_month_with_usage (tuple): the first and last days of the month before the most recent month for which COUNTER data is available
+
+    Yields:
+        dataframe: a dataframe containing all of the R5 COUNTER data
+    """
+    # The log for `test_StatisticsSources.test_harvest_R5_SUSHI()` contains log data from the modules below, it doesn't need to be repeated
+    caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
+    yield StatisticsSources_fixture._harvest_R5_SUSHI(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+
+
+@pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
+def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
+    """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response)
+    assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
+
     most_recently_loaded_records = pd.read_sql(
-        sql=SQL_query,
+        sql=f"""
+            SELECT *
+            FROM (
+                SELECT * FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT {method_response_match_object.group(1)}
+            ) subquery
+            ORDER BY COUNTER_data_ID ASC;
+        """,
         con=engine,
     )
-    most_recently_loaded_records = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    most_recently_loaded_records = most_recently_loaded_records.astype(COUNTERData.state_data_types())
-    most_recently_loaded_records["parent_publication_date"] = pd.to_datetime(most_recently_loaded_records["parent_publication_date"])
-    most_recently_loaded_records["publication_date"] = pd.to_datetime(most_recently_loaded_records["publication_date"])
-    most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
-    most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
-    assert_frame_equal(most_recently_loaded_records, to_check_against, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order; `check_index_type=False` argument allows test to pass if indexes are different dtypes (might be needed)
+    recently_loaded_records_for_comparison = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
+    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison[[field for field in recently_loaded_records_for_comparison.columns if recently_loaded_records_for_comparison[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values, which aren't in the dataframe created by `StatisticsSources._harvest_R5_SUSHI()`
+    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in recently_loaded_records_for_comparison.columns.to_list()})
+    if 'publication_date' in recently_loaded_records_for_comparison.columns.to_list():
+        recently_loaded_records_for_comparison["publication_date"] = pd.to_datetime(
+            recently_loaded_records_for_comparison["publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    if 'parent_publication_date' in recently_loaded_records_for_comparison.columns.to_list():
+        recently_loaded_records_for_comparison["parent_publication_date"] = pd.to_datetime(
+            recently_loaded_records_for_comparison["parent_publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
+    recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
 
+    try:
+        log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
+    except:
+        log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
+        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
+    assert_frame_equal(recently_loaded_records_for_comparison, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 #Section: Test `StatisticsSources.add_note()`
 def test_add_note():

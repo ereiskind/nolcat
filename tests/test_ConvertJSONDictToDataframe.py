@@ -1,5 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## Passing 2023-07-11 ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
 import logging
@@ -16,7 +16,7 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 #Section: Fixtures
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_PR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -24,7 +24,7 @@ def sample_SUSHI_PR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_DR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -32,7 +32,7 @@ def sample_SUSHI_DR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_TR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -40,7 +40,7 @@ def sample_SUSHI_TR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_IR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
     with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
@@ -48,7 +48,7 @@ def sample_SUSHI_IR_response_JSON_dict():
         yield dict_from_JSON
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_PR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -158,7 +158,7 @@ def sample_SUSHI_PR_response_dataframe():
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_DR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -582,7 +582,7 @@ def sample_SUSHI_DR_response_dataframe():
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_TR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -626,7 +626,7 @@ def sample_SUSHI_TR_response_dataframe():
     yield df
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def sample_SUSHI_IR_response_dataframe():
     """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe."""
     df = pd.DataFrame(
@@ -4488,8 +4488,4 @@ def test_create_dataframe_from_TR(sample_SUSHI_TR_response_JSON_dict, sample_SUS
 def test_create_dataframe_from_IR(sample_SUSHI_IR_response_JSON_dict, sample_SUSHI_IR_response_dataframe):
     """Tests transforming dictionaries derived from SUSHI PR JSONs into dataframes."""
     df = ConvertJSONDictToDataframe(sample_SUSHI_IR_response_JSON_dict).create_dataframe()
-    df1 = sample_SUSHI_IR_response_dataframe.compare(
-        df[['resource_name', 'publisher', 'platform', 'authors', 'publication_date', 'article_version', 'DOI', 'proprietary_ID', 'ISBN', 'data_type', 'YOP', 'access_type', 'access_method', 'parent_title', 'parent_authors', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_proprietary_ID', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'metric_type', 'usage_date', 'usage_count', 'report_creation_date']],
-        align_axis='index',
-    )
     assert_frame_equal(df, sample_SUSHI_IR_response_dataframe, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
