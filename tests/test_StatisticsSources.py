@@ -322,7 +322,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     log.info(f"Records from dataframe have fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
     log.info(f"Records from SUSHI have fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result)}")
     try:
-        log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result)}")
+        log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
     except:
         log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index}")
