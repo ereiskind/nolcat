@@ -215,7 +215,7 @@ class SUSHICallAndResponse:
     def _make_API_call(self):
         """Makes a call to the SUSHI API.
 
-        This method uses the requests library to handle all the possible calls in the SUSHI standard
+        This method uses the requests library to handle all the possible calls in the SUSHI standard.
         
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
