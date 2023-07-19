@@ -60,7 +60,7 @@ class SUSHICallAndResponse:
 
     def __repr__(self):
         """The printable representation of the class, determining what appears when `{self}` is used in an f-string."""
-        return
+        pass
     
 
     def make_SUSHI_call(self):
