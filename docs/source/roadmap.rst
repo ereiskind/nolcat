@@ -19,54 +19,50 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
+* Add documentation about adding records to ``fiscalYears`` relation via SQL command line
+* Resolve HTTP response 502/upload gateway error when uploading COUNTER reports via web app
+
+  * https://stackoverflow.com/questions/27396248/uwsgi-nginx-flask-upstream-prematurely-closed
+  * https://stackoverflow.com/questions/49162420/upstream-prematurely-closed-connection-while-reading-response-header-from-upstr
+  * https://serverfault.com/questions/926642/uwsgi-and-nginx-502-upstream-prematurely-closed-connection
+
+Iteration 1: Complete Current Data I/O
+======================================
 * Add duplication check to ``ingest_usage.views.upload_COUNTER_reports()``
-* Create R5.1 test data JSONs
-
-  * Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
-  * Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
-  * Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
-  * Add test for the new files in ``tests.test_ConvertJSONDictToDataframe``
-
-* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
-* Investigate ways to get list of plain text and JSON files saved in S3 bucket due to inability to load into database, load files with ``json.load(<class '_io.TextIOWrapper'>)``, and manipulate contents so they can be added to database
-
-Iteration 2: COUNTER Only Product
-=================================
-* Create ability to ingest SQL file with proper insert statements [Line starts with ``INSERT INTO `COUNTERData` VALUES (`` and ends with ``);``, in between should be split at each instance of ``),(`` to create the individual insert statements, which can be turned into records in a dataframe that can go into the database via ``to_sql()``]
-* Create "ingest_usage/upload-COUNTER-reports.html" page
-* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
-* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-
-Iteration 3: Create CSV Downloads from COUNTER Data
-===================================================
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
+* Put marker for ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_files()`` in class, class docstring, ERD, and test module
+* Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
+* Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
+* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+* Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_files()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_files()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_files()``
+* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
 * Finish "query-wizard.html"
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 
-Iteration 4: Minimum Viable Product
-===================================
+Iteration 2: Add Historical Data
+================================
+* Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
+* Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Write form class for non-COUNTER usage downloads
+* Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
 * Write "initialization/initial-data-upload-4.html" page
-* Write ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.app.upload_file_to_S3_bucket()``
+* Write ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+* Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
+* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
-* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` as two separate int fields if needed
+* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
-* If able to get drop-down working, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Create "ingest_usage/save-non-COUNTER-usage.html" page
-* Adjust form in "view_usage/download-non-COUNTER-usage.html" so all the options can be selected
-* Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Figure out how to get "Check if Usage Is Already in Database" subsection of ``nolcat.models.StatisticsSources._harvest_R5_SUSHI()`` to work
+* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
+* Write "ingest_usage/upload-non-COUNTER-usage.html" page
+* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 
-Iteration 5: Minimum Viable Product with Tests and Test Database
+Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
@@ -81,6 +77,14 @@ Iteration 5: Minimum Viable Product with Tests and Test Database
 Basic Enhancement Iterations
 ****************************
 These iterations make NoLCAT more robust and easier to use through relatively small adjustments. Many of these iterations move functionality from the SQL command line to the GUI.
+
+Iteration 0: Prepare for COUNTER R5.1
+=====================================
+* Develop the procedures for "Create R5.1 SUSHI Response JSON Reports" in the testing documentation
+* Add the data to the files in "tests/data/R5.1_COUNTER_JSONs_for_tests"
+* Write ``ConvertJSONDictToDataframe._create_dataframe_from_R5b1_JSON()``
+* Add fixtures for the new files in ``tests.test_ConvertJSONDictToDataframe``
+* Write ``tests.test_ConvertJSONDictToDataframe.test_create_dataframe_from_R5b1_JSON()``
 
 Iteration 1: View Lists
 =======================
@@ -132,8 +136,10 @@ Iteration 5: Create Drop-Down Lists
 
 Iteration 6: Create Query Wizard
 ================================
+* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
 * Craft queries to use
 * Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
+* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
 
 Iteration 7: Show Fiscal Year Information
 =========================================
