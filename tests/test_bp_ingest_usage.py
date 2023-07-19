@@ -39,7 +39,7 @@ def test_ingest_usage_homepage(client):
 
 def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
-    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`  #Test: `caplog` means no logging appears in stdout during tests
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
         #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
