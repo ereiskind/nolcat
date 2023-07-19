@@ -301,7 +301,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     )
     recently_loaded_records_for_comparison = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
     recently_loaded_records_for_comparison = recently_loaded_records_for_comparison[[field for field in recently_loaded_records_for_comparison.columns if recently_loaded_records_for_comparison[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values, which aren't in the dataframe created by `StatisticsSources._harvest_R5_SUSHI()`
-    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison.astype(COUNTERData.state_data_types())
+    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in recently_loaded_records_for_comparison.columns.to_list()})
     recently_loaded_records_for_comparison["parent_publication_date"] = pd.to_datetime(recently_loaded_records_for_comparison["parent_publication_date"])
     recently_loaded_records_for_comparison["publication_date"] = pd.to_datetime(recently_loaded_records_for_comparison["publication_date"])
     recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
