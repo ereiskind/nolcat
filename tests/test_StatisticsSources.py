@@ -286,6 +286,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
     method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response)
+    assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     most_recently_loaded_records = pd.read_sql(
         sql=f"""
@@ -324,7 +325,6 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     except:
         log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index}")
-    assert method_response_match_object is not None
     assert_frame_equal(recently_loaded_records_for_comparison, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 #Section: Test `StatisticsSources.add_note()`
