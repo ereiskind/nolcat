@@ -392,7 +392,10 @@ class SUSHICallAndResponse:
         """
         #Section: Create Error Message(s)
         #Subsection: Detail Each SUSHI Error
-        if isinstance(error_contents, dict):
+        if error_contents is None:
+            log.info(f"This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
+            return True
+        elif isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
                 log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
                 return True
