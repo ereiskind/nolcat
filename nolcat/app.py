@@ -73,7 +73,11 @@ def configure_logging(app):
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    #TEST: SQLAlchemy logging statements appear when when no live log output is requested--investigate and determine if related to the to-do below
     SQLAlchemy_log._add_default_handler = lambda handler: None  # Patch to avoid duplicate logging (from https://stackoverflow.com/a/76498428)
+    #ToDo: `pd.to_sql()` logging output begins with multiple setup statements with messages of just a pair of parentheses in between; some parentheses-only logging statements also appear in the `pd.read_sql()` output. Is there a way to remove those statements from the logging output?
+    logging.getLogger('botocore').setLevel(logging.INFO)  # This prompts `s3transfer` module logging to appear
+    logging.getLogger('s3transfer.utils').setLevel(logging.INFO)  # Expected log statements seem to be set at debug level, so this hides all log statements
     if app.debug:
         logging.getLogger('werkzeug').handlers = []  # Prevents Werkzeug from outputting messages twice in debug mode
 
@@ -320,8 +324,9 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=bucket)
     except botocore.exceptions.ClientError as error:
-        log.error(f"The check for the S3 bucket designated for downloads returned {error}.")
-        return f"Trying to upload the file saved at `{file}` failed because the check for the S3 bucket designated for downloads returned {error}."
+        message = f"Trying to upload the file saved at `{file}` failed because the check for the S3 bucket designated for downloads returned {error}."
+        log.error(message)
+        return message
  
 
     #Section: Upload File to Bucket
@@ -337,8 +342,9 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            log.info(f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket.")
-            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+            log.info(message)
+            return message
         except Exception as error:
             logging.warning(f"The object `{file}` could be opened into the object `{file_object}`, but uploading the latter with `upload_fileobj()` raised {error}. The object `{file}` will now try to be loaded with `upload_file()`.")
             file_object.close()
@@ -353,11 +359,14 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
                 Bucket=bucket,
                 Key=bucket_path + file_name,
             )
-            log.info(f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket.")
-            return f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."
+            log.info(message)
+            return message
         except Exception as error:
-            log.error(f"Trying to upload the object `{file}` as a path-like object raised the error {error}.")
-            return f"Trying to upload the object `{file}` as a path-like object raised the error {error}."
+            message = f"Trying to upload the object `{file}` as a path-like object raised the error {error}."
+            log.error(message)
+            return message
     else:
-        log.error(f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket.")
-        return f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."
+        message = f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."
+        log.error(message)
+        return message

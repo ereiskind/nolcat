@@ -1,13 +1,16 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2023-06-16 ##########
+########## Passing 2023-07-19 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.upload_COUNTER_reports import UploadCOUNTERReports
+
+log = logging.getLogger(__name__)
 
 
 #Section: Classes to Use in Fixture

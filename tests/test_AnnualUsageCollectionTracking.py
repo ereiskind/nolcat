@@ -1,14 +1,18 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## No tests written 2023-06-07 ##########
+########## No tests written 2023-07-11 ##########
 
 import pytest
+import logging
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.models import AnnualUsageCollectionTracking
 
+log = logging.getLogger(__name__)
+
 
 def test_collect_annual_usage_statistics():
     """Test calling the StatisticsSources._harvest_R5_SUSHI method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     #ToDo: Get the data from the other relations, then call the method
     pass
 

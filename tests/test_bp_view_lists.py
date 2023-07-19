@@ -1,7 +1,8 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## No tests written 2023-06-07 ##########
+########## No tests written 2023-07-11 ##########
 
 import pytest
+import logging
 from pathlib import Path
 import os
 from bs4 import BeautifulSoup
@@ -9,6 +10,8 @@ from bs4 import BeautifulSoup
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.view_lists import *
+
+log = logging.getLogger(__name__)
 
 
 def test_view_lists_homepage(client):

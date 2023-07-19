@@ -35,14 +35,14 @@ class ConvertJSONDictToDataframe:
         _serialize_dates: This method allows the `json.dumps()` method to serialize (convert) `datetime.datetime` and `datetime.date` attributes into strings.
     """
     # These field length constants allow the class to check that data in varchar fields without COUNTER-defined fixed vocabularies can be successfully uploaded to the `COUNTERData` relation; the constants are set here as class variables instead of in `models.py` to avoid a circular import
-    RESOURCE_NAME_LENGTH = 2000
-    PUBLISHER_LENGTH = 225
+    RESOURCE_NAME_LENGTH = 3600
+    PUBLISHER_LENGTH = 425
     PUBLISHER_ID_LENGTH = 50
-    PLATFORM_LENGTH = 75
-    AUTHORS_LENGTH = 1000
+    PLATFORM_LENGTH = 135
+    AUTHORS_LENGTH = 1800
     DOI_LENGTH = 75
     PROPRIETARY_ID_LENGTH = 100
-    URI_LENGTH = 250
+    URI_LENGTH = 450
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
@@ -71,13 +71,13 @@ class ConvertJSONDictToDataframe:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         elif COUNTER_release == "5.1":
             try:
                 df = self._transform_R5b1_JSON()
             except:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised a(n) `{error}`, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         else:
             log.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")

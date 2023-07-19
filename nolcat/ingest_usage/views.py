@@ -98,12 +98,15 @@ def harvest_SUSHI_statistics():
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
 
-        if form.report_to_harvest.data is None:
+        if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
+            report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
         else:
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {form.report_to_harvest.data} the date range {begin_date} to {end_date}.")
+            report_to_harvest = form.report_to_harvest.data
+            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
+        
         try:
-            result_message = stats_source.collect_usage_statistics(begin_date, end_date, form.report_to_harvest.data)  #ToDo: Confirm that leaving `SUSHIParametersForm.report_to_harvest` blank returns `None`
+            result_message = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
             flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -126,8 +129,7 @@ def upload_non_COUNTER_reports():
                 annualUsageCollectionTracking.AUCT_statistics_source,
                 annualUsageCollectionTracking.AUCT_fiscal_year,
                 statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year,
-                annualUsageCollectionTracking.notes
+                fiscalYears.fiscal_year
             FROM annualUsageCollectionTracking
             JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
             JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
@@ -147,7 +149,8 @@ def upload_non_COUNTER_reports():
         )
         non_COUNTER_files_needed = non_COUNTER_files_needed.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
         non_COUNTER_files_needed['AUCT_option'] = non_COUNTER_files_needed['statistics_source_name'] + " " + non_COUNTER_files_needed['fiscal_year']
-        non_COUNTER_files_needed = change_single_field_dataframe_into_series(non_COUNTER_files_needed.drop(columns=['statistics_source_name', 'fiscal_year']))
+        non_COUNTER_files_needed = non_COUNTER_files_needed.drop(columns=['statistics_source_name', 'fiscal_year'])
+        non_COUNTER_files_needed = change_single_field_dataframe_into_series(non_COUNTER_files_needed)
         logging.debug(f"AUCT multiindex and their corresponding form choices:\n{non_COUNTER_files_needed}")
         form.AUCT_option.choices = list(non_COUNTER_files_needed.items())
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)

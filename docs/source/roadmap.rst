@@ -9,6 +9,7 @@ This is a list of issues encountered over the course of development that require
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
 * J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
 * JSTOR status call returned ``None`` 2023-06-08
+* Morgan & Claypool raised ``HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))``
 * Certificate issues raising errors with
 
   * *Allen Press/Pinnacle Hosting*: ``HTTPSConnectionPool(host='pinnacle-secure.allenpress.com', port=443): Max retries exceeded with url: /status?... (Caused by SSLError(CertificateError("hostname 'pinnacle-secure.allenpress.com' doesn't match either of '*.literatumonline.com', 'literatumonline.com'")))``
@@ -67,21 +68,7 @@ Iteration 4: Minimum Viable Product
 
 Iteration 5: Minimum Viable Product with Tests and Test Database
 ================================================================
-* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources below have been consulted in multiple attempts to get this set up, but have thus far proven unsuccessful.
-
-    * https://flask.palletsprojects.com/en/2.0.x/tutorial/tests/
-    * https://flask.palletsprojects.com/en/2.0.x/testing/
-    * https://porter.codes/2020/07/24/Pytest-Sqlalchemy-Test-Fixutres.html
-    * https://spotofdata.com/flask-testing/
-    * http://alexmic.net/flask-sqlalchemy-pytest/
-    * https://www.patricksoftwareblog.com/unit-testing-a-flask-application/ (this uses unittest instead of pytest)
-    * Possibly https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
-    * Possibly https://github.com/ClearcodeHQ/pytest-mysql
-    * Possibly https://pypi.org/project/pytest-sqlalchemy/
-    * https://medium.com/@geoffreykoh/fun-with-fixtures-for-database-applications-8253eaf1a6d
-    * Add https://pypi.org/project/pycodestyle/ at this point?
-    * Possibly use https://pypi.org/project/pytest-order/ ?
-
+* Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
