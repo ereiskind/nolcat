@@ -256,7 +256,7 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
     yield (begin_date, end_date)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
 def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_usage_statistics()`.
 
