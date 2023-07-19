@@ -272,7 +272,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, most_recent
     most_recently_loaded_records["report_creation_date"] = pd.to_datetime(most_recently_loaded_records["report_creation_date"])
     most_recently_loaded_records["usage_date"] = pd.to_datetime(most_recently_loaded_records["usage_date"])
 
-    log.info(f"Records from dataframe have fields\n{return_string_of_dataframe_info(most_recently_loaded_records)}")
+    log.info(f"Records from dataframe have fields\n{return_string_of_dataframe_info(most_recently_loaded_records[[field for field in most_recently_loaded_records.columns if most_recently_loaded_records[field].notnull().any()]])}")
     log.info(f"Records from SUSHI have fields\n{return_string_of_dataframe_info(SUSHI_response)}")
     assert method_response_match_object is not None
     assert_frame_equal(
