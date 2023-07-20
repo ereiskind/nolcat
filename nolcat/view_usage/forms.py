@@ -35,4 +35,4 @@ class QueryWizardForm(FlaskForm):
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
     """Creates a form allowing the download of all saved non-COUNTER usage files."""
-    file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    AUCT_of_file_download = SelectField("Choose the usage statistics file to download:", validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
