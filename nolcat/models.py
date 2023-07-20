@@ -801,7 +801,7 @@ class StatisticsSources(db.Model):
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
             if len(individual_month_dfs) == 0:
-                message = f""
+                message = f"No data is available to load into the database."
                 log.warning(message)
                 return message
             else:
