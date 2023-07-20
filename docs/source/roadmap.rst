@@ -31,10 +31,10 @@ Iteration 1: Complete Current Data I/O
 * Put marker for ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_files()`` in class, class docstring, ERD, and test module
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
-* Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_files()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_files()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_files()``
+* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
+* Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
+* Write ``tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()``
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
 * Finish "query-wizard.html"
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
@@ -53,8 +53,6 @@ Iteration 2: Add Historical Data
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Write ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
