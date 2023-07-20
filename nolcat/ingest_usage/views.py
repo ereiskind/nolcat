@@ -1,6 +1,7 @@
 import logging
 import datetime
 import calendar
+from itertools import product
 from flask import render_template
 from flask import request
 from flask import abort
@@ -34,7 +35,46 @@ def upload_COUNTER_reports():
         try:
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
-            #ToDo: Confirm that the data isn't already in the database by seeing if each record in `df` matches an existing record
+            try:
+                # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+                statistics_sources_in_dataframe = df['statistics_source_ID'].unique().tolist()
+                report_types_in_dataframe = df['report_type'].unique().tolist()
+                dates_in_dataframe = df['usage_date'].unique().tolist()
+                combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
+                log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")
+                total_number_of_matching_records = 0
+                matching_record_instances = []
+                for combo in combinations_to_check:
+                    number_of_matching_records = pd.read_sql(
+                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type={combo[1]} AND usage_date={combo[2].strftime('%Y-%m-%d')};",
+                        con=db.engine,
+                    )
+                    number_of_matching_records = number_of_matching_records.iloc[0][0]
+                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")
+                    if number_of_matching_records > 0:
+                        matching_record_instances.append({
+                            'statistics_source_ID': combo[0],
+                            'report_type': combo[1],
+                            'date': combo[2],
+                        })
+                        log.debug(f"The combination {matching_record_instances[-1]} was added to `matching_record_instances`.")
+                        total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
+                if total_number_of_matching_records > 0:
+                    for instance in matching_record_instances:
+                        statistics_source_name = pd.read_sql(
+                            sql=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
+                            con=db.engine,
+                        )
+                        instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
+                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"
+                    log.error(message)
+                    flash(message)
+                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            except Exception as error:
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                log.error(message)
+                flash(message)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
                 'COUNTERData',
