@@ -319,6 +319,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
+    log.info("Starting `upload_file_to_S3_bucket()`.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
