@@ -188,6 +188,7 @@ digraph erd_and_classes {
 
         // Methods
         state_data_types [shape="Mrecord"]
+        usage_data_file_extensions [shape="Mrecord"]
         collect_annual_usage_statistics [shape="Mrecord"]
         upload_nonstandard_usage_file [shape="Mrecord"]
     }
