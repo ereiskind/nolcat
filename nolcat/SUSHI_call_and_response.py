@@ -352,7 +352,7 @@ class SUSHICallAndResponse:
         Args:
             error_message (str): either details of the situation that raised the error if an expected situation or the name of a Python error if an unexpected situation
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
-            exception (bool): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
+            exception (bool, optional): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
         
         Returns:
             str: the error message for the value section of the single-item `ERROR` dictionary

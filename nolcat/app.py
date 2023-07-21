@@ -312,9 +312,9 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Args:
         file (file-like or path-like object): the file being uploaded to the S3 bucket or the path to said file as a Python object
         file_name (str): the name the file will be saved under in the S3 bucket
-        client (S3.Client): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
-        bucket (str): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
-        bucket_path (str): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized at the beginning of this module
+        bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+        bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
     
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed

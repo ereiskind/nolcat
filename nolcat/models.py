@@ -590,7 +590,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             dataframe: a dataframe containing all of the R5 COUNTER data
@@ -880,7 +880,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
