@@ -371,3 +371,23 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         message = f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."
         log.error(message)
         return message
+
+
+def create_AUCT_ChoiceField_options(df):
+    """Transforms a dataframe into a list of options for use as ChoiceField options.
+
+    A dataframe with the fields `annualUsageCollectionTracking.AUCT_statistics_source`, `annualUsageCollectionTracking.AUCT_fiscal_year`, `statisticsSources.statistics_source_name`, and `fiscalYears.fiscal_year` is changed into a list of tuples, one for each record; the first value is another tuple with the primary key values from `annualUsageCollectionTracking`, and the second value is a string showing the statistics source name and fiscal year.
+
+    Args:
+        df (dataframe): a dataframe with the fields `annualUsageCollectionTracking.AUCT_statistics_source`, `annualUsageCollectionTracking.AUCT_fiscal_year`, `statisticsSources.statistics_source_name`, and `fiscalYears.fiscal_year`
+    
+    Returns:
+        list: a list of tuples; see the docstring's detailed description for the contents of the list
+    """
+    log.info("Starting `create_AUCT_ChoiceField_options()`.")
+    df = df.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
+    df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
+    df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
+    s = change_single_field_dataframe_into_series(df)
+    log.debug(f"AUCT multiindex values and their corresponding form choices:\n{s}")
+    return list(s.items())

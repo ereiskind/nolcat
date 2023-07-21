@@ -234,3 +234,35 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
     assert files_to_upload_to_S3_bucket.name in bucket_contents
+
+
+def test_create_AUCT_ChoiceField_options():
+    """Tests the transformation of a dataframe with four fields into a list for the `ChoiceField.choices` attribute with the characteristics described in the docstring of the function being tested."""
+    df = pd.DataFrame(
+        [
+            [1, 1, "First Statistics Source", "2017"],
+            [2, 1, "Second Statistics Source", "2017"],
+            [1, 2, "First Statistics Source", "2018"],
+            [3, 2, "Third Statistics Source", "2018"],
+        ],
+        columns=["AUCT_statistics_source", "AUCT_fiscal_year", "statistics_source_name", "fiscal_year"],
+    )
+    result_list = [
+        (
+            (1, 1),
+            "First Statistics Source--FY 2017",
+        ),
+        (
+            (2, 1),
+            "Second Statistics Source--FY 2017",
+        ),
+        (
+            (1, 2),
+            "First Statistics Source--FY 2018",
+        ),
+        (
+            (3, 2),
+            "Third Statistics Source--FY 2018",
+        ),
+    ]
+    assert create_AUCT_ChoiceField_options(df) == result_list
