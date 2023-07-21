@@ -1141,7 +1141,7 @@ class AnnualUsageCollectionTracking(db.Model):
         state_data_types: This method provides a dictionary of the attributes and their data types.
         usage_data_file_extensions: This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
-        upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
+        upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
