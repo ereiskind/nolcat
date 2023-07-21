@@ -169,27 +169,26 @@ def upload_non_COUNTER_reports():
     """The route function for uploading files containing non-COUNTER data into the container."""
     form = UsageFileForm()
     if request.method == 'GET':
-        SQL_query = f'''
-            SELECT
-                annualUsageCollectionTracking.AUCT_statistics_source,
-                annualUsageCollectionTracking.AUCT_fiscal_year,
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE
-                annualUsageCollectionTracking.usage_is_being_collected = true AND
-                annualUsageCollectionTracking.is_COUNTER_compliant = false AND
-                annualUsageCollectionTracking.usage_file_path IS NULL AND
-                (
-                    annualUsageCollectionTracking.collection_status = 'Collection not started' OR
-                    annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
-                    annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
-                );
-        '''
         non_COUNTER_files_needed = pd.read_sql(
-            sql=SQL_query,
+            sql=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected = true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant = false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status = 'Collection not started' OR
+                        annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
+                    );
+            """,
             con=db.engine,
         )
         form.AUCT_option.choices = create_AUCT_ChoiceField_options(non_COUNTER_files_needed)

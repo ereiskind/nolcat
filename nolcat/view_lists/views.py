@@ -58,9 +58,8 @@ def view_list_record(list, PK):
     """
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        #ToDo: SQL_query = Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
         #ToDo: df = pd.read_sql(
-        #ToDo:     sql=SQL_query,
+        #ToDo:     sql=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
         #ToDo:     con=db.engine,
         #ToDo: )
         #ToDo: df = df.astype({dict setting correct dtypes})
@@ -91,9 +90,8 @@ def edit_list_record(list, PK):
             #ToDo: Show page without prefilled values
             return render_template('view_lists/page.html')#ToDo:, form=form)
         #ToDo: if `PK` is in the relation
-            #ToDo: SQL_query = Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`
             #ToDo: df = pd.read_sql(
-            #ToDo:     sql=SQL_query,
+            #ToDo:     sql=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
             #ToDo:     con=db.engine,
             #ToDo: )
             #ToDo: df = df.astype({dict setting correct dtypes})

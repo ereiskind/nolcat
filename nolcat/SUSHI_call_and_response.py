@@ -362,7 +362,7 @@ class SUSHICallAndResponse:
         log.error(error_message)
         
         statistics_source_ID = pd.read_sql(
-            sql=f'SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to}',
+            sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
             con=db.engine,
         )
         temp_file_path = Path().resolve() / 'temp.txt'

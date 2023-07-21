@@ -68,95 +68,95 @@ def use_predefined_SQL_query():
         )
         
         if form.query_options.data == "PR_P1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='PR' AND access_method='Regular'
                 AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         elif form.query_options.data == "DR_D1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='DR' AND access_method='Regular'
                 AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');
-            '''
+            """
         elif form.query_options.data == "DR_D2":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='DR' AND access_method='Regular'
                 AND (metric_type='Limit_Exceeded' OR metric_type='No_License');
-            '''
+            """
         elif form.query_options.data == "TR_B1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular'
                 AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         if form.query_options.data == "TR_B2":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Book' AND access_method='Regular'
                 AND (metric_type='Limit_Exceeded' OR metric_type='No_License');
-            '''
+            """
         elif form.query_options.data == "TR_B3":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Book' AND access_method='Regular'
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         elif form.query_options.data == "TR_J1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular'
                 AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         elif form.query_options.data == "TR_J2":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Journal' AND access_method='Regular'
                 AND (metric_type='Limit_Exceeded' OR metric_type='No_License');
-            '''
+            """
         elif form.query_options.data == "TR_J3":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Journal' AND access_method='Regular'
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' Or metric_type='Unique_Item_Investigations' Or metric_type='Unique_Item_Requests');
-            '''
+            """
         elif form.query_options.data == "TR_J4":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular'
                 AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         elif form.query_options.data == "IR_A1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal'
                 AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');
-            '''
+            """
         elif form.query_options.data == "IR_M1":
-            query = f'''
+            query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
                 AND report_type='IR' AND data_type='Multimedia' AND access_method='Regular'
                 AND metric_type='Total_Item_Requests';
-            '''
+            """
         #ToDo: Decide what other canned reports, if any, are needed
         elif form.query_options.data == "w":
             #ToDo: Create queries that filter on metrics with fixed vocabularies via checkboxes
             #ToDo: Create queries where a sanitized (safe from SQL injection) free text field is fuzzily matched against a COUNTER free text field
-            query = f'''
-            '''
+            query = f"""
+            """
 
         df = pd.read_sql(
             sql=query,
@@ -182,18 +182,18 @@ def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
-        SQL_query = f'''
-            SELECT
-                statisticsSources.statistics_source_name,
-                fiscalYears.fiscal_year,
-                annualUsageCollectionTracking.usage_file_path
-            FROM annualUsageCollectionTracking
-            JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-            JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
-            WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
-        '''
         file_download_options = pd.read_sql(
-            sql=SQL_query,
+            sql=f"""
+                SELECT
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year,
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+            """,
             con=db.engine,
         )
         form.AUCT_of_file_download.choices = create_AUCT_ChoiceField_options(file_download_options)

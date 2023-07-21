@@ -124,33 +124,33 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         TR_B1_sum = TR_B1_df.iloc[0][0]
         log.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
 
         IR_M1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            ''',
+            """,
             con=db.engine,
         )
         IR_M1_sum = IR_M1_df.iloc[0][0]
         log.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
 
         TR_J1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         TR_J1_sum = TR_J1_df.iloc[0][0]
@@ -170,11 +170,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -192,11 +192,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -214,11 +214,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -236,11 +236,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -259,7 +259,7 @@ class FiscalYears(db.Model):
         log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
         current_statistics_sources = pd.read_sql(
-            sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            sql=f'SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;',  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             con=db.engine,
         )
         log.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
@@ -390,14 +390,14 @@ class Vendors(db.Model):
         log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
-        #ToDo:     sql=f'''
+        #ToDo:     sql=f"""
         #ToDo:         SELECT
         #ToDo:             statistics_source_ID,
         #ToDo:             statistics_source_name,
         #ToDo:             statistics_source_retrieval_code
         #ToDo:         FROM statisticsSources
         #ToDo:         WHERE vendor_ID = {vendor_PK};
-        #ToDo:     ''',
+        #ToDo:     """,
         #ToDo:     con=db.engine,
         #ToDo:     index_col='statistics_source_ID',
         #ToDo: )
@@ -415,7 +415,7 @@ class Vendors(db.Model):
         log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
-        #ToDo:     sql=f'''
+        #ToDo:     sql=f"""
         #ToDo:         SELECT
         #ToDo:             resource_source_ID,
         #ToDo:             resource_source_name,
@@ -423,7 +423,7 @@ class Vendors(db.Model):
         #ToDo:             use_stop_date
         #ToDo:         FROM resourceSources
         #ToDo:         WHERE vendor_ID = {vendor_PK};
-        #ToDo:     ''',
+        #ToDo:     """,
         #ToDo:     con=db.engine,
         #ToDo:     index_col='resource_source_ID',
         #ToDo: )
@@ -1226,7 +1226,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Get Data from Relations Corresponding to Composite Key
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
-            sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
+            sql=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
             con=db.engine,
         )
         start_date = fiscal_year_data['start_date'][0]
@@ -1237,7 +1237,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
         statistics_source_data = pd.read_sql(
-            sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
+            sql=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
             con=db.engine,
         )
         statistics_source = StatisticsSources(
