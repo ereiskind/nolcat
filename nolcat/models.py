@@ -1275,8 +1275,50 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self):
-        pass
+    def upload_nonstandard_usage_file(self, file, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+        """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
+
+        Args:
+            file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
+            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+
+        Returns:
+            str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
+        """
+        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
+        file_path = Path(file)
+        file_extension = file_path.suffix
+        if file_extension not in self.usage_data_file_extensions():
+            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{self.usage_data_file_extensions()}"
+            log.error(message)
+            return message
+        
+        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}.{file_extension}"
+        logging_message = upload_file_to_S3_bucket(
+            file,
+            file_name,
+        )
+        if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+            message = f"{logging_message} As a result, the file `{file_name}` wasn't uploaded to S3."
+            log.warning(message)
+            return message
+        log.debug(logging_message)
+        
+        try:
+            #ToDo: Make update to database with SQL statement below
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+            sql=f"""
+                UPDATE annualUsageCollectionTracking
+                SET usage_file_path = "{bucket}/{bucket_path}{file_name}"
+                WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
+            """
+            log.info(f"`{bucket}/{bucket_path}{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
+            return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
+        except Exception as error:
+            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."
+            log.error(message)
+            return message
 
 
 class COUNTERData(db.Model):
