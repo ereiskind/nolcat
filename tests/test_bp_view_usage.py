@@ -71,6 +71,5 @@ def test_GET_request_for_download_non_COUNTER_usage(client):
 
 def test_download_non_COUNTER_usage():
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
-    #ToDo: In the test data, all `annualUsageCollectionTracking.usage_file_path` values are null, so nothing is available to select in the form
     #ToDo: Write test
     pass
