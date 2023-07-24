@@ -1142,6 +1142,7 @@ class AnnualUsageCollectionTracking(db.Model):
         usage_data_file_extensions: This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
+        download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
@@ -1310,15 +1311,29 @@ class AnnualUsageCollectionTracking(db.Model):
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             sql=f"""
                 UPDATE annualUsageCollectionTracking
-                SET usage_file_path = "{bucket}/{bucket_path}{file_name}"
+                SET usage_file_path = "{bucket_path}{file_name}"
                 WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
             """
-            log.info(f"`{bucket}/{bucket_path}{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
+            log.info(f"`{bucket_path}{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
             return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
         except Exception as error:
             message = f"{logging_message} Updating the database to reflect this, however, returned {error}."
             log.error(message)
             return message
+    
+
+    @hybrid_method
+    def download_nonstandard_usage_file(self, client=s3_client, bucket=BUCKET_NAME):
+        """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
+
+        Args:
+            client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
+            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+        
+        Returns:
+            pathlib.Path: the absolute file path to the downloaded file
+        """
+        pass
 
 
 class COUNTERData(db.Model):

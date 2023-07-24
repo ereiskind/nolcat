@@ -21,3 +21,9 @@ def test_upload_nonstandard_usage_file():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass
+
+
+def test_download_nonstandard_usage_file():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
