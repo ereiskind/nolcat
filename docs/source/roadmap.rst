@@ -28,7 +28,6 @@ Planned Iterations
 
 Iteration 1: Complete Current Data I/O
 ======================================
-* Put marker for ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_files()`` in class, class docstring, ERD, and test module
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
 * Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()``
