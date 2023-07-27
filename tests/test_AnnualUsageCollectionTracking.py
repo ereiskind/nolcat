@@ -5,7 +5,8 @@ import pytest
 import logging
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import AnnualUsageCollectionTracking
+from nolcat.app import *
+from nolcat.models import *
 
 log = logging.getLogger(__name__)
 
