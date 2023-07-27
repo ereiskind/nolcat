@@ -16,11 +16,11 @@ log = logging.getLogger(__name__)
 @pytest.fixture
 def create_file_for_download(tmp_path):
     """Creates an `annualUsageCollectionTracking` object and a related file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
-    PK_for_AUCT_object = choice(
+    PK_for_AUCT_object = choice(tuple(
         (2, f"11_2.csv", "This is the first FY with usage statistics"),
         (3, f"11_3.csv", None),
         (4, f"11_4.csv", None),
-    )
+    ))
     AUCT_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=11,
         AUCT_fiscal_year=PK_for_AUCT_object[0],
