@@ -69,7 +69,18 @@ def test_upload_nonstandard_usage_file():
     pass
 
 
-def test_download_nonstandard_usage_file():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
+def test_download_nonstandard_usage_file(create_file_for_download):
+    """Test downloading a file in S3 to a local computer."""
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+    )
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
+    if create_file_for_download['usage_file_path'].split("/") not in bucket_contents:
+        pytest.skip(f"The file {create_file_for_download['usage_file_path']} wasn't successfully loaded into the S3 bucket.")
+    #ToDo: Get file
+    #ToDo: File should be empty
+    assert False
