@@ -1332,7 +1332,19 @@ class AnnualUsageCollectionTracking(db.Model):
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
         """
-        pass
+        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
+        #ToDo: How should the folder the files are downloaded to get cleared out? It can't be done after the download because the download is the return value for the route function.
+        temp_file_name = self.usage_file_path.split('/')[-1]
+        log.info(f"Downloading the file at `{self.usage_file_path}`.")
+        log.info(f"Current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
+        log.info(f"`Key` is `{self.usage_file_path}` and `Filename` is `{temp_file_name}`.")
+        client.download_file(
+            Bucket=bucket,
+            Key=self.usage_file_path,
+            Filename=temp_file_name,
+        )
+        log.info(f"After `download_file()`, current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
+        return None  #ToDo: Return downloaded file to `nolcat.view_usage.views.download_non_COUNTER_usage()` so it can be downloaded to local workstation via web app
 
 
 class COUNTERData(db.Model):
