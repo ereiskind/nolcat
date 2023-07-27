@@ -60,7 +60,6 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
         headers=header_value,
         data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.data`:\n{POST_response.data}")
 
     # This is the HTML file of the page the redirect goes to
     with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
