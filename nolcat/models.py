@@ -1171,8 +1171,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<'AUCT_statistics_source': '{self.AUCT_statistics_source}', 'AUCT_fiscal_year': '{self.AUCT_fiscal_year}', 'usage_is_being_collected': '{self.usage_is_being_collected}', 'manual_collection_required': '{self.manual_collection_required}', 'collection_via_email': '{self.collection_via_email}', 'is_COUNTER_compliant': '{self.is_COUNTER_compliant}', 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
 
 
     @hybrid_method
