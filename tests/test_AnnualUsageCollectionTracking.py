@@ -42,7 +42,7 @@ def create_file_for_download(tmp_path):
     )
     upload_file_to_S3_bucket(
         Path(tmp_path / 'df.csv'),
-        f"test_{AUCT_object['usage_file_path']}",
+        f"test_{AUCT_object.usage_file_path}",
     )
     yield AUCT_object
 
@@ -79,7 +79,7 @@ def test_download_nonstandard_usage_file(create_file_for_download):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    if create_file_for_download['usage_file_path'].split("/")[-1] not in bucket_contents:
+    if create_file_for_download.usage_file_path.split("/")[-1] not in bucket_contents:
         pytest.skip(f"The file {create_file_for_download['usage_file_path']} wasn't successfully loaded into the S3 bucket.")
     #ToDo: Get file
     #ToDo: File should be empty
