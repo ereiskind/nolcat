@@ -64,10 +64,11 @@ def file_for_download(tmp_path, AUCT_fixture_3):
         encoding='utf-8',
         errors='backslashreplace',
     )
-    yield upload_file_to_S3_bucket(
+    upload_file_to_S3_bucket(
         Path(tmp_path / 'df.csv'),
         f"test_{AUCT_fixture_3.usage_file_path}",
     )
+    yield f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_3.usage_file_path}"  # The fixture returns the name of the file for use in determining its successful upload
 
     try:
         s3_client.delete_object(
@@ -89,9 +90,8 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    if file_for_download.usage_file_path.split("/")[-1] not in bucket_contents:
-        pytest.skip(f"The file {file_for_download['usage_file_path']} wasn't successfully loaded into the S3 bucket.")
+    if file_for_download not in bucket_contents:
+        pytest.skip(f"The file {file_for_download} wasn't successfully loaded into the S3 bucket.")
     
     #Subsection: Download File Via Method
     file_path = AUCT_fixture_3.download_nonstandard_usage_file()
