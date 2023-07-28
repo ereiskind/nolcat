@@ -55,7 +55,7 @@ def AUCT_fixture_3(choose_AUCT_PKs):
     )
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def file_for_download(tmp_path, AUCT_fixture_3):
     """Creates a file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
     df=pd.DataFrame()
