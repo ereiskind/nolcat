@@ -13,6 +13,22 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 
+#Section: collect_annual_usage_statistics()
+def test_collect_annual_usage_statistics():
+    """Test calling the StatisticsSources._harvest_R5_SUSHI method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
+    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    #ToDo: Get the data from the other relations, then call the method
+    pass
+
+
+#Section: upload_nonstandard_usage_file()
+def test_upload_nonstandard_usage_file():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+#Section: download_nonstandard_usage_file()
 @pytest.fixture
 def create_file_for_download(tmp_path):
     """Creates an `annualUsageCollectionTracking` object and a related file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
@@ -54,19 +70,6 @@ def create_file_for_download(tmp_path):
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
     os.remove(tmp_path / 'df.csv')
-
-
-def test_collect_annual_usage_statistics():
-    """Test calling the StatisticsSources._harvest_R5_SUSHI method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
-    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
-    #ToDo: Get the data from the other relations, then call the method
-    pass
-
-
-def test_upload_nonstandard_usage_file():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
-    pass
 
 
 def test_download_nonstandard_usage_file(create_file_for_download):
