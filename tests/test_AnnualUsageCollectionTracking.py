@@ -81,6 +81,7 @@ def file_for_download(tmp_path, AUCT_fixture_3):
 
 def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     """Test downloading a file in S3 to a local computer."""
+    #Subsection: Confirm File to Download is in S3
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",
@@ -89,8 +90,10 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    if create_file_for_download.usage_file_path.split("/")[-1] not in bucket_contents:
-        pytest.skip(f"The file {create_file_for_download['usage_file_path']} wasn't successfully loaded into the S3 bucket.")
-    #ToDo: Get file
-    #ToDo: File should be empty
+    if file_for_download.usage_file_path.split("/")[-1] not in bucket_contents:
+        pytest.skip(f"The file {file_for_download['usage_file_path']} wasn't successfully loaded into the S3 bucket.")
+    
+    #Subsection: Download File Via Method
+    file_path = AUCT_fixture_3.download_nonstandard_usage_file()
+    log.info(f"`file_path` is {file_path} (type {type(file_path)})")
     assert False
