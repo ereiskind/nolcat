@@ -29,7 +29,7 @@ def create_file_for_download(tmp_path):
         collection_via_email=False,
         is_COUNTER_compliant=False,
         collection_status="Collection complete",
-        usage_file_path=f"{PATH_WITHIN_BUCKET}{PK_for_AUCT_object[1]}",
+        usage_file_path=f"{PK_for_AUCT_object[1]}",
         notes=PK_for_AUCT_object[2],
     )
     log.info(f"`AUCT_object`: {AUCT_object}")
@@ -42,7 +42,7 @@ def create_file_for_download(tmp_path):
     )
     upload_file_to_S3_bucket(
         file_for_S3,
-        f"{PATH_WITHIN_BUCKET}test_{PK_for_AUCT_object[1]}",
+        f"test_{AUCT_object['usage_file_path']}",
     )
     yield AUCT_object
 
