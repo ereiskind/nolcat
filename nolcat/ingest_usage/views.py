@@ -37,8 +37,14 @@ def upload_COUNTER_reports():
             df['report_creation_date'] = pd.to_datetime(None)
             try:
                 # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
+                log.debug(f"`df['statistics_source_ID']`: {df['statistics_source_ID']} (type {type(df['statistics_source_ID'])})")
+                log.debug(f"`df['statistics_source_ID'].unique()`: {df['statistics_source_ID'].unique()} (type {type(df['statistics_source_ID'].unique())})")
                 statistics_sources_in_dataframe = df['statistics_source_ID'].unique().tolist()
+                log.debug(f"`df['report_type']`: {df['report_type']} (type {type(df['report_type'])})")
+                log.debug(f"`df['report_type'].unique()`: {df['report_type'].unique()} (type {type(df['report_type'].unique())})")
                 report_types_in_dataframe = df['report_type'].unique().tolist()
+                log.debug(f"`df['usage_date']`: {df['usage_date']} (type {type(df['usage_date'])})")
+                log.debug(f"`df['usage_date'].unique()`: {df['usage_date'].unique()} (type {type(df['usage_date'].unique())})")
                 dates_in_dataframe = df['usage_date'].unique().tolist()
                 combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
                 log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")
