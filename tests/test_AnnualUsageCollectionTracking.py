@@ -35,13 +35,13 @@ def create_file_for_download(tmp_path):
     log.info(f"`AUCT_object`: {AUCT_object}")
 
     df=pd.DataFrame()
-    file_for_S3 = df.to_csv(
+    df.to_csv(
         tmp_path / 'df.csv',
         encoding='utf-8',
         errors='backslashreplace',
     )
     upload_file_to_S3_bucket(
-        file_for_S3,
+        Path(tmp_path / 'df.csv'),
         f"test_{AUCT_object['usage_file_path']}",
     )
     yield AUCT_object
