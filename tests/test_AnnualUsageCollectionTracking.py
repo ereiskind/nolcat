@@ -29,50 +29,57 @@ def test_upload_nonstandard_usage_file():
 
 
 #Section: download_nonstandard_usage_file()
-@pytest.fixture
-def create_file_for_download(tmp_path):
-    """Creates an `annualUsageCollectionTracking` object and a related file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
-    PK_for_AUCT_object = choice([
+@pytest.fixture(scope='module')
+def choose_AUCT_PKs():
+    """Chooses the `StatisticsSources.statistics_source_ID`, file name, and note value to use in the subsequent tests."""
+    yield choice([
         (2, f"11_2.csv", "This is the first FY with usage statistics"),
         (3, f"11_3.csv", None),
         (4, f"11_4.csv", None),
     ])
-    AUCT_object = AnnualUsageCollectionTracking(
+
+
+@pytest.fixture(scope='module')
+def AUCT_fixture_3(choose_AUCT_PKs):
+    """Creates an `AnnualUsageCollectionTracking` object with the data from `choose_AUCT_PKs()`."""
+    yield AnnualUsageCollectionTracking(
         AUCT_statistics_source=11,
-        AUCT_fiscal_year=PK_for_AUCT_object[0],
+        AUCT_fiscal_year=choose_AUCT_PKs[0],
         usage_is_being_collected=True,
         manual_collection_required=True,
         collection_via_email=False,
         is_COUNTER_compliant=False,
         collection_status="Collection complete",
-        usage_file_path=f"{PK_for_AUCT_object[1]}",
-        notes=PK_for_AUCT_object[2],
+        usage_file_path=f"{choose_AUCT_PKs[1]}",
+        notes=choose_AUCT_PKs[2],
     )
-    log.info(f"`AUCT_object`: {AUCT_object}")
 
+
+@pytest.fixture(scope='module')
+def file_for_download(tmp_path, AUCT_fixture_3):
+    """Creates a file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
     df=pd.DataFrame()
     df.to_csv(
         tmp_path / 'df.csv',
         encoding='utf-8',
         errors='backslashreplace',
     )
-    upload_file_to_S3_bucket(
+    yield upload_file_to_S3_bucket(
         Path(tmp_path / 'df.csv'),
-        f"test_{AUCT_object.usage_file_path}",
+        f"test_{AUCT_fixture_3.usage_file_path}",
     )
-    yield AUCT_object
 
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{PK_for_AUCT_object[1]}"
+            Key=f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_3.usage_file_path}"
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
     os.remove(tmp_path / 'df.csv')
 
 
-def test_download_nonstandard_usage_file(create_file_for_download):
+def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     """Test downloading a file in S3 to a local computer."""
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
