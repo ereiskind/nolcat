@@ -1,6 +1,7 @@
 import io
 import logging
 from pathlib import Path
+from datetime import datetime
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -185,8 +186,8 @@ def create_app():
             path_or_file=filename,
             mimetype=#ToDo: Add mimetype determined above
             as_attachment=True,
-            download_name=#ToDo: Get the last part of the pathlib.Path object
-            last_modified=#ToDo: Get current datetime.datetime
+            download_name=filename.name,
+            last_modified=datetime.today(),
         )
 
 
