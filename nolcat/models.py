@@ -1134,7 +1134,7 @@ class AnnualUsageCollectionTracking(db.Model):
         self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
         self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant
         self.collection_status (enum): the status of the usage statistics collection
-        self.usage_file_path (string): the path to the file containing the non-COUNTER usage statistics
+        self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PATH_WITHIN_BUCKET` section (see note)
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
@@ -1143,6 +1143,9 @@ class AnnualUsageCollectionTracking(db.Model):
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
         download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
+    
+    Note:
+        Strictly speaking, S3 doesn't use folders, just file names with segments that can be separated by slashes, but the segmentation of the file names allows a file-like structure to be created and used for the S3 GUI. The `PATH_WITHIN_BUCKET` constant is a shared beginning to all usage statistics files loaded into S3 by NoLCAT.
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
@@ -1310,10 +1313,10 @@ class AnnualUsageCollectionTracking(db.Model):
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             sql=f"""
                 UPDATE annualUsageCollectionTracking
-                SET usage_file_path = "{bucket_path}{file_name}"
+                SET usage_file_path = "{file_name}"
                 WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
             """
-            log.info(f"`{bucket_path}{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
+            log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
             return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
         except Exception as error:
             message = f"{logging_message} Updating the database to reflect this, however, returned {error}."
