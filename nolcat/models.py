@@ -1342,8 +1342,8 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"S3 contents are\n{s3_client.list_objects_v2(Bucket=BUCKET_NAME)}")
         client.download_file(
             Bucket=bucket,
-            Key=self.usage_file_path,
-            Filename=f"{bucket_path}{self.usage_file_path}",
+            Key=bucket_path + self.usage_file_path,
+            Filename=self.usage_file_path,
         )
         log.info(f"After `download_file()`, current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
         return None  #ToDo: Return downloaded file to `nolcat.view_usage.views.download_non_COUNTER_usage()` so it can be downloaded to local workstation via web app
