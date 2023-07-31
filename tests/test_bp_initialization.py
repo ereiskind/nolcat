@@ -263,12 +263,6 @@ def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
 
 
 #Section: Tests
-def test_download_file():
-    """Tests the route enabling file downloads."""
-    #ToDo: How can this route be tested?
-    pass
-
-
 def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/initialization/')

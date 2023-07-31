@@ -13,7 +13,7 @@
 
     <h2>1. Create the `fiscalYears` Relation with Historical Years</h2>  <!--Ordered list not used because numbering continues across multiple pages-->
     <ol>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.csv') }}">"initialize_fiscalYears.csv"</a>.</li>
+        <li>Download <!--a href="{{ url_for('initialization.download_file', filename='initialize_fiscalYears.csv') }}"-->"initialize_fiscalYears.csv"<!--/a-->.</li>
         <li>For all previous fiscal years for which there is usage data, fill out a row in the CSV with the appropriate data (only the `year`, `start_date`, and `end_date` fields are required).</li>
         <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `fiscal_year_ID` field.</li>
         <li>Save the CSV, ensuring the encoding is UTF-8.</li>
@@ -21,11 +21,11 @@
 
     <h2>2. Create the `vendors` and `vendorNotes` Relations</h2>
     <ol>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendors.csv') }}">"initialize_vendors.csv"</a>.</li>
+        <li>Download <!--a href="{{ url_for('initialization.download_file', filename='initialize_vendors.csv') }}"-->"initialize_vendors.csv"<!--/a-->.</li>
         <li>In the `vendor_name` field, list all the organizations which provide or have provided resources--publishers, aggregators, free sources, ect.</li>
         <li>For all of the above values that have vendor codes in Alma, add those codes to the `alma_vendor_code` field.</li>
         <li>Add sequential integer numbering starting at `0` and incrementing by one to all records in the `vendor_ID` field.</li>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.csv') }}">"initialize_vendorNotes.csv"</a>.</li>
+        <li>Download <!--a href="{{ url_for('initialization.download_file', filename='initialize_vendorNotes.csv') }}"-->"initialize_vendorNotes.csv"<!--/a-->.</li>
         <li>For every note on a vendor that needs to be added, in the `vendor_ID` field, put the `vendor_ID` value for the vendor from the "initialize_vendors.csv" file, then fill out the `note`, `written_by`, and `date_written` fields.</li>
         <li>Save the CSV, ensuring the encoding is UTF-8.</li>
     </ol>

@@ -163,6 +163,12 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
+def test_download_file():
+    """Tests the route enabling file downloads."""
+    #ToDo: How can this route be tested?
+    pass
+
+
 #Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_first_new_PK_value():

@@ -19,13 +19,6 @@ from ..upload_COUNTER_reports import UploadCOUNTERReports
 log = logging.getLogger(__name__)
 
 
-#Section: Uploads and Downloads
-@bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
-def download_file(filename):
-    """This route function allows the user to access the file specified in the route name through a Jinja link."""
-    return send_from_directory(directory=current_app.config['UPLOAD_FOLDER'], path='.', filename=filename, as_attachment=True)
-
-
 #Section: Database Initialization Wizard
 @bp.route('/', methods=['GET', 'POST'])
 def collect_FY_and_vendor_data():
