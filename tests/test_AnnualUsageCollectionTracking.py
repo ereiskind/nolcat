@@ -68,12 +68,12 @@ def file_for_download(tmp_path, AUCT_fixture_3):
         Path(tmp_path / 'df.csv'),
         AUCT_fixture_3.usage_file_path,
     )
-    yield f"{PATH_WITHIN_BUCKET}{AUCT_fixture_3.usage_file_path}"  # The fixture returns the name of the file for use in determining its successful upload
+    yield PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path  # The fixture returns the name of the file for use in determining its successful upload
 
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}{AUCT_fixture_3.usage_file_path}"
+            Key=PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
