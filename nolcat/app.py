@@ -203,16 +203,24 @@ def create_app():
         return render_template('index.html')
     
     
-    @app.route('/download/<path:filename>',  methods=['GET', 'POST'])
-    def download_file(filename):
-        """Downloads the file at the file path in the variable route."""
-        filename = Path(filename)  # Variable route requires string object
-        #ToDo: Get mimetype
+    @app.route('/download/<path:file_path>',  methods=['GET', 'POST'])
+    def download_file(file_path):
+        """Downloads the file at the absolute file path in the variable route.
+
+        An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
+
+        Args:
+            file_path (str): an absolute file path
+        
+        Returns:
+            file: a file is downloaded to the host machine through the web application
+        """
+        file_path = Path(file_path)  # Variable route requires string object
         return send_file(
-            path_or_file=filename,
-            mimetype=#ToDo: Add mimetype determined above
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
             as_attachment=True,
-            download_name=filename.name,
+            download_name=file_path.name,
             last_modified=datetime.today(),
         )
 
