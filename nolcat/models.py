@@ -1139,7 +1139,6 @@ class AnnualUsageCollectionTracking(db.Model):
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        usage_data_file_extensions: This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
         download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
@@ -1190,30 +1189,6 @@ class AnnualUsageCollectionTracking(db.Model):
             "usage_file_path": 'string',
             "notes": 'string',
         }
-
-
-    @hybrid_method
-    @classmethod
-    def usage_data_file_extensions(self):
-        """This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3."""
-        return (
-            "xlsx",
-            "csv",
-            "tsv",
-            "pdf",
-            "docx",
-            "pptx",
-            "txt",
-            "jpeg",
-            "jpg",
-            "png",
-            "svg",
-            "json",
-            "html",
-            "htm",
-            "xml",
-            "zip",
-        )
 
 
     @hybrid_method
@@ -1292,8 +1267,8 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
         file_path = Path(file)
         file_extension = file_path.suffix
-        if file_extension not in self.usage_data_file_extensions():
-            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{self.usage_data_file_extensions()}"
+        if file_extension not in file_extensions_and_mimetypes().keys():
+            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             log.error(message)
             return message
         
