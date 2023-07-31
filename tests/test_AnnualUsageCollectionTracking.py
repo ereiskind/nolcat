@@ -50,7 +50,7 @@ def AUCT_fixture_3(choose_AUCT_PKs):
         collection_via_email=False,
         is_COUNTER_compliant=False,
         collection_status="Collection complete",
-        usage_file_path=f"{choose_AUCT_PKs[1]}",
+        usage_file_path=f"test_{choose_AUCT_PKs[1]}",  # All uses of the attribute include the prefix, so the class object is initialized with it
         notes=choose_AUCT_PKs[2],
     )
 
@@ -66,14 +66,14 @@ def file_for_download(tmp_path, AUCT_fixture_3):
     )
     upload_file_to_S3_bucket(
         Path(tmp_path / 'df.csv'),
-        f"test_{AUCT_fixture_3.usage_file_path}",
+        AUCT_fixture_3.usage_file_path,
     )
-    yield f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_3.usage_file_path}"  # The fixture returns the name of the file for use in determining its successful upload
+    yield f"{PATH_WITHIN_BUCKET}{AUCT_fixture_3.usage_file_path}"  # The fixture returns the name of the file for use in determining its successful upload
 
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_3.usage_file_path}"
+            Key=f"{PATH_WITHIN_BUCKET}{AUCT_fixture_3.usage_file_path}"
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
