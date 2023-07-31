@@ -4,6 +4,7 @@ from pathlib import Path
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
+from flask import send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import pandas as pd
@@ -168,13 +169,27 @@ def create_app():
         from . import view_usage
     app.register_blueprint(view_usage.bp)
 
-    #Section: Create Homepage Route
+    #Section: Create Basic Routes
     @app.route('/')
     def homepage():
         """Returns the homepage in response to web app root requests."""
         return render_template('index.html')
     
     
+    @app.route('/download/<path:filename>',  methods=['GET', 'POST'])
+    def download_file(filename):
+        """Downloads the file at the file path in the variable route."""
+        filename = Path(filename)  # Variable route requires string object
+        #ToDo: Get mimetype
+        return send_file(
+            path_or_file=filename,
+            mimetype=#ToDo: Add mimetype determined above
+            as_attachment=True,
+            download_name=#ToDo: Get the last part of the pathlib.Path object
+            last_modified=#ToDo: Get current datetime.datetime
+        )
+
+
     return app
 
 
