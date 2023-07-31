@@ -1339,6 +1339,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #ToDo: How should the folder the files are downloaded to get cleared out? It can't be done after the download because the download is the return value for the route function.
         log.info(f"Downloading the file at `{self.usage_file_path}`.")
         log.info(f"Current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
+        log.info(f"S3 contents are\n{s3_client.list_objects_v2(Bucket=BUCKET_NAME)}")
         client.download_file(
             Bucket=bucket,
             Key=self.usage_file_path,
