@@ -439,5 +439,5 @@ def create_AUCT_ChoiceField_options(df):
     df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
     s = change_single_field_dataframe_into_series(df)
-    log.debug(f"AUCT multiindex values and their corresponding form choices:\n{s}")
+    log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
     return list(s.items())
