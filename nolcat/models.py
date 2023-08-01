@@ -1032,11 +1032,11 @@ class ResourceSources(db.Model):
             None: no return value is needed, so the default `None` is used
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
-        #ToDo: SQL_query = f'''
+        #ToDo: SQL_query = f"""
         #ToDo:     UPDATE
         #ToDo:     SET current_statistics_source = false
         #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
-        #ToDo: '''
+        #ToDo: """
         #ToDo: Apply above query to database
         #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
         pass

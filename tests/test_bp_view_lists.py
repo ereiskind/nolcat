@@ -3,8 +3,6 @@
 
 import pytest
 import logging
-from pathlib import Path
-import os
 from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
