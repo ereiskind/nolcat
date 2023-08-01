@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from flask import render_template
 from flask import redirect
@@ -28,7 +27,7 @@ def collect_FY_and_vendor_data():
     """
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
-        return render_template('initialization/index.html', form=form)  #ToDo: Add `CWD=Path.cwd()`; move folder with CSV templates
+        return render_template('initialization/index.html', form=form, CWD=str(Path.cwd()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
@@ -132,7 +131,7 @@ def collect_sources_data():
     """
     form = SourcesDataForm()
     if request.method == 'GET':
-        return render_template('initialization/initial-data-upload-2.html', form=form)  #ToDo: Add `CWD=Path.cwd()`; move folder with CSV templates
+        return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path.cwd()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
@@ -328,7 +327,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
         
         #ToDo: Confirm AUCT template CSV downloads successfully
-        return render_template('initialization/initial-data-upload-3.html', form=form)  #ToDo: Add `AUCT_file_path=template_save_location`; move folder with CSV templates
+        return render_template('initialization/initial-data-upload-3.html', form=form, AUCT_file_path=str(template_save_location))
 
     #Section: After Form Submission
     elif form.validate_on_submit():
