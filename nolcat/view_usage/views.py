@@ -36,6 +36,7 @@ def run_custom_SQL_query():
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        #ToDo: REDIRECT TO `download_file`?
         return Response(
             df.to_csv(
                 index_label="index",
@@ -163,6 +164,7 @@ def use_predefined_SQL_query():
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        #ToDo: REDIRECT TO `download_file`?
         return Response(
             df.to_csv(
                 index_label="index",
@@ -199,42 +201,12 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_ChoiceField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        download = Path(form.file_download.data)
-        download_name = download.name
-        if download.suffix == "xlsx":
-            download_mimetype = "application/vnd.ms-excel"
-        elif download.suffix == "csv":
-            download_mimetype = "text/csv"
-        elif download.suffix == "tsv":
-            download_mimetype = "text/tab-separated-values"
-        elif download.suffix == "pdf":
-            download_mimetype = "application/pdf"
-        elif download.suffix == "docx":
-            download_mimetype = "application/msword"
-        elif download.suffix == "pptx":
-            download_mimetype = "application/vnd.ms-powerpoint"
-        elif download.suffix == "txt":
-            download_mimetype = "text/plain"
-        elif download.suffix == "jpeg" or download.suffix == "jpg":
-            download_mimetype = "image/jpeg"
-        elif download.suffix == "png":
-            download_mimetype = "image/png"
-        elif download.suffix == "svg":
-            download_mimetype = "image/svg+xml"
-        elif download.suffix == "json":
-            download_mimetype = "application/json"
-        elif download.suffix == "html" or download.suffix == "htm":
-            download_mimetype = "text/html"
-        elif download.suffix == "xml":
-            download_mimetype = "text/xml"
-        elif download.suffix == "zip":
-            download_mimetype = "application/zip"
-        
-        return Response(
-            download,
-            mimetype=download_mimetype,
-            headers={'Content-disposition': f'attachment; filename={download_name}'},
-        )
+        statistics_source_ID, fiscal_year_ID = form.AUCT_of_file_download.data
+        #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
+
+        #ToDo: file_path = AUCT_object.download_nonstandard_usage_file()
+        #ToDo: REDIRECT TO `download_file` with `str(file_path)` as argument
+        pass
     else:
         log.error(f"`form.errors`: {form.errors}")
         return abort(404)

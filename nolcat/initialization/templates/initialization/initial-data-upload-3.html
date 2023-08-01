@@ -12,7 +12,7 @@
 
     <h2>6. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
+        <li>Download <!--ToDo: a href="{{ url_for('download_file', file_path=AUCT_file_path) }}"-->"initialize_annualUsageCollectionTracking.csv"<!--/a-->.</li>
         <li>Fill out the CSV from existing documentation:
             <ul>
                 <li>For statistics source and year combinations which don't exist (meaning either the statistics source didn't exist that year or no resource sources which used that statistics source were provided that year), delete the corresponding row in the CSV</li>
