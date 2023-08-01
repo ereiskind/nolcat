@@ -1300,28 +1300,31 @@ class AnnualUsageCollectionTracking(db.Model):
     
 
     @hybrid_method
-    def download_nonstandard_usage_file(self, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+    def download_nonstandard_usage_file(self, web_app_download_folder, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
+            web_app_download_folder (pathlib.Path): the folder from which the web app will download the file
             client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
             bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
-        #ToDo: How should the folder the files are downloaded to get cleared out? It can't be done after the download because the download is the return value for the route function.
+        file_download_path = web_app_download_folder / self.usage_file_path
         log.info(f"Downloading the file at `{self.usage_file_path}`.")
-        log.info(f"Current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
-        log.info(f"S3 contents are\n{s3_client.list_objects_v2(Bucket=BUCKET_NAME)}")
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
         )
-        log.info(f"After `download_file()`, current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
-        return None  #ToDo: Return downloaded file to `nolcat.view_usage.views.download_non_COUNTER_usage()` so it can be downloaded to local workstation via web app
+        if self.usage_file_path in [str(p.name) for p in Path.cwd().iterdir()]:
+            Path(Path.cwd() / self.usage_file_path).rename(file_download_path)
+            return file_download_path
+        else:
+            return False
 
 
 class COUNTERData(db.Model):

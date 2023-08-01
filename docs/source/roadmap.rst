@@ -30,7 +30,6 @@ Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()``
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views

@@ -94,6 +94,6 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
         pytest.skip(f"The file {file_for_download} wasn't successfully loaded into the S3 bucket.")
     
     #Subsection: Download File Via Method
-    file_path = AUCT_fixture_3.download_nonstandard_usage_file()
+    file_path = AUCT_fixture_3.download_nonstandard_usage_file(Path.cwd())
     log.info(f"`file_path` is {file_path} (type {type(file_path)})")
     assert False
