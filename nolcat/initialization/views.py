@@ -25,7 +25,7 @@ def collect_FY_and_vendor_data():
     """
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
-        return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent).resolve())
+        return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent.resolve()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
@@ -129,7 +129,7 @@ def collect_sources_data():
     """
     form = SourcesDataForm()
     if request.method == 'GET':
-        return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent).resolve())
+        return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent.resolve()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
