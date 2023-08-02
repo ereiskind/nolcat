@@ -1320,11 +1320,8 @@ class AnnualUsageCollectionTracking(db.Model):
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
         )
-        #ToDo: `Path(__file__).parent.resolve()` is `/nolcat/nolcat`
-        #ToDo: What is `Path.cwd()`?
-        log.info(f"`Path.cwd()` in `AnnualUsageCollectionTracking.download_nonstandard_usage_file()` is {Path.cwd()}") 
-        if self.usage_file_path in [str(p.name) for p in Path.cwd().iterdir()]:
-            Path(Path.cwd() / self.usage_file_path).rename(file_download_path)
+        if self.usage_file_path in [str(p.name) for p in Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1]).iterdir()]:
+            Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], self.usage_file_path).rename(file_download_path)
             return file_download_path
         else:
             return False
