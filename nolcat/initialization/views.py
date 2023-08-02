@@ -25,6 +25,8 @@ def collect_FY_and_vendor_data():
     """
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
+        log.info(f"`Path(__file__).parent.resolve()` is {Path(__file__).parent.resolve()} (type {type(Path(__file__).parent.resolve())}).")
+        log.info(f"`str(Path(__file__).parent.resolve())` is {str(Path(__file__).parent.resolve())} (type {type(str(Path(__file__).parent.resolve()))}).")
         return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent.resolve()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
@@ -129,8 +131,6 @@ def collect_sources_data():
     """
     form = SourcesDataForm()
     if request.method == 'GET':
-        log.info(f"`Path(__file__).parent.resolve()` is {Path(__file__).parent.resolve()} (type {type(Path(__file__).parent.resolve())}).")
-        log.info(f"`str(Path(__file__).parent.resolve())` is {str(Path(__file__).parent.resolve())} (type {type(str(Path(__file__).parent.resolve()))}).")
         return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent.resolve()))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
