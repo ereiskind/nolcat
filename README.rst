@@ -34,3 +34,7 @@ The instance can access the external MySQL database server, which serves as the 
 Encodings and File Types
 ========================
 E-resources involves working with scholarly content in a wide variety of languages, requiring the use of Unicode to accommodate multiple alphabets/character sets. NoLCAT uses the UTF-8 encoding for a variety of reasons, including its ubiquity, backwards compatibility, and inclusion as a requirement of the COUNTER 5 Code of Practice. Since Microsoft Excel can explicitly save files as CSV files with an UTF-8 encoding, NoLCAT will use the CSV format for plain text file uploads and downloads.
+
+File Paths
+==========
+NoLCAT defaults to using absolute file paths created through the pathlib module. The beginning of these paths, including all the components preceding the repo's outer ``nolcat`` folder, uses ``pathlib.Path(__file__).parent.resolve()``, which is guaranteed to return an absolute path and bases that path upon the file in which the code is located, rather than the more common ``pathlib.Path.cwd()``, which returns the folder from which the code is being run. To create a file path that ends at a folder earlier than the one where the file containing the code is located, ``Path(*Path(__file__).parts[0:Path(__file__).parts.index('<folder_name>')+1]).resolve()`` can be used, where ``<folder_name>`` is the name of the last folder in the file path. In situations where a file path contains two folders with the same name, only the first one is available through this method.
