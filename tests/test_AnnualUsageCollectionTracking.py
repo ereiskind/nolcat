@@ -98,5 +98,4 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     
     #Subsection: Download File Via Method
     file_path = AUCT_fixture_3.download_nonstandard_usage_file(Path(__file__).parent.resolve())
-    log.info(f"`file_path` is {file_path} (type {type(file_path)})")
-    assert False
+    assert file_path.is_file()
