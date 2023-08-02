@@ -63,12 +63,12 @@ def file_for_download(AUCT_fixture_3):
     """
     df=pd.DataFrame()
     df.to_csv(
-        Path(__file__).parent.resolve() / 'df.csv',
+        Path(__file__).parent.resolve() / AUCT_fixture_3.usage_file_path,
         encoding='utf-8',
         errors='backslashreplace',
     )
     upload_file_to_S3_bucket(
-        Path(Path(__file__).parent.resolve() / 'df.csv'),
+        Path(Path(__file__).parent.resolve() / AUCT_fixture_3.usage_file_path),
         AUCT_fixture_3.usage_file_path,
     )
     yield PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path  # The fixture returns the name of the file for use in determining its successful upload
@@ -80,7 +80,7 @@ def file_for_download(AUCT_fixture_3):
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
-    os.remove(Path(__file__).parent.resolve() / 'df.csv')
+    os.remove(Path(__file__).parent.resolve() / AUCT_fixture_3.usage_file_path)
 
 
 def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
