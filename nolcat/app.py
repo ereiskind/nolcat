@@ -215,7 +215,10 @@ def create_app():
         Returns:
             file: a file is downloaded to the host machine through the web application
         """
+        log.info("Starting `create_app.download_file()`.")
+        log.info(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
         file_path = Path(file_path)  # Variable route requires string object
+        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
