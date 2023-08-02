@@ -66,7 +66,7 @@ def client(app):
     The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
     """
     client = app.test_client()
-    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)})")
+    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")
     yield client
 
 
