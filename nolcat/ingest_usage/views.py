@@ -2,6 +2,7 @@ import logging
 import datetime
 import calendar
 from itertools import product
+from ast import literal_eval
 from flask import render_template
 from flask import request
 from flask import abort
@@ -219,7 +220,7 @@ def upload_non_COUNTER_reports():
                 "xml",
                 "zip",
             )
-            statistics_source_ID, fiscal_year_ID = form.AUCT_options.data # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+            statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
             file_extension = Path(form.usage_file.data.filename).suffix
             if file_extension not in valid_file_extensions:
                 message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"

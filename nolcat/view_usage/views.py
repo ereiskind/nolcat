@@ -3,6 +3,7 @@ import datetime
 import calendar
 from pathlib import Path
 import re
+from ast import literal_eval
 from flask import render_template
 from flask import request
 from flask import redirect
@@ -218,7 +219,7 @@ def download_non_COUNTER_usage():
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)})")
-        statistics_source_ID, fiscal_year_ID = form.AUCT_of_file_download.data
+        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
 
         #ToDo: file_path = AUCT_object.download_nonstandard_usage_file(Path.cwd())
