@@ -2,6 +2,7 @@ import io
 import logging
 from pathlib import Path
 from datetime import datetime
+import os
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -444,3 +445,15 @@ def create_AUCT_ChoiceField_options(df):
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
     return list(s.items())
+
+
+def default_download_folder():
+    """Creates a path to the default download folder.
+
+    Returns:
+        pathlib.Path: the path to the default download folder
+    """
+    if os.name == 'nt':  # Windows
+        return Path(os.getenv('USERPROFILE')) / 'Downloads'
+    else:  # *Nix systems, including macOS
+        return Path(os.getenv('HOME')) / 'Downloads'
