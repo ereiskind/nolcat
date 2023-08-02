@@ -50,11 +50,7 @@ file_name = Path('/', 'nolcat', 'tests', 'data')
 if file_name.exists():
     file_name = file_name / f'{relation_name}.csv'
 else:
-    file_name_start_elements = os.getcwd().split('nolcat')[0].split('\\')
-    file_name_start = Path(file_name_start_elements[0], '/')
-    for element in file_name_start_elements[1:-1]:  # This removes the drive letter from the beginning and the empty string from the end
-        file_name_start = file_name_start / element
-    file_name = file_name_start / 'nolcat' / 'tests' / 'data' / f'{relation_name}.csv'
+    file_name = Path(__file__).parent.resolve() / 'data' / f'{relation_name}.csv'
 
 file = relation_data.to_csv(
     file_name,

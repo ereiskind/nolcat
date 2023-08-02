@@ -270,7 +270,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'index.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -328,7 +328,7 @@ def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, crea
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -407,7 +407,7 @@ def test_collect_sources_data(client, engine, tmp_path, header_value, create_sta
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -426,17 +426,15 @@ def test_collect_sources_data(client, engine, tmp_path, header_value, create_sta
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
-    path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
     AUCT_template_df = pd.read_csv(
-        path_to_template,  #ToDo: When download functionality is set up, download CSV and read it into dataframe
+        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv').resolve(),
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    path_to_fixture = Path(tmp_path / 'annualUsageCollectionTracking_relation.csv')
     AUCT_fixture_df = pd.read_csv(
-        path_to_fixture,
+        Path(tmp_path / 'annualUsageCollectionTracking_relation.csv'),
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
@@ -490,7 +488,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, head
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    #with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html').resolve(), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')

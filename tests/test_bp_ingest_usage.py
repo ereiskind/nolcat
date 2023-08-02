@@ -25,7 +25,7 @@ def test_ingest_usage_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -46,7 +46,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
             # Could the classes in "test_UploadCOUNTERReports.py" be used?
             # Can a direct list of Werkzeug FileStorage object(s) be used?
         fields={
-            'COUNTER_reports': ('0_2017.xlsx', open(Path('tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'))
+            'COUNTER_reports': ('0_2017.xlsx', open(Path(__file__).resolve() / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb')),
         },
         encoding='utf-8',
     )
@@ -60,7 +60,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -91,7 +91,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
             str(child.string),
         ))
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -135,7 +135,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -161,7 +161,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(client, engine, caplog):
     #        str(child.string),
     #    ))
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html').resolve(), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1

@@ -6,8 +6,6 @@ The fixtures for connecting to the database are primarily based upon the fixture
 import pytest
 import logging
 from pathlib import Path
-import os
-import io
 import datetime
 import calendar
 from sqlalchemy import create_engine
@@ -201,8 +199,8 @@ def most_recent_month_with_usage():
         
         When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
         """
-        folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+        folder_path = Path(__file__).resolve() / 'bin' / 'COUNTER_workbooks_for_tests'
         file_names = []
-        for workbook in os.listdir(folder_path):
+        for workbook in folder_path.iterdir():
             file_names.append(workbook)
         pass  #TEST: This fixture isn't importing into other test modules; the `MultipartEncoder.fields` dictionary can only handle a single file per form field

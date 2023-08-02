@@ -56,9 +56,9 @@ def sample_COUNTER_report_workbooks():
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
     """
-    folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+    folder_path = Path(__file__).resolve() / 'bin' / 'COUNTER_workbooks_for_tests'
     fixture = []
-    for workbook in os.listdir(folder_path):
+    for workbook in folder_path.iterdir():
         fixture.append(mock_FileStorage_object(folder_path / workbook))
     fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)  # Modifying list in place returns `None`, so making modification in `return` statement makes fixture value `None`
     return fixture

@@ -56,16 +56,19 @@ def AUCT_fixture_3(choose_AUCT_PKs):
 
 
 @pytest.fixture
-def file_for_download(tmp_path, AUCT_fixture_3):
-    """Creates a file in S3 that can be used in `test_download_nonstandard_usage_file()`."""
+def file_for_download(AUCT_fixture_3):
+    """Creates a file in S3 that can be used in `test_download_nonstandard_usage_file()`.
+    
+    The test file is saved to NoLCAT's `tests` folder instead of pytest's temporary folder because the file path for the test file needs to be passed to a function outside the testing module.
+    """
     df=pd.DataFrame()
     df.to_csv(
-        tmp_path / 'df.csv',
+        Path(__file__).parent.resolve() / 'df.csv',
         encoding='utf-8',
         errors='backslashreplace',
     )
     upload_file_to_S3_bucket(
-        Path(tmp_path / 'df.csv'),
+        Path(Path(__file__).parent.resolve() / 'df.csv'),
         AUCT_fixture_3.usage_file_path,
     )
     yield PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path  # The fixture returns the name of the file for use in determining its successful upload
@@ -77,7 +80,7 @@ def file_for_download(tmp_path, AUCT_fixture_3):
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
-    os.remove(tmp_path / 'df.csv')
+    os.remove(Path(__file__).parent.resolve() / 'df.csv')
 
 
 def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
@@ -94,6 +97,6 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
         pytest.skip(f"The file {file_for_download} wasn't successfully loaded into the S3 bucket.")
     
     #Subsection: Download File Via Method
-    file_path = AUCT_fixture_3.download_nonstandard_usage_file(Path.cwd())
+    file_path = AUCT_fixture_3.download_nonstandard_usage_file(Path(__file__).parent.resolve())
     log.info(f"`file_path` is {file_path} (type {type(file_path)})")
     assert False
