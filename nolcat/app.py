@@ -217,6 +217,7 @@ def create_app():
             file: a file is downloaded to the host machine through the web application
         """
         log.info("Starting `create_app.download_file()`.")
+        log.debug(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
         file_path = Path(file_path)  # Variable route requires string object
         log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
         return f"The file path passed into the function is {file_path}"
