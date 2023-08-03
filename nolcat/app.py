@@ -217,14 +217,8 @@ def create_app():
         """
         log.info("Starting `create_app.download_file()`.")
         log.debug(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
-        file_path = Path(file_path)  # Variable route requires string object
-        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
-        if file_path.is_absolute():
-            log.info("`file_path` is an absolute path")
-        else:
-            log.info(f"`file_path` as is isn't absolute; `file_path.resolve()` ({file_path.resolve()}) is an absolute path: {file_path.resolve()}")
-        x=Path(__file__).parent.resolve() / 'initialization' / 'relation_initialization_templates' / 'initialize_fiscalYears.csv'
-        log.info(f"The working function sent the path {x} (type {type(x)}) which is an absolute path: {x.is_absolute()}")
+        file_path = Path(file_path).resolve()  # Variable route requires string object; the `Path` constructor creates a relative path, which causes `send_file()` to treat the path as if it's relative to this file
+        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
