@@ -21,6 +21,19 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 
+@pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
+def default_download_folder():
+    """Provides the path to the host workstation's downloads folder."""
+    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
+    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
+        if os.name == 'nt':  # Windows
+            return Path(os.getenv('USERPROFILE')) / 'Downloads'
+        else:  # *Nix systems, including macOS
+            return Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    pass
+
+
 @pytest.fixture(params=[Path(__file__).parent.resolve() / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent.resolve() / 'bin' / 'sample_COUNTER_R4_reports'])
 def files_for_testing(request):
     """Handles the selection and removal of files for testing uploads and downloads.
@@ -32,7 +45,7 @@ def files_for_testing(request):
     file_path_and_name = file_path / file_name
     yield file_path_and_name
 
-    #ToDo: Use `Path.unlink(missing_ok=True)` method to remove downloaded file from its download location
+    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
@@ -164,18 +177,18 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
-def test_download_file(client, files_for_testing):
+def test_download_file(client, files_for_testing):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
     log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
-    log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")
+    #ToDo: If method for interacting with host workstation's file system can be established, `log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")`
     page = client.get(f'/download/{files_for_testing}')
     log.info(f"The response header for the downloads route is {page.headers}")
     log.info(f"The history for the downloads route is {page.history}")
     GET_soup = BeautifulSoup(page.data, 'lxml')
     log.info(f"The data of the response item for the downloads route is\n{GET_soup}")
 
-    log.info(f"The contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")
     assert page.status == "200 OK"
+    #ToDo: If method for interacting with host workstation's file system can be established, check `default_download_folder` for `files_for_testing.name`
 
 
 #Section: Test Helper Functions
