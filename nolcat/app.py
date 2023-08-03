@@ -230,11 +230,6 @@ def create_app():
         #)
 
 
-    @app.route('/test-page')
-    def test():
-        return "this is the new testing page"
-
-
     return app
 
 
