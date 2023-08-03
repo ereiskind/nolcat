@@ -204,8 +204,8 @@ def create_app():
         return render_template('index.html')
     
     
-    @app.route('/download/',  methods=['GET', 'POST'])  # @app.route('/download/<path:file_path>',  methods=['GET', 'POST'])
-    def download_file():
+    @app.route('/download/<path:file_path>',  methods=['GET', 'POST'])
+    def download_file(file_path):
         """Downloads the file at the absolute file path in the variable route.
 
         An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
@@ -217,7 +217,7 @@ def create_app():
             file: a file is downloaded to the host machine through the web application
         """
         log.info("Starting `create_app.download_file()`.")
-        #log.info(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
+        log.info(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
         #file_path = Path(file_path)  # Variable route requires string object
         #log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
         return "this is a test"
