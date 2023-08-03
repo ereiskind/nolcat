@@ -168,6 +168,12 @@ Iteration 11: Create UI Design and Jinja Templates
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
+Iteration 12: Interact with Host File System
+============================================
+* Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
+* Finish ``tests.test_app.default_download_folder()``
+* Update ``tests.test_app.test_download_file()`` to use ``tests.test_app.default_download_folder()``
+
 Open Source Iterations
 **********************
 These iterations contain updates necessary for NoLCAT to be used as an open source program.
