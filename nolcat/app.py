@@ -220,9 +220,11 @@ def create_app():
         log.debug(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
         file_path = Path(file_path)  # Variable route requires string object
         log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
+        x=Path(__file__).parent.resolve() / 'initialization' / 'relation_initialization_templates' / 'initialize_fiscalYears.csv'
+        log.info(f"The working function sent the path {x} (type {type(x)})")
         return send_file(
-            path_or_file=Path(__file__).parent.resolve() / 'initialization' / 'relation_initialization_templates' / 'initialize_fiscalYears.csv',  #file_path,
-            mimetype='text/csv',  #file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
             as_attachment=True,
             download_name=file_path.name,
             last_modified=datetime.today(),
