@@ -164,10 +164,18 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
-def test_download_file():
+def test_download_file(client, file_for_download):
     """Tests the route enabling file downloads."""
-    #ToDo: How can this route be tested?
-    pass
+    log.info(f"At start of `test_download_file()`, `file_for_download` is {file_for_download} (type {type(file_for_download)})")
+    log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")
+    page = client.get(f'/download/{file_for_download}')
+    log.info(f"The response header for the downloads route is {page.headers}")
+    log.info(f"The history for the downloads route is {page.history}")
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    log.info(f"The data of the response item for the downloads route is\n{GET_soup}")
+
+    log.info(f"The contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")
+    assert page.status == "200 OK"
 
 
 #Section: Test Helper Functions

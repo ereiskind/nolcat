@@ -180,7 +180,6 @@ Iteration 1: Create Downloadable AUCT Template
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
 * Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
-* Write ``tests.test_app.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
 =======================================
