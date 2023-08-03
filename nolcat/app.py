@@ -220,13 +220,14 @@ def create_app():
         log.info(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
         file_path = Path(file_path)  # Variable route requires string object
         log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}).")
-        return send_file(
-            path_or_file=file_path,
-            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
-            as_attachment=True,
-            download_name=file_path.name,
-            last_modified=datetime.today(),
-        )
+        return "this is a test"
+        #return send_file(
+        #    path_or_file=file_path,
+        #    mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+        #    as_attachment=True,
+        #    download_name=file_path.name,
+        #    last_modified=datetime.today(),
+        #)
 
 
     return app
