@@ -21,7 +21,7 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 
-@pytest.fixture(params=[Path(__file__).parent.resolve() / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent.resolve() / 'data' / 'sample_COUNTER_R4_reports'])
+@pytest.fixture(params=[Path(__file__).parent.resolve() / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent.resolve() / 'bin' / 'sample_COUNTER_R4_reports'])
 def files_for_testing(request):
     """Handles the selection and removal of files for testing uploads and downloads.
     
