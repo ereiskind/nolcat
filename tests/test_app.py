@@ -164,11 +164,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
-def test_download_file(client, file_for_download):
+def test_download_file(client, files_for_testing):
     """Tests the route enabling file downloads."""
-    log.info(f"At start of `test_download_file()`, `file_for_download` is {file_for_download} (type {type(file_for_download)})")
+    log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
     log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")
-    page = client.get(f'/download/{file_for_download}')
+    page = client.get(f'/download/{files_for_testing}')
     log.info(f"The response header for the downloads route is {page.headers}")
     log.info(f"The history for the downloads route is {page.history}")
     GET_soup = BeautifulSoup(page.data, 'lxml')
