@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2023-07-19 ##########
+########## Failing 2023-08-04 ##########
 
 import pytest
 import logging
@@ -27,7 +27,7 @@ def current_month_like_most_recent_month_with_usage():
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
-    current_date = datetime.date.today()
+    current_date = datetime.date.today()  #TEST: 2023-08-04 - AttributeError: 'method_descriptor' object has no attribute 'today'
     begin_date = current_date.replace(day=1)
     end_date = datetime.date(
         begin_date.year,
@@ -157,7 +157,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
-    end_date = datetime.date(
+    end_date = datetime.date(  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object -- 
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -190,7 +190,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
             {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-            datetime.date(2020, 6, 1),  # The last month with usage in the test data
+            datetime.date(2020, 6, 1),  # The last month with usage in the test data  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
             datetime.date(2020, 8, 1),
         )
     #Test: Many statistics source providers don't have usage going back this far

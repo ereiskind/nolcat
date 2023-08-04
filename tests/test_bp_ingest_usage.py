@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2023-07-19 ##########
+########## Failing 2023-08-04 ##########
 
 import pytest
 import logging
@@ -46,7 +46,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
             # Could the classes in "test_UploadCOUNTERReports.py" be used?
             # Can a direct list of Werkzeug FileStorage object(s) be used?
         fields={
-            'COUNTER_reports': ('0_2017.xlsx', open(Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb')),
+            'COUNTER_reports': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb')),  #TEST: 2023-08-04 - NotADirectoryError: [Errno 20] Not a directory: '/nolcat/tests/test_bp_ingest_usage.py/bin/COUNTER_workbooks_for_tests/0_2017.xlsx'
         },
         encoding='utf-8',
     )
@@ -126,7 +126,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
         '/ingest_usage/harvest',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,

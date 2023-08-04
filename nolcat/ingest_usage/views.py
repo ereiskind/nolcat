@@ -143,7 +143,7 @@ def harvest_SUSHI_statistics():
             log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
-        end_date = datetime.date(
+        end_date = datetime.date(  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
             end_date.year,
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],

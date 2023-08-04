@@ -71,7 +71,7 @@ class ConvertJSONDictToDataframe:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")  #TEST: 2023-08-04 - Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised 'method_descriptor' object has no attribute 'fromisoformat', meaning the data couldn't be loaded into the database. The JSON data is being saved instead.
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         elif COUNTER_release == "5.1":
             try:
@@ -269,13 +269,13 @@ class ConvertJSONDictToDataframe:
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
                                 include_in_df_dtypes['proprietary_ID'] = 'string'
-                                log.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
+                                log.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.proprietary_ID` value ProQuest:paofoundation to `record_dict`. -- Last log statement for DR
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
                             record_dict['ISBN'] = str(type_and_value['Value'])
                             include_in_df_dtypes['ISBN'] = 'string'
-                            log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.ISBN` value 978-0-8223-8704-6 to `record_dict`. -- Last log statement for TR
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
@@ -342,7 +342,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Access_Method":
                     record_dict['access_method'] = value
                     include_in_df_dtypes['access_method'] = 'string'
-                    log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
+                    log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.access_method` value Regular to `record_dict`. -- Last log statement for PR
                 
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
@@ -405,7 +405,7 @@ class ConvertJSONDictToDataframe:
                         elif key_for_parent == "Data_Type":
                             record_dict['parent_data_type'] = value_for_parent
                             include_in_df_dtypes['parent_data_type'] = 'string'
-                            log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
+                            log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.parent_data_type` value Journal to `record_dict`. -- Last log statement for IR
                         
                         elif key_for_parent == "Item_ID":
                             for type_and_value in value_for_parent:

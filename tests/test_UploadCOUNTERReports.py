@@ -1,5 +1,5 @@
 """Test using `UploadCOUNTERReports`."""
-########## Passing 2023-07-19 ##########
+########## Failing 2023-08-04 ##########
 
 import pytest
 import logging
@@ -56,9 +56,9 @@ def sample_COUNTER_report_workbooks():
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
     """
-    folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
+    folder_path = Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests'
     fixture = []
-    for workbook in folder_path.iterdir():
+    for workbook in folder_path.iterdir():  #TEST: 2023-08-04 - NotADirectoryError: [Errno 20] Not a directory: '/nolcat/tests/test_UploadCOUNTERReports.py/bin/COUNTER_workbooks_for_tests'
         fixture.append(mock_FileStorage_object(folder_path / workbook))
     fixture.sort(key=lambda mock_FileStorage: mock_FileStorage.filename)  # Modifying list in place returns `None`, so making modification in `return` statement makes fixture value `None`
     return fixture

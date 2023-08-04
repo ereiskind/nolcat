@@ -306,8 +306,8 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['notes'] = None
         log.info(f"AUCT template dataframe:\n{df}")
 
+        template_save_location = Path(__file__).parent / 'initialize_annualUsageCollectionTracking.csv'
         try:
-            template_save_location = Path(__file__).parent / 'initialize_annualUsageCollectionTracking.csv'
             df.to_csv(
                 template_save_location,
                 index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
@@ -329,7 +329,8 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
-        template_save_location.unlink()
+        if template_save_location.is_file():
+            template_save_location.unlink()  #TEST: 2023-08-04 - UnboundLocalError: local variable 'template_save_location' referenced before assignment
         #Subsection: Ingest `annualUsageCollectionTracking` Data
         log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(
