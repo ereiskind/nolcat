@@ -181,8 +181,21 @@ def test_download_file(client, files_for_testing):  #ToDo: If method for interac
     """Tests the route enabling file downloads."""
     log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
     #ToDo: If method for interacting with host workstation's file system can be established, `log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")`
-    page = client.get(f'/download/{files_for_testing}')
+    page = client.get(
+        f'/download/{files_for_testing}',
+        follow_redirects=True,
+    )
     log.info(f"The response header for the downloads route is {page.headers} (type {type(page.headers)})")
+    try:
+        log.info(f"The location attribute of the response header for the downloads route is {page.headers['Location']} (type {type(page.headers['Location'])})")
+        try:
+            log.info(f"The data of the location attribute of the response header for the downloads route is {page.headers['Location'][1]} (type {type(page.headers['Location'][1])})")
+        except:
+            pass
+    except:
+        pass
+    log.info(f"The history for the downloads route is {page.history}")
+    log.info(f"The status of the downloads route is {page.status}")
     GET_soup = BeautifulSoup(page.data, 'lxml')
     log.info(f"The data of the response item for the downloads route (type {type(GET_soup)}) is\n{GET_soup}")
 
