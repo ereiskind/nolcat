@@ -217,17 +217,12 @@ def create_app():
         """
         log.info("Starting `create_app.download_file()`.")
         log.debug(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")
-        ##########
-        import os
-        log.info(f"`Path(file_path)` is {Path(file_path)} (type {type(Path(file_path))}) which is an absolute file path: {Path(file_path).is_absolute()}")
-        y=[os.path.split(x)[1] for x in Path(file_path).parents][:-1]
-        y.append([os.path.split(x) for x in Path(file_path).parents][-1][0])
-        y.reverse()
-        log.info(f"The {len(y)} parts of `Path(file_path)` are {y}")
-        log.info(f"`Path(file_path).root` is {Path(file_path).root} (type {type(Path(file_path).root)})")
-        log.info(f"`Path(file_path).anchor` is {Path(file_path).anchor} (type {type(Path(file_path).anchor)})")
-        ##########
-        #ToDo: Find way to make `file_path` an absolute file path
+        file_path = Path(  # Just using the `Path()` constructor creates a relative path; relative paths in `send_file()` are considered in relation to CWD
+            *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
+            *file_path.parts[file_path.parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
+        )
+        log.info(f"`Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])` is {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}")
+        log.info(f"`Path(*file_path.parts[file_path.parts.index('nolcat')+1:])` is {Path(*file_path.parts[file_path.parts.index('nolcat')+1:])}")
         log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
         return send_file(
             path_or_file=file_path,
