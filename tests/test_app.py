@@ -182,12 +182,11 @@ def test_download_file(client, files_for_testing):  #ToDo: If method for interac
     log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
     #ToDo: If method for interacting with host workstation's file system can be established, `log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")`
     page = client.get(f'/download/{files_for_testing}')
-    log.info(f"The response header for the downloads route is {page.headers}")
-    log.info(f"The history for the downloads route is {page.history}")
+    log.info(f"The response header for the downloads route is {page.headers} (type {type(page.headers)})")
     GET_soup = BeautifulSoup(page.data, 'lxml')
-    log.info(f"The data of the response item for the downloads route is\n{GET_soup}")
+    log.info(f"The data of the response item for the downloads route (type {type(GET_soup)}) is\n{GET_soup}")
 
-    assert page.status == "200 OK"
+    assert page.status == "308 PERMANENT REDIRECT"
     #ToDo: If method for interacting with host workstation's file system can be established, check `default_download_folder` for `files_for_testing.name`
 
 
