@@ -16,7 +16,7 @@ import pandas as pd
 
 log = logging.getLogger(__name__)
 
-absolute_path_to_tests_directory = Path(__file__).parent.resolve()
+absolute_path_to_tests_directory = Path(__file__).parent
 directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'
 
 

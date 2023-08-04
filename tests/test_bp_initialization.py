@@ -270,7 +270,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'index.html').resolve(), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -328,7 +328,7 @@ def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, crea
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html').resolve(), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -407,7 +407,7 @@ def test_collect_sources_data(client, engine, tmp_path, header_value, create_sta
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html').resolve(), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -427,7 +427,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
     AUCT_template_df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv').resolve(),
+        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv'),
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
@@ -488,7 +488,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, head
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    #with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html').resolve(), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')

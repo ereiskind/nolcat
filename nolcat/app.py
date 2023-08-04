@@ -226,16 +226,8 @@ def create_app():
         log.info(f"The {len(y)} parts of `Path(file_path)` are {y}")
         log.info(f"`Path(file_path).root` is {Path(file_path).root} (type {type(Path(file_path).root)})")
         log.info(f"`Path(file_path).anchor` is {Path(file_path).anchor} (type {type(Path(file_path).anchor)})")
-        
-        log.info(f"`Path(file_path).resolve()` is {Path(file_path).resolve()} (type {type(Path(file_path).resolve())}) which is an absolute file path: {Path(file_path).resolve().is_absolute()}")
-        y=[os.path.split(x)[1] for x in Path(file_path).resolve().parents][:-1]
-        y.append([os.path.split(x) for x in Path(file_path).resolve().parents][-1][0])
-        y.reverse()
-        log.info(f"The {len(y)} parts of `Path(file_path).resolve()` are {y}")
-        log.info(f"`Path(file_path).resolve().root` is {Path(file_path).resolve().root} (type {type(Path(file_path).resolve().root)})")
-        log.info(f"`Path(file_path).resolve().anchor` is {Path(file_path).resolve().anchor} (type {type(Path(file_path).resolve().anchor)})")
         ##########
-        file_path = Path(file_path).resolve()  # Variable route requires string object; the `Path` constructor creates a relative path, which causes `send_file()` to treat the path as if it's relative to this file
+        #ToDo: Find way to make `file_path` an absolute file path
         log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
         return send_file(
             path_or_file=file_path,

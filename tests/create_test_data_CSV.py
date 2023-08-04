@@ -50,7 +50,7 @@ file_name = Path('/', 'nolcat', 'tests', 'data')
 if file_name.exists():
     file_name = file_name / f'{relation_name}.csv'
 else:
-    file_name = Path(__file__).parent.resolve() / 'data' / f'{relation_name}.csv'
+    file_name = Path(__file__).parent / 'data' / f'{relation_name}.csv'
 
 file = relation_data.to_csv(
     file_name,

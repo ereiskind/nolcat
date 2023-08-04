@@ -31,7 +31,7 @@ def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     form = CustomSQLQueryForm()
     if request.method == 'GET':
-        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
         file_path.unlink(missing_ok=True)
         log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
@@ -43,7 +43,7 @@ def run_custom_SQL_query():
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index_label="index",
@@ -62,7 +62,7 @@ def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     form = QueryWizardForm()
     if request.method == 'GET':
-        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
         file_path.unlink(missing_ok=True)
         log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
@@ -177,7 +177,7 @@ def use_predefined_SQL_query():
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index_label="index",
@@ -197,8 +197,8 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent.resolve())}` contains the following files:\n{[file.name for file in Path(__file__).parent.resolve().iterdir()]}")
-        for file in Path(__file__).parent.resolve().iterdir():
+        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")
+        for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
                 log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")
@@ -224,7 +224,7 @@ def download_non_COUNTER_usage():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
 
-        #ToDo: file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent.resolve())
+        #ToDo: file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
         #ToDo: return redirect(url_for('download_file', file_path=str(file_path)))
         pass
     else:

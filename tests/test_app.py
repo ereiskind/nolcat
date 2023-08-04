@@ -34,7 +34,7 @@ def default_download_folder():
     pass
 
 
-@pytest.fixture(params=[Path(__file__).parent.resolve() / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent.resolve() / 'bin' / 'sample_COUNTER_R4_reports'])
+@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
 def files_for_testing(request):
     """Handles the selection and removal of files for testing uploads and downloads.
     
@@ -83,7 +83,7 @@ def test_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', 'index.html').resolve(), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -96,7 +96,7 @@ def test_homepage(client):
 def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
     nonexistent_page = client.get('/404')
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', '404.html').resolve(), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
