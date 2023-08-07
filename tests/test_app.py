@@ -187,19 +187,22 @@ def test_download_file(client, files_for_testing):  #ToDo: If method for interac
     )
     log.info(f"The response header for the downloads route is {page.headers} (type {type(page.headers)})")
     try:
-        log.info(f"The location attribute of the response header for the downloads route is {page.headers['Location']} (type {type(page.headers['Location'])})")
-        try:
-            log.info(f"The data of the location attribute of the response header for the downloads route is {page.headers['Location'][1]} (type {type(page.headers['Location'][1])})")
-        except:
-            pass
+        log.info(f"The location attribute of the response header for the downloads route is {page.headers['filename']} (type {type(page.headers['filename'])})")
     except:
         pass
-    log.info(f"The history for the downloads route is {page.history}")
-    log.info(f"The status of the downloads route is {page.status}")
+    log.info(f"The history for the downloads route is {page.history[0]} (type {type(page.history[0])})")
     GET_soup = BeautifulSoup(page.data, 'lxml')
     log.info(f"The data of the response item for the downloads route (type {type(GET_soup)}) is\n{GET_soup}")
 
-    assert page.status == "308 PERMANENT REDIRECT"
+    assert page.status == "200 OK"
+    #ToDo: assert filename in page.headers == files_for_testing.name
+    #ToDo: assert aspect of page.history == "308 PERMANENT REDIRECT"
+    if "bin" in files_for_testing.parts:
+        with files_for_testing.open('rb') as file:
+            log.info(f"The data of the file that was downloaded is (type {type(file)})\n{file}")
+    else:
+        with files_for_testing.open('rt') as file:
+            log.info(f"The data of the file that was downloaded is (type {type(file)})\n{file}")
     #ToDo: If method for interacting with host workstation's file system can be established, check `default_download_folder` for `files_for_testing.name`
 
 
