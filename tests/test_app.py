@@ -180,30 +180,29 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 def test_download_file(client, files_for_testing):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
     log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
-    #ToDo: If method for interacting with host workstation's file system can be established, `log.info(f"At start of `test_download_file()`, the contents of {str(default_download_folder())} are\n{[p for p in default_download_folder().iterdir()]}")`
     page = client.get(
         f'/download/{files_for_testing}',
         follow_redirects=True,
     )
-    log.info(f"The response header for the downloads route is {page.headers} (type {type(page.headers)})")
-    try:
-        log.info(f"The location attribute of the response header for the downloads route is {page.headers['filename']} (type {type(page.headers['filename'])})")
-    except:
-        pass
-    log.info(f"The history for the downloads route is {page.history[0]} (type {type(page.history[0])})")
-    GET_soup = BeautifulSoup(page.data, 'lxml')
-    log.info(f"The data of the response item for the downloads route (type {type(GET_soup)}) is\n{GET_soup}")
+    log.info(f"The filename in the response header for the downloads route is {page.headers.get('filename')} (type {type(page.headers.get('filename'))})")
+    log.info(f"The content type response header for the downloads route is {page.headers.get('Content-Disposition')} (type {type(page.headers.get('Content-Disposition'))})")
+    log.info(f"The file type in the response header for the downloads route is {page.headers.get('Content-Type')} (type {type(page.headers.get('Content-Type'))})")
+    log.info(f"The history for the downloads route is {page.history[0].status} (type {type(page.history[0].status)})")
+    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, files_for_testing.name) as file: downloaded_file = file.read()`
 
     assert page.status == "200 OK"
-    #ToDo: assert filename in page.headers == files_for_testing.name
-    #ToDo: assert aspect of page.history == "308 PERMANENT REDIRECT"
-    if "bin" in files_for_testing.parts:
-        with files_for_testing.open('rb') as file:
-            log.info(f"The data of the file that was downloaded is (type {type(file)})\n{file}")
-    else:
-        with files_for_testing.open('rt') as file:
-            log.info(f"The data of the file that was downloaded is (type {type(file)})\n{file}")
-    #ToDo: If method for interacting with host workstation's file system can be established, check `default_download_folder` for `files_for_testing.name`
+    #ToDo: assert page.history[0].status == "308 PERMANENT REDIRECT"
+    #ToDo: assert page.headers.get('filename') == files_for_testing.name
+    #ToDo: assert page.headers.get('Content-Disposition') == 'attachment'
+    #ToDo: assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[files_for_testing.suffix]
+    #ToDo: If method for interacting with host workstation's file system can be established, `assert files_for_testing.name in [file_name for file_name in default_download_folder.iterdir()]
+    #ToDo: If method for interacting with host workstation's file system can be established,
+    #if "bin" in files_for_testing.parts:
+    #    with files_for_testing.open('rb') as file:
+    #        assert file.read() == downloaded_file
+    #else:
+    #    with files_for_testing.open('rt') as file:
+    #        assert file.read() == downloaded_file
 
 
 #Section: Test Helper Functions
