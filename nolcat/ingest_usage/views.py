@@ -95,7 +95,7 @@ def upload_COUNTER_reports():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."
-            log.error(message)
+            log.error(message)  #TEST: 2023-08-08 - Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error type object 'datetime.datetime' has no attribute 'datetime'.
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
@@ -138,6 +138,8 @@ def harvest_SUSHI_statistics():
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
+        log.info(f"`begin_date` is {begin_date} (type {type(begin_date)})")
+        log.info(f"`end_date` is {end_date} (type {type(end_date)})")
         if end_date < begin_date:
             message = f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date})."
             log.warning(message)

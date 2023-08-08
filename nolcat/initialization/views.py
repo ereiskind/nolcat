@@ -329,6 +329,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     #Section: After Form Submission
     elif form.validate_on_submit():
+        log.info(f"Variables initialized in `request.method == 'GET'` exist in `form.validate_on_submit()`: {'df' in locals()}")
         if template_save_location.is_file():
             template_save_location.unlink()  #TEST: 2023-08-04 - UnboundLocalError: local variable 'template_save_location' referenced before assignment
         #Subsection: Ingest `annualUsageCollectionTracking` Data

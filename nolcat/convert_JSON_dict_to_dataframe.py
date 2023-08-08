@@ -137,6 +137,7 @@ class ConvertJSONDictToDataframe:
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['resource_name'] = value
                         log.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
@@ -150,6 +151,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher'] = value
                         log.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
@@ -163,6 +165,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher_ID'] = value
                         log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
@@ -189,6 +192,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['platform'] = value
                         log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
@@ -201,6 +205,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         if re.match(r'[Aa]uthor', string=type_and_value['Type']):
                             if record_dict.get('authors'):  # If the author name value is null, this will never be true
@@ -227,6 +232,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publication_date` Value
                 elif key == "Item_Dates":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         if type_and_value['Value'] == "1000-01-01" or type_and_value['Value'] == "1753-01-01" or type_and_value['Value'] == "1900-01-01":
                             continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
@@ -240,6 +246,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `article_version` Value
                 elif key == "Item_Attributes":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
@@ -249,6 +256,7 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         
                         #Subsection: Capture `DOI` Value
@@ -269,13 +277,13 @@ class ConvertJSONDictToDataframe:
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
                                 include_in_df_dtypes['proprietary_ID'] = 'string'
-                                log.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.proprietary_ID` value ProQuest:paofoundation to `record_dict`. -- Last log statement for DR
+                                log.debug(f"Added `COUNTERData.proprietary_ID` value {record_dict['proprietary_ID']} to `record_dict`.")
                         
                         #Subsection: Capture `ISBN` Value
                         elif type_and_value['Type'] == "ISBN":
                             record_dict['ISBN'] = str(type_and_value['Value'])
                             include_in_df_dtypes['ISBN'] = 'string'
-                            log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.ISBN` value 978-0-8223-8704-6 to `record_dict`. -- Last log statement for TR
+                            log.debug(f"Added `COUNTERData.ISBN` value {record_dict['ISBN']} to `record_dict`.")
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
@@ -313,18 +321,21 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `data_type` Value
                 elif key == "Data_Type":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['data_type'] = value
                     include_in_df_dtypes['data_type'] = 'string'
                     log.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
                 
                 #Subsection: Capture `section_Type` Value
                 elif key == "Section_Type":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['section_type'] = value
                     include_in_df_dtypes['section_type'] = 'string'
                     log.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     try:
                         record_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
@@ -334,25 +345,29 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['access_type'] = value
                     include_in_df_dtypes['access_type'] = 'string'
                     log.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
                 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['access_method'] = value
                     include_in_df_dtypes['access_method'] = 'string'
-                    log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.access_method` value Regular to `record_dict`. -- Last log statement for PR
+                    log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
                 
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if isinstance(value, list) and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
                         value = value[0]
                     for key_for_parent, value_for_parent in value.items():
 
                         #Subsection: Capture `parent_title` Value
                         if key_for_parent == "Item_Name":
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             if len(value_for_parent) > self.RESOURCE_NAME_LENGTH:
                                 log.critical(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
                                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
@@ -363,6 +378,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_authors` Value
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 if re.match(r'[Aa]uthor', string=type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
@@ -385,6 +401,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 if type_and_value['Value'] == "1000-01-01" or type_and_value['Value'] == "1753-01-01" or type_and_value['Value'] == "1900-01-01":
                                     continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
@@ -395,6 +412,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_article_version` Value
                         elif key_for_parent == "Item_Attributes":
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                                     record_dict['parent_article_version'] = type_and_value['Value']
@@ -403,11 +421,13 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             record_dict['parent_data_type'] = value_for_parent
                             include_in_df_dtypes['parent_data_type'] = 'string'
-                            log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")  #TEST: 2023-08-04 - Added `COUNTERData.parent_data_type` value Journal to `record_dict`. -- Last log statement for IR
+                            log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 
                                 #Subsection: Capture `parent_DOI` Value
@@ -472,6 +492,7 @@ class ConvertJSONDictToDataframe:
                             continue  # The `for key_for_parent, value_for_parent in value.items()` loop
 
                 elif key == "Performance":
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['temp'] = value
 
                 else:

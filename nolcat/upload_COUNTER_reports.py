@@ -83,9 +83,10 @@ class UploadCOUNTERReports:
                 while looking_for_header_row:
                     count_of_month_labels = 0
                     for cell in sheet[header_row_number]:
+                        log.info(f"`cell.value` is {cell.value} (type {type(cell.value)})")
                         if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
-                        elif isinstance(cell.value, datetime.datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
+                        elif isinstance(cell.value, datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])

@@ -598,6 +598,7 @@ class StatisticsSources(db.Model):
         """
         #Section: Get API Call URL and Parameters
         log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        log.debug("Before calling `self.fetch_SUSHI_information()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -605,7 +606,9 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
+        log.debug("Before calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
         SUSHI_status_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        log.debug("After calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
@@ -622,6 +625,7 @@ class StatisticsSources(db.Model):
         #Section: Harvest Individual Report if Specified
         if report_to_harvest == "PR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            log.debug("Before calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_data_response = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
@@ -629,10 +633,12 @@ class StatisticsSources(db.Model):
                 usage_start_date,
                 usage_end_date,
             )
+            log.debug("After calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             return SUSHI_data_response
         
         elif report_to_harvest == "DR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            log.debug("Before calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_data_response = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
@@ -640,10 +646,12 @@ class StatisticsSources(db.Model):
                 usage_start_date,
                 usage_end_date,
             )
+            log.debug("After calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             return SUSHI_data_response
         
         elif report_to_harvest == "TR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            log.debug("Before calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_data_response = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
@@ -651,11 +659,13 @@ class StatisticsSources(db.Model):
                 usage_start_date,
                 usage_end_date,
             )
+            log.debug("After calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             return SUSHI_data_response
         
         elif report_to_harvest == "IR":
             SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
             SUSHI_parameters["include_parent_details"] = "True"
+            log.debug("Before calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_data_response = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
@@ -663,12 +673,15 @@ class StatisticsSources(db.Model):
                 usage_start_date,
                 usage_end_date,
             )
+            log.debug("After calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             return SUSHI_data_response
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
+            log.debug("Before calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+            log.debug("After calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
                 all_available_reports = []
@@ -728,6 +741,7 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
                 #Subsection: Make API Call(s)
+                log.debug("Before calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
                 SUSHI_data_response = self._harvest_single_report(
                     report_name,
                     SUSHI_info['URL'],
@@ -735,6 +749,7 @@ class StatisticsSources(db.Model):
                     usage_start_date,
                     usage_end_date,
                 )
+                log.debug("After calling `self._harvest_single_report()` in `StatisticsSources._harvest_R5_SUSHI()`")  #TEST: 2023-08-08 - Temp logging statement
                 if isinstance(SUSHI_data_response, str):
                     log.debug(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
@@ -766,7 +781,9 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+        log.debug("Before calling `self._check_if_data_in_database()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
+        log.debug("After calling `self._check_if_data_in_database()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
             individual_month_dfs = []
@@ -777,20 +794,26 @@ class StatisticsSources(db.Model):
                     month_to_harvest.month,
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                 )
+                log.debug("Before calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+                log.debug("Before calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
                     log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                log.debug("Before calling `ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+                log.debug("After calling `ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                     temp_file_path = Path(__file__) / 'temp.json'
                     with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
+                    log.debug("Before calling `upload_file_to_S3_bucket()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                     log_message = upload_file_to_S3_bucket(
                         temp_file_path,
                         f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
                     )
+                    log.debug("After calling `upload_file_to_S3_bucket()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                     temp_file_path.unlink()
                     log.debug(log_message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
@@ -810,21 +833,27 @@ class StatisticsSources(db.Model):
         else:
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
+            log.debug("Before calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
             SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+            log.debug("After calling `SUSHICallAndResponse().make_SUSHI_call()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
             if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
                 message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
                 log.warning(message)
                 return message
+            log.debug("Before calling `ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
+            log.debug("After calling `ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
                 temp_file_path = Path(__file__) / 'temp.json'
                 with open(temp_file_path, 'xb', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
+                log.debug("Before calling `upload_file_to_S3_bucket()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
                     f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
                 )
+                log.debug("After calling `upload_file_to_S3_bucket()` in `StatisticsSources._harvest_single_report()`")  #TEST: 2023-08-08 - Temp logging statement
                 temp_file_path.unlink()
                 log.debug(log_message)
                 return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
@@ -886,7 +915,9 @@ class StatisticsSources(db.Model):
             str: the logging statement to indicate if calling and loading the data succeeded or failed
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        log.debug("Before calling `self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)` in `StatisticsSources.collect_usage_statistics()`")  #TEST: 2023-08-08 - Temp logging statement
         df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
+        log.debug("After calling `self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)` in `StatisticsSources.collect_usage_statistics()`")  #TEST: 2023-08-08 - Temp logging statement
         if isinstance(df, str):
             message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {df}"
             log.warning(message)
