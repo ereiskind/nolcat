@@ -110,6 +110,8 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     ).make_SUSHI_call()
     reports_offered = []
     for report in list(response.values())[0]:
+        if isinstance(report, str):
+            pytest.skip("The SUSHI call for the list of reports returned an error.")
         if "Report_ID" in list(report.keys()):
             if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 reports_offered.append(report["Report_ID"])
