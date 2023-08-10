@@ -1,6 +1,7 @@
 import logging
 import re
-import datetime
+from datetime import date
+from datetime import datetime
 from dateutil import parser
 import json
 from copy import deepcopy
@@ -238,7 +239,7 @@ class ConvertJSONDictToDataframe:
                             continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
                         if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
                             try:
-                                record_dict['publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                                record_dict['publication_date'] = date.fromisoformat(type_and_value['Value'])
                                 include_in_df_dtypes['publication_date'] = True
                                 log.debug(f"Added `COUNTERData.publication_date` value {record_dict['publication_date']} to `record_dict`.")
                             except:  # In case `type_and_value['Value']` is null, which would cause the conversion to a datetime data type to return a TypeError
@@ -406,7 +407,7 @@ class ConvertJSONDictToDataframe:
                                 if type_and_value['Value'] == "1000-01-01" or type_and_value['Value'] == "1753-01-01" or type_and_value['Value'] == "1900-01-01":
                                     continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
                                 if type_and_value['Type'] == "Publication_Date":  # Unlikely to be more than one; if there is, the field's date/datetime64 data type prevent duplicates from being preserved
-                                    record_dict['parent_publication_date'] = datetime.date.fromisoformat(type_and_value['Value'])
+                                    record_dict['parent_publication_date'] = date.fromisoformat(type_and_value['Value'])
                                     include_in_df_dtypes['parent_publication_date'] = True
                                     log.debug(f"Added `COUNTERData.parent_publication_date` value {record_dict['parent_publication_date']} to `record_dict`.")
                         
@@ -501,8 +502,9 @@ class ConvertJSONDictToDataframe:
             
             #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
             performance = record_dict.pop('temp')
+            log.debug(f"Preparing to add date, metric type, and usage count values `{performance}` to the record.")
             for period_grouping in performance:
-                record_dict['usage_date'] = datetime.date.fromisoformat(period_grouping['Period']['Begin_Date'])
+                record_dict['usage_date'] = date.fromisoformat(period_grouping['Period']['Begin_Date'])
                 for instance in period_grouping['Instance']:
                     record_dict['metric_type'] = instance['Metric_Type']
                     record_dict['usage_count'] = instance['Count']
@@ -572,7 +574,7 @@ class ConvertJSONDictToDataframe:
         Returns:
             str: the date or timestamp in ISO format
         """
-        if isinstance(dates,(datetime.date, datetime.datetime)):
+        if isinstance(dates,(date, datetime)):
             return dates.isoformat()
         else:
             raise TypeError  # So any unexpected non-serializable data types raise a type error
