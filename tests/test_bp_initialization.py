@@ -459,7 +459,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, head
         encoding='utf-8',
     )
     header_value['Content-Type'] = form_submissions.content_type
-    POST_response = client.post(  #TEST: 2023-08-04 - UnboundLocalError: local variable 'template_save_location' referenced before assignment
+    POST_response = client.post(
         '/initialization/initialization-page-3',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,

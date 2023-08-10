@@ -330,7 +330,7 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: After Form Submission
     elif form.validate_on_submit():
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
-            template_save_location.unlink(missing_ok=True)  #TEST: 2023-08-04 - UnboundLocalError: local variable 'template_save_location' referenced before assignment
+            template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
         log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(

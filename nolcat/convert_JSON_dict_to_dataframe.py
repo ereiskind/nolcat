@@ -72,7 +72,7 @@ class ConvertJSONDictToDataframe:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")  #TEST: 2023-08-04 - Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised 'method_descriptor' object has no attribute 'fromisoformat', meaning the data couldn't be loaded into the database. The JSON data is being saved instead.
+                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
                 return pd.DataFrame()  # Returning an empty dataframe tells `StatisticsSources._harvest_R5_SUSHI()` that this report can't be loaded
         elif COUNTER_release == "5.1":
             try:

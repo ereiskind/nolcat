@@ -84,7 +84,6 @@ class UploadCOUNTERReports:
                 while looking_for_header_row:
                     count_of_month_labels = 0
                     for cell in sheet[header_row_number]:
-                        log.info(f"`cell.value` is {cell.value} (type {type(cell.value)})")
                         if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
                         elif isinstance(cell.value, datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
@@ -245,7 +244,7 @@ class UploadCOUNTERReports:
                 if "publication_date" in df_field_names:
                     df['publication_date'] = df['publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
-                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
                 if "parent_publication_date" in df_field_names:
                     df['parent_publication_date'] = df['parent_publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues

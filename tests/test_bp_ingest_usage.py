@@ -126,7 +126,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
         'begin_date': most_recent_month_with_usage[0],
         'end_date': most_recent_month_with_usage[1],
     }
-    POST_response = client.post(  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
+    POST_response = client.post(
         '/ingest_usage/harvest',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,

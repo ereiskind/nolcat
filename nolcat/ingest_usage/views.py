@@ -37,6 +37,7 @@ def upload_COUNTER_reports():
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
             try:
+                log.debug("Starting the duplication check against what's already in the database.")
                 # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
                 log.debug(f"`df['statistics_source_ID']`: {df['statistics_source_ID']} (type {type(df['statistics_source_ID'])}).")
                 log.debug(f"`df['statistics_source_ID'].unique()`: {df['statistics_source_ID'].unique()} (type {type(df['statistics_source_ID'].unique())}).")
@@ -79,9 +80,10 @@ def upload_COUNTER_reports():
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             except Exception as error:
                 message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-                log.error(message)
+                log.error(message)  #TEST: 2023-08-10 The uploaded data wasn't added to the database because the check for possible duplication raised 'StringArray' object has no attribute 'tolist'.
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            log.debug("About to load dataframe into database.")
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
                 'COUNTERData',
@@ -143,10 +145,7 @@ def harvest_SUSHI_statistics():
             log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
-        log.info(f"`end_date.year` is {end_date.year} (type {type(end_date.year)}")
-        log.info(f"`end_date.month` is {end_date.month} (type {type(end_date.month)}")
-        log.info(f"`calendar.monthrange(end_date.year, end_date.month)[1]` is {calendar.monthrange(end_date.year, end_date.month)[1]} (type {type(calendar.monthrange(end_date.year, end_date.month)[1])}")
-        end_date = date(  #TEST: 2023-08-10 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
+        end_date = date(
             end_date.year,
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
