@@ -6,7 +6,7 @@ The fixtures for connecting to the database are primarily based upon the fixture
 import pytest
 import logging
 from pathlib import Path
-import datetime
+from datetime import date
 import calendar
 from sqlalchemy import create_engine
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -177,15 +177,15 @@ def most_recent_month_with_usage():
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
-    current_date = datetime.date.today()
-    if current_date.day < 10:
+    current_date = date.today()
+    if current_date.day < 15:
         begin_month = current_date + relativedelta(months=-2)
         begin_date = begin_month.replace(day=1)
     else:
         begin_month = current_date + relativedelta(months=-1)
         begin_date = begin_month.replace(day=1)
     
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
