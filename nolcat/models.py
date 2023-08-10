@@ -5,7 +5,8 @@ from pathlib import Path
 import sys
 import json
 import re
-import datetime
+from datetime import date
+from datetime import datetime
 import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
@@ -789,7 +790,7 @@ class StatisticsSources(db.Model):
             individual_month_dfs = []
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
-                SUSHI_parameters['end_date'] = datetime.date(
+                SUSHI_parameters['end_date'] = date(
                     month_to_harvest.year,
                     month_to_harvest.month,
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
