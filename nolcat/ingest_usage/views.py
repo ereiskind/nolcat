@@ -34,9 +34,16 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
-            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-            df['report_creation_date'] = pd.to_datetime(None)
             try:
+                try:
+                    df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+                    df['report_creation_date'] = pd.to_datetime(None)
+                except Exception as error:
+                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."
+                    log.error(message)
+                    flash(message)
+                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+                
                 log.debug("Starting the duplication check against what's already in the database.")
                 # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
                 log.debug(f"`df['statistics_source_ID']`: {df['statistics_source_ID']} (type {type(df['statistics_source_ID'])}).")
@@ -83,6 +90,7 @@ def upload_COUNTER_reports():
                 log.error(message)  #TEST: 2023-08-10 The uploaded data wasn't added to the database because the check for possible duplication raised 'StringArray' object has no attribute 'tolist'.
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            
             log.debug("About to load dataframe into database.")
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
