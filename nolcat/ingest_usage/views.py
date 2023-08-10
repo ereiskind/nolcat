@@ -1,5 +1,5 @@
 import logging
-import datetime
+from datetime import date
 import calendar
 from itertools import product
 from ast import literal_eval
@@ -138,14 +138,15 @@ def harvest_SUSHI_statistics():
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
-        log.info(f"`begin_date` is {begin_date} (type {type(begin_date)})")
-        log.info(f"`end_date` is {end_date} (type {type(end_date)})")
         if end_date < begin_date:
             message = f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date})."
             log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
-        end_date = datetime.date(  #TEST: 2023-08-04 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
+        log.info(f"`end_date.year` is {end_date.year} (type {type(end_date.year)}")
+        log.info(f"`end_date.month` is {end_date.month} (type {type(end_date.month)}")
+        log.info(f"`calendar.monthrange(end_date.year, end_date.month)[1]` is {calendar.monthrange(end_date.year, end_date.month)[1]} (type {type(calendar.monthrange(end_date.year, end_date.month)[1])}")
+        end_date = date(  #TEST: 2023-08-10 - TypeError: descriptor 'date' for 'datetime.datetime' objects doesn't apply to a 'int' object
             end_date.year,
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
