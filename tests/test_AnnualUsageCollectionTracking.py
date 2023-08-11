@@ -4,31 +4,39 @@
 import pytest
 import logging
 from random import choice
-import os
 
 # `conftest.py` fixtures are imported automatically
+from conftest import mock_FileStorage_object  # Direct import is required because it isn't a fixture
 from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
 
 
-#Section: collect_annual_usage_statistics()
-def test_collect_annual_usage_statistics():
-    """Test calling the StatisticsSources._harvest_R5_SUSHI method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
-    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
-    #ToDo: Get the data from the other relations, then call the method
+#Section: Collecting Annual COUNTER Usage Statistics
+@pytest.fixture(scope='module')
+def AUCT_fixture_for_SUSHI(engine):
+    """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value."""
+    #ToDo: sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source WHERE StatisticsSources.statistics_source_retrieval_code IS NOT NULL;"
+    #ToDo: Randomly select a record and use its data to create a `AnnualUsageCollectionTracking` object
     pass
 
 
-#Section: upload_nonstandard_usage_file()
-def test_upload_nonstandard_usage_file():
-    """Create a test for the function."""
-    #ToDo: Write test and docstring
+def test_collect_annual_usage_statistics(caplog):
+    """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+
+    #ToDo: AUCT_fixture -> PK used to get SUSHI start date, SUSHI end date, StatisticsSources object
+    #ToDo: `StatisticsSources._harvest_R5_SUSHI()` called with stats source and dates above
+    #ToDo: Index adjusted for upload to `COUNTERData` relation, then loaded into the relation
+    #ToDo: Success returns f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
     pass
 
 
-#Section: download_nonstandard_usage_file()
+#Section: Upload and Download Nonstandard Usage File
 @pytest.fixture(scope='module')
 def choose_AUCT_PKs():
     """Chooses the `StatisticsSources.statistics_source_ID`, file name, and note value to use in the subsequent tests."""
@@ -40,7 +48,7 @@ def choose_AUCT_PKs():
 
 
 @pytest.fixture(scope='module')
-def AUCT_fixture_3(choose_AUCT_PKs):
+def AUCT_fixture_for_file_IO(choose_AUCT_PKs):
     """Creates an `AnnualUsageCollectionTracking` object with the data from `choose_AUCT_PKs()`."""
     yield AnnualUsageCollectionTracking(
         AUCT_statistics_source=11,
@@ -56,36 +64,37 @@ def AUCT_fixture_3(choose_AUCT_PKs):
 
 
 @pytest.fixture
-def file_for_download(AUCT_fixture_3):
-    """Creates a file in S3 that can be used in `test_download_nonstandard_usage_file()`.
+def file_for_IO(AUCT_fixture_for_file_IO):
+    """Creates a file that can be used in `test_upload_nonstandard_usage_file()` and `test_download_nonstandard_usage_file()`.
     
     The test file is saved to NoLCAT's `tests` folder instead of pytest's temporary folder because the file path for the test file needs to be passed to a function outside the testing module.
     """
     df=pd.DataFrame()
+    log.info(f"`Path(__file__).parent` contents at start of `file_for_IO()`:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     df.to_csv(
-        Path(__file__).parent / AUCT_fixture_3.usage_file_path,
+        Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path,
         encoding='utf-8',
         errors='backslashreplace',
     )
-    upload_file_to_S3_bucket(
-        Path(Path(__file__).parent / AUCT_fixture_3.usage_file_path),
-        AUCT_fixture_3.usage_file_path,
-    )
-    yield PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path  # The fixture returns the name of the file for use in determining its successful upload
+    yield PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path  # The fixture returns the name of the file in S3 for use in determining its successful upload
 
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + AUCT_fixture_3.usage_file_path
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
-    os.remove(Path(__file__).parent / AUCT_fixture_3.usage_file_path)
+    #ToDo: try:
+    #ToDo:     s3_client.delete_object(
+    #ToDo:         Bucket=BUCKET_NAME,
+    #ToDo:         Key=PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path
+    #ToDo:     )
+    #ToDo: except botocore.exceptions as error:
+    #ToDo:     log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
+    #ToDo: Path(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path).unlink()
 
 
-def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
-    """Test downloading a file in S3 to a local computer."""
-    #Subsection: Confirm File to Download is in S3
+@pytest.mark.dependency(AUCT_fixture_for_file_IO)
+def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO):
+    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
+    log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
+    upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(mock_FileStorage_object(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path))
+    log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
+
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",
@@ -93,9 +102,25 @@ def test_download_nonstandard_usage_file(AUCT_fixture_3, file_for_download):
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    if file_for_download not in bucket_contents:
-        pytest.skip(f"The file {file_for_download} wasn't successfully loaded into the S3 bucket.")
-    
-    #Subsection: Download File Via Method
-    file_path = AUCT_fixture_3.download_nonstandard_usage_file(Path(__file__).parent)
+    log.info(f"`bucket_contents`:\n{bucket_contents}")
+    #ToDo: Confirm `file_for_IO` is name of file being looked for
+
+    usage_file_path_in_database = pd.read_sql(
+        sql=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {AUCT_fixture_for_file_IO.AUCT_statistics_source} AND AUCT_fiscal_year = {AUCT_fixture_for_file_IO.AUCT_fiscal_year};",
+        con=engine,
+    )
+    usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
+    log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")
+
+    #ToDo: upload_method -> return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
+    #ToDo: assert file_for_IO in bucket_contents
+    #ToDo: assert usage_file_path_in_database == file_for_IO
+
+
+@pytest.mark.dependency(depends=['test_upload_nonstandard_usage_file'])
+def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO):
+    """Test downloading a file in S3 to a local computer."""
+    log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
+    file_path = AUCT_fixture_for_file_IO.download_nonstandard_usage_file(Path(__file__).parent)
+    log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     assert file_path.is_file()
