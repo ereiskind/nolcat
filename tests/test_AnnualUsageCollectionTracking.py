@@ -89,6 +89,16 @@ def file_for_IO(AUCT_fixture_for_file_IO):
 
 
 @pytest.mark.dependency()
+def create_file_for_IO(file_for_IO):
+    """This test actually instantiates the file created in the `file_for_IO()` fixture.
+    
+    Without this test, the `file_for_IO()` fixture doesn't run before `test_upload_nonstandard_usage_file()`, meaning the latter can't use the file created in the former as said file doesn't exist.
+    """
+    log.info(f"`Path(__file__).parent` contents at start of `create_file_for_IO()`:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
+    assert file_for_IO.is_file()
+
+
+@pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
