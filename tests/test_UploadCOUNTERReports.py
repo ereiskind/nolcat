@@ -20,6 +20,9 @@ def sample_COUNTER_report_workbooks():
     """Creates a list of mock_FileStorage_object object(s) for use in testing the `UploadCOUNTERReports` class.
     
     The `UploadCOUNTERReports` constructor takes a list of Werkzeug FileStorage object(s), but when this fixture uses those objects, a `File is not a zip file` error is raised. The `mock_FileStorage_object` class was devised as a way around that issue.
+
+    Yields:
+        list: a list of mock_FileStorage_object object(s) simulating multiple files selected in a MultipleFileField field
     """
     folder_path = Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests'
     fixture = []

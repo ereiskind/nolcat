@@ -23,7 +23,11 @@ log = logging.getLogger(__name__)
 
 @pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
 def default_download_folder():
-    """Provides the path to the host workstation's downloads folder."""
+    """Provides the path to the host workstation's downloads folder.
+    
+    Yields:
+        pathlib.Path: a path to the host workstation's downloads folder
+    """
     #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
     '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
         if os.name == 'nt':  # Windows
@@ -39,6 +43,12 @@ def files_for_testing(request):
     """Handles the selection and removal of files for testing uploads and downloads.
     
     This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        request (pathlib.Path): an absolute path to a folder with test data
+
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file
     """
     file_path = request.param
     file_name = choice([file.name for file in file_path.iterdir()])

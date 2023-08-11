@@ -22,7 +22,11 @@ log = logging.getLogger(__name__)
 #Section: Fixtures
 @pytest.fixture
 def blank_annualUsageCollectionTracking_data_types():
-    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types."""
+    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types.
+    
+    Yields:
+        dict: the `astype` argument for `annualUsageCollectionTracking` and the primary keys corresponding to the parts of its composite key
+    """
     yield {
         **AnnualUsageCollectionTracking.state_data_types(),  # The double asterisk is the dictionary unpacking operator
         "Statistics Source": StatisticsSources.state_data_types()['statistics_source_name'],
@@ -32,7 +36,15 @@ def blank_annualUsageCollectionTracking_data_types():
 
 @pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
-    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        fiscalYears_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield fiscalYears_relation.to_csv(
         tmp_path / 'fiscalYears_relation.csv',
         index_label="fiscal_year_ID",
@@ -44,7 +56,15 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
 
 @pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
-    """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        vendors_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield vendors_relation.to_csv(
         tmp_path / 'vendors_relation.csv',
         index_label="vendor_ID",
@@ -56,7 +76,15 @@ def create_vendors_CSV_file(tmp_path, vendors_relation):
 
 @pytest.fixture
 def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
-    """Create a CSV file with the test data for the `vendorNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `vendorNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        vendorNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield vendorNotes_relation.to_csv(
         tmp_path / 'vendorNotes_relation.csv',
         index_label="vendor_notes_ID",
@@ -68,7 +96,15 @@ def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
 
 @pytest.fixture
 def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
-    """Create a CSV file with the test data for the `statisticsSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsSources_relation.to_csv(
         tmp_path / 'statisticsSources_relation.csv',
         index_label="statistics_source_ID",
@@ -80,7 +116,15 @@ def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
 
 @pytest.fixture
 def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relation):
-    """Create a CSV file with the test data for the `statisticsSourceNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsSourceNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsSourceNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsSourceNotes_relation.to_csv(
         tmp_path / 'statisticsSourceNotes_relation.csv',
         index_label="statistics_source_notes_ID",
@@ -92,7 +136,15 @@ def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relati
 
 @pytest.fixture
 def create_resourceSources_CSV_file(tmp_path, resourceSources_relation):
-    """Create a CSV file with the test data for the `resourceSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `resourceSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        resourceSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield resourceSources_relation.to_csv(
         tmp_path / 'resourceSources_relation.csv',
         index_label="resource_source_ID",
@@ -104,7 +156,15 @@ def create_resourceSources_CSV_file(tmp_path, resourceSources_relation):
 
 @pytest.fixture
 def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
-    """Create a CSV file with the test data for the `resourceSourceNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `resourceSourceNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        resourceSourceNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield resourceSourceNotes_relation.to_csv(
         tmp_path / 'resourceSourceNotes_relation.csv',
         index_label="resource_source_notes_ID",
@@ -116,7 +176,15 @@ def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
 
 @pytest.fixture
 def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSources_relation):
-    """Create a CSV file with the test data for the `statisticsResourceSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsResourceSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsResourceSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsResourceSources_relation.to_csv(
         tmp_path / 'statisticsResourceSources_relation.csv',
         index_label=["SRS_statistics_source", "SRS_resource_source"],
@@ -131,6 +199,13 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUs
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
     The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. The dataframe and subsequent CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function contains null values in the relation's non-index fields, extra fields for the statistics source and fiscal year name, and records for statistics source and fiscal year combinations that don't actually exist. To test the CSV creation, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        blank_annualUsageCollectionTracking_data_types (dict): the `astype` argument for `annualUsageCollectionTracking` and the primary keys corresponding to the parts of its composite key
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
     """
     multiindex = pd.DataFrame(
         [
@@ -240,7 +315,15 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUs
 
 @pytest.fixture
 def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectionTracking_relation):
-    """Create a CSV file with the test data for the `annualUsageCollectionTracking_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `annualUsageCollectionTracking_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        annualUsageCollectionTracking_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield annualUsageCollectionTracking_relation.to_csv(
         tmp_path / 'annualUsageCollectionTracking_relation.csv',
         index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
@@ -252,7 +335,15 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
 
 @pytest.fixture
 def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
-    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        COUNTERData_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield COUNTERData_relation.to_csv(
         tmp_path / 'COUNTERData_relation.csv',
         index_label="COUNTER_data_ID",

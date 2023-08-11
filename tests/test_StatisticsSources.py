@@ -94,14 +94,28 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 
 @pytest.fixture(scope='module')
 def SUSHI_credentials_fixture(StatisticsSources_fixture):
-    """A fixture returning the SUSHI credentials dictionary to avoid repeated callings of the `StatisticsSources.fetch_SUSHI_information()` method in later test functions."""
+    """A fixture returning the SUSHI credentials dictionary to avoid repeated callings of the `StatisticsSources.fetch_SUSHI_information()` method in later test functions.
+
+    Args:
+        StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+    
+    Yields:
+        dict: SUSHI credentials
+    """
     yield StatisticsSources_fixture.fetch_SUSHI_information()
 
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
-    """A fixture listing all the customizable reports offered by the given statistics source."""
+    """A fixture listing all the customizable reports offered by the given statistics source.
+
+    Args:
+        StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+    
+    Yields:
+        list: the abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+    """
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     response = SUSHICallAndResponse(
         StatisticsSources_fixture.statistics_source_name,

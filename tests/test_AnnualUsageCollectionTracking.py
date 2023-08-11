@@ -15,7 +15,14 @@ log = logging.getLogger(__name__)
 #Section: Collecting Annual COUNTER Usage Statistics
 @pytest.fixture(scope='module')
 def AUCT_fixture_for_SUSHI(engine):
-    """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value."""
+    """Creates an `AnnualUsageCollectionTracking` object with a non-null `StatisticsSources.statistics_source_retrieval_code` value.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
+    """
     #ToDo: sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source WHERE StatisticsSources.statistics_source_retrieval_code IS NOT NULL;"
     #ToDo: Randomly select a record and use its data to create a `AnnualUsageCollectionTracking` object
     pass
@@ -38,7 +45,11 @@ def test_collect_annual_usage_statistics(caplog):
 #Section: Upload and Download Nonstandard Usage File
 @pytest.fixture(scope='module')
 def choose_AUCT_PKs():
-    """Chooses the `StatisticsSources.statistics_source_ID`, file name, and note value to use in the subsequent tests."""
+    """Chooses the `StatisticsSources.statistics_source_ID`, file name, and note value to use in the subsequent tests.
+    
+    Yields:
+        tuple: a `StatisticsSources.statistics_source_ID`, file name, and note value
+    """
     yield choice([
         (2, f"11_2.csv", "This is the first FY with usage statistics"),
         (3, f"11_3.csv", None),
@@ -48,7 +59,14 @@ def choose_AUCT_PKs():
 
 @pytest.fixture(scope='module')
 def AUCT_fixture_for_file_IO(choose_AUCT_PKs):
-    """Creates an `AnnualUsageCollectionTracking` object with the data from `choose_AUCT_PKs()`."""
+    """Creates an `AnnualUsageCollectionTracking` object with the data from `choose_AUCT_PKs()`.
+
+    Args:
+        choose_AUCT_PKs (tuple): a `StatisticsSources.statistics_source_ID`, file name, and note value
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+    """
     yield AnnualUsageCollectionTracking(
         AUCT_statistics_source=11,
         AUCT_fiscal_year=choose_AUCT_PKs[0],
@@ -67,6 +85,12 @@ def file_for_IO(AUCT_fixture_for_file_IO):
     """Creates a file that can be used in `test_upload_nonstandard_usage_file()` and `test_download_nonstandard_usage_file()`.
     
     The test file is saved to NoLCAT's `tests` folder instead of pytest's temporary folder because the file path for the test file needs to be passed to a function outside the testing module.
+
+    Args:
+        AUCT_fixture_for_file_IO (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+
+    Yields:
+        #ToDo: Should it just be the `usage_file_path` attribute as pathlib.Path, the absolute file path in the container as pathlib.Path, the S3 file name as a string, or a tuple with some combination of the previous?
     """
     df=pd.DataFrame()
     df.to_csv(

@@ -27,6 +27,9 @@ def engine():
     """Creates a SQLAlchemy engine for testing.
     
     The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database. This fixture is used in `tests.test_app`, `tests.test_bp_ingest_usage`, `tests.test_bp_initialization`, `tests.test_FiscalYears`, `tests.test_StatisticsSources`, and later in this module.
+
+    Yields:
+        sqlalchemy.engine.Engine: a SQLAlchemy engine
     """
     engine = create_engine(
         f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
@@ -41,6 +44,9 @@ def app():
     """Creates an instance of the Flask object for the test session.
     
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection. This fixture is used in `tests.test_app` and later in this module.
+
+    Yields:
+        flask.Flask: a Flask object
     """
     app = create_app()
     app.debug = True
@@ -64,6 +70,12 @@ def client(app):
     """Creates an instance of the Flask test client.
     
     The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
+
+    Args:
+        app (flask.Flask): a Flask object
+
+    Yields:
+        flask.testing.FlaskClient: a way to test HTTP calls without running a live server
     """
     client = app.test_client()
     log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")
@@ -103,68 +115,112 @@ def session(engine, db):
 #Section: Test Data for Relations
 @pytest.fixture
 def fiscalYears_relation():
-    """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
+    """Creates a dataframe that can be loaded into the `fiscalYears` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.fiscalYears_relation()
 
 
 @pytest.fixture
 def vendors_relation():
-    """Creates a dataframe that can be loaded into the `vendors` relation."""
+    """Creates a dataframe that can be loaded into the `vendors` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.vendors_relation()
 
 
 @pytest.fixture
 def vendorNotes_relation():
-    """Creates a dataframe that can be loaded into the `vendorNotes` relation."""
+    """Creates a dataframe that can be loaded into the `vendorNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.vendorNotes_relation()
 
 
 @pytest.fixture
 def statisticsSources_relation():
-    """Creates a dataframe that can be loaded into the `statisticsSources` relation."""
+    """Creates a dataframe that can be loaded into the `statisticsSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsSources_relation()
 
 
 @pytest.fixture
 def statisticsSourceNotes_relation():
-    """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation."""
+    """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsSourceNotes_relation()
 
 
 @pytest.fixture
 def resourceSources_relation():
-    """Creates a dataframe that can be loaded into the `resourceSources` relation."""
+    """Creates a dataframe that can be loaded into the `resourceSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.resourceSources_relation()
 
 
 @pytest.fixture
 def resourceSourceNotes_relation():
-    """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation."""
+    """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.resourceSourceNotes_relation()
 
 
 @pytest.fixture
 def statisticsResourceSources_relation():
-    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsResourceSources_relation()
 
 
 @pytest.fixture
 def annualUsageCollectionTracking_relation():
-    """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation."""
+    """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.annualUsageCollectionTracking_relation()
 
 
 @pytest.fixture
 def COUNTERData_relation():
-    """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
+    """Creates a dataframe that can be loaded into the `COUNTERData` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.COUNTERData_relation()
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
 @pytest.fixture
 def header_value():
-    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
+    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header.
+    
+    Yields:
+        dict: HTTP header data
+    """
     return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
@@ -198,6 +254,9 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     """Creates a `MultipartEncoder.fields` dictionary value for a `MultipleFileField`.
     
     When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
+
+    Yields:
+        MultipartEncoder.fields: a representation of multiple files selected in a MultipleFileField
     """
     folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
     file_names = []
