@@ -5,7 +5,8 @@ from pathlib import Path
 import sys
 import json
 import re
-import datetime
+from datetime import date
+from datetime import datetime
 import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
@@ -772,7 +773,7 @@ class StatisticsSources(db.Model):
             individual_month_dfs = []
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
-                SUSHI_parameters['end_date'] = datetime.date(
+                SUSHI_parameters['end_date'] = date(
                     month_to_harvest.year,
                     month_to_harvest.month,
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
@@ -784,7 +785,7 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
+                    temp_file_path = Path(__file__) / 'temp.json'
                     with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
                     log_message = upload_file_to_S3_bucket(
@@ -818,8 +819,8 @@ class StatisticsSources(db.Model):
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                temp_file_path = Path().resolve() / 'temp.json'
-                with open(temp_file_path, 'xb', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                temp_file_path = Path(__file__) / 'temp.json'
+                with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
@@ -1032,11 +1033,11 @@ class ResourceSources(db.Model):
             None: no return value is needed, so the default `None` is used
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
-        #ToDo: SQL_query = f'''
+        #ToDo: SQL_query = f"""
         #ToDo:     UPDATE
         #ToDo:     SET current_statistics_source = false
         #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
-        #ToDo: '''
+        #ToDo: """
         #ToDo: Apply above query to database
         #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
         pass
@@ -1139,7 +1140,6 @@ class AnnualUsageCollectionTracking(db.Model):
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        usage_data_file_extensions: This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
         upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
         download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
@@ -1190,30 +1190,6 @@ class AnnualUsageCollectionTracking(db.Model):
             "usage_file_path": 'string',
             "notes": 'string',
         }
-
-
-    @hybrid_method
-    @classmethod
-    def usage_data_file_extensions(self):
-        """This method provides a tuple listing the extension of the types of files containing non-COUNTER compliant data that can be saved to S3."""
-        return (
-            "xlsx",
-            "csv",
-            "tsv",
-            "pdf",
-            "docx",
-            "pptx",
-            "txt",
-            "jpeg",
-            "jpg",
-            "png",
-            "svg",
-            "json",
-            "html",
-            "htm",
-            "xml",
-            "zip",
-        )
 
 
     @hybrid_method
@@ -1292,8 +1268,8 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
         file_path = Path(file)
         file_extension = file_path.suffix
-        if file_extension not in self.usage_data_file_extensions():
-            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{self.usage_data_file_extensions()}"
+        if file_extension not in file_extensions_and_mimetypes().keys():
+            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             log.error(message)
             return message
         
@@ -1325,28 +1301,31 @@ class AnnualUsageCollectionTracking(db.Model):
     
 
     @hybrid_method
-    def download_nonstandard_usage_file(self, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+    def download_nonstandard_usage_file(self, web_app_download_folder, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
+            web_app_download_folder (pathlib.Path): the folder from which the web app will download the file
             client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
             bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
         
         Returns:
             pathlib.Path: the absolute file path to the downloaded file
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
-        #ToDo: How should the folder the files are downloaded to get cleared out? It can't be done after the download because the download is the return value for the route function.
+        file_download_path = web_app_download_folder / self.usage_file_path
         log.info(f"Downloading the file at `{self.usage_file_path}`.")
-        log.info(f"Current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
-        log.info(f"S3 contents are\n{s3_client.list_objects_v2(Bucket=BUCKET_NAME)}")
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
         )
-        log.info(f"After `download_file()`, current file location is {Path.cwd()} and its contents are {[p for p in Path().iterdir()]}.")
-        return None  #ToDo: Return downloaded file to `nolcat.view_usage.views.download_non_COUNTER_usage()` so it can be downloaded to local workstation via web app
+        if self.usage_file_path in [str(p.name) for p in Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1]).iterdir()]:
+            Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], self.usage_file_path).rename(file_download_path)
+            return file_download_path
+        else:
+            return False
 
 
 class COUNTERData(db.Model):

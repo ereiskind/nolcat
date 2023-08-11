@@ -1,5 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-11 ##########
 
 import pytest
 import logging
@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 @pytest.fixture
 def sample_SUSHI_PR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -27,7 +27,7 @@ def sample_SUSHI_PR_response_JSON_dict():
 @pytest.fixture
 def sample_SUSHI_DR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -35,7 +35,7 @@ def sample_SUSHI_DR_response_JSON_dict():
 @pytest.fixture
 def sample_SUSHI_TR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
@@ -43,7 +43,7 @@ def sample_SUSHI_TR_response_JSON_dict():
 @pytest.fixture
 def sample_SUSHI_IR_response_JSON_dict():
     """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 

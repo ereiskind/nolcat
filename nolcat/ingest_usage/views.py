@@ -1,7 +1,8 @@
 import logging
-import datetime
+from datetime import date
 import calendar
 from itertools import product
+from ast import literal_eval
 from flask import render_template
 from flask import request
 from flask import abort
@@ -33,26 +34,39 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
-            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-            df['report_creation_date'] = pd.to_datetime(None)
             try:
-                # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
-                log.debug(f"`df['statistics_source_ID']`: {df['statistics_source_ID']} (type {type(df['statistics_source_ID'])})")
-                log.debug(f"`df['statistics_source_ID'].unique()`: {df['statistics_source_ID'].unique()} (type {type(df['statistics_source_ID'].unique())})")
-                statistics_sources_in_dataframe = df['statistics_source_ID'].unique().tolist()
-                log.debug(f"`df['report_type']`: {df['report_type']} (type {type(df['report_type'])})")
-                log.debug(f"`df['report_type'].unique()`: {df['report_type'].unique()} (type {type(df['report_type'].unique())})")
-                report_types_in_dataframe = df['report_type'].unique().tolist()
-                log.debug(f"`df['usage_date']`: {df['usage_date']} (type {type(df['usage_date'])})")
-                log.debug(f"`df['usage_date'].unique()`: {df['usage_date'].unique()} (type {type(df['usage_date'].unique())})")
-                dates_in_dataframe = df['usage_date'].unique().tolist()
+                try:
+                    df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+                    df['report_creation_date'] = pd.to_datetime(None)
+                except Exception as error:
+                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."
+                    log.error(message)
+                    flash(message)
+                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+                
+                log.debug("Starting the duplication check against what's already in the database.")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype
+                statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
+                log.debug(f"`df['statistics_source_ID']` as a list: {statistics_sources_in_dataframe}")
+                statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
+                log.debug(f"`df['statistics_source_ID']` as a deduped list: {statistics_sources_in_dataframe}")
+
+                report_types_in_dataframe = df['report_type'].tolist()
+                log.debug(f"`df['report_type']` as a list: {report_types_in_dataframe}")
+                report_types_in_dataframe = list(set(report_types_in_dataframe))
+                log.debug(f"`df['report_type']` as a deduped list: {report_types_in_dataframe}")
+
+                dates_in_dataframe = df['usage_date'].tolist()
+                log.debug(f"`df['usage_date']` as a list: {dates_in_dataframe}")
+                dates_in_dataframe = list(set(dates_in_dataframe))
+                log.debug(f"`df['usage_date']` as a deduped list: {dates_in_dataframe}")
+
                 combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
                 log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")
                 total_number_of_matching_records = 0
                 matching_record_instances = []
                 for combo in combinations_to_check:
                     number_of_matching_records = pd.read_sql(
-                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type={combo[1]} AND usage_date={combo[2].strftime('%Y-%m-%d')};",
+                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
                         con=db.engine,
                     )
                     number_of_matching_records = number_of_matching_records.iloc[0][0]
@@ -81,6 +95,8 @@ def upload_COUNTER_reports():
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            
+            log.debug("About to load dataframe into database.")
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
                 'COUNTERData',
@@ -142,7 +158,7 @@ def harvest_SUSHI_statistics():
             log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
-        end_date = datetime.date(
+        end_date = date(
             end_date.year,
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
@@ -219,7 +235,7 @@ def upload_non_COUNTER_reports():
                 "xml",
                 "zip",
             )
-            statistics_source_ID, fiscal_year_ID = form.AUCT_options.data # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+            statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
             file_extension = Path(form.usage_file.data.filename).suffix
             if file_extension not in valid_file_extensions:
                 message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"

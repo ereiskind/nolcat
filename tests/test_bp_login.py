@@ -1,5 +1,5 @@
 """Tests the routes in the `login` blueprint."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-11 ##########
 
 import pytest
 import logging
@@ -21,7 +21,7 @@ def test_login_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(os.getcwd(), 'nolcat', 'login', 'templates', 'login', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'login', 'templates', 'login', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1

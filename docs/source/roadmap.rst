@@ -8,7 +8,6 @@ This is a list of issues encountered over the course of development that require
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
 * J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
-* JSTOR status call returned ``None`` 2023-06-08
 * Morgan & Claypool raised ``HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))``
 * Certificate issues raising errors with
 
@@ -20,19 +19,12 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Resolve HTTP response 502/upload gateway error when uploading COUNTER reports via web app
-
-  * https://stackoverflow.com/questions/27396248/uwsgi-nginx-flask-upstream-prematurely-closed
-  * https://stackoverflow.com/questions/49162420/upstream-prematurely-closed-connection-while-reading-response-header-from-upstr
-  * https://serverfault.com/questions/926642/uwsgi-and-nginx-502-upstream-prematurely-closed-connection
 
 Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Write ``nolcat.models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()``
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
 * Finish "query-wizard.html"
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
@@ -170,6 +162,12 @@ Iteration 11: Create UI Design and Jinja Templates
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
+Iteration 12: Interact with Host File System
+============================================
+* Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
+* Finish ``tests.test_app.default_download_folder()``
+* Update ``tests.test_app.test_download_file()`` to use ``tests.test_app.default_download_folder()``
+
 Open Source Iterations
 **********************
 These iterations contain updates necessary for NoLCAT to be used as an open source program.
@@ -182,7 +180,6 @@ Iteration 1: Create Downloadable AUCT Template
 Iteration 2: Make Initialization Forms Downloadable
 ===================================================
 * Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
-* Write ``tests.test_bp_initialization.test_download_file()``
 
 Iteration 3: Write ``__repr__`` Methods
 =======================================

@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-11 ##########
 
 import pytest
 import logging
@@ -21,17 +21,31 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 
-@pytest.fixture(params=[Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests'), Path(os.getcwd(), 'tests', 'bin', 'sample_COUNTER_R4_reports')])
-def files_to_upload_to_S3_bucket(request):
-    """Handles the selection and removal of files for testing uploads to a S3 bucket.
+@pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
+def default_download_folder():
+    """Provides the path to the host workstation's downloads folder."""
+    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
+    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
+        if os.name == 'nt':  # Windows
+            return Path(os.getenv('USERPROFILE')) / 'Downloads'
+        else:  # *Nix systems, including macOS
+            return Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    pass
+
+
+@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
+def files_for_testing(request):
+    """Handles the selection and removal of files for testing uploads and downloads.
     
-    This fixture uses parameterization to randomly select two files--one text and one binary--to upload into a S3 bucket, then, upon completion of the test, removes those files from the bucket. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+    This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
     """
     file_path = request.param
-    list_of_file_names = tuple(os.walk(file_path))[0][2]
-    file_name = choice(list_of_file_names)
-    file_to_upload = file_path / file_name  # Adding prefix in fixture prevents matching to files required in `upload_file_to_S3_bucket()`
-    yield file_to_upload
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    yield file_path_and_name
+
+    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
     try:
         s3_client.delete_object(
             Bucket=BUCKET_NAME,
@@ -69,7 +83,7 @@ def test_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     
-    with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -82,7 +96,7 @@ def test_homepage(client):
 def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
     nonexistent_page = client.get('/404')
-    with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
@@ -163,6 +177,29 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
+def test_download_file(client, files_for_testing):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
+    """Tests the route enabling file downloads."""
+    log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
+    page = client.get(
+        f'/download/{files_for_testing}',
+        follow_redirects=True,
+    )
+    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, files_for_testing.name) as file: downloaded_file = file.read()`
+
+    assert page.status == "200 OK"
+    assert page.history[0].status == "308 PERMANENT REDIRECT"
+    assert page.headers.get('Content-Disposition') == f'attachment; filename={files_for_testing.name}'
+    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[files_for_testing.suffix]
+    #ToDo: If method for interacting with host workstation's file system can be established, `assert files_for_testing.name in [file_name for file_name in default_download_folder.iterdir()]
+    #ToDo: If method for interacting with host workstation's file system can be established,
+    #if "bin" in files_for_testing.parts:
+    #    with files_for_testing.open('rb') as file:
+    #        assert file.read() == downloaded_file
+    #else:
+    #    with files_for_testing.open('rt') as file:
+    #        assert file.read() == downloaded_file
+
+
 #Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_first_new_PK_value():
@@ -219,11 +256,11 @@ def test_S3_bucket_connection():
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
+def test_upload_file_to_S3_bucket(files_for_testing):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
-        files_to_upload_to_S3_bucket,
-        f"test_{files_to_upload_to_S3_bucket.name}",  # The prefix will allow filtering that prevents the test from failing
+        files_for_testing,
+        f"test_{files_for_testing.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -233,7 +270,7 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    assert files_to_upload_to_S3_bucket.name in bucket_contents
+    assert files_for_testing.name in bucket_contents
 
 
 def test_create_AUCT_ChoiceField_options():

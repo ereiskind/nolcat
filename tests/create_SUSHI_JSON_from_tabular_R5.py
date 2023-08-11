@@ -1,7 +1,7 @@
 """Transform Excel worksheet produced by "tests\\data\\create_JSON_base.json" into a JSON. This module requires pandas 1.4 or higher to run due to the bug described at https://github.com/pandas-dev/pandas/pull/43949."""
 
 import logging
-import pathlib
+from pathlib import Path
 import io
 import re
 import json
@@ -16,7 +16,7 @@ import pandas as pd
 
 log = logging.getLogger(__name__)
 
-absolute_path_to_tests_directory = pathlib.Path(__file__).parent.resolve()
+absolute_path_to_tests_directory = Path(__file__).parent
 directory_with_final_JSONs = absolute_path_to_tests_directory / 'data' / 'COUNTER_JSONs_for_tests'
 
 
@@ -66,7 +66,7 @@ def correct_item_parent_dictionary(item_parent_dictionary):
 
 #Section: Load the Workbook(s)
 file_path = input("Enter the complete file path for the Excel workbook output from OpenRefine: ")
-file_path = pathlib.Path(file_path)
+file_path = Path(file_path)
 file = load_workbook(filename=file_path, read_only=True)
 report_name = file_path.stem
 report_type = report_name.split("_")[1]

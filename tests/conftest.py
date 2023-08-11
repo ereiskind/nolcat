@@ -6,9 +6,7 @@ The fixtures for connecting to the database are primarily based upon the fixture
 import pytest
 import logging
 from pathlib import Path
-import os
-import io
-import datetime
+from datetime import date
 import calendar
 from sqlalchemy import create_engine
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -68,7 +66,7 @@ def client(app):
     The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
     """
     client = app.test_client()
-    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)})")
+    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")
     yield client
 
 
@@ -179,15 +177,15 @@ def most_recent_month_with_usage():
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
-    current_date = datetime.date.today()
-    if current_date.day < 10:
+    current_date = date.today()
+    if current_date.day < 15:
         begin_month = current_date + relativedelta(months=-2)
         begin_date = begin_month.replace(day=1)
     else:
         begin_month = current_date + relativedelta(months=-1)
         begin_date = begin_month.replace(day=1)
     
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -201,8 +199,8 @@ def most_recent_month_with_usage():
         
         When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
         """
-        folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
+        folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
         file_names = []
-        for workbook in os.listdir(folder_path):
+        for workbook in folder_path.iterdir():
             file_names.append(workbook)
         pass  #TEST: This fixture isn't importing into other test modules; the `MultipartEncoder.fields` dictionary can only handle a single file per form field

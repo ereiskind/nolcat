@@ -1,13 +1,10 @@
 import logging
-import os
 from pathlib import Path
 from flask import render_template
 from flask import redirect
 from flask import url_for
 from flask import request
 from flask import abort
-from flask import current_app
-from flask import send_from_directory
 import pandas as pd
 
 from . import bp
@@ -19,13 +16,6 @@ from ..upload_COUNTER_reports import UploadCOUNTERReports
 log = logging.getLogger(__name__)
 
 
-#Section: Uploads and Downloads
-@bp.route('/download/<path:filename>',  methods=['GET', 'POST'])
-def download_file(filename):
-    """This route function allows the user to access the file specified in the route name through a Jinja link."""
-    return send_from_directory(directory=current_app.config['UPLOAD_FOLDER'], path='.', filename=filename, as_attachment=True)
-
-
 #Section: Database Initialization Wizard
 @bp.route('/', methods=['GET', 'POST'])
 def collect_FY_and_vendor_data():
@@ -35,7 +25,7 @@ def collect_FY_and_vendor_data():
     """
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
-        return render_template('initialization/index.html', form=form)
+        return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         # For relations containing a record index (primary key) column when loaded, the primary key field name must be identified using the `index_col` keyword argument, otherwise pandas will create an `index` field for an auto-generated record index; this extra field will prevent the dataframe from being loaded into the database.
@@ -139,7 +129,7 @@ def collect_sources_data():
     """
     form = SourcesDataForm()
     if request.method == 'GET':
-        return render_template('initialization/initial-data-upload-2.html', form=form)
+        return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
@@ -316,15 +306,15 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['notes'] = None
         log.info(f"AUCT template dataframe:\n{df}")
 
+        template_save_location = Path(__file__).parent / 'initialize_annualUsageCollectionTracking.csv'
         try:
-            template_save_location = Path(os.path.dirname(os.path.realpath(__file__)), 'initialize_annualUsageCollectionTracking.csv')
             df.to_csv(
                 template_save_location,
                 index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
                 encoding='utf-8',
                 errors='backslashreplace',  # For encoding errors
             )
-            log.debug(f"The AUCT template CSV was created successfully: {os.path.isfile(template_save_location)}")
+            log.debug(f"The AUCT template CSV was created successfully: {template_save_location.is_file()}")
         except Exception as error:
             log.error(f"The AUCT template CSV wasn't created because of the error {error}.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
@@ -335,11 +325,12 @@ def collect_AUCT_and_historical_COUNTER_data():
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
         
         #ToDo: Confirm AUCT template CSV downloads successfully
-        return render_template('initialization/initial-data-upload-3.html', form=form)
+        return render_template('initialization/initial-data-upload-3.html', form=form, AUCT_file_path=str(template_save_location))
 
     #Section: After Form Submission
     elif form.validate_on_submit():
-        #ToDo: remove file at `template_save_location`?
+        if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
+            template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
         log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(

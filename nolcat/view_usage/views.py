@@ -2,12 +2,14 @@ import logging
 import datetime
 import calendar
 from pathlib import Path
+import re
+from ast import literal_eval
 from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
 from flask import abort
-from flask import Response
+from flask import flash
 import pandas as pd
 
 from . import bp
@@ -29,22 +31,27 @@ def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     form = CustomSQLQueryForm()
     if request.method == 'GET':
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        file_path.unlink(missing_ok=True)
+        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
+        #ToDo: Set up handling for invalid query
         df = pd.read_sql(
             sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        return Response(
-            df.to_csv(
-                index_label="index",
-                date_format='%Y-%m-%d',
-                errors='backslashreplace',
-            ),
-            mimetype='text/csv',
-            headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
         )
+        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         log.error(f"`form.errors`: {form.errors}")
         return abort(404)
@@ -55,12 +62,19 @@ def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     form = QueryWizardForm()
     if request.method == 'GET':
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        file_path.unlink(missing_ok=True)
+        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            return redirect(url_for('view_usage.use_predefined_SQL_query'))  #ToDo: Add message flashing that the end date was before the begin date
+            message = "The last day of the provided date range was before the beginning of the date range. Please correct the dates and try again."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.use_predefined_SQL_query'))
         end_date = datetime.date(
             end_date.year,
             end_date.month,
@@ -95,7 +109,7 @@ def use_predefined_SQL_query():
                 AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular'
                 AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');
             """
-        if form.query_options.data == "TR_B2":
+        elif form.query_options.data == "TR_B2":
             query = f"""
                 SELECT * FROM COUNTERData
                 WHERE usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
@@ -163,15 +177,15 @@ def use_predefined_SQL_query():
             con=db.engine,
         )
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        return Response(
-            df.to_csv(
-                index_label="index",
-                date_format='%Y-%m-%d',
-                errors='backslashreplace',
-            ),
-            mimetype='text/csv',
-            headers={'Content-disposition': 'attachment; filename=NoLCAT_download.csv'},
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
         )
+        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         log.error(f"`form.errors`: {form.errors}")
         return abort(404)
@@ -182,6 +196,13 @@ def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
+        file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
+        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")
+        for file in Path(__file__).parent.iterdir():
+            if file_name_format.fullmatch(str(file.name)):
+                file.unlink()
+                log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")
+
         file_download_options = pd.read_sql(
             sql=f"""
                 SELECT
@@ -199,42 +220,13 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_ChoiceField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        download = Path(form.file_download.data)
-        download_name = download.name
-        if download.suffix == "xlsx":
-            download_mimetype = "application/vnd.ms-excel"
-        elif download.suffix == "csv":
-            download_mimetype = "text/csv"
-        elif download.suffix == "tsv":
-            download_mimetype = "text/tab-separated-values"
-        elif download.suffix == "pdf":
-            download_mimetype = "application/pdf"
-        elif download.suffix == "docx":
-            download_mimetype = "application/msword"
-        elif download.suffix == "pptx":
-            download_mimetype = "application/vnd.ms-powerpoint"
-        elif download.suffix == "txt":
-            download_mimetype = "text/plain"
-        elif download.suffix == "jpeg" or download.suffix == "jpg":
-            download_mimetype = "image/jpeg"
-        elif download.suffix == "png":
-            download_mimetype = "image/png"
-        elif download.suffix == "svg":
-            download_mimetype = "image/svg+xml"
-        elif download.suffix == "json":
-            download_mimetype = "application/json"
-        elif download.suffix == "html" or download.suffix == "htm":
-            download_mimetype = "text/html"
-        elif download.suffix == "xml":
-            download_mimetype = "text/xml"
-        elif download.suffix == "zip":
-            download_mimetype = "application/zip"
-        
-        return Response(
-            download,
-            mimetype=download_mimetype,
-            headers={'Content-disposition': f'attachment; filename={download_name}'},
-        )
+        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
+        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
+        #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
+
+        #ToDo: file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
+        #ToDo: return redirect(url_for('download_file', file_path=str(file_path)))
+        pass
     else:
         log.error(f"`form.errors`: {form.errors}")
         return abort(404)
