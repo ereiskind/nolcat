@@ -66,7 +66,7 @@ def upload_COUNTER_reports():
                 matching_record_instances = []
                 for combo in combinations_to_check:
                     number_of_matching_records = pd.read_sql(
-                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type={combo[1]} AND usage_date={combo[2].strftime('%Y-%m-%d')};",
+                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
                         con=db.engine,
                     )
                     number_of_matching_records = number_of_matching_records.iloc[0][0]
