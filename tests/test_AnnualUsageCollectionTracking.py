@@ -6,7 +6,6 @@ import logging
 from random import choice
 
 # `conftest.py` fixtures are imported automatically
-from conftest import mock_FileStorage_object  # Direct import is required because it isn't a fixture
 from nolcat.app import *
 from nolcat.models import *
 
