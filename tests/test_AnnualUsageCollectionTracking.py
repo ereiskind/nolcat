@@ -88,7 +88,7 @@ def file_for_IO(AUCT_fixture_for_file_IO):
 
 
 @pytest.mark.dependency()
-def create_file_for_IO(file_for_IO):
+def test_create_file_for_IO(file_for_IO):
     """This test actually instantiates the file created in the `file_for_IO()` fixture.
     
     Without this test, the `file_for_IO()` fixture doesn't run before `test_upload_nonstandard_usage_file()`, meaning the latter can't use the file created in the former as said file doesn't exist.
