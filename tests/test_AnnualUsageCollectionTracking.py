@@ -88,7 +88,7 @@ def file_for_IO(AUCT_fixture_for_file_IO):
     #ToDo: Path(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path).unlink()
 
 
-@pytest.mark.dependency(AUCT_fixture_for_file_IO)
+@pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
