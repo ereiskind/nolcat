@@ -8,7 +8,6 @@ This is a list of issues encountered over the course of development that require
 
 * A ScienceDirect SUSHI call returned ``401 Client Error: Unauthorized for url``; since Elsevier manages SUSHI out of the developer/API portal for all their products, the credentials can't be easily checked and/or reset
 * J-STAGE uses a customer ID and the institutional IP ranges for authentication, so SUSHI calls from AWS are denied access
-* JSTOR status call returned ``None`` 2023-06-08
 * Morgan & Claypool raised ``HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f838d4b84f0>, 'Connection to www.morganclaypool.com timed out. (connect timeout=90)')) and HTTPSConnectionPool(host='www.morganclaypool.com', port=443): Max retries exceeded with url: /reports?... (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f838d4b8eb0>: Failed to establish a new connection: [Errno 110] Connection timed out'))``
 * Certificate issues raising errors with
 
@@ -20,11 +19,6 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Resolve HTTP response 502/upload gateway error when uploading COUNTER reports via web app
-
-  * https://stackoverflow.com/questions/27396248/uwsgi-nginx-flask-upstream-prematurely-closed
-  * https://stackoverflow.com/questions/49162420/upstream-prematurely-closed-connection-while-reading-response-header-from-upstr
-  * https://serverfault.com/questions/926642/uwsgi-and-nginx-502-upstream-prematurely-closed-connection
 
 Iteration 1: Complete Current Data I/O
 ======================================

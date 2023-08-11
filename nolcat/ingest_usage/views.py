@@ -92,7 +92,7 @@ def upload_COUNTER_reports():
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             except Exception as error:
                 message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-                log.error(message)  #TEST: 2023-08-11 - The uploaded data wasn't added to the database because the check for possible duplication raised (MySQLdb.OperationalError) (1054, "Unknown column 'BR2' in'where clause'")
+                log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             
