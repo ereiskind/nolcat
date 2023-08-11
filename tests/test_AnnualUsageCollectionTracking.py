@@ -69,12 +69,12 @@ def file_for_IO(AUCT_fixture_for_file_IO):
     The test file is saved to NoLCAT's `tests` folder instead of pytest's temporary folder because the file path for the test file needs to be passed to a function outside the testing module.
     """
     df=pd.DataFrame()
-    log.info(f"`Path(__file__).parent` contents at start of `file_for_IO()`:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     df.to_csv(
         Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path,
         encoding='utf-8',
         errors='backslashreplace',
     )
+    log.info(f"Return value of `file_for_IO()` is {PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path} (type {type(PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path)})")
     yield PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path  # The fixture returns the name of the file in S3 for use in determining its successful upload
 
     #ToDo: try:
@@ -118,6 +118,7 @@ def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO, file_fo
     #ToDo: upload_method -> return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
     #ToDo: assert file_for_IO in bucket_contents
     #ToDo: assert usage_file_path_in_database == file_for_IO
+    pass
 
 
 @pytest.mark.dependency(depends=['test_upload_nonstandard_usage_file'])
