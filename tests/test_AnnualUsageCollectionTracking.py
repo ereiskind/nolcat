@@ -88,18 +88,11 @@ def file_for_IO(AUCT_fixture_for_file_IO):
 
 
 @pytest.mark.dependency()
-def test_create_file_for_IO(file_for_IO):
-    """This test actually instantiates the file created in the `file_for_IO()` fixture.
+def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO, file_for_IO, caplog):
+    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
     
-    Without this test, the `file_for_IO()` fixture doesn't run before `test_upload_nonstandard_usage_file()`, meaning the latter can't use the file created in the former as said file doesn't exist.
+    The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
     """
-    log.info(f"`Path(__file__).parent` contents at start of `create_file_for_IO()`:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
-    assert file_for_IO.is_file()
-
-
-@pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO, caplog):
-    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='botocore')
     log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path)
