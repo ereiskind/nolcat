@@ -44,17 +44,22 @@ def upload_COUNTER_reports():
                     flash(message)
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
                 
-                log.debug("Starting the duplication check against what's already in the database.")
-                # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
-                log.debug(f"`df['statistics_source_ID']`: {df['statistics_source_ID']} (type {type(df['statistics_source_ID'])}).")
-                log.debug(f"`df['statistics_source_ID'].unique()`: {df['statistics_source_ID'].unique()} (type {type(df['statistics_source_ID'].unique())}).")
-                statistics_sources_in_dataframe = df['statistics_source_ID'].unique().tolist()
-                log.debug(f"`df['report_type']`: {df['report_type']} (type {type(df['report_type'])}).")
-                log.debug(f"`df['report_type'].unique()`: {df['report_type'].unique()} (type {type(df['report_type'].unique())}).")
-                report_types_in_dataframe = df['report_type'].unique().tolist()
-                log.debug(f"`df['usage_date']`: {df['usage_date']} (type {type(df['usage_date'])}).")
-                log.debug(f"`df['usage_date'].unique()`: {df['usage_date'].unique()} (type {type(df['usage_date'].unique())}).")
-                dates_in_dataframe = df['usage_date'].unique().tolist()
+                log.debug("Starting the duplication check against what's already in the database.")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype
+                statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
+                log.debug(f"`df['statistics_source_ID']` as a list: {statistics_sources_in_dataframe}")
+                statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
+                log.debug(f"`df['statistics_source_ID']` as a deduped list: {statistics_sources_in_dataframe}")
+
+                report_types_in_dataframe = df['report_type'].tolist()
+                log.debug(f"`df['report_type']` as a list: {report_types_in_dataframe}")
+                report_types_in_dataframe = list(set(report_types_in_dataframe))
+                log.debug(f"`df['report_type']` as a deduped list: {report_types_in_dataframe}")
+
+                dates_in_dataframe = df['usage_date'].tolist()
+                log.debug(f"`df['usage_date']` as a list: {dates_in_dataframe}")
+                dates_in_dataframe = list(set(dates_in_dataframe))
+                log.debug(f"`df['usage_date']` as a deduped list: {dates_in_dataframe}")
+
                 combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
                 log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")
                 total_number_of_matching_records = 0
