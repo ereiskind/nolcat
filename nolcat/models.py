@@ -1285,6 +1285,10 @@ class AnnualUsageCollectionTracking(db.Model):
         log.debug(logging_message)
         
         try:
+            log.info(f"`db` is {db} (type {type(db)})")
+            log.info(f"`db.engine` is {db.engine} (type {type(db.engine)})")
+            x=db.engine.execute('show tables;')
+            log.info(f"`db.engine.execute('show tables;')` is {x} (type {type(x)})")
             #ToDo: Make update to database with SQL statement below
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             sql=f"""
