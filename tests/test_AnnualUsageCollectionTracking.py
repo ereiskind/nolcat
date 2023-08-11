@@ -92,7 +92,7 @@ def file_for_IO(AUCT_fixture_for_file_IO):
 def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
-    upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(mock_FileStorage_object(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path))
+    upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path)
     log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
 
     list_objects_response = s3_client.list_objects_v2(
