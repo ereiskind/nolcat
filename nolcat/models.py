@@ -1273,7 +1273,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.error(message)
             return message
         
-        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}.{file_extension}"
+        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
         logging_message = upload_file_to_S3_bucket(
             file,
             file_name,
