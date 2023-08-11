@@ -92,7 +92,7 @@ def upload_COUNTER_reports():
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             except Exception as error:
                 message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-                log.error(message)  #TEST: 2023-08-10 The uploaded data wasn't added to the database because the check for possible duplication raised 'StringArray' object has no attribute 'tolist'.
+                log.error(message)  #TEST: 2023-08-11 - The uploaded data wasn't added to the database because the check for possible duplication raised (MySQLdb.OperationalError) (1054, "Unknown column 'BR2' in'where clause'")
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             
@@ -110,7 +110,7 @@ def upload_COUNTER_reports():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."
-            log.error(message)  #TEST: 2023-08-08 - Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error type object 'datetime.datetime' has no attribute 'datetime'.
+            log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
