@@ -94,9 +94,7 @@ def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO, file_fo
     The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
     """
     caplog.set_level(logging.INFO, logger='botocore')
-    log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path)
-    log.info(f"`Path(__file__).parent` contents in `test_upload_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
