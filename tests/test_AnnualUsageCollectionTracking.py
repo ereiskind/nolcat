@@ -124,11 +124,13 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     test_file_path = Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
+    log.info(f"`upload_method` is {upload_method} (type {type(upload_method)})")
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",
     )
+    log.info(f"`list_objects_response`:\n{list_objects_response}")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
