@@ -35,8 +35,10 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value):
+def test_run_custom_SQL_query(client, header_value, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
+
     POST_response = client.post(
         '/view_usage/custom-SQL',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
@@ -59,8 +61,10 @@ def test_run_custom_SQL_query(client, header_value):
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value):
+def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
         ("DR_D1", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='DR' AND access_method='Regular'AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
@@ -112,8 +116,10 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value):
+def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, caplog):
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+
     #query = #ToDo: Randomly create a query simulating one created via the query wizard
     #form_input = {
     #    'begin_date': '2016-07-01',
@@ -156,6 +162,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value):
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
 
     page = client.get('/ingest_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(page.data, 'lxml')

@@ -117,7 +117,10 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     
     The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
     caplog.set_level(logging.INFO, logger='botocore')
+
     test_file_path = Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
@@ -152,6 +155,7 @@ def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, file_for_IO, 
     The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
     """
     caplog.set_level(logging.INFO, logger='botocore')
+
     log.info(f"`file_for_IO` is {file_for_IO}")
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     file_path = AUCT_fixture_for_file_IO.download_nonstandard_usage_file(Path(__file__).parent)
