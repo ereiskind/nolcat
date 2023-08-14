@@ -61,7 +61,7 @@ def test_run_custom_SQL_query(client, header_value):
 
 def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    query_options = choice(
+    query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
         ("DR_D1", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='DR' AND access_method='Regular'AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
         ("DR_D2", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='DR' AND access_method='Regular'AND (metric_type='Limit_Exceeded' OR metric_type='No_License');"),
@@ -74,7 +74,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         ("TR_J4", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular'AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
         ("IR_A1", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal'AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
         ("IR_M1", "SELECT * FROM COUNTERDataWHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01'AND report_type='IR' AND data_type='Multimedia' AND access_method='Regular'AND metric_type='Total_Item_Requests';"),
-    )
+    ))
     form_input = {
         'begin_date': '2016-07-01',
         'end_date': '2020-06-01',
