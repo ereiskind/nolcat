@@ -122,9 +122,12 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     caplog.set_level(logging.INFO, logger='botocore')
 
     test_file_path = Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path
+    log.info(f"`test_file_path` is {test_file_path} (type {type(test_file_path)})")
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
-    log.info(f"`upload_method` is {upload_method} (type {type(upload_method)})")
+        upload_result = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
+    upload_result = re.fullmatch(r'Successfully uploaded `(.*)` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name.', string=upload_result)
+    log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")
+    log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -144,10 +147,9 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
     log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")
 
-    #ToDo: upload_method -> return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
+    assert upload_result is not None
     #ToDo: assert file_for_IO in bucket_contents
     #ToDo: assert usage_file_path_in_database == file_for_IO
-    pass
 
 
 @pytest.mark.dependency()
