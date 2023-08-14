@@ -162,7 +162,9 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
+    log.info(f"`GET_soup`:\n{GET_soup}")
+    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")
+    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
         tuple_content = re.search(r'\((\d*),\s(\d*)\)', string=child['value'])
         GET_select_field_options.append((
             tuple([int(i) for i in tuple_content.group(1, 2)]),
