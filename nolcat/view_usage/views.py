@@ -1,5 +1,5 @@
 import logging
-import datetime
+from datetime import date
 import calendar
 from pathlib import Path
 import re
@@ -75,7 +75,7 @@ def use_predefined_SQL_query():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
-        end_date = datetime.date(
+        end_date = date(
             end_date.year,
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
