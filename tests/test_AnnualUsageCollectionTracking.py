@@ -111,6 +111,40 @@ def file_for_IO(AUCT_fixture_for_file_IO):
     #ToDo: Path(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path).unlink()
 
 
+@pytest.fixture
+def file_for_S3(tmp_path, AUCT_fixture_for_file_IO):
+    """Creates a file that can be used in `test_download_nonstandard_usage_file()`.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        AUCT_fixture_for_file_IO (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+
+    Yields:
+        str: complete name of file in S3, including the bucket name
+    """
+    df=pd.DataFrame()
+    df.to_csv(
+        tmp_path / AUCT_fixture_for_file_IO.usage_file_path,
+        encoding='utf-8',
+        errors='backslashreplace',
+    )
+    S3_file_name = f"{BUCKET_NAME}/{PATH_WITHIN_BUCKET}test_{AUCT_fixture_for_file_IO.usage_file_path}"  # The prefix will allow filtering that prevents the test from failing
+    upload_file_to_S3_bucket(
+        tmp_path / AUCT_fixture_for_file_IO.usage_file_path,
+        S3_file_name,
+    )
+    log.info(f"Yield value of `file_for_S3()` is {S3_file_name} (type {type(S3_file_name)})")
+    yield S3_file_name
+
+    #try:
+    #    s3_client.delete_object(
+    #        Bucket=BUCKET_NAME,
+    #        Key=f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_for_file_IO.usage_file_path}"
+    #    )
+    #except botocore.exceptions as error:
+    #    log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
+
+
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO, file_for_IO, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
@@ -152,12 +186,8 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 
-@pytest.mark.dependency()
-def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, file_for_IO, caplog):
-    """Test downloading a file in S3 to a local computer.
-    
-    The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
-    """
+def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, file_for_S3, caplog):
+    """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
 
     log.info(f"`file_for_IO` is {file_for_IO}")
