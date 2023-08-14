@@ -42,7 +42,7 @@ def test_run_custom_SQL_query(client, header_value):
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data="SELECT COUNT(*) FROM COUNTERData;",
+        data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
     log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
