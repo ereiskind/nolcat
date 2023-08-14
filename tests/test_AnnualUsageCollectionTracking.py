@@ -145,10 +145,14 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     pass
 
 
-@pytest.mark.dependency(depends=['test_upload_nonstandard_usage_file'])
-def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, caplog):
-    """Test downloading a file in S3 to a local computer."""
+@pytest.mark.dependency()
+def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, file_for_IO, caplog):
+    """Test downloading a file in S3 to a local computer.
+    
+    The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
+    """
     caplog.set_level(logging.INFO, logger='botocore')
+    log.info(f"`file_for_IO` is {file_for_IO}")
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     file_path = AUCT_fixture_for_file_IO.download_nonstandard_usage_file(Path(__file__).parent)
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
