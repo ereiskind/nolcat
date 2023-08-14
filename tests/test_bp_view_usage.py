@@ -165,7 +165,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
 
-    page = client.get('/ingest_usage/non-COUNTER-downloads')
+    page = client.get('/view_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
