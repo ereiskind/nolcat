@@ -112,13 +112,15 @@ def file_for_IO(AUCT_fixture_for_file_IO):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, AUCT_fixture_for_file_IO, file_for_IO, caplog):
+def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO, file_for_IO, caplog):
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
     
     The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
     """
     caplog.set_level(logging.INFO, logger='botocore')
-    upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path)
+    test_file_path = Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path
+    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
+        upload_method = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
