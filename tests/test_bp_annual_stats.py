@@ -14,7 +14,7 @@ from nolcat.annual_stats import *
 log = logging.getLogger(__name__)
 
 
-def test_GET_request_for_annual_stats_homepage(client, engine):
+def test_GET_request_for_annual_stats_homepage(engine, client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/annual_stats/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
