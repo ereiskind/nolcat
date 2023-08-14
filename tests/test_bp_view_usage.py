@@ -83,6 +83,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         'begin_date': '2016-07-01',
         'end_date': '2020-06-01',
         'query_options': query_options[0],
+        #ToDo: Fields for query wizard not yet created; once created, they'll need to be added with null values here
     }
     POST_response = client.post(
         '/view_usage/query-wizard',
@@ -120,11 +121,11 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
 
-    #query = #ToDo: Randomly create a query simulating one created via the query wizard
     #form_input = {
     #    'begin_date': '2016-07-01',
     #    'end_date': '2020-06-01',
-    #    'query_options': query,
+    #    'query_options': "w",
+    #    #ToDo: Fields for query wizard not yet created; once created, they'll need to be added here
     #}
     #POST_response = client.post(
     #    '/view_usage/query-wizard',
@@ -146,7 +147,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #)
     #CSV_df = CSV_df.astype(COUNTERData.state_data_types())
     #database_df = pd.read_sql(
-    #    sql=query,
+    #    sql=#ToDo: The query created with the query wizard
     #    con=engine,
     #    index_col='COUNTER_data_ID',
     #)
