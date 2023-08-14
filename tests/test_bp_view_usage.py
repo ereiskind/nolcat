@@ -31,10 +31,28 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query():
+def test_run_custom_SQL_query(client, header_value):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
-    #ToDo: Write test
-    pass
+    POST_response = client.post(
+        '/view_usage/custom-SQL',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data="SELECT COUNT(*) FROM COUNTERData;",
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    df = pd.read_csv(
+        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    log.info(f"`df` is\n{df}")
+    log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")
+
+    assert POST_response.status == "200 OK"
+    assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
 def test_use_predefined_SQL_query_with_COUNTER_standard_views():
