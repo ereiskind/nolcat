@@ -283,8 +283,8 @@ def test_upload_file_to_S3_bucket(files_for_testing):
     assert files_for_testing.name in bucket_contents
 
 
-def test_create_AUCT_ChoiceField_options():
-    """Tests the transformation of a dataframe with four fields into a list for the `ChoiceField.choices` attribute with the characteristics described in the docstring of the function being tested."""
+def test_create_AUCT_SelectField_options():
+    """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
     df = pd.DataFrame(
         [
             [1, 1, "First Statistics Source", "2017"],
@@ -312,4 +312,4 @@ def test_create_AUCT_ChoiceField_options():
             "Third Statistics Source--FY 2018",
         ),
     ]
-    assert create_AUCT_ChoiceField_options(df) == result_list
+    assert create_AUCT_SelectField_options(df) == result_list

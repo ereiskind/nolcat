@@ -217,7 +217,7 @@ def download_non_COUNTER_usage():
             """,
             con=db.engine,
         )
-        form.AUCT_of_file_download.choices = create_AUCT_ChoiceField_options(file_download_options)
+        form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")

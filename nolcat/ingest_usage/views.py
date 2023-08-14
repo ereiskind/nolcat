@@ -213,7 +213,7 @@ def upload_non_COUNTER_reports():
             """,
             con=db.engine,
         )
-        form.AUCT_option.choices = create_AUCT_ChoiceField_options(non_COUNTER_files_needed)
+        form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         try:
