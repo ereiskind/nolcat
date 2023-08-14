@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import os
 from random import choice
+import re
 from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 
@@ -152,24 +153,46 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value):
     pass
 
 
-def test_GET_request_for_download_non_COUNTER_usage(client):
+def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    page = client.get('/view_usage/non-COUNTER-downloads')
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()`
+
+    page = client.get('/ingest_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
-    #ToDo: Get the values from the SQL query in the best way for the purpose of comparison
-
+    GET_select_field_options = []
+    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
+        tuple_content = re.search(r'\((\d*),\s(\d*)\)', string=child['value'])
+        GET_select_field_options.append((
+            tuple([int(i) for i in tuple_content.group(1, 2)]),
+            str(child.string),
+        ))
+    
     with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'templates', 'view_usage', 'download-non-COUNTER-usage.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-        #ToDo: Get the list of file path options presented for populating the drop-down
+    db_select_field_options = pd.read_sql(
+        sql="""
+                SELECT
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year,
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+            """,
+        con=engine,
+    )
+    db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
-    #ToDo: `assert page.status == "200 OK"` when route is completed
+    assert page.status == "200 OK"
     assert HTML_file_title == GET_response_title
     assert HTML_file_page_title == GET_response_page_title
-    #ToDo: Compare the possible file download options
+    assert GET_select_field_options == db_select_field_options
 
 
 def test_download_non_COUNTER_usage():
