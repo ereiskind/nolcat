@@ -216,6 +216,42 @@ def COUNTERData_relation():
     yield relations.COUNTERData_relation()
 
 
+#Section: Fixtures for File I/O
+def path_to_sample_file():
+    # A parameterized function returning an absolute pathlib.Path to files of various types
+        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
+        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
+        # tests.test_app.test_download_file()
+        # tests.test_app.test_upload_file_to_S3_bucket()
+        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
+    pass
+
+
+def non_COUNTER_AUCT_object():
+    # An AnnualUsageCollectionsTracking object based on a record with a non-null `annualUsageCollectionTracking.usage_file_path` value
+        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
+        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
+        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
+        # tests.test_bp_view_usage.test_download_non_COUNTER_usage()
+    pass
+
+
+def remove_file_from_S3():
+    # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` creates file name using class attributes, so a fixture creating the file can't be used; the file still needs to removed at the end of testing, and this fixture determines what the file name will be, yields a null value, and removes the file with the determined file name
+        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
+        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
+        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
+        # tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()
+    pass
+
+
+def non_COUNTER_file_to_download_from_S3():
+    # Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
+        # tests.test_bp_view_usage.test_download_non_COUNTER_usage()
+        # tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()
+    pass
+
+
 #Section: Other Fixtures Used in Multiple Test Modules
 @pytest.fixture
 def header_value():
