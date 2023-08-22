@@ -8,14 +8,17 @@ import logging
 from pathlib import Path
 from datetime import date
 import calendar
+from random import choice
 from sqlalchemy import create_engine
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
+import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
 from nolcat.app import create_app
 from nolcat.app import configure_logging
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
+from nolcat.app import s3_client
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from data import relations
 
 log = logging.getLogger(__name__)
@@ -247,6 +250,50 @@ def most_recent_month_with_usage():
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
     yield (begin_date, end_date)
+
+
+@pytest.fixture(scope='module')
+def default_download_folder():
+    """Provides the path to the host workstation's downloads folder.
+    
+    Yields:
+        pathlib.Path: a path to the host workstation's downloads folder
+    """
+    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
+    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
+        if os.name == 'nt':  # Windows
+            return Path(os.getenv('USERPROFILE')) / 'Downloads'
+        else:  # *Nix systems, including macOS
+            return Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    pass
+
+
+@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
+def files_for_testing(request):
+    """Handles the selection and removal of files for testing uploads and downloads.
+    
+    This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        request (pathlib.Path): an absolute path to a folder with test data
+
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file
+    """
+    file_path = request.param
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    yield file_path_and_name
+
+    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 @pytest.fixture

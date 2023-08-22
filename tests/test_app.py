@@ -4,13 +4,10 @@
 import pytest
 import logging
 from pathlib import Path
-import os
-from random import choice
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 import sqlalchemy
 import flask
 
@@ -19,50 +16,6 @@ from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
-
-
-@pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
-def default_download_folder():
-    """Provides the path to the host workstation's downloads folder.
-    
-    Yields:
-        pathlib.Path: a path to the host workstation's downloads folder
-    """
-    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
-    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
-        if os.name == 'nt':  # Windows
-            return Path(os.getenv('USERPROFILE')) / 'Downloads'
-        else:  # *Nix systems, including macOS
-            return Path(os.getenv('HOME')) / 'Downloads'
-    '''
-    pass
-
-
-@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
-def files_for_testing(request):
-    """Handles the selection and removal of files for testing uploads and downloads.
-    
-    This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
-
-    Args:
-        request (pathlib.Path): an absolute path to a folder with test data
-
-    Yields:
-        pathlib.Path: an absolute file path to a randomly selected file
-    """
-    file_path = request.param
-    file_name = choice([file.name for file in file_path.iterdir()])
-    file_path_and_name = file_path / file_name
-    yield file_path_and_name
-
-    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 #Section: Test Flask Factory Pattern
