@@ -217,14 +217,26 @@ def COUNTERData_relation():
 
 
 #Section: Fixtures for File I/O
-def path_to_sample_file():
-    # A parameterized function returning an absolute pathlib.Path to files of various types
-        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
-        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
-        # tests.test_app.test_download_file()
-        # tests.test_app.test_upload_file_to_S3_bucket()
-        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
-    pass
+@pytest.fixture(params=[
+    Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
+    Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
+])
+def path_to_sample_file(request):
+    """A parameterized function returning absolute paths to randomly selected files for use in testing file I/O operations.
+
+    This fixture uses parameterization to randomly select multiple files of different types for use in any tests involving file uploads or downloads. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        request (pathlib.Path): an absolute path to a folder with test data
+
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file
+    """
+    file_path = request.param
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    log.info(f"`file_path_parameter()` returning file {file_path_and_name}")
+    yield file_path_and_name
 
 
 def non_COUNTER_AUCT_object():

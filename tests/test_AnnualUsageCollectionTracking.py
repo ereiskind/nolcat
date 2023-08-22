@@ -146,33 +146,28 @@ def file_for_S3(tmp_path, AUCT_fixture_for_file_IO):
 
 
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO, file_for_IO, caplog):
-    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly.
-    
-    The `file_for_IO()` fixture is included as an argument because it needs to run before this test, as that fixture creates a file needed by this test.
-    """
+def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, caplog):
+    """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
     caplog.set_level(logging.INFO, logger='botocore')
 
-    test_file_path = Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path
-    log.info(f"`test_file_path` is {test_file_path} (type {type(test_file_path)})")
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        upload_result = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(test_file_path)
+        upload_result = AUCT_fixture_for_file_IO.upload_nonstandard_usage_file(path_to_sample_file)
     upload_result = re.fullmatch(r'Successfully uploaded `(.*)` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name.', string=upload_result)
     log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")
     log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}test_",
+        Prefix=f"{PATH_WITHIN_BUCKET}",
     )
     log.info(f"`list_objects_response`:\n{list_objects_response}")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
     log.info(f"`bucket_contents`:\n{bucket_contents}")
-    #ToDo: Confirm `file_for_IO` is name of file being looked for
 
     usage_file_path_in_database = pd.read_sql(
         sql=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {AUCT_fixture_for_file_IO.AUCT_statistics_source} AND AUCT_fiscal_year = {AUCT_fixture_for_file_IO.AUCT_fiscal_year};",
@@ -182,7 +177,7 @@ def test_upload_nonstandard_usage_file(engine, client, AUCT_fixture_for_file_IO,
     log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")
 
     assert upload_result is not None
-    #ToDo: assert file_for_IO in bucket_contents
+    assert f"{AUCT_fixture_for_file_IO.AUCT_statistics_source}_{AUCT_fixture_for_file_IO.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 

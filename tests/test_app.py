@@ -140,26 +140,26 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
-def test_download_file(client, files_for_testing):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
+def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
-    log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
+    log.info(f"At start of `test_download_file()`, `path_to_sample_file` is {path_to_sample_file} (type {type(path_to_sample_file)})")
     page = client.get(
-        f'/download/{files_for_testing}',
+        f'/download/{path_to_sample_file}',
         follow_redirects=True,
     )
-    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, files_for_testing.name) as file: downloaded_file = file.read()`
+    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, path_to_sample_file.name) as file: downloaded_file = file.read()`
 
     assert page.status == "200 OK"
     assert page.history[0].status == "308 PERMANENT REDIRECT"
-    assert page.headers.get('Content-Disposition') == f'attachment; filename={files_for_testing.name}'
-    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[files_for_testing.suffix]
-    #ToDo: If method for interacting with host workstation's file system can be established, `assert files_for_testing.name in [file_name for file_name in default_download_folder.iterdir()]
+    assert page.headers.get('Content-Disposition') == f'attachment; filename={path_to_sample_file.name}'
+    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[path_to_sample_file.suffix]
+    #ToDo: If method for interacting with host workstation's file system can be established, `assert path_to_sample_file.name in [file_name for file_name in default_download_folder.iterdir()]
     #ToDo: If method for interacting with host workstation's file system can be established,
-    #if "bin" in files_for_testing.parts:
-    #    with files_for_testing.open('rb') as file:
+    #if "bin" in path_to_sample_file.parts:
+    #    with path_to_sample_file.open('rb') as file:
     #        assert file.read() == downloaded_file
     #else:
-    #    with files_for_testing.open('rt') as file:
+    #    with path_to_sample_file.open('rt') as file:
     #        assert file.read() == downloaded_file
 
 
@@ -219,11 +219,11 @@ def test_S3_bucket_connection():
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-def test_upload_file_to_S3_bucket(files_for_testing):
+def test_upload_file_to_S3_bucket(path_to_sample_file):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
-        files_for_testing,
-        f"test_{files_for_testing.name}",  # The prefix will allow filtering that prevents the test from failing
+        path_to_sample_file,
+        f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -233,7 +233,7 @@ def test_upload_file_to_S3_bucket(files_for_testing):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    assert files_for_testing.name in bucket_contents
+    assert path_to_sample_file.name in bucket_contents
 
 
 def test_create_AUCT_SelectField_options():
