@@ -10,6 +10,7 @@ from datetime import date
 import calendar
 from random import choice
 from sqlalchemy import create_engine
+import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
@@ -19,6 +20,7 @@ from nolcat.app import create_app
 from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.models import *
 from data import relations
 
 log = logging.getLogger(__name__)
@@ -239,13 +241,33 @@ def path_to_sample_file(request):
     yield file_path_and_name
 
 
-def non_COUNTER_AUCT_object():
-    # An AnnualUsageCollectionsTracking object based on a record with a non-null `annualUsageCollectionTracking.usage_file_path` value
-        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
-        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
-        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
-        # tests.test_bp_view_usage.test_download_non_COUNTER_usage()
-    pass
+def non_COUNTER_AUCT_object_after_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
+
+    Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+    """
+    record = pd.read_sql(
+        sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample()
+    yield AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes=record'],
+    )
 
 
 def remove_file_from_S3():

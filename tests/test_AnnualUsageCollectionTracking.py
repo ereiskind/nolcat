@@ -43,43 +43,6 @@ def test_collect_annual_usage_statistics(caplog):
 
 
 #Section: Upload and Download Nonstandard Usage File
-@pytest.fixture(scope='module')
-def choose_AUCT_PKs():
-    """Chooses the `StatisticsSources.statistics_source_ID`, file name, and note value to use in the subsequent tests.
-    
-    Yields:
-        tuple: a `StatisticsSources.statistics_source_ID`, file name, and note value
-    """
-    yield choice([
-        (2, f"11_2.csv", "This is the first FY with usage statistics"),
-        (3, f"11_3.csv", None),
-        (4, f"11_4.csv", None),
-    ])
-
-
-@pytest.fixture(scope='module')
-def AUCT_fixture_for_file_IO(choose_AUCT_PKs):
-    """Creates an `AnnualUsageCollectionTracking` object with the data from `choose_AUCT_PKs()`.
-
-    Args:
-        choose_AUCT_PKs (tuple): a `StatisticsSources.statistics_source_ID`, file name, and note value
-    
-    Yields:
-        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
-    """
-    yield AnnualUsageCollectionTracking(
-        AUCT_statistics_source=11,
-        AUCT_fiscal_year=choose_AUCT_PKs[0],
-        usage_is_being_collected=True,
-        manual_collection_required=True,
-        collection_via_email=False,
-        is_COUNTER_compliant=False,
-        collection_status="Collection complete",
-        usage_file_path=f"test_{choose_AUCT_PKs[1]}",  # All uses of the attribute include the prefix, so the class object is initialized with it
-        notes=choose_AUCT_PKs[2],
-    )
-
-
 @pytest.fixture
 def file_for_IO(AUCT_fixture_for_file_IO):
     """Creates a file that can be used in `test_upload_nonstandard_usage_file()` and `test_download_nonstandard_usage_file()`.
@@ -181,13 +144,13 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, capl
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 
-def test_download_nonstandard_usage_file(AUCT_fixture_for_file_IO, file_for_S3, caplog):
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, caplog):
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
 
-    log.info(f"`file_for_IO` is {file_for_IO}")
+    log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
-    file_path = AUCT_fixture_for_file_IO.download_nonstandard_usage_file(Path(__file__).parent)
+    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(Path(__file__).parent)
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     log.info(f"`file_path` in `test_download_nonstandard_usage_file()` is {file_path} (type {type(file_path)})")
     #ToDo: `file_path`, aka the absolute path to which the file will be downloaded, should be the same as the original uploaded file with the parameters above
