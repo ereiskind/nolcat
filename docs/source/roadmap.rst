@@ -27,7 +27,6 @@ Iteration 1: Complete Current Data I/O
 * Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
 * Finish "query-wizard.html"
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_COUNTER_standard_views()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 
 Iteration 2: Add Historical Data
@@ -52,7 +51,6 @@ Iteration 2: Add Historical Data
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
-* Finish ``tests.test_bp_view_usage.test_GET_request_for_download_non_COUNTER_usage()``, including altering test data so one of the records in the AUCT relation has a non-null value in ``annualUsageCollectionTracking.usage_file_path``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
@@ -231,7 +229,6 @@ Iteration: Create Method for Adding New Fiscal Years to the Relation
 Iteration: Allow User-Created SQL Queries
 =========================================
 * Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
-* Write ``tests.test_bp_view_usage.test_run_custom_SQL_query()``
 
 Iteration: Display Results of Usage Data Requests in Browser
 ============================================================
