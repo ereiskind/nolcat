@@ -237,7 +237,7 @@ def path_to_sample_file(request):
     file_path = request.param
     file_name = choice([file.name for file in file_path.iterdir()])
     file_path_and_name = file_path / file_name
-    log.info(f"`file_path_parameter()` returning file {file_path_and_name}")
+    log.info(f"`path_to_sample_file()` returning file {file_path_and_name}.")
     yield file_path_and_name
 
 
@@ -261,7 +261,7 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample()
-    yield AnnualUsageCollectionTracking(
+    yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
@@ -272,6 +272,8 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes=record'],
     )
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")
+    yield yield_object
 
 
 def non_COUNTER_AUCT_object_after_upload(engine):
@@ -290,7 +292,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample()
-    yield AnnualUsageCollectionTracking(
+    yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
@@ -301,6 +303,9 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes=record'],
     )
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")
+    yield yield_object
+
 
 
 def remove_file_from_S3():
