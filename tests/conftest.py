@@ -307,14 +307,30 @@ def non_COUNTER_AUCT_object_after_upload(engine):
     yield yield_object
 
 
+def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
+    """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
 
-def remove_file_from_S3():
-    # `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` creates file name using class attributes, so a fixture creating the file can't be used; the file still needs to removed at the end of testing, and this fixture determines what the file name will be, yields a null value, and removes the file with the determined file name
-        # tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()
-        # tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()
-        # tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()
-        # tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()
-    pass
+    The `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method creates a name for the file in S3 based on class attributes, so a standard fixture for creating and removing the file won't work. This fixture uses the file and class attributes to determine the name of the file the method will create, yields a null value as no data is needed from it, then performs teardown operations using the previously determined file name.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+
+    Yields:
+        None
+    """
+    log.info(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
+    log.info(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
 def non_COUNTER_file_to_download_from_S3():
