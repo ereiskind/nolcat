@@ -241,6 +241,39 @@ def path_to_sample_file(request):
     yield file_path_and_name
 
 
+def non_COUNTER_AUCT_object_before_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+    """
+    record = pd.read_sql(
+        sql=f"""
+            SELECT * FROM annualUsageCollectionTracking WHERE
+                usage_is_being_collected=true AND
+                is_COUNTER_compliant=false AND
+                collection_status='Collection not started' AND
+                usage_file_path IS NULL;
+        """,
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample()
+    yield AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes=record'],
+    )
+
+
 def non_COUNTER_AUCT_object_after_upload(engine):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
 
