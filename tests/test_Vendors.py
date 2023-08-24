@@ -1,5 +1,5 @@
 """Tests the methods in Vendors."""
-########## No tests written 2023-08-11 ##########
+########## No tests written 2023-08-24 ##########
 
 import pytest
 import logging

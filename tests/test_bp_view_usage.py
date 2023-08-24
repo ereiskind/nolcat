@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2023-08-11 ##########
+########## Failing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -39,7 +39,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/custom-SQL',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -85,7 +85,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         'query_options': query_options[0],
         #ToDo: Fields for query wizard not yet created; once created, they'll need to be added with null values here
     }
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/query-wizard',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,

@@ -33,18 +33,18 @@ Iteration 2: Add Historical Data
 ================================
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
 * Write "initialization/initial-data-upload-4.html" page
 * Write ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+  * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
+  * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
+* Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
-* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
-* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
+  * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
+  * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
 * Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 

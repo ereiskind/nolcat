@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## No tests written 2023-08-11 ##########
+########## Failing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -43,73 +43,8 @@ def test_collect_annual_usage_statistics(caplog):
 
 
 #Section: Upload and Download Nonstandard Usage File
-@pytest.fixture
-def file_for_IO(AUCT_fixture_for_file_IO):
-    """Creates a file that can be used in `test_upload_nonstandard_usage_file()` and `test_download_nonstandard_usage_file()`.
-    
-    The test file is saved to NoLCAT's `tests` folder instead of pytest's temporary folder because the file path for the test file needs to be passed to a function outside the testing module.
-
-    Args:
-        AUCT_fixture_for_file_IO (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
-
-    Yields:
-        #ToDo: Should it just be the `usage_file_path` attribute as pathlib.Path, the absolute file path in the container as pathlib.Path, the S3 file name as a string, or a tuple with some combination of the previous?
-    """
-    df=pd.DataFrame()
-    df.to_csv(
-        Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path,
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    log.info(f"Return value of `file_for_IO()` is {PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path} (type {type(PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path)})")
-    yield PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path  # The fixture returns the name of the file in S3 for use in determining its successful upload
-
-    #ToDo: try:
-    #ToDo:     s3_client.delete_object(
-    #ToDo:         Bucket=BUCKET_NAME,
-    #ToDo:         Key=PATH_WITHIN_BUCKET + AUCT_fixture_for_file_IO.usage_file_path
-    #ToDo:     )
-    #ToDo: except botocore.exceptions as error:
-    #ToDo:     log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
-    #ToDo: Path(Path(__file__).parent / AUCT_fixture_for_file_IO.usage_file_path).unlink()
-
-
-@pytest.fixture
-def file_for_S3(tmp_path, AUCT_fixture_for_file_IO):
-    """Creates a file that can be used in `test_download_nonstandard_usage_file()`.
-
-    Args:
-        tmp_path (pathlib.Path): a temporary directory created just for running tests
-        AUCT_fixture_for_file_IO (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
-
-    Yields:
-        str: complete name of file in S3, including the bucket name
-    """
-    df=pd.DataFrame()
-    df.to_csv(
-        tmp_path / AUCT_fixture_for_file_IO.usage_file_path,
-        encoding='utf-8',
-        errors='backslashreplace',
-    )
-    S3_file_name = f"{BUCKET_NAME}/{PATH_WITHIN_BUCKET}test_{AUCT_fixture_for_file_IO.usage_file_path}"  # The prefix will allow filtering that prevents the test from failing
-    upload_file_to_S3_bucket(
-        tmp_path / AUCT_fixture_for_file_IO.usage_file_path,
-        S3_file_name,
-    )
-    log.info(f"Yield value of `file_for_S3()` is {S3_file_name} (type {type(S3_file_name)})")
-    yield S3_file_name
-
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=f"{PATH_WITHIN_BUCKET}test_{AUCT_fixture_for_file_IO.usage_file_path}"
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
-
-
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test  #TEST: fixture 'non_COUNTER_AUCT_object_before_upload' not found
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
@@ -144,7 +79,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests  #TEST: fixture 'non_COUNTER_AUCT_object_before_upload' not found
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
 
