@@ -261,7 +261,7 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         """,
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample()
+    ).sample().reset_index()
     log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
@@ -272,7 +272,7 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
         collection_status=record.at[0,'collection_status'],
         usage_file_path=record.at[0,'usage_file_path'],
-        notes=record.at[0,'notes=record'],
+        notes=record.at[0,'notes'],
     )
     log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")
     yield yield_object
@@ -294,7 +294,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample()
+    ).sample().reset_index()
     log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
@@ -305,7 +305,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
         collection_status=record.at[0,'collection_status'],
         usage_file_path=record.at[0,'usage_file_path'],
-        notes=record.at[0,'notes=record'],
+        notes=record.at[0,'notes'],
     )
     log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")
     yield yield_object
