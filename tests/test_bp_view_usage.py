@@ -37,7 +37,7 @@ def test_view_usage_homepage(client):
 
 def test_run_custom_SQL_query(client, header_value, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
+    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
     POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/custom-SQL',
@@ -63,7 +63,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
 
 def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
