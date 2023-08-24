@@ -262,8 +262,9 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample()
+    log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
         manual_collection_required=record.at[0,'manual_collection_required'],
@@ -294,8 +295,9 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         con=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample()
+    log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
         manual_collection_required=record.at[0,'manual_collection_required'],
