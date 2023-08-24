@@ -264,7 +264,7 @@ def non_COUNTER_AUCT_object_before_upload(engine):
     ).sample().reset_index()
     log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
         manual_collection_required=record.at[0,'manual_collection_required'],
@@ -297,7 +297,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
     ).sample().reset_index()
     log.info(f"The record as a dataframe is\n{record}")
     yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],  #TEST: KeyError: 0
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
         usage_is_being_collected=record.at[0,'usage_is_being_collected'],
         manual_collection_required=record.at[0,'manual_collection_required'],
@@ -324,8 +324,8 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     Yields:
         None
     """
-    log.info(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
-    log.info(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
+    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
+    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
     yield None
@@ -349,8 +349,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yield:
         None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
     """
-    log.info(f"In `non_COUNTER_file_to_download_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
-    log.info(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
+    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
     result = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,

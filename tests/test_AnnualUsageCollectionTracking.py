@@ -44,7 +44,7 @@ def test_collect_annual_usage_statistics(caplog):
 
 #Section: Upload and Download Nonstandard Usage File
 @pytest.mark.dependency()
-def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test  #TEST: fixture 'non_COUNTER_AUCT_object_before_upload' not found
+def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
@@ -79,13 +79,17 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests  #TEST: fixture 'non_COUNTER_AUCT_object_before_upload' not found
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Test downloading a file in S3 to a local computer."""
-    caplog.set_level(logging.INFO, logger='botocore')
+    #caplog.set_level(logging.INFO, logger='botocore')
 
     log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
+    #TEST: `non_COUNTER_AUCT_object_after_upload` is <'AUCT_statistics_source': '11', 'AUCT_fiscal_year': '3', 'usage_is_being_collected': '1', 'manual_collection_required': '1', 'collection_via_email': '0', 'is_COUNTER_compliant': '0', 'collection_status': 'Collection complete', 'usage_file_path': 'raw-vendor-reports/11_3.csv', 'notes': 'None'>
+    #TEST: `non_COUNTER_AUCT_object_after_upload` is <'AUCT_statistics_source': '11', 'AUCT_fiscal_year': '2', 'usage_is_being_collected': '1', 'manual_collection_required': '1', 'collection_via_email': '0', 'is_COUNTER_compliant': '0', 'collection_status': 'Collection complete', 'usage_file_path': 'raw-vendor-reports/11_2.csv', 'notes': 'This is the first FY with usage statistics'>
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(Path(__file__).parent)
+    #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'raw-vendor-reports/11_2.csv.F1578cF1'
+    #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'raw-vendor-reports/11_3.csv.a945F004'
     log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
     log.info(f"`file_path` in `test_download_nonstandard_usage_file()` is {file_path} (type {type(file_path)})")
     #ToDo: `file_path`, aka the absolute path to which the file will be downloaded, should be the same as the original uploaded file with the parameters above

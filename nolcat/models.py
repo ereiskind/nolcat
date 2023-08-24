@@ -1320,6 +1320,8 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
         file_download_path = web_app_download_folder / self.usage_file_path
         log.info(f"Downloading the file at `{self.usage_file_path}`.")
+        #TEST: Downloading the file at `raw-vendor-reports/11_2.csv`.
+        #TEST: Downloading the file at `raw-vendor-reports/11_3.csv`.
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,
