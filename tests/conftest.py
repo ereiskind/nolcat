@@ -241,6 +241,7 @@ def path_to_sample_file(request):
     yield file_path_and_name
 
 
+@pytest.fixture
 def non_COUNTER_AUCT_object_before_upload(engine):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
 
@@ -276,6 +277,7 @@ def non_COUNTER_AUCT_object_before_upload(engine):
     yield yield_object
 
 
+@pytest.fixture
 def non_COUNTER_AUCT_object_after_upload(engine):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
 
@@ -307,6 +309,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
     yield yield_object
 
 
+@pytest.fixture
 def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
     """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
 
@@ -333,6 +336,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
+@pytest.fixture
 def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload):
     """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
 
