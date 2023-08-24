@@ -329,13 +329,13 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
     yield None
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=PATH_WITHIN_BUCKET + file_name
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
 @pytest.fixture
@@ -356,13 +356,13 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     )
     log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")
     yield None
-    #try:
-    #    s3_client.delete_object(
-    #        Bucket=BUCKET_NAME,
-    #        Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
-    #    )
-    #except botocore.exceptions as error:
-    #    log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
     #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
 
 
