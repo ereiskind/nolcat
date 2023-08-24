@@ -363,6 +363,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     #    )
     #except botocore.exceptions as error:
     #    log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
@@ -416,33 +417,6 @@ def default_download_folder():
             return Path(os.getenv('HOME')) / 'Downloads'
     '''
     pass
-
-
-@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
-def files_for_testing(request):
-    """Handles the selection and removal of files for testing uploads and downloads.
-    
-    This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
-
-    Args:
-        request (pathlib.Path): an absolute path to a folder with test data
-
-    Yields:
-        pathlib.Path: an absolute file path to a randomly selected file
-    """
-    file_path = request.param
-    file_name = choice([file.name for file in file_path.iterdir()])
-    file_path_and_name = file_path / file_name
-    yield file_path_and_name
-
-    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 @pytest.fixture
