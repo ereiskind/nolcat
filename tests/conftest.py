@@ -333,11 +333,31 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
         log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
-def non_COUNTER_file_to_download_from_S3():
-    # Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
-        # tests.test_bp_view_usage.test_download_non_COUNTER_usage()
-        # tests.test_AnnualUsageCollectionTracking.test_download_nonstandard_usage_file()
-    pass
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload):
+    """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+
+    Yield:
+        None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
+    """
+    log.info(f"In `non_COUNTER_file_to_download_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
+    log.info(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
+    result = upload_file_to_S3_bucket(
+        path_to_sample_file,
+        non_COUNTER_AUCT_object_after_upload.usage_file_path,
+    )
+    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
