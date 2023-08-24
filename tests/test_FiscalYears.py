@@ -203,9 +203,9 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
 
             [True, True, True, False, "Usage not provided", None, "Simulating a resource that starts offering usage statistics"],
             [True, True, True, False, "Usage not provided", None, None],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_2.csv", "This is the first FY with usage statistics"],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_3.csv", None],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_4.csv", None],
+            [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
+            [True, True, False, False, "Collection complete", "11_3.csv", None],
+            [True, True, False, False, "Collection complete", "11_4.csv", None],
             [True, True, False, False, "Collection not started", None, None],
             [None, None, None, None, None, None, None],
         ],
