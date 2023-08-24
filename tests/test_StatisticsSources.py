@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-08-24 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -68,13 +68,17 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture = StatisticsSources(
+    fixture_retrieval_code = choice(retrieval_codes)
+    fixture_name = pd.read_sql(  # Because the source used impacts if the tests pass or not, the source name should be included in the error log
+        sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code={fixture_retrieval_code};",
+        con=engine,
+    )
+    yield StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = "Stats source fixture name",
-        statistics_source_retrieval_code = choice(retrieval_codes),
+        statistics_source_name = f"{fixture_name.iloc[0][0]} [for SUSHI]",
+        statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    yield fixture
 
 
 #Section: Tests and Fixture for SUSHI Credentials
