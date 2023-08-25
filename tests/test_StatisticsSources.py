@@ -73,6 +73,15 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code={fixture_retrieval_code};",
         con=engine,
     )
+    log.info(fixture_name)
+    try:
+        log.info(fixture_name.loc[0])
+    except Exception as e:
+        log.info(f"`fixture_name.loc[0]` raised {e}")
+    try:
+        log.info(fixture_name.loc[0][0])
+    except Exception as e:
+        log.info(f"`fixture_name.loc[0][0]` raised {e}")
     yield StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = f"{fixture_name.iloc[0][0]} [for SUSHI]",
