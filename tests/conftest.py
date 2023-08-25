@@ -219,6 +219,24 @@ def COUNTERData_relation():
 
 
 #Section: Fixtures for File I/O
+@pytest.fixture(scope='session')
+def download_destination():
+    """Provides the path to the folder all downloads will go to.
+
+    Ideally, tests would download files to the host machine just like the web app, but at this time, there is no way for pytest tests running in a container on an AWS EC2 instance to interact with the host machine's file system.
+    
+    Yields:
+        pathlib.Path: a path to the destination for downloaded files
+    """
+    '''#ToDo: If method for interacting with host workstation's file system can be established
+    if os.name == 'nt':  # Windows
+        yield Path(os.getenv('USERPROFILE')) / 'Downloads'
+    else:  # *Nix systems, including macOS
+        yield Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    yield Path(__file__).parent
+
+
 @pytest.fixture(params=[
     Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
     Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
@@ -339,7 +357,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
 
 
 @pytest.fixture
-def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload):
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
     """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
 
     Args:
@@ -363,7 +381,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
-    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
+    Path(download_destination).unlink(missing_ok=True)
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
@@ -400,23 +418,6 @@ def most_recent_month_with_usage():
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
     yield (begin_date, end_date)
-
-
-@pytest.fixture(scope='module')
-def default_download_folder():
-    """Provides the path to the host workstation's downloads folder.
-    
-    Yields:
-        pathlib.Path: a path to the host workstation's downloads folder
-    """
-    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
-    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
-        if os.name == 'nt':  # Windows
-            return Path(os.getenv('USERPROFILE')) / 'Downloads'
-        else:  # *Nix systems, including macOS
-            return Path(os.getenv('HOME')) / 'Downloads'
-    '''
-    pass
 
 
 @pytest.fixture

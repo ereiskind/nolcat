@@ -79,7 +79,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     #ToDo: assert usage_file_path_in_database == file_for_IO
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Test downloading a file in S3 to a local computer."""
     #caplog.set_level(logging.INFO, logger='botocore')
 
