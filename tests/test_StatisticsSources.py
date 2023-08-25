@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2023-08-24 ##########
+########## Failing 2023-08-25 ##########
 
 import pytest
 import logging
@@ -160,7 +160,6 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
             date(2020, 6, 1),  # The last month with usage in the test data
             current_month_like_most_recent_month_with_usage[1],
         )
-    #TEST: assert False
     assert isinstance(data_check, list)
     assert date(2020, 6, 1) not in data_check
     assert current_month_like_most_recent_month_with_usage[0] in data_check
@@ -211,15 +210,9 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
+    #ToDo: if SUSHI_response contains "Call to SUSHI code \d* for reports/\w{2} returned no usage data, which may or may not be appropriate.", skip test
     #Test: Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    df = pd.concat([
-        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
-        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
-    ], axis='columns')
-    log.info(f"The concatenated timestamp df is\n{df}")
-    log.info(f"The concatenated timestamp df with the `any` method is\n{df.any(axis='columns')}")
-    log.info(f"The concatenated timestamp df with the `any` and `all` methods is\n{df.any(axis='columns').all()}")
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
@@ -344,8 +337,10 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
     recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
 
-    try:
+    try:  #ToDo: Test is failing because rows are out of order--below shows metric and number pairs are the same but on different rows
         log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
+        #ToDo: Would resetting the index of both dataframes help?
+        #ToDo: Would a sort help?
     except:
         log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")

@@ -19,6 +19,7 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
+* Make corrections to ``tests.test_StatisticsSources``
 
 Iteration 1: Complete Current Data I/O
 ======================================
