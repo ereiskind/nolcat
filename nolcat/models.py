@@ -1318,7 +1318,7 @@ class AnnualUsageCollectionTracking(db.Model):
         """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
 
         Args:
-            web_app_download_folder (pathlib.Path): the folder from which the web app will download the file
+            web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
             client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
             bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
             bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
@@ -1329,8 +1329,6 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
         file_download_path = web_app_download_folder / self.usage_file_path
         log.info(f"Downloading the file at `{self.usage_file_path}`.")
-        #TEST: Downloading the file at `raw-vendor-reports/11_2.csv`.
-        #TEST: Downloading the file at `raw-vendor-reports/11_3.csv`.
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,

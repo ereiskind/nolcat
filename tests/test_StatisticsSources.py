@@ -226,6 +226,13 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         )
     #Test: Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
+    df = pd.concat([
+        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
+        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
+    ], axis='columns')
+    log.info(f"The concatenated timestamp df is\n{df}")
+    log.info(f"The concatenated timestamp df with the `any` method is\n{df.any(axis='columns')}")
+    log.info(f"The concatenated timestamp df with the `any` and `all` methods is\n{df.any(axis='columns').all()}")
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
@@ -242,7 +249,6 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     with client:
         SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    #TEST: NotADirectoryError: [Errno 20] Not a directory: '/nolcat/nolcat/models.py/temp.json'
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
