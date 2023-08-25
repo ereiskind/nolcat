@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2023-08-11 ##########
+########## Failing 2023-08-25 ##########
 
 import pytest
 import logging
@@ -68,13 +68,13 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture = StatisticsSources(
+    fixture_retrieval_code = choice(retrieval_codes)
+    yield StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = "Stats source fixture name",
-        statistics_source_retrieval_code = choice(retrieval_codes),
+        statistics_source_name = f"SUSHI code {fixture_retrieval_code}",
+        statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    yield fixture
 
 
 #Section: Tests and Fixture for SUSHI Credentials
@@ -210,6 +210,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
+    #ToDo: if SUSHI_response contains "Call to SUSHI code \d* for reports/\w{2} returned no usage data, which may or may not be appropriate.", skip test
     #Test: Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
@@ -336,8 +337,10 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
     recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
 
-    try:
+    try:  #ToDo: Test is failing because rows are out of order--below shows metric and number pairs are the same but on different rows
         log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
+        #ToDo: Would resetting the index of both dataframes help?
+        #ToDo: Would a sort help?
     except:
         log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")

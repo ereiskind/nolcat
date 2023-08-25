@@ -1,16 +1,13 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2023-08-11 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
 from pathlib import Path
-import os
-from random import choice
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 import sqlalchemy
 import flask
 
@@ -19,50 +16,6 @@ from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
-
-
-@pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
-def default_download_folder():
-    """Provides the path to the host workstation's downloads folder.
-    
-    Yields:
-        pathlib.Path: a path to the host workstation's downloads folder
-    """
-    #ToDo: If method for interacting with host workstation's file system can be established, `yield input("Enter the absolute path to the computer's downloads folder: ")`
-    '''If `os.name` can be replaced by another attribute or method for finding the host computer's OS
-        if os.name == 'nt':  # Windows
-            return Path(os.getenv('USERPROFILE')) / 'Downloads'
-        else:  # *Nix systems, including macOS
-            return Path(os.getenv('HOME')) / 'Downloads'
-    '''
-    pass
-
-
-@pytest.fixture(params=[Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests', Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports'])
-def files_for_testing(request):
-    """Handles the selection and removal of files for testing uploads and downloads.
-    
-    This fixture uses parameterization to randomly select two files--one text and one binary--to test both uploading to an S3 bucket and downloading from a location in the NoLCAT repo, then removes the files created by those tests. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
-
-    Args:
-        request (pathlib.Path): an absolute path to a folder with test data
-
-    Yields:
-        pathlib.Path: an absolute file path to a randomly selected file
-    """
-    file_path = request.param
-    file_name = choice([file.name for file in file_path.iterdir()])
-    file_path_and_name = file_path / file_name
-    yield file_path_and_name
-
-    #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder` to parameters, then `Path(default_download_folder).unlink(missing_ok=True)`
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 #Section: Test Flask Factory Pattern
@@ -187,26 +140,26 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
-def test_download_file(client, files_for_testing):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
+def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
-    log.info(f"At start of `test_download_file()`, `files_for_testing` is {files_for_testing} (type {type(files_for_testing)})")
+    log.info(f"At start of `test_download_file()`, `path_to_sample_file` is {path_to_sample_file} (type {type(path_to_sample_file)})")
     page = client.get(
-        f'/download/{files_for_testing}',
+        f'/download/{path_to_sample_file}',
         follow_redirects=True,
     )
-    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, files_for_testing.name) as file: downloaded_file = file.read()`
+    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, path_to_sample_file.name) as file: downloaded_file = file.read()`
 
     assert page.status == "200 OK"
     assert page.history[0].status == "308 PERMANENT REDIRECT"
-    assert page.headers.get('Content-Disposition') == f'attachment; filename={files_for_testing.name}'
-    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[files_for_testing.suffix]
-    #ToDo: If method for interacting with host workstation's file system can be established, `assert files_for_testing.name in [file_name for file_name in default_download_folder.iterdir()]
+    assert page.headers.get('Content-Disposition') == f'attachment; filename={path_to_sample_file.name}'
+    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[path_to_sample_file.suffix]
+    #ToDo: If method for interacting with host workstation's file system can be established, `assert path_to_sample_file.name in [file_name for file_name in default_download_folder.iterdir()]
     #ToDo: If method for interacting with host workstation's file system can be established,
-    #if "bin" in files_for_testing.parts:
-    #    with files_for_testing.open('rb') as file:
+    #if "bin" in path_to_sample_file.parts:
+    #    with path_to_sample_file.open('rb') as file:
     #        assert file.read() == downloaded_file
     #else:
-    #    with files_for_testing.open('rt') as file:
+    #    with path_to_sample_file.open('rt') as file:
     #        assert file.read() == downloaded_file
 
 
@@ -266,11 +219,11 @@ def test_S3_bucket_connection():
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-def test_upload_file_to_S3_bucket(files_for_testing):
+def test_upload_file_to_S3_bucket(path_to_sample_file):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
-        files_for_testing,
-        f"test_{files_for_testing.name}",  # The prefix will allow filtering that prevents the test from failing
+        path_to_sample_file,
+        f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -280,7 +233,7 @@ def test_upload_file_to_S3_bucket(files_for_testing):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    assert files_for_testing.name in bucket_contents
+    assert path_to_sample_file.name in bucket_contents
 
 
 def test_create_AUCT_SelectField_options():

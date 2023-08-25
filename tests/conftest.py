@@ -8,14 +8,19 @@ import logging
 from pathlib import Path
 from datetime import date
 import calendar
+from random import choice
 from sqlalchemy import create_engine
+import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
+import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
 from nolcat.app import create_app
 from nolcat.app import configure_logging
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
+from nolcat.app import s3_client
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.models import *
 from data import relations
 
 log = logging.getLogger(__name__)
@@ -213,6 +218,172 @@ def COUNTERData_relation():
     yield relations.COUNTERData_relation()
 
 
+#Section: Fixtures for File I/O
+@pytest.fixture(scope='session')
+def download_destination():
+    """Provides the path to the folder all downloads will go to.
+
+    Ideally, tests would download files to the host machine just like the web app, but at this time, there is no way for pytest tests running in a container on an AWS EC2 instance to interact with the host machine's file system.
+    
+    Yields:
+        pathlib.Path: a path to the destination for downloaded files
+    """
+    '''#ToDo: If method for interacting with host workstation's file system can be established
+    if os.name == 'nt':  # Windows
+        yield Path(os.getenv('USERPROFILE')) / 'Downloads'
+    else:  # *Nix systems, including macOS
+        yield Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    yield Path(__file__).parent
+
+
+@pytest.fixture(params=[
+    Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
+    Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
+])
+def path_to_sample_file(request):
+    """A parameterized function returning absolute paths to randomly selected files for use in testing file I/O operations.
+
+    This fixture uses parameterization to randomly select multiple files of different types for use in any tests involving file uploads or downloads. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        request (pathlib.Path): an absolute path to a folder with test data
+
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file
+    """
+    file_path = request.param
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    log.info(f"`path_to_sample_file()` returning file {file_path_and_name}.")
+    yield file_path_and_name
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_before_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+    """
+    record = pd.read_sql(
+        sql=f"""
+            SELECT * FROM annualUsageCollectionTracking WHERE
+                usage_is_being_collected=true AND
+                is_COUNTER_compliant=false AND
+                collection_status='Collection not started' AND
+                usage_file_path IS NULL;
+        """,
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample().reset_index()
+    log.info(f"The record as a dataframe is\n{record}")
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")
+    yield yield_object
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_after_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
+
+    Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+    """
+    record = pd.read_sql(
+        sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample().reset_index()
+    log.info(f"The record as a dataframe is\n{record}")
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")
+    yield yield_object
+
+
+@pytest.fixture
+def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
+    """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
+
+    The `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method creates a name for the file in S3 based on class attributes, so a standard fixture for creating and removing the file won't work. This fixture uses the file and class attributes to determine the name of the file the method will create, yields a null value as no data is needed from it, then performs teardown operations using the previously determined file name.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+
+    Yields:
+        None
+    """
+    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
+    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+
+
+@pytest.fixture
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
+    """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+
+    Yield:
+        None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
+    """
+    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
+    result = upload_file_to_S3_bucket(
+        path_to_sample_file,
+        non_COUNTER_AUCT_object_after_upload.usage_file_path,
+    )
+    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+    Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
+
+
 #Section: Other Fixtures Used in Multiple Test Modules
 @pytest.fixture
 def header_value():
@@ -262,7 +433,7 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     file_names = []
     for workbook in folder_path.iterdir():
         file_names.append(workbook)
-    pass  #TEST: This fixture isn't importing into other test modules; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+    pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
 
 
 #Section: Replacement Classes

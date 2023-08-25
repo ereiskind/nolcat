@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2023-08-11 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -203,9 +203,9 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
 
             [True, True, True, False, "Usage not provided", None, "Simulating a resource that starts offering usage statistics"],
             [True, True, True, False, "Usage not provided", None, None],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_2.csv", "This is the first FY with usage statistics"],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_3.csv", None],
-            [True, True, False, False, "Collection complete", f"{PATH_WITHIN_BUCKET}11_4.csv", None],
+            [True, True, False, False, "Collection complete", "11_2.csv", "This is the first FY with usage statistics"],
+            [True, True, False, False, "Collection complete", "11_3.csv", None],
+            [True, True, False, False, "Collection complete", "11_4.csv", None],
             [True, True, False, False, "Collection not started", None, None],
             [None, None, None, None, None, None, None],
         ],
@@ -222,4 +222,5 @@ def test_collect_fiscal_year_usage_statistics():
     """Create a test calling the StatisticsSources._harvest_R5_SUSHI method with the FiscalYears.start_date and FiscalYears.end_date as the arguments."""
     #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     #ToDo: With each year's results changing, and with each API call having the date and time of the call in it, how can matching be done?
+    #ToDo: Method being tested returns f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
     pass

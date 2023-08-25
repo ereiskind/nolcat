@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2023-08-11 ##########
+########## Failing 2023-08-25 ##########
 
 import pytest
 import logging
@@ -37,9 +37,9 @@ def test_view_usage_homepage(client):
 
 def test_run_custom_SQL_query(client, header_value, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
+    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/custom-SQL',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -63,7 +63,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
 
 def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
@@ -85,7 +85,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         'query_options': query_options[0],
         #ToDo: Fields for query wizard not yet created; once created, they'll need to be added with null values here
     }
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/query-wizard',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -172,7 +172,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     GET_select_field_options = []
     log.info(f"`GET_soup`:\n{GET_soup}")
     log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")
-    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:  #TEST: AttributeError: 'NoneType' object has no attribute 'children'
+    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
         tuple_content = re.search(r'\((\d*),\s(\d*)\)', string=child['value'])
         GET_select_field_options.append((
             tuple([int(i) for i in tuple_content.group(1, 2)]),
