@@ -381,7 +381,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         )
     except botocore.exceptions as error:
         log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
-    Path(download_destination).unlink(missing_ok=True)
+    Path(download_destination / path_to_sample_file.name).unlink(missing_ok=True)
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
