@@ -76,7 +76,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 
     assert upload_result is not None
     assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
-    #ToDo: assert usage_file_path_in_database == file_for_IO
+    #ToDo: Add `assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" == usage_file_path_in_database` when database update and delete in method is completed
 
 
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests

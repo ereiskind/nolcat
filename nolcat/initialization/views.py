@@ -320,6 +320,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
                 #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
+                # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
                 return redirect(url_for('initialization.collect_sources_data'))
             infinite_loop_error = True
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function

@@ -320,7 +320,8 @@ class FiscalYears(db.Model):
             #ToDo: else:
                 #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")
             #ToDo: dfs.append(df)
-            #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
+            #ToDo: Update AUCT table
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: try:
@@ -436,6 +437,7 @@ class Vendors(db.Model):
     def add_note(self):
         log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -915,6 +917,7 @@ class StatisticsSources(db.Model):
     def add_note(self):
         log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1010,6 +1013,7 @@ class ResourceSources(db.Model):
     def add_access_stop_date(self):
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Put value in access_stop_date when current_access goes from True to False
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1017,6 +1021,7 @@ class ResourceSources(db.Model):
     def remove_access_stop_date(self):
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Null value in access_stop_date when current_access goes from False to True
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1040,6 +1045,7 @@ class ResourceSources(db.Model):
         #ToDo: """
         #ToDo: Apply above query to database
         #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1047,6 +1053,7 @@ class ResourceSources(db.Model):
     def add_note(self):
         log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1246,6 +1253,7 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
             log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             return message
         except Exception as error:
             message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
@@ -1294,6 +1302,7 @@ class AnnualUsageCollectionTracking(db.Model):
             sql=f"""
                 UPDATE annualUsageCollectionTracking
                 SET usage_file_path = "{file_name}"
+                AND collection_status='Collection complete'
                 WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
             """
             log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")

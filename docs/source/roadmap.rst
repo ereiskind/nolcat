@@ -24,10 +24,10 @@ Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Write ``tests.test_AnnualUsageCollectionTracking.test_upload_nonstandard_usage_file()``
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
 * Finish "query-wizard.html"
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
+* Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
 
 Iteration 2: Add Historical Data
 ================================
