@@ -68,6 +68,7 @@ def use_predefined_SQL_query():
         log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
+        log.info(f"`use_predefined_SQL_query()` received {form.begin_date.data} as the being date, {form.end_date.data} as the end date, and {form.query_options.data} as the query option from the form.")
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
@@ -80,6 +81,7 @@ def use_predefined_SQL_query():
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
+        log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         
         if form.query_options.data == "PR_P1":
             query = f"""
@@ -176,6 +178,7 @@ def use_predefined_SQL_query():
             sql=query,
             con=db.engine,
         )
+        log.debug(f"The query result:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
