@@ -20,6 +20,8 @@ Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 * Make corrections to ``tests.test_StatisticsSources``
+* **Before ``upload_file_to_S3_bucket()`` saving of data raising errors, make sure the pathlib.Path part of temp path doesn't include a file name**
+* **Remove user input on CLI in SUSHI call**
 
 Iteration 1: Complete Current Data I/O
 ======================================
