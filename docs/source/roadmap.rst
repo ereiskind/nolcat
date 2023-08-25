@@ -24,8 +24,8 @@ Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()`` for the standard views
-* Finish "query-wizard.html"
+* Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
+* Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 * Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
 
@@ -37,14 +37,14 @@ Iteration 2: Add Historical Data
 * Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
 * Write "initialization/initial-data-upload-4.html" page
 * Write ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
-  * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
-  * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
+* Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
+* Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
-  * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-  * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
+* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
+* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
 * Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 
@@ -56,8 +56,8 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
-* Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
+* Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 
 Basic Enhancement Iterations
 ****************************
@@ -125,6 +125,7 @@ Iteration 6: Create Query Wizard
 * Craft queries to use
 * Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
 * Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
+* Finish form in "query-wizard.html"
 
 Iteration 7: Show Fiscal Year Information
 =========================================
