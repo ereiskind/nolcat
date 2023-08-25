@@ -29,6 +29,7 @@ Iteration 1: Complete Current Data I/O
 * Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
 * Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
+* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 * Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
 * Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
