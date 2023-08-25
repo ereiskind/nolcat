@@ -87,5 +87,5 @@ def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, n
     log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in download_destination.iterdir()]}")
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
     log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in download_destination.iterdir()]}")
-    assert file_path.name == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
+    assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()
