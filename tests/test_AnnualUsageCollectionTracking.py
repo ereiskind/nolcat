@@ -81,16 +81,11 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Test downloading a file in S3 to a local computer."""
-    #caplog.set_level(logging.INFO, logger='botocore')
+    caplog.set_level(logging.INFO, logger='botocore')
 
     log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
-    #TEST: `non_COUNTER_AUCT_object_after_upload` is <'AUCT_statistics_source': '11', 'AUCT_fiscal_year': '3', 'usage_is_being_collected': '1', 'manual_collection_required': '1', 'collection_via_email': '0', 'is_COUNTER_compliant': '0', 'collection_status': 'Collection complete', 'usage_file_path': 'raw-vendor-reports/11_3.csv', 'notes': 'None'>
-    #TEST: `non_COUNTER_AUCT_object_after_upload` is <'AUCT_statistics_source': '11', 'AUCT_fiscal_year': '2', 'usage_is_being_collected': '1', 'manual_collection_required': '1', 'collection_via_email': '0', 'is_COUNTER_compliant': '0', 'collection_status': 'Collection complete', 'usage_file_path': 'raw-vendor-reports/11_2.csv', 'notes': 'This is the first FY with usage statistics'>
-    log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
-    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(Path(__file__).parent)
-    #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'raw-vendor-reports/11_2.csv.F1578cF1'
-    #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'raw-vendor-reports/11_3.csv.a945F004'
-    log.info(f"`Path(__file__).parent` contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in Path(__file__).parent.iterdir()]}")
-    log.info(f"`file_path` in `test_download_nonstandard_usage_file()` is {file_path} (type {type(file_path)})")
-    #ToDo: `file_path`, aka the absolute path to which the file will be downloaded, should be the same as the original uploaded file with the parameters above
-    pass
+    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in download_destination.iterdir()]}")
+    file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
+    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in download_destination.iterdir()]}")
+    assert file_path.name == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
+    assert file_path.is_file()
