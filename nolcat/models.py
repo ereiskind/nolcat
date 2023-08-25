@@ -5,7 +5,8 @@ from pathlib import Path
 import sys
 import json
 import re
-import datetime
+from datetime import date
+from datetime import datetime
 import calendar
 from sqlalchemy.ext.hybrid import hybrid_method  # Initial example at https://pynash.org/2013/03/01/Hybrid-Properties-in-SQLAlchemy/
 import pandas as pd
@@ -124,33 +125,33 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         TR_B1_sum = TR_B1_df.iloc[0][0]
         log.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
 
         IR_M1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
-            ''',
+            """,
             con=db.engine,
         )
         IR_M1_sum = IR_M1_df.iloc[0][0]
         log.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
 
         TR_J1_df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         TR_J1_sum = TR_J1_df.iloc[0][0]
@@ -170,11 +171,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -192,11 +193,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -214,11 +215,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Searches_Regular' AND access_method='Regular' AND report_type='DR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -236,11 +237,11 @@ class FiscalYears(db.Model):
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
         df = pd.read_sql(
-            sql=f'''
+            sql=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
                 WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
                 AND metric_type='Searches_Federated' AND access_method='Regular' AND report_type='DR';
-            ''',
+            """,
             con=db.engine,
         )
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")
@@ -259,7 +260,7 @@ class FiscalYears(db.Model):
         log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
         current_statistics_sources = pd.read_sql(
-            sql=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            sql=f'SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;',  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             con=db.engine,
         )
         log.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")
@@ -319,7 +320,8 @@ class FiscalYears(db.Model):
             #ToDo: else:
                 #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")
             #ToDo: dfs.append(df)
-            #ToDo: Update AUCT table; see https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-flask-sqlalchemy-app/ for executing SQL update statements
+            #ToDo: Update AUCT table
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: try:
@@ -390,14 +392,14 @@ class Vendors(db.Model):
         log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
-        #ToDo:     sql=f'''
+        #ToDo:     sql=f"""
         #ToDo:         SELECT
         #ToDo:             statistics_source_ID,
         #ToDo:             statistics_source_name,
         #ToDo:             statistics_source_retrieval_code
         #ToDo:         FROM statisticsSources
         #ToDo:         WHERE vendor_ID = {vendor_PK};
-        #ToDo:     ''',
+        #ToDo:     """,
         #ToDo:     con=db.engine,
         #ToDo:     index_col='statistics_source_ID',
         #ToDo: )
@@ -415,7 +417,7 @@ class Vendors(db.Model):
         log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
         #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
         #ToDo: df = pd.read_sql(
-        #ToDo:     sql=f'''
+        #ToDo:     sql=f"""
         #ToDo:         SELECT
         #ToDo:             resource_source_ID,
         #ToDo:             resource_source_name,
@@ -423,7 +425,7 @@ class Vendors(db.Model):
         #ToDo:             use_stop_date
         #ToDo:         FROM resourceSources
         #ToDo:         WHERE vendor_ID = {vendor_PK};
-        #ToDo:     ''',
+        #ToDo:     """,
         #ToDo:     con=db.engine,
         #ToDo:     index_col='resource_source_ID',
         #ToDo: )
@@ -435,6 +437,7 @@ class Vendors(db.Model):
     def add_note(self):
         log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -590,7 +593,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             dataframe: a dataframe containing all of the R5 COUNTER data
@@ -772,7 +775,7 @@ class StatisticsSources(db.Model):
             individual_month_dfs = []
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
-                SUSHI_parameters['end_date'] = datetime.date(
+                SUSHI_parameters['end_date'] = date(
                     month_to_harvest.year,
                     month_to_harvest.month,
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
@@ -784,7 +787,7 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path().resolve() / 'temp.json'
+                    temp_file_path = Path(__file__) / 'temp.json'
                     with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
                     log_message = upload_file_to_S3_bucket(
@@ -818,8 +821,8 @@ class StatisticsSources(db.Model):
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                temp_file_path = Path().resolve() / 'temp.json'
-                with open(temp_file_path, 'xb', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+                temp_file_path = Path(__file__) / 'temp.json'
+                with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
@@ -880,7 +883,7 @@ class StatisticsSources(db.Model):
         Args:
             usage_start_date (datetime.date): the first day of the usage collection date range, which is the first day of the month
             usage_end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
-            report_to_harvest (str): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
+            report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
             str: the logging statement to indicate if calling and loading the data succeeded or failed
@@ -914,6 +917,7 @@ class StatisticsSources(db.Model):
     def add_note(self):
         log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1009,6 +1013,7 @@ class ResourceSources(db.Model):
     def add_access_stop_date(self):
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Put value in access_stop_date when current_access goes from True to False
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1016,6 +1021,7 @@ class ResourceSources(db.Model):
     def remove_access_stop_date(self):
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         #ToDo: Null value in access_stop_date when current_access goes from False to True
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1032,13 +1038,14 @@ class ResourceSources(db.Model):
             None: no return value is needed, so the default `None` is used
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
-        #ToDo: SQL_query = f'''
+        #ToDo: SQL_query = f"""
         #ToDo:     UPDATE
         #ToDo:     SET current_statistics_source = false
         #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
-        #ToDo: '''
+        #ToDo: """
         #ToDo: Apply above query to database
         #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1046,6 +1053,7 @@ class ResourceSources(db.Model):
     def add_note(self):
         log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
+        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1134,13 +1142,17 @@ class AnnualUsageCollectionTracking(db.Model):
         self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
         self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant
         self.collection_status (enum): the status of the usage statistics collection
-        self.usage_file_path (string): the path to the file containing the non-COUNTER usage statistics
+        self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PATH_WITHIN_BUCKET` section (see note)
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
         collect_annual_usage_statistics: A method invoking the `_harvest_R5_SUSHI()` method for the given resource's fiscal year usage.
-        upload_nonstandard_usage_file: #ToDo: Copy first line of docstring here
+        upload_nonstandard_usage_file: A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
+        download_nonstandard_usage_file: A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
+    
+    Note:
+        Strictly speaking, S3 doesn't use folders, just file names with segments that can be separated by slashes, but the segmentation of the file names allows a file-like structure to be created and used for the S3 GUI. The `PATH_WITHIN_BUCKET` constant is a shared beginning to all usage statistics files loaded into S3 by NoLCAT.
     """
     __tablename__ = 'annualUsageCollectionTracking'
 
@@ -1169,8 +1181,7 @@ class AnnualUsageCollectionTracking(db.Model):
 
     def __repr__(self):
         """The printable representation of the record."""
-        #ToDo: Create an f-string to serve as a printable representation of the record
-        pass
+        return f"<'AUCT_statistics_source': '{self.AUCT_statistics_source}', 'AUCT_fiscal_year': '{self.AUCT_fiscal_year}', 'usage_is_being_collected': '{self.usage_is_being_collected}', 'manual_collection_required': '{self.manual_collection_required}', 'collection_via_email': '{self.collection_via_email}', 'is_COUNTER_compliant': '{self.is_COUNTER_compliant}', 'collection_status': '{self.collection_status}', 'usage_file_path': '{self.usage_file_path}', 'notes': '{self.notes}'>"
 
 
     @hybrid_method
@@ -1201,7 +1212,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Get Data from Relations Corresponding to Composite Key
         #Subsection: Get Data from `fiscalYears`
         fiscal_year_data = pd.read_sql(
-            sql=f'SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};',
+            sql=f"SELECT fiscal_year, start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={self.AUCT_fiscal_year};",
             con=db.engine,
         )
         start_date = fiscal_year_data['start_date'][0]
@@ -1212,7 +1223,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
         statistics_source_data = pd.read_sql(
-            sql=f'SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source}',
+            sql=f"SELECT statistics_source_name, statistics_source_retrieval_code, vendor_ID FROM statisticsSources WHERE statistics_source_ID={self.AUCT_statistics_source};",
             con=db.engine,
         )
         statistics_source = StatisticsSources(
@@ -1242,6 +1253,7 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
             log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             return message
         except Exception as error:
             message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
@@ -1250,8 +1262,83 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self):
-        pass
+    def upload_nonstandard_usage_file(self, file, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+        """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
+
+        Args:
+            file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
+            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+
+        Returns:
+            str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
+        """
+        log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
+        file_path = Path(file)
+        file_extension = file_path.suffix
+        if file_extension not in file_extensions_and_mimetypes().keys():
+            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{list(file_extensions_and_mimetypes().keys())}"
+            log.error(message)
+            return message
+        
+        file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
+        logging_message = upload_file_to_S3_bucket(
+            file,
+            file_name,
+        )
+        if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.', string=logging_message) is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+            message = f"{logging_message} As a result, the file `{file_name}` wasn't uploaded to S3."
+            log.warning(message)
+            return message
+        log.debug(logging_message)
+        
+        try:
+            log.info(f"`db` is {db} (type {type(db)})")
+            log.info(f"`db.engine` is {db.engine} (type {type(db.engine)})")
+            x=db.engine.execute('show tables;')
+            log.info(f"`db.engine.execute('show tables;')` is {x} (type {type(x)})")
+            #ToDo: Make update to database with SQL statement below
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+            sql=f"""
+                UPDATE annualUsageCollectionTracking
+                SET usage_file_path = "{file_name}"
+                AND collection_status='Collection complete'
+                WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
+            """
+            log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")
+            return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."
+        except Exception as error:
+            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."
+            log.error(message)
+            return message
+    
+
+    @hybrid_method
+    def download_nonstandard_usage_file(self, web_app_download_folder, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+        """A method for downloading a file with usage statistics for a statistics source for a given fiscal year from S3.
+
+        Args:
+            web_app_download_folder (pathlib.Path): the absolute path for the folder to which the web app will download the file
+            client (S3.Client, optional): the client for connecting to an S3 bucket; default is `S3_client` initialized in `nolcat.app` module
+            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
+            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
+        
+        Returns:
+            pathlib.Path: the absolute file path to the downloaded file
+        """
+        log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
+        file_download_path = web_app_download_folder / self.usage_file_path
+        log.info(f"Downloading the file at `{self.usage_file_path}`.")
+        client.download_file(
+            Bucket=bucket,
+            Key=bucket_path + self.usage_file_path,
+            Filename=self.usage_file_path,
+        )
+        if self.usage_file_path in [str(p.name) for p in Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1]).iterdir()]:
+            Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], self.usage_file_path).rename(file_download_path)
+            return file_download_path
+        else:
+            return False
 
 
 class COUNTERData(db.Model):

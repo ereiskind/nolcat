@@ -1,16 +1,13 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
 from pathlib import Path
-import os
-from random import choice
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
-import botocore.exceptions  # `botocore` is a dependency of `boto3`
 import sqlalchemy
 import flask
 
@@ -19,26 +16,6 @@ from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
-
-
-@pytest.fixture(params=[Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests'), Path(os.getcwd(), 'tests', 'bin', 'sample_COUNTER_R4_reports')])
-def files_to_upload_to_S3_bucket(request):
-    """Handles the selection and removal of files for testing uploads to a S3 bucket.
-    
-    This fixture uses parameterization to randomly select two files--one text and one binary--to upload into a S3 bucket, then, upon completion of the test, removes those files from the bucket. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
-    """
-    file_path = request.param
-    list_of_file_names = tuple(os.walk(file_path))[0][2]
-    file_name = choice(list_of_file_names)
-    file_to_upload = file_path / file_name  # Adding prefix in fixture prevents matching to files required in `upload_file_to_S3_bucket()`
-    yield file_to_upload
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=f"{PATH_WITHIN_BUCKET}test_{file_name}"
-        )
-    except botocore.exceptions as error:
-        log.error(f"Trying to remove the test data files from the S3 bucket raised {error}.")
 
 
 #Section: Test Flask Factory Pattern
@@ -69,7 +46,7 @@ def test_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     
-    with open(Path(os.getcwd(), 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -82,7 +59,7 @@ def test_homepage(client):
 def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
     nonexistent_page = client.get('/404')
-    with open(Path(os.getcwd(), 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'templates', '404.html'), 'br') as HTML_file:
         # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
@@ -163,6 +140,29 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
     assert_frame_equal(retrieved_data, expected_output_data)
 
 
+def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
+    """Tests the route enabling file downloads."""
+    log.info(f"At start of `test_download_file()`, `path_to_sample_file` is {path_to_sample_file} (type {type(path_to_sample_file)})")
+    page = client.get(
+        f'/download/{path_to_sample_file}',
+        follow_redirects=True,
+    )
+    #ToDo: If method for interacting with host workstation's file system can be established, `with Path(default_download_folder, path_to_sample_file.name) as file: downloaded_file = file.read()`
+
+    assert page.status == "200 OK"
+    assert page.history[0].status == "308 PERMANENT REDIRECT"
+    assert page.headers.get('Content-Disposition') == f'attachment; filename={path_to_sample_file.name}'
+    assert page.headers.get('Content-Type') == file_extensions_and_mimetypes()[path_to_sample_file.suffix]
+    #ToDo: If method for interacting with host workstation's file system can be established, `assert path_to_sample_file.name in [file_name for file_name in default_download_folder.iterdir()]
+    #ToDo: If method for interacting with host workstation's file system can be established,
+    #if "bin" in path_to_sample_file.parts:
+    #    with path_to_sample_file.open('rb') as file:
+    #        assert file.read() == downloaded_file
+    #else:
+    #    with path_to_sample_file.open('rt') as file:
+    #        assert file.read() == downloaded_file
+
+
 #Section: Test Helper Functions
 @pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
 def test_first_new_PK_value():
@@ -219,11 +219,11 @@ def test_S3_bucket_connection():
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
+def test_upload_file_to_S3_bucket(path_to_sample_file):
     """Tests uploading files to a S3 bucket."""
     upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
-        files_to_upload_to_S3_bucket,
-        f"test_{files_to_upload_to_S3_bucket.name}",  # The prefix will allow filtering that prevents the test from failing
+        path_to_sample_file,
+        f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -233,4 +233,36 @@ def test_upload_file_to_S3_bucket(files_to_upload_to_S3_bucket):
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    assert files_to_upload_to_S3_bucket.name in bucket_contents
+    assert path_to_sample_file.name in bucket_contents
+
+
+def test_create_AUCT_SelectField_options():
+    """Tests the transformation of a dataframe with four fields into a list for the `SelectField.choices` attribute with the characteristics described in the docstring of the function being tested."""
+    df = pd.DataFrame(
+        [
+            [1, 1, "First Statistics Source", "2017"],
+            [2, 1, "Second Statistics Source", "2017"],
+            [1, 2, "First Statistics Source", "2018"],
+            [3, 2, "Third Statistics Source", "2018"],
+        ],
+        columns=["AUCT_statistics_source", "AUCT_fiscal_year", "statistics_source_name", "fiscal_year"],
+    )
+    result_list = [
+        (
+            (1, 1),
+            "First Statistics Source--FY 2017",
+        ),
+        (
+            (2, 1),
+            "Second Statistics Source--FY 2017",
+        ),
+        (
+            (1, 2),
+            "First Statistics Source--FY 2018",
+        ),
+        (
+            (3, 2),
+            "Third Statistics Source--FY 2018",
+        ),
+    ]
+    assert create_AUCT_SelectField_options(df) == result_list

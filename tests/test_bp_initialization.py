@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -22,7 +22,11 @@ log = logging.getLogger(__name__)
 #Section: Fixtures
 @pytest.fixture
 def blank_annualUsageCollectionTracking_data_types():
-    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types."""
+    """Create a dictionary with the fields in the `annualUsageCollectionTracking` template and their associated data types.
+    
+    Yields:
+        dict: the `astype` argument for `annualUsageCollectionTracking` and the primary keys corresponding to the parts of its composite key
+    """
     yield {
         **AnnualUsageCollectionTracking.state_data_types(),  # The double asterisk is the dictionary unpacking operator
         "Statistics Source": StatisticsSources.state_data_types()['statistics_source_name'],
@@ -32,7 +36,15 @@ def blank_annualUsageCollectionTracking_data_types():
 
 @pytest.fixture
 def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
-    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `fiscalYears` relation, then removes the file at the end of the test.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        fiscalYears_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield fiscalYears_relation.to_csv(
         tmp_path / 'fiscalYears_relation.csv',
         index_label="fiscal_year_ID",
@@ -44,7 +56,15 @@ def create_fiscalYears_CSV_file(tmp_path, fiscalYears_relation):
 
 @pytest.fixture
 def create_vendors_CSV_file(tmp_path, vendors_relation):
-    """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `vendors` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        vendors_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield vendors_relation.to_csv(
         tmp_path / 'vendors_relation.csv',
         index_label="vendor_ID",
@@ -56,7 +76,15 @@ def create_vendors_CSV_file(tmp_path, vendors_relation):
 
 @pytest.fixture
 def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
-    """Create a CSV file with the test data for the `vendorNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `vendorNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        vendorNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield vendorNotes_relation.to_csv(
         tmp_path / 'vendorNotes_relation.csv',
         index_label="vendor_notes_ID",
@@ -68,7 +96,15 @@ def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
 
 @pytest.fixture
 def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
-    """Create a CSV file with the test data for the `statisticsSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsSources_relation.to_csv(
         tmp_path / 'statisticsSources_relation.csv',
         index_label="statistics_source_ID",
@@ -80,7 +116,15 @@ def create_statisticsSources_CSV_file(tmp_path, statisticsSources_relation):
 
 @pytest.fixture
 def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relation):
-    """Create a CSV file with the test data for the `statisticsSourceNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsSourceNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsSourceNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsSourceNotes_relation.to_csv(
         tmp_path / 'statisticsSourceNotes_relation.csv',
         index_label="statistics_source_notes_ID",
@@ -92,7 +136,15 @@ def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relati
 
 @pytest.fixture
 def create_resourceSources_CSV_file(tmp_path, resourceSources_relation):
-    """Create a CSV file with the test data for the `resourceSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `resourceSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        resourceSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield resourceSources_relation.to_csv(
         tmp_path / 'resourceSources_relation.csv',
         index_label="resource_source_ID",
@@ -104,7 +156,15 @@ def create_resourceSources_CSV_file(tmp_path, resourceSources_relation):
 
 @pytest.fixture
 def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
-    """Create a CSV file with the test data for the `resourceSourceNotes_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `resourceSourceNotes_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        resourceSourceNotes_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield resourceSourceNotes_relation.to_csv(
         tmp_path / 'resourceSourceNotes_relation.csv',
         index_label="resource_source_notes_ID",
@@ -116,7 +176,15 @@ def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
 
 @pytest.fixture
 def create_statisticsResourceSources_CSV_file(tmp_path, statisticsResourceSources_relation):
-    """Create a CSV file with the test data for the `statisticsResourceSources_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `statisticsResourceSources_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        statisticsResourceSources_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield statisticsResourceSources_relation.to_csv(
         tmp_path / 'statisticsResourceSources_relation.csv',
         index_label=["SRS_statistics_source", "SRS_resource_source"],
@@ -131,6 +199,13 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUs
     """Create a CSV file with the test data resulting from the Cartesian join creating the AUCT template, then removes the file at the end of the test.
     
     The `annualUsageCollectionTracking_relation` fixture represents the aforementioned relation when completely filled out with data. The dataframe and subsequent CSV created from the Cartesian join in the `collect_AUCT_and_historical_COUNTER_data()` route function contains null values in the relation's non-index fields, extra fields for the statistics source and fiscal year name, and records for statistics source and fiscal year combinations that don't actually exist. To test the CSV creation, a new dataframe meeting those criteria needed to be created for conversion to the CSV. This dataframe is ordered by the `AUCT_statistics_source` field followed by the `AUCT_fiscal_year` field to match the order that results from the Cartesian join.
+
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        blank_annualUsageCollectionTracking_data_types (dict): the `astype` argument for `annualUsageCollectionTracking` and the primary keys corresponding to the parts of its composite key
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
     """
     multiindex = pd.DataFrame(
         [
@@ -240,7 +315,15 @@ def create_blank_annualUsageCollectionTracking_CSV_file(tmp_path, blank_annualUs
 
 @pytest.fixture
 def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectionTracking_relation):
-    """Create a CSV file with the test data for the `annualUsageCollectionTracking_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `annualUsageCollectionTracking_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        annualUsageCollectionTracking_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield annualUsageCollectionTracking_relation.to_csv(
         tmp_path / 'annualUsageCollectionTracking_relation.csv',
         index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
@@ -252,7 +335,15 @@ def create_annualUsageCollectionTracking_CSV_file(tmp_path, annualUsageCollectio
 
 @pytest.fixture
 def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
-    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test."""
+    """Create a CSV file with the test data for the `COUNTERData_relation` relation, then removes the file at the end of the test.
+    
+    Args:
+        tmp_path (pathlib.Path): a temporary directory created just for running tests
+        COUNTERData_relation (dataframe): a relation of test data
+    
+    Yields:
+        CSV: a CSV file corresponding to a relation in the test data
+    """
     yield COUNTERData_relation.to_csv(
         tmp_path / 'COUNTERData_relation.csv',
         index_label="COUNTER_data_ID",
@@ -263,12 +354,6 @@ def create_COUNTERData_CSV_file(tmp_path, COUNTERData_relation):
 
 
 #Section: Tests
-def test_download_file():
-    """Tests the route enabling file downloads."""
-    #ToDo: How can this route be tested?
-    pass
-
-
 def test_GET_request_for_collect_FY_and_vendor_data(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/initialization/')
@@ -276,7 +361,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -287,7 +372,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -334,7 +419,7 @@ def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, crea
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -348,7 +433,7 @@ def test_collect_FY_and_vendor_data(client, engine, tmp_path, header_value, crea
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(client, engine, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
@@ -413,7 +498,7 @@ def test_collect_sources_data(client, engine, tmp_path, header_value, create_sta
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -432,17 +517,15 @@ def test_collect_sources_data(client, engine, tmp_path, header_value, create_sta
 def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_path, create_blank_annualUsageCollectionTracking_CSV_file, blank_annualUsageCollectionTracking_data_types):
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
-    path_to_template = Path(os.getcwd(), 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv')  # CWD is where the tests are being run (root for this suite)
     AUCT_template_df = pd.read_csv(
-        path_to_template,  #ToDo: When download functionality is set up, download CSV and read it into dataframe
+        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv'),
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    path_to_fixture = Path(tmp_path / 'annualUsageCollectionTracking_relation.csv')
     AUCT_fixture_df = pd.read_csv(
-        path_to_fixture,
+        Path(tmp_path / 'annualUsageCollectionTracking_relation.csv'),
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
@@ -452,7 +535,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data', 'test_collect_sources_data'])  # Test will fail without primary keys found in the `fiscalYears` and `statisticsSources` relations; this test passes only if those relations are successfully loaded into the database
-def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
+def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()`
@@ -461,7 +544,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, head
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
             #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
-            #'COUNTER_reports': #TEST: Unable to find way to submit multiple files to a single MultipleFileFields field; commented-out sections won't work or pass until a method is found
+            #'COUNTER_reports': #TEST: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
             #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
@@ -496,7 +579,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(client, engine, tmp_path, head
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    #with open(Path(os.getcwd(), 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')

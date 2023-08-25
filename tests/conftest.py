@@ -6,18 +6,21 @@ The fixtures for connecting to the database are primarily based upon the fixture
 import pytest
 import logging
 from pathlib import Path
-import os
-import io
-import datetime
+from datetime import date
 import calendar
+from random import choice
 from sqlalchemy import create_engine
+import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
+import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
 from nolcat.app import db as _db  # `nolcat.app` imports don't use wildcard because of need for alias here
 from nolcat.app import create_app
 from nolcat.app import configure_logging
-from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME
+from nolcat.app import s3_client
+from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
+from nolcat.models import *
 from data import relations
 
 log = logging.getLogger(__name__)
@@ -29,6 +32,9 @@ def engine():
     """Creates a SQLAlchemy engine for testing.
     
     The engine object is the starting point for an SQLAlchemy application. Engines are a crucial intermediary object in how SQLAlchemy connects the user and the database. This fixture is used in `tests.test_app`, `tests.test_bp_ingest_usage`, `tests.test_bp_initialization`, `tests.test_FiscalYears`, `tests.test_StatisticsSources`, and later in this module.
+
+    Yields:
+        sqlalchemy.engine.Engine: a SQLAlchemy engine
     """
     engine = create_engine(
         f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
@@ -43,6 +49,9 @@ def app():
     """Creates an instance of the Flask object for the test session.
     
     This instance of the Flask object includes the application context (https://flask.palletsprojects.com/en/2.0.x/appcontext/) and thus access to application-level data, such as configurations, logging, and the database connection. This fixture is used in `tests.test_app` and later in this module.
+
+    Yields:
+        flask.Flask: a Flask object
     """
     app = create_app()
     app.debug = True
@@ -66,9 +75,15 @@ def client(app):
     """Creates an instance of the Flask test client.
     
     The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
+
+    Args:
+        app (flask.Flask): a Flask object
+
+    Yields:
+        flask.testing.FlaskClient: a way to test HTTP calls without running a live server
     """
     client = app.test_client()
-    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)})")
+    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")
     yield client
 
 
@@ -105,68 +120,278 @@ def session(engine, db):
 #Section: Test Data for Relations
 @pytest.fixture
 def fiscalYears_relation():
-    """Creates a dataframe that can be loaded into the `fiscalYears` relation."""
+    """Creates a dataframe that can be loaded into the `fiscalYears` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.fiscalYears_relation()
 
 
 @pytest.fixture
 def vendors_relation():
-    """Creates a dataframe that can be loaded into the `vendors` relation."""
+    """Creates a dataframe that can be loaded into the `vendors` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.vendors_relation()
 
 
 @pytest.fixture
 def vendorNotes_relation():
-    """Creates a dataframe that can be loaded into the `vendorNotes` relation."""
+    """Creates a dataframe that can be loaded into the `vendorNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.vendorNotes_relation()
 
 
 @pytest.fixture
 def statisticsSources_relation():
-    """Creates a dataframe that can be loaded into the `statisticsSources` relation."""
+    """Creates a dataframe that can be loaded into the `statisticsSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsSources_relation()
 
 
 @pytest.fixture
 def statisticsSourceNotes_relation():
-    """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation."""
+    """Creates a dataframe that can be loaded into the `statisticsSourceNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsSourceNotes_relation()
 
 
 @pytest.fixture
 def resourceSources_relation():
-    """Creates a dataframe that can be loaded into the `resourceSources` relation."""
+    """Creates a dataframe that can be loaded into the `resourceSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.resourceSources_relation()
 
 
 @pytest.fixture
 def resourceSourceNotes_relation():
-    """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation."""
+    """Creates a dataframe that can be loaded into the `resourceSourceNotes` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.resourceSourceNotes_relation()
 
 
 @pytest.fixture
 def statisticsResourceSources_relation():
-    """Creates a series that can be loaded into the `statisticsResourceSources` relation."""
+    """Creates a series that can be loaded into the `statisticsResourceSources` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.statisticsResourceSources_relation()
 
 
 @pytest.fixture
 def annualUsageCollectionTracking_relation():
-    """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation."""
+    """Creates a dataframe that can be loaded into the `annualUsageCollectionTracking` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.annualUsageCollectionTracking_relation()
 
 
 @pytest.fixture
 def COUNTERData_relation():
-    """Creates a dataframe that can be loaded into the `COUNTERData` relation."""
+    """Creates a dataframe that can be loaded into the `COUNTERData` relation.
+    
+    Yields:
+        dataframe: a relation of test data
+    """
     yield relations.COUNTERData_relation()
+
+
+#Section: Fixtures for File I/O
+@pytest.fixture(scope='session')
+def download_destination():
+    """Provides the path to the folder all downloads will go to.
+
+    Ideally, tests would download files to the host machine just like the web app, but at this time, there is no way for pytest tests running in a container on an AWS EC2 instance to interact with the host machine's file system.
+    
+    Yields:
+        pathlib.Path: a path to the destination for downloaded files
+    """
+    '''#ToDo: If method for interacting with host workstation's file system can be established
+    if os.name == 'nt':  # Windows
+        yield Path(os.getenv('USERPROFILE')) / 'Downloads'
+    else:  # *Nix systems, including macOS
+        yield Path(os.getenv('HOME')) / 'Downloads'
+    '''
+    yield Path(__file__).parent
+
+
+@pytest.fixture(params=[
+    Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests',
+    Path(__file__).parent / 'bin' / 'sample_COUNTER_R4_reports',
+])
+def path_to_sample_file(request):
+    """A parameterized function returning absolute paths to randomly selected files for use in testing file I/O operations.
+
+    This fixture uses parameterization to randomly select multiple files of different types for use in any tests involving file uploads or downloads. The `sample_COUNTER_R4_reports` folder is used for binary data because all of the files within are under 30KB; there is no similar way to limit the file size for text data, as the files in `COUNTER_JSONs_for_tests` can be over 6,000KB.
+
+    Args:
+        request (pathlib.Path): an absolute path to a folder with test data
+
+    Yields:
+        pathlib.Path: an absolute file path to a randomly selected file
+    """
+    file_path = request.param
+    file_name = choice([file.name for file in file_path.iterdir()])
+    file_path_and_name = file_path / file_name
+    log.info(f"`path_to_sample_file()` returning file {file_path_and_name}.")
+    yield file_path_and_name
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_before_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+    """
+    record = pd.read_sql(
+        sql=f"""
+            SELECT * FROM annualUsageCollectionTracking WHERE
+                usage_is_being_collected=true AND
+                is_COUNTER_compliant=false AND
+                collection_status='Collection not started' AND
+                usage_file_path IS NULL;
+        """,
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample().reset_index()
+    log.info(f"The record as a dataframe is\n{record}")
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")
+    yield yield_object
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_after_upload(engine):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
+
+    Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+    """
+    record = pd.read_sql(
+        sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
+        con=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    ).sample().reset_index()
+    log.info(f"The record as a dataframe is\n{record}")
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")
+    yield yield_object
+
+
+@pytest.fixture
+def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
+    """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
+
+    The `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method creates a name for the file in S3 based on class attributes, so a standard fixture for creating and removing the file won't work. This fixture uses the file and class attributes to determine the name of the file the method will create, yields a null value as no data is needed from it, then performs teardown operations using the previously determined file name.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+
+    Yields:
+        None
+    """
+    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
+    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+
+
+@pytest.fixture
+def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_after_upload, download_destination):
+    """Creates a file in S3 with a name matching the convention in `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` that can be downloaded when testing `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_after_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+
+    Yield:
+        None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
+    """
+    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
+    result = upload_file_to_S3_bucket(
+        path_to_sample_file,
+        non_COUNTER_AUCT_object_after_upload.usage_file_path,
+    )
+    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+    Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
 #Section: Other Fixtures Used in Multiple Test Modules
 @pytest.fixture
 def header_value():
-    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header."""
+    """A dictionary containing a HTTP request header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header.
+    
+    Yields:
+        dict: HTTP header data
+    """
     return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
@@ -179,15 +404,15 @@ def most_recent_month_with_usage():
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
-    current_date = datetime.date.today()
-    if current_date.day < 10:
+    current_date = date.today()
+    if current_date.day < 15:
         begin_month = current_date + relativedelta(months=-2)
         begin_date = begin_month.replace(day=1)
     else:
         begin_month = current_date + relativedelta(months=-1)
         begin_date = begin_month.replace(day=1)
     
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -195,14 +420,53 @@ def most_recent_month_with_usage():
     yield (begin_date, end_date)
 
 
-    @pytest.fixture
-    def sample_COUNTER_reports_for_MultipartEncoder():
-        """Creates a `MultipartEncoder.fields` dictionary value for a `MultipleFileField`.
-        
-        When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
+@pytest.fixture
+def sample_COUNTER_reports_for_MultipartEncoder():
+    """Creates a `MultipartEncoder.fields` dictionary value for a `MultipleFileField`.
+    
+    When using the requests `post()` method on a page with a WTForms form containing `FileField` field(s), the `post()` method's `data` argument uses a `MultipartEncoder` object to contain the uploaded files. The `MultipartEncoder.fields` attribute is a dictionary where each key is the name of a `FileField` field in the form and the corresponding value is a tuple consisting of the file name and a file object (created with the `open()` function). Some WTForms fields requiring file uploads, however, are `MultipleFileFields` that take in all of the Excel workbooks in `\\nolcat\\tests\\bin\\COUNTER_workbooks_for_tests`; this fixture generates a `MultipartEncoder.fields` dictionary value tuple for all of those Excel workbooks and combines them in a tuple.
+
+    Yields:
+        MultipartEncoder.fields: a representation of multiple files selected in a MultipleFileField
+    """
+    folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
+    file_names = []
+    for workbook in folder_path.iterdir():
+        file_names.append(workbook)
+    pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+
+
+#Section: Replacement Classes
+class _fileAttribute:
+    """Enables the `_file` attribute of the `mock_FileStorage_object.stream` attribute.
+
+    Attributes:
+        self._file (str): The absolute file path for the COUNTER report being uploaded
+    """
+    def __init__(self, file_path):
+        """The constructor method for `_fileAttribute`, which instantiates the string of the absolute file path for the COUNTER report being uploaded."""
+        self._file = str(file_path)
+
+
+class mock_FileStorage_object:
+    """A replacement for a Werkzeug FileStorage object.
+
+    Some class constructors, functions, and methods use an individual or a list of Werkzeug FileStorage objects--the `data` attribute of a WTForms FileField or MultipleFileField object respectively--as an argument. When a list of Werkzeug FileStorage object(s) created with the FileStorage constructor in a fixture is used, however, the _io.BytesIO object returned by the `.stream._file` attribute often raises a `File is not a zip file` error in OpenPyXL's `load_workbook()` function. With the same files encapsulated in the same classes raising an error depending on their source, it could not be determined how to prevent the FileStorage object(s) created in the fixture from raising the error. As an alternative, this class was created; it has the attributes of the Werkzeug FileStorage object needed for the tests its used in, so it works the same way in the method, but it features the absolute file path as a string instead of a _io.BytesIO object to avoid the `File is not a zip file` error.
+
+    Attributes:
+        self.stream (_fileAttribute._file): The intermediary attribute for the absolute file path for the COUNTER report being uploaded
+        self.filename (str): The name of the file of the COUNTER report being uploaded
+    """
+    def __init__(self, file_path):
+        """The constructor method for `mock_FileStorage_object`, which instantiates the attributes `stream` and `filename` based on the absolute file path for the COUNTER report being uploaded.
+
+        Args:
+            file_path (pathlib.Path): The absolute file path for the COUNTER report being uploaded
         """
-        folder_path = Path('tests', 'bin', 'COUNTER_workbooks_for_tests')
-        file_names = []
-        for workbook in os.listdir(folder_path):
-            file_names.append(workbook)
-        pass  #TEST: This fixture isn't importing into other test modules; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+        self.stream = _fileAttribute(file_path.absolute())
+        self.filename = file_path.name
+
+
+    def __repr__(self):
+        """The printable representation of a `mock_FileStorage_object` instance."""
+        return f"<__main__.mock_FileStorage_object {{'stream._file': '{self.stream._file}', 'filename': '{self.filename}'}}>"

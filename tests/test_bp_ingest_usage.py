@@ -1,16 +1,14 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
-import json
 from random import choice
 from pathlib import Path
 import os
 import re
 from bs4 import BeautifulSoup
 import pandas as pd
-from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
@@ -27,7 +25,7 @@ def test_ingest_usage_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -37,7 +35,7 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relation, caplog):
+def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
@@ -48,7 +46,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
             # Could the classes in "test_UploadCOUNTERReports.py" be used?
             # Can a direct list of Werkzeug FileStorage object(s) be used?
         fields={
-            'COUNTER_reports': ('0_2017.xlsx', open(Path('tests', 'bin', 'COUNTER_workbooks_for_tests', '0_2017.xlsx'), 'rb'))
+            'COUNTER_reports': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb')),
         },
         encoding='utf-8',
     )
@@ -62,7 +60,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -80,7 +78,7 @@ def test_upload_COUNTER_reports(client, engine, header_value, COUNTERData_relati
     #TEST: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
-def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
+def test_GET_request_for_harvest_SUSHI_statistics(engine, client,):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     page = client.get('/ingest_usage/harvest')
     GET_soup = BeautifulSoup(page.data, 'lxml')
@@ -93,7 +91,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
             str(child.string),
         ))
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'make-SUSHI-call.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -109,7 +107,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(client, engine):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, header_value, caplog):
+def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, header_value, caplog):
     """Tests making a SUSHI API call based on data entered into the `ingest_usage.SUSHIParametersForm` form.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. Since the data in the form being submitted with the POST request is ultimately used to make a SUSHI call, the `StatisticsSources.statistics_source_retrieval_code` values used in the test data--`1`, `2`, and `3`--must correspond to values in the SUSHI credentials JSON; for testing purposes, these values don't need to make SUSHI calls to the statistics source designated by the test data's StatisticsSources record--any valid credential set will work. The limited number of possible SUSHI credentials means statistics sources current with the available usage statistics are not filtered out, meaning this test may fail because it fails the check preventing SUSHI calls to stats source/date combos already in the database.
@@ -137,7 +135,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     # This is the HTML file of the page the redirect goes to
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
@@ -148,7 +146,7 @@ def test_harvest_SUSHI_statistics(client, engine, most_recent_month_with_usage, 
     assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
-def test_GET_request_for_upload_non_COUNTER_reports(client, engine, caplog):
+def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()`
     page = client.get('/ingest_usage/upload-non-COUNTER')
@@ -163,7 +161,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(client, engine, caplog):
     #        str(child.string),
     #    ))
 
-    with open(Path(os.getcwd(), 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)
+    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'upload-non-COUNTER-usage.html'), 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1

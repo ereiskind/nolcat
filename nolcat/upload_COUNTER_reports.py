@@ -1,12 +1,8 @@
 import logging
-import os
-from pathlib import Path
 import re
-import sys
-import datetime
+from datetime import date
+from datetime import datetime
 import html
-import wtforms
-from flask import request
 from openpyxl import load_workbook
 import pandas as pd
 
@@ -90,7 +86,7 @@ class UploadCOUNTERReports:
                     for cell in sheet[header_row_number]:
                         if cell.value is None or isinstance(cell.value, int):
                             continue  # `None` and integers (which appear in the "Release" field of the header) cause `TypeError` in `re.fullmatch`, so they need to be weeded out here
-                        elif isinstance(cell.value, datetime.datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
+                        elif isinstance(cell.value, datetime) or re.fullmatch(r'[A-Z][a-z]{2}\-\d{4}', cell.value) is not None:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
@@ -155,11 +151,11 @@ class UploadCOUNTERReports:
                                 month_int = 11
                             elif date_tuple[0] == "Dec":
                                 month_int = 12
-                            df_field_names.append(datetime.date(int(date_tuple[1]), month_int, 1))
-                            df_date_field_names.append(datetime.date(int(date_tuple[1]), month_int, 1))
-                        elif isinstance(field_name, datetime.datetime):
-                            df_field_names.append(datetime.date(field_name.year, field_name.month, 1))  # This both ensures the date is the first of the month and removes the unneeded time data
-                            df_date_field_names.append(datetime.date(field_name.year, field_name.month, 1))
+                            df_field_names.append(date(int(date_tuple[1]), month_int, 1))
+                            df_date_field_names.append(date(int(date_tuple[1]), month_int, 1))
+                        elif isinstance(field_name, datetime):
+                            df_field_names.append(date(field_name.year, field_name.month, 1))  # This both ensures the date is the first of the month and removes the unneeded time data
+                            df_date_field_names.append(date(field_name.year, field_name.month, 1))
                         
                         elif (field_name is None or field_name == "" or field_name == " ") and (report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5'):
                             df_field_names.append("resource_name")
@@ -248,12 +244,12 @@ class UploadCOUNTERReports:
                 if "publication_date" in df_field_names:
                     df['publication_date'] = df['publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
-                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['publication_date'] = df['publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
                     df['publication_date'] = df['publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
                 if "parent_publication_date" in df_field_names:
                     df['parent_publication_date'] = df['parent_publication_date'].fillna("`None`")  # Different data types use different null values, so switching to the null placeholder string now prevents type juggling issues
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: str(cell_value).split("T")[0] if isinstance(cell_value, str) else cell_value)
-                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime.datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
+                    df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: cell_value.strftime('%Y-%m-%d') if isinstance(cell_value, datetime) else cell_value)  # Date data types in pandas inherit from `datetime.datetime`
                     df['parent_publication_date'] = df['parent_publication_date'].apply(lambda cell_value: "`None`" if cell_value=='1000-01-01' or cell_value=='1753-01-01' or cell_value=='1900-01-01' else cell_value)
 
                 #Subsection: Add `statistics_source_ID` and `report_type` Fields

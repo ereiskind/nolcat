@@ -352,7 +352,7 @@ class SUSHICallAndResponse:
         Args:
             error_message (str): either details of the situation that raised the error if an expected situation or the name of a Python error if an unexpected situation
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
-            exception (bool): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
+            exception (bool, optional): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
         
         Returns:
             str: the error message for the value section of the single-item `ERROR` dictionary
@@ -362,10 +362,10 @@ class SUSHICallAndResponse:
         log.error(error_message)
         
         statistics_source_ID = pd.read_sql(
-            sql=f'SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to}',
+            sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
             con=db.engine,
         )
-        temp_file_path = Path().resolve() / 'temp.txt'
+        temp_file_path = Path(__file__) / 'temp.txt'
         with open(temp_file_path, 'xb', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
             file.write(Response_text)
         

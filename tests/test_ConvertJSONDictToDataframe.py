@@ -1,5 +1,5 @@
 """Test using `ConvertJSONDictToDataframe`."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-24 ##########
 
 import pytest
 import logging
@@ -18,39 +18,59 @@ log = logging.getLogger(__name__)
 #Section: Fixtures
 @pytest.fixture
 def sample_SUSHI_PR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_PR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI PR API calls.
+    
+    Yields:
+        dict: test COUNTER data
+    """
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_PR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
 def sample_SUSHI_DR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '0_DR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI DR API calls.
+    
+    Yields:
+        dict: test COUNTER data
+    """
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '0_DR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
 def sample_SUSHI_TR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_TR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI TR API calls.
+    
+    Yields:
+        dict: test COUNTER data
+    """
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_TR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
 def sample_SUSHI_IR_response_JSON_dict():
-    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls."""
-    with open(Path(os.getcwd(), 'tests', 'data', 'COUNTER_JSONs_for_tests', '3_IR.json')) as JSON_file:  # CWD is where the tests are being run (root for this suite)
+    """Creates a dictionary like the ones derived from the JSONs received in response to SUSHI IR API calls.
+    
+    Yields:
+        dict: test COUNTER data
+    """
+    with open(Path(__file__).parent / 'data' / 'COUNTER_JSONs_for_tests' / '3_IR.json') as JSON_file:
         dict_from_JSON = json.load(JSON_file)
         yield dict_from_JSON
 
 
 @pytest.fixture
 def sample_SUSHI_PR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_PR_response_JSON_dict` fixture into a dataframe.
+    
+    Yields:
+        dataframe: test COUNTER data
+    """
     df = pd.DataFrame(
         [
             ["Duke University Press", "Book", "Regular", "Total_Item_Investigations", "2019-07-01", 14, "2019-07-01"],
@@ -160,7 +180,11 @@ def sample_SUSHI_PR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_DR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_DR_response_JSON_dict` fixture into a dataframe.
+    
+    Yields:
+        dataframe: test COUNTER data
+    """
     df = pd.DataFrame(
         [
             ["01 Periodicals Archive Online Foundation Collection 1", "ProQuest", "ProQuest", "ProQuest:paofoundation", "Database", "Regular", "Searches_Automated", "2019-10-01", 4942, "2019-07-01"],
@@ -584,7 +608,11 @@ def sample_SUSHI_DR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_TR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_TR_response_JSON_dict` fixture into a dataframe.
+    
+    Yields:
+        dataframe: test COUNTER data
+    """
     df = pd.DataFrame(
         [
             ["Archive Stories<subtitle>Facts, Fictions, and the Writing of History</subtitle>", "Duke University Press", "Duke University Press", "10.1215/9780822387046", "Silverchair:989", "978-0-8223-8704-6", "Book", "Chapter", 2005, "Controlled", "Regular", "Total_Item_Investigations", "2019-12-01", 10, "2019-07-01"],
@@ -628,7 +656,11 @@ def sample_SUSHI_TR_response_dataframe():
 
 @pytest.fixture
 def sample_SUSHI_IR_response_dataframe():
-    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe."""
+    """Creates a dataframe with the result of changing the data in the `sample_SUSHI_IR_response_JSON_dict` fixture into a dataframe.
+    
+    Yields:
+        dataframe: test COUNTER data
+    """
     df = pd.DataFrame(
         [
             ["(Com)Post-Capitalism<subtitle>Cultivating a More-than-Human Economy in the Appalachian Anthropocene</subtitle>", "Duke University Press", "Duke University Press", "Bradley M. Jones", "2019-05-01", "VoR", "10.1215/22011919-7349347", "Silverchair:138280", None, "Article", 2019, "OA_Gold", "Regular", "Environmental Humanities", None, None, "Journal", None, "Silverchair:1000015", None, "2201-1919", "2201-1919", "Total_Item_Investigations", "2019-10-01", 6, "2019-07-01"],

@@ -1,10 +1,11 @@
 """Tests the methods in StatisticsSources."""
-########## Passing 2023-07-19 ##########
+########## Failing 2023-08-25 ##########
 
 import pytest
 import logging
 import json
-import datetime
+from datetime import date
+from datetime import datetime
 from random import choice
 import re
 import pandas as pd
@@ -27,9 +28,9 @@ def current_month_like_most_recent_month_with_usage():
     Yields:
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
-    current_date = datetime.date.today()
+    current_date = date.today()
     begin_date = current_date.replace(day=1)
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -61,19 +62,19 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
         query_result = pd.read_sql(
-            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')}",
+            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')};",
             con=engine,
         )
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture = StatisticsSources(
+    fixture_retrieval_code = choice(retrieval_codes)
+    yield StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = "Stats source fixture name",
-        statistics_source_retrieval_code = choice(retrieval_codes),
+        statistics_source_name = f"SUSHI code {fixture_retrieval_code}",
+        statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    yield fixture
 
 
 #Section: Tests and Fixture for SUSHI Credentials
@@ -93,14 +94,28 @@ def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
 
 @pytest.fixture(scope='module')
 def SUSHI_credentials_fixture(StatisticsSources_fixture):
-    """A fixture returning the SUSHI credentials dictionary to avoid repeated callings of the `StatisticsSources.fetch_SUSHI_information()` method in later test functions."""
+    """A fixture returning the SUSHI credentials dictionary to avoid repeated callings of the `StatisticsSources.fetch_SUSHI_information()` method in later test functions.
+
+    Args:
+        StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+    
+    Yields:
+        dict: SUSHI credentials
+    """
     yield StatisticsSources_fixture.fetch_SUSHI_information()
 
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
-    """A fixture listing all the customizable reports offered by the given statistics source."""
+    """A fixture listing all the customizable reports offered by the given statistics source.
+
+    Args:
+        StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
+    
+    Yields:
+        list: the abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+    """
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
     response = SUSHICallAndResponse(
         StatisticsSources_fixture.statistics_source_name,
@@ -110,6 +125,8 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
     ).make_SUSHI_call()
     reports_offered = []
     for report in list(response.values())[0]:
+        if isinstance(report, str):
+            pytest.skip("The SUSHI call for the list of reports returned an error.")
         if "Report_ID" in list(report.keys()):
             if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 reports_offered.append(report["Report_ID"])
@@ -140,11 +157,11 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             choice(reports_offered_by_StatisticsSource_fixture),
-            datetime.date(2020, 6, 1),  # The last month with usage in the test data
+            date(2020, 6, 1),  # The last month with usage in the test data
             current_month_like_most_recent_month_with_usage[1],
         )
     assert isinstance(data_check, list)
-    assert datetime.date(2020, 6, 1) not in data_check
+    assert date(2020, 6, 1) not in data_check
     assert current_month_like_most_recent_month_with_usage[0] in data_check
 
 
@@ -157,7 +174,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using month before month in `test_harvest_R5_SUSHI_with_report_to_harvest()` to avoid being stopped by duplication check
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -172,7 +189,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
         )
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency()
@@ -190,9 +207,10 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
             {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
-            datetime.date(2020, 6, 1),  # The last month with usage in the test data
-            datetime.date(2020, 8, 1),
+            date(2020, 6, 1),  # The last month with usage in the test data
+            date(2020, 8, 1),
         )
+    #ToDo: if SUSHI_response contains "Call to SUSHI code \d* for reports/\w{2} returned no usage data, which may or may not be appropriate.", skip test
     #Test: Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
@@ -213,7 +231,7 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
         SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -224,7 +242,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-2)  # Using two months before `most_recent_month_with_usage` to avoid being stopped by duplication check
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -232,7 +250,7 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda datetime: datetime.strftime('%Y-%m-%d')).eq(datetime.datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`
@@ -249,7 +267,7 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
         tuple: two datetime.date values, representing the first and last day of a month respectively
     """
     begin_date = most_recent_month_with_usage[0] + relativedelta(months=-1)
-    end_date = datetime.date(
+    end_date = date(
         begin_date.year,
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
@@ -319,8 +337,10 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
     recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
 
-    try:
+    try:  #ToDo: Test is failing because rows are out of order--below shows metric and number pairs are the same but on different rows
         log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
+        #ToDo: Would resetting the index of both dataframes help?
+        #ToDo: Would a sort help?
     except:
         log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")

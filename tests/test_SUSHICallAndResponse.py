@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2023-07-19 ##########
+########## Passing 2023-08-11 ##########
 
 import pytest
 import logging
@@ -27,7 +27,11 @@ The private helper methods don't have their own tests because they operate only 
 
 @pytest.fixture(scope='module')  # Without the scope, the data prompts appear in stdout for each test
 def SUSHI_credentials_fixture():
-    """A fixture to collect and store the data for making SUSHI calls."""
+    """A fixture to collect and store the data for making SUSHI calls.
+    
+    Yields:
+        tuple: the URL and parameters dictionary needed to make a SUSHI call
+    """
     URL = input("Enter the SUSHI base URL, including the final backslash: ")
     customer_id = input("Enter the SUSHI customer ID: ")
     requestor_id = input("Enter the SUSHI requestor ID or just press enter if none exists: ")

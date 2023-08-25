@@ -1,11 +1,11 @@
 """Tests the methods in Vendors."""
-########## No tests written 2023-07-11 ##########
+########## No tests written 2023-08-24 ##########
 
 import pytest
 import logging
 
 # `conftest.py` fixtures are imported automatically
-from nolcat.models import Vendors
+from nolcat.models import *
 
 log = logging.getLogger(__name__)
 
