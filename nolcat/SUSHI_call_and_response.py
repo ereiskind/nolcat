@@ -35,7 +35,7 @@ class SUSHICallAndResponse:
         _make_API_call: Makes a call to the SUSHI API.
         _convert_Response_to_JSON: Converts the `text` attribute of a `requests.Response` object to native Python data types.
         _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
-        _handle_SUSHI_exceptions: The method presents the user with the error in the SUSHI response(s) and asks if the `StatisticsSources._harvest_R5_SUSHI()` method should continue.
+        _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
@@ -106,7 +106,7 @@ class SUSHICallAndResponse:
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case
             log.debug(f"The report has a `Report_Header` with an `Exception` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exception']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Report_Header']['Exception'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Report_Header']['Exception'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Report_Header']['Exception']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -115,7 +115,7 @@ class SUSHICallAndResponse:
 
         try:
             log.debug(f"The report has a `Report_Header` with an `Exceptions` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exceptions']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Report_Header']['Exceptions']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -124,7 +124,7 @@ class SUSHICallAndResponse:
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case--prior code indicates this case appears in response to `status` calls
             log.debug(f"The report has an `Exception` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exception']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Exception']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -133,7 +133,7 @@ class SUSHICallAndResponse:
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case
             log.debug(f"The report has an `Exceptions` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exceptions']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Exceptions']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -142,7 +142,7 @@ class SUSHICallAndResponse:
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case
             log.debug(f"The report has an `Alert` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Alert']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Alert'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Alert'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Alert']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -151,7 +151,7 @@ class SUSHICallAndResponse:
 
         try:  #ALERT: Couldn't find a statistics source to use as a test case
             log.debug(f"The report has an `Alerts` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Alerts']}.")
-            if not self._handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to):
+            if self._handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to) is not None:
                 message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Alerts']}`."
                 log.warning(message)
                 return {"ERROR": message}
@@ -161,7 +161,7 @@ class SUSHICallAndResponse:
         try:
             if "Message" in API_response.keys():
                 log.debug("The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block.")
-                if not self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                if self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to) is not None:
                     message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response}`."
                     log.warning(message)
                     return {"ERROR": message}
@@ -171,7 +171,7 @@ class SUSHICallAndResponse:
         try:
             if "Message" in API_response[0].keys():  # The `keys()` iterator also serves as a check that the item in the list is a dictionary
                 log.debug("The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block.")
-                if not self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to):
+                if self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to) is not None:
                     message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response}`."
                     log.warning(message)
                     return {"ERROR": message}
@@ -377,61 +377,46 @@ class SUSHICallAndResponse:
         return error_message
 
 
-    def _handle_SUSHI_exceptions(self, error_contents, report_type, statistics_source):
-        """The method presents the user with the error in the SUSHI response(s) and asks if the StatisticsSources._harvest_R5_SUSHI method should continue.
+    def _handle_SUSHI_exceptions(self, error_contents, report_type):
+        """This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
 
-        This method presents the user with the error(s) returned in a SUSHI call and asks if the error should be validated. For status calls, this means not making any further SUSHI calls to the resource at the time; for report calls returning usage data, it means not loading the report data into the database.
-        
+        Based on the SUSHI error code, this method can do multiple things:
+            * For 10*, 20*, and 3031 SUSHI errors, the error message is part of the flashed message, prompting the user to try again later, possibly after double checking their SUSHI credentials
+            * For 3030 SUSHI errors, include the error message in the flashed message, and if all reports return this value, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
+            * For 3032 and 3040 SUSHI errors, include the error message in the flashed message and add a note on the statistics source with the error message
+
         Args:
             error_contents (dict or list): the contents of the error message(s)
             report_type (str): the type of report being requested, determined by the value of `call_path`
-            statistics_source (str): the name of the statistics source that returned the SUSHI call in question
         
         Returns:
-            bool: if the StatisticsSources._harvest_R5_SUSHI method should continue
+            #ToDo: What should be returned?
         """
-        #Section: Create Error Message(s)
-        #Subsection: Detail Each SUSHI Error
         if error_contents is None:
-            log.info(f"This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
-            return True
+            log.info(f"This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+            return None
         elif isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
-                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
-                return True
+                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+                return None
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
-            dialog_box_text = self._create_error_query_text(error_contents)
+            #ToDo: Handle single error and return appropriate value
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
-                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the user is not being asked how to handle the error.")
-                return True
-            dialog_box_text = []
+                log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
+                return None
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
-            for error in error_contents:
-                dialog_box_text.append(self._create_error_query_text(error))
-            dialog_box_text = "\n".join(dialog_box_text)
+            if len(error_contents) == 1:
+                #ToDo: Handle single error and return appropriate value
+            else:
+                handled_errors = []
+                for error in error_contents:
+                    #ToDo: Handle single error
+                    handled_errors.append()  #ToDo: Get argument from preceding line
+                return handled_errors
         else:
             log.info(f"SUSHI error handling method for a {report_type} accepted data of an invalid type.")
-            return False  # Since error_contents was of an invalid data type, something went wrong, so the method should be terminated.
-        
-        #Subsection: Ask the User What To Do
-        if report_type == "status" or report_type == "reports":
-            dialog_box_text = dialog_box_text + f"\nShould usage statistics be collected from {statistics_source}?"
-        else:
-            dialog_box_text = dialog_box_text + f"\nShould this usage data be loaded into the database?"
-        
-
-        #Section: Generate Dialog Box
-        #ToDo: Make into a Flask dialog box with Boolean answer options (currently goes to stdout)
-        stdout_response = pyinputplus.inputBool(f"{dialog_box_text} Type \"True\" or \"False\" to answer. ")
-        if stdout_response:
-            return True
-        else:
-            if report_type == "status" or report_type == "reports":
-                log.info(f"The user opted not to continue collecting data from {statistics_source}.")
-            else:
-                log.info(f"The user opted not to load the {report_type} data from {statistics_source}.")
-            return False
+            #ToDo: return something indicating a major problem
     
 
     def _create_error_query_text(self, error_contents):
