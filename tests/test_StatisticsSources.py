@@ -69,22 +69,16 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             retrieval_codes.append(interface)
     
     fixture_retrieval_code = choice(retrieval_codes)
+    log.debug(f"The retrieval code being used is {fixture_retrieval_code} (type {type(fixture_retrieval_code)})")
     fixture_name = pd.read_sql(  # Because the source used impacts if the tests pass or not, the source name should be included in the error log
-        sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code='{fixture_retrieval_code}';",
+        sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code='{fixture_retrieval_code}';",  #TEST: This is returning an empty dataframe
         con=engine,
     )
-    log.info(fixture_name)
-    try:
-        log.info(fixture_name.loc[0])
-    except Exception as e:
-        log.info(f"`fixture_name.loc[0]` raised {e}")
-    try:
-        log.info(fixture_name.loc[0][0])
-    except Exception as e:
-        log.info(f"`fixture_name.loc[0][0]` raised {e}")
+    fixture_name = fixture_name.loc[0][0]
+    log.info(f"The SUSHI source {fixture_name} (code {fixture_retrieval_code}) will be used in the tests.")
     yield StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = f"{fixture_name.iloc[0][0]} [for SUSHI]",
+        statistics_source_name = f"{fixture_name} [for SUSHI]",
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
