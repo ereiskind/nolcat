@@ -28,9 +28,11 @@ Iteration 1: Complete Current Data I/O
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
 * Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
+* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
 * Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
+* Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration 2: Add Historical Data
 ================================
@@ -49,7 +51,6 @@ Iteration 2: Add Historical Data
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
-* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
@@ -229,10 +230,6 @@ Iteration: View All Associated Resource and Statistics Sources in a Vendor Recor
 Iteration: Create Method for Adding New Fiscal Years to the Relation
 ====================================================================
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)
-
-Iteration: Allow User-Created SQL Queries
-=========================================
-* Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration: Display Results of Usage Data Requests in Browser
 ============================================================
