@@ -70,7 +70,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     
     fixture_retrieval_code = choice(retrieval_codes)
     fixture_name = pd.read_sql(  # Because the source used impacts if the tests pass or not, the source name should be included in the error log
-        sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code={fixture_retrieval_code};",
+        sql=f"SELECT statistics_source_name from statisticsSources WHERE statisticsSources.statistics_source_retrieval_code='{fixture_retrieval_code}';",
         con=engine,
     )
     log.info(fixture_name)
