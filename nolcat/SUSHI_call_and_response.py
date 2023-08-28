@@ -36,7 +36,7 @@ class SUSHICallAndResponse:
         _convert_Response_to_JSON: Converts the `text` attribute of a `requests.Response` object to native Python data types.
         _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
-        _create_error_query_text: This method creates the text for the `handle_SUSHI_exceptions()` dialog box.
+        _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -389,53 +389,48 @@ class SUSHICallAndResponse:
             #ToDo: return something indicating a major problem
     
 
-    def _create_error_query_text(self, error_contents):
-        """This method creates the text for the `handle_SUSHI_exceptions` dialog box.
+    def _evaluate_individual_SUSHI_exception(self, error_contents):
+        """This method determines what to do upon the occurrence of an error depending on the type of error.
 
-        The `handle_SUSHI_exceptions` method can take a single exception or a list of exceptions, and in the case of the latter, the desired behavior is to have all the errors described in a single dialog box. To that end, the procedure for creating the error descriptions has been put in this separate method so it can be called for each error sent to `handle_SUSHI_exceptions` but have the method call itself only generate a single dialog box.
+        SUSHI has multiple possible error codes (see https://cop5.projectcounter.org/en/5.1/appendices/d-handling-errors-and-exceptions.html), and  not all of them should be handled in the same way:
+            * For 10*, 20*, and 3031 SUSHI errors, return the SUSHI error as an error and flash a message to try again later, possibly after double checking their SUSHI credentials
+            * For 3030 SUSHI errors, flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
+            * For 3032 and 3040 SUSHI errors, flash the error message and add a `statisticsSourceNotes` record for the statistics source with the error message
 
         Args:
             error_contents (dict): the contents of the error message
         
         Returns:
-            str: a line of `handle_SUSHI_exceptions` dialog box text describing a single error
+            tuple: an error message if appropriate; the message to flash
         """
-        #Section: Confirm a Valid Error
-        if isinstance(error_contents['Code'], int):
-            str_code = str(error_contents['Code'])
-        elif error_contents['Code'].isnumeric():
-            str_code = error_contents['Code']
+        errors_and_codes = {
+            'Service Not Available': '1000',
+            'Service Busy': '1010',
+            'Report Queued for Processing': '1011',
+            'Client has made too many requests': '1020',
+            'Insufficient Information to Process Request': '1030',
+            'Usage Not Ready for Requested Dates': '3031',
+            'Requestor Not Authorized to Access Service': '2000',
+            'Requestor is Not Authorized to Access Usage for Institution': '2010',
+            'APIKey Invalid': '2020',
+            'No Usage Available for Requested Dates': '3030',
+            'Usage No Longer Available for Requested Dates': '3032',
+            'Partial Data Returned': '3040',
+        }
+        try:
+            error_code = errors_and_codes(error_contents['Message'])
+        except:
+            #ToDo: Unrecognized error
+        
+        if error_code == '3030':
+            # flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
+            #ToDo: return (no error, a message with error_contents['Message'], error_code, and error_contents['Data'] if available and something unique among flashed messages that a regex can find)
+        elif error_code == '3032' or error_code == '3040':
+            # flash the error message and add a `statisticsSourceNotes` record for the statistics source with the error message
+            #ToDo: Use sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name={self.calling_to};"
+            #ToDo: Convert `*` to StatisticsSource object
+            #ToDo: object above.add_note()
+            #ToDo: return (no error, a message with error_contents['Message'], error_code, and error_contents['Data'] if available)
         else:
-            str_code = None
-        
-        
-        #Section: Separate Elements of Error into Variables
-        message = error_contents['Message']
-        
-        try:
-            severity = error_contents['Severity']
-        except:
-            severity = None
-        
-        try:
-            code = error_contents['Code']
-        except:
-            code = None
-        
-        try:
-            data = error_contents['Data']
-        except:
-            data = None
-        
-
-        #Section: Create Dialog Box Text
-        dialog_box_text = f"The API call returned a {message} error"
-
-        if code is not None:
-            dialog_box_text = dialog_box_text + f" (code {str_code})"
-        if severity is not None:
-            dialog_box_text = dialog_box_text + f" with {severity} severity"
-        if data is not None:
-            dialog_box_text = dialog_box_text + f" for an error about {data}"
-        
-        return dialog_box_text + "."
+            # return the SUSHI error as an error and flash a message to try again later, possibly after double checking their SUSHI credentials
+            #ToDo: return (error_contents['Message'], a message with error_contents['Message'], error_code, and error_contents['Data'] if available)
