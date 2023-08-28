@@ -101,7 +101,6 @@ class SUSHICallAndResponse:
             return {"ERROR": return_dict_value}
 
         #Section: Check for SUSHI Error Codes
-        # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
 
         if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
@@ -353,19 +352,15 @@ class SUSHICallAndResponse:
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type):
-        """This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
-
-        Based on the SUSHI error code, this method can do multiple things:
-            * For 10*, 20*, and 3031 SUSHI errors, the error message is part of the flashed message, prompting the user to try again later, possibly after double checking their SUSHI credentials
-            * For 3030 SUSHI errors, include the error message in the flashed message, and if all reports return this value, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
-            * For 3032 and 3040 SUSHI errors, include the error message in the flashed message and add a note on the statistics source with the error message
+        """This method handles all the SUSHI exceptions included in a SUSHI call, splitting apart multiple exceptions and determining what to do based on all of the exceptions combined.
 
         Args:
             error_contents (dict or list): the contents of the error message(s)
             report_type (str): the type of report being requested, determined by the value of `call_path`
         
         Returns:
-            #ToDo: What should be returned?
+            tuple: an error message or `None` if the harvesting should continue; a list of the statements that should be flashed
+            None: if the program can proceed as expected and doesn't need to alert the user about the error
         """
         if error_contents is None:
             log.info(f"This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
