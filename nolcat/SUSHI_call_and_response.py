@@ -104,79 +104,54 @@ class SUSHICallAndResponse:
         # https://www.projectcounter.org/appendix-f-handling-errors-exceptions/ has list of COUNTER error codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
 
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
-            log.debug(f"The report has a `Report_Header` with an `Exception` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exception']}.")
-            if self._handle_SUSHI_exceptions(API_response['Report_Header']['Exception'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Report_Header']['Exception']}`."
+        if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
+            if API_response.get('Report_Header').get('Exception'):
+                for_debug = "Exception"
+                SUSHI_exception_statement = API_response['Report_Header']['Exception']
+            else:
+                for_debug = "Exceptions"
+                SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
+            log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
+            SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
+            if SUSHI_exceptions is not None:
+                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
+                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
                 log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
+                return 
 
-        try:
-            log.debug(f"The report has a `Report_Header` with an `Exceptions` key containing a single exception or a list of exceptions: {API_response['Report_Header']['Exceptions']}.")
-            if self._handle_SUSHI_exceptions(API_response['Report_Header']['Exceptions'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Report_Header']['Exceptions']}`."
+        if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
+            if API_response.get('Exception'):
+                for_debug = "Exception"
+                SUSHI_exception_statement = API_response['Exception']
+            elif API_response.get('Exceptions'):
+                for_debug = "Exceptions"
+                SUSHI_exception_statement = API_response['Exceptions']
+            elif API_response.get('Alert'):
+                for_debug = "Alert"
+                SUSHI_exception_statement = API_response['Alert']
+            elif API_response.get('Alerts'):
+                for_debug = "Alerts"
+                SUSHI_exception_statement = API_response['Alerts']
+            log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
+            SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
+            if SUSHI_exceptions is not None:
+                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
+                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
                 log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
+                return 
 
-        try:  #ALERT: Couldn't find a statistics source to use as a test case--prior code indicates this case appears in response to `status` calls
-            log.debug(f"The report has an `Exception` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exception']}.")
-            if self._handle_SUSHI_exceptions(API_response['Exception'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Exception']}`."
+        if API_response.get('Message') or API_response[0].get('Message'):
+            if isinstance(API_response, list):
+                for_debug = "list of dictionaries"
+            else:
+                for_debug = "dictionary"
+            log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
+            SUSHI_exceptions = self._handle_SUSHI_exceptions(API_response, self.call_path)
+            if SUSHI_exceptions is not None:
+                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
+                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
                 log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
-
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
-            log.debug(f"The report has an `Exceptions` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Exceptions']}.")
-            if self._handle_SUSHI_exceptions(API_response['Exceptions'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Exceptions']}`."
-                log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
-
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
-            log.debug(f"The report has an `Alert` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Alert']}.")
-            if self._handle_SUSHI_exceptions(API_response['Alert'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Alert']}`."
-                log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
-
-        try:  #ALERT: Couldn't find a statistics source to use as a test case
-            log.debug(f"The report has an `Alerts` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {API_response['Alerts']}.")
-            if self._handle_SUSHI_exceptions(API_response['Alerts'], self.call_path, self.calling_to) is not None:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response['Alerts']}`."
-                log.warning(message)
-                return {"ERROR": message}
-        except:
-            pass
-
-        try:
-            if "Message" in API_response.keys():
-                log.debug("The report is nothing but a dictionary of the key-value pairs found in an `Exceptions` block.")
-                if self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to) is not None:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response}`."
-                    log.warning(message)
-                    return {"ERROR": message}
-        except:
-            pass
-
-        try:
-            if "Message" in API_response[0].keys():  # The `keys()` iterator also serves as a check that the item in the list is a dictionary
-                log.debug("The report is nothing but a list of dictionaries of the key-value pairs found in an `Exceptions` block.")
-                if self._handle_SUSHI_exceptions(API_response, self.call_path, self.calling_to) is not None:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) `{API_response}`."
-                    log.warning(message)
-                    return {"ERROR": message}
-        except:
-            pass
+                return 
 
         #Subsection: Check Customizable Reports for Data
         # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
