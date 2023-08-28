@@ -417,10 +417,17 @@ class SUSHICallAndResponse:
             'Usage No Longer Available for Requested Dates': '3032',
             'Partial Data Returned': '3040',
         }
-        try:
-            error_code = errors_and_codes(error_contents['Message'])
-        except:
-            #ToDo: Unrecognized error
+        error_code = errors_and_codes.get(error_contents['Message'])
+        if not error_code:
+            if error_contents.get('Code') in [v for v in errors_and_codes.values()] or error_contents.get('Code') in [int(v) for v in errors_and_codes.values()]:
+                error_code = str(error_contents['Code'])
+                error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
+            else:
+                message = f"`error_contents['Message']` is {error_contents.get('Message')} and error_contents['Code']` is {error_contents.get('Code')}, neither of which matched a known error."
+                log.error(message)
+                return (message, message)
+        log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
+                
         
         if error_code == '3030':
             # flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
