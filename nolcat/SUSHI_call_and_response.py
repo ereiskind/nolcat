@@ -12,6 +12,7 @@ import pandas as pd
 import pyinputplus
 
 from .app import *
+from nolcat.models import *
 
 log = logging.getLogger(__name__)
 
@@ -427,17 +428,35 @@ class SUSHICallAndResponse:
                 log.error(message)
                 return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
-                
         
         if error_code == '3030':
-            # flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
-            #ToDo: return (no error, a message with error_contents['Message'], error_code, and error_contents['Data'] if available and something unique among flashed messages that a regex can find)
+            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            if error_contents.get('Data'):
+                message = message[:-1] + f" due to {error_contents['Data']}."
+            log.error(message)
+            return (None, message)
         elif error_code == '3032' or error_code == '3040':
-            # flash the error message and add a `statisticsSourceNotes` record for the statistics source with the error message
-            #ToDo: Use sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name={self.calling_to};"
-            #ToDo: Convert `*` to StatisticsSource object
-            #ToDo: object above.add_note()
-            #ToDo: return (no error, a message with error_contents['Message'], error_code, and error_contents['Data'] if available)
+            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            if error_contents.get('Data'):
+                message = message[:-1] + f" due to {error_contents['Data']}."
+                #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
+            df = pd.read_sql(
+                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
+                con=db.engine,
+            )
+            statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                statistics_source_ID = int(df['statistics_source_ID'][0]),
+                statistics_source_name = str(df['statistics_source_name'][0]),
+                statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                vendor_ID = int(df['vendor_ID'][0]),
+            )  # Without the `int` constructors, a numpy int type is used
+            statistics_source_object.add_note(message)
+            log.error(message)
+            return (None, message)
         else:
-            # return the SUSHI error as an error and flash a message to try again later, possibly after double checking their SUSHI credentials
-            #ToDo: return (error_contents['Message'], a message with error_contents['Message'], error_code, and error_contents['Data'] if available)
+            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            if error_contents.get('Data'):
+                message = message[:-1] + f" due to {error_contents['Data']}."
+            message = message + " Try the call again later, after checking credentials if needed."
+            log.error(message)
+            return (error_contents['Message'], message)
