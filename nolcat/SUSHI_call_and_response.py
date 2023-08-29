@@ -321,35 +321,37 @@ class SUSHICallAndResponse:
         return API_response
     
 
-    def _save_raw_Response_text(self, error_message, Response_text, exception=False):
+    def _save_raw_Response_text(self, Response_text):
         """Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
 
         Args:
-            error_message (str): either details of the situation that raised the error if an expected situation or the name of a Python error if an unexpected situation
             Response_text (str): the Unicode string that couldn't be converted to native Python data types
-            exception (bool, optional): a Boolean indicating if the error was an uncaught exception raised during `_convert_Response_to_JSON()`; defaults to `False`
         
         Returns:
-            str: the error message for the value section of the single-item `ERROR` dictionary
+            str: an error message to flash indicating the creation of the bailout file
         """
-        if exception:
-            error_message = f"The `SUSHICallAndResponse._convert_Response_to_JSON()` method unexpectedly raised a(n) `{error_message}` error, meaning the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
-        log.error(error_message)
+        log.error(f"Because of the previously given error, the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
+        
+        temp_file_path = Path(__file__).parent / 'temp.txt'
+        with open(temp_file_path, 'xb', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+            file.write(Response_text)
+        log.debug(f"Temp file successfully created.")
         
         statistics_source_ID = pd.read_sql(
             sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
             con=db.engine,
         )
-        temp_file_path = Path(__file__).parent / 'temp.txt'
-        with open(temp_file_path, 'xb', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-            file.write(Response_text)
-        
+        S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
+        log.debug(f"S3 file name set to {S3_file_name}.")
+
         upload_file_to_S3_bucket(
             temp_file_path,
-            f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt",
+            S3_file_name,
         )
         temp_file_path.unlink()
-        return error_message
+        message = f"The file {S3_file_name} was created in S3."
+        log.info(message)
+        return message
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type):
