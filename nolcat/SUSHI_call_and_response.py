@@ -371,23 +371,35 @@ class SUSHICallAndResponse:
                 log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
-            #ToDo: Handle single error and return appropriate value
+            SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents['Message'])
+            return (SUSHI_exception[0], [SUSHI_exception[1]])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
                 log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
-                #ToDo: Handle single error and return appropriate value
+                SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents['Message'])
+                return (SUSHI_exception[0], [SUSHI_exception[1]])
             else:
-                handled_errors = []
+                flash_messages_list = []
+                errors_list = {}  # A set automatically dedupes as items are added
                 for error in error_contents:
-                    #ToDo: Handle single error
-                    handled_errors.append()  #ToDo: Get argument from preceding line
-                return handled_errors
+                    SUSHI_exception = self._evaluate_individual_SUSHI_exception(error)
+                    flash_messages_list.append(SUSHI_exception[1])
+                    if SUSHI_exception[0]:
+                        errors_list.add(SUSHI_exception[0])
+                if len(errors_list) == 1:
+                    return (errors_list.pop(), flash_messages_list)
+                elif len(errors_list) > 1:
+                    #ToDo: If this ever happens, determine if there's a better way to handle it
+                    return (list(errors_list), flash_messages_list)
+                else:
+                    return (None, flash_messages_list)
         else:
-            log.info(f"SUSHI error handling method for a {report_type} accepted data of an invalid type.")
-            #ToDo: return something indicating a major problem
+            message = f"SUSHI error handling method for a {report_type} accepted {repr(type(error_contents))} data, which is an invalid type."
+            log.info(message)
+            return (message, [message])
     
 
     def _evaluate_individual_SUSHI_exception(self, error_contents):
