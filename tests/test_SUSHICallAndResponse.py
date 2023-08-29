@@ -74,7 +74,7 @@ def SUSHI_credentials_fixture():
         calendar.monthrange(SUSHI_credentials['end_date'].year, SUSHI_credentials['end_date'].month)[1]
     )
 
-    return (URL, SUSHI_credentials)
+    yield (URL, SUSHI_credentials)
 
 
 @pytest.mark.dependency()
