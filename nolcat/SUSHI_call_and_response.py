@@ -70,36 +70,34 @@ class SUSHICallAndResponse:
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
 
         Returns:
-            dict: the API call response or an error message
+            tuple: the API call response or an error message; a list of the statements that should be flashed
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
+        messages_to_flash = []
         API_response = self._make_API_call()
-        if isinstance(API_response, dict):  # Meaning the SUSHI API call couldn't be made
+        if isinstance(API_response, str):  # Meaning the SUSHI API call couldn't be made
             log.error(API_response)
-            return API_response
+            return (API_response, [API_response])
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
             message = f"Call to {self.calling_to} returned an empty string."
             log.warning(message)
-            return {"ERROR": message}
+            return (message, [message])
         
         #Section: Convert Response to Python Data Types
         try:
             API_response = self._convert_Response_to_JSON(API_response)
         except Exception as error:
-            return_dict_value = self._save_raw_Response_text(error, API_response.text, exception=True)
-            log.error(return_dict_value)
-            return {"ERROR": return_dict_value}
-        if isinstance(API_response, tuple) and isinstance(API_response[1], Exception):
-            return_dict_value = self._save_raw_Response_text(API_response[1], API_response[0].text, exception=True)
-            log.error(return_dict_value)
-            return {"ERROR": return_dict_value}
-        if len(API_response.keys()) == 1 and list(API_response.keys()) == "ERROR":
-            return_dict_value = self._save_raw_Response_text(API_response['ERROR'], API_response.text)
-            log.error(return_dict_value)
-            return {"ERROR": return_dict_value}
+            message1 = f"Calling the `_convert_Response_to_JSON` method raised the error {error}."
+            log.error(message1)
+            message2 = self._save_raw_Response_text(API_response.text)
+            return (message1, [message1, message2])
+        if isinstance(API_response, tuple) and isinstance(API_response[0], Exception):
+            #API = tuple: the API call response in native Python data types or the error raised when attempting the conversion; any messages to be flashed
+            message = self._save_raw_Response_text(API_response.text)
+            return (API_response[0], [API_response[1], message])
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
@@ -114,10 +112,14 @@ class SUSHICallAndResponse:
             log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if SUSHI_exceptions is not None:
-                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
-                log.warning(message)
-                return 
+                if SUSHI_exceptions[0]:
+                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
+                    log.warning(message)
+                    return SUSHI_exceptions
+                else:
+                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                    for statement in SUSHI_exceptions[1]:
+                        messages_to_flash.append(statement)
 
         if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
             if API_response.get('Exception'):
@@ -135,10 +137,14 @@ class SUSHICallAndResponse:
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if SUSHI_exceptions is not None:
-                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
-                log.warning(message)
-                return 
+                if SUSHI_exceptions[0]:
+                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
+                    log.warning(message)
+                    return SUSHI_exceptions
+                else:
+                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                    for statement in SUSHI_exceptions[1]:
+                        messages_to_flash.append(statement)
 
         if API_response.get('Message') or API_response[0].get('Message'):
             if isinstance(API_response, list):
@@ -148,23 +154,36 @@ class SUSHICallAndResponse:
             log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
             SUSHI_exceptions = self._handle_SUSHI_exceptions(API_response, self.call_path)
             if SUSHI_exceptions is not None:
-                #ToDo: Update below based on return value of above--return `tuple: the API call response or an error message; a list of the statements that should be flashed`
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) {}."
-                log.warning(message)
-                return 
+                if SUSHI_exceptions[0]:
+                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
+                    log.warning(message)
+                    return SUSHI_exceptions
+                else:
+                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                    for statement in SUSHI_exceptions[1]:
+                        messages_to_flash.append(statement)
 
         #Subsection: Check Customizable Reports for Data
         # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
         custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
         if custom_report_regex.search(self.call_path):
-            message = f"Call to {self.calling_to} for {self.call_path} returned no usage data, which may or may not be appropriate."
-            try:
-                if len(API_response['Report_Items']) == 0:
+            Report_Items_status = len(API_response.get('Report_Items', 'x'))
+            if Report_Items_status == 0 or Report_Items_status == 'x':  # This allows for deduplication of log and return statements
+                if messages_to_flash:
+                    if Report_Items_status == 0:
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising the SUSHI error."
+                    elif Report_Items_status == 'x':
+                        message = f"Call to {self.calling_to} for {self.call_path} returned SUSHI data without a `Report_Items` section."
+                    messages_to_flash.append(message)
                     log.warning(message)
-                    return {"ERROR": message}
-            except TypeError:
-                log.warning(message)
-                return {"ERROR": message}
+                    return (message, messages_to_flash)
+                else:
+                    if Report_Items_status == 0:
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising the SUSHI error."
+                    elif Report_Items_status == 'x':
+                        message = f"Call to {self.calling_to} for {self.call_path} returned SUSHI data without a `Report_Items` section."
+                    log.warning(message)
+                    return (message, [message])
         
         #Section: Display to Stdout and Return `API_response`
         if custom_report_regex.search(self.call_path):
@@ -184,7 +203,10 @@ class SUSHICallAndResponse:
                         log.debug(API_response['Report_Items'][n])
         else:
             log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
-        return API_response
+        if messages_to_flash:
+            return (API_response, messages_to_flash)
+        else:
+            return (API_response, None)
 
 
     def _make_API_call(self):
@@ -194,7 +216,7 @@ class SUSHICallAndResponse:
         
         Returns:
             requests.Response: the complete Response object returned by the GET request to the API
-            dict: error message to indicate to `StatisticsSources._harvest_single_report()` that the API call failed
+            str: error message to indicate to `StatisticsSources._harvest_single_report()` that the API call failed
         """
         log.info(f"Starting `_make_API_call()` by calling {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
         API_call_URL = self.call_URL + self.call_path
@@ -215,15 +237,17 @@ class SUSHICallAndResponse:
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
                 message = f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
                 log.error(message)
-                return {"ERROR": message}
+                return message
             except Exception as error_after_timeout:
                 message = f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}."
                 log.error(message)
-                return {"ERROR": message}
+                return message
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            return {"ERROR": f"Call to {self.calling_to} raised error {error}"}
+            message = f"Call to {self.calling_to} raised error {error}"
+            log.error(message)
+            return message
 
         log.info(f"GET request for {self.calling_to} at {self.call_path} successful.")
         return API_response
@@ -236,7 +260,7 @@ class SUSHICallAndResponse:
             API_response (requests.Response): the response returned by the SUSHI API call
         
         Returns:
-            dict: the API call response in native Python data types or an error message
+            tuple: the API call response in native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed
         """
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
@@ -246,27 +270,29 @@ class SUSHICallAndResponse:
                     log.info("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
                     API_response = ast.literal_eval(API_response.content.decode('utf-8'))
                 except Exception as error:
-                    log.error(f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}.")
-                    return (API_response, error)
+                    message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
+                    log.error(message)
+                    return (error, message)
             elif isinstance(API_response.text, list):
                 try:
                     log.info(f"The returned text is in list format and is the list of reports.")
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except Exception as error:
-                    log.error(f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}.")
-                    return (API_response, error)
+                    message = f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}."
+                    log.error(message)
+                    return (error, message)
             else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The raw JSON file is being saved instead."
-                log.warning(message)
-                return {"ERROR": message}
+                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
+                log.error(message)
+                return (json.JSONDecodeError(message), message)
                 
             if isinstance(API_response, list):
                 API_response = dict(reports = API_response)
                 log.info("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
             else:
-                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary. The raw JSON file is being saved instead."
+                message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
                 log.error(message)
-                return {"ERROR": message}
+                return (json.JSONDecodeError(message), message)
         
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
@@ -278,8 +304,9 @@ class SUSHICallAndResponse:
                     try:
                         API_response = ast.literal_eval(API_response.content.decode('utf-8'))
                     except Exception as error:
-                        log.error(f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}.")
-                        return (API_response, error)
+                        message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
+                        log.error(message)
+                        return (error, message)
                 
                 if isinstance(API_response, dict):
                     log.info("The returned text was converted to a dictionary.")
@@ -289,36 +316,38 @@ class SUSHICallAndResponse:
                     API_response = API_response[0]
                 
                 else:
-                    message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
+                    message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type, which doesn't match SUSHI logic; it couldn't be converted to native Python data types."
                     log.error(message)
-                    return {"ERROR": message}
+                    return (json.JSONDecodeError(message), message)
             
             elif isinstance(API_response.text, dict):
                 try:
                     log.info("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except Exception as error:
-                    log.error(f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}.")
-                    return (API_response, error)
+                    message = f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}."
+                    log.error(message)
+                    return (error, message)
             
             elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
                 try:
                     log.info("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = json.loads(API_response[0].content.decode('utf-8'))
                 except Exception as error:
-                    log.error(f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}.")
-                    return (API_response, error)
+                    message = f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}."
+                    log.error(message)
+                    return (error, message)
             
             else:
-                message = f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead."
+                message = f"Call to {self.calling_to} returned an object of the {repr(type(API_response))} type with a {repr(type(API_response.text))} text type; it couldn't be converted to native Python data types."
                 log.error(message)
-                return {"ERROR": message}
+                return (json.JSONDecodeError(message), message)
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
         if isinstance(API_response, pd.core.frame.DataFrame):
             log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
         log.debug(f"SUSHI data:\n{API_response}")
-        return API_response
+        return (API_response, None)
     
 
     def _save_raw_Response_text(self, Response_text):
