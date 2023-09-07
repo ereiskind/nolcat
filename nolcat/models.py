@@ -307,15 +307,18 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #ToDo: dfs = []
+        #ToDo: all_flash_statements = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
-            #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #ToDo: if isinstance(df, str):
-                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {df}")
+            #ToDo: df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            #ToDo: for statement in flash_statements:
+                    #ToDo: all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
+            #ToDo: if isinstance(df, str) or isinstance(df, Exception):
+                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {str(df)}")
                 #ToDo: continue
             #ToDo: else:
                 #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")
@@ -333,11 +336,11 @@ class FiscalYears(db.Model):
             #ToDo: )
             #ToDo: message = f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
             #ToDo: log.info(message)
-            #ToDo: return message
-        #ToDo: except Exception as e:
+            #ToDo: return (message, all_flash_statements)
+        #ToDo: except Exception as error:
         #ToDo: message = f"The load for FY {self.fiscal_year} had the error {error}."
             #ToDo: log.error(message)
-            #ToDo: return message
+            #ToDo: return (message, all_flash_statements)
         pass
 
 
@@ -886,14 +889,14 @@ class StatisticsSources(db.Model):
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
-        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
-        if isinstance(df, str):
-            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {df}"
+        df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
+        if isinstance(df, str) or isinstance(df, Exception):
+            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {str(df)}"
             log.warning(message)
-            return message
+            return (message, flash_statements)
         else:
             log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
@@ -907,11 +910,12 @@ class StatisticsSources(db.Model):
             )
             message = f"Successfully loaded {df.shape[0]} records into the database."
             log.info(message)
-            return message
+            return (message, flash_statements)
         except Exception as error:
             message = f"The load had the error {error}."
             log.error(message)
-            return message
+            return (message, flash_statements)
+
 
     @hybrid_method
     def add_note(self):
@@ -1206,7 +1210,7 @@ class AnnualUsageCollectionTracking(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
@@ -1235,11 +1239,11 @@ class AnnualUsageCollectionTracking(db.Model):
         log.info(f"The `StatisticsSources` object is {statistics_source}.")
 
         #Section: Collect and Load SUSHI Data
-        df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        if isinstance(df, str):
-            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {df}"
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        if isinstance(df, str) or isinstance(df, Exception):
+            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {str(df)}"
             log.warning(message)
-            return message
+            return (message, flash_statements)
         else:
             log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
         df.index += first_new_PK_value('COUNTERData')
@@ -1254,11 +1258,11 @@ class AnnualUsageCollectionTracking(db.Model):
             log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            return message
+            return (message, flash_statements)
         except Exception as error:
             message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
             log.error(message)
-            return message
+            return (message, flash_statements)
 
 
     @hybrid_method

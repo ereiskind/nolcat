@@ -172,9 +172,9 @@ def harvest_SUSHI_statistics():
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
-            result_message = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
-            flash(result_message)
+            flash(flash_messages)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"The SUSHI request form submission failed due to the error {error}."
