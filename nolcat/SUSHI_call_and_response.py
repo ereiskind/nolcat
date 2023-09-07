@@ -70,7 +70,7 @@ class SUSHICallAndResponse:
         This method calls two other methods in sequence: `_make_API_call()`, which makes the API call itself, and `_convert_Response_to_JSON()`, which changes the `Response.text` attribute of the value returned by `_make_API_call()` into native Python data types. This division is done so `Response.text` attributes that can't be changed into native Python data types can more easily be saved as text files in a S3 bucket for preservation and possible later review.
 
         Returns:
-            tuple: the API call response or an error message; a list of the statements that should be flashed
+            tuple: the API call response (dict) or an error message (str or Exception); a list of the statements that should be flashed (list of str)
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
@@ -90,14 +90,13 @@ class SUSHICallAndResponse:
         try:
             API_response = self._convert_Response_to_JSON(API_response)
         except Exception as error:
-            message1 = f"Calling the `_convert_Response_to_JSON` method raised the error {error}."
+            message1 = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(message1)
-            message2 = self._save_raw_Response_text(API_response.text)
+            message2 = self._save_raw_Response_text(API_response[0].text)
             return (message1, [message1, message2])
         if isinstance(API_response, tuple) and isinstance(API_response[0], Exception):
-            #API = tuple: the API call response in native Python data types or the error raised when attempting the conversion; any messages to be flashed
-            message = self._save_raw_Response_text(API_response.text)
-            return (API_response[0], [API_response[1], message])
+            message = self._save_raw_Response_text(API_response[0].text)
+            return (f"The `_convert_Response_to_JSON()` method returned {str(API_response[0])}.", [API_response[1], message])
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
@@ -260,7 +259,7 @@ class SUSHICallAndResponse:
             API_response (requests.Response): the response returned by the SUSHI API call
         
         Returns:
-            tuple: the API call response in native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed
+            tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
         """
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
@@ -344,8 +343,6 @@ class SUSHICallAndResponse:
                 return (json.JSONDecodeError(message), message)
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
-        if isinstance(API_response, pd.core.frame.DataFrame):
-            log.info(f"Sample of SUSHI data:\n{API_response.head()}")  # Because `API_response` can be very long, the `info` logging statement shows only a small portion of the dataframe
         log.debug(f"SUSHI data:\n{API_response}")
         return (API_response, None)
     
@@ -391,7 +388,7 @@ class SUSHICallAndResponse:
             report_type (str): the type of report being requested, determined by the value of `call_path`
         
         Returns:
-            tuple: an error message or `None` if the harvesting should continue; a list of the statements that should be flashed
+            tuple: an error message or `None` if the harvesting should continue (None or str); a list of the statements that should be flashed (list of str)
             None: if the program can proceed as expected and doesn't need to alert the user about the error
         """
         if error_contents is None:
@@ -423,8 +420,8 @@ class SUSHICallAndResponse:
                 if len(errors_list) == 1:
                     return (errors_list.pop(), flash_messages_list)
                 elif len(errors_list) > 1:
-                    #ToDo: If this ever happens, determine if there's a better way to handle it
-                    return (list(errors_list), flash_messages_list)
+                    joined_list = '\n'.join(errors_list)  # Escape character sequence not allowed in expression part of f-string
+                    return (f"All of the following errors were returned:\n{joined_list}", flash_messages_list)
                 else:
                     return (None, flash_messages_list)
         else:
@@ -445,7 +442,7 @@ class SUSHICallAndResponse:
             error_contents (dict): the contents of the error message
         
         Returns:
-            tuple: an error message if appropriate; the message to flash
+            tuple: an error message if appropriate (None or str); the message to flash (str)
         """
         errors_and_codes = {
             'Service Not Available': '1000',
