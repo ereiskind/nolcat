@@ -436,6 +436,50 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
 
 
+#Section: Test Helper Function Not Possible in `nolcat.app`
+def match_direct_SUSHI_harvest_result(number_of_records):
+    """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
+
+    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
+
+    Args:
+        number_of_records (int): the number of records in the SUSHI pull
+    
+    Returns:
+        dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
+    """
+    df = pd.read_sql(
+        sql=f"""
+            SELECT *
+            FROM (
+                SELECT * FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT {number_of_records}
+            ) subquery
+            ORDER BY COUNTER_data_ID ASC;
+        """,
+        con=db.engine,
+    )
+    df = df.drop(columns='COUNTER_data_ID')
+    df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
+    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
+    if 'publication_date' in df.columns.to_list():
+        df["publication_date"] = pd.to_datetime(
+            df["publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    if 'parent_publication_date' in df.columns.to_list():
+        df["parent_publication_date"] = pd.to_datetime(
+            df["parent_publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    return df
+
+
 #Section: Replacement Classes
 class _fileAttribute:
     """Enables the `_file` attribute of the `mock_FileStorage_object.stream` attribute.

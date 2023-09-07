@@ -266,3 +266,7 @@ def test_create_AUCT_SelectField_options():
         ),
     ]
     assert create_AUCT_SelectField_options(df) == result_list
+
+
+#ToDo: test_match_direct_SUSHI_harvest_result()
+# Function itself in `tests.conftest`
