@@ -298,7 +298,10 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
 def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
-    """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation."""
+    """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation.
+    
+    The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes.
+    """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
@@ -307,7 +310,7 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
-    most_recently_loaded_records = pd.read_sql(
+    records_loaded_by_method = pd.read_sql(
         sql=f"""
             SELECT *
             FROM (
@@ -319,32 +322,34 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
         """,
         con=engine,
     )
-    recently_loaded_records_for_comparison = most_recently_loaded_records.drop(columns='COUNTER_data_ID')
-    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison[[field for field in recently_loaded_records_for_comparison.columns if recently_loaded_records_for_comparison[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values, which aren't in the dataframe created by `StatisticsSources._harvest_R5_SUSHI()`
-    recently_loaded_records_for_comparison = recently_loaded_records_for_comparison.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in recently_loaded_records_for_comparison.columns.to_list()})
-    if 'publication_date' in recently_loaded_records_for_comparison.columns.to_list():
-        recently_loaded_records_for_comparison["publication_date"] = pd.to_datetime(
-            recently_loaded_records_for_comparison["publication_date"],
+    records_loaded_by_method = records_loaded_by_method.drop(columns='COUNTER_data_ID')
+    records_loaded_by_method = records_loaded_by_method[[field for field in records_loaded_by_method.columns if records_loaded_by_method[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values, which aren't in the dataframe created by `StatisticsSources._harvest_R5_SUSHI()`
+    records_loaded_by_method = records_loaded_by_method.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in records_loaded_by_method.columns.to_list()})
+    if 'publication_date' in records_loaded_by_method.columns.to_list():
+        records_loaded_by_method["publication_date"] = pd.to_datetime(
+            records_loaded_by_method["publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
             infer_datetime_format=True,
         )
-    if 'parent_publication_date' in recently_loaded_records_for_comparison.columns.to_list():
-        recently_loaded_records_for_comparison["parent_publication_date"] = pd.to_datetime(
-            recently_loaded_records_for_comparison["parent_publication_date"],
+    if 'parent_publication_date' in records_loaded_by_method.columns.to_list():
+        records_loaded_by_method["parent_publication_date"] = pd.to_datetime(
+            records_loaded_by_method["parent_publication_date"],
             errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
             infer_datetime_format=True,
         )
-    recently_loaded_records_for_comparison["report_creation_date"] = pd.to_datetime(recently_loaded_records_for_comparison["report_creation_date"])
-    recently_loaded_records_for_comparison["usage_date"] = pd.to_datetime(recently_loaded_records_for_comparison["usage_date"])
+    records_loaded_by_method["report_creation_date"] = pd.to_datetime(records_loaded_by_method["report_creation_date"])
+    records_loaded_by_method["usage_date"] = pd.to_datetime(records_loaded_by_method["usage_date"])
 
     try:  #ToDo: Test is failing because rows are out of order--below shows metric and number pairs are the same but on different rows
-        log.info(f"Differences:\n{recently_loaded_records_for_comparison.compare(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
-        #ToDo: Would resetting the index of both dataframes help?
+        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        r1 = records_loaded_by_method.reset_index()
+        r2 = harvest_R5_SUSHI_result.reset_index()
+        log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
         #ToDo: Would a sort help?
     except:
-        log.info(f"Dataframe from database has index {recently_loaded_records_for_comparison.index} and fields\n{return_string_of_dataframe_info(recently_loaded_records_for_comparison)}")
-        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[recently_loaded_records_for_comparison.columns.to_list()])}")
-    assert_frame_equal(recently_loaded_records_for_comparison, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+        log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
+        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 #Section: Test `StatisticsSources.add_note()`
 def test_add_note():
