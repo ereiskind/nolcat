@@ -255,14 +255,15 @@ def upload_non_COUNTER_reports():
                 flash(f"{logging_message} {message}")
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
 
-            update_query = pd.read_sql(  #ToDo: Can an UPDATE query be run like this?
+            update_query = pd.read_sql(
                 sql=f'''
                     UPDATE annualUsageCollectionTracking
                     SET usage_file_path = {file_name}
                     WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
                 ''',
-                con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+                con=db.engine,
             )
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
             log.debug(message)
             flash(message)
