@@ -14,6 +14,40 @@ from nolcat.models import *
 log = logging.getLogger(__name__)
 
 
+@pytest.fixture(scope='module')
+def FiscalYears_object_and_record():
+    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
+
+    Yields:
+        tuple: a FiscalYears object; a single-record dataframe for the fiscalYears relation
+    """
+    primary_key_value = 6
+    fiscal_year_value = "2023"
+    start_date_value = date.fromisoformat('2022-07-01')
+    end_date_value = date.fromisoformat('2023-06-30')
+
+    FY_instance = FiscalYears(
+        fiscal_year_ID = primary_key_value,
+        fiscal_year = fiscal_year_value,
+        start_date = start_date_value,
+        end_date = end_date_value,
+        ACRL_60b = None,
+        ACRL_63 = None,
+        ARL_18 = None,
+        ARL_19 = None,
+        ARL_20 = None,
+        notes_on_statisticsSources_used = None,
+        notes_on_corrections_after_submission = None,
+    )
+    FY_df = pd.DataFrame(
+        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
+        index=[primary_key_value],
+        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+    )
+    FY_df.index.name = "fiscal_year_ID"
+    yield (FY_instance, FY_df)
+
+
 def test_calculate_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
@@ -44,36 +78,12 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client):
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record):
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
     
-    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
+    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record is added to the `fiscalYears` relation and used for the method.
     """
-    #Section: Create `FiscalYears` Object and `fiscalYears` Record
-    primary_key_value = 6
-    fiscal_year_value = "2023"
-    start_date_value = date.fromisoformat('2022-07-01')
-    end_date_value = date.fromisoformat('2023-06-30')
-
-    FY_instance = FiscalYears(
-        fiscal_year_ID = primary_key_value,
-        fiscal_year = fiscal_year_value,
-        start_date = start_date_value,
-        end_date = end_date_value,
-        ACRL_60b = None,
-        ACRL_63 = None,
-        ARL_18 = None,
-        ARL_19 = None,
-        ARL_20 = None,
-        notes_on_statisticsSources_used = None,
-        notes_on_corrections_after_submission = None,
-    )
-    FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
-        index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
-    )
-    FY_df.index.name = "fiscal_year_ID"
+    FY_instance, FY_df = FiscalYears_object_and_record
 
     #Section: Update Relation and Run Method
     FY_df.to_sql(
