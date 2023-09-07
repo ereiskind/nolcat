@@ -5,6 +5,7 @@ import pytest
 import logging
 import calendar
 from datetime import date
+from datetime import timedelta
 import re
 import pyinputplus
 
@@ -191,3 +192,31 @@ def test_IR_call_validity(SUSHI_credentials_fixture, caplog):
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert response['Report_Header']['Report_ID'] == "IR" or response['Report_Header']['Report_ID'] == "ir"
+
+
+@pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
+def test_call_with_invalid_dates(SUSHI_credentials_fixture, caplog):
+    """Tests that a SUSHI call with invalid dates returns the correct error.
+    
+    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    SUSHI_credentials['end_date'] = SUSHI_credentials['end_date'] - timedelta(days=1)  # The day before the `begin_date`
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    log.info(f"`response` in `test_call_with_invalid_dates()` is:\n{response}")
+    pass
+
+
+@pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
+def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
+    """Tests that a SUSHI call with invalid credentials returns the correct error.
+    
+    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
+    log.info(f"`response` in `test_call_with_invalid_credentials()` is:\n{response}")
+    pass
