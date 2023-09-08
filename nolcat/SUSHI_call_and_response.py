@@ -344,7 +344,7 @@ class SUSHICallAndResponse:
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
         log.debug(f"SUSHI data:\n{API_response}")
-        return (API_response, None)
+        return (API_response, [])
     
 
     def _save_raw_Response_text(self, Response_text):
