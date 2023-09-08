@@ -3,7 +3,6 @@
 
 import pytest
 import logging
-from random import choice
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
@@ -23,9 +22,23 @@ def AUCT_fixture_for_SUSHI(engine):
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
-    #ToDo: sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source WHERE StatisticsSources.statistics_source_retrieval_code IS NOT NULL;"
-    #ToDo: Randomly select a record and use its data to create a `AnnualUsageCollectionTracking` object
-    pass
+    record = pd.read_sql(
+        sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE StatisticsSources.statistics_source_retrieval_code IS NOT NULL;",
+        con=engine,
+    ).sample().reset_index()
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(f"`AUCT_fixture_for_SUSHI()` returning {yield_object}.")
+    yield yield_object
 
 
 def test_collect_annual_usage_statistics(caplog):
