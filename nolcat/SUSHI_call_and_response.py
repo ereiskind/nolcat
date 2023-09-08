@@ -91,11 +91,12 @@ class SUSHICallAndResponse:
         except Exception as error:
             message1 = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(message1)
-            message2 = self._save_raw_Response_text(API_response[0].text)
+            message2 = self._save_raw_Response_text(API_response.text)
             return (message1, [message1, message2])
-        if isinstance(API_response, tuple) and isinstance(API_response[0], Exception):
-            message = self._save_raw_Response_text(API_response[0].text)
-            return (f"The `_convert_Response_to_JSON()` method returned {str(API_response[0])}.", [API_response[1], message])
+        if isinstance(API_response, Exception):
+            message = self._save_raw_Response_text(API_response.text)
+            messages_to_flash.append(message)
+            return (f"The `_convert_Response_to_JSON()` method returned {str(API_response)}.", messages_to_flash)
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
