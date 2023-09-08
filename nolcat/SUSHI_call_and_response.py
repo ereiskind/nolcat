@@ -74,7 +74,6 @@ class SUSHICallAndResponse:
         """
         #Section: Make API Call
         log.info(f"Starting `make_SUSHI_call()` to {self.calling_to} for {self.call_path}.")  # `self.parameters` not included because 1) it shows encoded values (e.g. `%3D` is an equals sign) that are appropriately unencoded in the GET request and 2) repetitions of secret information in plain text isn't secure
-        messages_to_flash = []
         API_response = self._make_API_call()
         if isinstance(API_response, str):  # Meaning the SUSHI API call couldn't be made
             log.error(API_response)
@@ -88,7 +87,7 @@ class SUSHICallAndResponse:
         
         #Section: Convert Response to Python Data Types
         try:
-            API_response = self._convert_Response_to_JSON(API_response)
+            API_response, messages_to_flash = self._convert_Response_to_JSON(API_response)  # If there aren't any messages to flash, an empty list is initialized
         except Exception as error:
             message1 = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."
             log.error(message1)
@@ -154,14 +153,13 @@ class SUSHICallAndResponse:
             log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
             SUSHI_exceptions = self._handle_SUSHI_exceptions(API_response, self.call_path)
             if SUSHI_exceptions is not None:
+                log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                for statement in SUSHI_exceptions[1]:
+                    messages_to_flash.append(statement)
                 if SUSHI_exceptions[0]:
                     message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
                     log.warning(message)
-                    return SUSHI_exceptions
-                else:
-                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
-                    for statement in SUSHI_exceptions[1]:
-                        messages_to_flash.append(statement)
+                    return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
         # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
@@ -204,6 +202,7 @@ class SUSHICallAndResponse:
         else:
             log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
         if messages_to_flash:
+            log.info(f"The messages to flash:\n{messages_to_flash}")
             return (API_response, messages_to_flash)
         else:
             return (API_response, None)
