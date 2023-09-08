@@ -45,6 +45,8 @@ def AUCT_fixture_for_SUSHI(engine):
 def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
 
+    The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
+
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
@@ -79,8 +81,14 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
-    log.info(f"`start_date` is {start_date} (type {type(start_date)}) and `end_date` is {end_date} (type {type(end_date)})")  #TEST: `start_date` is 2020-07-01 (type <class 'datetime.date'>) and `end_date` is 2021-06-30 (type <class 'datetime.date'>)
-    pass
+    StatisticsSources_object = StatisticsSources(
+        statistics_source_ID = record.at[0,'statistics_source_ID'],
+        statistics_source_name = record.at[0,'statistics_source_name'],
+        statistics_source_retrieval_code = record.at[0,'statistics_source_retrieval_code'],
+        vendor_ID = record.at[0,'vendor_ID'],
+    )
+    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date} (type {type(start_date)}) and end date {end_date} (type {type(end_date)}).")
+    yield StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
 
 
 def test_collect_annual_usage_statistics(harvest_R5_SUSHI_result, caplog):
