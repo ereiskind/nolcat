@@ -284,6 +284,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     Args:
         StatisticsSources_fixture (nolcat.models.StatisticsSources): a class instantiation via fixture containing the necessary data to make a real SUSHI call
         month_before_month_like_most_recent_month_with_usage (tuple): the first and last days of the month before the most recent month for which COUNTER data is available
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
