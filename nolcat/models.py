@@ -620,6 +620,7 @@ class StatisticsSources(db.Model):
             message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}."
             log.warning(message)
             return message
+        #TEST: `tests/test_bp_ingest_usage.py::test_harvest_SUSHI_statistics` error occurred here
         else:
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass

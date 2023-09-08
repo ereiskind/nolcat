@@ -177,7 +177,7 @@ def harvest_SUSHI_statistics():
             flash(flash_messages)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            message = f"The SUSHI request form submission failed due to the error {error}."
+            message = f"The SUSHI request form submission failed due to the error {error}."  #TEST: The SUSHI request form submission failed due to the error 'tuple' object has no attribute 'get'.
             log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))

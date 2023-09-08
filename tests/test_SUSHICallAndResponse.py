@@ -1,5 +1,5 @@
 """Tests the functionality of the `SUSHICallAndResponse` class. Because the class exists solely to encapsulate API call functionality with objects of this class never being instantiated, testing the private methods is better done by sending API calls to vendors representing a variety of edge cases, which are listed on the "Testing" page of the documentation, than by calling each method directly."""
-########## Passing 2023-08-11 ##########
+########## Failing 2023-09-08 ##########
 
 import pytest
 import logging
@@ -83,7 +83,7 @@ def test_status_call(SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``status`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder  #TEST: AttributeError: 'tuple' object has no attribute 'get'
     assert isinstance(response, dict) or isinstance(response[0], dict)  # EBSCO's is a dict inside a list as of 2022-12-14
 
 
@@ -106,7 +106,7 @@ def test_reports_call(SUSHI_credentials_fixture, caplog):
     """Tests that an API call via ``make_SUSHI_call()`` to the ``reports`` endpoint returns a value of the type ``StatisticsSources._harvest_R5_SUSHI()`` expects."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
+    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()  #TEST: AttributeError: 'tuple' object has no attribute 'get'
     assert isinstance(response, dict)
 
 
