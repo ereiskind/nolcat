@@ -118,7 +118,7 @@ def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
         list: the abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
-    response = SUSHICallAndResponse(  #TEST: AttributeError: 'tuple' object has no attribute 'get'
+    response = SUSHICallAndResponse(  #TEST: AttributeError: 'NoneType' object has no attribute 'get'
         StatisticsSources_fixture.statistics_source_name,
         SUSHI_data['URL'],
         "reports",
@@ -147,7 +147,7 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
             current_month_like_most_recent_month_with_usage[0],
             current_month_like_most_recent_month_with_usage[1],
         )
-    #TEST: Error due to `AttributeError: 'tuple' object has no attribute 'get'`
+    #TEST: AttributeError: 'NoneType' object has no attribute 'get'
     assert data_check is None
 
 
@@ -162,7 +162,7 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
             date(2020, 6, 1),  # The last month with usage in the test data
             current_month_like_most_recent_month_with_usage[1],
         )
-    #TEST: Error due to `AttributeError: 'tuple' object has no attribute 'get'`
+    #TEST: AttributeError: 'NoneType' object has no attribute 'get'
     assert isinstance(data_check, list)
     assert date(2020, 6, 1) not in data_check
     assert current_month_like_most_recent_month_with_usage[0] in data_check
@@ -190,7 +190,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             begin_date,
             end_date,
         )
-    #TEST: Error due to `AttributeError: 'tuple' object has no attribute 'get'`
+    #TEST: AttributeError: 'NoneType' object has no attribute 'get'
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
@@ -216,7 +216,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         )
     #ToDo: if SUSHI_response contains "Call to SUSHI code \d* for reports/\w{2} returned no usage data, which may or may not be appropriate.", skip test
     #Test: Many statistics source providers don't have usage going back this far
-    #TEST: Error due to `AttributeError: 'tuple' object has no attribute 'get'`
+    #TEST: AttributeError: 'NoneType' object has no attribute 'get'
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),

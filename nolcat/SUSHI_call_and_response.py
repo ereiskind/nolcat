@@ -99,8 +99,7 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
-
-        #TEST: `AttributeError: 'tuple' object has no attribute 'get'` from `tests/test_StatisticsSources.py:121`
+        #TEST: AttributeError: 'NoneType' object has no attribute 'get'
         if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
             if API_response.get('Report_Header').get('Exception'):
                 for_debug = "Exception"
