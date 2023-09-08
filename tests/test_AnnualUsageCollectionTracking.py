@@ -41,6 +41,49 @@ def AUCT_fixture_for_SUSHI(engine):
     yield yield_object
 
 
+@pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
+def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
+    """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        AUCT_fixture_for_SUSHI (nolcat.models.AnnualUsageCollectionTracking): a class instantiation via fixture used to get the necessary data to make a real SUSHI call
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        dataframe: a dataframe containing all of the R5 COUNTER data
+    """
+    caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
+    caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
+    caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
+    caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
+
+    record = pd.read_sql(
+        sql=f"""
+            SELECT
+                fiscalYears.start_date,
+                fiscalYears.end_date,
+                statisticsSources.statistics_source_ID,
+                statisticsSources.statistics_source_name,
+                statisticsSources.statistics_source_retrieval_code,
+                statisticsSources.vendor_ID
+            FROM annualUsageCollectionTracking
+            JOIN
+                statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                AND fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+            WHERE
+                annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source}
+                AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};
+        """,
+        con=engine,
+    )
+    
+    start_date = record.at[0,'start_date']
+    end_date = record.at[0,'end_date']
+    log.info(f"`start_date` is {start_date} (type {type(start_date)}) and `end_date` is {end_date} (type {type(end_date)})")
+    pass
+
+
 def test_collect_annual_usage_statistics(caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
