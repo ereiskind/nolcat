@@ -79,7 +79,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
-    log.info(f"`start_date` is {start_date} (type {type(start_date)}) and `end_date` is {end_date} (type {type(end_date)})")
+    log.info(f"`start_date` is {start_date} (type {type(start_date)}) and `end_date` is {end_date} (type {type(end_date)})")  #TEST: `start_date` is 2020-07-01 (type <class 'datetime.date'>) and `end_date` is 2021-06-30 (type <class 'datetime.date'>)
     pass
 
 

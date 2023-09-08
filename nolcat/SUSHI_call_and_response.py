@@ -101,25 +101,25 @@ class SUSHICallAndResponse:
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
-        #TEST: AttributeError: 'NoneType' object has no attribute 'get'
-        if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
-            if API_response.get('Report_Header').get('Exception'):
-                for_debug = "Exception"
-                SUSHI_exception_statement = API_response['Report_Header']['Exception']
-            else:
-                for_debug = "Exceptions"
-                SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
-            log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
-            SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
-            if SUSHI_exceptions is not None:
-                if SUSHI_exceptions[0]:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
-                    log.warning(message)
-                    return SUSHI_exceptions
+        if isinstance(API_response.get('Report_Header'), dict):  #TEST: AttributeError: 'NoneType' object has no attribute 'get'
+            if API_response.get('Report_Header').get('Exception') or API_response.get('Report_Header').get('Exceptions'):  #ALERT: Couldn't find a statistics source to use as a test case for the former
+                if API_response.get('Report_Header').get('Exception'):
+                    for_debug = "Exception"
+                    SUSHI_exception_statement = API_response['Report_Header']['Exception']
                 else:
-                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
-                    for statement in SUSHI_exceptions[1]:
-                        messages_to_flash.append(statement)
+                    for_debug = "Exceptions"
+                    SUSHI_exception_statement = API_response['Report_Header']['Exceptions']
+                log.debug(f"The report has a `Report_Header` with an `{for_debug}` key containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
+                SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
+                if SUSHI_exceptions is not None:
+                    if SUSHI_exceptions[0]:
+                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
+                        log.warning(message)
+                        return SUSHI_exceptions
+                    else:
+                        log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                        for statement in SUSHI_exceptions[1]:
+                            messages_to_flash.append(statement)
 
         if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
             if API_response.get('Exception'):
