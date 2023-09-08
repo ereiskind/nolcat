@@ -97,6 +97,7 @@ class SUSHICallAndResponse:
             message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(message)
             return (f"The `_convert_Response_to_JSON()` method returned {str(API_response)}.", messages_to_flash)
+        log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
         # JSONs for SUSHI data that's deemed problematic aren't saved as files because doing so would be keeping bad data
