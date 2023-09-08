@@ -23,7 +23,7 @@ def AUCT_fixture_for_SUSHI(engine):
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `statistics_source_retrieval_code` attribute
     """
     record = pd.read_sql(
-        sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE StatisticsSources.statistics_source_retrieval_code IS NOT NULL;",
+        sql=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         con=engine,
     ).sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
