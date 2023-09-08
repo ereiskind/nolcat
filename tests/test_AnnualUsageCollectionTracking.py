@@ -68,9 +68,8 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
                 statisticsSources.statistics_source_retrieval_code,
                 statisticsSources.vendor_ID
             FROM annualUsageCollectionTracking
-            JOIN
-                statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-                AND fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
             WHERE
                 annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source}
                 AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};
