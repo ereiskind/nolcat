@@ -13,6 +13,7 @@ from pandas.testing import assert_frame_equal
 from dateutil.relativedelta import relativedelta  # dateutil is a pandas dependency, so it doesn't need to be in requirements.txt
 
 # `conftest.py` fixtures are imported automatically
+from conftest import match_direct_SUSHI_harvest_result
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
@@ -298,55 +299,35 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
-def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
+def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation.
     
-    The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes.
+    The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response)
+    method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response[0])
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
-    records_loaded_by_method = pd.read_sql(
-        sql=f"""
-            SELECT *
-            FROM (
-                SELECT * FROM COUNTERData
-                ORDER BY COUNTER_data_ID DESC
-                LIMIT {method_response_match_object.group(1)}
-            ) subquery
-            ORDER BY COUNTER_data_ID ASC;
-        """,
-        con=engine,
-    )
-    records_loaded_by_method = records_loaded_by_method.drop(columns='COUNTER_data_ID')
-    records_loaded_by_method = records_loaded_by_method[[field for field in records_loaded_by_method.columns if records_loaded_by_method[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values, which aren't in the dataframe created by `StatisticsSources._harvest_R5_SUSHI()`
-    records_loaded_by_method = records_loaded_by_method.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in records_loaded_by_method.columns.to_list()})
-    if 'publication_date' in records_loaded_by_method.columns.to_list():
-        records_loaded_by_method["publication_date"] = pd.to_datetime(
-            records_loaded_by_method["publication_date"],
-            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
-        )
-    if 'parent_publication_date' in records_loaded_by_method.columns.to_list():
-        records_loaded_by_method["parent_publication_date"] = pd.to_datetime(
-            records_loaded_by_method["parent_publication_date"],
-            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
-            infer_datetime_format=True,
-        )
-    records_loaded_by_method["report_creation_date"] = pd.to_datetime(records_loaded_by_method["report_creation_date"])
-    records_loaded_by_method["usage_date"] = pd.to_datetime(records_loaded_by_method["usage_date"])
-
-    try:  #ToDo: Test is failing because rows are out of order--below shows metric and number pairs are the same but on different rows
+    records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
+    try:
         log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        #TEST: Test is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
         r1 = records_loaded_by_method.reset_index()
         r2 = harvest_R5_SUSHI_result.reset_index()
         log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
-        #ToDo: Would a sort help?
+        s2 = harvest_R5_SUSHI_result.sort_values(
+            by=records_loaded_by_method.columns.to_list(),
+            ignore_index=True,
+        )
+        s1 = records_loaded_by_method.sort_values(
+            by=records_loaded_by_method.columns.to_list(),
+            ignore_index=True,
+        )
+        log.info(f"Differences after sorting by all fields:\n{s1.compare(s2[s1.columns.to_list()])}")
     except:
         log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
         log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
