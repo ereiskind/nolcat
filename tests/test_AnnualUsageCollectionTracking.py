@@ -3,8 +3,10 @@
 
 import pytest
 import logging
+from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
+from conftest import match_direct_SUSHI_harvest_result
 from nolcat.app import *
 from nolcat.models import *
 
@@ -91,18 +93,48 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     yield StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
 
 
-def test_collect_annual_usage_statistics(harvest_R5_SUSHI_result, caplog):
-    """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance."""
+def test_collect_annual_usage_statistics(engine, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
+    """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
+    
+    The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
+    """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
-    #ToDo: AUCT_fixture -> PK used to get SUSHI start date, SUSHI end date, StatisticsSources object
-    #ToDo: `StatisticsSources._harvest_R5_SUSHI()` called with stats source and dates above
-    #ToDo: Index adjusted for upload to `COUNTERData` relation, then loaded into the relation
-    #ToDo: Success returns f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."
-    pass
+    method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+    method_response_match_object = re.match(r'Successfully loaded (\d*) records for .* for FY \d{4} into the database.', string=method_response[0])
+    assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
+
+    database_update_check = pd.read_sql(
+        sql=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
+        con=engine,
+    )
+    database_update_check = database_update_check.iloc[0][0]
+
+    records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
+    try:
+        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        #TEST: Test this is based on is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
+        r1 = records_loaded_by_method.reset_index()
+        r2 = harvest_R5_SUSHI_result.reset_index()
+        log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
+        s2 = harvest_R5_SUSHI_result.sort_values(
+            by=records_loaded_by_method.columns.to_list(),
+            ignore_index=True,
+        )
+        s1 = records_loaded_by_method.sort_values(
+            by=records_loaded_by_method.columns.to_list(),
+            ignore_index=True,
+        )
+        log.info(f"Differences after sorting by all fields:\n{s1.compare(s2[s1.columns.to_list()])}")
+    except:
+        log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
+        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+    
+    assert database_update_check == "Collection complete"
+    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
 #Section: Upload and Download Nonstandard Usage File

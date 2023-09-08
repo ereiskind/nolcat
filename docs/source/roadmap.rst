@@ -60,7 +60,6 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
 * Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 
 Basic Enhancement Iterations
