@@ -128,6 +128,24 @@ def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
 
+@pytest.fixture
+def list_of_reports(SUSHI_credentials_fixture):
+    """A fixture feeding the entered SUSHI data into the `COUNTER_reports_offered_by_statistics_source` fixture.
+
+    Args:
+        SUSHI_credentials_fixture (tuple): the URL and parameters dictionary needed to make a SUSHI call
+
+    Yields:
+        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+    """
+    URL, SUSHI_credentials = SUSHI_credentials_fixture
+    yield COUNTER_reports_offered_by_statistics_source(
+        "StatisticsSources.statistics_source_name",
+        URL,
+        SUSHI_credentials
+    )
+
+
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
 def test_PR_call_validity(SUSHI_credentials_fixture, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""

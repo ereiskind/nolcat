@@ -109,29 +109,20 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
 def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
-    """A fixture listing all the customizable reports offered by the given statistics source.
+    """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` fixture.
 
     Args:
         StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
     
     Yields:
-        list: the abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
     SUSHI_data = StatisticsSources_fixture.fetch_SUSHI_information()
-    response = SUSHICallAndResponse(  #TEST: AttributeError: 'NoneType' object has no attribute 'get'
+    yield COUNTER_reports_offered_by_statistics_source(
         StatisticsSources_fixture.statistics_source_name,
         SUSHI_data['URL'],
-        "reports",
         {k:v for (k, v) in SUSHI_data.items() if k != "URL"},
-    ).make_SUSHI_call()
-    reports_offered = []
-    for report in list(response.values())[0]:
-        if isinstance(report, str):
-            pytest.skip("The SUSHI call for the list of reports returned an error.")
-        if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
-                reports_offered.append(report["Report_ID"])
-    yield reports_offered
+    )
 
 
 #Section: Test SUSHI Harvesting Methods in Reverse Call Order
