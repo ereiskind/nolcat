@@ -408,7 +408,7 @@ class SUSHICallAndResponse:
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents)
-            return (SUSHI_exception[0], [SUSHI_exception[1]])
+            return (f"`{report_type}` {SUSHI_exception[0]}", [SUSHI_exception[1]])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
                 log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
@@ -416,7 +416,7 @@ class SUSHICallAndResponse:
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
                 SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents[0])
-                return (SUSHI_exception[0], [SUSHI_exception[1]])
+                return (f"`{report_type}` {SUSHI_exception[0]}", [SUSHI_exception[1]])
             else:
                 flash_messages_list = []
                 errors_list = {}  # A set automatically dedupes as items are added
@@ -424,7 +424,7 @@ class SUSHICallAndResponse:
                     SUSHI_exception = self._evaluate_individual_SUSHI_exception(error)
                     flash_messages_list.append(SUSHI_exception[1])
                     if SUSHI_exception[0]:
-                        errors_list.add(SUSHI_exception[0])
+                        errors_list.add(f"`{report_type}` {SUSHI_exception[0]}")
                 if len(errors_list) == 1:
                     return (errors_list.pop(), flash_messages_list)
                 elif len(errors_list) > 1:
@@ -502,7 +502,7 @@ class SUSHICallAndResponse:
             log.error(message)
             return (None, message)
         else:
-            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            message = f"request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
             if error_contents.get('Data'):
                 message = message[:-1] + f" due to {error_contents['Data']}."
             message = message + " Try the call again later, after checking credentials if needed."
