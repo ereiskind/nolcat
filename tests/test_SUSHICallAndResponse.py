@@ -202,7 +202,13 @@ def test_call_with_invalid_dates(SUSHI_credentials_fixture, caplog):
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    SUSHI_credentials['end_date'] = SUSHI_credentials['end_date'] - timedelta(days=1)  # The day before the `begin_date`
+    SUSHI_credentials['end_date'] = SUSHI_credentials['begin_date'] - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
+    SUSHI_credentials['end_date'] = date(
+        SUSHI_credentials['end_date'].year,
+        SUSHI_credentials['end_date'].month,
+        calendar.monthrange(SUSHI_credentials['end_date'].year, SUSHI_credentials['end_date'].month)[1],
+    )
+    log.debug(f"The begin date is {SUSHI_credentials['begin_date'].strftime('%Y-%m-%d')} and the end date is {SUSHI_credentials['end_date'].strftime('%Y-%m-%d')}.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     log.info(f"`response` in `test_call_with_invalid_dates()` is:\n{response}")
     pass
