@@ -147,17 +147,11 @@ def list_of_reports(SUSHI_credentials_fixture):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_PR_call_validity(SUSHI_credentials_fixture, caplog):
+def test_PR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/pr`` endpoint return a valid SUSHI platform report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    has_PR = False
-    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
-    for report in list_of_reports:
-        if report["Report_ID"] == "PR" or report["Report_ID"] == "pr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
-            has_PR = True
-    if has_PR == False:
+    if "PR" not in list_of_reports:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
@@ -165,17 +159,11 @@ def test_PR_call_validity(SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_DR_call_validity(SUSHI_credentials_fixture, caplog):
+def test_DR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/dr`` endpoint return a valid SUSHI database report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    has_DR = False
-    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
-    for report in list_of_reports:
-        if report["Report_ID"] == "DR" or report["Report_ID"] == "dr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
-            has_DR = True
-    if has_DR == False:
+    if "DR" not in list_of_reports:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
@@ -183,17 +171,11 @@ def test_DR_call_validity(SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_TR_call_validity(SUSHI_credentials_fixture, caplog):
+def test_TR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/tr`` endpoint return a valid SUSHI title report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    has_TR = False
-    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
-    for report in list_of_reports:
-        if report["Report_ID"] == "TR" or report["Report_ID"] == "tr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
-            has_TR = True
-    if has_TR == False:
+    if "TR" not in list_of_reports:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
@@ -201,17 +183,11 @@ def test_TR_call_validity(SUSHI_credentials_fixture, caplog):
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
-def test_IR_call_validity(SUSHI_credentials_fixture, caplog):
+def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     """Tests that the API call via ``make_SUSHI_call()`` to the ``reports/ir`` endpoint return a valid SUSHI item report."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
-    check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    has_IR = False
-    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
-    for report in list_of_reports:
-        if report["Report_ID"] == "IR" or report["Report_ID"] == "ir":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
-            has_IR = True
-    if has_IR == False:
+    if "IR" not in list_of_reports:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
