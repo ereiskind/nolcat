@@ -21,6 +21,7 @@ from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from nolcat.models import *
+from nolcat.SUSHI_call_and_response import *
 from data import relations
 
 log = logging.getLogger(__name__)
