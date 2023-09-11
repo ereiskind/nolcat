@@ -70,13 +70,15 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
-    fixture_retrieval_code = choice(retrieval_codes)
-    yield StatisticsSources(
+    fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+    yield_object = StatisticsSources(
         statistics_source_ID = 0,
         statistics_source_name = f"SUSHI code {fixture_retrieval_code}",
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
+    log.debug(f"The StatisticsSources object being used for testing is {yield_object}.")
+    yield yield_object
 
 
 #Section: Tests and Fixture for SUSHI Credentials

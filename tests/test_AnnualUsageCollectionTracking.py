@@ -83,11 +83,11 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
-    StatisticsSources_object = StatisticsSources(
-        statistics_source_ID = record.at[0,'statistics_source_ID'],
-        statistics_source_name = record.at[0,'statistics_source_name'],
-        statistics_source_retrieval_code = record.at[0,'statistics_source_retrieval_code'],
-        vendor_ID = record.at[0,'vendor_ID'],
+    StatisticsSources_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+        statistics_source_ID = int(record.at[0,'statistics_source_ID']),
+        statistics_source_name = str(record.at[0,'statistics_source_name']),
+        statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+        vendor_ID = int(record.at[0,'vendor_ID']),
     )
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date} (type {type(start_date)}) and end date {end_date} (type {type(end_date)}).")
     yield StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
