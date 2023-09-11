@@ -129,11 +129,12 @@ def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
 
 
 @pytest.fixture
-def list_of_reports(SUSHI_credentials_fixture):
+def list_of_reports(SUSHI_credentials_fixture, COUNTER_reports_offered_by_statistics_source):
     """A fixture feeding the entered SUSHI data into the `COUNTER_reports_offered_by_statistics_source` fixture.
 
     Args:
         SUSHI_credentials_fixture (tuple): the URL and parameters dictionary needed to make a SUSHI call
+        COUNTER_reports_offered_by_statistics_source (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
 
     Yields:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
