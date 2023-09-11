@@ -115,7 +115,8 @@ class SUSHICallAndResponse:
                     if SUSHI_exceptions[0]:
                         message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
                         log.warning(message)
-                        return SUSHI_exceptions
+                        messages_to_flash.append(message)
+                        return (message, messages_to_flash)
                     else:
                         log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
                         for statement in SUSHI_exceptions[1]:
@@ -140,7 +141,8 @@ class SUSHICallAndResponse:
                 if SUSHI_exceptions[0]:
                     message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
                     log.warning(message)
-                    return SUSHI_exceptions
+                    messages_to_flash.append(message)
+                    return (message, messages_to_flash)
                 else:
                     log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
                     for statement in SUSHI_exceptions[1]:
@@ -164,6 +166,7 @@ class SUSHICallAndResponse:
                     if SUSHI_exceptions[0]:
                         message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
                         log.warning(message)
+                        messages_to_flash.append(message)
                         return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
