@@ -224,5 +224,8 @@ def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    log.info(f"`response` in `test_call_with_invalid_credentials()` is:\n{response}")
-    pass
+    log.debug(f"`test_call_with_invalid_credentials()` returns\n{response}")
+    assert isinstance(response, tuple)
+    assert response[0].startswith(f"Call to StatisticsSources.statistics_source_name raised error 400 Client Error: Bad Request for url: {URL}reports/pr?customer_id=deliberatelyIncorrect")
+    assert isinstance(response[1], list)
+    assert response[0] in response[1]
