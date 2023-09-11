@@ -436,35 +436,6 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
 
 
-@pytest.fixture  # This is only called once per module by the fixture function that supplies the arguments
-def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
-    """A fixture listing all the customizable reports offered by the given statistics source.
-
-    Args:
-        statistics_source_name (str): the name of the statistics source
-        URL (str): the base URL for the SUSHI API call
-        credentials (dict): the SUSHI credentials for the API call
-    
-    Yields:
-        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
-    """
-    response = SUSHICallAndResponse(
-        statistics_source_name,
-        URL,
-        "reports",
-        credentials,
-    ).make_SUSHI_call()
-    response_as_list = [report for report in list(response[0].values())[0]]
-    log.debug(f"The response to the reports request as a list is:\n{response_as_list}")
-    list_of_reports = []
-    for report in response_as_list:
-        if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
-                list_of_reports.append(report["Report_ID"].upper())
-    log.debug(f"The stats source at {URL} offers the following reports: {list_of_reports}.")
-    yield list_of_reports
-
-
 #Section: Test Helper Function Not Possible in `nolcat.app`
 def match_direct_SUSHI_harvest_result(number_of_records):
     """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
@@ -507,6 +478,34 @@ def match_direct_SUSHI_harvest_result(number_of_records):
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
     return df
+
+
+def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
+    """A test helper function generating a list of all the customizable reports offered by the given statistics source.
+
+    Args:
+        statistics_source_name (str): the name of the statistics source
+        URL (str): the base URL for the SUSHI API call
+        credentials (dict): the SUSHI credentials for the API call
+    
+    Returns:
+        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+    """
+    response = SUSHICallAndResponse(
+        statistics_source_name,
+        URL,
+        "reports",
+        credentials,
+    ).make_SUSHI_call()
+    response_as_list = [report for report in list(response[0].values())[0]]
+    log.debug(f"The response to the reports request as a list is:\n{response_as_list}")
+    list_of_reports = []
+    for report in response_as_list:
+        if "Report_ID" in list(report.keys()):
+            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+                list_of_reports.append(report["Report_ID"].upper())
+    log.debug(f"The stats source at {URL} offers the following reports: {list_of_reports}.")
+    return list_of_reports
 
 
 #Section: Replacement Classes

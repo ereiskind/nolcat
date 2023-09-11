@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 
 # `conftest.py` fixtures are imported automatically
 from conftest import match_direct_SUSHI_harvest_result
+from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
@@ -108,12 +109,11 @@ def SUSHI_credentials_fixture(StatisticsSources_fixture):
 
 #Section: Fixture Listing Available Reports
 @pytest.fixture(scope='module')
-def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture, COUNTER_reports_offered_by_statistics_source):
-    """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` fixture.
+def reports_offered_by_StatisticsSource_fixture(StatisticsSources_fixture):
+    """A fixture feeding a StatisticsSources object into the `COUNTER_reports_offered_by_statistics_source` function.
 
     Args:
         StatisticsSources_fixture (StatisticsSources): a StatisticsSources object connected to valid SUSHI data
-        COUNTER_reports_offered_by_statistics_source (list): the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     
     Yields:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
