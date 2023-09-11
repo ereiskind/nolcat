@@ -404,7 +404,7 @@ class SUSHICallAndResponse:
                 log.info(f"This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
-            SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents['Message'])
+            SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents)
             return (SUSHI_exception[0], [SUSHI_exception[1]])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
@@ -412,7 +412,7 @@ class SUSHICallAndResponse:
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
-                SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents[0]['Message'])
+                SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents[0])
                 return (SUSHI_exception[0], [SUSHI_exception[1]])
             else:
                 flash_messages_list = []
