@@ -146,21 +146,25 @@ class SUSHICallAndResponse:
                     for statement in SUSHI_exceptions[1]:
                         messages_to_flash.append(statement)
 
-        if API_response.get('Message') or API_response[0].get('Message'):
+        if isinstance(API_response, list) or API_response.get('Message'):  # This structure is designed to enable reuse while not exposing any non-list values to the index operator
             if isinstance(API_response, list):
-                for_debug = "list of dictionaries"
+                if API_response[0].get('Message'):
+                    for_debug = "list of dictionaries"
+                else:
+                    for_debug = False
             else:
                 for_debug = "dictionary"
-            log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
-            SUSHI_exceptions = self._handle_SUSHI_exceptions(API_response, self.call_path)
-            if SUSHI_exceptions is not None:
-                log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
-                for statement in SUSHI_exceptions[1]:
-                    messages_to_flash.append(statement)
-                if SUSHI_exceptions[0]:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
-                    log.warning(message)
-                    return (message, messages_to_flash)
+            if for_debug:
+                log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
+                SUSHI_exceptions = self._handle_SUSHI_exceptions(API_response, self.call_path)
+                if SUSHI_exceptions is not None:
+                    log.debug(f"The following statements are being added to `messages_to_flash`:\n{SUSHI_exceptions[1]}")
+                    for statement in SUSHI_exceptions[1]:
+                        messages_to_flash.append(statement)
+                    if SUSHI_exceptions[0]:
+                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of this SUSHI data has stopped."
+                        log.warning(message)
+                        return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
         # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
