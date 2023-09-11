@@ -412,7 +412,7 @@ class SUSHICallAndResponse:
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
-                SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents['Message'])
+                SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents[0]['Message'])
                 return (SUSHI_exception[0], [SUSHI_exception[1]])
             else:
                 flash_messages_list = []
