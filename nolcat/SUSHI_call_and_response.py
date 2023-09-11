@@ -364,7 +364,7 @@ class SUSHICallAndResponse:
         log.error(f"Because of the previously given error, the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")
         
         temp_file_path = Path(__file__).parent / 'temp.txt'
-        with open(temp_file_path, 'xb', errors='backslashreplace') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
+        with open(temp_file_path, 'xb') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
             file.write(Response_text)
         log.debug(f"Temp file successfully created.")
         
