@@ -604,6 +604,10 @@ class StatisticsSources(db.Model):
         """
         #Section: Get API Call URL and Parameters
         log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        if usage_start_date < usage_end_date:
+            message = f"The given end date of {usage_end_date.strftime('%Y-%m')} is before the given start date of {usage_start_date.strftime('%Y-%m')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+            log.error(message)
+            return (message, [message])
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
