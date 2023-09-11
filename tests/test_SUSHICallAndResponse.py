@@ -98,7 +98,7 @@ def test_status_call_validity(SUSHI_credentials_fixture, caplog):
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
         if re.fullmatch(r'[sS]ervice.?[aA]ctive', key):  # No match returns `None`, a Boolean `False`, while a match returns a match object, a Boolean `True`
-            service_active_value = response[key]  # The value that goes with `key` in `response`
+            service_active_value = response[0][key]  # The value that goes with `key` in `response[0]`
     assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
 
 
