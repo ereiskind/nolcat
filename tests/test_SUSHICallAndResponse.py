@@ -84,7 +84,8 @@ def test_status_call(SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
-    assert isinstance(response, dict) or isinstance(response[0], dict)  # EBSCO's is a dict inside a list as of 2022-12-14
+    assert isinstance(response, tuple)
+    assert isinstance(response[0], dict) or (isinstance(response[0][0], dict) and len(response[0]) == 1)  # EBSCO's is a dict inside a list as of 2022-12-14
 
 
 @pytest.mark.dependency(depends=['test_status_call'])  # If the status call test fails, this test is skipped
@@ -95,7 +96,7 @@ def test_status_call_validity(SUSHI_credentials_fixture, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
-    for key in list(response.keys()):
+    for key in list(response[0].keys()):
         if re.fullmatch(r'[sS]ervice.?[aA]ctive', key):  # No match returns `None`, a Boolean `False`, while a match returns a match object, a Boolean `True`
             service_active_value = response[key]  # The value that goes with `key` in `response`
     assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
@@ -107,7 +108,8 @@ def test_reports_call(SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    assert isinstance(response, dict)
+    assert isinstance(response, tuple)
+    assert isinstance(response[0], dict)
 
 
 @pytest.mark.dependency(depends=['test_reports_call'])  # If the reports call test fails, this test is skipped
@@ -116,7 +118,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
-    list_of_reports = [report for report in list(response.values())[0]]
+    list_of_reports = [report for report in list(response[0].values())[0]]
     number_of_reports_available = len(list_of_reports)
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
@@ -133,14 +135,15 @@ def test_PR_call_validity(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_PR = False
-    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "PR" or report["Report_ID"] == "pr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_PR = True
     if has_PR == False:
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "PR" or response['Report_Header']['Report_ID'] == "pr"
+    assert isinstance(response, tuple)
+    assert response[0]['Report_Header']['Report_ID'] == "PR" or response[0]['Report_Header']['Report_ID'] == "pr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -150,14 +153,15 @@ def test_DR_call_validity(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_DR = False
-    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "DR" or report["Report_ID"] == "dr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_DR = True
     if has_DR == False:
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "DR" or response['Report_Header']['Report_ID'] == "dr"
+    assert isinstance(response, tuple)
+    assert response[0]['Report_Header']['Report_ID'] == "DR" or response[0]['Report_Header']['Report_ID'] == "dr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -167,14 +171,15 @@ def test_TR_call_validity(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_TR = False
-    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "TR" or report["Report_ID"] == "tr":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_TR = True
     if has_TR == False:
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "TR" or response['Report_Header']['Report_ID'] == "tr"
+    assert isinstance(response, tuple)
+    assert response[0]['Report_Header']['Report_ID'] == "TR" or response[0]['Report_Header']['Report_ID'] == "tr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -184,14 +189,15 @@ def test_IR_call_validity(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     check_for_report = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     has_IR = False
-    list_of_reports = [report for report in list(check_for_report.values())[0]]
+    list_of_reports = [report for report in list(check_for_report[0].values())[0]]
     for report in list_of_reports:
         if report["Report_ID"] == "IR" or report["Report_ID"] == "ir":  # Know this key will be found because if it couldn't be, ``test_reports_call_validity`` wouldn't have passed
             has_IR = True
     if has_IR == False:
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
-    assert response['Report_Header']['Report_ID'] == "IR" or response['Report_Header']['Report_ID'] == "ir"
+    assert isinstance(response, tuple)
+    assert response[0]['Report_Header']['Report_ID'] == "IR" or response[0]['Report_Header']['Report_ID'] == "ir"
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
