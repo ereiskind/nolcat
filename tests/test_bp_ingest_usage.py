@@ -141,6 +141,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
+    log.info(POST_response.data)
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  #TEST: tests/test_bp_ingest_usage.py:146: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
