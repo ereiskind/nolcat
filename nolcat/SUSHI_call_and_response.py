@@ -138,6 +138,7 @@ class SUSHICallAndResponse:
             log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if SUSHI_exceptions is not None:
+                log.debug(f"`SUSHI_exceptions[0]` is {SUSHI_exceptions[0]}")
                 if SUSHI_exceptions[0]:
                     message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped."
                     log.warning(message)
