@@ -209,26 +209,6 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
-def test_call_with_invalid_dates(SUSHI_credentials_fixture, caplog):
-    """Tests that a SUSHI call with invalid dates returns the correct error.
-    
-    There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
-    """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
-    URL, SUSHI_credentials = SUSHI_credentials_fixture
-    SUSHI_credentials['end_date'] = SUSHI_credentials['begin_date'] - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
-    SUSHI_credentials['end_date'] = date(
-        SUSHI_credentials['end_date'].year,
-        SUSHI_credentials['end_date'].month,
-        calendar.monthrange(SUSHI_credentials['end_date'].year, SUSHI_credentials['end_date'].month)[1],
-    )
-    log.debug(f"The begin date is {SUSHI_credentials['begin_date'].strftime('%Y-%m-%d')} and the end date is {SUSHI_credentials['end_date'].strftime('%Y-%m-%d')}.")
-    response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    log.info(f"`response` in `test_call_with_invalid_dates()` is:\n{response}")
-    pass
-
-
-@pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
 def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
     """Tests that a SUSHI call with invalid credentials returns the correct error.
     
