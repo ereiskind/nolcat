@@ -408,6 +408,7 @@ class SUSHICallAndResponse:
                 return None
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents)
+            log.debug(f"`_evaluate_individual_SUSHI_exception` returned\n{SUSHI_exception}")
             return (f"`{report_type}` {SUSHI_exception[0]}", [SUSHI_exception[1]])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
@@ -416,6 +417,7 @@ class SUSHICallAndResponse:
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
                 SUSHI_exception = self._evaluate_individual_SUSHI_exception(error_contents[0])
+                log.debug(f"`_evaluate_individual_SUSHI_exception` returned\n{SUSHI_exception}")
                 return (f"`{report_type}` {SUSHI_exception[0]}", [SUSHI_exception[1]])
             else:
                 flash_messages_list = []
@@ -426,10 +428,14 @@ class SUSHICallAndResponse:
                     if SUSHI_exception[0]:
                         errors_list.add(f"`{report_type}` {SUSHI_exception[0]}")
                 if len(errors_list) == 1:
-                    return (errors_list.pop(), flash_messages_list)
+                    return_value = (errors_list.pop(), flash_messages_list)
+                    log.debug(f"`_evaluate_individual_SUSHI_exception` returned\n{return_value}")
+                    return return_value
                 elif len(errors_list) > 1:
                     joined_list = '\n'.join(errors_list)  # Escape character sequence not allowed in expression part of f-string
-                    return (f"All of the following errors were returned:\n{joined_list}", flash_messages_list)
+                    return_value = (f"All of the following errors were returned:\n{joined_list}", flash_messages_list)
+                    log.debug(f"`_evaluate_individual_SUSHI_exception` returned\n{return_value}")
+                    return return_value
                 else:
                     return (None, flash_messages_list)
         else:
