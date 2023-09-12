@@ -603,9 +603,9 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
-        log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date < usage_end_date:
-            message = f"The given end date of {usage_end_date.strftime('%Y-%m')} is before the given start date of {usage_start_date.strftime('%Y-%m')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+            message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             log.error(message)
             return (message, [message])
         SUSHI_info = self.fetch_SUSHI_information()
@@ -776,7 +776,7 @@ class StatisticsSources(db.Model):
             dataframe: the API call response data in a dataframe
             str: an error message indicating the harvest failed
         """
-        log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
@@ -859,7 +859,7 @@ class StatisticsSources(db.Model):
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
         """
-        log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
         log.debug(f"The months in the date range are {months_in_date_range}")
         months_to_harvest = []
@@ -896,7 +896,7 @@ class StatisticsSources(db.Model):
         Returns:
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
-        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
         if isinstance(df, str) or isinstance(df, Exception):
             message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {str(df)}"
