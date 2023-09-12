@@ -478,19 +478,19 @@ class SUSHICallAndResponse:
                 error_code = str(error_contents['Code'])
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
             else:
-                message = f"`error_contents['Message']` is {error_contents.get('Message')} and error_contents['Code']` is {error_contents.get('Code')}, neither of which matched a known error."
+                message = f"had `error_contents['Message']` {error_contents.get('Message')} and error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
                 log.error(message)
                 return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         if error_code == '3030':
-            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            message = f"request raised error {error_code}: {error_contents['Message']}."
             if error_contents.get('Data'):
                 message = message[:-1] + f" due to {error_contents['Data']}."
             log.error(message)
             return (None, message)
         elif error_code == '3032' or error_code == '3040':
-            message = f"Request raised error {error_code}: {error_contents['Message']}."
+            message = f"request raised error {error_code}: {error_contents['Message']}."
             if error_contents.get('Data'):
                 message = message[:-1] + f" due to {error_contents['Data']}."
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
