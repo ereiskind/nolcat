@@ -114,7 +114,7 @@ class SUSHICallAndResponse:
                 log.debug(f"`SUSHI_exceptions[0]` is {SUSHI_exceptions[0]}")
                 if SUSHI_exceptions is not None:
                     if SUSHI_exceptions[0]:
-                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped."
+                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
                         log.warning(message)
                         messages_to_flash.append(message)
                         return (message, messages_to_flash)
@@ -140,7 +140,7 @@ class SUSHICallAndResponse:
             SUSHI_exceptions = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if SUSHI_exceptions is not None:
                 if SUSHI_exceptions[0]:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped."
+                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
                     log.warning(message)
                     messages_to_flash.append(message)
                     return (message, messages_to_flash)
@@ -165,7 +165,7 @@ class SUSHICallAndResponse:
                     for statement in SUSHI_exceptions[1]:
                         messages_to_flash.append(statement)
                     if SUSHI_exceptions[0]:
-                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped."
+                        message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions[0]}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
                         log.warning(message)
                         messages_to_flash.append(message)
                         return (message, messages_to_flash)
