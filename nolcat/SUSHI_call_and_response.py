@@ -410,7 +410,7 @@ class SUSHICallAndResponse:
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error_contents)
             flash_message = report_type + flash_message
-            if SUSHI_exception.startswith(" had `error_contents['Message']`"):
+            if isinstance(SUSHI_exception, str) and SUSHI_exception.startswith(" had `error_contents['Message']`"):
                 SUSHI_exception = report_type + SUSHI_exception
             log.debug(f"`_evaluate_individual_SUSHI_exception` returned the error {SUSHI_exception} and the flash message {flash_message}.")
             return (SUSHI_exception, [flash_message])
@@ -422,7 +422,7 @@ class SUSHICallAndResponse:
             if len(error_contents) == 1:
                 SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error_contents[0])
                 flash_message = report_type + flash_message
-                if SUSHI_exception.startswith(" had `error_contents['Message']`"):
+                if isinstance(SUSHI_exception, str) and SUSHI_exception.startswith(" had `error_contents['Message']`"):
                     SUSHI_exception = report_type + SUSHI_exception
                 log.debug(f"`_evaluate_individual_SUSHI_exception` returned the error {SUSHI_exception} and the flash message {flash_message}.")
                 return (SUSHI_exception, [flash_message])
@@ -434,7 +434,7 @@ class SUSHICallAndResponse:
                     flash_message = report_type + flash_message
                     flash_messages_list.append(flash_message)
                     if SUSHI_exception:
-                        if SUSHI_exception.startswith(" had `error_contents['Message']`"):
+                        if isinstance(SUSHI_exception, str) and SUSHI_exception.startswith(" had `error_contents['Message']`"):
                             errors_list.add(report_type + SUSHI_exception)
                         else:
                             errors_list.add(SUSHI_exception)
