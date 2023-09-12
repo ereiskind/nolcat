@@ -156,7 +156,11 @@ def test_PR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
         pytest.skip("PR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
-    assert response[0].get('Report_Header').get('Report_ID') == "PR" or response[0].get('Report_Header').get('Report_ID') == "pr"
+    if isinstance(response[0], str):
+        log.info("This is in the string data type block")
+        assert False
+    else:
+        assert response[0].get('Report_Header').get('Report_ID') == "PR" or response[0].get('Report_Header').get('Report_ID') == "pr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -168,7 +172,10 @@ def test_DR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
         pytest.skip("DR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
-    assert response[0].get('Report_Header').get('Report_ID') == "DR" or response[0].get('Report_Header').get('Report_ID') == "dr" or response[0].startswith("reports/dr request raised error 3030:")  # SUSHI error 3030 is common for DR--many platforms with no databases offer it, but without databases, there's never any data--so the raising of such an error rarely signals a problem and should be considered a passing test
+    if isinstance(response[0], str):
+        assert response[0].startswith("reports/dr request raised error 3030:")  # SUSHI error 3030 is common for DR--many platforms with no databases offer it, but without databases, there's never any data--so the raising of such an error rarely signals a problem and should be considered a passing test
+    else:
+        assert response[0].get('Report_Header').get('Report_ID') == "DR" or response[0].get('Report_Header').get('Report_ID') == "dr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -180,7 +187,10 @@ def test_TR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
         pytest.skip("TR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
-    assert response[0].get('Report_Header').get('Report_ID') == "TR" or response[0].get('Report_Header').get('Report_ID') == "tr"
+    if isinstance(response[0], str):
+        assert False
+    else:
+        assert response[0].get('Report_Header').get('Report_ID') == "TR" or response[0].get('Report_Header').get('Report_ID') == "tr"
 
 
 @pytest.mark.dependency(depends=['test_reports_call_validity'])  # If the reports call validity test fails, this test is skipped
@@ -192,7 +202,10 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
         pytest.skip("IR not offered by this vendor.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
-    assert response[0].get('Report_Header').get('Report_ID') == "IR" or response[0].get('Report_Header').get('Report_ID') == "ir"
+    if isinstance(response[0], str):
+        assert False
+    else:
+        assert response[0].get('Report_Header').get('Report_ID') == "IR" or response[0].get('Report_Header').get('Report_ID') == "ir"
 
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
