@@ -151,6 +151,8 @@ def harvest_SUSHI_statistics():
             vendor_ID = int(df['vendor_ID'][0]),
         )  # Without the `int` constructors, a numpy int type is used
 
+        begin_date = form.begin_date.data
+        end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
