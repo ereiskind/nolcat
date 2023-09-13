@@ -22,7 +22,7 @@ class SUSHICallAndResponse:
 
     This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call()` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call()` method, which has two major results:
     * Objects of the `SUSHICallAndResponse` type are never instantiated; a dictionary, the return value of `make_SUSHI_call()`, is returned instead.
-    * With multiple return statements, a single item dictionary with the key `ERROR` and a value with a message about the problem can be returned if there's a problem with the API call or the returned SUSHI value.
+    * With multiple return statements, a tuples where the first value is a string or Python error can be returned if there's a problem with the API call or the returned SUSHI value.
 
     Attributes:
         self.header_value (dict): a class attribute containing a value for the requests header that makes the URL request appear to come from a Chrome browser and not the requests module; some platforms return 403 errors with the standard requests header
@@ -116,9 +116,8 @@ class SUSHICallAndResponse:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
                 if flash_message_list and SUSHI_exceptions:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
+                    message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made." 
                     log.warning(message)
-                    messages_to_flash.append(message)
                     return (message, messages_to_flash)
 
         if API_response.get('Exception') or API_response.get('Exceptions') or API_response.get('Alert') or API_response.get('Alerts'):  #ALERT: Couldn't find a statistics source to use as a test case for any (prior code indicates the first case appears in response to `status` calls)
@@ -141,9 +140,8 @@ class SUSHICallAndResponse:
                 for statement in flash_message_list:
                     messages_to_flash.append(statement)
             if flash_message_list and SUSHI_exceptions:
-                message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
+                message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made." 
                 log.warning(message)
-                messages_to_flash.append(message)
                 return (message, messages_to_flash)
 
         if isinstance(API_response, list) or API_response.get('Message'):  # This structure is designed to enable reuse while not exposing any non-list values to the index operator
@@ -162,9 +160,8 @@ class SUSHICallAndResponse:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
                 if flash_message_list and SUSHI_exceptions:
-                    message = f"Call to {self.calling_to} returned the SUSHI error(s) {SUSHI_exceptions}. Processing of data from this SUSHI API call has stopped and no further API calls will be made."
+                    message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made." 
                     log.warning(message)
-                    messages_to_flash.append(message)
                     return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
@@ -421,7 +418,7 @@ class SUSHICallAndResponse:
             flash_message = report_type + flash_message
             if isinstance(SUSHI_exception, str):
                 SUSHI_exception = report_type + SUSHI_exception
-            log.debug(f"`_evaluate_individual_SUSHI_exception` returned the error {SUSHI_exception} and the flash message {flash_message}.")
+            log.debug(f"`_evaluate_individual_SUSHI_exception` raised the error {SUSHI_exception} and the flash message {flash_message}.")
             return (SUSHI_exception, [flash_message])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
@@ -433,7 +430,7 @@ class SUSHICallAndResponse:
                 flash_message = report_type + flash_message
                 if isinstance(SUSHI_exception, str):
                     SUSHI_exception = report_type + SUSHI_exception
-                log.debug(f"`_evaluate_individual_SUSHI_exception` returned the error {SUSHI_exception} and the flash message {flash_message}.")
+                log.debug(f"`_evaluate_individual_SUSHI_exception` raised the error {SUSHI_exception} and the flash message {flash_message}.")
                 return (SUSHI_exception, [flash_message])
             else:
                 flash_messages_list = []
@@ -449,14 +446,14 @@ class SUSHICallAndResponse:
                             errors_list.add(SUSHI_exception)
                 if len(errors_list) == 1:  # One error indicating API calls should stop
                     return_value = (errors_list.pop(), flash_messages_list)
-                    log.debug(f"`_evaluate_individual_SUSHI_exception` returned the error {return_value[0]} and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception` raised the error {return_value[0]} and the flash messages\n{flash_messages_list}")
                     return return_value
                 elif len(errors_list) > 1:  # Multiple errors indicating API calls should stop
                     joined_list = '\n'.join(errors_list)  # Escape character sequence not allowed in expression part of f-string
-                    log.debug(f"`_evaluate_individual_SUSHI_exception` returned the errors\n{joined_list}\nand the flash messages\n{flash_messages_list}")
-                    return (f"All of the following errors were returned:\n{joined_list}", flash_messages_list)
+                    log.debug(f"`_evaluate_individual_SUSHI_exception` raised the errors\n{joined_list}\nand the flash messages\n{flash_messages_list}")
+                    return (f"All of the following errors were raised:\n{joined_list}", flash_messages_list)
                 else:  # API calls should continue
-                    log.debug(f"`_evaluate_individual_SUSHI_exception` returned the no errors and the flash messages\n{flash_messages_list}")
+                    log.debug(f"`_evaluate_individual_SUSHI_exception` raised no errors and the flash messages\n{flash_messages_list}")
                     return (None, flash_messages_list)
         else:
             message = f"SUSHI error handling method for a {report_type} accepted {repr(type(error_contents))} data, which is an invalid type."
@@ -498,7 +495,7 @@ class SUSHICallAndResponse:
                 error_code = str(error_contents['Code'])
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
             else:
-                message = f" had `error_contents['Message']` {error_contents.get('Message')} and error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
+                message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
                 log.error(message)
                 return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
