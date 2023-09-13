@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2023-08-24 ##########
+########## Passing 2023-09-08 ##########
 
 import pytest
 import logging
@@ -12,6 +12,40 @@ from nolcat.app import *
 from nolcat.models import *
 
 log = logging.getLogger(__name__)
+
+
+@pytest.fixture(scope='module')
+def FiscalYears_object_and_record():
+    """Creates a FiscalYears object and an empty record for the fiscalYears relation.
+
+    Yields:
+        tuple: a FiscalYears object; a single-record dataframe for the fiscalYears relation
+    """
+    primary_key_value = 6
+    fiscal_year_value = "2023"
+    start_date_value = date.fromisoformat('2022-07-01')
+    end_date_value = date.fromisoformat('2023-06-30')
+
+    FY_instance = FiscalYears(
+        fiscal_year_ID = primary_key_value,
+        fiscal_year = fiscal_year_value,
+        start_date = start_date_value,
+        end_date = end_date_value,
+        ACRL_60b = None,
+        ACRL_63 = None,
+        ARL_18 = None,
+        ARL_19 = None,
+        ARL_20 = None,
+        notes_on_statisticsSources_used = None,
+        notes_on_corrections_after_submission = None,
+    )
+    FY_df = pd.DataFrame(
+        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
+        index=[primary_key_value],
+        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+    )
+    FY_df.index.name = "fiscal_year_ID"
+    yield (FY_instance, FY_df)
 
 
 def test_calculate_ACRL_60b():
@@ -44,36 +78,12 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client):
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record):
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
     
-    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record needs to be added to the `fiscalYears` relation and used for the method.
+    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record is added to the `fiscalYears` relation and used for the method.
     """
-    #Section: Create `FiscalYears` Object and `fiscalYears` Record
-    primary_key_value = 6
-    fiscal_year_value = "2023"
-    start_date_value = date.fromisoformat('2022-07-01')
-    end_date_value = date.fromisoformat('2023-06-30')
-
-    FY_instance = FiscalYears(
-        fiscal_year_ID = primary_key_value,
-        fiscal_year = fiscal_year_value,
-        start_date = start_date_value,
-        end_date = end_date_value,
-        ACRL_60b = None,
-        ACRL_63 = None,
-        ARL_18 = None,
-        ARL_19 = None,
-        ARL_20 = None,
-        notes_on_statisticsSources_used = None,
-        notes_on_corrections_after_submission = None,
-    )
-    FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
-        index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
-    )
-    FY_df.index.name = "fiscal_year_ID"
+    FY_instance, FY_df = FiscalYears_object_and_record
 
     #Section: Update Relation and Run Method
     FY_df.to_sql(
@@ -218,9 +228,15 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client):
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
-def test_collect_fiscal_year_usage_statistics():
-    """Create a test calling the StatisticsSources._harvest_R5_SUSHI method with the FiscalYears.start_date and FiscalYears.end_date as the arguments."""
-    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
-    #ToDo: With each year's results changing, and with each API call having the date and time of the call in it, how can matching be done?
-    #ToDo: Method being tested returns f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
+def test_collect_fiscal_year_usage_statistics(caplog):
+    """Create a test calling the `StatisticsSources._harvest_R5_SUSHI()` method with the `FiscalYears.start_date` and `FiscalYears.end_date` as the arguments. """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+
+    #This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. This test needs a FiscalYears object for a record in the test data that will return records with a small but limited number of SUSHI calls that can easily be made and returned so the result of the method can be verified.
+    #ToDo: Calling the method on `FY_instance` when it's instantiated via `FY_instance, FY_df = FiscalYears_object_and_record` will return no data
+    #ToDo: Will three results of `StatisticsSources._harvest_R5_SUSHI()` concatenated be the same as a result like `match_direct_SUSHI_harvest_result()`?
+    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple, the first value of which will be f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database." if the SUSHI pull and database load is a success
     pass

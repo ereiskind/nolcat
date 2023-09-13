@@ -307,15 +307,18 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #ToDo: dfs = []
+        #ToDo: all_flash_statements = []
         #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
             #ToDo: statistics_source = Get the matching StatisticsSources object
-            #ToDo: df = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #ToDo: if isinstance(df, str):
-                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {df}")
+            #ToDo: df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            #ToDo: for statement in flash_statements:
+                    #ToDo: all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
+            #ToDo: if isinstance(df, str) or isinstance(df, Exception):
+                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {str(df)}")
                 #ToDo: continue
             #ToDo: else:
                 #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")
@@ -333,11 +336,11 @@ class FiscalYears(db.Model):
             #ToDo: )
             #ToDo: message = f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."
             #ToDo: log.info(message)
-            #ToDo: return message
-        #ToDo: except Exception as e:
+            #ToDo: return (message, all_flash_statements)
+        #ToDo: except Exception as error:
         #ToDo: message = f"The load for FY {self.fiscal_year} had the error {error}."
             #ToDo: log.error(message)
-            #ToDo: return message
+            #ToDo: return (message, all_flash_statements)
         pass
 
 
@@ -600,7 +603,11 @@ class StatisticsSources(db.Model):
             str: an error message indicating the harvest failed
         """
         #Section: Get API Call URL and Parameters
-        log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
+        if usage_start_date > usage_end_date:
+            message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+            log.error(message)
+            return (message, [message])
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
@@ -768,7 +775,7 @@ class StatisticsSources(db.Model):
             dataframe: the API call response data in a dataframe
             str: an error message indicating the harvest failed
         """
-        log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
@@ -787,7 +794,7 @@ class StatisticsSources(db.Model):
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path(__file__) / 'temp.json'
+                    temp_file_path = Path(__file__).parent / 'temp.json'
                     with open(temp_file_path, 'xb', encoding='utf-8', errors='backslashreplace') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
                     log_message = upload_file_to_S3_bucket(
@@ -821,7 +828,7 @@ class StatisticsSources(db.Model):
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                temp_file_path = Path(__file__) / 'temp.json'
+                temp_file_path = Path(__file__).parent / 'temp.json'
                 with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
                 log_message = upload_file_to_S3_bucket(
@@ -851,7 +858,7 @@ class StatisticsSources(db.Model):
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
         """
-        log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m')} to {end_date.strftime('%Y-%m')}.")
+        log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
         log.debug(f"The months in the date range are {months_in_date_range}")
         months_to_harvest = []
@@ -886,14 +893,14 @@ class StatisticsSources(db.Model):
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
-        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m')} to {usage_end_date.strftime('%Y-%m')}.")
-        df = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
-        if isinstance(df, str):
-            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {df}"
+        log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
+        df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
+        if isinstance(df, str) or isinstance(df, Exception):
+            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {str(df)}"
             log.warning(message)
-            return message
+            return (message, flash_statements)
         else:
             log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
@@ -907,11 +914,12 @@ class StatisticsSources(db.Model):
             )
             message = f"Successfully loaded {df.shape[0]} records into the database."
             log.info(message)
-            return message
+            return (message, flash_statements)
         except Exception as error:
             message = f"The load had the error {error}."
             log.error(message)
-            return message
+            return (message, flash_statements)
+
 
     @hybrid_method
     def add_note(self):
@@ -1206,7 +1214,7 @@ class AnnualUsageCollectionTracking(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            str: the logging statement to indicate if calling and loading the data succeeded or failed
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.")
         #Section: Get Data from Relations Corresponding to Composite Key
@@ -1229,17 +1237,17 @@ class AnnualUsageCollectionTracking(db.Model):
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         log.info(f"The `StatisticsSources` object is {statistics_source}.")
 
         #Section: Collect and Load SUSHI Data
-        df = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        if isinstance(df, str):
-            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {df}"
+        df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
+        if isinstance(df, str) or isinstance(df, Exception):
+            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {str(df)}"
             log.warning(message)
-            return message
+            return (message, flash_statements)
         else:
             log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
         df.index += first_new_PK_value('COUNTERData')
@@ -1254,11 +1262,11 @@ class AnnualUsageCollectionTracking(db.Model):
             log.info(message)
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            return message
+            return (message, flash_statements)
         except Exception as error:
             message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."
             log.error(message)
-            return message
+            return (message, flash_statements)
 
 
     @hybrid_method

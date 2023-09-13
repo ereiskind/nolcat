@@ -153,17 +153,6 @@ def harvest_SUSHI_statistics():
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
-        if end_date < begin_date:
-            message = f"The entered date range is invalid: the end date ({end_date}) is before the begin date ({begin_date})."
-            log.warning(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.harvest_SUSHI_statistics'))
-        end_date = date(
-            end_date.year,
-            end_date.month,
-            calendar.monthrange(end_date.year, end_date.month)[1],
-        )
-
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
@@ -172,13 +161,13 @@ def harvest_SUSHI_statistics():
             log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
-            result_message = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
-            flash(result_message)
+            flash(flash_messages)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"The SUSHI request form submission failed due to the error {error}."
-            log.warning(message)
+            log.warning(message)  #TEST: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
@@ -255,14 +244,15 @@ def upload_non_COUNTER_reports():
                 flash(f"{logging_message} {message}")
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
 
-            update_query = pd.read_sql(  #ToDo: Can an UPDATE query be run like this?
+            update_query = pd.read_sql(
                 sql=f'''
                     UPDATE annualUsageCollectionTracking
                     SET usage_file_path = {file_name}
                     WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
                 ''',
-                con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+                con=db.engine,
             )
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
             message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
             log.debug(message)
             flash(message)

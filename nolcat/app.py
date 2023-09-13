@@ -300,7 +300,7 @@ def first_new_PK_value(relation):
             ORDER BY {PK_field} DESC
             LIMIT 1;
         """,
-        con=db.engine,  # In pytest tests started at the command line, calls to `db.engine` raise `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+        con=db.engine,
     )
     if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")

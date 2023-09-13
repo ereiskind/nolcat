@@ -1,5 +1,5 @@
 """This module contains the tests for setting up the Flask web app, which roughly correspond to the functions in `nolcat\\app.py`. Each blueprint's own `views.py` module has a corresponding test module."""
-########## Passing 2023-08-24 ##########
+########## Passing 2023-09-08 ##########
 
 import pytest
 import logging
@@ -266,3 +266,7 @@ def test_create_AUCT_SelectField_options():
         ),
     ]
     assert create_AUCT_SelectField_options(df) == result_list
+
+
+#ToDo: test_match_direct_SUSHI_harvest_result()
+# Function itself in `tests.conftest`

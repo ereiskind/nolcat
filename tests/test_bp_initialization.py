@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2023-08-24 ##########
+########## Passing 2023-09-08 ##########
 
 import pytest
 import logging
@@ -386,7 +386,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
@@ -449,7 +449,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
         '/initialization/initialization-page-2',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=CSV_files,
@@ -552,7 +552,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/initialization/initialization-page-3',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,

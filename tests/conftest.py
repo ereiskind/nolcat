@@ -9,6 +9,7 @@ from pathlib import Path
 from datetime import date
 import calendar
 from random import choice
+import re
 from sqlalchemy import create_engine
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -21,6 +22,7 @@ from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from nolcat.models import *
+from nolcat.SUSHI_call_and_response import *
 from data import relations
 
 log = logging.getLogger(__name__)
@@ -434,6 +436,98 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     for workbook in folder_path.iterdir():
         file_names.append(workbook)
     pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+
+
+@pytest.fixture
+def SUSHI_server_error_regex_object():
+    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because of a server-side issue.
+
+    Yields:
+        re.Pattern: the regex object matching SUSHI server error messages
+    """
+    yield re.compile(r'Call to .* returned the SUSHI error\(s\) (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) request raised error (1000|1010|1011|1020):')
+
+
+@pytest.fixture
+def no_SUSHI_data_regex_object():
+    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because no data is returned.
+
+    Returns:
+       re.Pattern: the regex object matching SUSHI server error messages
+    """
+    yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
+
+
+#Section: Test Helper Function Not Possible in `nolcat.app`
+def match_direct_SUSHI_harvest_result(number_of_records):
+    """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
+
+    Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
+
+    Args:
+        number_of_records (int): the number of records in the SUSHI pull
+    
+    Returns:
+        dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
+    """
+    df = pd.read_sql(
+        sql=f"""
+            SELECT *
+            FROM (
+                SELECT * FROM COUNTERData
+                ORDER BY COUNTER_data_ID DESC
+                LIMIT {number_of_records}
+            ) subquery
+            ORDER BY COUNTER_data_ID ASC;
+        """,
+        con=db.engine,
+    )
+    df = df.drop(columns='COUNTER_data_ID')
+    df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
+    df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
+    if 'publication_date' in df.columns.to_list():
+        df["publication_date"] = pd.to_datetime(
+            df["publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    if 'parent_publication_date' in df.columns.to_list():
+        df["parent_publication_date"] = pd.to_datetime(
+            df["parent_publication_date"],
+            errors='coerce',  # Changes the null values to the date dtype's null value `NaT`
+            infer_datetime_format=True,
+        )
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    return df
+
+
+def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
+    """A test helper function generating a list of all the customizable reports offered by the given statistics source.
+
+    Args:
+        statistics_source_name (str): the name of the statistics source
+        URL (str): the base URL for the SUSHI API call
+        credentials (dict): the SUSHI credentials for the API call
+    
+    Returns:
+        list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
+    """
+    response = SUSHICallAndResponse(
+        statistics_source_name,
+        URL,
+        "reports",
+        credentials,
+    ).make_SUSHI_call()
+    response_as_list = [report for report in list(response[0].values())[0]]
+    log.debug(f"The response to the reports request as a list is:\n{response_as_list}")
+    list_of_reports = []
+    for report in response_as_list:
+        if "Report_ID" in list(report.keys()):
+            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+                list_of_reports.append(report["Report_ID"].upper())
+    log.debug(f"The stats source at {URL} offers the following reports: {list_of_reports}.")
+    return list_of_reports
 
 
 #Section: Replacement Classes

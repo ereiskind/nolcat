@@ -20,15 +20,18 @@ Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
 * Make corrections to ``tests.test_StatisticsSources``
+* **Remove user input on CLI in SUSHI call**
 
 Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
 * Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
+* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
-* Add names and descriptions of standard views to ``nolcat.view_usage.forms.QueryWizardForm()``
+* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
 * Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
+* Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration 2: Add Historical Data
 ================================
@@ -47,17 +50,16 @@ Iteration 2: Add Historical Data
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
-* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
+* Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
-* Write ``tests.test_AnnualUsageCollectionTracking.test_collect_annual_usage_statistics()``--how should this be different from the check for the SUSHI call class beyond checking to see if the ``annualUsageCollectionTracking.collection_status`` value updated?
 * Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 
 Basic Enhancement Iterations
@@ -227,10 +229,6 @@ Iteration: View All Associated Resource and Statistics Sources in a Vendor Recor
 Iteration: Create Method for Adding New Fiscal Years to the Relation
 ====================================================================
 * Determine the best method to add a record for the new fiscal year to the ``FiscalYears`` relation (ideally with automatic execution each July 1)
-
-Iteration: Allow User-Created SQL Queries
-=========================================
-* Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration: Display Results of Usage Data Requests in Browser
 ============================================================

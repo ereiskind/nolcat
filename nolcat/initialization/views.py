@@ -407,6 +407,7 @@ def upload_historical_non_COUNTER_usage():
         #ToDo: For each file uploaded in the form
             #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
             #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
+            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
         log.error(f"`form.errors`: {form.errors}")

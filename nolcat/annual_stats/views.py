@@ -37,6 +37,8 @@ def annual_stats_homepage():
 @bp.route('/view_year', methods=['GET', 'POST'])  #ToDo: Add variable path information accepting the PK for the fiscal year
 def show_fiscal_year_details():  #ToDo: Add variable path information for the PK for the fiscal year
     """Returns a page that shows the information about and the statistics collection status for the fiscal year."""
+    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` runs from here
+    #ToDo: `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` runs from here
     run_annual_stats_methods_form = RunAnnualStatsMethodsForm()
     edit_fiscalYear_form = EditFiscalYearForm()
     edit_AUCT_form = EditAUCTForm()
