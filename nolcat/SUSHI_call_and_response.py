@@ -175,7 +175,7 @@ class SUSHICallAndResponse:
         Report_Items_status = len(API_response.get('Report_Items', 'No `Report_Items` key'))  # Combining the check for the existence of the key and the length of its value list allows for deduplication of log and return statements
         if Report_Items_status == 0 or Report_Items_status == 'No `Report_Items` key':
             if custom_report_regex.search(self.call_path):
-                log.debug(f"Report has no data; check to see why and if existing flash statements from SUSHI errors ")
+                log.debug(f"Report has no data; checking to see why and if existing flash statements from SUSHI errors provide an explanation.")
                 SUSHI_error_flash_messages = []
                 for message in messages_to_flash:
                     if '3030' in message or '3031' in message or '3032' in message:
