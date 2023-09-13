@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2023-09-08 ##########
+########## Failing 2023-09-13 ##########
 
 import pytest
 import logging
@@ -144,7 +144,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     log.info(POST_response.data)
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  #TEST: tests/test_bp_ingest_usage.py:146: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
+    assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail    #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):

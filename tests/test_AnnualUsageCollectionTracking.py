@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2023-09-08 ##########
+########## Failing 2023-09-13 ##########
 
 import pytest
 import logging
@@ -104,7 +104,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+        method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
     method_response_match_object = re.match(r'Successfully loaded (\d*) records for .* for FY \d{4} into the database.', string=method_response[0])
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
