@@ -5,7 +5,6 @@ import pytest
 import logging
 import calendar
 from datetime import date
-from datetime import timedelta
 import re
 import pyinputplus
 
