@@ -19,8 +19,8 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Make corrections to ``tests.test_StatisticsSources``
-* **Remove user input on CLI in SUSHI call**
+* Update ``nolcat.models`` to handle new SUSHI class return type
+* Make corrections to tests needing the above change
 
 Iteration 1: Complete Current Data I/O
 ======================================
