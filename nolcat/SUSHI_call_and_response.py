@@ -437,7 +437,7 @@ class SUSHICallAndResponse:
                 return (SUSHI_exception, [flash_message])
             else:
                 flash_messages_list = []
-                errors_list = {}  # A set automatically dedupes as items are added
+                errors_list = set()  # A set automatically dedupes as items are added
                 for error in error_contents:
                     SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error)
                     flash_message = report_type + flash_message
