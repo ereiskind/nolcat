@@ -1238,7 +1238,7 @@ class AnnualUsageCollectionTracking(db.Model):
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]),
+            statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
         log.info(f"The `StatisticsSources` object is {statistics_source}.")
