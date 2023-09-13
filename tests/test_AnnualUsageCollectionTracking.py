@@ -93,7 +93,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     yield StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
 
 
-def test_collect_annual_usage_statistics(engine, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
+def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
     """Test calling the `StatisticsSources._harvest_R5_SUSHI()` method for the record's StatisticsSources instance with arguments taken from the record's FiscalYears instance.
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
@@ -103,7 +103,8 @@ def test_collect_annual_usage_statistics(engine, AUCT_fixture_for_SUSHI, harvest
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
-    method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
+        method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
     method_response_match_object = re.match(r'Successfully loaded (\d*) records for .* for FY \d{4} into the database.', string=method_response[0])
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
