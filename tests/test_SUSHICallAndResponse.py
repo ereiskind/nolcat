@@ -133,7 +133,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'(Silverchair:CR_)?[PpDdTtIi][Rr](_\w\d)?', report["Report_ID"]):
+            if re.fullmatch(r'(Silverchair:CR_)?(LL_C)?[PpDdTtIi]?[Rr](_\w\d)?', report["Report_ID"]):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 
