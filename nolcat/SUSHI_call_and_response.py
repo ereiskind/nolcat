@@ -21,7 +21,7 @@ class SUSHICallAndResponse:
     """A class that makes SUSHI API calls in the StatisticsSources._harvest_R5_SUSHI method.
 
     This class encapsulates the functionality for making SUSHI API calls. Based on the structure suggested at https://stackoverflow.com/a/48574985, the functionality for creating this SUSHI data dictionary object has been divided into the traditional __init__ method, which instantiates the class attributes, and the `make_SUSHI_call()` method, which actually performs the steps of the API call. This structure requires all instances of the class constructor to be prepended to a call to the `make_SUSHI_call()` method, which has two major results:
-    * Objects of the `SUSHICallAndResponse` type are never instantiated; a dictionary, the return value of `make_SUSHI_call()`, is returned instead.
+    * Objects of the `SUSHICallAndResponse` type are never instantiated; a tuple, the return value of `make_SUSHI_call()`, is returned instead.
     * With multiple return statements, a tuples where the first value is a string or Python error can be returned if there's a problem with the API call or the returned SUSHI value.
 
     Attributes:
@@ -512,7 +512,7 @@ class SUSHICallAndResponse:
                 message = message[:-1] + f" due to {error_contents['Data']}."
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
             df = pd.read_sql(
-                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
+                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
                 con=db.engine,
             )
             statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary

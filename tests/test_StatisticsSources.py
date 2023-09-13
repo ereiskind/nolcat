@@ -150,10 +150,18 @@ def test_check_if_data_in_database_yes(client, StatisticsSources_fixture, report
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
     """
+    report = choice(reports_offered_by_StatisticsSource_fixture)
+    last_month_with_usage_in_test_data = date(2020, 6, 1)
+    test_could_pass = pd.read_sql(
+        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={StatisticsSources_fixture.statistics_source_ID} AND report_type='{report}' AND usage_date='{last_month_with_usage_in_test_data.strftime('%Y-%m-%d')}';",
+        con=engine,
+    )
+    if test_could_pass.iloc[0][0] == 0:
+        pytest.skip(f"The {StatisticsSources_fixture.statistics_source_name} doesn't have {report} data in the test data, so this test cannot pass; as a result, it's being skipped.")
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
-            choice(reports_offered_by_StatisticsSource_fixture),
-            date(2020, 6, 1),  # The last month with usage in the test data
+            report,
+            last_month_with_usage_in_test_data,
             current_month_like_most_recent_month_with_usage[1],
         )
     #TEST: AttributeError: 'NoneType' object has no attribute 'get'
