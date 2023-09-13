@@ -170,24 +170,37 @@ class SUSHICallAndResponse:
                         return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
-        # Some customizable reports errors weren't being caught by the error handlers above despite matching the criteria; some statistics sources offer reports for content they don't have (statistics sources without databases providing database reports is the most common example). In both cases, reports containing no data should be caught as potential errors. This check comes after the checks for common SUSHI errors because errors can cause a report to be returned with no usage data.
+        # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
         custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
-        if custom_report_regex.search(self.call_path):
-            Report_Items_status = len(API_response.get('Report_Items', 'x'))
-            if Report_Items_status == 0 or Report_Items_status == 'x':  # This allows for deduplication of log and return statements
-                if messages_to_flash:
+        Report_Items_status = len(API_response.get('Report_Items', 'No `Report_Items` key'))  # Combining the check for the existence of the key and the length of its value list allows for deduplication of log and return statements
+        if Report_Items_status == 0 or Report_Items_status == 'No `Report_Items` key':
+            if custom_report_regex.search(self.call_path):
+                log.debug(f"Report has no data; check to see why and if existing flash statements from SUSHI errors ")
+                SUSHI_error_flash_messages = []
+                for message in messages_to_flash:
+                    if '3030' in message or '3031' in message or '3032' in message:
+                        SUSHI_error_flash_messages.append(message)
+                        
+                if messages_to_flash and SUSHI_error_flash_messages:
+                    for message in SUSHI_error_flash_messages:
+                        messages_to_flash.append(message)
+                    joined_messages = "\n".join(SUSHI_error_flash_messages)
+                    message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because of the following SUSHI errors:\n{joined_messages}"
+                    log.warning(message)
+                    return (message, messages_to_flash)
+                elif messages_to_flash:
                     if Report_Items_status == 0:
-                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising the SUSHI error."
-                    elif Report_Items_status == 'x':
-                        message = f"Call to {self.calling_to} for {self.call_path} returned SUSHI data without a `Report_Items` section."
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising a SUSHI error."
+                    elif Report_Items_status == 'No `Report_Items` key':
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because the SUSHI data didn't have a `Report_Items` section."
                     messages_to_flash.append(message)
                     log.warning(message)
                     return (message, messages_to_flash)
                 else:
                     if Report_Items_status == 0:
-                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising the SUSHI error."
-                    elif Report_Items_status == 'x':
-                        message = f"Call to {self.calling_to} for {self.call_path} returned SUSHI data without a `Report_Items` section."
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising a SUSHI error."
+                    elif Report_Items_status == 'No `Report_Items` key':
+                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because the SUSHI data didn't have a `Report_Items` section."
                     log.warning(message)
                     return (message, [message])
         
