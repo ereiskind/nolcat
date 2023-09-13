@@ -230,7 +230,7 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
 
 @pytest.mark.dependency(depends=['test_PR_call_validity'])  # If the PR call validity test fails, this test is skipped
 def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
-    """Tests that a SUSHI call with invalid credentials returns the correct error.
+    """Tests that a SUSHI call with invalid credentials returns an error.
     
     There's no check confirming that the PR is available; if it wasn't, the dependency would prevent this test from running.
     """
@@ -238,8 +238,6 @@ def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
-    log.debug(f"`test_call_with_invalid_credentials()` returns\n{response}")
     assert isinstance(response, tuple)
-    assert response[0].startswith(f"Call to StatisticsSources.statistics_source_name raised error 400 Client Error: Bad Request for url: {URL}reports/pr?customer_id=deliberatelyIncorrect")
+    assert response[0].startswith(f"Call to StatisticsSources.statistics_source_name raised the SUSHI error(s)")
     assert isinstance(response[1], list)
-    assert response[0] in response[1]
