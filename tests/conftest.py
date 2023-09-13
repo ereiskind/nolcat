@@ -9,6 +9,7 @@ from pathlib import Path
 from datetime import date
 import calendar
 from random import choice
+import re
 from sqlalchemy import create_engine
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -435,6 +436,26 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     for workbook in folder_path.iterdir():
         file_names.append(workbook)
     pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+
+
+@pytest.fixture
+def SUSHI_server_error_regex_object():
+    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because of a server-side issue.
+
+    Yields:
+        re.Pattern: the regex object matching SUSHI server error messages
+    """
+    yield re.compile(r'Call to .* returned the SUSHI error\(s\) (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) request raised error (1000|1010|1011|1020):')
+
+
+@pytest.fixture
+def no_SUSHI_data_regex_object():
+    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because no data is returned.
+
+    Returns:
+       re.Pattern: the regex object matching SUSHI server error messages
+    """
+    yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
 
 
 #Section: Test Helper Function Not Possible in `nolcat.app`
