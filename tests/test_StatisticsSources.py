@@ -6,6 +6,7 @@ import logging
 import json
 from datetime import date
 from datetime import datetime
+from datetime import timedelta
 from random import choice
 import re
 import pandas as pd
@@ -254,6 +255,23 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
     assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+
+
+@pytest.mark.dependency(depends=['test_harvest_single_report'])
+def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_recent_month_with_usage, reports_offered_by_StatisticsSource_fixture):
+    """Tests the code for rejecting a SUSHI end date before the begin date."""
+    begin_date = most_recent_month_with_usage[0] + relativedelta(months=-3)  # Using three months before `most_recent_month_with_usage` so `end_date` is still in the past
+    end_date = begin_date - timedelta(days=32)  # Sets `end_date` far enough before `begin_date` that it will be at least the last day of the month before `begin_date`
+    end_date = date(
+        end_date.year,
+        end_date.month,
+        calendar.monthrange(end_date.year, end_date.month)[1],
+    )
+    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    assert isinstance(SUSHI_response, tuple)
+    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', string=SUSHI_response[0])
+    assert isinstance(SUSHI_response[1], list)
+    assert len(SUSHI_response[1]) == 1
 
 
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`
