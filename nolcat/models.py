@@ -641,13 +641,18 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "IR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
-            SUSHI_data_response = self._harvest_single_report(
+            SUSHI_data_response, flash_message_list = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
                 SUSHI_parameters,
                 usage_start_date,
                 usage_end_date,
             )
+            if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
+                log.error(message)
+                #ToDo: Pass flash_message_list back to route function
+                return message
             return SUSHI_data_response
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
@@ -694,6 +699,8 @@ class StatisticsSources(db.Model):
             #Section: Make Customizable Report SUSHI Calls
             #Subsection: Set Up Loop Through Customizable Reports
             custom_report_dataframes = []
+            complete_flash_message_list = []
+            no_usage_returned_count = 0
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
                 log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
@@ -716,20 +723,34 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
 
                 #Subsection: Make API Call(s)
-                SUSHI_data_response = self._harvest_single_report(
+                SUSHI_data_response, flash_message_list = self._harvest_single_report(
                     report_name,
                     SUSHI_info['URL'],
                     SUSHI_parameters,
                     usage_start_date,
                     usage_end_date,
                 )
-                if isinstance(SUSHI_data_response, str):
-                    log.debug(SUSHI_data_response)
+                for item in flash_message_list:
+                    complete_flash_message_list.append(item)
+                if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
+                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
+                    log.error(message)
+                    #ToDo: Pass complete_flash_message_list back to route function
+                    return message
+                elif SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R%_SUSHI()` is being increased.")
+                    no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
+            if len(custom_report_dataframes) == no_usage_returned_count:
+                message = f"None of the SUSHI calls to {self.statistics_source_name} returned any usage data."
+                log.error(message)
+                #ToDo: Pass complete_flash_message_list back to route function
+                return message
 
 
             #Section: Return a Single Dataframe
+            #ToDo: Pass flash_message_list back to route function
             try:
                 return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             except ValueError as error:
