@@ -599,32 +599,32 @@ class StatisticsSources(db.Model):
             report_to_harvest (str, optional): the report ID for the customizable report to harvest; defaults to `None`, which harvests all available custom reports
         
         Returns:
-            dataframe: a dataframe containing all of the R5 COUNTER data
-            str: an error message indicating the harvest failed
+            tuple: all the SUSHI data per the specified arguments (dataframe) or an error message (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
         """
         #Section: Get API Call URL and Parameters
         log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
             message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
             log.error(message)
-            return (message, [message])
+            return (message, {'dates': [message]})
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
+        all_flashed_statements = {}
         log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
 
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        all_flashed_statements['status'] = flash_message_list
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
             message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
-            #ToDo: Pass flash_message_list back to route function
             log.warning(message)
-            return message
+            return (message, all_flashed_statements)
         else:
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  # These are status endpoints that checked out
             pass
@@ -648,17 +648,18 @@ class StatisticsSources(db.Model):
                 usage_start_date,
                 usage_end_date,
             )
+            all_flashed_statements[report_to_harvest] = flash_message_list
             if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
                 message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
                 log.error(message)
-                #ToDo: Pass flash_message_list back to route function
-                return message
-            return SUSHI_data_response
+                return (message, all_flashed_statements)
+            return (SUSHI_data_response, all_flashed_statements)
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+            all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
                 all_available_reports = []
@@ -668,17 +669,14 @@ class StatisticsSources(db.Model):
                             if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
-                #ToDo: Pass flash_message_list back to route function
             elif SUSHI_reports_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_reports_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
                 message = f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
-                #ToDo: Pass flash_message_list back to route function
                 log.warning(message)
-                return message
+                return (message, all_flashed_statements)
             else:
                 message = f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
-                #ToDo: Pass flash_message_list back to route function
                 log.error(message)
-                return message
+                return (message, all_flashed_statements)
 
             #Subsection: Get List of Available Customizable Reports
             available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
@@ -730,13 +728,13 @@ class StatisticsSources(db.Model):
                     usage_start_date,
                     usage_end_date,
                 )
+                all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
                 if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
                     message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
                     log.error(message)
-                    #ToDo: Pass complete_flash_message_list back to route function
-                    return message
+                    return (message, all_flashed_statements)
                 elif SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R%_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
@@ -745,18 +743,16 @@ class StatisticsSources(db.Model):
             if len(custom_report_dataframes) == no_usage_returned_count:
                 message = f"None of the SUSHI calls to {self.statistics_source_name} returned any usage data."
                 log.error(message)
-                #ToDo: Pass complete_flash_message_list back to route function
-                return message
+                return (message, all_flashed_statements)
 
 
             #Section: Return a Single Dataframe
-            #ToDo: Pass flash_message_list back to route function
             try:
-                return pd.concat(custom_report_dataframes, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+                return (pd.concat(custom_report_dataframes, ignore_index=True), all_flashed_statements)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             except ValueError as error:
                 message = f"The harvested reports couldn't be combined because of the error {error}."
                 log.warning(message)
-                return message
+                return (message, all_flashed_statements)
 
 
     @hybrid_method
