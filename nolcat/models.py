@@ -615,13 +615,14 @@ class StatisticsSources(db.Model):
 
 
         #Section: Confirm SUSHI API Functionality
-        SUSHI_status_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
+        SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
-        elif len(SUSHI_status_response) == 1 and list(SUSHI_status_response.keys())[0] == "ERROR":
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response['ERROR']}."
+        elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."
+            #ToDo: Pass flash_message_list back to route function
             log.warning(message)
             return message
         else:
@@ -678,7 +679,7 @@ class StatisticsSources(db.Model):
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
-            SUSHI_reports_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
+            SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
                 log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
                 all_available_reports = []
@@ -688,12 +689,15 @@ class StatisticsSources(db.Model):
                             if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}")
-            elif len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "ERROR":
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response['ERROR']}."
+                #ToDo: Pass flash_message_list back to route function
+            elif SUSHI_reports_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_reports_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."
+                #ToDo: Pass flash_message_list back to route function
                 log.warning(message)
                 return message
             else:
                 message = f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
+                #ToDo: Pass flash_message_list back to route function
                 log.error(message)
                 return message
 
@@ -780,6 +784,7 @@ class StatisticsSources(db.Model):
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
             individual_month_dfs = []
+            #ToDo: Create summary lists for flash messages
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
                 SUSHI_parameters['end_date'] = date(
@@ -787,10 +792,20 @@ class StatisticsSources(db.Model):
                     month_to_harvest.month,
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                 )
-                SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
-                if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}.")
+                SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+                if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
+                    message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."
+                    log.warning(message)
+                    #ToDo: Pass flash_message_list back to route function
+                    return message
+                elif SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
+                    #ToDo: Indicate that no data was returned for later
+                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
+                    #ToDo: Add flash_message_list to summary list
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                #ToDo: if this is the last of the values in subset_of_months_to_harvest and all calls have returned no data
+                    #ToDo: log.info(message about no data)
+                    #ToDo: continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
@@ -803,6 +818,7 @@ class StatisticsSources(db.Model):
                     )
                     temp_file_path.unlink()
                     log.debug(log_message)
+                    #ToDo: Add flash_message_list to summary list
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
@@ -810,20 +826,23 @@ class StatisticsSources(db.Model):
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-            if len(individual_month_dfs) == 0:
-                message = f"No data is available to load into the database."
-                log.warning(message)
-                return message
-            else:
+                #ToDo: Add flash_message_list to summary list
                 log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
+                #ToDo: Pass summary list of flash messages to calling function
                 return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
-            SUSHI_data_response = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
-            if len(SUSHI_data_response) == 1 and list(SUSHI_data_response.keys())[0] == "ERROR":
-                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response['ERROR']}."
+            SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+            if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
+                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."
                 log.warning(message)
+                #ToDo: Pass flash_message_list back to route function
+                return message
+            elif SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
+                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."
+                log.warning(message)
+                #ToDo: Pass flash_message_list back to route function
                 return message
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
@@ -837,12 +856,14 @@ class StatisticsSources(db.Model):
                 )
                 temp_file_path.unlink()
                 log.debug(log_message)
+                #ToDo: Pass flash_message_list back to route function
                 return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
             log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
             log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
+            #ToDo: Pass flash_message_list back to route function
             return df
 
 
