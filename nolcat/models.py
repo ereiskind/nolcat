@@ -736,7 +736,7 @@ class StatisticsSources(db.Model):
                     log.error(message)
                     return (message, all_flashed_statements)
                 elif SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
-                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R%_SUSHI()` is being increased.")
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
