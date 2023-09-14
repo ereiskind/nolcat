@@ -776,15 +776,15 @@ class StatisticsSources(db.Model):
             end_date (datetime.date): the last day of the usage collection date range, which is the last day of the month
 
         Returns:
-            dataframe: the API call response data in a dataframe
-            str: an error message indicating the harvest failed
+            tuple: SUSHI data from the API call (dataframe) or an error message (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
             individual_month_dfs = []
-            #ToDo: Create summary lists for flash messages
+            complete_flash_message_list = []
+            no_usage_returned_count = 0
             for month_to_harvest in subset_of_months_to_harvest:
                 SUSHI_parameters['begin_date'] = month_to_harvest
                 SUSHI_parameters['end_date'] = date(
@@ -793,19 +793,20 @@ class StatisticsSources(db.Model):
                     calendar.monthrange(month_to_harvest.year, month_to_harvest.month)[1],
                 )
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
+                for item in flash_message_list:
+                    complete_flash_message_list.append(item)
                 if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
                     message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."
                     log.warning(message)
-                    #ToDo: Pass flash_message_list back to route function
-                    return message
+                    return (message, complete_flash_message_list)
                 elif SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
-                    #ToDo: Indicate that no data was returned for later
+                    no_usage_returned_count += 1
                     log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")
-                    #ToDo: Add flash_message_list to summary list
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
-                #ToDo: if this is the last of the values in subset_of_months_to_harvest and all calls have returned no data
-                    #ToDo: log.info(message about no data)
-                    #ToDo: continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                if len(subset_of_months_to_harvest) == no_usage_returned_count:
+                    message = f"None of the calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned any usage data."
+                    log.warning(message)
+                    return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                     log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
@@ -818,7 +819,7 @@ class StatisticsSources(db.Model):
                     )
                     temp_file_path.unlink()
                     log.debug(log_message)
-                    #ToDo: Add flash_message_list to summary list
+                    complete_flash_message_list.append(log_message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
@@ -826,10 +827,8 @@ class StatisticsSources(db.Model):
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-                #ToDo: Add flash_message_list to summary list
                 log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
-                #ToDo: Pass summary list of flash messages to calling function
-                return pd.concat(individual_month_dfs, ignore_index=True)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
+                return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
@@ -837,13 +836,11 @@ class StatisticsSources(db.Model):
             if SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
                 message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."
                 log.warning(message)
-                #ToDo: Pass flash_message_list back to route function
-                return message
+                return (message, flash_message_list)
             elif SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
-                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."
+                message = f"None of the calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned any usage data; instead, they returned the error {SUSHI_data_response}."
                 log.warning(message)
-                #ToDo: Pass flash_message_list back to route function
-                return message
+                return (message, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
@@ -856,15 +853,14 @@ class StatisticsSources(db.Model):
                 )
                 temp_file_path.unlink()
                 log.debug(log_message)
-                #ToDo: Pass flash_message_list back to route function
-                return f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe."
+                flash_message_list.append(log_message)
+                return (f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. Loading it into a S3 bucket returned {log_message}.", flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
             log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name}:\n{df}")
             log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name}:\n{return_string_of_dataframe_info(df)}")
-            #ToDo: Pass flash_message_list back to route function
-            return df
+            return (df, flash_message_list)
 
 
     @hybrid_method
