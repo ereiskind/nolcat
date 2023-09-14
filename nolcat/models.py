@@ -631,42 +631,16 @@ class StatisticsSources(db.Model):
 
 
         #Section: Harvest Individual Report if Specified
-        if report_to_harvest == "PR":
-            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            SUSHI_data_response = self._harvest_single_report(
-                report_to_harvest,
-                SUSHI_info['URL'],
-                SUSHI_parameters,
-                usage_start_date,
-                usage_end_date,
-            )
-            return SUSHI_data_response
-        
-        elif report_to_harvest == "DR":
-            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
-            SUSHI_data_response = self._harvest_single_report(
-                report_to_harvest,
-                SUSHI_info['URL'],
-                SUSHI_parameters,
-                usage_start_date,
-                usage_end_date,
-            )
-            return SUSHI_data_response
-        
-        elif report_to_harvest == "TR":
-            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
-            SUSHI_data_response = self._harvest_single_report(
-                report_to_harvest,
-                SUSHI_info['URL'],
-                SUSHI_parameters,
-                usage_start_date,
-                usage_end_date,
-            )
-            return SUSHI_data_response
-        
-        elif report_to_harvest == "IR":
-            SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
-            SUSHI_parameters["include_parent_details"] = "True"
+        if re.fullmatch(r'[PDTI]R', report_to_harvest):
+            if report_to_harvest == "PR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif report_to_harvest == "DR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
+            elif report_to_harvest == "TR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Section_Type"
+            elif report_to_harvest == "IR":
+                SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
+                SUSHI_parameters["include_parent_details"] = "True"
             SUSHI_data_response = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
