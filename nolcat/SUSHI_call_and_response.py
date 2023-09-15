@@ -302,8 +302,12 @@ class SUSHICallAndResponse:
                 return (json.JSONDecodeError(message), message)
                 
             if isinstance(API_response, list):
-                API_response = dict(reports = API_response)
+                if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
+                    message = f"Call to {self.calling_to} for a list of reports raised the error {API_response}."
+                    log.error(message)
+                    return (ValueError(message), message)
                 log.info("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
+                API_response = dict(reports = API_response)
             else:
                 message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
                 log.error(message)
