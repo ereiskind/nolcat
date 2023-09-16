@@ -142,7 +142,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
 def test_download_file(client, path_to_sample_file):  #ToDo: If method for interacting with host workstation's file system can be established, add `default_download_folder`
     """Tests the route enabling file downloads."""
-    log.info(f"At start of `test_download_file()`, `path_to_sample_file` is {path_to_sample_file} (type {type(path_to_sample_file)})")
+    log.info(f"At start of `test_download_file()`, `path_to_sample_file` is {path_to_sample_file} (type {type(path_to_sample_file)})")  #ValueCheck
     page = client.get(
         f'/download/{path_to_sample_file}',
         follow_redirects=True,

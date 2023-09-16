@@ -78,7 +78,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    log.debug(f"The StatisticsSources object being used for testing is {yield_object}.")
+    log.debug(f"The StatisticsSources object being used for testing is {yield_object}.")  #ValueCheck
     yield yield_object
 
 
@@ -157,7 +157,7 @@ def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture
         con=engine,
     )
     if test_could_pass.iloc[0][0] == 0:
-        pytest.skip(f"The {StatisticsSources_fixture.statistics_source_name} doesn't have {report} data in the test data, so this test cannot pass; as a result, it's being skipped.")
+        pytest.skip(f"The {StatisticsSources_fixture.statistics_source_name} doesn't have {report} data in the test data, so this test cannot pass; as a result, it's being skipped.")  #PytestSkip
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             report,

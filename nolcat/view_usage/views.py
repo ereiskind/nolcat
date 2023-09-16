@@ -32,9 +32,9 @@ def run_custom_SQL_query():
     form = CustomSQLQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")  #ValueCheck
         file_path.unlink(missing_ok=True)
-        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")  #ValueCheck
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
         #ToDo: Set up handling for invalid query
@@ -53,7 +53,7 @@ def run_custom_SQL_query():
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
         return abort(404)
 
 
@@ -63,16 +63,16 @@ def use_predefined_SQL_query():
     form = QueryWizardForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")  #ValueCheck
         file_path.unlink(missing_ok=True)
-        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")  #ValueCheck
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`use_predefined_SQL_query()` received {form.begin_date.data} as the being date, {form.end_date.data} as the end date, and {form.query_options.data} as the query option from the form.")
+        log.info(f"`use_predefined_SQL_query()` received {form.begin_date.data} as the being date, {form.end_date.data} as the end date, and {form.query_options.data} as the query option from the form.")  #ValueCheck
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = "The last day of the provided date range was before the beginning of the date range. Please correct the dates and try again."
+            message = "The last day of the provided date range was before the beginning of the date range. Please correct the dates and try again."  #UnexpectedProblem
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
@@ -81,7 +81,7 @@ def use_predefined_SQL_query():
             end_date.month,
             calendar.monthrange(end_date.year, end_date.month)[1],
         )
-        log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
+        log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")  #ValueCheck
         
         if form.query_options.data == "PR_P1":
             query = f"""
@@ -178,7 +178,7 @@ def use_predefined_SQL_query():
             sql=query,
             con=db.engine,
         )
-        log.debug(f"The query result:\n{df}")
+        log.debug(f"The query result:\n{df}")  #ValueCheck
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -187,10 +187,10 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")  #ValueCheck
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
         return abort(404)
 
 
@@ -200,11 +200,11 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")
+        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")  #ValueCheck
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
-                log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")
+                log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")  #ValueCheck
 
         file_download_options = pd.read_sql(
             sql=f"""
@@ -223,7 +223,7 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
+        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")  #ValueCheck
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
 
@@ -231,5 +231,5 @@ def download_non_COUNTER_usage():
         #ToDo: return redirect(url_for('download_file', file_path=str(file_path)))
         pass
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
         return abort(404)
