@@ -6,6 +6,66 @@ What follows are details about the style of the code and its documentation that 
 Python Code
 ***********
 
+Logging Statements
+==================
+Each set of circumstances needing a logging statement or a log-like output statement has a specific logging level and structure assigned to it. All such statements are full sentences ending in periods.
+
+* Starting an iteration
+
+  * Debug logging statement
+
+* Adding an item to a dictionary
+
+  * Debug logging statement
+
+* Logging values returned from other functions that provide INFO-level logging statements with the values they return
+
+  * Debug logging statement
+
+* "Starting `function_name()`" statements
+
+  * Info logging statement
+
+* The statement with the value a function is returning
+
+  * Info logging statement
+
+* Status messages duplicated with message flashing
+
+  * Info logging statement
+
+* HTTP response code for API call
+
+  * Info logging statement
+
+* Statements triggered by failing API call
+
+  * Warning logging statement
+
+* SUSHI report errors
+
+  * Warning logging statement
+
+* A problem with MySQL I/O
+
+  * Error logging statement
+
+* A problem with file I/O
+
+  * Error logging statement
+
+* Failed API call
+
+  * Error logging statement
+
+* 404 Page not found
+
+  * Error logging statement
+
+* Finding values for a given field are longer than the field's max length
+
+  * Critical logging statement
+
 reStructured Text
 *****************
 

@@ -41,27 +41,7 @@ PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within 
 def configure_logging(app):
     """Create single logging configuration for entire program.
 
-    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/. Logging statements are full sentences ending in periods.
-    Logging statement levels:
-        * Debug
-            * Starting an iteration
-            * Adding an item to a dictionary
-            * Logging values returned from other functions that provide INFO-level logging statements with the values they return
-        * Info
-            * "Starting `function_name()`" statements
-            * The statement with the value a function is returning
-            * Status messages duplicated with message flashing
-            * HTTP response code for API call
-        * Warning
-            * Statements triggered by failing API call
-            * SUSHI report errors
-        * Error
-            * A problem with MySQL I/O
-            * A problem with file I/O
-            * Failed API call
-            * 404 Page not found
-        * Critical
-            * Finding values for a given field are longer than the field's max length
+    This function was largely based upon the information at https://shzhangji.com/blog/2022/08/10/configure-logging-for-flask-sqlalchemy-project/ with some additional information from https://engineeringfordatascience.com/posts/python_logging/.
 
     Args:
         app (flask.Flask): the Flask object
