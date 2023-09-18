@@ -44,10 +44,6 @@ Each set of circumstances needing a logging statement or a log-like output state
 
   * Debug logging statement
 
-* "Starting `function_name()`" statements
-
-  * Info logging statement
-
 * The statement with the value a function is returning
 
   * Info logging statement
