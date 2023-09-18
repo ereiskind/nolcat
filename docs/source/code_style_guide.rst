@@ -16,6 +16,12 @@ Each set of circumstances needing a logging statement or a log-like output state
   * At the beginning of all functions and methods except for test functions, test fixtures, and those returning a value within five statements
   * Structure: "Starting `<name of function/method>()` for <relevant parameters>."
 
+* Finding values for a given field are longer than the field's max length
+
+  * Critical logging statement
+  * In the ``ConvertJSONDictToDataframe`` class
+  * Structure: "Increase the `<attribute name>` max field length to <length of the value found + 10%>."
+
 * Starting an iteration
 
   * Debug logging statement
@@ -67,10 +73,6 @@ Each set of circumstances needing a logging statement or a log-like output state
 * 404 Page not found
 
   * Error logging statement
-
-* Finding values for a given field are longer than the field's max length
-
-  * Critical logging statement
 
 reStructured Text
 *****************
