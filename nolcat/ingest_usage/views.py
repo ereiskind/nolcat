@@ -29,6 +29,7 @@ def ingest_usage_homepage():
 @bp.route('/upload-COUNTER', methods=['GET', 'POST'])
 def upload_COUNTER_reports():
     """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
+    log.info("Starting `upload_COUNTER_reports()`.")
     form = COUNTERReportsForm()
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
@@ -124,6 +125,7 @@ def harvest_SUSHI_statistics():
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
     """
+    log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
     if request.method == 'GET':
         statistics_source_options = pd.read_sql(
@@ -178,6 +180,7 @@ def harvest_SUSHI_statistics():
 @bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
 def upload_non_COUNTER_reports():
     """The route function for uploading files containing non-COUNTER data into the container."""
+    log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
         non_COUNTER_files_needed = pd.read_sql(

@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 @bp.route('/', methods=['GET', 'POST'])
 def annual_stats_homepage():
     """Returns the homepage for the `annual_stats` blueprint, which serves as a homepage for administrative functions."""
+    log.info("Starting `annual_stats_homepage()`.")
     form = ChooseFiscalYearForm()
     if request.method == 'GET':
         # The links to the lists of vendors, resource sources, and statistics sources are standard jinja redirects; the code for populating the lists from the underlying relations is in the route functions being redirected to
@@ -37,6 +38,7 @@ def annual_stats_homepage():
 @bp.route('/view_year', methods=['GET', 'POST'])  #ToDo: Add variable path information accepting the PK for the fiscal year
 def show_fiscal_year_details():  #ToDo: Add variable path information for the PK for the fiscal year
     """Returns a page that shows the information about and the statistics collection status for the fiscal year."""
+    log.info("Starting `show_fiscal_year_details()`.")
     #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` runs from here
     #ToDo: `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` runs from here
     run_annual_stats_methods_form = RunAnnualStatsMethodsForm()

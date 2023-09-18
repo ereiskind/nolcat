@@ -29,6 +29,7 @@ def view_usage_homepage():
 @bp.route('/custom-SQL', methods=['GET', 'POST'])
 def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
+    log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
@@ -60,6 +61,7 @@ def run_custom_SQL_query():
 @bp.route('query-wizard', methods=['GET', 'POST'])
 def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
+    log.info("Starting `use_predefined_SQL_query()`.")
     form = QueryWizardForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
@@ -197,6 +199,7 @@ def use_predefined_SQL_query():
 @bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
 def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
+    log.info("Starting `download_non_COUNTER_usage()`.")
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')

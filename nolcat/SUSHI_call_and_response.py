@@ -277,6 +277,7 @@ class SUSHICallAndResponse:
         Returns:
             tuple: the API call response as a dict using native Python data types or a Python Exception raised when attempting the conversion; any messages to be flashed (list of str)
         """
+        log.info("Starting `_convert_Response_to_JSON()`.")
         #Section: Convert Text Attributes for Calls to `reports` Endpoint
         # `reports` endpoints should result in a list, not a dictionary, so they're being handled separately
         if self.call_path == "reports":
@@ -376,7 +377,7 @@ class SUSHICallAndResponse:
         Returns:
             str: an error message to flash indicating the creation of the bailout file
         """
-        log.error("Because of the previously given error, the `requests.Response.content` couldn't be converted to native Python data types. The `requests.Response.text` value is being saved to a file instead.")  #Explanation
+        log.info("Starting `_save_raw_Response_text()`.")
         
         temp_file_path = Path(__file__).parent / 'temp.txt'
         with open(temp_file_path, 'xb') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
@@ -410,6 +411,7 @@ class SUSHICallAndResponse:
         Returns:
             tuple: an error message (str) or `None` if the harvesting should continue (None); a list of the statements that should be flashed (list of str) or `None` if the program doesn't need to alert the user about the error (None)
         """
+        log.info(f"Starting `_handle_SUSHI_exceptions()` for error(s) {error_contents}.")
         if error_contents is None:
             log.info("This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")  #Explanation
             return (None, None)
@@ -479,6 +481,7 @@ class SUSHICallAndResponse:
         Returns:
             tuple: an error message if appropriate (None or str); the message to flash (str)
         """
+        log.info(f"Starting `_evaluate_individual_SUSHI_exception()` for error {error_contents}.")
         errors_and_codes = {
             'Service Not Available': '1000',
             'Service Busy': '1010',

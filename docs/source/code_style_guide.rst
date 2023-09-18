@@ -10,6 +10,12 @@ Logging Statements
 ==================
 Each set of circumstances needing a logging statement or a log-like output statement has a specific logging level and structure assigned to it. All such statements are full sentences ending in periods.
 
+* "Starting `function_name()`" statements
+
+  * Info logging statement
+  * At the beginning of all functions and methods except for test functions, test fixtures, and those returning a value within five statements
+  * Structure: "Starting `<name of function/method>()` for <relevant parameters>."
+
 * Starting an iteration
 
   * Debug logging statement

@@ -23,6 +23,7 @@ def collect_FY_and_vendor_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
+    log.info("Starting `collect_FY_and_vendor_data()`.")
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent))
@@ -127,6 +128,7 @@ def collect_sources_data():
 
     The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
+    log.info("Starting `collect_sources_data()`.")
     form = SourcesDataForm()
     if request.method == 'GET':
         return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent))
@@ -274,6 +276,7 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
+    log.info("Starting `collect_AUCT_and_historical_COUNTER_data()`.")
     form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
@@ -396,6 +399,7 @@ def upload_historical_non_COUNTER_usage():
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
+    log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     '''
     form = FormClass()
     if request.method == 'GET':

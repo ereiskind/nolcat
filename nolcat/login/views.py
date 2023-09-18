@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 @bp.route('/')
 def login_homepage():
     """Returns the homepage for the `login` blueprint."""
+    #ToDo: `log.info("Starting `login_homepage()`.")` if the page grows
     #ToDo: Should this be the page for logging in (entering existing credentials) with Flask-User?
     return render_template('login/index.html')
 

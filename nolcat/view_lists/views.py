@@ -21,6 +21,7 @@ def view_lists_homepage(list):
         Args:
             list (str): the relation whose records are being listed
     """
+    log.info(f"Starting `view_lists_homepage()` for {list}.")
     if list == "resources":
         title = "Resource Sources"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
@@ -56,6 +57,7 @@ def view_list_record(list, PK):
         list (str): the relation the record comes from
         PK (int): the primary key of the record being viewed
     """
+    log.info(f"Starting `view_list_record()` for {list}.")
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
         #ToDo: df = pd.read_sql(
@@ -84,6 +86,7 @@ def edit_list_record(list, PK):
         list (_type_): _description_
         PK (_type_): _description_
     """
+    log.info(f"Starting `edit_list_record()` for {list}.")
     #ToDo: Write form for adding/editing record and for adding or editing notes
     if request.method == 'GET':
         #ToDo: if request came from adding new record link/PK not in relation:

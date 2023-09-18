@@ -109,6 +109,7 @@ def internal_server_error(error):
 
 def create_app():
     """A factory pattern for instantiating Flask web apps."""
+    log.info("Starting `create_app()`.")
     app = Flask(__name__)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
@@ -195,8 +196,7 @@ def create_app():
         Returns:
             file: a file is downloaded to the host machine through the web application
         """
-        log.info("Starting `create_app.download_file()`.")
-        log.debug(f"`file_path` at start of route function is {file_path} (type {type(file_path)}).")  #ValueCheck
+        log.info(f"Starting `create_app.download_file()` for file at path {file_path} (type {type(file_path)}).")
         file_path = Path(  # Just using the `Path()` constructor creates a relative path; relative paths in `send_file()` are considered in relation to CWD
             *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
             *Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
@@ -256,7 +256,7 @@ def first_new_PK_value(relation):
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
     """
-    log.info("Starting `first_new_PK_value()`.")
+    log.info(f"Starting `first_new_PK_value()` for the {relation} relation.")
     if relation == 'fiscalYears':
         PK_field = 'fiscal_year_ID'
     elif relation == 'vendors':
@@ -357,7 +357,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
-    log.info("Starting `upload_file_to_S3_bucket()`.")
+    log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
     try:
@@ -422,7 +422,7 @@ def create_AUCT_SelectField_options(df):
     Returns:
         list: a list of tuples; see the docstring's detailed description for the contents of the list
     """
-    log.info("Starting `create_AUCT_SelectField_options()`.")
+    log.info(f"Starting `create_AUCT_SelectField_options()` for the {df} dataframe.")
     df = df.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
     df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
