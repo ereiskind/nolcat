@@ -22,6 +22,16 @@ Each set of circumstances needing a logging statement or a log-like output state
   * In the ``ConvertJSONDictToDataframe`` class
   * Structure: "Increase the `<attribute name>` max field length to <length of the value found + 10%>."
 
+* API call responses
+
+  * Info logging statement; errors are error logging statement
+  * In the ``SUSHICallAndResponse._make_API_call()`` method
+  * Structure:
+
+    * HTTP response codes through the object: "<HTTP verb> response code: <HTTP response object>"
+    * Successful request: "<HTTP verb> request to <plain text location called> at <URL> successful."
+    * HTTP errors returned: "<HTTP verb> request to <plain text location called> raised <list errors>."
+
 * Starting an iteration
 
   * Debug logging statement
@@ -43,10 +53,6 @@ Each set of circumstances needing a logging statement or a log-like output state
   * Info logging statement
 
 * Status messages duplicated with message flashing
-
-  * Info logging statement
-
-* HTTP response code for API call
 
   * Info logging statement
 

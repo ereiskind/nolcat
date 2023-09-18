@@ -239,7 +239,7 @@ class SUSHICallAndResponse:
         try:  # `raise_for_status()` returns Exception objects if the HTTP status is 4XX or 5XX, so using it requires try/except logic (2XX codes return `None` and the redirects of 3XX are followed)
             time.sleep(1) # Some platforms return a 1020 error if SUSHI requests aren't spaced out; this provides spacing
             API_response = requests.get(API_call_URL, params=self.parameters, timeout=90, headers=self.header_value)
-            log.info(f"`API_response` HTTP code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403  #ValueCheck
+            log.info(f"GET response code: {API_response}")  # In the past, GET requests that returned JSON downloads had HTTP status 403
             API_response.raise_for_status()
 
         except Timeout as error:
@@ -247,24 +247,24 @@ class SUSHICallAndResponse:
                 log.info(f"Calling {self.calling_to} for {self.call_path} again.")  #BadAPIResponse
                 time.sleep(1)
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
-                log.info(f"`API_response` HTTP code: {API_response}")  #ValueCheck
+                log.info(f"GET response code: {API_response}")
                 API_response.raise_for_status()
             except Timeout as error_after_timeout:  #ALERT: On 2022-12-16, ProQuest got to this point when pulling the IR for 12 months and automatically began making GET calls with port 80 (standard HTTP requests vs. HTTPS requests with port 443), repeating the call just under five minutes later without any indication the prior request actually got a timeout error
-                message = f"Call to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."  #BadAPIResponse
+                message = f"GET request to {self.calling_to} raised timeout errors {error} and {error_after_timeout}."
                 log.error(message)
                 return message
             except Exception as error_after_timeout:
-                message = f"Call to {self.calling_to} raised errors {error} and {error_after_timeout}."  #BadAPIResponse
+                message = f"GET request to {self.calling_to} raised errors {error} and {error_after_timeout}."
                 log.error(message)
                 return message
 
         except Exception as error:
             #ToDo: View error information and, if data can be pulled with modification of API call, repeat call in way that works
-            message = f"Call to {self.calling_to} raised error {error}"  #BadAPIResponse
+            message = f"GET request to {self.calling_to} raised error {error}"
             log.error(message)
             return message
 
-        log.info(f"GET request for {self.calling_to} at {self.call_path} successful.")  #ValueCheck
+        log.info(f"GET request to {self.calling_to} at {self.call_path} successful.")
         return API_response
 
 
