@@ -340,6 +340,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
+    
     method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
     method_response_match_object = re.match(r'Successfully loaded (\d*) records into the database.', string=method_response[0])  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below

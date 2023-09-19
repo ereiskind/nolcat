@@ -557,6 +557,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={

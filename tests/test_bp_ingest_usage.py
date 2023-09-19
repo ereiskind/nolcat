@@ -39,6 +39,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
+    
     form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
         #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
             # Multiple items in the value of a MultipartEncoder.fields key-value pair doesn't work
@@ -83,6 +84,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
     """Tests that the page for making custom SUSHI calls can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     page = client.get('/ingest_usage/harvest')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -121,6 +123,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     caplog.set_level(logging.INFO, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `StatisticsSources._check_if_data_in_database()` called in `StatisticsSources._harvest_single_report()` called in `StatisticsSources._harvest_R5_SUSHI()` called in `StatisticsSources.collect_usage_statistics()`
+    
     primary_key_list = query_database(
         query="SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
@@ -157,6 +160,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     """Tests that the page for uploading and saving non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `change_single_field_dataframe_into_series()` and `query_database()`
+    
     page = client.get('/ingest_usage/upload-non-COUNTER')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title

@@ -71,9 +71,8 @@ def test_404_page(client):
 def test_loading_data_into_relation(engine, vendors_relation, caplog):
     """Tests loading data into and querying data from a relation.
     
-    This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations.
+    This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations. This test function also serves as the test for `nolcat.app.query_database()`, since it's called in latter part of the function and has a precondition of needing the data loaded in the earlier part of the function.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     vendors_relation.to_sql(
         name='vendors',
         con=engine,
@@ -99,7 +98,6 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
 
     This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     df_dtypes = {
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
         "statistics_source_retrieval_code": StatisticsSources.state_data_types()['statistics_source_retrieval_code'],
@@ -285,4 +283,8 @@ def test_create_AUCT_SelectField_options():
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
+# Function itself in `tests.conftest`
+
+
+#ToDo: test_COUNTER_reports_offered_by_statistics_source()
 # Function itself in `tests.conftest`
