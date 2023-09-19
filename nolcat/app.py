@@ -429,3 +429,28 @@ def create_AUCT_SelectField_options(df):
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")  #ValueCheck
     return list(s.items())
+
+
+def query_database(query, engine):
+    """A wrapper for the `pd.read_sql()` method that includes the error handling.
+
+    Args:
+        query (str): the SQL query
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Returns:
+        dataframe: the result of the query
+        str: a message including the error raised by the attempt to run the query
+    """
+    log.info(f"Starting `query_database()` for query {query}.")
+    try:
+        df = pd.read_sql(
+            sql=query,
+            con=engine,
+        )
+        log.debug(f"The complete response to {query}:\n{df}")
+        return df
+    except Exception as error:
+        message = f"The query {query} raised the error {error}."
+        log.error(message)
+        return message

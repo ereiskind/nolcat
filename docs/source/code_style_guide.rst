@@ -32,6 +32,15 @@ Each set of circumstances needing a logging statement or a log-like output state
     * Successful request: "<HTTP verb> request to <plain text location called> at <URL> successful."
     * HTTP errors returned: "<HTTP verb> request to <plain text location called> raised <list errors>."
 
+* MySQL queries
+
+  * Debug logging statement; errors are error logging statement
+  * In the ``query_database()`` function
+  * Structure:
+
+    * Successful query: "The complete response to <query text>:\n<dataframe returned by query>"
+    * Failed query: "The query <query text> raised the error <Python exception>."
+
 * Starting an iteration
 
   * Debug logging statement
@@ -59,10 +68,6 @@ Each set of circumstances needing a logging statement or a log-like output state
 * SUSHI report errors
 
   * Warning logging statement
-
-* A problem with MySQL I/O
-
-  * Error logging statement
 
 * A problem with file I/O
 
