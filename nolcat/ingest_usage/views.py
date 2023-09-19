@@ -66,12 +66,14 @@ def upload_COUNTER_reports():
                 total_number_of_matching_records = 0
                 matching_record_instances = []
                 for combo in combinations_to_check:
-                    number_of_matching_records = pd.read_sql(
-                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
-                        con=db.engine,
+                    number_of_matching_records = query_database(
+                        query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
+                        engine=db.engine,
                     )
+                    if isinstance(number_of_matching_records, str):
+                        #SQLErrorReturned
                     number_of_matching_records = number_of_matching_records.iloc[0][0]
-                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #ValueCheck
+                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #CheckDataValue
                     if number_of_matching_records > 0:
                         matching_record_instances.append({
                             'statistics_source_ID': combo[0],
@@ -82,12 +84,14 @@ def upload_COUNTER_reports():
                         total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
                 if total_number_of_matching_records > 0:
                     for instance in matching_record_instances:
-                        statistics_source_name = pd.read_sql(
-                            sql=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
-                            con=db.engine,
+                        statistics_source_name = query_database(
+                            query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
+                            engine=db.engine,
                         )
+                        if isinstance(statistics_source_name, str):
+                            #SQLErrorReturned
                         instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
-                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"  #ValueCheck
+                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"  #EarlyReturn
                     log.error(message)
                     flash(message)
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -128,22 +132,22 @@ def harvest_SUSHI_statistics():
     log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
     if request.method == 'GET':
-        statistics_source_options = pd.read_sql(
-            sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
-            con=db.engine,
+        statistics_source_options = query_database(
+            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            engine=db.engine,
         )
+        if isinstance(statistics_source_options, str):
+            #SQLErrorReturned
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
-        try:
-            df = pd.read_sql(
-                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
-                con=db.engine,
-            )
-        except Exception as error:
-            message = f"The query for the statistics source record failed due to the error {error}."  #StdoutPythonError
-            log.error(message)
-            flash(message)
+        df = query_database(
+            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            #SQLErrorReturned
+            flash(#ToDo: Determine error message to flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -183,8 +187,8 @@ def upload_non_COUNTER_reports():
     log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = pd.read_sql(
-            sql=f"""
+        non_COUNTER_files_needed = query_database(
+            query=f"""
                 SELECT
                     annualUsageCollectionTracking.AUCT_statistics_source,
                     annualUsageCollectionTracking.AUCT_fiscal_year,
@@ -203,8 +207,10 @@ def upload_non_COUNTER_reports():
                         annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
                     );
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(non_COUNTER_files_needed, str):
+            #SQLErrorReturned
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
@@ -247,16 +253,16 @@ def upload_non_COUNTER_reports():
                 flash(logging_message + " " + message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
 
-            update_query = pd.read_sql(
-                sql=f'''
-                    UPDATE annualUsageCollectionTracking
-                    SET usage_file_path = {file_name}
-                    WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
-                ''',
-                con=db.engine,
-            )
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."  #ValueCheck
+            # update_query = query_database(
+            #    query=f"""
+            #        UPDATE annualUsageCollectionTracking
+            #        SET usage_file_path = '{file_name}'
+            #        WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
+            #    """,
+            #    con=db.engine,
+            #)
+            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."  #QueryReturn
             log.debug(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))

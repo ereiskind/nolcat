@@ -14,8 +14,10 @@ from nolcat.annual_stats import *
 log = logging.getLogger(__name__)
 
 
-def test_GET_request_for_annual_stats_homepage(engine, client):
+def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     page = client.get('/annual_stats/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title
@@ -31,10 +33,12 @@ def test_GET_request_for_annual_stats_homepage(engine, client):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = pd.read_sql(
-        sql="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
-        con=engine,
+    db_select_field_options = query_database(
+        query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+        engine=engine,
     )
+    if isinstance(db_select_field_options, str):
+        #SQLErrorReturned
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"

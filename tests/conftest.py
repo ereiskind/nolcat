@@ -262,27 +262,29 @@ def path_to_sample_file(request):
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine):
+def non_COUNTER_AUCT_object_before_upload(engine, caplog):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
     """
-    record = pd.read_sql(
-        sql=f"""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"""
             SELECT * FROM annualUsageCollectionTracking WHERE
                 usage_is_being_collected=true AND
                 is_COUNTER_compliant=false AND
                 collection_status='Collection not started' AND
                 usage_file_path IS NULL;
         """,
-        con=engine,
+        engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")  #ValueCheck
+    log.info(f"The record as a dataframe is\n{record}")  #CheckDataValue
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -294,28 +296,30 @@ def non_COUNTER_AUCT_object_before_upload(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")  #ValueCheck
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")  #FunctionReturn #QueryToRelationClass
     yield yield_object
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_after_upload(engine):
+def non_COUNTER_AUCT_object_after_upload(engine, caplog):
     """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
 
     Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
 
     Args:
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
     """
-    record = pd.read_sql(
-        sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
-        con=engine,
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
+        engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")  #ValueCheck
+    log.info(f"The record as a dataframe is\n{record}")  #CheckDataValues
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -327,7 +331,7 @@ def non_COUNTER_AUCT_object_after_upload(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")  #ValueCheck
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")  #FunctionReturn #QueryToRelationClass
     yield yield_object
 
 
@@ -459,19 +463,21 @@ def no_SUSHI_data_regex_object():
 
 
 #Section: Test Helper Function Not Possible in `nolcat.app`
-def match_direct_SUSHI_harvest_result(number_of_records):
+def match_direct_SUSHI_harvest_result(number_of_records, caplog):
     """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
 
     Args:
         number_of_records (int): the number of records in the SUSHI pull
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Returns:
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
-    df = pd.read_sql(
-        sql=f"""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    df = query_database(
+        query=f"""
             SELECT *
             FROM (
                 SELECT * FROM COUNTERData
@@ -480,8 +486,10 @@ def match_direct_SUSHI_harvest_result(number_of_records):
             ) subquery
             ORDER BY COUNTER_data_ID ASC;
         """,
-        con=db.engine,
+        engine=db.engine,
     )
+    if isinstance(df, str):
+        #SQLErrorReturned
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})

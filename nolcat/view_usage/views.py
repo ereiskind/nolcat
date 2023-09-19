@@ -38,11 +38,12 @@ def run_custom_SQL_query():
         log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")  #ValueCheck
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Set up handling for invalid query
-        df = pd.read_sql(
-            sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
-            con=db.engine,
+        df = query_database(
+            query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
+            engine=db.engine,
         )
+        if isinstance(df, str):
+            #SQLErrorReturned
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -176,11 +177,13 @@ def use_predefined_SQL_query():
             query = f"""
             """
 
-        df = pd.read_sql(
-            sql=query,
-            con=db.engine,
+        df = query_database(
+            query=query,
+            engine=db.engine,
         )
-        log.debug(f"The query result:\n{df}")  #ValueCheck
+        if isinstance(df, str):
+            #SQLErrorReturned
+        log.debug(f"The query result:\n{df}")  #CheckDataValue
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -209,8 +212,8 @@ def download_non_COUNTER_usage():
                 file.unlink()
                 log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")  #ValueCheck
 
-        file_download_options = pd.read_sql(
-            sql=f"""
+        file_download_options = query_database(
+            query=f"""
                 SELECT
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year,
@@ -221,8 +224,10 @@ def download_non_COUNTER_usage():
                 JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(file_download_options, str):
+            #SQLErrorReturned
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():

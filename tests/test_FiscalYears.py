@@ -78,11 +78,12 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record):
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record, caplog):
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
     
     The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record is added to the `fiscalYears` relation and used for the method.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     FY_instance, FY_df = FiscalYears_object_and_record
 
     #Section: Update Relation and Run Method
@@ -100,11 +101,13 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
         assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
     
     #Section: Create and Compare Dataframes
-    retrieved_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    retrieved_data = query_database(
+        query="SELECT * FROM annualUsageCollectionTracking;",
+        engine=engine,
+        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    if isinstance(retrieved_data, str):
+        #SQLErrorReturned
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],

@@ -21,10 +21,12 @@ def annual_stats_homepage():
     form = ChooseFiscalYearForm()
     if request.method == 'GET':
         # The links to the lists of vendors, resource sources, and statistics sources are standard jinja redirects; the code for populating the lists from the underlying relations is in the route functions being redirected to
-        fiscal_year_options = pd.read_sql(
-            sql="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
-            con=db.engine,
+        fiscal_year_options = query_database(
+            query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
+            engine=db.engine,
         )
+        if isinstance(fiscal_year_options, str):
+            #SQLErrorReturned
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
     elif form.validate_on_submit():
@@ -47,17 +49,21 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
     #ToDo: is the best way to run `FiscalYears.create_usage_tracking_records_for_fiscal_year()` also a form?
     if request.method == 'GET':
         #ToDo: fiscal_year_PK = the variable path int, which is also the PK in the fiscalYears relations for the fiscal year being viewed
-        fiscal_year_details = pd.read_sql(
-            sql=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
-            con=db.engine,
+        fiscal_year_details = query_database(
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
+            engine=db.engine,
         )
+        if isinstance(fiscal_year_details, str):
+            #SQLErrorReturned
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
-        fiscal_year_reporting = pd.read_sql(
-            sql=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
-            con=db.engine,
-            index_col='AUCT_statistics_source',
+        fiscal_year_reporting = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
+            engine=db.engine,
+            index='AUCT_statistics_source',
         )
+        if isinstance(fiscal_year_reporting, str):
+            #SQLErrorReturned
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
         return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)

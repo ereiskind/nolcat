@@ -35,10 +35,12 @@ def view_lists_homepage(list):
         log.error(f"The route function didn't understand the argument `{list}`.")  #UnexpectedProblem
         return abort(404)
     
-    #ToDo: df = pd.read_sql(
-    #ToDo:     sql=SQL_query,
-    #ToDo:     con=db.engine,
+    #ToDo: df = query_database(
+    #ToDo:     query=SQL_query,
+    #ToDo:     engine=db.engine,
     #ToDo: )
+    #ToDo: if isinstance(df, str):
+    #ToDo:     #SQLErrorReturned
     #ToDo: df = df.astype({dict setting correct dtypes})
     #ToDo: Add field with links to see details for each record
     #ToDo: Display the returned dataframe
@@ -60,13 +62,12 @@ def view_list_record(list, PK):
     log.info(f"Starting `view_list_record()` for {list}.")
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        #ToDo: df = pd.read_sql(
-        #ToDo:     sql=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-        #ToDo:     con=db.engine,
+        #ToDo: df = query_database(
+        #ToDo:     query=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #ToDo:     engine=db.engine,
         #ToDo: )
         #ToDo: df = df.astype({dict setting correct dtypes})
-        #ToDo: Display the returned data
-        return render_template('view_lists/page.html')#ToDo, :form=form)
+        return render_template('view_lists/page.html')#ToDo:, form=form)
     #ToDo: elif form.validate_on_submit():
         #ToDo: Add the form data to the relevant notes relation
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
@@ -93,10 +94,12 @@ def edit_list_record(list, PK):
             #ToDo: Show page without prefilled values
             return render_template('view_lists/page.html')#ToDo:, form=form)
         #ToDo: if `PK` is in the relation
-            #ToDo: df = pd.read_sql(
-            #ToDo:     sql=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-            #ToDo:     con=db.engine,
+            #ToDo: df = query_database(
+            #ToDo:     query=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+            #ToDo:     engine=db.engine,
             #ToDo: )
+            #ToDo: if isinstance(df, str):
+            #ToDo:     #SQLErrorReturned
             #ToDo: df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
                 # https://stackoverflow.com/q/35892144

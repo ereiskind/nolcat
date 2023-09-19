@@ -64,6 +64,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
 def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
@@ -104,11 +105,13 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         encoding_errors='backslashreplace',
     )
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    database_df = pd.read_sql(
-        sql=query_options[1],
-        con=engine,
-        index_col='COUNTER_data_ID',
+    database_df = query_database(
+        query=query_options[1],
+        engine=engine,
+        index='COUNTER_data_ID',
     )
+    if isinstance(database_df, str):
+        #SQLErrorReturned
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -120,6 +123,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
 def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, caplog):
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     #form_input = {
     #    'begin_date': '2016-07-01',
@@ -146,11 +150,13 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    encoding_errors='backslashreplace',
     #)
     #CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    #database_df = pd.read_sql(
-    #    sql=#ToDo: The query created with the query wizard
-    #    con=engine,
-    #    index_col='COUNTER_data_ID',
+    #database_df = query_database(
+    #    query=#ToDo: The query created with the query wizard
+    #    engine=engine,
+    #    index='COUNTER_data_ID',
     #)
+    #if isinstance(database_df, str):
+    #    #SQLErrorReturned
     #database_df = database_df.astype(COUNTERData.state_data_types())
 
     #assert POST_response.status == "200 OK"
@@ -162,7 +168,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
 
     page = client.get('/view_usage/non-COUNTER-downloads')
@@ -183,8 +189,8 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = pd.read_sql(
-        sql="""
+    db_select_field_options = query_database(
+        query="""
                 SELECT
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year,
@@ -195,8 +201,10 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
                 JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
             """,
-        con=engine,
+        engine=engine,
     )
+    if isinstance(db_select_field_options, str):
+        #SQLErrorReturned
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"

@@ -274,20 +274,23 @@ def first_new_PK_value(relation):
     elif relation == 'COUNTERData':
         PK_field = 'COUNTER_data_ID'
     
-    largest_PK_value = pd.read_sql(
-        sql=f"""
+    largest_PK_value = query_database(
+        query=f"""
             SELECT {PK_field} FROM {relation}
             ORDER BY {PK_field} DESC
             LIMIT 1;
         """,
-        con=db.engine,
+        engine=db.engine,
     )
-    if largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
-        log.debug(f"The {relation} relation is empty.")  #FilterConditionStatement
+    if isinstance(largest_PK_value, str):
+        #SQLErrorReturned
+    elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
+        log.debug(f"The {relation} relation is empty.")  #EarlyReturn
         return 0
-    largest_PK_value = largest_PK_value.iloc[0][0]
-    log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")  #ValueCheck
-    return int(largest_PK_value) + 1
+    else:
+        largest_PK_value = largest_PK_value.iloc[0][0]
+        log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")  #FunctionReturn
+        return int(largest_PK_value) + 1
 
 
 def return_string_of_dataframe_info(df):
@@ -431,12 +434,13 @@ def create_AUCT_SelectField_options(df):
     return list(s.items())
 
 
-def query_database(query, engine):
+def query_database(query, engine, index=None):
     """A wrapper for the `pd.read_sql()` method that includes the error handling.
 
     Args:
         query (str): the SQL query
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        index (str): the field(s) in the resulting dataframe to sue as the index; default is `None`, same as in the wrapped method
     
     Returns:
         dataframe: the result of the query
@@ -447,6 +451,7 @@ def query_database(query, engine):
         df = pd.read_sql(
             sql=query,
             con=engine,
+            index_col=index,
         )
         log.debug(f"The complete response to {query}:\n{df}")
         return df

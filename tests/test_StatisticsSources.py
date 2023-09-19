@@ -42,7 +42,7 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine, most_recent_month_with_usage):
+def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
@@ -50,10 +50,13 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     Args:
         PATH_TO_CREDENTIALS_FILE (str): the file path for "R5_SUSHI_credentials.json"
         most_recent_month_with_usage (tuple): the first and last days of the most recent month for which COUNTER data is available
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
@@ -64,10 +67,18 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:
-        query_result = pd.read_sql(
-            sql=f"SELECT COUNT(*) FROM statisticsSources JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID WHERE statisticsSources.statistics_source_retrieval_code={interface} AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')};",
-            con=engine,
+        query_result = query_database(
+            query=f"""
+                SELECT COUNT(*)
+                FROM statisticsSources
+                JOIN COUNTERData ON statisticsSources.statistics_source_ID=COUNTERData.statistics_source_ID
+                WHERE statisticsSources.statistics_source_retrieval_code={interface}
+                AND COUNTERData.usage_date={most_recent_month_with_usage[0].strftime('%Y-%m-%d')};
+            """,
+            engine=engine,
         )
+        if isinstance(query_result, str):
+            #SQLErrorReturned
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
@@ -145,16 +156,17 @@ def test_check_if_data_in_database_no(client, StatisticsSources_fixture, reports
     assert data_check is None
 
 
-def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage):
+def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture, reports_offered_by_StatisticsSource_fixture, current_month_like_most_recent_month_with_usage, caplog):
     """Tests if a given date and statistics source combination has any usage in the database when there are matches.
     
     To be certain the date range includes dates for which the given `StatisticsSources.statistics_source_ID` value both does and doesn't have usage, the date range must span from the dates covered by the test data to the current month, for which no data is available. Additionally, the `StatisticsSources.statistics_source_ID` value in `StatisticsSources_fixture` must correspond to a source that has all four possible reports in the test data.
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     report = choice(reports_offered_by_StatisticsSource_fixture)
     last_month_with_usage_in_test_data = date(2020, 6, 1)
-    test_could_pass = pd.read_sql(
-        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={StatisticsSources_fixture.statistics_source_ID} AND report_type='{report}' AND usage_date='{last_month_with_usage_in_test_data.strftime('%Y-%m-%d')}';",
-        con=engine,
+    test_could_pass = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={StatisticsSources_fixture.statistics_source_ID} AND report_type='{report}' AND usage_date='{last_month_with_usage_in_test_data.strftime('%Y-%m-%d')}';",
+        engine=engine,
     )
     if test_could_pass.iloc[0][0] == 0:
         pytest.skip(f"The {StatisticsSources_fixture.statistics_source_name} doesn't have {report} data in the test data, so this test cannot pass; as a result, it's being skipped.")  #PytestSkip

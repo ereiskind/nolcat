@@ -384,12 +384,14 @@ class SUSHICallAndResponse:
             file.write(Response_text)
         log.debug(f"Temp file successfully created.")
         
-        statistics_source_ID = pd.read_sql(
-            sql=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
-            con=db.engine,
+        statistics_source_ID = query_database(
+            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
+            engine=db.engine,
         )
+        if isinstance(statistics_source_ID, str):
+            #SQLErrorReturned
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
-        log.debug(f"S3 file name set to {S3_file_name}.")  #ValueCheck
+        log.debug(f"S3 file name set to {S3_file_name}.")  #CheckDataValue
 
         upload_file_to_S3_bucket(
             temp_file_path,
@@ -518,16 +520,19 @@ class SUSHICallAndResponse:
             if error_contents.get('Data'):
                 message = message[:-1] + f" due to {error_contents['Data']}."  #ValueCheck
                 #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
-            df = pd.read_sql(
-                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-                con=db.engine,
+            df = query_database(
+                query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                engine=db.engine,
             )
+            if isinstance(df, str):
+                #SQLErrorReturned
             statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                 statistics_source_ID = int(df['statistics_source_ID'][0]),
                 statistics_source_name = str(df['statistics_source_name'][0]),
                 statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
                 vendor_ID = int(df['vendor_ID'][0]),
             )  # Without the `int` constructors, a numpy int type is used
+            #ToDo: #QueryToRelationClass
             statistics_source_object.add_note(message)
             log.error(message)
             return (None, message)

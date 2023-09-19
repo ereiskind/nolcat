@@ -372,8 +372,10 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
@@ -393,27 +395,33 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    fiscalYears_relation_data = pd.read_sql(
-        sql="SELECT * FROM fiscalYears;",
-        con=engine,
-        index_col='fiscal_year_ID',
+    fiscalYears_relation_data = query_database(
+        query="SELECT * FROM fiscalYears;",
+        engine=engine,
+        index='fiscal_year_ID',
     )
+    if isinstance(fiscalYears_relation_data, str):
+        #SQLErrorReturned
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
-    vendors_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendors;",
-        con=engine,
-        index_col='vendor_ID',
+    vendors_relation_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
     )
+    if isinstance(vendors_relation_data, str):
+        #SQLErrorReturned
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
-    vendorNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendorNotes;",
-        con=engine,
-        index_col='vendor_notes_ID',
+    vendorNotes_relation_data = query_database(
+        query="SELECT * FROM vendorNotes;",
+        engine=engine,
+        index='vendor_notes_ID',
     )
+    if isinstance(vendorNotes_relation_data, str):
+        #SQLErrorReturned
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
@@ -433,8 +441,10 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
@@ -456,42 +466,50 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    statisticsSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSources;",
-        con=engine,
-        index_col='statistics_source_ID',
+    statisticsSources_relation_data = query_database(
+        query="SELECT * FROM statisticsSources;",
+        engine=engine,
+        index='statistics_source_ID',
     )
+    if isinstance(statisticsSources_relation_data, str):
+        #SQLErrorReturned
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
     statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
-    statisticsSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSourceNotes;",
-        con=engine,
-        index_col='statistics_source_notes_ID',
+    statisticsSourceNotes_relation_data = query_database(
+        query="SELECT * FROM statisticsSourceNotes;",
+        engine=engine,
+        index='statistics_source_notes_ID',
     )
+    if isinstance(statisticsSourceNotes_relation_data, str):
+        #SQLErrorReturned
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
-    resourceSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSources;",
-        con=engine,
-        index_col='resource_source_ID',
+    resourceSources_relation_data = query_database(
+        query="SELECT * FROM resourceSources;",
+        engine=engine,
+        index='resource_source_ID',
     )
+    if isinstance(resourceSources_relation_data, str):
+        #SQLErrorReturned
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
 
-    resourceSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSourceNotes;",
-        con=engine,
-        index_col='resource_source_notes_ID',
+    resourceSourceNotes_relation_data = query_database(
+        query="SELECT * FROM resourceSourceNotes;",
+        engine=engine,
+        index='resource_source_notes_ID',
     )
+    if isinstance(resourceSourceNotes_relation_data, str):
+        #SQLErrorReturned
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
-    statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        sql="SELECT * FROM statisticsResourceSources;",
-        con=engine,
-        index_col=['SRS_statistics_source', 'SRS_resource_source'],
+    statisticsResourceSources_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
+        query="SELECT * FROM statisticsResourceSources;",
+        engine=engine,
+        index=['SRS_statistics_source', 'SRS_resource_source'],
     )
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
@@ -538,7 +556,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={
@@ -559,18 +577,22 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    annualUsageCollectionTracking_relation_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    annualUsageCollectionTracking_relation_data = query_database(
+        query="SELECT * FROM annualUsageCollectionTracking;",
+        engine=engine,
+        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    if isinstance(annualUsageCollectionTracking_relation_data, str):
+        #SQLErrorReturned
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    #COUNTERData_relation_data = pd.read_sql(
-    #    sql="SELECT * FROM COUNTERData;",
-    #    con=engine,
-    #    index_col="COUNTER_data_ID",
+    #COUNTERData_relation_data = query_database(
+    #    query="SELECT * FROM COUNTERData;",
+    #    engine=engine,
+    #    indexindex="COUNTER_data_ID",
     #)
+    #if isinstance(COUNTERData_relation_data, str):
+    #    #SQLErrorReturned
     #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
