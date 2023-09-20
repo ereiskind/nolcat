@@ -434,6 +434,38 @@ def create_AUCT_SelectField_options(df):
     return list(s.items())
 
 
+def load_data_into_database(df, relation, engine, load_index=True, index_field_name=None):
+    """A wrapper for the pandas `to_sql()` method that includes the error handling.
+
+    Args:
+        df (dataframe): the data to load into the database
+        relation (str): the relation the data is being loaded into
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        load_index (bool): include the dataframe index in the loaded data; default is `True`, same as in the wrapped method
+        index_field_name (str or list of str): the name of the field(s) in the relation that the dataframe index values should be loaded into; default is `None`, same as in the wrapped method, which means the index field name(s) are matched to field(s) in the relation
+
+    Returns:
+        str: a message indicating success or including the error raised by the attempt to load the data
+    """
+    log.info(f"Starting `load_data_into_database()` for relation {relation}.")
+    try:
+        df.to_sql(
+            name=relation,
+            con=engine,
+            if_exists='append',
+            chunksize=1000,
+            index=load_index,
+            index_label=index_field_name,
+        )
+        message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
+        log.debug(message)
+        return message
+    except Exception as error:
+        message = f"Loading data into the {relation} relation raised the error {error}."
+        log.error(message)
+        return message
+
+
 def query_database(query, engine, index=None):
     """A wrapper for the `pd.read_sql()` method that includes the error handling.
 

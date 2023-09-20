@@ -68,19 +68,26 @@ def test_404_page(client):
 
 
 @pytest.mark.dependency()
-def test_loading_data_into_relation(engine, vendors_relation, caplog):
-    """Tests loading data into and querying data from a relation.
-    
-    This test takes a dataframe from a fixture and loads it into a relation, then performs a `SELECT *` query on that same relation to confirm that the database and program are connected to allow CRUD operations. This test function also serves as the test for `nolcat.app.query_database()`, since it's called in latter part of the function and has a precondition of needing the data loaded in the earlier part of the function.
+def test_load_data_into_database(engine, vendors_relation):
+    """Tests loading data into a relation.
+
+    Testing the helper function for loading data into the database also confirms that the database and program are connected.
     """
-    vendors_relation.to_sql(
-        name='vendors',
-        con=engine,
-        if_exists='append',
-        # `if_exists='replace',` raises the error `sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')`
-        chunksize=1000,
-        index_label='vendor_ID',
+    result = load_data_into_database(
+        df=vendors_relation,
+        relation='vendors',
+        engine=engine,
+        index_field_name='vendor_ID',
     )
+    assert result == "Successfully loaded 8 records into the vendors relation."
+
+
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_query_database(engine, vendors_relation):
+    """Tests getting data from the database through a SQL query.
+
+    This test performs a `SELECT *` query on the relation that had data loaded into it in the previous test, confirming that the function works and that the database and program are connected to allow CRUD operations.
+    """
     retrieved_vendors_data = query_database(
         query="SELECT * FROM vendors;",
         engine=engine,
@@ -92,11 +99,11 @@ def test_loading_data_into_relation(engine, vendors_relation, caplog):
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
 
-@pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
+@pytest.mark.dependency(depends=['test_query_database'])
 def test_loading_connected_data_into_other_relation(engine, statisticsSources_relation, caplog):
     """Tests loading data into a second relation connected with foreign keys and performing a joined query.
 
-    This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_loading_data_into_relation`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
+    This test uses second dataframe to load data into a relation that has a foreign key field that corresponds to the primary keys of the relation loaded with data in `test_load_data_into_database`, then tests that the data load and the primary key-foreign key connection worked by performing a `JOIN` query and comparing it to a manually constructed dataframe containing that same data.
     """
     df_dtypes = {
         "statistics_source_name": StatisticsSources.state_data_types()['statistics_source_name'],
@@ -178,7 +185,7 @@ def test_download_file(client, path_to_sample_file):  #ToDo: If method for inter
 
 
 #Section: Test Helper Functions
-@pytest.mark.dependency(depends=['test_loading_data_into_relation'])  # If the data load into the `vendors` relation fails, this test is skipped
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_first_new_PK_value():
     """Tests the retrieval of a relation's next primary key value."""
     assert first_new_PK_value('vendors') == 8

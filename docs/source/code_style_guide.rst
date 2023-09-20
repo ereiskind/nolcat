@@ -32,6 +32,15 @@ Each set of circumstances needing a logging statement or a log-like output state
     * Successful request: "<HTTP verb> request to <plain text location called> at <URL> successful."
     * HTTP errors returned: "<HTTP verb> request to <plain text location called> raised <list errors>."
 
+* Load data into MySQL database
+
+  * Debug logging statement; errors are error logging statement
+  * In the ``load_data_into_database()`` function
+  * Structure:
+
+    * Input success: "Successfully loaded <number of loaded records> records into the <name of relation> relation."
+    * Input failure: "Loading data into the <name of relation> relation raised the error <Python exception>."
+
 * MySQL queries
 
   * Debug logging statement; errors are error logging statement
