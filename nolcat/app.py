@@ -440,7 +440,7 @@ def query_database(query, engine, index=None):
     Args:
         query (str): the SQL query
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        index (str or list of str): the field(s) in the resulting dataframe to sue as the index; default is `None`, same as in the wrapped method
+        index (str or list of str): the field(s) in the resulting dataframe to use as the index; default is `None`, same as in the wrapped method
     
     Returns:
         dataframe: the result of the query
