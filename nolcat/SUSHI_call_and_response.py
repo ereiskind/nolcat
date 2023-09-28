@@ -89,14 +89,19 @@ class SUSHICallAndResponse:
         try:
             API_response, messages_to_flash = self._convert_Response_to_JSON(API_response)  # If there aren't any messages to flash, an empty list is initialized
         except Exception as error:
-            message1 = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."  #StdoutPythonError
-            log.error(message1)
-            message2 = self._save_raw_Response_text(API_response.text)
-            return (message1, [message1, message2])
+            message = f"Calling the `_convert_Response_to_JSON()` method raised the error {error}."  #ConversionError
+            log.error(f"{message} As a result, the `requests.Response.content` couldn't be converted to native Python data types; the `requests.Response.text` value is being saved to a file instead.")
+            messages_to_flash = [message]
+            flash_message = self._save_raw_Response_text(API_response.text)
+            messages_to_flash.append(flash_message)
+            return (message, messages_to_flash)
+        
         if isinstance(API_response, Exception):
-            message = self._save_raw_Response_text(API_response.text)
-            messages_to_flash.append(message)
-            return (f"The `_convert_Response_to_JSON()` method returned {str(API_response)}.", messages_to_flash)  #UnexpectedProblem
+            #ToDo: message = #ConversionError
+            log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
+            flash_message = self._save_raw_Response_text(API_response.text)
+            messages_to_flash.append(flash_message)
+            return (message, messages_to_flash)
         log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
