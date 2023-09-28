@@ -102,20 +102,13 @@ def upload_COUNTER_reports():
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             
             df.index += first_new_PK_value('COUNTERData')
-            df.to_sql(
-                'COUNTERData',
-                con=db.engine,
-                if_exists='append',
-                index_label='COUNTER_data_ID',
+            load_result = load_data_into_database(
+                df=df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
             )
-            message = "Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation."  #SQLLoadSuccess
-            log.info(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."  #SQLLoadError
-            log.error(message)
-            flash(message)
+            flash(load_result)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")  #404

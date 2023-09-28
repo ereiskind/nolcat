@@ -87,13 +87,11 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     FY_instance, FY_df = FiscalYears_object_and_record
 
     #Section: Update Relation and Run Method
-    FY_df.to_sql(
-        name='fiscalYears',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index=True,
-        index_label='fiscal_year_ID',
+    load_data_into_database(
+        df=FY_df,
+        relation='fiscalYears',
+        engine=engine,
+        index_field_name='fiscal_year_ID',
     )
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()

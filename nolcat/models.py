@@ -303,20 +303,13 @@ class FiscalYears(db.Model):
         log.debug(f"And a summary of the dataframe the above records are in:\n{return_string_of_dataframe_info(df)}")
 
         #Section: Load Data into `annualUsageCollectionTracking` Relation
-        try:
-            df.to_sql(
-                'annualUsageCollectionTracking',
-                con=db.engine,
-                if_exists='append',
-                index_label=["AUCT_statistics_source", "AUCT_fiscal_year"],
-            )
-            message = f"Successfully loaded {df.shape[0]} AUCT records for FY {self.fiscal_year} into the database."  #SQLLoadSuccess
-            log.info(message)
-            return message
-        except Exception as error:
-            message = f"The AUCT records load for FY {self.fiscal_year} had the error {error}."  #SQLLoadError
-            log.error(message)
-            return message
+        load_result = load_data_into_database(
+            df=df,
+            relation='annualUsageCollectionTracking',
+            engine=db.engine,
+            index_field_name=["AUCT_statistics_source", "AUCT_fiscal_year"],
+        )
+        return load_result
 
 
     @hybrid_method
@@ -346,20 +339,13 @@ class FiscalYears(db.Model):
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: try:
-            #ToDo: df.to_sql(
-            #ToDo:     'COUNTERData',
-            #ToDo:     con=db.engine,
-            #ToDo:     if_exists='append',
-            #ToDo:     index_label='COUNTER_data_ID',
-            #ToDo: )
-            #ToDo: message = f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database."  #SQLLoadSuccess
-            #ToDo: log.info(message)
-            #ToDo: return (message, all_flash_statements)
-        #ToDo: except Exception as error:
-        #ToDo: message = f"The load for FY {self.fiscal_year} had the error {error}."  #SQLLoadError
-            #ToDo: log.error(message)
-            #ToDo: return (message, all_flash_statements)
+        #ToDo: load_result = load_data_into_database(
+        #ToDo:     df=df,
+        #ToDo:     relation='COUNTERData',
+        #ToDo:     engine=db.engine,
+        #ToDo:     index_field_name='COUNTER_data_ID',
+        #ToDo: )
+        #ToDo: return (load_result, all_flash_statements)
         pass
 
 
@@ -944,20 +930,13 @@ class StatisticsSources(db.Model):
             log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")  #Good_harvest_R5_SUSHI
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
         log.debug(f"The dataframe after adjusting the index:\n{df}")
-        try:
-            df.to_sql(
-                'COUNTERData',
-                con=db.engine,
-                if_exists='append',
-                index_label='COUNTER_data_ID',
-            )
-            message = f"Successfully loaded {df.shape[0]} records into the database."  #SQLLoadSuccess
-            log.info(message)
-            return (message, flash_statements)
-        except Exception as error:
-            message = f"The load had the error {error}."  #SQLLoadError
-            log.error(message)
-            return (message, flash_statements)
+        load_result = load_data_into_database(
+            df=df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        return (load_result, flash_statements)
 
 
     @hybrid_method
@@ -1295,23 +1274,16 @@ class AnnualUsageCollectionTracking(db.Model):
         else:
             log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")  #Good_harvest_R5_SUSHI
         df.index += first_new_PK_value('COUNTERData')
-        try:
-            df.to_sql(
-                'COUNTERData',
-                con=db.engine,
-                if_exists='append',
-                index_label='COUNTER_data_ID',
-            )
-            message = f"Successfully loaded {df.shape[0]} records for {statistics_source.statistics_source_name} for FY {fiscal_year} into the database."  #SQLLoadSuccess
-            log.info(message)
+        load_result = load_data_into_database(
+            df=df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        if re.fullmatch(r'Successfully loaded \d* records into the \w* relation.', load_result):
             self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            #ToDo: Is logging message with both SQL load success and SQL update success needed?
-            return (message, flash_statements)
-        except Exception as error:
-            message = f"The load for {statistics_source.statistics_source_name} for FY {fiscal_year} had the error {error}."  #SQLLoadError
-            log.error(message)
-            return (message, flash_statements)
+        return (load_result, flash_statements)
 
 
     @hybrid_method

@@ -115,7 +115,7 @@ MySQL I/O
 ---------
 * Load data into MySQL database
 
-  * Debug logging statement; errors are error logging statement
+  * Info logging statement; errors are error logging statement
   * In the ``load_data_into_database()`` function
   * Structure:
 

@@ -5,6 +5,7 @@ from flask import redirect
 from flask import url_for
 from flask import request
 from flask import abort
+from flask import flash
 import pandas as pd
 
 from . import bp
@@ -89,32 +90,32 @@ def collect_FY_and_vendor_data():
 
 
         #Section: Load Data into Database
-        try:
-            fiscalYears_dataframe.to_sql(
-                'fiscalYears',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `fiscal_year_ID`
-            )
-            log.debug("Relation `fiscalYears` loaded into the database.")  #SQLLoadSuccess
-            vendors_dataframe.to_sql(
-                'vendors',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `vendor_ID`
-            )
-            log.debug("Relation `vendors` loaded into the database.")  #SQLLoadSuccess
-            vendorNotes_dataframe.to_sql(
-                'vendorNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `vendorNotes` loaded into the database.")  #SQLLoadSuccess
-            log.info("All relations loaded into the database.")  #SQLLoadSuccess
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
-            #ToDo: Flash error
+        data_load_errors = []
+        fiscalYears_load_result = load_data_into_database(
+            df=fiscalYears_dataframe,
+            relation='fiscalYears',
+            engine=db.engine,
+        )
+        if fiscalYears_load_result.startwith("Loading data into the fiscalYears relation raised the error"):
+            data_load_errors.append(fiscalYears_load_result)
+        vendors_load_result = load_data_into_database(
+            df=vendors_dataframe,
+            relation='vendors',
+            engine=db.engine,
+        )
+        if vendors_load_result.startwith("Loading data into the vendors relation raised the error"):
+            data_load_errors.append(vendors_load_result)
+        vendorNotes_load_result = load_data_into_database(
+            df=vendorNotes_dataframe,
+            relation='vendorNotes',
+            engine=db.engine,
+            load_index=False,
+        )
+        if vendorNotes_load_result.startwith("Loading data into the vendorNotes relation raised the error"):
+            data_load_errors.append(vendorNotes_load_result)
+        if data_load_errors:
+            flash(data_load_errors)
+            return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         
         return redirect(url_for('initialization.collect_sources_data'))
 
@@ -224,46 +225,47 @@ def collect_sources_data():
 
 
         #Section: Load Data into Database
-        try:
-            statisticsSources_dataframe.to_sql(
-                'statisticsSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `statistics_source_ID`
-            )
-            log.debug("Relation `statisticsSources` loaded into the database.")  #SQLLoadSuccess
-            statisticsSourceNotes_dataframe.to_sql(
-                'statisticsSourceNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `statisticsSourceNotes` loaded into the database.")  #SQLLoadSuccess
-            resourceSources_dataframe.to_sql(
-                'resourceSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `resource_source_ID`
-            )
-            log.debug("Relation `resourceSources` loaded into the database.")  #SQLLoadSuccess
-            resourceSourceNotes_dataframe.to_sql(
-                'resourceSourceNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `resourceSourceNotes` loaded into the database.")  #SQLLoadSuccess
-            statisticsResourceSources_dataframe.to_sql(
-                'statisticsResourceSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
-            )
-            log.debug("Relation `statisticsResourceSources` loaded into the database.")  #SQLLoadSuccess
-            log.info("All relations loaded into the database")  #SQLLoadSuccess
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
-            #ToDo: Flash error
+        data_load_errors = []
+        statisticsSources_load_result = load_data_into_database(
+            df=statisticsSources_dataframe,
+            relation='statisticsSources',
+            engine=db.engine,
+        )
+        if statisticsSources_load_result.startwith("Loading data into the statisticsSources relation raised the error"):
+            data_load_errors.append(statisticsSources_load_result)
+        statisticsSourceNotes_load_result = load_data_into_database(
+            df=statisticsSourceNotes_dataframe,
+            relation='statisticsSourceNotes',
+            engine=db.engine,
+            load_index=False,
+        )
+        if statisticsSourceNotes_load_result.startwith("Loading data into the statisticsSourceNotes relation raised the error"):
+            data_load_errors.append(statisticsSourceNotes_load_result)
+        resourceSources_load_result = load_data_into_database(
+            df=resourceSources_dataframe,
+            relation='resourceSources',
+            engine=db.engine,
+        )
+        if resourceSources_load_result.startwith("Loading data into the resourceSources relation raised the error"):
+            data_load_errors.append(resourceSources_load_result)
+        resourceSourceNotes_load_result = load_data_into_database(
+            df= resourceSourceNotes_dataframe,
+            relation='resourceSourceNotes',
+            engine=db.engine,
+            load_index=False,
+        )
+        if resourceSourceNotes_load_result.startwith("Loading data into the resourceSourceNotes relation raised the error"):
+            data_load_errors.append(resourceSourceNotes_load_result)
+        statisticsResourceSources_load_result = load_data_into_database(
+            df=statisticsResourceSources_dataframe,
+            relation='statisticsResourceSources',
+            engine=db.engine,
+        )
+        if statisticsResourceSources_load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
+            data_load_errors.append(statisticsResourceSources_load_result)
+        if data_load_errors:
+            flash(data_load_errors)
+            return redirect(url_for('initialization.collect_sources_data'))
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
@@ -372,26 +374,26 @@ def collect_AUCT_and_historical_COUNTER_data():
         # ToDo: Run `check_if_data_already_in_COUNTERData()`
 
         #Subsection: Load Data into Database
-        try:
-            AUCT_dataframe.to_sql(
-                'annualUsageCollectionTracking',
-                con=db.engine,
-                if_exists='append',
-                index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-            )
-            log.debug("Relation `annualUsageCollectionTracking` loaded into the database.")  #SQLLoadSuccess
-
-            # COUNTER_reports_df.to_sql(
-            #     'COUNTERData',
-            #     con=db.engine,
-            #     if_exists='append',
-            #     index_label='COUNTER_data_ID',
-            # )
-            # log.debug("Relation `COUNTERData` loaded into the database.")  #SQLLoadSuccess
-            log.info("All relations loaded into the database.")  #SQLLoadSuccess
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
-            #ToDo: Flash error
+        data_load_errors = []
+        annualUsageCollectionTracking_load_result = load_data_into_database(
+            df=AUCT_dataframe,
+            relation='annualUsageCollectionTracking',
+            engine=db.engine,
+            index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+        )
+        if annualUsageCollectionTracking_load_result.startwith("Loading data into the annualUsageCollectionTracking relation raised the error"):
+            data_load_errors.append(annualUsageCollectionTracking_load_result)
+        #COUNTERData_load_result = load_data_into_database(
+        #    df=COUNTER_reports_df,
+        #    relation='COUNTERData',
+        #    engine=db.engine,
+        #    index_field_name='COUNTER_data_ID',
+        #)
+        #if COUNTERData_load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+        #    data_load_errors.append(COUNTERData_load_result)
+        if data_load_errors:
+            flash(data_load_errors)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))

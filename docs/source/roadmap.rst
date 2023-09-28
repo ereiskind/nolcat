@@ -34,7 +34,6 @@ Iteration 1: Complete Current Data I/O
 
 Iteration 2: Add Historical Data
 ================================
-* Add flash messages for errors
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``

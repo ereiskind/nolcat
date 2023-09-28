@@ -112,12 +112,11 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
-    statisticsSources_relation.to_sql(
-        name='statisticsSources',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index_label='statistics_source_ID',
+    load_data_into_database(
+        df=statisticsSources_relation,
+        relation='statisticsSources',
+        engine=engine,
+        index_field_name='statistics_source_ID',
     )
     retrieved_data = query_database(
         query="""
