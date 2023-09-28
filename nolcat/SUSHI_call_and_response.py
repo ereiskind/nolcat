@@ -450,8 +450,6 @@ class SUSHICallAndResponse:
                     if SUSHI_exception:
                         if isinstance(SUSHI_exception, str):
                             errors_list.add(report_type + SUSHI_exception)
-                        else:
-                            errors_list.add(SUSHI_exception)
                 if len(errors_list) == 1:  # One error indicating API calls should stop
                     return_value = (errors_list.pop(), flash_messages_list)
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{flash_messages_list}")
