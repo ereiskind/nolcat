@@ -288,11 +288,62 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
-def test_check_if_data_already_in_COUNTERData():
+@pytest.fixture
+def partially_duplicate_COUNTER_data():
+    """COUNTER data, some of which is in the `COUNTERData_relation` dataframe.
+
+    Yields:
+        dataframe: data formatted for loading into the `COUNTERData` relation
+    """
+    df = pd.DataFrame(
+        [
+            [3, "TR", "Empires of Vision<subtitle>A Reader</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822378976", "Silverchair:417", "978-0-8223-7897-6", None, None, None, "Book", "Chapter", 2013, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-01-01", 4, None],
+            [3, "TR", "Within the Circle<subtitle>An Anthology of African American Literary Criticism from the Harlem Renaissance to the Present</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822399889", "Silverchair:1923", "978-0-8223-1536-0", None, None, None, "Book", "Chapter", 1994, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-01-01", 4, None],
+            [3, "TR", "Pikachu's Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822385813", "Silverchair:891", "978-0-8223-8581-3", None, None, None, "Book", "Book", 2004, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-03-01", 2, None],
+            [3, "TR", "Pikachu's Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822385813", "Silverchair:891", "978-0-8223-8581-3", None, None, None, "Book", "Book", 2004, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-03-01", 2, None],
+            [3, "TR", "Pikachu's Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822385813", "Silverchair:891", "978-0-8223-8581-3", None, None, None, "Book", None, 2004, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Investigations", "2020-03-01", 2, None],
+            [3, "TR", "Within the Circle<subtitle>An Anthology of African American Literary Criticism from the Harlem Renaissance to the Present</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822399889", "Silverchair:1923", "978-0-8223-1536-0", None, None, None, "Book", "Chapter", 1994, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-02-01", 16, None],
+            [3, "TR", "Within the Circle<subtitle>An Anthology of African American Literary Criticism from the Harlem Renaissance to the Present</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822399889", "Silverchair:1923", "978-0-8223-1536-0", None, None, None, "Book", "Chapter", 1994, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-02-01", 4, None],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
+    )
+    df.index.name = "COUNTER_data_ID"
+    df = df.astype(COUNTERData.state_data_types())
+    df["publication_date"] = pd.to_datetime(df["publication_date"])
+    df["parent_publication_date"] = pd.to_datetime(df["parent_publication_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    yield df
+
+
+@pytest.fixture
+def non_duplicate_COUNTER_data():
+    """The COUNTER data from `partially_duplicate_COUNTER_data`not in the `COUNTERData_relation` dataframe.
+
+    Yields:
+        dataframe: data formatted for loading into the `COUNTERData` relation
+    """
+    df = pd.DataFrame(
+        [
+            [3, "TR", "Within the Circle<subtitle>An Anthology of African American Literary Criticism from the Harlem Renaissance to the Present</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822399889", "Silverchair:1923", "978-0-8223-1536-0", None, None, None, "Book", "Chapter", 1994, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-02-01", 16, None],
+            [3, "TR", "Within the Circle<subtitle>An Anthology of African American Literary Criticism from the Harlem Renaissance to the Present</subtitle>", "Duke University Press", None, "Duke University Press", None, None, None, "10.1215/9780822399889", "Silverchair:1923", "978-0-8223-1536-0", None, None, None, "Book", "Chapter", 1994, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-02-01", 4, None],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
+    )
+    df.index.name = "COUNTER_data_ID"
+    df = df.astype(COUNTERData.state_data_types())
+    df["publication_date"] = pd.to_datetime(df["publication_date"])
+    df["parent_publication_date"] = pd.to_datetime(df["parent_publication_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+    yield df
+
+
+def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
     """Tests the check for statistics source/report type/usage date combinations already in the database."""
-    #ToDo: Create fixture for `COUNTERData` where some of the records duplicate the test data fixture.
-    #ToDo: Use the fixture in the function
-    #ToDo: The function should return a dataframe of all the records that aren't duplicates and a statement that lists the combinations that are duplicates
+    #ToDo: df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
+    #ToDo: assert_frame_equal(df, non_duplicate_COUNTER_data)
+    #ToDo: assert message == f"Usage statistics for the statistics source, report type, and usage date combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{dictionary with combinations 3/TR/2020-01-01, 3/TR/2020-03-01, 2/BR2/2018-04-01, 2/BR2/2018-08-01}"
     pass
 
 
