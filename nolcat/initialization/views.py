@@ -114,6 +114,7 @@ def collect_FY_and_vendor_data():
             log.info("All relations loaded into the database.")  #SQLLoadSuccess
         except Exception as error:
             log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
+            #ToDo: Flash error
         
         return redirect(url_for('initialization.collect_sources_data'))
 
@@ -262,6 +263,7 @@ def collect_sources_data():
             log.info("All relations loaded into the database")  #SQLLoadSuccess
         except Exception as error:
             log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
+            #ToDo: Flash error
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
@@ -323,6 +325,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
                 #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
+                #ToDo: Flash error
                 # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
                 return redirect(url_for('initialization.collect_sources_data'))
             infinite_loop_error = True
@@ -388,6 +391,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             log.info("All relations loaded into the database.")  #SQLLoadSuccess
         except Exception as error:
             log.error(f"The `to_sql` methods raised the error {error}.")  #SQLLoadError
+            #ToDo: Flash error
 
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
