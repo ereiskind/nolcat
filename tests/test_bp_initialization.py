@@ -592,7 +592,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #COUNTERData_relation_data = query_database(
     #    query="SELECT * FROM COUNTERData;",
     #    engine=engine,
-    #    indexindex="COUNTER_data_ID",
+    #    index="COUNTER_data_ID",
     #)
     #if isinstance(COUNTERData_relation_data, str):
     #    #SQLErrorReturned
