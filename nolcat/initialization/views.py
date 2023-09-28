@@ -355,13 +355,18 @@ def collect_AUCT_and_historical_COUNTER_data():
 
         #Subsection: Ingest COUNTER Reports
         #ToDo: Uncomment this subsection during Planned Iteration 2
-        # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-        # log.debug(COUNTER_reports_df)
-        #ToDo: Does there need to be a warning here about if the above method returns no data?
-        # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-        # COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        # log.info(COUNTER_reports_df.head())
-        # log.debug(COUNTER_reports_df)
+        #try:
+        #    COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+        #    log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
+        #    COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+        #    COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        #    log.info(f"`COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n")
+        #    log.debug(f"`COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
+        #except Exception as error:
+        #    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
+        #    log.error(message)
+        #    #ToDo: Flash message
+        # ToDo: Run `check_if_data_already_in_COUNTERData()`
 
         #Subsection: Load Data into Database
         try:
