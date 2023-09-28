@@ -288,6 +288,14 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
+def test_check_if_data_already_in_COUNTERData():
+    """Tests the check for statistics source/report type/usage date combinations already in the database."""
+    #ToDo: Create fixture for `COUNTERData` where some of the records duplicate the test data fixture.
+    #ToDo: Use the fixture in the function
+    #ToDo: The function should return a dataframe of all the records that aren't duplicates and a statement that lists the combinations that are duplicates
+    pass
+
+
 #ToDo: test_match_direct_SUSHI_harvest_result()
 # Function itself in `tests.conftest`
 

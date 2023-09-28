@@ -489,3 +489,18 @@ def query_database(query, engine, index=None):
         message = f"The query {query} raised the error {error}."
         log.error(message)
         return message
+
+
+def check_if_data_already_in_COUNTERData(df):
+    """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
+
+    Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
+
+    Args:
+        df (dataframe): the data to be loaded into the `COUNTERData` relation
+    
+    Returns:
+        tuple: the dataframe to be loaded into `COUNTERData`; the message to be flashed about the records not loaded or `None` if all records are being loaded (str or None)
+    """
+    log.info(f"Starting `check_if_data_already_in_COUNTERData()`.")
+    pass
