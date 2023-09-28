@@ -10,6 +10,12 @@
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+        <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <h2>6. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
         <li>Download <a href="{{ url_for('download_file', file_path=AUCT_file_path) }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>

@@ -11,6 +11,12 @@
     <h1>Database Initialization Wizard: Page 1</h1>
     <p>These pages will walk you through the process of initializing the database with your historical usage statistics and other data required for the relational structure of the underlying database.</p>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <h2>1. Create the `fiscalYears` Relation with Historical Years</h2>  <!--Ordered list not used because numbering continues across multiple pages-->
     <ol>
         <li>Download <a href="{{ url_for('download_file', file_path=CWD+'/relation_initialization_templates/initialize_fiscalYears.csv') }}">"initialize_fiscalYears.csv"</a>.</li>
