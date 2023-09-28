@@ -1,7 +1,6 @@
 import logging
 from datetime import date
 import calendar
-from itertools import product
 from ast import literal_eval
 from flask import render_template
 from flask import request
@@ -35,81 +34,31 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
-            try:
-                try:
-                    df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-                    df['report_creation_date'] = pd.to_datetime(None)
-                except Exception as error:
-                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
-                    log.error(message)
-                    flash(message)
-                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-                
-                log.debug("*Starting the duplication check against what's already in the database.*")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype
-                statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
-                log.debug(f"`df['statistics_source_ID']` as a list: {statistics_sources_in_dataframe}")  #ValueCheck
-                statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
-                log.debug(f"`df['statistics_source_ID']` as a deduped list: {statistics_sources_in_dataframe}")  #ValueCheck
-
-                report_types_in_dataframe = df['report_type'].tolist()
-                log.debug(f"`df['report_type']` as a list: {report_types_in_dataframe}")  #ValueCheck
-                report_types_in_dataframe = list(set(report_types_in_dataframe))
-                log.debug(f"`df['report_type']` as a deduped list: {report_types_in_dataframe}")  #ValueCheck
-
-                dates_in_dataframe = df['usage_date'].tolist()
-                log.debug(f"`df['usage_date']` as a list: {dates_in_dataframe}")  #ValueCheck
-                dates_in_dataframe = list(set(dates_in_dataframe))
-                log.debug(f"`df['usage_date']` as a deduped list: {dates_in_dataframe}")  #ValueCheck
-
-                combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-                log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")  #AboutTo
-                total_number_of_matching_records = 0
-                matching_record_instances = []
-                for combo in combinations_to_check:
-                    number_of_matching_records = query_database(
-                        query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
-                        engine=db.engine,
-                    )
-                    if isinstance(number_of_matching_records, str):
-                        #SQLErrorReturned
-                    number_of_matching_records = number_of_matching_records.iloc[0][0]
-                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #QueryReturn
-                    if number_of_matching_records > 0:
-                        matching_record_instances.append({
-                            'statistics_source_ID': combo[0],
-                            'report_type': combo[1],
-                            'date': combo[2],
-                        })
-                        log.debug(f"Added {matching_record_instances[-1]} to `matching_record_instances`.")
-                        total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
-                if total_number_of_matching_records > 0:
-                    for instance in matching_record_instances:
-                        statistics_source_name = query_database(
-                            query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
-                            engine=db.engine,
-                        )
-                        if isinstance(statistics_source_name, str):
-                            #SQLErrorReturned
-                        instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
-                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"  #OneOff
-                    log.error(message)
-                    flash(message)
-                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            except Exception as error:
-                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-                log.error(message)
-                flash(message)
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            
-            df.index += first_new_PK_value('COUNTERData')
-            load_result = load_data_into_database(
-                df=df,
-                relation='COUNTERData',
-                engine=db.engine,
-                index_field_name='COUNTER_data_ID',
-            )
-            flash(load_result)
+            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+            df['report_creation_date'] = pd.to_datetime(None)
+        except Exception as error:
+            message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
+            log.error(message)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        
+        try:
+            df, message = check_if_data_already_in_COUNTERData(df)
+        except Exception as error:
+            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        
+        df.index += first_new_PK_value('COUNTERData')
+        load_result = load_data_into_database(
+            df=df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        flash(load_result)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
