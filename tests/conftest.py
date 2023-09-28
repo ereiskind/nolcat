@@ -398,7 +398,7 @@ def header_value():
     Yields:
         dict: HTTP header data
     """
-    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+    yield {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
 @pytest.fixture(scope='session')
@@ -457,7 +457,7 @@ def SUSHI_server_error_regex_object():
 def no_SUSHI_data_regex_object():
     """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because no data is returned.
 
-    Returns:
+    Yields:
        re.Pattern: the regex object matching SUSHI server error messages
     """
     yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
@@ -473,7 +473,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         number_of_records (int): the number of records in the SUSHI pull
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
-    Returns:
+    Yields:
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -512,7 +512,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
     else:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
-    return df
+    yield df
 
 
 def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
@@ -540,7 +540,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
             if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
-    return list_of_reports
+    yield list_of_reports
 
 
 #Section: Replacement Classes
