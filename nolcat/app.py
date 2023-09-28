@@ -26,7 +26,7 @@ except:
         try:
             from nolcat import nolcat_secrets as secrets
         except:
-            print("None of the provided import statements for `nolcat\\nolcat_secrets.py` worked.")  #UnexpectedProblem
+            print("None of the provided import statements for `nolcat\\nolcat_secrets.py` worked.")
 
 DATABASE_USERNAME = secrets.Username
 DATABASE_PASSWORD = secrets.Password
@@ -201,9 +201,7 @@ def create_app():
             *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
             *Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
         )
-        log.debug(f"`Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])` is {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}")  #ValueCheck
-        log.debug(f"`Path(*Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:])` is {Path(*Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:])}")  #ValueCheck
-        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")  #ValueCheck
+        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")  #FileIO
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -285,11 +283,11 @@ def first_new_PK_value(relation):
     if isinstance(largest_PK_value, str):
         #SQLErrorReturned
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
-        log.debug(f"The {relation} relation is empty.")  #EarlyReturn
+        log.debug(f"The {relation} relation is empty.")
         return 0
     else:
         largest_PK_value = largest_PK_value.iloc[0][0]
-        log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")  #FunctionReturn
+        log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")  #QueryReturn
         return int(largest_PK_value) + 1
 
 
@@ -366,17 +364,17 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=bucket)
     except botocore.exceptions.ClientError as error:
-        message = f"Trying to upload the file saved at `{file}` failed because the check for the S3 bucket designated for downloads returned {error}."  #StdoutPythonError
+        message = f"Trying to upload the file saved at `{file}` failed because the check for the S3 bucket designated for downloads returned {error}."  #FileIOError
         log.error(message)
         return message
  
 
     #Section: Upload File to Bucket
-    log.info(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #ValueCheck
+    log.info(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #FileIO
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
-        log.debug(f"{file} opened successfully to initialize object {file_object}")  #ValueCheck
+        log.debug(f"{file} opened successfully to initialize object {file_object}")  #FileIO
         try:
             client.upload_fileobj(
                 Fileobj=file_object,
@@ -384,14 +382,14 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #ValueCheck
+            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #FileIO
             log.info(message)
             return message
         except Exception as error:
-            logging.warning(f"The object `{file}` could be opened into the object `{file_object}`, but uploading the latter with `upload_fileobj()` raised {error}. The object `{file}` will now try to be loaded with `upload_file()`.")  #StdoutPythonError
+            logging.warning(f"The object `{file}` could be opened into the object `{file_object}`, but uploading the latter with `upload_fileobj()` raised {error}. The object `{file}` will now try to be loaded with `upload_file()`.")  #FileIOError
             file_object.close()
     except Exception as error:
-        log.debug(f"The object `{file}` raised {error} when the `open()` method was called. The object `{file}` will now try to be loaded with `upload_file()`.")  #StdoutPythonError
+        log.debug(f"The object `{file}` raised {error} when the `open()` method was called. The object `{file}` will now try to be loaded with `upload_file()`.")  #FileIOError
     
     #Subsection: Upload File with `upload_file()`
     if file.is_file():
@@ -401,15 +399,15 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
                 Bucket=bucket,
                 Key=bucket_path + file_name,
             )
-            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #ValueCheck
+            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #FileIO
             log.info(message)
             return message
         except Exception as error:
-            message = f"Trying to upload the object `{file}` as a path-like object raised the error {error}."  #StdoutPythonError
+            message = f"Trying to upload the object `{file}` as a path-like object raised the error {error}."  #FileIOError
             log.error(message)
             return message
     else:
-        message = f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."  #UnexpectedProblem
+        message = f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."  #FileIOError
         log.error(message)
         return message
 
@@ -430,7 +428,7 @@ def create_AUCT_SelectField_options(df):
     df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
     s = change_single_field_dataframe_into_series(df)
-    log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")  #ValueCheck
+    log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
     return list(s.items())
 
 

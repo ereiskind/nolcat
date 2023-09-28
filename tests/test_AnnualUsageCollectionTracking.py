@@ -29,7 +29,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
-    ).sample().reset_index()
+    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
     if isinstance(record, str):
         #SQLErrorReturned
     yield_object = AnnualUsageCollectionTracking(
@@ -157,19 +157,19 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)
     upload_result = re.fullmatch(r'Successfully uploaded `(.*)` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name.', string=upload_result)
-    log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #ValueCheck
-    log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #ValueCheck
+    log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
+    log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}",
     )
-    log.info(f"`list_objects_response`:\n{list_objects_response}")  #ValueCheck
+    log.info(f"`list_objects_response`:\n{list_objects_response}")  #temp
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
-    log.info(f"`bucket_contents`:\n{bucket_contents}")  #ValueCheck
+    log.info(f"`bucket_contents`:\n{bucket_contents}")  #temp
 
     usage_file_path_in_database = query_database(
         query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
@@ -178,7 +178,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     if isinstance(usage_file_path_in_database, str):
         #SQLErrorReturned
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
-    log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")  #CheckDataValue
+    log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")  #QueryReturn
 
     assert upload_result is not None
     assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
@@ -188,9 +188,9 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
-    log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #ValueCheck
-    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #ValueCheck
+    log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #temp
+    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #FileIO
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
-    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #ValueCheck
+    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #FileIO
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()

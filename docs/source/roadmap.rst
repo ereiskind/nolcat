@@ -19,16 +19,7 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Standardize f-strings with following types
-  #ValueCheck
-  #FilterConditionStatement
-  #StdoutPythonError
-  #UnexpectedProblem
-  #GoodAPIResponse
-  #BadAPIResponse
-  #Explanation
-  #PytestSkip
-* Make corrections to tests needing the above change
+* Standardize logging output; record standards in code style guide
 
 Iteration 1: Complete Current Data I/O
 ======================================

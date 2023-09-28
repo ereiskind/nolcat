@@ -162,7 +162,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "PR" not in list_of_reports:
-        pytest.skip("PR not offered by this vendor.")
+        pytest.skip("PR not offered by this statistics source.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
@@ -180,7 +180,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "DR" not in list_of_reports:
-        pytest.skip("DR not offered by this vendor.")
+        pytest.skip("DR not offered by this statistics source.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
@@ -198,7 +198,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "TR" not in list_of_reports:
-        pytest.skip("TR not offered by this vendor.")
+        pytest.skip("TR not offered by this statistics source.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
@@ -216,7 +216,7 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     URL, SUSHI_credentials = SUSHI_credentials_fixture
     if "IR" not in list_of_reports:
-        pytest.skip("IR not offered by this vendor.")
+        pytest.skip("IR not offered by this statistics source.")
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):

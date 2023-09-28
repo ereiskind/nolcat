@@ -8,13 +8,41 @@ Python Code
 
 Logging Statements
 ==================
-Each set of circumstances needing a logging statement or a log-like output statement has a specific logging level and structure assigned to it. All such statements are full sentences ending in periods.
+The repo features a wide variety of logging statements and log-like output statements. Many of these are consistent within a function or module, but others are standardized with a specific logging level and structure throughout the entire repository; statements with very specific standardizations are recorded here. All logging statements and log-like output statements are full sentences ending in periods.
 
+Logging Markers
+---------------
 * "Starting `function_name()`" statements
 
   * Info logging statement
   * At the beginning of all functions and methods except for test functions, test fixtures, and those returning a value within five statements
   * Structure: "Starting `<name of function/method>()` for <relevant parameters>."
+
+* Signpost
+
+  * Debug logging statement
+  * These are meant to both provide information and provide extra guidance in determining the location of errors
+  * As informational statements, there's no common structure, but they have an asterisk at the beginning and end of the statement
+
+* Adding to dictionary in the ``ConvertJSONDictToDataframe.create_dataframe()`` method
+
+  * Debug logging statement
+  * Structure: "Added `COUNTERData.<dictionary key>` value <dictionary value> to `<name of dict>`."
+
+* About to take an action --> #AboutTo
+
+  * Debug or info logging statement
+  * A marker that something is about to happen, so if the program crashes immediately after that log statement, what the program was doing when it crashed is clear
+  * Includes starting iterations
+  * Structure: **???**
+
+General Errors and In-Test Issues
+---------------------------------
+* Pytest skips
+
+  * Requested report not offered: "<report> not offered by this statistics source."
+  * Requested report returned a SUSHI error: "The test is being skipped because the API call returned a server-based SUSHI error."
+  * Requested report returned no data: "The test is being skipped because the API call returned no data."
 
 * Finding values for a given field are longer than the field's max length
 
@@ -22,6 +50,22 @@ Each set of circumstances needing a logging statement or a log-like output state
   * In the ``ConvertJSONDictToDataframe`` class
   * Structure: "Increase the `<attribute name>` max field length to <length of the value found + 10%>."
 
+* File input and output --> #FileIOError, #FileIO
+
+  * Info and debug logging statements; errors are error logging statement
+  * *Needs to be divided into subcategories*
+  * Structure:
+
+    * S3 delete file operation failed: ""
+
+* Unable to convert file or JSON into dataframe --> #create_dataframeError
+* Unable to convert data types --> #ConversionError
+* Page not found --> #404
+
+  * Error logging statement
+
+SUSHI Calls
+-----------
 * API call responses
 
   * Info logging statement; errors are error logging statement
@@ -32,6 +76,43 @@ Each set of circumstances needing a logging statement or a log-like output state
     * Successful request: "<HTTP verb> request to <plain text location called> at <URL> successful."
     * HTTP errors returned: "<HTTP verb> request to <plain text location called> raised <list errors>."
 
+* Responses to the ``SUSHICallAndResponse.make_SUSHI_call()`` method --> #Goodmake_SUSHI_call, #Badmake_SUSHI_call
+
+  * Info **???** logging statement; errors are warning logging statement
+  * Structure:
+
+    * Success: ""
+    * Failure: ""
+
+* Responses to the ``StatisticsSources._harvest_single_report()`` method --> #Good_harvest_single_report, #Bad_harvest_single_report
+
+  * Info **???** logging statement; errors are warning logging statement
+  * Structure:
+
+    * Success: ""
+    * Failure: ""
+
+* Successful ``StatisticsSources._harvest_R5_SUSHI()`` method --> #Good_harvest_R5_SUSHI
+
+  * Info **???** logging statement
+  * Structure: ""
+
+* No data returned by SUSHI call --> #NoSUSHIData
+* SUSHI COUNTER error returned --> #SUSHIErrors
+
+  * Warning logging statement
+
+* SUSHI call attempted with invalid dates --> #SUSHIDateError
+
+  * Error logging statement
+
+* Report other than customizable reports --> #UnknownSUSHIReport
+
+  * Warning logging statement
+
+
+MySQL I/O
+---------
 * Load data into MySQL database
 
   * Debug logging statement; errors are error logging statement
@@ -41,7 +122,7 @@ Each set of circumstances needing a logging statement or a log-like output state
     * Input success: "Successfully loaded <number of loaded records> records into the <name of relation> relation."
     * Input failure: "Loading data into the <name of relation> relation raised the error <Python exception>."
 
-* MySQL queries
+* Query database
 
   * Debug logging statement; errors are error logging statement
   * In the ``query_database()`` function
@@ -50,45 +131,17 @@ Each set of circumstances needing a logging statement or a log-like output state
     * Successful query: "The complete response to <query text>:\n<dataframe returned by query>"
     * Failed query: "The query <query text> raised the error <Python exception>."
 
-* Starting an iteration
+* Indication of query result in calling function --> #SQLErrorReturn, #QueryReturn, #QueryToRelationClass
 
-  * Debug logging statement
+  * **???** logging statement; errors are **???** logging statement
+  * In the function that called ``query_database()``
+  * Structure:
 
-* Adding an item to a dictionary
+    * Successful dataframe output: ""
+    * Successful single-value output: ""
+    * Successful statistics resource source: ""
 
-  * Debug logging statement
-
-* Logging values returned from other functions that provide INFO-level logging statements with the values they return
-
-  * Debug logging statement
-
-* The statement with the value a function is returning
-
-  * Info logging statement
-
-* Status messages duplicated with message flashing
-
-  * Info logging statement
-
-* Statements triggered by failing API call
-
-  * Warning logging statement
-
-* SUSHI report errors
-
-  * Warning logging statement
-
-* A problem with file I/O
-
-  * Error logging statement
-
-* Failed API call
-
-  * Error logging statement
-
-* 404 Page not found
-
-  * Error logging statement
+* Replace with database update function to be written --> #ReplaceWithUpdateFunction
 
 reStructured Text
 *****************

@@ -511,6 +511,8 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         engine=engine,
         index=['SRS_statistics_source', 'SRS_resource_source'],
     )
+    if isinstance(statisticsResourceSources_relation_data, str):
+        #SQLErrorReturned
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 

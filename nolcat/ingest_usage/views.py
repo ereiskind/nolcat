@@ -40,12 +40,12 @@ def upload_COUNTER_reports():
                     df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
                     df['report_creation_date'] = pd.to_datetime(None)
                 except Exception as error:
-                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #StdoutPythonError
+                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
                     log.error(message)
                     flash(message)
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
                 
-                log.debug("Starting the duplication check against what's already in the database.")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype  #Explanation
+                log.debug("*Starting the duplication check against what's already in the database.*")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype
                 statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
                 log.debug(f"`df['statistics_source_ID']` as a list: {statistics_sources_in_dataframe}")  #ValueCheck
                 statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
@@ -62,7 +62,7 @@ def upload_COUNTER_reports():
                 log.debug(f"`df['usage_date']` as a deduped list: {dates_in_dataframe}")  #ValueCheck
 
                 combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-                log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")  #ValueCheck
+                log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")  #AboutTo
                 total_number_of_matching_records = 0
                 matching_record_instances = []
                 for combo in combinations_to_check:
@@ -73,14 +73,14 @@ def upload_COUNTER_reports():
                     if isinstance(number_of_matching_records, str):
                         #SQLErrorReturned
                     number_of_matching_records = number_of_matching_records.iloc[0][0]
-                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #CheckDataValue
+                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #QueryReturn
                     if number_of_matching_records > 0:
                         matching_record_instances.append({
                             'statistics_source_ID': combo[0],
                             'report_type': combo[1],
                             'date': combo[2],
                         })
-                        log.debug(f"The combination {matching_record_instances[-1]} was added to `matching_record_instances`.")  #ValueCheck
+                        log.debug(f"Added {matching_record_instances[-1]} to `matching_record_instances`.")
                         total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
                 if total_number_of_matching_records > 0:
                     for instance in matching_record_instances:
@@ -91,17 +91,16 @@ def upload_COUNTER_reports():
                         if isinstance(statistics_source_name, str):
                             #SQLErrorReturned
                         instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
-                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"  #EarlyReturn
+                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"  #OneOff
                     log.error(message)
                     flash(message)
                     return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             except Exception as error:
-                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."  #StdoutPythonError
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             
-            log.debug("About to load dataframe into database.")  #Explanation
             df.index += first_new_PK_value('COUNTERData')
             df.to_sql(
                 'COUNTERData',
@@ -109,17 +108,17 @@ def upload_COUNTER_reports():
                 if_exists='append',
                 index_label='COUNTER_data_ID',
             )
-            message = "Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation."  #Explanation
+            message = "Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation."  #SQLLoadSuccess
             log.info(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."  #StdoutPythonError
+            message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."  #SQLLoadError
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
 
 
@@ -156,15 +155,16 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(df['vendor_ID'][0]),
         )  # Without the `int` constructors, a numpy int type is used
+        #ToDo: #QueryToRelationClass
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")  #ValueCheck
+            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")  #AboutTo
         else:
             report_to_harvest = form.report_to_harvest.data
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  #ValueCheck
+            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  #AboutTo
         
         try:
             result_message, flash_messages = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
@@ -172,12 +172,12 @@ def harvest_SUSHI_statistics():
             flash(flash_messages)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            message = f"The SUSHI request form submission failed due to the error {error}."  #StdoutPythonError
+            message = f"The SUSHI call raised {error}."
             log.warning(message)  #TEST: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
 
 
@@ -236,19 +236,19 @@ def upload_non_COUNTER_reports():
             statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
             file_extension = Path(form.usage_file.data.filename).suffix
             if file_extension not in valid_file_extensions:
-                message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"  #UnexpectedProblem
+                message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"  #FileIOError
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             file_name = f"{statistics_source_ID}_{fiscal_year_ID}.{file_extension}"
-            log.debug(f"The non-COUNTER usage file will be named `{file_name}`.")  #ValueCheck
+            log.debug(f"The non-COUNTER usage file will be named `{file_name}`.")  #FileIO
             
             logging_message = upload_file_to_S3_bucket(
                 form.usage_file.data,
                 file_name,
             )
             if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
-                message = f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved."  #FilterConditionStatement
+                message = f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved."  #FileIOError
                 log.error(message)
                 flash(logging_message + " " + message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
@@ -262,15 +262,15 @@ def upload_non_COUNTER_reports():
             #    """,
             #    con=db.engine,
             #)
-            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."  #QueryReturn
+            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."  #ReplaceWithUpdateFunction
             log.debug(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            message = f"The file upload failed due to the error {error}."  #StdoutPythonError
+            message = f"The file upload failed due to the error {error}."  #ReplaceWithUpdateFunction
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)

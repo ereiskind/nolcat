@@ -46,15 +46,15 @@ def test_run_custom_SQL_query(client, header_value, caplog):
         headers=header_value,
         data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #ValueCheck
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #ValueCheck
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
     df = pd.read_csv(
         Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    log.info(f"`df` is\n{df}")  #ValueCheck
-    log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")  #ValueCheck
+    log.info(f"`df` is\n{df}")  #temp
+    log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")  #temp
 
     assert POST_response.status == "200 OK"
     assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
@@ -93,8 +93,8 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #ValueCheck
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #ValueCheck
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     CSV_df = pd.read_csv(
         Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
@@ -138,8 +138,8 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    headers=header_value,
     #    data=form_input,
     #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #ValueCheck
-    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #ValueCheck
+    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     #CSV_df = pd.read_csv(
     #    Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
@@ -176,8 +176,8 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    log.info(f"`GET_soup`:\n{GET_soup}")  #ValueCheck
-    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #ValueCheck
+    log.info(f"`GET_soup`:\n{GET_soup}")  #temp
+    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #temp
     for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
         tuple_content = re.search(r'\((\d*),\s(\d*)\)', string=child['value'])
         GET_select_field_options.append((

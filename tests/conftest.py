@@ -42,7 +42,7 @@ def engine():
         f'mysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_SCHEMA_NAME}',
         echo=False,  # Logging configuration includes SQLAlchemy engine, so `True` causes repetition
     )
-    log.info(f"`tests.conftest.engine()` yields {engine} (type {type(engine)}).")  #ValueCheck
+    log.info(f"`tests.conftest.engine()` yields {engine} (type {type(engine)}).")
     yield engine
 
 
@@ -66,10 +66,10 @@ def app():
     configure_logging(app)
     context = app.app_context()
     context.push()  # Binds the application context to the current context/Flask application
-    log.info(f"`tests.conftest.app()` yields {app} (type {type(app)}), which is bound to {context}.")  #ValueCheck
+    log.info(f"`tests.conftest.app()` yields {app} (type {type(app)}), which is bound to `context` {context} (type {type(context)}).")
     yield app
     context.pop()  # Removes and deletes the application context; placement after the yield statement means the action occurs at the end of the session
-    log.info("`tests.conftest.app()` teardown complete.")  #Explanation
+    log.info("`tests.conftest.app()` teardown complete.")
 
 
 @pytest.fixture(scope='session')
@@ -85,7 +85,7 @@ def client(app):
         flask.testing.FlaskClient: a way to test HTTP calls without running a live server
     """
     client = app.test_client()
-    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")  #ValueCheck
+    log.info(f"`tests.conftest.client()` yields {client} (type {type(client)}).")
     yield client
 
 
@@ -257,7 +257,7 @@ def path_to_sample_file(request):
     file_path = request.param
     file_name = choice([file.name for file in file_path.iterdir()])
     file_path_and_name = file_path / file_name
-    log.info(f"`path_to_sample_file()` returning file {file_path_and_name}.")  #ValueCheck
+    log.info(f"`path_to_sample_file()` yields {file_path_and_name} (type {type(file_path_and_name)}).")
     yield file_path_and_name
 
 
@@ -283,8 +283,8 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         """,
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")  #CheckDataValue
+    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
+    log.info(f"The record as a dataframe is\n{record}")  #QueryReturn
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -296,7 +296,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")  #FunctionReturn #QueryToRelationClass
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")  #QueryToRelationClass
     yield yield_object
 
 
@@ -318,8 +318,8 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")  #CheckDataValues
+    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
+    log.info(f"The record as a dataframe is\n{record}")  #QueryReturn
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -331,7 +331,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")  #FunctionReturn #QueryToRelationClass
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")  #QueryToRelationClass
     yield yield_object
 
 
@@ -348,10 +348,10 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")  #ValueCheck
-    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")  #ValueCheck
+    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")  #FileIO
+    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")  #FileIO
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")  #ValueCheck
+    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")  #FileIO
     yield None
     try:
         s3_client.delete_object(
@@ -359,7 +359,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  #StdoutPythonError
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  #FileIOError
 
 
 @pytest.fixture
@@ -373,12 +373,12 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yield:
         None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
     """
-    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #ValueCheck
+    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #FileIO
     result = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
-    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")  #ValueCheck
+    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")  #FileIO
     yield None
     try:
         s3_client.delete_object(
@@ -386,7 +386,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
             Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")  #StdoutPythonError
+        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")  #FileIOError
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
@@ -423,6 +423,7 @@ def most_recent_month_with_usage():
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
+    log.info(f"`most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
 
@@ -507,6 +508,10 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         )
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
+    if df.shape[1] > 20:
+        log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
+    else:
+        log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
     return df
 
 
@@ -527,14 +532,14 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
+    #ToDo: #Goodmake_SUSHI_call
     response_as_list = [report for report in list(response[0].values())[0]]
-    log.debug(f"The response to the reports request as a list is:\n{response_as_list}")  #ValueCheck
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
             if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
-    log.debug(f"The stats source at {URL} offers the following reports: {list_of_reports}.")  #ValueCheck
+    log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
     return list_of_reports
 
 

@@ -33,7 +33,7 @@ def annual_stats_homepage():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
-        log.error(f"`form.errors`: {form.errors}")  #StdoutPythonErrors
+        log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
 
 
@@ -43,6 +43,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
     log.info("Starting `show_fiscal_year_details()`.")
     #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` runs from here
     #ToDo: `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` runs from here
+    #ToDo: Above both fail with error message `f"The SUSHI call raised {error}."`
     run_annual_stats_methods_form = RunAnnualStatsMethodsForm()
     edit_fiscalYear_form = EditFiscalYearForm()
     edit_AUCT_form = EditAUCTForm()
@@ -93,5 +94,5 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
         #ToDo: Get values below for the form submitted
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)

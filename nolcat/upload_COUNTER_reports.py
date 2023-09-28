@@ -53,27 +53,27 @@ class UploadCOUNTERReports:
 
         #Section: Load the Workbook(s)
         for FileStorage_object in self.COUNTER_report_files:
-            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}.")  #ValueCheck
+            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}.")  #AboutTo
             # When using the web app, `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>; `FileStorage_object.stream._file` is <class '_io.BytesIO'>
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}.")  #ValueCheck
+                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}.")  #FileIO
             except Exception as error:
-                log.error(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error {error}.")  #FilterConditionStatement
+                log.error(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error {error}.")  #FileIOError
                 continue
             
             try:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object.filename))[0])  # `findall` always produces a list
             except Exception as error:
-                log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")  #FilterConditionStatement
+                log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 continue
 
             for report_type in file.sheetnames:
                 if report_type not in valid_report_types:
-                    log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")  #FilterConditionStatement
+                    log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
-                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")  #ValueCheck
+                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")  #AboutTo
 
 
                 #Section: Identify the Header Row
@@ -90,7 +90,7 @@ class UploadCOUNTERReports:
                             count_of_month_labels += 1
                     if count_of_month_labels > 1:  # This stops at the first row with multiple dates, which won't be true of any header row
                         number_of_fields = len(sheet[header_row_number])
-                        log.debug(f"The table's header is at row {header_row_number}.")  #ValueCheck
+                        log.debug(f"The table's header is at row {header_row_number}.")
                         looking_for_header_row = False
                         break
                     else:
@@ -108,7 +108,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  #ValueCheck
+                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  #AboutTo
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
@@ -205,7 +205,7 @@ class UploadCOUNTERReports:
                         else:
                             df_field_names.append(field_name.lower())
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # List comprehension used to preserve order
-                log.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")  #ValueCheck
+                log.info(f"The COUNTER report contains the fields {df_non_date_field_names} and data for the dates {df_date_field_names}.")
 
 
                 #Section: Create Dataframe
@@ -222,8 +222,8 @@ class UploadCOUNTERReports:
                     names=df_field_names,
                     dtype={k: v for (k, v) in df_dtypes.items() if v != "datetime64[ns]"},  # Ensuring string fields are set as such keeps individual values within those fields from being set as numbers or dates (e.g. resources with a date or year for a title)
                 )
-                log.info(f"Dataframe immediately after creation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")  #ValueCheck
-                log.debug(f"Complete dataframe:\n{df}")  #ValueCheck
+                log.info(f"Dataframe immediately after creation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Complete dataframe:\n{df}")
                 for field in date_dtype_fields.keys():
                     df[field] = pd.to_datetime(
                         df[field],
@@ -232,7 +232,7 @@ class UploadCOUNTERReports:
                         utc=True,  # This must be set to `True` to convert timezone-aware datetime objects
                     )
                     df[field] = df[field].dt.tz_localize(None)
-                log.debug(f"Dataframe after all initial dtypes set\n{return_string_of_dataframe_info(df)}")  #ValueCheck
+                log.debug(f"Dataframe after all initial dtypes set\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Make Pre-Stacking Updates
@@ -261,14 +261,14 @@ class UploadCOUNTERReports:
                 df['report_type'] = report_type
                 df_field_names.append("report_type")
                 df_non_date_field_names.append("report_type")
-                log.debug(f"Dataframe field names: {df_field_names}")  #ValueCheck
+                log.debug(f"Dataframe field names: {df_field_names}")
 
                 #Subsection: Remove `Reporting Period` Field
                 df_field_names_sans_reporting_period_fields = [field_name for field_name in df_non_date_field_names if not re.search(r'[Rr]eporting[\s_][Pp]eriod', field_name)]
                 reporting_period_field_names = [field_name for field_name in df_non_date_field_names if field_name not in df_field_names_sans_reporting_period_fields]  # List comprehension used to preserve list order
                 df = df.drop(columns=reporting_period_field_names)
                 df_field_names = df_field_names_sans_reporting_period_fields + df_date_field_names
-                log.debug(f"`df_field_names` with statistics source ID and without reporting period: {df_field_names}")  #ValueCheck
+                log.debug(f"Dataframe field names with statistics source ID and without reporting period: {df_field_names}")
 
                 #Subsection: Remove Total Rows
                 if re.match(r'PR1?', string=report_type) is None:  # `re.match` returns `None` if there isn't a match, so this selects everything but platform reports in both R4 and R5
@@ -277,7 +277,7 @@ class UploadCOUNTERReports:
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
                     summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
                     df = df[summary_rows_are_false]
-                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")  #ValueCheck
+                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.match(r'TR[1|2]', string=report_type) is not None:  # `re.match` returns `None` if there isn't a match, so this selects all title reports
@@ -306,7 +306,7 @@ class UploadCOUNTERReports:
                     df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "print_ISSN")
                     df_field_names.insert(len(df_field_names)-len(df_date_field_names)-1, "online_ISSN")
                     df = df[df_field_names]
-                    log.debug(f"Dataframe with identifiers in standardized fields:\n{df}")  #ValueCheck
+                    log.debug(f"Dataframe with identifiers in standardized fields:\n{df}")
 
                 #Subsection: Put Placeholder in for Null Values
                 df = df.fillna("`None`")
@@ -317,7 +317,7 @@ class UploadCOUNTERReports:
                     regex=True
                 )
 
-                log.debug(f"Dataframe with pre-stacking changes:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe with pre-stacking changes:\n{df}")
 
 
                 #Section: Stack Dataframe
@@ -330,24 +330,24 @@ class UploadCOUNTERReports:
                     axis='columns'
                 )
                 df = df.drop(columns=df_non_date_field_names)
-                log.debug(f"Dataframe with without metadata columns:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe with without metadata columns:\n{df}")
                 df = df.set_index('temp_index')
-                log.debug(f"Dataframe with new index column:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe with new index column:\n{df}")
 
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
-                log.debug(f"Dataframe immediately after stacking:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe immediately after stacking:\n{df}")
                 df = df.reset_index()
                 df = df.rename(columns={
                     'level_1': 'usage_date',
                     0: 'usage_count',
                 })
-                log.debug(f"Dataframe with reset index:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe with reset index:\n{df}")
 
                 #Subsection: Recreate Metadata Fields
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 df = df.drop(columns='temp_index')
-                log.debug(f"Fully transposed dataframe:\n{df}")  #ValueCheck
+                log.debug(f"Fully transposed dataframe:\n{df}")
 
 
                 #Section: Adjust Data in Dataframe
@@ -355,22 +355,22 @@ class UploadCOUNTERReports:
                 df = df[df['usage_count'] != 0]
                 df = df[df['usage_count'] != "`None`"]  # Some zero `usage_count` values may have been null values replaced by the null placeholder; retaining them interferes with correcting data types
                 df = df.reset_index(drop=True)
-                log.debug(f"Dataframe with zero usage records removed:\n{df}")  #ValueCheck
+                log.debug(f"Dataframe with zero usage records removed:\n{df}")
 
                 #Subsection: Correct Data Types, Including Replacing Null Placeholders with Null Values
                 if "YOP" in df_dtypes.keys():
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
-                log.debug(f"Before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")  #ValueCheck
+                log.debug(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
-                    log.debug(f"After removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")  #ValueCheck
-                log.debug(f"Before dtype conversion:\n{return_string_of_dataframe_info(df)}")  #ValueCheck
+                    log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
-                log.debug(f"After dtype conversion:\n{return_string_of_dataframe_info(df)}")  #ValueCheck
+                log.debug(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
-                log.debug(f"Updated dataframe dtypes and null counts:\n{return_string_of_dataframe_info(df)}")  #ValueCheck
+                log.debug(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Add Fields Missing from R4 Reports
                 if report_type == 'BR1' or report_type == 'BR2' or report_type == 'BR3' or report_type == 'BR5':
@@ -408,8 +408,8 @@ class UploadCOUNTERReports:
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("licence", "license"))  #  Always use American English spelling for `license`
                 df['metric_type'] = df['metric_type'].apply(lambda cell_value: cell_value.replace("denied.", "denied:"))
                 
-                log.info(f"Dataframe being used in concatenation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")  #ValueCheck
-                log.debug(f"Complete dataframe:\n{df}")  #ValueCheck
+                log.info(f"Dataframe being used in concatenation:\n{df.head()}\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Complete dataframe:\n{df}")
                 all_dataframes_to_concatenate.append(df)
         
         
@@ -419,8 +419,8 @@ class UploadCOUNTERReports:
             all_dataframes_to_concatenate,
             ignore_index=True,  # Resets index
         )
-        log.info(f"Combined dataframe info:\n{return_string_of_dataframe_info(combined_df)}")  #ValueCheck
-        log.debug(f"Combined dataframe:\n{combined_df}")  #ValueCheck
+        log.info(f"Combined dataframe info:\n{return_string_of_dataframe_info(combined_df)}")
+        log.debug(f"Combined dataframe:\n{combined_df}")
 
         #Subsection: Set Data Types
         combined_df_field_names = combined_df.columns.values.tolist()
@@ -444,5 +444,5 @@ class UploadCOUNTERReports:
 
 
         #Section: Return Dataframe
-        log.info(f"Final dataframe:\n{combined_df}\nand dtypes:\n{combined_df.dtypes}")  #ValueCheck
+        log.info(f"Final dataframe:\n{combined_df}\nand dtypes:\n{combined_df.dtypes}")
         return combined_df

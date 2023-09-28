@@ -38,6 +38,7 @@ def current_month_like_most_recent_month_with_usage():
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
+    log.info(f"`current_month_like_most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
 
@@ -89,7 +90,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
-    log.debug(f"The StatisticsSources object being used for testing is {yield_object}.")  #ValueCheck
+    log.info(f"`StatisticsSources_fixture()` yields {yield_object} (type {type(yield_object)}).")
     yield yield_object
 
 
@@ -169,7 +170,7 @@ def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture
         engine=engine,
     )
     if test_could_pass.iloc[0][0] == 0:
-        pytest.skip(f"The {StatisticsSources_fixture.statistics_source_name} doesn't have {report} data in the test data, so this test cannot pass; as a result, it's being skipped.")  #PytestSkip
+        pytest.skip(f"{report} not offered by this statistics source.")
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             report,
@@ -305,6 +306,7 @@ def month_before_month_like_most_recent_month_with_usage(most_recent_month_with_
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
+    log.info(f"`month_before_month_like_most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
 
@@ -322,7 +324,6 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
     Yields:
         dataframe: a dataframe containing all of the R5 COUNTER data
     """
-    # The log for `test_StatisticsSources.test_harvest_R5_SUSHI()` contains log data from the modules below, it doesn't need to be repeated
     caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
     caplog.set_level(logging.ERROR, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`

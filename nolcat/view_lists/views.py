@@ -32,7 +32,7 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
-        log.error(f"The route function didn't understand the argument `{list}`.")  #UnexpectedProblem
+        log.error(f"The route function didn't understand the argument `{list}`.")  #404
         return abort(404)
     
     #ToDo: df = query_database(
@@ -70,9 +70,10 @@ def view_list_record(list, PK):
         return render_template('view_lists/page.html')#ToDo:, form=form)
     #ToDo: elif form.validate_on_submit():
         #ToDo: Add the form data to the relevant notes relation
-        return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
+        #ToDo: #ReplaceWithUpdateFunction
+        return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))
     else:
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
     
 
@@ -113,5 +114,5 @@ def edit_list_record(list, PK):
         # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         #ToDo: return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #StdoutPythonError
+        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
