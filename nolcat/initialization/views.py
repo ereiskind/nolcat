@@ -368,7 +368,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         #    log.info(f"`COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n")
         #    log.debug(f"`COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
         #except Exception as error:
-        #    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
+        #    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe raised the error {error}."
         #    log.error(message)
         #    #ToDo: Flash message
         # ToDo: Run `check_if_data_already_in_COUNTERData()`

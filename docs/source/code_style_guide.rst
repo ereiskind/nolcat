@@ -58,7 +58,14 @@ General Errors and In-Test Issues
 
     * S3 delete file operation failed: ""
 
-* Unable to convert file or JSON into dataframe --> #create_dataframeError
+* Unable to convert file or JSON into dataframe
+
+  * Warning logging statement
+  * Structure:
+
+    * From SUSHI: "JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe."
+    * From workbooks: "Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error <error>."
+
 * Unable to convert data types --> #ConversionError
 * Page not found --> #404
 

@@ -37,7 +37,7 @@ def upload_COUNTER_reports():
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
         except Exception as error:
-            message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."  #create_dataframeError
+            message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
