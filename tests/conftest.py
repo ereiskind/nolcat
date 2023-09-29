@@ -523,7 +523,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         URL (str): the base URL for the SUSHI API call
         credentials (dict): the SUSHI credentials for the API call
     
-    Returns:
+    Yields:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
     response = SUSHICallAndResponse(

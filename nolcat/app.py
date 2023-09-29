@@ -2,6 +2,7 @@ import io
 import logging
 from pathlib import Path
 from datetime import datetime
+from itertools import product
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -489,3 +490,99 @@ def query_database(query, engine, index=None):
         message = f"The query {query} raised the error {error}."
         log.error(message)
         return message
+
+
+def check_if_data_already_in_COUNTERData(df):
+    """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
+
+    Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
+
+    Args:
+        df (dataframe): the data to be loaded into the `COUNTERData` relation
+    
+    Returns:
+        tuple: the dataframe to be loaded into `COUNTERData`; the message to be flashed about the records not loaded or `None` if all records are being loaded (str or None)
+    """
+    log.info(f"Starting `check_if_data_already_in_COUNTERData()`.")
+
+    #Section: Get the Statistics Sources, Report Types, and Dates
+    #Subsection: Get the Statistics Sources
+    statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
+    log.debug(f"All statistics sources as a list:\n{statistics_sources_in_dataframe}")
+    statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
+    log.debug(f"All statistics sources as a deduped list:\n{statistics_sources_in_dataframe}")
+
+    #Subsection: Get the Report Types
+    report_types_in_dataframe = df['report_type'].tolist()
+    log.debug(f"All report types as a list:\n{report_types_in_dataframe}")
+    report_types_in_dataframe = list(set(report_types_in_dataframe))
+    log.debug(f"All report types as a deduped list:\n{report_types_in_dataframe}")
+
+    #Subsection: Get the Dates
+    dates_in_dataframe = df['usage_date'].tolist()
+    log.debug(f"All usage dates as a list:\n{dates_in_dataframe}")
+    dates_in_dataframe = list(set(dates_in_dataframe))
+    log.debug(f"All usage dates as a deduped list:\n{dates_in_dataframe}")
+
+    #Section: Check Database for Combinations of Above
+    combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
+    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")  #AboutTo
+    total_number_of_matching_records = 0
+    matching_record_instances = []
+    for combo in combinations_to_check:
+        number_of_matching_records = query_database(
+            query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
+            engine=db.engine,
+        )
+        if isinstance(number_of_matching_records, str):
+            #SQLErrorReturned
+        number_of_matching_records = number_of_matching_records.iloc[0][0]
+        log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #QueryReturn
+        if number_of_matching_records > 0:
+            matching_record_instances.append({
+                'statistics_source_ID': combo[0],
+                'report_type': combo[1],
+                'date': combo[2],
+            })
+            log.debug(f"The list of combinations with matches in the database now includes {matching_record_instances[-1]}.")
+            total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
+        
+    #Section: Return Result
+    if total_number_of_matching_records > 0:
+        #Subsection: Get Records and Statistics Source Names for Matches
+        records_to_remove = []
+        for instance in matching_record_instances:
+            to_remove = df[
+                (df['statistics_source_ID']==instance['statistics_source_ID']) &
+                (df['report_type']==instance['report_type']) &
+                (df['usage_date']==instance['usage_date'])
+            ]
+            records_to_remove.append(to_remove)
+
+            statistics_source_name = query_database(
+                query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
+                engine=db.engine,
+            )
+            if isinstance(statistics_source_name, str):
+                #SQLErrorReturned
+            instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
+        
+        #Subsection: Return Results
+        records_to_remove = pd.concat(records_to_remove)
+        records_to_keep = df[
+            pd.merge(
+                df,
+                records_to_remove,
+                how='left',  # Because all records come from the left (first) dataframe, there's no difference between a left and outer join
+                indicator=True,
+            )['_merge']=='left_only'
+        ]
+        matching_record_instances_string = []
+        for instance in matching_record_instances:
+            matching_record_instances_string.append(f"{instance['report_type']:3} | {instance['usage_date'].strftime('%Y-%m-%d')} | {instance['statistics_source_name']} (ID {instance['statistics_source_ID']})")
+        "\n".join(matching_record_instances_string)
+        message = f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances_string}"
+        log.info(message)
+        return (records_to_keep, message)
+    else:
+        return (df, None)
