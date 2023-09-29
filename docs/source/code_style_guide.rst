@@ -89,10 +89,13 @@ SUSHI Calls
   * Warning logging statement
   * Structure: "The call to the `<name of report>` endpoint for <statistics source name> raised the error <SUSHI error>."
 
-* Successful ``StatisticsSources._harvest_R5_SUSHI()`` method --> #Good_harvest_R5_SUSHI
+* Responses to the ``StatisticsSources._harvest_R5_SUSHI()`` method
 
-  * Info **???** logging statement
-  * Structure: ""
+  * Debug logging statement; errors are warning logging statement
+  * Structure:
+
+    * Success: "The SUSHI harvest for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> was a success."
+    * Failure: "SUSHI harvesting for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> raised the error <error>."
 
 * No data returned by SUSHI call --> #NoSUSHIData
 * SUSHI COUNTER error returned --> #SUSHIErrors

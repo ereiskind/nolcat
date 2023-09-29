@@ -239,5 +239,5 @@ def test_collect_fiscal_year_usage_statistics(caplog):
     #This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. This test needs a FiscalYears object for a record in the test data that will return records with a small but limited number of SUSHI calls that can easily be made and returned so the result of the method can be verified.
     #ToDo: Calling the method on `FY_instance` when it's instantiated via `FY_instance, FY_df = FiscalYears_object_and_record` will return no data
     #ToDo: Will three results of `StatisticsSources._harvest_R5_SUSHI()` concatenated be the same as a result like `match_direct_SUSHI_harvest_result()`?
-    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple, the first value of which will be f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database." if the SUSHI pull and database load is a success
+    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple for which `re.fullmatch(r'The SUSHI harvest for statistics source \w* for FY \d{4} was a success.', string=method_response[0])` will be true if the SUSHI pull and database load is a success
     pass

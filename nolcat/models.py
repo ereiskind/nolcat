@@ -329,11 +329,10 @@ class FiscalYears(db.Model):
             #ToDo: df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             #ToDo: for statement in flash_statements:
                     #ToDo: all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
-            #ToDo: if isinstance(df, str) or isinstance(df, Exception):
-                #ToDo: log.warning(f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} returned the following error: {str(df)}")  #Bad_harvest_R5_SUSHI
+            #ToDo: if isinstance(df, str):
                 #ToDo: continue
             #ToDo: else:
-                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success")  #Good_harvest_R5_SUSHI
+                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success.")
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
@@ -920,12 +919,11 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources.collect_usage_statistics()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         df, flash_statements = self._harvest_R5_SUSHI(usage_start_date, usage_end_date, report_to_harvest)
-        if isinstance(df, str) or isinstance(df, Exception):
-            message = f"SUSHI harvesting for statistics source {self.statistics_source_name} returned the following error: {str(df)}"  #Bad_harvest_R5_SUSHI
-            log.warning(message)
-            return (message, flash_statements)
+        if isinstance(df, str):
+            log.warning(df)
+            return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")  #Good_harvest_R5_SUSHI
+            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         load_result = load_data_into_database(
@@ -1265,12 +1263,11 @@ class AnnualUsageCollectionTracking(db.Model):
 
         #Section: Collect and Load SUSHI Data
         df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
-        if isinstance(df, str) or isinstance(df, Exception):
-            message = f"SUSHI harvesting for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} returned the following error: {str(df)}"  #Bad_harvest_R5_SUSHI
-            log.warning(message)
-            return (message, flash_statements)
+        if isinstance(df, str):
+            log.warning(df)
+            return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")  #Good_harvest_R5_SUSHI
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
             df=df,
