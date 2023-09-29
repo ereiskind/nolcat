@@ -332,7 +332,7 @@ class FiscalYears(db.Model):
             #ToDo: if isinstance(df, str):
                 #ToDo: continue
             #ToDo: else:
-                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} was a success.")
+                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
             #ToDo: dfs.append(df)
             #ToDo: Update AUCT table
             # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
@@ -923,7 +923,7 @@ class StatisticsSources(db.Model):
             log.warning(df)
             return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} was a success.")
+            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} successfully found {df.shape[1]} records.")
         df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         load_result = load_data_into_database(
@@ -1267,7 +1267,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(df)
             return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} was a success.")
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
             df=df,

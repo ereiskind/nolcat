@@ -111,7 +111,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source \w* for FY \d{4} was a success.', string=method_response[0])
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source \w* for FY \d{4} successfully found (\d*) records.', string=method_response[0])
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     database_update_check = query_database(

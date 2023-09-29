@@ -94,7 +94,7 @@ SUSHI Calls
   * Debug logging statement; errors are warning logging statement
   * Structure:
 
-    * Success: "The SUSHI harvest for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> was a success."
+    * Success: "The SUSHI harvest for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> successfully found <number of records> records."
     * Failure: "SUSHI harvesting for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> raised the error <error>."
 
 * No data returned by SUSHI call --> #NoSUSHIData
