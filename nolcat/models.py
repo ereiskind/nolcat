@@ -850,7 +850,7 @@ class StatisticsSources(db.Model):
                 temp_file_path.unlink()
                 log.debug(log_message)
                 flash_message_list.append(log_message)
-                message = f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. Loading it into a S3 bucket returned {log_message}."  #ConversionError
+                message = f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. Loading it into a S3 bucket returned {log_message}."
                 log.info(message)
                 return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID

@@ -66,7 +66,6 @@ General Errors and In-Test Issues
     * From SUSHI: "JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe."
     * From workbooks: "Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error <error>."
 
-* Unable to convert data types --> #ConversionError
 * Page not found --> #404
 
   * Error logging statement

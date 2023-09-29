@@ -68,7 +68,7 @@ class ConvertJSONDictToDataframe:
         try:
             parser.isoparse(self.SUSHI_JSON_dictionary.get('Report_Header').get('Created')).date()  # Saving as datetime.date data type removes the time data  
         except Exception as error:
-            log.warning(f"Parsing the `Created` field from the SUSHI report header into a Python date data type returned the error {error}. The current date, which is the likely value, is being substituted.")  #ConversionError
+            log.warning(f"Parsing the `Created` field from the SUSHI report header into a Python date data type returned the error {error}. The current date, which is the likely value, is being substituted.")
             report_header_creation_date = date.today()
         log.debug(f"Report creation date is {report_header_creation_date} of type {type(report_header_creation_date)}.")
         COUNTER_release = self.SUSHI_JSON_dictionary['Report_Header']['Release']
