@@ -751,8 +751,8 @@ class StatisticsSources(db.Model):
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
             if len(custom_report_dataframes) == no_usage_returned_count:
-                message = f"None of the SUSHI calls to {self.statistics_source_name} returned any usage data."  #NoSUSHIData
-                log.error(message)
+                message = f"All of the calls to {self.statistics_source_name} returned no usage data."
+                log.warning(message)
                 return (message, all_flashed_statements)
 
 
@@ -805,7 +805,7 @@ class StatisticsSources(db.Model):
                     log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #Badmake_SUSHI_call
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
-                    message = f"None of the calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned any usage data."  #NoSUSHIData
+                    message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
                     log.warning(message)
                     return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()

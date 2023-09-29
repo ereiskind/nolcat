@@ -81,8 +81,8 @@ class SUSHICallAndResponse:
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
-            message = f"Call to {self.calling_to} returned an empty string."  #NoSUSHIData
-            log.warning(message)
+            message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no data."
+            log.error(message)
             return (message, [message])
         
         #Section: Convert Response to Python Data Types
@@ -190,7 +190,7 @@ class SUSHICallAndResponse:
                     return (message, messages_to_flash)
                 elif messages_to_flash:
                     if Report_Items_status == 0:
-                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising a SUSHI error."  #NoSUSHIData
+                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."
                     elif Report_Items_status == 'No `Report_Items` key':
                         message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because the SUSHI data didn't have a `Report_Items` section."  #SUSHIErrors
                     messages_to_flash.append(message)
@@ -198,7 +198,7 @@ class SUSHICallAndResponse:
                     return (message, messages_to_flash)
                 else:
                     if Report_Items_status == 0:
-                        message = f"Call to {self.calling_to} for {self.call_path} returned no usage data without raising a SUSHI error."  #NoSUSHIData
+                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."
                     elif Report_Items_status == 'No `Report_Items` key':
                         message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because the SUSHI data didn't have a `Report_Items` section."  #SUSHIErrors
                     log.warning(message)

@@ -97,7 +97,14 @@ SUSHI Calls
     * Success: "The SUSHI harvest for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> successfully found <number of records> records."
     * Failure: "SUSHI harvesting for statistics source <statistics source name> <<for FY <FY year> (if there's a specific fiscal year for the harvest)>> raised the error <error>."
 
-* No data returned by SUSHI call --> #NoSUSHIData
+* No data returned by SUSHI call
+  
+  * Warning logging statement
+  * Structure:
+
+    * Single report: "The call<s> to the `<name of report>` endpoint for <statistics source name> returned no usage data."
+    * Multiple reports: "All of the calls to <statistics source name> returned no usage data."
+
 * SUSHI COUNTER error returned --> #SUSHIErrors
 
   * Warning logging statement
