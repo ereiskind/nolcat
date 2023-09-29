@@ -341,10 +341,10 @@ def non_duplicate_COUNTER_data():
 
 def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
     """Tests the check for statistics source/report type/usage date combinations already in the database."""
-    #ToDo: df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
-    #ToDo: assert_frame_equal(df, non_duplicate_COUNTER_data)
-    #ToDo: assert message == f"Usage statistics for the statistics source, report type, and usage date combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{dictionary with combinations 3/TR/2020-01-01, 3/TR/2020-03-01, 2/BR2/2018-04-01, 2/BR2/2018-08-01}"
-    pass
+    #TEST: Because there's no data loaded in the `COUNTERData` relation at this point, this test won't pass
+    df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
+    assert_frame_equal(df, non_duplicate_COUNTER_data)
+    assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
