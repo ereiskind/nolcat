@@ -122,7 +122,7 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made."   #SUSHIErrors
+                    message = self._stop_API_calls_message(SUSHI_exceptions)
                     log.warning(message)
                     return (message, messages_to_flash)
 
@@ -139,14 +139,14 @@ class SUSHICallAndResponse:
             elif API_response.get('Alerts'):
                 for_debug = "Alerts"
                 SUSHI_exception_statement = API_response['Alerts']
-            log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")  #SUSHIErrors
+            log.debug(f"The report has an `{for_debug}` key on the same level as `Report_Header` containing a single exception or a list of exceptions: {SUSHI_exception_statement}.")
             SUSHI_exceptions, flash_message_list = self._handle_SUSHI_exceptions(SUSHI_exception_statement, self.call_path)
             if flash_message_list:
                 for statement in flash_message_list:
                     messages_to_flash.append(statement)
                 log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
             if flash_message_list and SUSHI_exceptions:
-                message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made."  #SUSHIErrors
+                message = self._stop_API_calls_message(SUSHI_exceptions)
                 log.warning(message)
                 return (message, messages_to_flash)
 
@@ -159,14 +159,14 @@ class SUSHICallAndResponse:
             else:
                 for_debug = "dictionary"
             if for_debug:
-                log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")  #SUSHIErrors
+                log.debug(f"The report is nothing but a {for_debug} of the key-value pairs found in an `Exceptions` block: {API_response}.")
                 SUSHI_exceptions, flash_message_list = self._handle_SUSHI_exceptions(API_response, self.call_path)
                 if flash_message_list:
                     for statement in flash_message_list:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = f"Call to {self.calling_to} raised the SUSHI error(s) {SUSHI_exceptions} Processing of data from this SUSHI API call has stopped and no further API calls will be made."  #SUSHIErrors
+                    message = self._stop_API_calls_message(SUSHI_exceptions)
                     log.warning(message)
                     return (message, messages_to_flash)
 
@@ -186,7 +186,7 @@ class SUSHICallAndResponse:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
                     joined_messages = "\n".join(SUSHI_error_flash_messages)
-                    message = f"Call to {self.calling_to} for {self.call_path} returned no usage data because of the following SUSHI errors:\n{joined_messages}"  #SUSHIErrors
+                    message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the call raised the following error(s):\n{joined_messages}"
                     log.warning(message)
                     return (message, messages_to_flash)
                 elif messages_to_flash:
@@ -310,7 +310,7 @@ class SUSHICallAndResponse:
                 
             if isinstance(API_response, list):
                 if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
-                    message = f"Call to {self.calling_to} for a list of reports raised the error {API_response}."  #SUSHIErrors
+                    message = f"The call to the `reports` endpoint for {self.calling_to} raised the SUSHI error {API_response}."
                     log.error(message)
                     return (ValueError(message), message)
                 log.debug("*The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.*")

@@ -103,20 +103,23 @@ SUSHI Calls
 
     * Single report: "The call<s> to the `<name of report>` endpoint for <statistics source name> returned no usage data."
     * Single report without `Report_Items` section: "The call to the `<name of report>` endpoint for <statistics source name> returned no usage data because the SUSHI data didn't have a `Report_Items` section."
+    * Single report was empty string (error logging statement): "The call to the `<name of report>` endpoint for <statistics source name> returned no data."
     * Multiple reports: "All of the calls to <statistics source name> returned no usage data."
 
-* SUSHI COUNTER error returned --> #SUSHIErrors
+* SUSHI COUNTER error returned
 
   * Warning logging statement
+  * Structure:
 
-* SUSHI call attempted with invalid dates --> #SUSHIDateError
+    * Basic: "The call to the `<name of report>` endpoint for <statistics source name> raised the SUSHI error(s) <SUSHI error message; if more than one, line breaks before, after, and in between each error statement>"
+    * Errors resulting in no usage data: "The call to the `<name of report>` endpoint for <statistics source name> returned no usage data because the call raised the following error(s):<list of SUSHI error messages, each on its own line, with a line break before>"
+
+      * Additionally, if any listed error is causing API calls to stop: "API calls to <statistics source name> have stopped and no other calls will be made."
+
+* SUSHI call attempted with invalid dates
 
   * Error logging statement
-
-* Report other than customizable reports --> #UnknownSUSHIReport
-
-  * Warning logging statement
-
+  * Structure: "The given end date of <end date> is before the given start date of <start date>, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
 
 MySQL I/O
 ---------
