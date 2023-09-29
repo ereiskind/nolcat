@@ -102,6 +102,7 @@ SUSHI Calls
   * Structure:
 
     * Single report: "The call<s> to the `<name of report>` endpoint for <statistics source name> returned no usage data."
+    * Single report without `Report_Items` section: "The call to the `<name of report>` endpoint for <statistics source name> returned no usage data because the SUSHI data didn't have a `Report_Items` section."
     * Multiple reports: "All of the calls to <statistics source name> returned no usage data."
 
 * SUSHI COUNTER error returned --> #SUSHIErrors
