@@ -259,6 +259,7 @@ digraph erd_and_classes {
         _save_raw_Response_text [shape="Mrecord"]
         _handle_SUSHI_exceptions [shape="Mrecord"]
         _evaluate_individual_SUSHI_exception [shape="Mrecord"]
+        _stop_API_calls_message [shape="Mrecord"]
     }
 
 

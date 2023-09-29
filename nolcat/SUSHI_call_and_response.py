@@ -38,6 +38,7 @@ class SUSHICallAndResponse:
         _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
+        _stop_API_calls_message: Creates the return message for when the API calls are being stopped.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -546,3 +547,18 @@ class SUSHICallAndResponse:
             message = message + " Try the call again later, after checking credentials if needed."
             log.error(message)
             return (message, message)
+    
+
+    def _stop_API_calls_message(self, message):
+        """Creates the return message for when the API calls are being stopped.
+
+        Args:
+            message (str): the list of error messages, where multiple messages are separated by line breaks
+        
+        Returns:
+            str: the return message
+        """
+        if '\n' in message:
+            return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI errors\n{message}\nAPI calls to {self.calling_to} have stopped and no other calls will be made."
+        else:
+            return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI error {message} API calls to {self.calling_to} have stopped and no other calls will be made."
