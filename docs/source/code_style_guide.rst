@@ -76,18 +76,17 @@ SUSHI Calls
     * Successful request: "<HTTP verb> request to <plain text location called> at <URL> successful."
     * HTTP errors returned: "<HTTP verb> request to <plain text location called> raised <list errors>."
 
-* Responses to the ``SUSHICallAndResponse.make_SUSHI_call()`` method --> #Goodmake_SUSHI_call, #Badmake_SUSHI_call
+* Successful SUSHI status or reports call via the ``SUSHICallAndResponse.make_SUSHI_call()`` method
 
-  * Info **???** logging statement; errors are warning logging statement
-  * Structure:
+  * Info logging statement
+  * Structure: "Call to `<type of endpoint>` endpoint for <statistics source name> successful."
 
-    * Success: ""
-    * Failure: ""
-
-* Failed ``StatisticsSources._harvest_single_report()`` method
+* Failed ``StatisticsSources._harvest_single_report()`` or ``SUSHICallAndResponse.make_SUSHI_call()`` methods
 
   * Warning logging statement
   * Structure: "The call to the `<name of report>` endpoint for <statistics source name> raised the error <SUSHI error>."
+
+    * Additionally, when part of a month-by-month gathering: "None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
 
 * Responses to the ``StatisticsSources._harvest_R5_SUSHI()`` method
 

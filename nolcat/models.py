@@ -628,15 +628,15 @@ class StatisticsSources(db.Model):
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
         if re.match(r'^https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain containing `mathscinet`
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  #Goodmake_SUSHI_call
+            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #Badmake_SUSHI_call
+            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised the error {SUSHI_status_response}."
             log.warning(message)
             return (message, all_flashed_statements)
         else:
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  #Goodmake_SUSHI_call
+            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
 
 
@@ -671,7 +671,7 @@ class StatisticsSources(db.Model):
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-                log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")  #Goodmake_SUSHI_call
+                log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
                 all_available_reports = []
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
@@ -680,7 +680,7 @@ class StatisticsSources(db.Model):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             elif isinstance(SUSHI_reports_response, str) and (SUSHI_reports_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_reports_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data")):
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} returned the error {SUSHI_reports_response}."  #Badmake_SUSHI_call
+                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised the error {SUSHI_reports_response}."
                 log.warning(message)
                 return (message, all_flashed_statements)
             else:
@@ -797,12 +797,12 @@ class StatisticsSources(db.Model):
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
                 if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                    message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."  #Badmake_SUSHI_call
+                    message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}. None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
                     log.warning(message)
                     return (message, complete_flash_message_list)
                 elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
                     no_usage_returned_count += 1
-                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}.")  #Badmake_SUSHI_call
+                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}.")
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
@@ -835,11 +835,11 @@ class StatisticsSources(db.Model):
             SUSHI_parameters['end_date'] = end_date
             SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
             if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}. Additionally, all previously harvested SUSHI data won't be loaded into the database."  #Badmake_SUSHI_call
+                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}. None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
                 log.warning(message)
                 return (message, flash_message_list)
             elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
-                message = f"None of the calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned any usage data; instead, they returned the error {SUSHI_data_response}."  #Badmake_SUSHI_call
+                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data and raised the error {SUSHI_data_response}."
                 log.warning(message)
                 return (message, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
