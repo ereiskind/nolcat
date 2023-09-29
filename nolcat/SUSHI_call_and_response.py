@@ -222,9 +222,9 @@ class SUSHICallAndResponse:
                     for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
                         log.debug(API_response['Report_Items'][n])
         else:
-            log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")  #CheckValue
+            log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
         if messages_to_flash:
-            log.info(f"The messages to flash:\n{messages_to_flash}")  #CheckValue
+            log.info(f"The messages to flash:\n{messages_to_flash}")
             return (API_response, messages_to_flash)
         else:
             return (API_response, None)
@@ -369,8 +369,8 @@ class SUSHICallAndResponse:
                 log.error(message)
                 return (json.JSONDecodeError(message), message)
         
-        log.info(f"SUSHI data converted to {repr(type(API_response))}.")  #CheckValue
-        log.debug(f"SUSHI data:\n{API_response}")  #CheckValue
+        log.info(f"SUSHI data converted to {repr(type(API_response))}.")
+        log.debug(f"SUSHI data:\n{API_response}")
         return (API_response, [])
     
 
