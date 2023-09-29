@@ -659,10 +659,8 @@ class StatisticsSources(db.Model):
                 usage_end_date,
             )
             all_flashed_statements[report_to_harvest] = flash_message_list
-            if isinstance(SUSHI_data_response, str) and (SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data")):
-                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_status_response}."
-                log.error(message)
-                return (message, all_flashed_statements)
+            if isinstance(SUSHI_data_response, str):
+                log.error(SUSHI_data_response)
             return (SUSHI_data_response, all_flashed_statements)
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
@@ -679,12 +677,11 @@ class StatisticsSources(db.Model):
                             if re.match(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
-            elif isinstance(SUSHI_reports_response, str) and (SUSHI_reports_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_reports_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data")):
-                message = f"The call to the `reports` endpoint for {self.statistics_source_name} raised the error {SUSHI_reports_response}."
-                log.warning(message)
-                return (message, all_flashed_statements)
+            elif isinstance(SUSHI_reports_response, str):
+                log.warning(SUSHI_reports_response)
+                return (SUSHI_reports_response, all_flashed_statements)
             else:
-                message = f"A `reports` SUSHI call was made to {self.statistics_source_name}, but the data returned was neither handled as a should have been in `SUSHICallAndResponse.make_SUSHI_call()` nor raised an error. Investigation into the response {SUSHI_reports_response} is required."
+                message = f"The SUSHI call for a list of reports returned the following invalid value; investigation into the response  is required:\n{SUSHI_reports_response}"
                 log.error(message)
                 return (message, all_flashed_statements)
 
@@ -742,11 +739,10 @@ class StatisticsSources(db.Model):
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}."
-                    log.error(message)
-                    return (message, all_flashed_statements)
-                elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
+                    log.error(SUSHI_data_response)
+                    return (SUSHI_data_response, all_flashed_statements)
+                elif isinstance(SUSHI_data_response, str) and re.match(r'returned no( usage)? data', string=SUSHI_data_response):
                     log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.*")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
@@ -797,14 +793,17 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                    message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}. None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
-                    log.warning(message)
-                    return (message, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
+                    message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
+                    log.warning(SUSHI_data_response + " " + message)
+                    complete_flash_message_list.append(message)
+                    return (SUSHI_data_response, complete_flash_message_list)
+                elif isinstance(SUSHI_data_response, str) and re.match(r'returned no( usage)? data', string=SUSHI_data_response):
+                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.*")
                     no_usage_returned_count += 1
-                    log.warning(f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}.")
+                    log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
                     log.warning(message)
@@ -835,14 +834,9 @@ class StatisticsSources(db.Model):
             SUSHI_parameters['begin_date'] = start_date
             SUSHI_parameters['end_date'] = end_date
             SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
-            if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}. None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
-                log.warning(message)
-                return (message, flash_message_list)
-            elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"Call to {self.statistics_source_name} for reports returned no usage data"):
-                message = f"The call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data and raised the error {SUSHI_data_response}."
-                log.warning(message)
-                return (message, flash_message_list)
+            if isinstance(SUSHI_data_response, str):
+                log.warning(SUSHI_data_response)
+                return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:  # The method above returns an empty dataframe if the dataframe created couldn't be successfully loaded into the database
                 log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")  #create_dataframeError
