@@ -549,10 +549,16 @@ def check_if_data_already_in_COUNTERData(df):
         
     #Section: Return Result
     if total_number_of_matching_records > 0:
+        #Subsection: Get Records and Statistics Source Names for Matches
         records_to_remove = []
-        statistics_source_names = []
         for instance in matching_record_instances:
-            #ToDo: Select df records matching all three values in `instance` (https://stackoverflow.com/a/22086347) and add resulting database to `records_to_remove`
+            to_remove = df[
+                (df['statistics_source_ID']==instance['statistics_source_ID']) &
+                (df['report_type']==instance['report_type']) &
+                (df['usage_date']==instance['usage_date'])
+            ]
+            records_to_remove.append(to_remove)
+
             statistics_source_name = query_database(
                 query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
                 engine=db.engine,
@@ -561,8 +567,22 @@ def check_if_data_already_in_COUNTERData(df):
                 #SQLErrorReturned
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
-        #ToDo: Concatenate `records_to_remove`
-        #ToDo: Create dataframe without `records_to_remove` records (https://stackoverflow.com/a/44706892)
-        #ToDo: f"Usage statistics for the statistics source, report type, and usage date combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{`instance` reformatted for string output}"
+        #Subsection: Return Results
+        records_to_remove = pd.concat(records_to_remove)
+        records_to_keep = df[
+            pd.merge(
+                df,
+                records_to_remove,
+                how='left',  # Because all records come from the left (first) dataframe, there's no difference between a left and outer join
+                indicator=True,
+            )['_merge']=='left_only'
+        ]
+        matching_record_instances_string = []
+        for instance in matching_record_instances:
+            matching_record_instances_string.append(f"{instance['report_type']:3} | {instance['usage_date'].strftime('%Y-%m-%d')} | {instance['statistics_source_name']} (ID {instance['statistics_source_ID']})")
+        "\n".join(matching_record_instances_string)
+        message = f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances_string}"
+        log.info(message)
+        return (records_to_keep, message)
     else:
         return (df, None)
