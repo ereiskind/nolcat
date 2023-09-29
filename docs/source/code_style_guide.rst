@@ -84,13 +84,10 @@ SUSHI Calls
     * Success: ""
     * Failure: ""
 
-* Responses to the ``StatisticsSources._harvest_single_report()`` method --> #Good_harvest_single_report, #Bad_harvest_single_report
+* Failed ``StatisticsSources._harvest_single_report()`` method
 
-  * Info **???** logging statement; errors are warning logging statement
-  * Structure:
-
-    * Success: ""
-    * Failure: ""
+  * Warning logging statement
+  * Structure: "The call to the `<name of report>` endpoint for <statistics source name> raised the error <SUSHI error>."
 
 * Successful ``StatisticsSources._harvest_R5_SUSHI()`` method --> #Good_harvest_R5_SUSHI
 

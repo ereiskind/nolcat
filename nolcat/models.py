@@ -661,10 +661,9 @@ class StatisticsSources(db.Model):
             )
             all_flashed_statements[report_to_harvest] = flash_message_list
             if isinstance(SUSHI_data_response, str) and (SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made.") or SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data")):
-                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_status_response}."  #Bad_harvest_single_report
+                message = f"The call to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_status_response}."
                 log.error(message)
                 return (message, all_flashed_statements)
-            #ToDo: #Good_harvest_single_report
             return (SUSHI_data_response, all_flashed_statements)
         
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
@@ -744,7 +743,7 @@ class StatisticsSources(db.Model):
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
                 if isinstance(SUSHI_data_response, str) and SUSHI_data_response.endswith("Processing of data from this SUSHI API call has stopped and no further API calls will be made."):
-                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} returned the error {SUSHI_data_response}."  #Bad_harvest_single_report
+                    message = f"The call to the `reports/{report_name.lower()}` endpoint for {self.statistics_source_name} raised the error {SUSHI_data_response}."
                     log.error(message)
                     return (message, all_flashed_statements)
                 elif isinstance(SUSHI_data_response, str) and SUSHI_data_response.startswith(f"None of the calls to the `reports/{report_to_harvest.lower()}` endpoint for {self.statistics_source_name} returned any usage data"):
@@ -760,7 +759,6 @@ class StatisticsSources(db.Model):
 
             #Section: Return a Single Dataframe
             try:
-                #ToDo: #Good_harvest_single_report
                 return (pd.concat(custom_report_dataframes, ignore_index=True), all_flashed_statements)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
             except ValueError as error:
                 message = f"The harvested reports couldn't be combined because of the error {error}."
