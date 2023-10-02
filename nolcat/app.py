@@ -282,7 +282,7 @@ def first_new_PK_value(relation):
         engine=db.engine,
     )
     if isinstance(largest_PK_value, str):
-        #SQLErrorReturned
+        return largest_PK_value  #ToDo:: Have calls handle string return indicating error
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
@@ -484,10 +484,10 @@ def query_database(query, engine, index=None):
             con=engine,
             index_col=index,
         )
-        log.debug(f"The complete response to {query}:\n{df}")
+        log.debug(f"The complete response to `{query}`:\n{df}")
         return df
     except Exception as error:
-        message = f"The query {query} raised the error {error}."
+        message = f"The query `{query}` raised the error {error}."
         log.error(message)
         return message
 
@@ -535,7 +535,7 @@ def check_if_data_already_in_COUNTERData(df):
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            #SQLErrorReturned
+            return number_of_matching_records  #ToDo:: Have calls handle string return indicating error
         number_of_matching_records = number_of_matching_records.iloc[0][0]
         log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #QueryReturn
         if number_of_matching_records > 0:
@@ -564,7 +564,7 @@ def check_if_data_already_in_COUNTERData(df):
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                #SQLErrorReturned
+                return statistics_source_name  #ToDo:: Have calls handle string return indicating error
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results

@@ -394,8 +394,8 @@ class SUSHICallAndResponse:
             query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
             engine=db.engine,
         )
-        if isinstance(statistics_source_ID, str):
-            #SQLErrorReturned
+        if isinstance(statistics_source_ID, str):  # The variable is an error message
+            return statistics_source_ID
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
         log.debug(f"S3 file name set to {S3_file_name}.")  #FileIO
 
@@ -528,8 +528,8 @@ class SUSHICallAndResponse:
                 query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
                 engine=db.engine,
             )
-            if isinstance(df, str):
-                #SQLErrorReturned
+            if isinstance(df, str):  # The variable is an error message
+                return (df, [message, df])
             statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                 statistics_source_ID = int(df['statistics_source_ID'][0]),
                 statistics_source_name = str(df['statistics_source_name'][0]),

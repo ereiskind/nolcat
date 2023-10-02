@@ -4,6 +4,7 @@ from flask import request
 from flask import abort
 from flask import redirect
 from flask import url_for
+from flask import flash
 import pandas as pd
 
 from . import bp
@@ -40,7 +41,7 @@ def view_lists_homepage(list):
     #ToDo:     engine=db.engine,
     #ToDo: )
     #ToDo: if isinstance(df, str):
-    #ToDo:     #SQLErrorReturned
+    #ToDo:     #HomepageSQLError
     #ToDo: df = df.astype({dict setting correct dtypes})
     #ToDo: Add field with links to see details for each record
     #ToDo: Display the returned dataframe
@@ -100,7 +101,8 @@ def edit_list_record(list, PK):
             #ToDo:     engine=db.engine,
             #ToDo: )
             #ToDo: if isinstance(df, str):
-            #ToDo:     #SQLErrorReturned
+            #ToDo:     flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            #ToDo:     return redirect(url_for(view_lists.view_lists_homepage))
             #ToDo: df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
                 # https://stackoverflow.com/q/35892144

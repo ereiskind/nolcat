@@ -29,9 +29,10 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
     record = query_database(
         query=f"SELECT * FROM annualUsageCollectionTracking JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source WHERE statisticsSources.statistics_source_retrieval_code IS NOT NULL;",
         engine=engine,
-    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
+    )
     if isinstance(record, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+    record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -85,7 +86,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         engine=engine,
     )
     if isinstance(record, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
@@ -119,7 +120,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         engine=engine,
     )
     if isinstance(database_update_check, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to run test because it relied on t{database_update_check[1:].replace(' raised', ', which raised')}")
     database_update_check = database_update_check.iloc[0][0]
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
@@ -176,7 +177,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
         engine=engine,
     )
     if isinstance(usage_file_path_in_database, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to run test because it relied on t{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
     log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")  #QueryReturn
 

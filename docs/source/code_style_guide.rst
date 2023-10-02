@@ -144,18 +144,27 @@ MySQL I/O
   * In the ``query_database()`` function
   * Structure:
 
-    * Successful query: "The complete response to <query text>:\n<dataframe returned by query>"
-    * Failed query: "The query <query text> raised the error <Python exception>."
+    * Successful query: "The complete response to `<query text>`:\n<dataframe returned by query>"
+    * Failed query: "The query `<query text>` raised the error <Python exception>."
 
-* Indication of query result in calling function --> #SQLErrorReturn, #QueryReturn, #QueryToRelationClass
+* Indication of query result in calling function
 
-  * **???** logging statement; errors are **???** logging statement
+  * **???** logging statement; errors are warning logging statement
   * In the function that called ``query_database()``
   * Structure:
 
     * Successful dataframe output: ""
     * Successful single-value output: ""
-    * Successful statistics resource source: ""
+    * Failure:
+
+      * Returning string: Repeat the ``query_database()`` error message
+      * Helper function: Pass the ``query_database()`` error message to the database that called the helper function --> #ToDo:: Have calls handle string return indicating error
+      * Returning integer: "Unable to return requested sum because it relied on <slightly modified error message>"
+      * Fixture function: "Unable to create fixture because it relied on <slightly modified error message>" in ``pytest.skip()``
+      * Test function: "Unable to run test because it relied on <slightly modified error message>" in ``pytest.skip()``
+      * Non-homepage view function: "Unable to load requested page because it relied on <slightly modified error message>" in flashed message, return to blueprint homepage
+      * Homepage view function: page outside of blueprints for sharing this message--> #HomepageSQLError
+      * Replace when methods in `Vendors` relation class are written --> #SQLDataframeReturnError
 
 * Replace with database update function to be written --> #ReplaceWithUpdateFunction
 

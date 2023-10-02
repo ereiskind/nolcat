@@ -94,7 +94,7 @@ def test_query_database(engine, vendors_relation):
         index='vendor_ID',
     )
     if isinstance(retrieved_vendors_data, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to run test because it relied on t{retrieved_vendors_data[1:].replace(' raised', ', which raised')}")
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
@@ -135,7 +135,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     if isinstance(retrieved_data, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to run test because it relied on t{retrieved_data[1:].replace(' raised', ', which raised')}")
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(

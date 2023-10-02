@@ -4,6 +4,7 @@ from flask import request
 from flask import abort
 from flask import redirect
 from flask import url_for
+from flask import flash
 import pandas as pd
 
 from . import bp
@@ -26,7 +27,7 @@ def annual_stats_homepage():
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
-            #SQLErrorReturned
+            #HomepageSQLError
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
     elif form.validate_on_submit():
@@ -55,7 +56,8 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
-            #SQLErrorReturned
+            flash(f"Unable to load requested page because it relied on t{fiscal_year_details[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
         fiscal_year_reporting = query_database(
@@ -64,7 +66,8 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             index='AUCT_statistics_source',
         )
         if isinstance(fiscal_year_reporting, str):
-            #SQLErrorReturned
+            flash(f"Unable to load requested page because it relied on t{fiscal_year_reporting[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
         return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)

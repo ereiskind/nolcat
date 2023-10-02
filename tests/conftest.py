@@ -490,7 +490,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         engine=db.engine,
     )
     if isinstance(df, str):
-        #SQLErrorReturned
+        pytest.skip(f"Unable to create fixture because it relied on t{df[1:].replace(' raised', ', which raised')}")
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})

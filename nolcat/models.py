@@ -122,6 +122,7 @@ class FiscalYears(db.Model):
 
         Returns:
             int: the answer to ACRL 60b
+            str: the error message if a query fails
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = query_database(
@@ -133,7 +134,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            log.warning(message)
+            return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
             log.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")  #QueryReturn
@@ -147,7 +150,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            log.warning(message)
+            return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
             log.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")  #QueryReturn
@@ -161,7 +166,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_J1_df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{TR_J1_df[1:]}"
+            log.warning(message)
+            return message
         else:
             TR_J1_sum = TR_J1_df.iloc[0][0]
             log.debug(f"The e-serials sum query returned\n{TR_J1_df}\nfrom which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")  #QueryReturn
@@ -177,6 +184,7 @@ class FiscalYears(db.Model):
 
         Returns:
             int: the answer to ACRL 63
+            str: the error message if the query fails
         """
         log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
         df = query_database(
@@ -188,7 +196,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
         return df.iloc[0][0]
 
@@ -201,6 +211,7 @@ class FiscalYears(db.Model):
 
         Returns:
             int: the answer to ARL 18
+            str: the error message if the query fails
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_18()` for {self.fiscal_year}.")
         df = query_database(
@@ -212,7 +223,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
         return df.iloc[0][0]
 
@@ -225,6 +238,7 @@ class FiscalYears(db.Model):
 
         Returns:
             int: the answer to ARL 19
+            str: the error message if the query fails
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_19()` for {self.fiscal_year}.")
         df = query_database(
@@ -236,7 +250,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
         return df.iloc[0][0]
 
@@ -249,6 +265,7 @@ class FiscalYears(db.Model):
 
         Returns:
             int: the answer to ARL 20
+            str: the error message if the query fails
         """
         log.info(f"Starting `FiscalYears.calculate_ARL_20()` for {self.fiscal_year}.")
         df = query_database(
@@ -260,7 +277,9 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            #SQLErrorReturned
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
         log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
         return df.iloc[0][0]
 
@@ -411,7 +430,7 @@ class Vendors(db.Model):
         #ToDo:     index='statistics_source_ID',
         #ToDo: )
         #ToDo: if isinstance(df, str):
-        #ToDo:     #SQLErrorReturned
+        #ToDo:     #SQLDataframeReturnError
         #ToDo: #QueryReturn
         #ToDo: return df
         pass
@@ -440,7 +459,7 @@ class Vendors(db.Model):
         #ToDo:     index='resource_source_ID',
         #ToDo: )
         #ToDo: if isinstance(df, str):
-        #ToDo:     #SQLErrorReturned
+        #ToDo:     #SQLDataframeReturnError
         #ToDo: #QueryReturn
         #ToDo: return df
         pass
@@ -778,7 +797,10 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if subset_of_months_to_harvest:
+        if re.fullmatch(r'The query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
+            message = f"When attempting to check if the data was already in the database, t{subset_of_months_to_harvest[1:]}"
+            return (message, [message])
+        elif subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")  #AboutTo
             individual_month_dfs = []
             complete_flash_message_list = []
@@ -872,6 +894,7 @@ class StatisticsSources(db.Model):
 
         Returns:
             list: the dates that should be harvested; a null value means the full range should be harvested
+            str: the error message from `query_database()` being passed through
         """
         log.info(f"Starting `StatisticsSources._check_if_data_in_database()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         months_in_date_range = [d.date() for d in list(rrule(MONTHLY, dtstart=start_date, until=end_date))]  # Creates a list of date objects representing the first day of the month of every month in the date range (rrule alone creates datetime objects)
@@ -884,7 +907,7 @@ class StatisticsSources(db.Model):
                 engine=db.engine,
             )
             if isinstance(number_of_records, str):
-                #SQLErrorReturned
+                return number_of_records
             log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")  #QueryReturn
             if number_of_records.iloc[0][0] == 0:
                 months_to_harvest.append(month_being_checked)
@@ -1234,7 +1257,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(fiscal_year_data, str):
-            #SQLErrorReturned
+            return (fiscal_year_data, [fiscal_year_data])
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
@@ -1247,7 +1270,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(statistics_source_data, str):
-            #SQLErrorReturned
+            return (statistics_source_data, [statistics_source_data])
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),

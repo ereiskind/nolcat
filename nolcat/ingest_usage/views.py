@@ -78,7 +78,8 @@ def harvest_SUSHI_statistics():
             engine=db.engine,
         )
         if isinstance(statistics_source_options, str):
-            #SQLErrorReturned
+            flash(f"Unable to load requested page because it relied on t{statistics_source_options[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
@@ -87,8 +88,7 @@ def harvest_SUSHI_statistics():
             engine=db.engine,
         )
         if isinstance(df, str):
-            #SQLErrorReturned
-            flash(#ToDo: Determine error message to flash)
+            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -152,7 +152,8 @@ def upload_non_COUNTER_reports():
             engine=db.engine,
         )
         if isinstance(non_COUNTER_files_needed, str):
-            #SQLErrorReturned
+            flash(f"Unable to load requested page because it relied on t{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
