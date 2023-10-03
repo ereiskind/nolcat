@@ -62,9 +62,9 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
         for vendor in SUSHI_data_file:
-            for stats_source in vendor['interface']:
-                if "interface_id" in list(stats_source.keys()):
-                        retrieval_codes_as_interface_IDs.append(stats_source['interface_id'])
+            for statistics_source_dict in vendor['interface']:
+                if "interface_id" in list(statistics_source_dict.keys()):
+                        retrieval_codes_as_interface_IDs.append(statistics_source_dict['interface_id'])
     
     retrieval_codes = []
     for interface in retrieval_codes_as_interface_IDs:

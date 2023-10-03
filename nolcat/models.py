@@ -584,26 +584,26 @@ class StatisticsSources(db.Model):
             SUSHI_data_file = json.load(JSON_file)
             log.debug("*JSON with SUSHI credentials loaded.*")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
-                for stats_source in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
-                    if stats_source['interface_id'] == self.statistics_source_retrieval_code:
+                for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
+                    if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
                         log.debug(f"Saving credentials for {self.statistics_source_name} ({self.statistics_source_retrieval_code}) to dictionary.")
                         credentials = dict(
-                            URL = stats_source['statistics']['online_location'],
-                            customer_id = stats_source['statistics']['user_id']
+                            URL = statistics_source_dict['statistics']['online_location'],
+                            customer_id = statistics_source_dict['statistics']['user_id']
                         )
 
                         try:
-                            credentials['requestor_id'] = stats_source['statistics']['user_password']
+                            credentials['requestor_id'] = statistics_source_dict['statistics']['user_password']
                         except:
                             pass
 
                         try:
-                            credentials['api_key'] = stats_source['statistics']['user_pass_note']
+                            credentials['api_key'] = statistics_source_dict['statistics']['user_pass_note']
                         except:
                             pass
 
                         try:
-                            credentials['platform'] = stats_source['statistics']['delivery_address']
+                            credentials['platform'] = statistics_source_dict['statistics']['delivery_address']
                         except:
                             pass
 

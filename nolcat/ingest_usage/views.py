@@ -91,7 +91,7 @@ def harvest_SUSHI_statistics():
             flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
-        stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+        statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
             statistics_source_ID = int(df['statistics_source_ID'][0]),
             statistics_source_name = str(df['statistics_source_name'][0]),
             statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
@@ -103,13 +103,13 @@ def harvest_SUSHI_statistics():
         end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")  #AboutTo
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")  #AboutTo
         else:
             report_to_harvest = form.report_to_harvest.data
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  #AboutTo
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  #AboutTo
         
         try:
-            result_message, flash_messages = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
             flash(flash_messages)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
