@@ -484,7 +484,11 @@ def query_database(query, engine, index=None):
             con=engine,
             index_col=index,
         )
-        log.debug(f"The complete response to `{query}`:\n{df}")
+        if df.shape[1] > 20:
+            log.info(f"The beginning and the end of the response to `{query}`:\n{df.head(10)}\n...\n{df.tail(10)}")
+            log.debug(f"The complete response to `{query}`:\n{df}")
+        else:
+            log.info(f"The complete response to `{query}`:\n{df}")
         return df
     except Exception as error:
         message = f"The query `{query}` raised the error {error}."

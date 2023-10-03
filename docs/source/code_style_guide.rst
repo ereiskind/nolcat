@@ -140,7 +140,7 @@ MySQL I/O
 
 * Query database
 
-  * Debug logging statement; errors are error logging statement
+  * Info logging statement; errors are error logging statement
   * In the ``query_database()`` function
   * Structure:
 
