@@ -27,7 +27,7 @@ def annual_stats_homepage():
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
-            #HomepageSQLError
+            return abort(404)  #HomepageSQLError
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
     elif form.validate_on_submit():
