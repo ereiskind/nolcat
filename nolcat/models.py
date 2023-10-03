@@ -676,7 +676,7 @@ class StatisticsSources(db.Model):
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
             else:
-                message = "An invalid value was recieved from a fixed text field."
+                message = "An invalid value was received from a fixed text field."
                 log.critical(message)
                 all_flashed_statements['CRITICAL'] = message
                 return (message, all_flashed_statements)
