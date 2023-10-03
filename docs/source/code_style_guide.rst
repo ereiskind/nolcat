@@ -149,12 +149,20 @@ MySQL I/O
 
 * Indication of query result in calling function
 
-  * **???** logging statement; errors are warning logging statement
+  * Debug logging statement; errors are warning logging statement
   * In the function that called ``query_database()``
   * Structure:
 
-    * Successful dataframe output: ""
-    * Successful single-value output: ""
+    * Success:
+
+      * Successful individual value(s) output: "The <type of query, optional> query returned a dataframe from which <value from dataframe> (type <type of data from dataframe>) was extracted."
+
+        * For multiple value, repeat the statement of the values and their data types and end with "were extracted."
+
+      * Successful dataframe output: "The result of the query for <what was being queried for>:\n<dataframe>"
+      * Successful initialization of a relation class object: "The following `<name of relation class>` object was initialized based on the query results:\n<object>"
+      * Successful initialization of a relation class object in a fixture (info): "`<fixture function name>()` returning the following `<name of relation class>` object which was initialized based on the query results:\n{yield_object}."
+
     * Failure:
 
       * Returning string: Repeat the ``query_database()`` error message

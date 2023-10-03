@@ -288,7 +288,7 @@ def first_new_PK_value(relation):
         return 0
     else:
         largest_PK_value = largest_PK_value.iloc[0][0]
-        log.info(f"Result of query for largest primary key value:\n{largest_PK_value}")  #QueryReturn
+        log.debug(f"The query returned a dataframe from which {largest_PK_value} (type {type(largest_PK_value)}) was extracted.")
         return int(largest_PK_value) + 1
 
 
@@ -537,7 +537,7 @@ def check_if_data_already_in_COUNTERData(df):
         if isinstance(number_of_matching_records, str):
             return number_of_matching_records  #ToDo:: Have calls handle string return indicating error
         number_of_matching_records = number_of_matching_records.iloc[0][0]
-        log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")  #QueryReturn
+        log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")
         if number_of_matching_records > 0:
             matching_record_instances.append({
                 'statistics_source_ID': combo[0],

@@ -283,8 +283,10 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         """,
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
-    log.info(f"The record as a dataframe is\n{record}")  #QueryReturn
+    )
+    if isinstance(record, str):
+        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+    record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -296,7 +298,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")  #QueryToRelationClass
+    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning the following `StatisticsSources` object which was initialized based on the query results:\n{yield_object}")
     yield yield_object
 
 
@@ -318,8 +320,10 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()  #ToDo: Will this work with possible string returned by `query_database()`?
-    log.info(f"The record as a dataframe is\n{record}")  #QueryReturn
+    )
+    if isinstance(record, str):
+        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+    record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
         AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
@@ -331,7 +335,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")  #QueryToRelationClass
+    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")
     yield yield_object
 
 

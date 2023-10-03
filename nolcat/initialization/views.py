@@ -286,12 +286,15 @@ def collect_AUCT_and_historical_COUNTER_data():
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        df = pd.read_sql(
-            sql="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
-            con=db.engine,
-            index_col=["statistics_source_ID", "fiscal_year_ID"],
+        df = query_database(
+            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
+            engine=db.engine,
+            index=["statistics_source_ID", "fiscal_year_ID"],
         )
-        log.debug(f"AUCT Cartesian product dataframe:\n{df}")  #QueryReturn
+        if isinstance(df, str):
+            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('initialization.collect_FY_and_vendor_data'))
+        log.debug(f"The result of the query for the AUCT Cartesian product dataframe:\n{df}")
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={

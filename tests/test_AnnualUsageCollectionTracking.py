@@ -44,7 +44,7 @@ def AUCT_fixture_for_SUSHI(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`AUCT_fixture_for_SUSHI()` returning {yield_object}.")  #QueryToRelationClass
+    log.info(f"`AUCT_fixture_for_SUSHI()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")
     yield yield_object
 
 
@@ -96,8 +96,10 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
-    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date} (type {type(start_date)}) and end date {end_date} (type {type(end_date)}).")  #QueryToRelationClass
-    yield StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
+    log.debug(f"The query returned a dataframe from which the start date {start_date} (type {type(start_date)}), the end date {end_date} (type {type(end_date)}), and the `StatisticsSources` object {StatisticsSources_object} were extracted.")
+    yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
+    log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
+    yield yield_object
 
 
 def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI, harvest_R5_SUSHI_result, caplog):
@@ -179,7 +181,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     if isinstance(usage_file_path_in_database, str):
         pytest.skip(f"Unable to run test because it relied on t{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
-    log.info(f"`usage_file_path_in_database` is {usage_file_path_in_database} (type {type(usage_file_path_in_database)})")  #QueryReturn
+    log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")
 
     assert upload_result is not None
     assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents

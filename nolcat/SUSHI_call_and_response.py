@@ -536,7 +536,7 @@ class SUSHICallAndResponse:
                 statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
                 vendor_ID = int(df['vendor_ID'][0]),
             )  # Without the `int` constructors, a numpy int type is used
-            #ToDo: #QueryToRelationClass
+            log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
             statistics_source_object.add_note(message)
             log.error(message)
             return (None, message)

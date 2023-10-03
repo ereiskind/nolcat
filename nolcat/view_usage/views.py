@@ -185,7 +185,7 @@ def use_predefined_SQL_query():
         if isinstance(df, str):
             flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('view_usage.view_usage_homepage'))
-        log.debug(f"The query result:\n{df}")  #QueryReturn
+        log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(

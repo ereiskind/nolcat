@@ -139,7 +139,7 @@ class FiscalYears(db.Model):
             return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
-            log.debug(f"The e-book sum query returned\n{TR_B1_df}\nfrom which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")  #QueryReturn
+            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
 
         IR_M1_df = query_database(
             query=f"""
@@ -155,7 +155,7 @@ class FiscalYears(db.Model):
             return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
-            log.debug(f"The e-media sum query returned\n{IR_M1_df}\nfrom which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")  #QueryReturn
+            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
 
         TR_J1_df = query_database(
             query=f"""
@@ -171,7 +171,7 @@ class FiscalYears(db.Model):
             return message
         else:
             TR_J1_sum = TR_J1_df.iloc[0][0]
-            log.debug(f"The e-serials sum query returned\n{TR_J1_df}\nfrom which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")  #QueryReturn
+            log.debug(f"The e-serials sum query returned a dataframe from which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
@@ -199,8 +199,9 @@ class FiscalYears(db.Model):
             message = f"Unable to return requested sum because it relied on t{df[1:]}"
             log.warning(message)
             return message
-        log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
-        return df.iloc[0][0]
+        ACRL_63 = df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")
+        return ACRL_63
 
 
     @hybrid_method
@@ -226,8 +227,9 @@ class FiscalYears(db.Model):
             message = f"Unable to return requested sum because it relied on t{df[1:]}"
             log.warning(message)
             return message
-        log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
-        return df.iloc[0][0]
+        ARL_18= df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ARL_18} (type {type(ARL_18)}) was extracted")
+        return ARL_18
 
     
     @hybrid_method
@@ -253,8 +255,9 @@ class FiscalYears(db.Model):
             message = f"Unable to return requested sum because it relied on t{df[1:]}"
             log.warning(message)
             return message
-        log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
-        return df.iloc[0][0]
+        ARL_19= df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ARL_19} (type {type(ARL_19)}) was extracted")
+        return ARL_19
 
 
     @hybrid_method
@@ -280,8 +283,9 @@ class FiscalYears(db.Model):
             message = f"Unable to return requested sum because it relied on t{df[1:]}"
             log.warning(message)
             return message
-        log.debug(f"The sum query returned (type {type(df)}):\n{df}")  #QueryReturn
-        return df.iloc[0][0]
+        ARL_20= df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ARL_20} (type {type(ARL_20)}) was extracted")
+        return ARL_20
 
 
     @hybrid_method
@@ -301,7 +305,7 @@ class FiscalYears(db.Model):
         )
         if isinstance(current_statistics_sources, str):
             return current_statistics_sources
-        log.debug(f"Result of query for current statistics sources PKs:\n{current_statistics_sources}")  #QueryReturn
+        log.debug(f"The result of the query for current statistics sources PKs:\n{current_statistics_sources}")
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
@@ -431,7 +435,7 @@ class Vendors(db.Model):
         #ToDo: )
         #ToDo: if isinstance(df, str):
         #ToDo:     #SQLDataframeReturnError
-        #ToDo: #QueryReturn
+        #ToDo: log.debug(f"The result of the query for a list of statistics sources associated with {self.vendor_name}:\n{df}")
         #ToDo: return df
         pass
 
@@ -460,7 +464,7 @@ class Vendors(db.Model):
         #ToDo: )
         #ToDo: if isinstance(df, str):
         #ToDo:     #SQLDataframeReturnError
-        #ToDo: #QueryReturn
+        #ToDo: log.debug(f"The result of the query for list of a resource sources associated with {self.vendor_name}:\n{df}")
         #ToDo: return df
         pass
 
@@ -908,8 +912,9 @@ class StatisticsSources(db.Model):
             )
             if isinstance(number_of_records, str):
                 return number_of_records
-            log.info(f"There were {number_of_records.iloc[0][0]} records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database.")  #QueryReturn
-            if number_of_records.iloc[0][0] == 0:
+            number_of_records = number_of_records.iloc[0][0]
+            log.debug(f"The records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} query returned a dataframe from which {number_of_records} (type {type(number_of_records)}) was extracted.")
+            if number_of_records == 0:
                 months_to_harvest.append(month_being_checked)
             else:
                 log.warning(f"There were records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} already loaded in the database; {month_being_checked.strftime('%Y-%m')} won't be included in the harvested date range.")
@@ -1083,8 +1088,6 @@ class ResourceSources(db.Model):
         #ToDo:     SET current_statistics_source = false
         #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
         #ToDo: """
-        #ToDo: #QueryReturn
-        #ToDo: Apply above query to database
         #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
         # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
@@ -1261,7 +1264,7 @@ class AnnualUsageCollectionTracking(db.Model):
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        log.debug(f"The fiscal year start and end dates are {start_date} (type {type(start_date)})and {end_date} (type {type(end_date)}).")  #QueryReturn #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        log.debug(f"The query returned a dataframe from which {start_date} (type {type(start_date)}), {end_date} (type {type(end_date)}), and {fiscal_year} (type {type(fiscal_year)}) were extracted.")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
@@ -1277,7 +1280,7 @@ class AnnualUsageCollectionTracking(db.Model):
             statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
-        log.info(f"The `StatisticsSources` object is {statistics_source}.")  #QueryToRelationClass
+        log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")
 
         #Section: Collect and Load SUSHI Data
         df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
