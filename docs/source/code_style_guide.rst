@@ -53,10 +53,32 @@ General Errors and In-Test Issues
 * File input and output --> #FileIOError, #FileIO
 
   * Info and debug logging statements; errors are error logging statement
-  * *Needs to be divided into subcategories*
   * Structure:
 
-    * S3 delete file operation failed: ""
+    * Success:
+
+      * File found:
+      * File created:
+      * Name file:
+      * S3 bucket:
+
+        * File loaded into S3:
+
+      * Upload file:
+      * Download file:
+      * Other:
+
+    * Failure:
+
+      * Invalid file type:
+      * Blank file:
+      * S3 bucket problems:
+
+        * Unable to locate S3 bucket:
+        * Unable to upload file to S3 bucket:
+        * Unable to delete file in S3 bucket:
+
+      * Other:
 
 * Unable to convert file or JSON into dataframe
 
