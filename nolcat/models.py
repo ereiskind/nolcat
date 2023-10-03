@@ -664,7 +664,7 @@ class StatisticsSources(db.Model):
 
 
         #Section: Harvest Individual Report if Specified
-        if re.fullmatch(r'[PDTI]R', report_to_harvest):
+        if isinstance(report_to_harvest, str):
             log.debug(f"Harvesting just a {report_to_harvest} report.")
             if report_to_harvest == "PR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method"
@@ -675,6 +675,11 @@ class StatisticsSources(db.Model):
             elif report_to_harvest == "IR":
                 SUSHI_parameters["attributes_to_show"] = "Data_Type|Access_Method|YOP|Access_Type|Authors|Publication_Date|Article_Version"
                 SUSHI_parameters["include_parent_details"] = "True"
+            else:
+                message = "An invalid value was recieved from a fixed text field."
+                log.critical(message)
+                all_flashed_statements['CRITICAL'] = message
+                return (message, all_flashed_statements)
             SUSHI_data_response, flash_message_list = self._harvest_single_report(
                 report_to_harvest,
                 SUSHI_info['URL'],
@@ -690,7 +695,7 @@ class StatisticsSources(db.Model):
         else:  # Default; `else` not needed for handling invalid input because input option is a fixed text field
             #Section: Get List of Resources
             #Subsection: Make API Call
-            log.debug(f"Making a call for the `reports` endpoint where `self.statistics_source_name` is {self.statistics_source_name} (type {type(self.statistics_source_name)}), `SUSHI_info['URL']` is {SUSHI_info['URL']} (type {type(SUSHI_info['URL'])}), `SUSHI_parameters` is {SUSHI_parameters} (type {type(SUSHI_parameters)}).")
+            log.debug(f"Making a call for the `reports` endpoint.")
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
