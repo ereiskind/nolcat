@@ -808,7 +808,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if re.fullmatch(r'The query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
+        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'The query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
             message = f"When attempting to check if the data was already in the database, t{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
