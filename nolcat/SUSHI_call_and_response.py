@@ -226,7 +226,7 @@ class SUSHICallAndResponse:
             log.info(f"The messages to flash:\n{messages_to_flash}")
             return (API_response, messages_to_flash)
         else:
-            return (API_response, None)
+            return (API_response, [])
 
 
     def _make_API_call(self):

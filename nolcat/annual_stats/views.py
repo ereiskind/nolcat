@@ -44,7 +44,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
     log.info("Starting `show_fiscal_year_details()`.")
     #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` runs from here
     #ToDo: `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` runs from here
-    #ToDo: if re.fullmatch(r'SUSHI harvesting for statistics source \w* raised the error \w*\.', string=method_response[0]): above failed
+    #ToDo: if re.fullmatch(r'SUSHI harvesting for statistics source \w* raised the error \w*\.', string=method_response[0]): above failed  # `re.fullmatch` when `string=` isn't a string returns an error
     run_annual_stats_methods_form = RunAnnualStatsMethodsForm()
     edit_fiscalYear_form = EditFiscalYearForm()
     edit_AUCT_form = EditAUCTForm()
