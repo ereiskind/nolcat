@@ -50,35 +50,52 @@ General Errors and In-Test Issues
   * In the ``ConvertJSONDictToDataframe`` class
   * Structure: "Increase the `<attribute name>` max field length to <length of the value found + 10%>."
 
-* File input and output --> #FileIOError, #FileIO
+* Managing data files in the repo --> #FileIOError, #FileIO
 
   * Info and debug logging statements; errors are error logging statement
   * Structure:
 
     * Success:
 
-      * File found:
-      * File created:
-      * Name file:
-      * S3 bucket:
-
-        * File loaded into S3:
-
-      * Upload file:
-      * Download file:
+      * File found in repo:
+      * File successfully created:
+      * File name successfully created:
       * Other:
 
     * Failure:
 
-      * Invalid file type:
-      * Blank file:
-      * S3 bucket problems:
-
-        * Unable to locate S3 bucket:
-        * Unable to upload file to S3 bucket:
-        * Unable to delete file in S3 bucket:
-
       * Other:
+
+* File I/O with the host machine --> #FileIOError, #FileIO
+
+  * Debug logging statement; errors are error logging statement
+  * Structure:
+
+    * Success:
+
+      * File uploaded:
+      * WTForms FileField value ingested
+      * File downloaded:
+
+    * Failure:
+
+      * Invalid file type uploaded:
+      * Blank file uploaded
+
+* File I/O with S3 --> #FileIOError, #FileIO
+
+  * Debug logging statement; errors are error logging statement
+  * Structure:
+
+    * Success:
+
+      * File loaded into S3:
+
+    * Failure:
+
+      * Unable to locate S3 bucket:
+      * Unable to upload file to S3 bucket:
+      * Unable to delete file in S3 bucket:
 
 * Unable to convert file or JSON into dataframe
 
