@@ -220,6 +220,15 @@ MySQL I/O
     * Successful query: "The complete response to `<query text>`:\n<dataframe returned by query>"
     * Failed query: "Running the query `<query text>` raised the error <Python exception>."
 
+* Update database
+
+  * Info logging statement; errors are error logging statement
+  * In the ``update_database()`` function
+  * Structure:
+
+    * Successful update: "Successfully preformed the update `<update statement text>`."
+    * Failed update: "Running the update statement `<update statement text>` raised the error <Python exception>."
+
 * Indication of query result in calling function
 
   * Debug logging statement; errors are warning logging statement

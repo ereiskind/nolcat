@@ -616,4 +616,12 @@ def update_database(update_statement, engine):
         str: a message indicating success or including the error raised by the attempt to update the data
     """
     log.info(f"Starting `update_database()` for the update statement {update_statement}.")
-    pass
+    try:
+        engine.execute(update_statement)
+        message = f"Successfully preformed the update `{update_statement}`."
+        log.info(message)
+        return message
+    except Exception as error:
+        message = f"Running the update statement `{update_statement}` raised the error {error}."
+        log.error(message)
+        return message
