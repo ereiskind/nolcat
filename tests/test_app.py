@@ -318,7 +318,7 @@ def partially_duplicate_COUNTER_data():
 
 @pytest.fixture
 def non_duplicate_COUNTER_data():
-    """The COUNTER data from `partially_duplicate_COUNTER_data`not in the `COUNTERData_relation` dataframe.
+    """The COUNTER data from `partially_duplicate_COUNTER_data` not in the `COUNTERData_relation` dataframe.
 
     Yields:
         dataframe: data formatted for loading into the `COUNTERData` relation
