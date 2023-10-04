@@ -339,6 +339,11 @@ def non_duplicate_COUNTER_data():
     yield df
 
 
+def test_format_list_for_stdout():
+    """Test pretty printing a list by adding a line break between each item."""
+    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
+
+
 def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
     """Tests the check for statistics source/report type/usage date combinations already in the database."""
     #TEST: Because there's no data loaded in the `COUNTERData` relation at this point, this test won't pass

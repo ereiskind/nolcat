@@ -496,6 +496,18 @@ def query_database(query, engine, index=None):
         return message
 
 
+def format_list_for_stdout(stdout_list):
+    """Changes a list into a string which places each item of the list on its own line.
+
+    Args:
+        stdout_list (list): a list for pretty printing to stdout
+    
+    Returns:
+        str: the list contents with a line break between each item
+    """
+    return '\n'.join(stdout_list)
+
+
 def check_if_data_already_in_COUNTERData(df):
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
@@ -581,11 +593,10 @@ def check_if_data_already_in_COUNTERData(df):
                 indicator=True,
             )['_merge']=='left_only'
         ]
-        matching_record_instances_string = []
+        matching_record_instances_list = []
         for instance in matching_record_instances:
-            matching_record_instances_string.append(f"{instance['report_type']:3} | {instance['usage_date'].strftime('%Y-%m-%d')} | {instance['statistics_source_name']} (ID {instance['statistics_source_ID']})")
-        "\n".join(matching_record_instances_string)
-        message = f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances_string}"
+            matching_record_instances_list.append(f"{instance['report_type']:3} | {instance['usage_date'].strftime('%Y-%m-%d')} | {instance['statistics_source_name']} (ID {instance['statistics_source_ID']})")
+        message = f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{format_list_for_stdout(matching_record_instances_list)}"
         log.info(message)
         return (records_to_keep, message)
     else:

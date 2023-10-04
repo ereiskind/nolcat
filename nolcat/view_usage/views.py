@@ -208,7 +208,7 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")  #FileIO
+        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{format_list_for_stdout([file.name for file in Path(__file__).parent.iterdir()])}")  #FileIO
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()

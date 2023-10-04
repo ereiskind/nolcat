@@ -185,8 +185,7 @@ class SUSHICallAndResponse:
                 if messages_to_flash and SUSHI_error_flash_messages:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
-                    joined_messages = "\n".join(SUSHI_error_flash_messages)
-                    message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the call raised the following error(s):\n{joined_messages}"
+                    message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the call raised the following error(s):\n{format_list_for_stdout(SUSHI_error_flash_messages)}"
                     log.warning(message)
                     return (message, messages_to_flash)
                 elif messages_to_flash:
@@ -461,9 +460,8 @@ class SUSHICallAndResponse:
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the error {return_value[0]} and the flash messages\n{flash_messages_list}")
                     return return_value
                 elif len(errors_list) > 1:  # Multiple errors indicating API calls should stop
-                    joined_list = '\n'.join(errors_list)  # Escape character sequence not allowed in expression part of f-string
-                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{joined_list}\nand the flash messages\n{flash_messages_list}")
-                    return (f"All of the following errors were raised:\n{joined_list}", flash_messages_list)
+                    log.debug(f"`_evaluate_individual_SUSHI_exception()` raised the errors\n{format_list_for_stdout(errors_list)}\nand the flash messages\n{flash_messages_list}")
+                    return (f"All of the following errors were raised:\n{format_list_for_stdout(errors_list)}", flash_messages_list)
                 else:  # API calls should continue
                     log.debug(f"`_evaluate_individual_SUSHI_exception()` raised no errors and the flash messages\n{flash_messages_list}")
                     return (None, flash_messages_list)
