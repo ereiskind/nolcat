@@ -44,6 +44,13 @@ General Errors and In-Test Issues
   * Requested report returned a SUSHI error: "The test is being skipped because the API call returned a server-based SUSHI error."
   * Requested report returned no data: "The test is being skipped because the API call returned no data."
 
+* Variable value declarations in fixtures
+
+  * Debug logging statement
+  * Statements at the start of fixture functions adding the variables to stdout/logging for troubleshooting purposes
+  * When the value is a pathlib.Path object, ``.resolve()`` is added to output an absolute file path
+  * Structure: "In `<fixture function name>()`, the `<variable name>` is <value>."
+
 * Finding values for a given field are longer than the field's max length
 
   * Critical logging statement
