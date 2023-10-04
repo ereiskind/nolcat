@@ -601,3 +601,19 @@ def check_if_data_already_in_COUNTERData(df):
         return (records_to_keep, message)
     else:
         return (df, None)
+
+
+def update_database(update_statement, engine):
+    """A wrapper for the `Engine.execute()` method that includes the error handling.
+
+    The `execute()` method of the `sqlalchemy.engine.Engine` class automatically commits the changes made by the statement.
+
+    Args:
+        update_statement (str): the SQL update statement
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Returns:
+        str: a message indicating success or including the error raised by the attempt to update the data
+    """
+    log.info(f"Starting `update_database()` for the update statement {update_statement}.")
+    pass

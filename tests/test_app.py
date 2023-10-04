@@ -352,6 +352,33 @@ def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, 
     assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"
 
 
+@pytest.fixture
+def updated_vendors_relation():
+    """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    pass
+
+
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_update_database(engine, updated_vendors_relation):
+    """Tests updating data in the database through a SQL update statement."""
+    #ToDo: Write SQL update statement slightly altering test data in `vendors` relation
+    #ToDo: update_database(update_statement, engine)
+    #ToDo: retrieved_updated_vendors_data = query_database(
+    #ToDo:     query="SELECT * FROM vendors;",
+    #ToDo:     engine=engine,
+    #ToDo:     index='vendor_ID',
+    #ToDo: )
+    #ToDo: if isinstance(retrieved_updated_vendors_data, str):
+    #ToDo:     pytest.skip(f"Unable to run test because it relied on t{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
+    #ToDo: retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    #ToDo: assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
+    pass
+
+
 #ToDo: test_match_direct_SUSHI_harvest_result()
 # Function itself in `tests.conftest`
 
