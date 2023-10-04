@@ -1346,7 +1346,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")  #ReplaceWithUpdateFunction
             return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."  #FileIO
         except Exception as error:
-            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."  #SQLLoadError
+            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."  #ReplaceWithUpdateFunction
             log.error(message)
             return message
     
