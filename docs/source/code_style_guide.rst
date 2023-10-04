@@ -56,7 +56,15 @@ General Errors and In-Test Issues
 
     * Success:
 
-      * File found in repo:
+      * Check for a previously existing file in repo:
+
+        * Debug logging statement
+        * Information about the logging statement's relative location in a function can be added at the very beginning of the statement
+        * Structure:
+
+          * Check for a single file: "There's a file at <absolute path to file>: <Boolean>."
+          * Check the contents of a folder: "The files in the folder <absolute path to folder>\n<list of files in folder separated by newlines>"
+
       * File successfully created:
       * File name successfully created:
       * Other:

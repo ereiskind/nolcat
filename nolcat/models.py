@@ -41,7 +41,7 @@ def PATH_TO_CREDENTIALS_FILE():
     """
     file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
     if file_path.exists():
-        log.info(f"The R5 SUSHI credentials file was found at at `{file_path}`.")  #FileIO
+        log.debug(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
         return str(file_path)
     log.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()

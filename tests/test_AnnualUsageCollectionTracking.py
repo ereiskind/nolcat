@@ -192,8 +192,8 @@ def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, n
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
     log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #temp
-    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` before method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #FileIO
+    log.debug(f"Before `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
-    log.debug(f"Download destination contents in `test_download_nonstandard_usage_file()` after method call:\n{[file_path for file_path in download_destination.iterdir()]}")  #FileIO
+    log.debug(f"After `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()
