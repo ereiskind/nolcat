@@ -97,10 +97,19 @@ General Errors and In-Test Issues
 
       * File loaded into S3:
 
+        * Info logging statement
+        * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
+        * Structure: "Successfully loaded the file <name given to file> into the <name of bucket> S3 bucket."
+
     * Failure:
 
-      * Unable to locate S3 bucket:
       * Unable to upload file to S3 bucket:
+
+        * Error logging statement if final; warning logging statement if not
+        * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
+        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run) raised the error <Python exception>."
+        * If the logging statement isn't final, a statement that another function will be tried is added to the end
+
       * Unable to delete file in S3 bucket:
 
 * Unable to convert file or JSON into dataframe

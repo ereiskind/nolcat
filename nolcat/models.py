@@ -1327,10 +1327,8 @@ class AnnualUsageCollectionTracking(db.Model):
             file,
             file_name,
         )
-        if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.', string=logging_message) is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
-            message = f"{logging_message} As a result, the file `{file_name}` wasn't uploaded to S3."  #FileIOError
-            log.warning(message)
-            return message
+        if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+            return logging_message
         log.debug(logging_message)
         
         try:

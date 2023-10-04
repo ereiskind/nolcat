@@ -365,17 +365,17 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     try:
         check_for_bucket = s3_client.head_bucket(Bucket=bucket)
     except botocore.exceptions.ClientError as error:
-        message = f"Trying to upload the file saved at `{file}` failed because the check for the S3 bucket designated for downloads returned {error}."  #FileIOError
+        message = f"Unable to upload files to S3 because the check for the S3 bucket designated for downloads raised the error {error}."
         log.error(message)
         return message
  
 
     #Section: Upload File to Bucket
-    log.info(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #FileIO
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #AboutTo
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
-        log.debug(f"{file} opened successfully to initialize object {file_object}")  #FileIO
+        log.debug(f"Successfully initialized {file_object} (type {type(file_object)}).")
         try:
             client.upload_fileobj(
                 Fileobj=file_object,
@@ -383,32 +383,32 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
                 Key=bucket_path + file_name,
             )
             file_object.close()
-            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #FileIO
+            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
             log.info(message)
             return message
         except Exception as error:
-            logging.warning(f"The object `{file}` could be opened into the object `{file_object}`, but uploading the latter with `upload_fileobj()` raised {error}. The object `{file}` will now try to be loaded with `upload_file()`.")  #FileIOError
+            log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
             file_object.close()
     except Exception as error:
-        log.debug(f"The object `{file}` raised {error} when the `open()` method was called. The object `{file}` will now try to be loaded with `upload_file()`.")  #FileIOError
+        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
     if file.is_file():
         try:
-            client.upload_file(
+            client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,
                 Bucket=bucket,
                 Key=bucket_path + file_name,
             )
-            message = f"The file `{file_name}` has been successfully uploaded to the `{bucket}` S3 bucket."  #FileIO
+            message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
             log.info(message)
             return message
         except Exception as error:
-            message = f"Trying to upload the object `{file}` as a path-like object raised the error {error}."  #FileIOError
+            message = f"Running the function `upload_file()` on {file} (type {type(file)}) raised the error {error}."
             log.error(message)
             return message
     else:
-        message = f"{file} (type {type(file)}) couldn't be opened as a file-like object and wasn't a path-like object for an existing file; as a result, it couldn't be uploaded to the S3 bucket."  #FileIOError
+        message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
 

@@ -190,7 +190,7 @@ def upload_non_COUNTER_reports():
                 form.usage_file.data,
                 file_name,
             )
-            if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
+            if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
                 message = f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved."  #FileIOError
                 log.error(message)
                 flash(logging_message + " " + message)
