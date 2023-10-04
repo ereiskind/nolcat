@@ -491,7 +491,7 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{query}`:\n{df}")
         return df
     except Exception as error:
-        message = f"The query `{query}` raised the error {error}."
+        message = f"Running the query `{query}` raised the error {error}."
         log.error(message)
         return message
 

@@ -218,7 +218,7 @@ MySQL I/O
   * Structure:
 
     * Successful query: "The complete response to `<query text>`:\n<dataframe returned by query>"
-    * Failed query: "The query `<query text>` raised the error <Python exception>."
+    * Failed query: "Running the query `<query text>` raised the error <Python exception>."
 
 * Indication of query result in calling function
 
