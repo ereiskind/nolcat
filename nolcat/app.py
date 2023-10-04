@@ -457,7 +457,7 @@ def load_data_into_database(df, relation, engine, load_index=True, index_field_n
             index_label=index_field_name,
         )
         message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
-        log.debug(message)
+        log.info(message)
         return message
     except Exception as error:
         message = f"Loading data into the {relation} relation raised the error {error}."
