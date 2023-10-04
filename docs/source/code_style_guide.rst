@@ -52,7 +52,6 @@ General Errors and In-Test Issues
 
 * Managing data files in the repo --> #FileIOError, #FileIO
 
-  * Info and debug logging statements; errors are error logging statement
   * Structure:
 
     * Success:
@@ -68,13 +67,17 @@ General Errors and In-Test Issues
 
 * File I/O with the host machine --> #FileIOError, #FileIO
 
-  * Debug logging statement; errors are error logging statement
   * Structure:
 
     * Success:
 
       * File uploaded:
       * WTForms FileField value ingested
+
+        * Debug logging statement
+        * In the ``nolcat.initialization.views`` module
+        * Structure: "The `<relation name>` FileField data:\n<FileField object>"
+
       * File downloaded:
 
     * Failure:
@@ -82,9 +85,12 @@ General Errors and In-Test Issues
       * Invalid file type uploaded:
       * Blank file uploaded
 
+        * Error logging statement
+        * In the ``nolcat.initialization.views`` module
+        * Structure: "The `<relation name>` relation data file was read in with no data."
+
 * File I/O with S3 --> #FileIOError, #FileIO
 
-  * Debug logging statement; errors are error logging statement
   * Structure:
 
     * Success:

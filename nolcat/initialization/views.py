@@ -34,7 +34,7 @@ def collect_FY_and_vendor_data():
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used.
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
-        log.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")  #FileIO
+        log.debug(f"The `fiscalYears` FileField data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -44,7 +44,7 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if fiscalYears_dataframe.isnull().all(axis=None) == True:
-            log.error("The `fiscalYears` relation data file was read in with no data.")  #FileIOError
+            log.error("The `fiscalYears` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`fiscalYears`")
         
         fiscalYears_dataframe = fiscalYears_dataframe.astype({k: v for (k, v) in FiscalYears.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
@@ -54,7 +54,7 @@ def collect_FY_and_vendor_data():
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         #Subsection: Upload `vendors` CSV File
-        log.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")  #FileIO
+        log.debug(f"The `vendors` FileField data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_CSV.data,
             index_col='vendor_ID',
@@ -62,7 +62,7 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if vendors_dataframe.isnull().all(axis=None) == True:
-            log.error("The `vendors` relation data file was read in with no data.")  #FileIOError
+            log.error("The `vendors` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendors`")
         
         vendors_dataframe = vendors_dataframe.astype({k: v for (k, v) in Vendors.state_data_types().items()})
@@ -71,7 +71,7 @@ def collect_FY_and_vendor_data():
         log.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         #Subsection: Upload `vendorNotes` CSV File
-        log.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")  #FileIO
+        log.debug(f"The `vendorNotes` FileField data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
             parse_dates=['date_written'],
@@ -80,7 +80,7 @@ def collect_FY_and_vendor_data():
             encoding_errors='backslashreplace',
         )
         if vendorNotes_dataframe.isnull().all(axis=None) == True:
-            log.error("The `vendorNotes` relation data file was read in with no data.")  #FileIOError
+            log.error("The `vendorNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`vendorNotes`")
         
         vendorNotes_dataframe = vendorNotes_dataframe.astype({k: v for (k, v) in VendorNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
@@ -137,7 +137,7 @@ def collect_sources_data():
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
-        log.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")  #FileIO
+        log.debug(f"The `statisticsSources` FileField data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_CSV.data,
             index_col='statistics_source_ID',
@@ -145,7 +145,7 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsSources_dataframe.isnull().all(axis=None) == True:
-            log.error("The `statisticsSources` relation data file was read in with no data.")  #FileIOError
+            log.error("The `statisticsSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSources`")
         
         statisticsSources_dataframe = statisticsSources_dataframe.astype({k: v for (k, v) in StatisticsSources.state_data_types().items()})
@@ -154,7 +154,7 @@ def collect_sources_data():
         log.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         #Subsection: Upload `statisticsSourceNotes` CSV File
-        log.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")  #FileIO
+        log.debug(f"The `statisticsSourceNotes` FileField data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
@@ -163,7 +163,7 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsSourceNotes_dataframe.isnull().all(axis=None) == True:
-            log.error("The `statisticsSourceNotes` relation data file was read in with no data.")  #FileIOError
+            log.error("The `statisticsSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsSourceNotes`")
         
         statisticsSourceNotes_dataframe = statisticsSourceNotes_dataframe.astype({k: v for (k, v) in StatisticsSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
@@ -172,7 +172,7 @@ def collect_sources_data():
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` CSV File
-        log.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")  #FileIO
+        log.debug(f"The `resourceSources` FileField data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
@@ -182,7 +182,7 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if resourceSources_dataframe.isnull().all(axis=None) == True:
-            log.error("The `resourceSources` relation data file was read in with no data.")  #FileIOError
+            log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
@@ -191,7 +191,7 @@ def collect_sources_data():
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         #Subsection: Upload `resourceSourceNotes` CSV File
-        log.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")  #FileIO
+        log.debug(f"The `resourceSourceNotes` FileField data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
@@ -200,7 +200,7 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if resourceSourceNotes_dataframe.isnull().all(axis=None) == True:
-            log.error("The `resourceSourceNotes` relation data file was read in with no data.")  #FileIOError
+            log.error("The `resourceSourceNotes` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSourceNotes`")
         
         resourceSourceNotes_dataframe = resourceSourceNotes_dataframe.astype({k: v for (k, v) in ResourceSourceNotes.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
@@ -209,7 +209,7 @@ def collect_sources_data():
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsResourceSources` CSV File
-        log.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")  #FileIO
+        log.debug(f"The `statisticsResourceSources` FileField data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
@@ -217,7 +217,7 @@ def collect_sources_data():
             encoding_errors='backslashreplace',
         )
         if statisticsResourceSources_dataframe.isnull().all(axis=None) == True:
-            log.error("The `statisticsResourceSources` relation data file was read in with no data.")  #FileIOError
+            log.error("The `statisticsResourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`statisticsResourceSources`")
         
         # Because there aren't any string dtypes in need of encoding correction, the logging statements for the dtypes and the dataframe have been combined
@@ -344,7 +344,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
-        log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")  #FileIO
+        log.debug(f"The `annualUsageCollectionTracking` FileField data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
             index_col=['AUCT_statistics_source', 'AUCT_fiscal_year'],
@@ -352,7 +352,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             encoding_errors='backslashreplace',
         )
         if AUCT_dataframe.isnull().all(axis=None) == True:
-            log.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")  #FileIOError
+            log.error("The `annualUsageCollectionTracking` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`annualUsageCollectionTracking`")
         
         AUCT_dataframe = AUCT_dataframe.astype({k: v for (k, v) in AnnualUsageCollectionTracking.state_data_types().items()})
