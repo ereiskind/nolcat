@@ -158,28 +158,10 @@ def upload_non_COUNTER_reports():
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         try:
-            valid_file_extensions = (  # File types allowed are limited to those that can be downloaded in `nolcat.view_usage.views.download_non_COUNTER_usage()`
-                "xlsx",
-                "csv",
-                "tsv",
-                "pdf",
-                "docx",
-                "pptx",
-                "txt",
-                "jpeg",
-                "jpg",
-                "png",
-                "svg",
-                "json",
-                "html",
-                "htm",
-                "xml",
-                "zip",
-            )
             statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
             file_extension = Path(form.usage_file.data.filename).suffix
-            if file_extension not in valid_file_extensions:
-                message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"  #FileIOError
+            if file_extension not in file_extensions_and_mimetypes().keys():
+                message = f"The file extension of {form.usage_file.data.filename} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))

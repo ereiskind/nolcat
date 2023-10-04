@@ -82,7 +82,11 @@ General Errors and In-Test Issues
 
     * Failure:
 
-      * Invalid file type uploaded:
+      * Upload features invalid file extension:
+
+        * Error logging statement
+        * Structure: "The file extension of <full file path of uploaded file> is invalid. Please convert the file to use one of the following extensions and try again:\n<list of valid file extension from ``file_extensions_and_mimetypes()``>"
+
       * Blank file uploaded
 
         * Error logging statement

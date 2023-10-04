@@ -1318,7 +1318,7 @@ class AnnualUsageCollectionTracking(db.Model):
         file_path = Path(file)
         file_extension = file_path.suffix
         if file_extension not in file_extensions_and_mimetypes().keys():
-            message = f"The file type of `{file_path}` is invalid. Please convert the file to one of the following file types and try again:\n{list(file_extensions_and_mimetypes().keys())}"  #FileIOError
+            message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             log.error(message)
             return message
         
