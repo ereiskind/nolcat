@@ -300,7 +300,7 @@ class FiscalYears(db.Model):
         log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
         current_statistics_sources = query_database(
-            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             engine=db.engine,
         )
         if isinstance(current_statistics_sources, str):
@@ -433,7 +433,7 @@ class Vendors(db.Model):
         #ToDo:             statistics_source_name,
         #ToDo:             statistics_source_retrieval_code
         #ToDo:         FROM statisticsSources
-        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:         WHERE vendor_ID={vendor_PK};
         #ToDo:     """,
         #ToDo:     engine=db.engine,
         #ToDo:     index='statistics_source_ID',
@@ -462,7 +462,7 @@ class Vendors(db.Model):
         #ToDo:             source_in_use,
         #ToDo:             access_stop_date
         #ToDo:         FROM resourceSources
-        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:         WHERE vendor_ID={vendor_PK};
         #ToDo:     """,
         #ToDo:     engine=db.engine,
         #ToDo:     index='resource_source_ID',

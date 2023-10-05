@@ -84,7 +84,7 @@ def harvest_SUSHI_statistics():
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         df = query_database(
-            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
             engine=db.engine,
         )
         if isinstance(df, str):
@@ -137,16 +137,16 @@ def upload_non_COUNTER_reports():
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected = true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant = false AND
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
                     annualUsageCollectionTracking.usage_file_path IS NULL AND
                     (
-                        annualUsageCollectionTracking.collection_status = 'Collection not started' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
                     );
             """,
             engine=db.engine,

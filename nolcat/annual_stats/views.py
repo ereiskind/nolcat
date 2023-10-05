@@ -52,7 +52,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
     if request.method == 'GET':
         #ToDo: fiscal_year_PK = the variable path int, which is also the PK in the fiscalYears relations for the fiscal year being viewed
         fiscal_year_details = query_database(
-            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID={fiscal_year_PK};",
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
@@ -61,7 +61,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
         fiscal_year_reporting = query_database(
-            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year={fiscal_year_PK};",
             engine=db.engine,
             index='AUCT_statistics_source',
         )
