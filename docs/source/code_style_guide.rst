@@ -126,7 +126,7 @@ General Errors and In-Test Issues
 
         * Error logging statement if final; warning logging statement if not
         * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
-        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run) raised the error <Python exception>."
+        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
         * If the logging statement isn't final, a statement that another function will be tried is added to the end
 
       * Unable to delete file in S3 bucket:
