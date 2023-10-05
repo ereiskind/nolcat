@@ -375,7 +375,7 @@ class Vendors(db.Model):
     """The class representation of the `vendors` relation, which contains a list of entities that provide access to either electronic resources or usage statistics.
     
     Attributes:
-        self. vendor_ID (int): the primary key
+        self.vendor_ID (int): the primary key
         self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
         self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
