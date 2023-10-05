@@ -288,6 +288,11 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
+def test_format_list_for_stdout():
+    """Test pretty printing a list by adding a line break between each item."""
+    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
+
+
 @pytest.fixture
 def partially_duplicate_COUNTER_data():
     """COUNTER data, some of which is in the `COUNTERData_relation` dataframe.
@@ -337,11 +342,6 @@ def non_duplicate_COUNTER_data():
     df["usage_date"] = pd.to_datetime(df["usage_date"])
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     yield df
-
-
-def test_format_list_for_stdout():
-    """Test pretty printing a list by adding a line break between each item."""
-    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
 
 
 def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
