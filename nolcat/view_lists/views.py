@@ -70,8 +70,10 @@ def view_list_record(list, PK):
         #ToDo: df = df.astype({dict setting correct dtypes})
         return render_template('view_lists/page.html')#ToDo:, form=form)
     #ToDo: elif form.validate_on_submit():
-        #ToDo: Add the form data to the relevant notes relation
-        #ToDo: #ReplaceWithUpdateFunction
+        #ToDo: Run one of the methods below based on the list type
+            # Vendors.add_note()
+            # StatisticsSources.add_note()
+            # ResourceSources.add_note()
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))
     else:
         #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
