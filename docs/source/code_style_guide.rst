@@ -256,8 +256,6 @@ MySQL I/O
       * Homepage view function: page outside of blueprints for sharing this message--> #HomepageSQLError
       * Replace when methods in `Vendors` relation class are written --> #SQLDataframeReturnError
 
-* Replace with database update function to be written --> #ReplaceWithUpdateFunction
-
 reStructured Text
 *****************
 

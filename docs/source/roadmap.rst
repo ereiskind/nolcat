@@ -38,13 +38,12 @@ Iteration 2: Add Historical Data
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
 * Write "initialization/initial-data-upload-4.html" page
-* Write ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
@@ -90,15 +89,15 @@ Iteration 1: View Lists
 
 Iteration 2: Update Statistics Sources to Resource Sources Relationship
 =======================================================================
+* Update "view_lists/edit_list_record.html" and accompanying form as necessary
 * Finish ``nolcat.models.ResourceSources.change_StatisticsSource()``
-* Update "view_lists/edit_record.html" and accompanying form as necessary
 * Write ``tests.test_ResourceSources.test_change_StatisticsSource()``
 
 Iteration 3: Update Access Stop Date Attribute
 ==============================================
-* Write ``nolcat.models.ResourceSources.add_access_stop_date()``
-* Write ``nolcat.models.ResourceSources.remove_access_stop_date()``
-* Update "view_lists/edit_record.html" and accompanying form as necessary
+* Update "view_lists/edit_list_record.html" and accompanying form as necessary
+* Finish ``nolcat.models.ResourceSources.add_access_stop_date()``
+* Finish ``nolcat.models.ResourceSources.remove_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_add_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_remove_access_stop_date()``
 

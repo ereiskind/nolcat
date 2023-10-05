@@ -328,10 +328,19 @@ def collect_AUCT_and_historical_COUNTER_data():
         except Exception as error:
             log.error(f"The AUCT template CSV wasn't created because of the error {error}.")  #FileIOError
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
-                log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
-                #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
-                #ToDo: Flash error
-                # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+                message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
+                log.error(message)
+                for relation in ['statisticsSources', 'statisticsSourceNotes', 'resourceSources', 'resourceSourceNotes', 'statisticsResourceSources']:
+                    update_result = update_database(
+                        update_statement=f"Truncate {relation};",
+                        engine=db.engine,
+                    )
+                    if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+                        message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
+                        log.critical(message)
+                        flash(message)
+                        return redirect(url_for('initialization.collect_FY_and_vendor_data'))
+                flash(message)
                 return redirect(url_for('initialization.collect_sources_data'))
             infinite_loop_error = True
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
@@ -417,15 +426,65 @@ def upload_historical_non_COUNTER_usage():
     '''
     form = FormClass()
     if request.method == 'GET':
-        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
-        #ToDo: Create an iterable to pass all the records returned by the above to a form
-        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
+        #ToDo: Below directly from `ingest_usage`
+        non_COUNTER_files_needed = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=db.engine,
+        )
+        if isinstance(non_COUNTER_files_needed, str):
+            flash(f"Unable to load requested page because it relied on t{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('homepage'))
+        #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: For each file uploaded in the form
-            #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
-            #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+        #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
+        #ToDo: For each FileField in the form
+            df = query_database(
+                query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={form.name_of_field_which_captured_the_AUCT_statistics_source.data} AND AUCT_fiscal_year={form.name_of_field_which_captured_the_AUCT_fiscal_year.data};",
+                engine=db.engine,
+            )
+            if isinstance(df, str):
+                message = f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}"  #ToDo: Edit language, since page isn't being loaded here
+                log.error(message)
+                #ToDo: Add `message` to error message list in some form
+                continue
+            AUCT_object = AnnualUsageCollectionTracking(
+                AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+                AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
+                usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+                manual_collection_required=df.at[0,'manual_collection_required'],
+                collection_via_email=df.at[0,'collection_via_email'],
+                is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+                collection_status=df.at[0,'collection_status'],
+                usage_file_path=df.at[0,'usage_file_path'],
+                notes=df.at[0,'notes'],
+            )
+            response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
+            if not re.fullmatch(r'Successfully loaded the file \d*_\d*\.\w{3,4} into the .* S3 bucket and successfully preformed the update `.*`\.', string=response):  # Inverted to remain consistent with rest of program
+                #ToDo: Do any other actions need to be taken?
+                log.error(response)
+                #ToDo: Add `message` to error message list in some form
+                continue
+            message = f"message using `AUCT_object` to indicate that the file was uploaded successfully"
+            log.debug(message)
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
         log.error(f"`form.errors`: {form.errors}")  #404

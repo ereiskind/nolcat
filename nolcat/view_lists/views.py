@@ -111,9 +111,11 @@ def edit_list_record(list, PK):
                 # https://stackoverflow.com/q/28941504
         #ToDo: return render_template('view_lists/page.html', form=form)
     #ToDo: elif form.validate_on_submit():
-        #ToDo: update or insert the changes
-        #ToDo: Changing a statisticsSources-resourceSources connection means changing the non-PK field in statisticsResourceSources from true to false and creating a new record with the PKs of the new sources--does it makes sense to have a "if stats source changes, pick new one here" drop-down listing all stats sources but the current one on a resource source details page?
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+        #ToDo: add_access_stop_date()
+        #ToDo: remove_access_stop_date()
+        #ToDo: change_StatisticsSource()
+            #ToDo: Above has a statistics source PK as its argument--provide a drop-down of names of all statistics sources via "if stats source changes, pick new one here" drop-down listing on a resource source details page which triggers this method
+        #ToDo: update_database(update_statement==f"the SQL update statement")
         #ToDo: return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
     else:
         #ToDo: log.error(f"`form.errors`: {form.errors}")  #404

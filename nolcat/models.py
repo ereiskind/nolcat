@@ -357,8 +357,13 @@ class FiscalYears(db.Model):
             #ToDo: else:
                 #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
             #ToDo: dfs.append(df)
-            #ToDo: Update AUCT table
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+            #ToDo: update_result = update_database(
+            #ToDo:     update_statement=f"the SQL update statement",
+            #ToDo:     engine=db.engine,
+            #ToDo: )
+            #ToDo: if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+                #ToDo: log.warning()
+                #ToDo: Add `update_result` to flashed messages
         #ToDo: df = pd.concat(dfs)
         #ToDo: df.index += first_new_PK_value('COUNTERData')
         #ToDo: load_result = load_data_into_database(
@@ -473,7 +478,6 @@ class Vendors(db.Model):
     def add_note(self):
         log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -969,7 +973,6 @@ class StatisticsSources(db.Model):
     def add_note(self):
         log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1027,8 +1030,8 @@ class ResourceSources(db.Model):
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        add_access_stop_date: #ToDo: Copy first line of docstring here
-        remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        add_access_stop_date: Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
+        remove_access_stop_date:  Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
         change_StatisticsSource: Change the current statistics source for the resource source.
         add_note:  #ToDo: Copy first line of docstring here
     """
@@ -1062,19 +1065,42 @@ class ResourceSources(db.Model):
 
 
     @hybrid_method
-    def add_access_stop_date(self):
+    def add_access_stop_date(self, access_stop_date=date.today()):
+        """Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
+
+        Args:
+            access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; defaults to `date.today()`
+        
+        Returns:
+            _type_: _description_  #ToDo: Update on completion of method
+        """
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
-        #ToDo: Put value in access_stop_date when current_access goes from True to False
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"the SQL update statement",  #ToDo: In record, access_stop_date=access_stop_date and source_in_use=False
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
     def remove_access_stop_date(self):
+        """Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
+
+        Returns:
+            _type_: _description_  #ToDo: Update on completion of method
+        """
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
-        #ToDo: Null value in access_stop_date when current_access goes from False to True
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"the SQL update statement",  #ToDo: In record, access_stop_date=None and source_in_use=True
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
@@ -1087,24 +1113,75 @@ class ResourceSources(db.Model):
             statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
         
         Returns:
-            None: no return value is needed, so the default `None` is used
+            _type_: _description_  #ToDo: Update on completion of method
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
-        #ToDo: SQL_query = f"""
-        #ToDo:     UPDATE
-        #ToDo:     SET current_statistics_source = false
-        #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
-        #ToDo: """
-        #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"""
+                UPDATE statisticsResourceSources
+                SET current_statistics_source=false
+                WHERE SRS_resource_source={self.resource_source_ID};
+            """,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
+        
+        check_for_existing_record = query_database(
+            query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
+            engine=db.engine,
+        )
+        if isinstance(check_for_existing_record, str):
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem in line with the "Indication of query result in calling function" section of the code style guide
+        
+        if check_for_existing_record.empty:
+            log.debug("Adding a new record to the `statisticsResourceSources` relation.")
+            multiindex = pd.DataFrame(
+                [
+                    [statistics_source_PK, self.resource_source_ID]
+                ],
+                columns=["SRS_statistics_source", "SRS_resource_source"],
+            )
+            multiindex = pd.MultiIndex.from_frame(multiindex)
+            series = pd.Series(
+                data=[
+                    True
+                ],
+                index=multiindex,
+                name="current_statistics_source",
+            )
+            series = series.astype(StatisticsResourceSources.state_data_types())
+
+            load_result = load_data_into_database(
+                df=series,
+                relation='statisticsResourceSources',
+                engine=db.engine,
+            )
+            if load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
+                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+
+        else:
+            log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
+            update_result = update_database(
+                update_statement=f"""
+                    UPDATE statisticsResourceSources
+                    SET current_statistics_source=true
+                    WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
+                """,
+                engine=db.engine,
+            )
+            if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+                #ToDo: log.warning()
+                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
     def add_note(self):
         log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1303,10 +1380,19 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if re.fullmatch(r'Successfully loaded \d* records into the \w* relation.', load_result):
-            self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        return (load_result, flash_statements)
+        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            return (load_result, flash_statements)
+        update_statement = f"the SQL update statement"  #ToDo: Write update statement setting collection_status = "Collection complete" for record in question
+        update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            message = f"Updating the `annualUsageCollectionTracking.collection_status` field automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+            log.warning(message)
+            flash_statements.append(message)
+            return (f"{load_result[:-1]}, but u{message[1:]}", flash_statements)
+        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
 
 
     @hybrid_method
@@ -1338,24 +1424,22 @@ class AnnualUsageCollectionTracking(db.Model):
             return logging_message
         log.debug(logging_message)
         
-        try:
-            log.info(f"`db` is {db} (type {type(db)})")  #ReplaceWithUpdateFunction
-            log.info(f"`db.engine` is {db.engine} (type {type(db.engine)})")  #ReplaceWithUpdateFunction
-            x=db.engine.execute('show tables;')
-            log.info(f"`db.engine.execute('show tables;')` is {x} (type {type(x)})")  #ReplaceWithUpdateFunction
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            sql=f"""
-                UPDATE annualUsageCollectionTracking
-                SET usage_file_path = "{file_name}"
-                AND collection_status='Collection complete'
-                WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
-            """
-            log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")  #ReplaceWithUpdateFunction
-            return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."  #FileIO
-        except Exception as error:
-            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."  #ReplaceWithUpdateFunction
-            log.error(message)
-            return message
+        update_statement = f"""
+            UPDATE annualUsageCollectionTracking
+            SET usage_file_path='{file_name}'
+            AND collection_status='Collection complete'
+            WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
+        """
+        update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            single_line_update_statement = update_statement.replace('\n', ' ')
+            message = f"Updating the `annualUsageCollectionTracking` relation to ensure the {file_name} file can be downloaded failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
+            log.warning(message)
+            return f"{logging_message[:-1]}, but u{message[1:]}"
+        return f"{logging_message[:-1]} and s{update_result[1:]}"
     
 
     @hybrid_method
