@@ -455,7 +455,7 @@ class Vendors(db.Model):
         #ToDo:             resource_source_ID,
         #ToDo:             resource_source_name,
         #ToDo:             source_in_use,
-        #ToDo:             use_stop_date
+        #ToDo:             access_stop_date
         #ToDo:         FROM resourceSources
         #ToDo:         WHERE vendor_ID = {vendor_PK};
         #ToDo:     """,
@@ -1022,7 +1022,7 @@ class ResourceSources(db.Model):
         self.resource_source_ID (int): the primary key
         self.resource_source_name (string): the resource source name
         self.source_in_use (bool): indicates if we currently have access to resources at the resource source
-        self.use_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
+        self.access_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
@@ -1037,7 +1037,7 @@ class ResourceSources(db.Model):
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     resource_source_name = db.Column(db.String(100), nullable=False)
     source_in_use = db.Column(db.Boolean, nullable=False)
-    use_stop_date = db.Column(db.Date)
+    access_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
@@ -1056,7 +1056,7 @@ class ResourceSources(db.Model):
         return {
             "resource_source_name": 'string',
             "source_in_use": 'bool',  # Python's `bool` is used to reinforce that this is a non-null field
-            "use_stop_date": 'datetime64[ns]',
+            "access_stop_date": 'datetime64[ns]',
             "vendor_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
 

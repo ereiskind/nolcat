@@ -176,7 +176,7 @@ def collect_sources_data():
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
-            parse_dates=['use_stop_date'],
+            parse_dates=['access_stop_date'],
             date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',

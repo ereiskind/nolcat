@@ -126,7 +126,7 @@ digraph erd_and_classes {
         resource_source_ID [shape="note"]
         resource_source_name
         source_in_use
-        use_stop_date
+        access_stop_date
         vendor_ID_in_resourceSources [
             label="vendor_ID"
             shape="folder"

@@ -494,7 +494,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     if isinstance(resourceSources_relation_data, str):
         pytest.skip(f"Unable to run test because it relied on t{resourceSources_relation_data[1:].replace(' raised', ', which raised')}")
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
-    resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
+    resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
 
     resourceSourceNotes_relation_data = query_database(
         query="SELECT * FROM resourceSourceNotes;",
