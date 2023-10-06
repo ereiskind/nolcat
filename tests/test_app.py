@@ -359,7 +359,22 @@ def updated_vendors_relation():
     Yields:
         dataframe: data matching the updated `vendors` relation
     """
-    pass
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
