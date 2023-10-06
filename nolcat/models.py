@@ -214,9 +214,40 @@ class FiscalYears(db.Model):
             int: the answer to ACRL 61a
             str: the error message if a query fails
         """
-        #ToDo: TR_B1, data_type='Book', metric_type='Unique_Title_Requests'
-        #ToDo: IR_M1, data_type='Multimedia', metric_type='Total_Item_Requests'
-        pass
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61a()` for {self.fiscal_year}.")
+        TR_B1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(TR_B1_df, str):
+            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            TR_B1_sum = TR_B1_df.iloc[0][0]
+            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(IR_M1_df, str):
+            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            IR_M1_sum = IR_M1_df.iloc[0][0]
+            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        return TR_B1_sum + IR_M1_sum
 
 
     @hybrid_method
