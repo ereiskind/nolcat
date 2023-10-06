@@ -380,18 +380,20 @@ def updated_vendors_relation():
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
 def test_update_database(engine, updated_vendors_relation):
     """Tests updating data in the database through a SQL update statement."""
-    #ToDo: Write SQL update statement slightly altering test data in `vendors` relation
-    #ToDo: update_database(update_statement, engine)
-    #ToDo: retrieved_updated_vendors_data = query_database(
-    #ToDo:     query="SELECT * FROM vendors;",
-    #ToDo:     engine=engine,
-    #ToDo:     index='vendor_ID',
-    #ToDo: )
-    #ToDo: if isinstance(retrieved_updated_vendors_data, str):
-    #ToDo:     pytest.skip(f"Unable to run test because it relied on t{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
-    #ToDo: retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
-    #ToDo: assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
-    pass
+    update_result = update_database(
+        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+        engine=engine,
+    )
+    retrieved_updated_vendors_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
+    )
+    if isinstance(retrieved_updated_vendors_data, str):
+        pytest.skip(f"Unable to run test because it relied on t{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
+    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
+    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
