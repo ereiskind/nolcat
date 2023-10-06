@@ -469,6 +469,7 @@ class FiscalYears(db.Model):
 
         #Section: Collect Usage from Each Statistics Source
         dfs = []
+        where_statements = []
         all_flash_statements = []
         for AUCT_object in AUCT_objects_to_collect:
             statistics_source = query_database(
@@ -491,15 +492,11 @@ class FiscalYears(db.Model):
                 all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
             if isinstance(df, str):
                 continue
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
             dfs.append(df)
-            update_result = update_database(
-                update_statement=f"the SQL update statement",
-                engine=db.engine,
-            )
-            if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
-                log.warning()  #ToDo: Calling `update_database` failure
-                all_flash_statements()  #ToDo: Either add message logged above or `update_result`
+            where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records. Those records and the `annualUsageCollectionTracking` relation composite primary key value have been saved for loaded into the database.")
+        
+        #Section: Update Data in Database
         df = pd.concat(dfs)
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
@@ -508,7 +505,23 @@ class FiscalYears(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        return (load_result, all_flash_statements)
+        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            return (load_result, all_flash_statements)
+        update_statement = f"""
+            UPDATE annualUsageCollectionTracking
+            SET collection_status='Collection complete'
+            WHERE {" OR ".join(where_statements)};
+        """
+        update_result = update_database(
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+            log.warning(message)
+            all_flash_statements.append(message)
+            return (f"{load_result[:-1]}, but u{message[1:]}", all_flash_statements)
+        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
 
 
 class Vendors(db.Model):
@@ -1514,8 +1527,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
-        else:
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
+        log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
             df=df,
@@ -1535,7 +1547,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
-            message = f"Updating the `annualUsageCollectionTracking.collection_status` field automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             flash_statements.append(message)
             return (f"{load_result[:-1]}, but u{message[1:]}", flash_statements)
@@ -1583,7 +1595,7 @@ class AnnualUsageCollectionTracking(db.Model):
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
             single_line_update_statement = update_statement.replace('\n', ' ')
-            message = f"Updating the `annualUsageCollectionTracking` relation to ensure the {file_name} file can be downloaded failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
+            message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)
             return f"{logging_message[:-1]}, but u{message[1:]}"
         return f"{logging_message[:-1]} and s{update_result[1:]}"
