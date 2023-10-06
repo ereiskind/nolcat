@@ -229,6 +229,15 @@ MySQL I/O
     * Successful update: "Successfully preformed the update `<update statement text>`."
     * Failed update: "Running the update statement `<update statement text>` raised the error <Python exception>."
 
+* Indication of data loading result in calling function
+
+  * Debug logging statement; errors are warning logging statement
+  * In the function that called ``load_data_into_database()()``
+  * Structure:
+
+    * Success: *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
+    * Failure: *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
+
 * Indication of query result in calling function
 
   * Debug logging statement; errors are warning logging statement
@@ -255,6 +264,27 @@ MySQL I/O
       * Non-homepage view function: "Unable to load requested page because it relied on <slightly modified error message>" in flashed message, return to blueprint homepage
       * Homepage view function: page outside of blueprints for sharing this message--> #HomepageSQLError
       * Replace when methods in `Vendors` relation class are written --> #SQLDataframeReturnError
+
+* Indication of update result in calling function
+
+  * Debug logging statement; errors are warning logging statement
+  * In the function that called ``update_database()``
+  * Structure:
+
+    * Success:
+
+      * Database updated to reflect successfully loaded data: ``load_data_into_database()`` response followed by ``update_database()`` response
+      * *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
+
+    * Failure:
+
+      * Failure of database updates that reflect successfully loaded data:
+
+        * Logging statement: "Updating the `<name of relation>` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
+        * Overall function return value features ``load_data_into_database()`` response followed by the above logging statement
+
+      * *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
+      * *Return value that will indicate to "view_lists/edit_record.html" that there was a problem*
 
 reStructured Text
 *****************
