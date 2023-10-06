@@ -65,8 +65,10 @@ class FiscalYears(db.Model):
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
-        calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
+        calculate_depreciated_ACRL_60b: This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
+        calculate_depreciated_ACRL_63: This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
+        calculate_ACRL_61a: This method calculates the value of ACRL question 61a for the given fiscal year.
+        calculate_ACRL_61b: This method calculates the value of ACRL question 61b for the given fiscal year.
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
