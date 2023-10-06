@@ -232,7 +232,7 @@ MySQL I/O
 * Indication of data loading result in calling function
 
   * Debug logging statement; errors are warning logging statement
-  * In the function that called ``load_data_into_database()()``
+  * In the function that called ``load_data_into_database()``
   * Structure:
 
     * Success: *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
