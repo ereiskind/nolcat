@@ -12,8 +12,8 @@ class ChooseFiscalYearForm(FlaskForm):
 class RunAnnualStatsMethodsForm(FlaskForm):
     """Creates a form for running the annual usage statistics methods in the `FiscalYears` relation class."""
     #annual_stats_method = SelectField(#ToDo: Write label for field, choices=[
-        # calculate_ACRL_60b()
-        # calculate_ACRL_63()
+        # calculate_depreciated_ACRL_60b()
+        # calculate_depreciated_ACRL_63()
         # calculate_ACRL_61a
         # calculate_ACRL_61b
         # calculate_ARL_18()

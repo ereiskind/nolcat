@@ -115,16 +115,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_60b(self):
-        """This method calculates the value of ACRL question 60b for the given fiscal year.
+    def calculate_depreciated_ACRL_60b(self):
+        """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
 
         Returns:
             int: the answer to ACRL 60b
             str: the error message if a query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -177,16 +177,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_63(self):
-        """This method calculates the value of ACRL question 63 for the given fiscal year.
+    def calculate_depreciated_ACRL_63(self):
+        """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
 
         Returns:
             int: the answer to ACRL 63
             str: the error message if the query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_63()` for {self.fiscal_year}.")
         df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData

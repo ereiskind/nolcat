@@ -34,8 +34,8 @@ digraph erd_and_classes {
         // Methods
         // Should each number have its own method, or should all of them be calculated at the same time?
         state_data_types [shape="Mrecord"]
-        calculate_ACRL_60b [shape="Mrecord"]
-        calculate_ACRL_63 [shape="Mrecord"]
+        calculate_depreciated_ACRL_60b [shape="Mrecord"]
+        calculate_depreciated_ACRL_63 [shape="Mrecord"]
         calculate_ACRL_61a [shape="Mrecord"]
         calculate_ACRL_61b [shape="Mrecord"]
         calculate_ARL_18 [shape="Mrecord"]
