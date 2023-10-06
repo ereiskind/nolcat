@@ -1211,7 +1211,11 @@ class ResourceSources(db.Model):
         """
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         update_result = update_database(
-            update_statement=f"the SQL update statement",  #ToDo: In record, access_stop_date=access_stop_date and source_in_use=False
+            update_statement=f"""
+                UPDATE resourceSources
+                SET access_stop_date='{access_stop_date}' AND source_in_use=false
+                WHERE resource_source_ID={self.resource_source_ID};
+            """,
             engine=db.engine,
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
@@ -1229,7 +1233,11 @@ class ResourceSources(db.Model):
         """
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         update_result = update_database(
-            update_statement=f"the SQL update statement",  #ToDo: In record, access_stop_date=None and source_in_use=True
+            update_statement=f"""
+                UPDATE resourceSources
+                SET access_stop_date IS NONE AND source_in_use=true
+                WHERE resource_source_ID={self.resource_source_ID};
+            """,
             engine=db.engine,
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
@@ -1517,7 +1525,11 @@ class AnnualUsageCollectionTracking(db.Model):
         )
         if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
             return (load_result, flash_statements)
-        update_statement = f"the SQL update statement"  #ToDo: Write update statement setting collection_status = "Collection complete" for record in question
+        update_statement = update_statement=f"""
+            UPDATE annualUsageCollectionTracking
+            SET collection_status='Collection complete'
+            WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
+        """
         update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
             update_statement=update_statement,
             engine=db.engine,
