@@ -48,13 +48,25 @@ def FiscalYears_object_and_record():
     yield (FY_instance, FY_df)
 
 
-def test_calculate_ACRL_60b():
+def test_calculate_depreciated_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass
 
 
-def test_calculate_ACRL_63():
+def test_calculate_depreciated_ACRL_63():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_calculate_ACRL_61a():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_calculate_ACRL_61b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass

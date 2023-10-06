@@ -115,16 +115,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_60b(self):
-        """This method calculates the value of ACRL question 60b for the given fiscal year.
+    def calculate_depreciated_ACRL_60b(self):
+        """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
 
         Returns:
             int: the answer to ACRL 60b
             str: the error message if a query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -177,16 +177,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_63(self):
-        """This method calculates the value of ACRL question 63 for the given fiscal year.
+    def calculate_depreciated_ACRL_63(self):
+        """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
 
         Returns:
             int: the answer to ACRL 63
             str: the error message if the query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_63()` for {self.fiscal_year}.")
         df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -202,6 +202,80 @@ class FiscalYears(db.Model):
         ACRL_63 = df.iloc[0][0]
         log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")
         return ACRL_63
+    
+
+    @hybrid_method
+    def calculate_ACRL_61a(self):
+        """This method calculates the value of ACRL question 61a for the given fiscal year.
+
+        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 61a
+            str: the error message if a query fails
+        """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61a()` for {self.fiscal_year}.")
+        TR_B1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(TR_B1_df, str):
+            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            TR_B1_sum = TR_B1_df.iloc[0][0]
+            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(IR_M1_df, str):
+            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            IR_M1_sum = IR_M1_df.iloc[0][0]
+            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        return TR_B1_sum + IR_M1_sum
+
+
+    @hybrid_method
+    def calculate_ACRL_61b(self):
+        """This method calculates the value of ACRL question 61b for the given fiscal year.
+
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage.
+
+        Returns:
+            int: the answer to ACRL 61b, OA included
+            str: the error message if a query fails
+        """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61b()` for {self.fiscal_year}.")
+        df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
+        ACRL_61b = df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ACRL_61b} (type {type(ACRL_61b)}) was extracted")
+        return ACRL_61b
 
 
     @hybrid_method
