@@ -84,7 +84,7 @@ def harvest_SUSHI_statistics():
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
         df = query_database(
-            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
+            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
             engine=db.engine,
         )
         if isinstance(df, str):
@@ -137,16 +137,16 @@ def upload_non_COUNTER_reports():
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected = true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant = false AND
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
                     annualUsageCollectionTracking.usage_file_path IS NULL AND
                     (
-                        annualUsageCollectionTracking.collection_status = 'Collection not started' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
                     );
             """,
             engine=db.engine,
@@ -157,45 +157,35 @@ def upload_non_COUNTER_reports():
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        try:
-            statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
-            file_extension = Path(form.usage_file.data.filename).suffix
-            if file_extension not in file_extensions_and_mimetypes().keys():
-                message = f"The file extension of {form.usage_file.data.filename} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
-                log.error(message)
-                flash(message)
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            file_name = f"{statistics_source_ID}_{fiscal_year_ID}.{file_extension}"
-            log.debug(f"The non-COUNTER usage file will be named `{file_name}`.")  #FileIO
-            
-            logging_message = upload_file_to_S3_bucket(
-                form.usage_file.data,
-                file_name,
-            )
-            if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
-                message = f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved."  #FileIOError
-                log.error(message)
-                flash(logging_message + " " + message)
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            # update_query = query_database(
-            #    query=f"""
-            #        UPDATE annualUsageCollectionTracking
-            #        SET usage_file_path = '{file_name}'
-            #        WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
-            #    """,
-            #    con=db.engine,
-            #)
-            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."  #ReplaceWithUpdateFunction
-            log.debug(message)
-            flash(message)
+        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+        df = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"The file upload failed due to the error {error}."  #ReplaceWithUpdateFunction
-            log.error(message)
-            flash(message)
+        AUCT_object = AnnualUsageCollectionTracking(
+            AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+            AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
+            usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+            manual_collection_required=df.at[0,'manual_collection_required'],
+            collection_via_email=df.at[0,'collection_via_email'],
+            is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+            collection_status=df.at[0,'collection_status'],
+            usage_file_path=df.at[0,'usage_file_path'],
+            notes=df.at[0,'notes'],
+        )
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
+        if not re.fullmatch(r'Successfully loaded the file \d*_\d*\.\w{3,4} into the .* S3 bucket and successfully preformed the update `.*`\.', string=response):  # Inverted to remain consistent with rest of program
+            #ToDo: Do any other actions need to be taken?
+            log.error(response)
+            flash(response)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
+        log.debug(message)
+        flash(message)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)

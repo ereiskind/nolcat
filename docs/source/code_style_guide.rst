@@ -126,7 +126,7 @@ General Errors and In-Test Issues
 
         * Error logging statement if final; warning logging statement if not
         * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
-        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run) raised the error <Python exception>."
+        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
         * If the logging statement isn't final, a statement that another function will be tried is added to the end
 
       * Unable to delete file in S3 bucket:
@@ -218,7 +218,25 @@ MySQL I/O
   * Structure:
 
     * Successful query: "The complete response to `<query text>`:\n<dataframe returned by query>"
-    * Failed query: "The query `<query text>` raised the error <Python exception>."
+    * Failed query: "Running the query `<query text>` raised the error <Python exception>."
+
+* Update database
+
+  * Info logging statement; errors are error logging statement
+  * In the ``update_database()`` function
+  * Structure:
+
+    * Successful update: "Successfully preformed the update `<update statement text>`."
+    * Failed update: "Running the update statement `<update statement text>` raised the error <Python exception>."
+
+* Indication of data loading result in calling function
+
+  * Debug logging statement; errors are warning logging statement
+  * In the function that called ``load_data_into_database()``
+  * Structure:
+
+    * Success: *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
+    * Failure: *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
 
 * Indication of query result in calling function
 
@@ -247,7 +265,26 @@ MySQL I/O
       * Homepage view function: page outside of blueprints for sharing this message--> #HomepageSQLError
       * Replace when methods in `Vendors` relation class are written --> #SQLDataframeReturnError
 
-* Replace with database update function to be written --> #ReplaceWithUpdateFunction
+* Indication of update result in calling function
+
+  * Debug logging statement; errors are warning logging statement
+  * In the function that called ``update_database()``
+  * Structure:
+
+    * Success:
+
+      * Database updated to reflect successfully loaded data: ``load_data_into_database()`` response followed by ``update_database()`` response
+      * *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
+
+    * Failure:
+
+      * Failure of database updates that reflect successfully loaded data:
+
+        * Logging statement: "Updating the `<name of relation>` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
+        * Overall function return value features ``load_data_into_database()`` response followed by the above logging statement
+
+      * *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
+      * *Return value that will indicate to "view_lists/edit_record.html" that there was a problem*
 
 reStructured Text
 *****************

@@ -55,8 +55,10 @@ class FiscalYears(db.Model):
         self.fiscal_year (string): the fiscal year in "yyyy" format; the ending year of the range is used
         self.start_date (datetime64[ns]): the first day of the fiscal year
         self.end_date (datetime64[ns]) the last day of the fiscal year
-        self.ACRL_60b (Int64): the reported value for ACRL 60b
-        self.ACRL_63 (Int64): the reported value for ACRL 63
+        self.depreciated_ACRL_60b (Int64): the reported value for depreciated ACRL 60b
+        self.depreciated_ACRL_63 (Int64): the reported value for depreciated ACRL 63
+        self.ACRL_61a (Int64): the reported value for ACRL 61a
+        self.ACRL_61b (Int64): the reported value for 61b
         self.ARL_18 (Int64): the reported value for ARL 18
         self.ARL_19 (Int64): the reported value for ARL 19
         self.ARL_20 (Int64): the reported value for ARL 20
@@ -65,8 +67,10 @@ class FiscalYears(db.Model):
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
-        calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
+        calculate_depreciated_ACRL_60b: This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
+        calculate_depreciated_ACRL_63: This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
+        calculate_ACRL_61a: This method calculates the value of ACRL question 61a for the given fiscal year.
+        calculate_ACRL_61b: This method calculates the value of ACRL question 61b for the given fiscal year.
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
@@ -79,8 +83,10 @@ class FiscalYears(db.Model):
     fiscal_year = db.Column(db.String(4), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    ACRL_60b = db.Column(db.Integer)
-    ACRL_63 = db.Column(db.Integer)
+    depreciated_ACRL_60b = db.Column(db.Integer)
+    depreciated_ACRL_63 = db.Column(db.Integer)
+    ACRL_61a = db.Column(db.Integer)
+    ACRL_61b = db.Column(db.Integer)
     ARL_18 = db.Column(db.Integer)
     ARL_19 = db.Column(db.Integer)
     ARL_20 = db.Column(db.Integer)
@@ -104,8 +110,10 @@ class FiscalYears(db.Model):
             "fiscal_year": 'string',
             "start_date": 'datetime64[ns]',
             "end_date": 'datetime64[ns]',
-            "ACRL_60b": 'Int64',
-            "ACRL_63": 'Int64',
+            "depreciated_ACRL_60b": 'Int64',
+            "depreciated_ACRL_63": 'Int64',
+            "ACRL_61a": 'Int64',
+            "ACRL_61b": 'Int64',
             "ARL_18": 'Int64',
             "ARL_19": 'Int64',
             "ARL_20": 'Int64',
@@ -115,16 +123,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_60b(self):
-        """This method calculates the value of ACRL question 60b for the given fiscal year.
+    def calculate_depreciated_ACRL_60b(self):
+        """This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed. Include usage for e-books, e-serials, and e-media titles even if they were purchased as part of a collection or database."
 
         Returns:
             int: the answer to ACRL 60b
             str: the error message if a query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_60b()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_60b()` for {self.fiscal_year}.")
         TR_B1_df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -177,16 +185,16 @@ class FiscalYears(db.Model):
 
 
     @hybrid_method
-    def calculate_ACRL_63(self):
-        """This method calculates the value of ACRL question 63 for the given fiscal year.
+    def calculate_depreciated_ACRL_63(self):
+        """This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
 
-        ACRL 60b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 60b, which was last asked on the 2022 survey, was the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
 
         Returns:
             int: the answer to ACRL 63
             str: the error message if the query fails
         """
-        log.info(f"Starting `FiscalYears.calculate_ACRL_63()` for {self.fiscal_year}.")
+        log.info(f"Starting `FiscalYears.calculate_depreciated_ACRL_63()` for {self.fiscal_year}.")
         df = query_database(
             query=f"""
                 SELECT SUM(usage_count) FROM COUNTERData
@@ -202,6 +210,80 @@ class FiscalYears(db.Model):
         ACRL_63 = df.iloc[0][0]
         log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")
         return ACRL_63
+    
+
+    @hybrid_method
+    def calculate_ACRL_61a(self):
+        """This method calculates the value of ACRL question 61a for the given fiscal year.
+
+        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 61a
+            str: the error message if a query fails
+        """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61a()` for {self.fiscal_year}.")
+        TR_B1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Title_Requests' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(TR_B1_df, str):
+            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            TR_B1_sum = TR_B1_df.iloc[0][0]
+            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+
+        IR_M1_df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Total_Item_Requests' AND data_type='Multimedia' AND access_method='Regular' AND report_type='IR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(IR_M1_df, str):
+            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            log.warning(message)
+            return message
+        else:
+            IR_M1_sum = IR_M1_df.iloc[0][0]
+            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+
+        return TR_B1_sum + IR_M1_sum
+
+
+    @hybrid_method
+    def calculate_ACRL_61b(self):
+        """This method calculates the value of ACRL question 61b for the given fiscal year.
+
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage.
+
+        Returns:
+            int: the answer to ACRL 61b, OA included
+            str: the error message if a query fails
+        """
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61b()` for {self.fiscal_year}.")
+        df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
+        ACRL_61b = df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ACRL_61b} (type {type(ACRL_61b)}) was extracted")
+        return ACRL_61b
 
 
     @hybrid_method
@@ -300,7 +382,7 @@ class FiscalYears(db.Model):
         log.info(f"Starting `FiscalYears.create_usage_tracking_records_for_fiscal_year()` for {self.fiscal_year}.")
         #Section: Get PKs of the Fiscal Year's Statistics Sources
         current_statistics_sources = query_database(
-            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source = true;",  # In MySQL, `field = true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
+            query=f"SELECT SRS_statistics_source FROM statisticsResourceSources WHERE current_statistics_source=true;",  # In MySQL, `field=true` is faster when the field is indexed and all values are either `1` or `0` (MySQL's Boolean field actually stores a one-bit integer) (see https://stackoverflow.com/q/24800881 and https://stackoverflow.com/a/34149077)
             engine=db.engine,
         )
         if isinstance(current_statistics_sources, str):
@@ -345,37 +427,108 @@ class FiscalYears(db.Model):
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
-        #ToDo: dfs = []
-        #ToDo: all_flash_statements = []
-        #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
-            #ToDo: statistics_source = Get the matching StatisticsSources object
-            #ToDo: df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #ToDo: for statement in flash_statements:
-                    #ToDo: all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
-            #ToDo: if isinstance(df, str):
-                #ToDo: continue
-            #ToDo: else:
-                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
-            #ToDo: dfs.append(df)
-            #ToDo: Update AUCT table
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        #ToDo: df = pd.concat(dfs)
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: load_result = load_data_into_database(
-        #ToDo:     df=df,
-        #ToDo:     relation='COUNTERData',
-        #ToDo:     engine=db.engine,
-        #ToDo:     index_field_name='COUNTER_data_ID',
-        #ToDo: )
-        #ToDo: return (load_result, all_flash_statements)
-        pass
+        #Section: Get AUCT Records for Statistics Sources to be Pulled
+        AUCT_objects_to_collect_df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    annualUsageCollectionTracking.usage_is_being_collected,
+                    annualUsageCollectionTracking.manual_collection_required,
+                    annualUsageCollectionTracking.collection_via_email,
+                    annualUsageCollectionTracking.is_COUNTER_compliant,
+                    annualUsageCollectionTracking.collection_status,
+                    annualUsageCollectionTracking.usage_file_path,
+                    annualUsageCollectionTracking.notes
+                FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.manual_collection_required=false;
+            """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
+            engine=db.engine,
+        )
+        if isinstance(AUCT_objects_to_collect_df, str):
+            return (AUCT_objects_to_collect_df, [AUCT_objects_to_collect_df])
+        log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
+        AUCT_objects_to_collect = [
+            AnnualUsageCollectionTracking(
+                AUCT_statistics_source=record_tuple[0],
+                AUCT_fiscal_year=record_tuple[1],
+                usage_is_being_collected=record_tuple[2],
+                manual_collection_required=record_tuple[3],
+                collection_via_email=record_tuple[4],
+                is_COUNTER_compliant=record_tuple[5],
+                collection_status=record_tuple[6],
+                usage_file_path=record_tuple[7],
+                notes=record_tuple[8],
+            ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
+        ]
+        log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
+
+        #Section: Collect Usage from Each Statistics Source
+        dfs = []
+        where_statements = []
+        all_flash_statements = []
+        for AUCT_object in AUCT_objects_to_collect:
+            statistics_source = query_database(
+                query=f"""
+                    SELECT
+                        statisticsSources.statistics_source_ID,
+                        statisticsSources.statistics_source_name,
+                        statisticsSources.statistics_source_retrieval_code,
+                        statisticsSources.vendor_ID
+                    FROM statisticsSources
+                    WHERE statisticsSources.statistics_source_ID={AUCT_object.AUCT_statistics_source};
+                """,
+                engine=db.engine,
+            )
+            if isinstance(statistics_source, str):
+                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on t{statistics_source[1:].replace(' raised', ', which raised')}")
+                continue
+            df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for statement in flash_statements:
+                all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
+            if isinstance(df, str):
+                continue
+            dfs.append(df)
+            where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records. Those records and the `annualUsageCollectionTracking` relation composite primary key value have been saved for loaded into the database.")
+        
+        #Section: Update Data in Database
+        df = pd.concat(dfs)
+        df.index += first_new_PK_value('COUNTERData')
+        load_result = load_data_into_database(
+            df=df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            return (load_result, all_flash_statements)
+        update_statement = f"""
+            UPDATE annualUsageCollectionTracking
+            SET collection_status='Collection complete'
+            WHERE {" OR ".join(where_statements)};
+        """
+        update_result = update_database(
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+            log.warning(message)
+            all_flash_statements.append(message)
+            return (f"{load_result[:-1]}, but u{message[1:]}", all_flash_statements)
+        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
 
 
 class Vendors(db.Model):
     """The class representation of the `vendors` relation, which contains a list of entities that provide access to either electronic resources or usage statistics.
     
     Attributes:
-        self. vendor_ID (int): the primary key
+        self.vendor_ID (int): the primary key
         self.vendor_name (string): the name of the vendor= db.Column(db.String(80))
         self.alma_vendor_code (string): the code used to identify vendors in the Alma API return value
 
@@ -428,7 +581,7 @@ class Vendors(db.Model):
         #ToDo:             statistics_source_name,
         #ToDo:             statistics_source_retrieval_code
         #ToDo:         FROM statisticsSources
-        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:         WHERE vendor_ID={vendor_PK};
         #ToDo:     """,
         #ToDo:     engine=db.engine,
         #ToDo:     index='statistics_source_ID',
@@ -455,9 +608,9 @@ class Vendors(db.Model):
         #ToDo:             resource_source_ID,
         #ToDo:             resource_source_name,
         #ToDo:             source_in_use,
-        #ToDo:             use_stop_date
+        #ToDo:             access_stop_date
         #ToDo:         FROM resourceSources
-        #ToDo:         WHERE vendor_ID = {vendor_PK};
+        #ToDo:         WHERE vendor_ID={vendor_PK};
         #ToDo:     """,
         #ToDo:     engine=db.engine,
         #ToDo:     index='resource_source_ID',
@@ -473,7 +626,6 @@ class Vendors(db.Model):
     def add_note(self):
         log.info(f"Starting `Vendors.add_note()` for {self.vendor_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -808,7 +960,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'The query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
+        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
             message = f"When attempting to check if the data was already in the database, t{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
@@ -969,7 +1121,6 @@ class StatisticsSources(db.Model):
     def add_note(self):
         log.info(f"Starting `StatisticsSources.add_note()` for {self.statistics_source_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1022,13 +1173,13 @@ class ResourceSources(db.Model):
         self.resource_source_ID (int): the primary key
         self.resource_source_name (string): the resource source name
         self.source_in_use (bool): indicates if we currently have access to resources at the resource source
-        self.use_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
+        self.access_stop_date (datetime64[ns]): if we don't have access to resources at this source, the last date we had access
         self.vendor_ID (int): the foreign key for `vendors`
     
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        add_access_stop_date: #ToDo: Copy first line of docstring here
-        remove_access_stop_date:  #ToDo: Copy first line of docstring here
+        add_access_stop_date: Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
+        remove_access_stop_date:  Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
         change_StatisticsSource: Change the current statistics source for the resource source.
         add_note:  #ToDo: Copy first line of docstring here
     """
@@ -1037,7 +1188,7 @@ class ResourceSources(db.Model):
     resource_source_ID = db.Column(db.Integer, primary_key=True, autoincrement=False)
     resource_source_name = db.Column(db.String(100), nullable=False)
     source_in_use = db.Column(db.Boolean, nullable=False)
-    use_stop_date = db.Column(db.Date)
+    access_stop_date = db.Column(db.Date)
     vendor_ID = db.Column(db.Integer, db.ForeignKey('vendors.vendor_ID'), nullable=False)
 
     FK_in_ResourceSourceNotes = db.relationship('ResourceSourceNotes', backref='resourceSources')
@@ -1056,25 +1207,56 @@ class ResourceSources(db.Model):
         return {
             "resource_source_name": 'string',
             "source_in_use": 'bool',  # Python's `bool` is used to reinforce that this is a non-null field
-            "use_stop_date": 'datetime64[ns]',
+            "access_stop_date": 'datetime64[ns]',
             "vendor_ID": 'int',  # Python's `int` is used to reinforce that this is a non-null field
         }
 
 
     @hybrid_method
-    def add_access_stop_date(self):
+    def add_access_stop_date(self, access_stop_date=date.today()):
+        """Indicate that a resource is no longer in use by adding a date to `access_stop_date` and changing the `source_in_use` value to `False`.
+
+        Args:
+            access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; defaults to `date.today()`
+        
+        Returns:
+            _type_: _description_  #ToDo: Update on completion of method
+        """
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
-        #ToDo: Put value in access_stop_date when current_access goes from True to False
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"""
+                UPDATE resourceSources
+                SET access_stop_date='{access_stop_date}' AND source_in_use=false
+                WHERE resource_source_ID={self.resource_source_ID};
+            """,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
     def remove_access_stop_date(self):
+        """Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
+
+        Returns:
+            _type_: _description_  #ToDo: Update on completion of method
+        """
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
-        #ToDo: Null value in access_stop_date when current_access goes from False to True
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"""
+                UPDATE resourceSources
+                SET access_stop_date IS NONE AND source_in_use=true
+                WHERE resource_source_ID={self.resource_source_ID};
+            """,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
@@ -1087,24 +1269,75 @@ class ResourceSources(db.Model):
             statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
         
         Returns:
-            None: no return value is needed, so the default `None` is used
+            _type_: _description_  #ToDo: Update on completion of method
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
-        #ToDo: SQL_query = f"""
-        #ToDo:     UPDATE
-        #ToDo:     SET current_statistics_source = false
-        #ToDo:     WHERE SRS_resource_source = {self.resource_source_ID};
-        #ToDo: """
-        #ToDo: Inset record into `statisticsResourceSources` relation with values `statistics_source_PK`, `self.resource_source_ID`, and "true"
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        pass
+        update_result = update_database(
+            update_statement=f"""
+                UPDATE statisticsResourceSources
+                SET current_statistics_source=false
+                WHERE SRS_resource_source={self.resource_source_ID};
+            """,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            #ToDo: log.warning()
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
+        
+        check_for_existing_record = query_database(
+            query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
+            engine=db.engine,
+        )
+        if isinstance(check_for_existing_record, str):
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem in line with the "Indication of query result in calling function" section of the code style guide
+        
+        if check_for_existing_record.empty:
+            log.debug("Adding a new record to the `statisticsResourceSources` relation.")
+            multiindex = pd.DataFrame(
+                [
+                    [statistics_source_PK, self.resource_source_ID]
+                ],
+                columns=["SRS_statistics_source", "SRS_resource_source"],
+            )
+            multiindex = pd.MultiIndex.from_frame(multiindex)
+            series = pd.Series(
+                data=[
+                    True
+                ],
+                index=multiindex,
+                name="current_statistics_source",
+            )
+            series = series.astype(StatisticsResourceSources.state_data_types())
+
+            load_result = load_data_into_database(
+                df=series,
+                relation='statisticsResourceSources',
+                engine=db.engine,
+            )
+            if load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
+                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+
+        else:
+            log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
+            update_result = update_database(
+                update_statement=f"""
+                    UPDATE statisticsResourceSources
+                    SET current_statistics_source=true
+                    WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
+                """,
+                engine=db.engine,
+            )
+            if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+                #ToDo: log.warning()
+                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
+            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
 
 
     @hybrid_method
     def add_note(self):
         log.info(f"Starting `ResourceSources.add_note()` for {self.resource_source_name}.")
         #ToDo: Create a method for adding notes
-        # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
         pass
 
 
@@ -1294,8 +1527,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
-        else:
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
+        log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
             df=df,
@@ -1303,10 +1535,23 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if re.fullmatch(r'Successfully loaded \d* records into the \w* relation.', load_result):
-            self.collection_status = "Collection complete"  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-        return (load_result, flash_statements)
+        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            return (load_result, flash_statements)
+        update_statement = update_statement=f"""
+            UPDATE annualUsageCollectionTracking
+            SET collection_status='Collection complete'
+            WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
+        """
+        update_result = update_database(  # This updates the field in the relation to confirm that the data has been collected and is in NoLCAT
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+            log.warning(message)
+            flash_statements.append(message)
+            return (f"{load_result[:-1]}, but u{message[1:]}", flash_statements)
+        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
 
 
     @hybrid_method
@@ -1338,24 +1583,22 @@ class AnnualUsageCollectionTracking(db.Model):
             return logging_message
         log.debug(logging_message)
         
-        try:
-            log.info(f"`db` is {db} (type {type(db)})")  #ReplaceWithUpdateFunction
-            log.info(f"`db.engine` is {db.engine} (type {type(db.engine)})")  #ReplaceWithUpdateFunction
-            x=db.engine.execute('show tables;')
-            log.info(f"`db.engine.execute('show tables;')` is {x} (type {type(x)})")  #ReplaceWithUpdateFunction
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            sql=f"""
-                UPDATE annualUsageCollectionTracking
-                SET usage_file_path = "{file_name}"
-                AND collection_status='Collection complete'
-                WHERE AUCT_statistics_source = {self.AUCT_statistics_source} AND AUCT_fiscal_year = {self.AUCT_fiscal_year};
-            """
-            log.info(f"`{file_name}` added to the AUCT record for the statistics_source_ID {self.AUCT_statistics_source} and the fiscal_year_ID {self.AUCT_fiscal_year}.")  #ReplaceWithUpdateFunction
-            return f"Successfully uploaded `{file_name}` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name."  #FileIO
-        except Exception as error:
-            message = f"{logging_message} Updating the database to reflect this, however, returned {error}."  #ReplaceWithUpdateFunction
-            log.error(message)
-            return message
+        update_statement = f"""
+            UPDATE annualUsageCollectionTracking
+            SET usage_file_path='{file_name}'
+            AND collection_status='Collection complete'
+            WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
+        """
+        update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
+            update_statement=update_statement,
+            engine=db.engine,
+        )
+        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            single_line_update_statement = update_statement.replace('\n', ' ')
+            message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
+            log.warning(message)
+            return f"{logging_message[:-1]}, but u{message[1:]}"
+        return f"{logging_message[:-1]} and s{update_result[1:]}"
     
 
     @hybrid_method

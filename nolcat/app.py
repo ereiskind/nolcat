@@ -457,7 +457,7 @@ def load_data_into_database(df, relation, engine, load_index=True, index_field_n
             index_label=index_field_name,
         )
         message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
-        log.debug(message)
+        log.info(message)
         return message
     except Exception as error:
         message = f"Loading data into the {relation} relation raised the error {error}."
@@ -491,7 +491,7 @@ def query_database(query, engine, index=None):
             log.info(f"The complete response to `{query}`:\n{df}")
         return df
     except Exception as error:
-        message = f"The query `{query}` raised the error {error}."
+        message = f"Running the query `{query}` raised the error {error}."
         log.error(message)
         return message
 
@@ -601,3 +601,27 @@ def check_if_data_already_in_COUNTERData(df):
         return (records_to_keep, message)
     else:
         return (df, None)
+
+
+def update_database(update_statement, engine):
+    """A wrapper for the `Engine.execute()` method that includes the error handling.
+
+    The `execute()` method of the `sqlalchemy.engine.Engine` class automatically commits the changes made by the statement.
+
+    Args:
+        update_statement (str): the SQL update statement
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+    
+    Returns:
+        str: a message indicating success or including the error raised by the attempt to update the data
+    """
+    log.info(f"Starting `update_database()` for the update statement {update_statement}.")
+    try:
+        engine.execute(update_statement)
+        message = f"Successfully preformed the update `{update_statement}`."
+        log.info(message)
+        return message
+    except Exception as error:
+        message = f"Running the update statement `{update_statement}` raised the error {error}."
+        log.error(message)
+        return message

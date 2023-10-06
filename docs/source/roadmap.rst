@@ -29,7 +29,6 @@ Iteration 1: Complete Current Data I/O
 * Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
-* Handle the "https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations" updates
 * Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration 2: Add Historical Data
@@ -39,13 +38,12 @@ Iteration 2: Add Historical Data
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
 * Write "initialization/initial-data-upload-4.html" page
-* Write ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
-* Finish ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
@@ -54,11 +52,14 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
 * Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
-* Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
-* Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
+* Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_60b()``
+* Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_63()``
+* Write ``tests.test_FiscalYears.test_calculate_ACRL_61a()``
+* Write ``tests.test_FiscalYears.test_calculate_ACRL_61b()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
+* Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 * Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 
 Basic Enhancement Iterations
@@ -91,15 +92,15 @@ Iteration 1: View Lists
 
 Iteration 2: Update Statistics Sources to Resource Sources Relationship
 =======================================================================
+* Update "view_lists/edit_list_record.html" and accompanying form as necessary
 * Finish ``nolcat.models.ResourceSources.change_StatisticsSource()``
-* Update "view_lists/edit_record.html" and accompanying form as necessary
 * Write ``tests.test_ResourceSources.test_change_StatisticsSource()``
 
 Iteration 3: Update Access Stop Date Attribute
 ==============================================
-* Write ``nolcat.models.ResourceSources.add_access_stop_date()``
-* Write ``nolcat.models.ResourceSources.remove_access_stop_date()``
-* Update "view_lists/edit_record.html" and accompanying form as necessary
+* Update "view_lists/edit_list_record.html" and accompanying form as necessary
+* Finish ``nolcat.models.ResourceSources.add_access_stop_date()``
+* Finish ``nolcat.models.ResourceSources.remove_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_add_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_remove_access_stop_date()``
 
@@ -146,24 +147,19 @@ Iteration 8: Show Annual Usage Collection Tracking Information
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 9: Initiate All SUSHI Collection for Fiscal Year
-===========================================================
-* Finish ``nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()``
-* Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
-
-Iteration 10: Switch Message Display from Stdout to Flask
+Iteration 9: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 
-Iteration 11: Create UI Design and Jinja Templates
+Iteration 10: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
-Iteration 12: Interact with Host File System
+Iteration 11: Interact with Host File System
 ============================================
 * Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
 * Finish ``tests.test_app.default_download_folder()``

@@ -52,7 +52,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
     if request.method == 'GET':
         #ToDo: fiscal_year_PK = the variable path int, which is also the PK in the fiscalYears relations for the fiscal year being viewed
         fiscal_year_details = query_database(
-            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID = {fiscal_year_PK};",
+            query=f"SELECT * FROM fiscalYears WHERE fiscal_year_ID={fiscal_year_PK};",
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
@@ -61,7 +61,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
         fiscal_year_reporting = query_database(
-            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year = {fiscal_year_PK};",
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_fiscal_year={fiscal_year_PK};",
             engine=db.engine,
             index='AUCT_statistics_source',
         )
@@ -72,11 +72,17 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
         return render_template('annual_stats/fiscal-year-details.html', run_annual_stats_methods_form=run_annual_stats_methods_form, edit_fiscalYear_form=edit_fiscalYear_form, edit_AUCT_form=edit_AUCT_form)
     elif run_annual_stats_methods_form.validate_on_submit():
-        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_60b()`:
-            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_60b()`
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_depreciated_ACRL_60b()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_depreciated_ACRL_60b()`
             return redirect(url_for('annual_stats.show_fiscal_year_details'))
-        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_63()`:
-            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_63()`
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_depreciated_ACRL_63()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_depreciated_ACRL_63()`
+            return redirect(url_for('annual_stats.show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_61a()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_61a()`
+            return redirect(url_for('annual_stats.show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_61b()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_61b()`
             return redirect(url_for('annual_stats.show_fiscal_year_details'))
         #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ARL_18()`:
             #ToDo: Flash result of `fiscal_year_PK.calculate_ARL_18()`

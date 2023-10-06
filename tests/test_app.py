@@ -288,6 +288,11 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
+def test_format_list_for_stdout():
+    """Test pretty printing a list by adding a line break between each item."""
+    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
+
+
 @pytest.fixture
 def partially_duplicate_COUNTER_data():
     """COUNTER data, some of which is in the `COUNTERData_relation` dataframe.
@@ -318,7 +323,7 @@ def partially_duplicate_COUNTER_data():
 
 @pytest.fixture
 def non_duplicate_COUNTER_data():
-    """The COUNTER data from `partially_duplicate_COUNTER_data`not in the `COUNTERData_relation` dataframe.
+    """The COUNTER data from `partially_duplicate_COUNTER_data` not in the `COUNTERData_relation` dataframe.
 
     Yields:
         dataframe: data formatted for loading into the `COUNTERData` relation
@@ -339,17 +344,56 @@ def non_duplicate_COUNTER_data():
     yield df
 
 
-def test_format_list_for_stdout():
-    """Test pretty printing a list by adding a line break between each item."""
-    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
-
-
 def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
     """Tests the check for statistics source/report type/usage date combinations already in the database."""
     #TEST: Because there's no data loaded in the `COUNTERData` relation at this point, this test won't pass
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     assert_frame_equal(df, non_duplicate_COUNTER_data)
     assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"
+
+
+@pytest.fixture
+def updated_vendors_relation():
+    """The test data for the `vendors` relation featuring the change to be made in the `test_update_database()` test.
+
+    Yields:
+        dataframe: data matching the updated `vendors` relation
+    """
+    df = pd.DataFrame(
+        [
+            ["ProQuest", None],
+            ["EBSCO", None],
+            ["Gale", "CODE"],
+            ["iG Publishing/BEP", None],
+            ["Ebook Library", None],
+            ["Ebrary", None],
+            ["MyiLibrary", None],
+            ["Duke UP", None],
+        ],
+        columns=["vendor_name", "alma_vendor_code"],
+    )
+    df.index.name = "vendor_ID"
+    df = df.astype(Vendors.state_data_types())
+    yield df
+
+
+@pytest.mark.dependency(depends=['test_load_data_into_database'])
+def test_update_database(engine, updated_vendors_relation):
+    """Tests updating data in the database through a SQL update statement."""
+    update_result = update_database(
+        update_statement=f"UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;",
+        engine=engine,
+    )
+    retrieved_updated_vendors_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
+    )
+    if isinstance(retrieved_updated_vendors_data, str):
+        pytest.skip(f"Unable to run test because it relied on t{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
+    retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
+    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()

@@ -197,8 +197,8 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
                     annualUsageCollectionTracking.AUCT_statistics_source,
                     annualUsageCollectionTracking.AUCT_fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
             """,
         engine=engine,

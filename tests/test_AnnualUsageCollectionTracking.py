@@ -175,7 +175,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     log.info(f"`bucket_contents`:\n{bucket_contents}")  #temp
 
     usage_file_path_in_database = query_database(
-        query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+        query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
     )
     if isinstance(usage_file_path_in_database, str):
