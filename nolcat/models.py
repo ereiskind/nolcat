@@ -254,14 +254,28 @@ class FiscalYears(db.Model):
     def calculate_ACRL_61b(self):
         """This method calculates the value of ACRL question 61b for the given fiscal year.
 
-        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database." This calculation includes open access usage.
 
         Returns:
             int: the answer to ACRL 61b, OA included
             str: the error message if a query fails
         """
-        #ToDo: TR_J1, data_type='Journal', metric_type='Unique_Item_Requests', no access_type filter
-        pass
+        log.info(f"Starting `FiscalYears.calculate_ACRL_61b()` for {self.fiscal_year}.")
+        df = query_database(
+            query=f"""
+                SELECT SUM(usage_count) FROM COUNTERData
+                WHERE usage_date>='{self.start_date.strftime('%Y-%m-%d')}' AND usage_date<='{self.end_date.strftime('%Y-%m-%d')}'
+                AND metric_type='Unique_Item_Requests' AND data_type='Journal' AND access_method='Regular' AND report_type='TR';
+            """,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            log.warning(message)
+            return message
+        ACRL_61b = df.iloc[0][0]
+        log.debug(f"The sum query returned a dataframe from which {ACRL_61b} (type {type(ACRL_61b)}) was extracted")
+        return ACRL_61b
 
 
     @hybrid_method
