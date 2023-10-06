@@ -59,6 +59,7 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
+* Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
 * Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
 
 Basic Enhancement Iterations
@@ -146,24 +147,19 @@ Iteration 8: Show Annual Usage Collection Tracking Information
 * Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 9: Initiate All SUSHI Collection for Fiscal Year
-===========================================================
-* Finish ``nolcat.models.FiscalYears.collect_fiscal_year_usage_statistics()``
-* Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
-
-Iteration 10: Switch Message Display from Stdout to Flask
+Iteration 9: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 * Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
 * Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 
-Iteration 11: Create UI Design and Jinja Templates
+Iteration 10: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
-Iteration 12: Interact with Host File System
+Iteration 11: Interact with Host File System
 ============================================
 * Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
 * Finish ``tests.test_app.default_download_folder()``

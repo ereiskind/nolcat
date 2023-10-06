@@ -427,35 +427,88 @@ class FiscalYears(db.Model):
             tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of the statements that should be flashed (list of str)
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
-        #ToDo: dfs = []
-        #ToDo: all_flash_statements = []
-        #ToDo: For every AnnualUsageCollectionTracking object with the given FY where usage_is_being_collected=True and manual_collection_required=False
-            #ToDo: statistics_source = Get the matching StatisticsSources object
-            #ToDo: df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
-            #ToDo: for statement in flash_statements:
-                    #ToDo: all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
-            #ToDo: if isinstance(df, str):
-                #ToDo: continue
-            #ToDo: else:
-                #ToDo: log.debug("The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
-            #ToDo: dfs.append(df)
-            #ToDo: update_result = update_database(
-            #ToDo:     update_statement=f"the SQL update statement",
-            #ToDo:     engine=db.engine,
-            #ToDo: )
-            #ToDo: if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
-                #ToDo: log.warning()
-                #ToDo: Add `update_result` to flashed messages
-        #ToDo: df = pd.concat(dfs)
-        #ToDo: df.index += first_new_PK_value('COUNTERData')
-        #ToDo: load_result = load_data_into_database(
-        #ToDo:     df=df,
-        #ToDo:     relation='COUNTERData',
-        #ToDo:     engine=db.engine,
-        #ToDo:     index_field_name='COUNTER_data_ID',
-        #ToDo: )
-        #ToDo: return (load_result, all_flash_statements)
-        pass
+        #Section: Get AUCT Records for Statistics Sources to be Pulled
+        AUCT_objects_to_collect_df = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    annualUsageCollectionTracking.usage_is_being_collected,
+                    annualUsageCollectionTracking.manual_collection_required,
+                    annualUsageCollectionTracking.collection_via_email,
+                    annualUsageCollectionTracking.is_COUNTER_compliant,
+                    annualUsageCollectionTracking.collection_status,
+                    annualUsageCollectionTracking.usage_file_path,
+                    annualUsageCollectionTracking.notes
+                FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.AUCT_fiscal_year={self.fiscal_year_ID} AND
+                annualUsageCollectionTracking.usage_is_being_collected=true AND
+                annualUsageCollectionTracking.manual_collection_required=false;
+            """,  #ToDo: Is a check that `annualUsageCollectionTracking.collection_status` isn't "Collection complete" needed?
+            engine=db.engine,
+        )
+        if isinstance(AUCT_objects_to_collect_df, str):
+            return (AUCT_objects_to_collect_df, [AUCT_objects_to_collect_df])
+        log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
+        AUCT_objects_to_collect = [
+            AnnualUsageCollectionTracking(
+                AUCT_statistics_source=record_tuple[0],
+                AUCT_fiscal_year=record_tuple[1],
+                usage_is_being_collected=record_tuple[2],
+                manual_collection_required=record_tuple[3],
+                collection_via_email=record_tuple[4],
+                is_COUNTER_compliant=record_tuple[5],
+                collection_status=record_tuple[6],
+                usage_file_path=record_tuple[7],
+                notes=record_tuple[8],
+            ) for record_tuple in AUCT_objects_to_collect_df.itertuples(name=None)
+        ]
+        log.info(f"The AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{format_list_for_stdout(AUCT_objects_to_collect)}")
+
+        #Section: Collect Usage from Each Statistics Source
+        dfs = []
+        all_flash_statements = []
+        for AUCT_object in AUCT_objects_to_collect:
+            statistics_source = query_database(
+                query=f"""
+                    SELECT
+                        statisticsSources.statistics_source_ID,
+                        statisticsSources.statistics_source_name,
+                        statisticsSources.statistics_source_retrieval_code,
+                        statisticsSources.vendor_ID
+                    FROM statisticsSources
+                    WHERE statisticsSources.statistics_source_ID={AUCT_object.AUCT_statistics_source};
+                """,
+                engine=db.engine,
+            )
+            if isinstance(statistics_source, str):
+                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on t{statistics_source[1:].replace(' raised', ', which raised')}")
+                continue
+            df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
+            for statement in flash_statements:
+                all_flash_statements.append(f"{statement} [statistics source {statistics_source.statistics_source_name}; FY {self.fiscal_year}]")
+            if isinstance(df, str):
+                continue
+            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records.")
+            dfs.append(df)
+            update_result = update_database(
+                update_statement=f"the SQL update statement",
+                engine=db.engine,
+            )
+            if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+                log.warning()  #ToDo: Calling `update_database` failure
+                all_flash_statements()  #ToDo: Either add message logged above or `update_result`
+        df = pd.concat(dfs)
+        df.index += first_new_PK_value('COUNTERData')
+        load_result = load_data_into_database(
+            df=df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        return (load_result, all_flash_statements)
 
 
 class Vendors(db.Model):
