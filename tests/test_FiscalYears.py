@@ -31,8 +31,10 @@ def FiscalYears_object_and_record():
         fiscal_year = fiscal_year_value,
         start_date = start_date_value,
         end_date = end_date_value,
-        ACRL_60b = None,
-        ACRL_63 = None,
+        depreciated_ACRL_60b = None,
+        depreciated_ACRL_63 = None,
+        ACRL_61a = None,
+        ACRL_61b = None,
         ARL_18 = None,
         ARL_19 = None,
         ARL_20 = None,
@@ -42,7 +44,7 @@ def FiscalYears_object_and_record():
     FY_df = pd.DataFrame(
         [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
         index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+        columns=["fiscal_year", "start_date", "end_date", "depreciated_ACRL_60b", "depreciated_ACRL_63","ACRL_61a", "ACRL_61b",  "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
     yield (FY_instance, FY_df)

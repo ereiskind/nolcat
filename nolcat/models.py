@@ -55,8 +55,10 @@ class FiscalYears(db.Model):
         self.fiscal_year (string): the fiscal year in "yyyy" format; the ending year of the range is used
         self.start_date (datetime64[ns]): the first day of the fiscal year
         self.end_date (datetime64[ns]) the last day of the fiscal year
-        self.ACRL_60b (Int64): the reported value for ACRL 60b
-        self.ACRL_63 (Int64): the reported value for ACRL 63
+        self.depreciated_ACRL_60b (Int64): the reported value for depreciated ACRL 60b
+        self.depreciated_ACRL_63 (Int64): the reported value for depreciated ACRL 63
+        self.ACRL_61a (Int64): the reported value for ACRL 61a
+        self.ACRL_61b (Int64): the reported value for 61b
         self.ARL_18 (Int64): the reported value for ARL 18
         self.ARL_19 (Int64): the reported value for ARL 19
         self.ARL_20 (Int64): the reported value for ARL 20
@@ -65,8 +67,10 @@ class FiscalYears(db.Model):
 
     Methods:
         state_data_types: This method provides a dictionary of the attributes and their data types.
-        calculate_ACRL_60b: This method calculates the value of ACRL question 60b for the given fiscal year.
-        calculate_ACRL_63: This method calculates the value of ACRL question 63 for the given fiscal year.
+        calculate_depreciated_ACRL_60b: This method calculates the value of depreciated ACRL question 60b for the given fiscal year.
+        calculate_depreciated_ACRL_63: This method calculates the value of depreciated ACRL question 63 for the given fiscal year.
+        calculate_ACRL_61a: This method calculates the value of ACRL question 61a for the given fiscal year.
+        calculate_ACRL_61b: This method calculates the value of ACRL question 61b for the given fiscal year.
         calculate_ARL_18: This method calculates the value of ARL question 18 for the given fiscal year.
         calculate_ARL_19: This method calculates the value of ARL question 19 for the given fiscal year.
         calculate_ARL_20: This method calculates the value of ARL question 20 for the given fiscal year.
@@ -79,8 +83,10 @@ class FiscalYears(db.Model):
     fiscal_year = db.Column(db.String(4), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    ACRL_60b = db.Column(db.Integer)
-    ACRL_63 = db.Column(db.Integer)
+    depreciated_ACRL_60b = db.Column(db.Integer)
+    depreciated_ACRL_63 = db.Column(db.Integer)
+    ACRL_61a = db.Column(db.Integer)
+    ACRL_61b = db.Column(db.Integer)
     ARL_18 = db.Column(db.Integer)
     ARL_19 = db.Column(db.Integer)
     ARL_20 = db.Column(db.Integer)
@@ -104,8 +110,10 @@ class FiscalYears(db.Model):
             "fiscal_year": 'string',
             "start_date": 'datetime64[ns]',
             "end_date": 'datetime64[ns]',
-            "ACRL_60b": 'Int64',
-            "ACRL_63": 'Int64',
+            "depreciated_ACRL_60b": 'Int64',
+            "depreciated_ACRL_63": 'Int64',
+            "ACRL_61a": 'Int64',
+            "ACRL_61b": 'Int64',
             "ARL_18": 'Int64',
             "ARL_19": 'Int64',
             "ARL_20": 'Int64',
