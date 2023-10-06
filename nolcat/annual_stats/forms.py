@@ -14,6 +14,8 @@ class RunAnnualStatsMethodsForm(FlaskForm):
     #annual_stats_method = SelectField(#ToDo: Write label for field, choices=[
         # calculate_ACRL_60b()
         # calculate_ACRL_63()
+        # calculate_ACRL_61a
+        # calculate_ACRL_61b
         # calculate_ARL_18()
         # calculate_ARL_19()
         # calculate_ARL_20()

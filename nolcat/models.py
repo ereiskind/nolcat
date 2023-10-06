@@ -202,6 +202,35 @@ class FiscalYears(db.Model):
         ACRL_63 = df.iloc[0][0]
         log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")
         return ACRL_63
+    
+
+    @hybrid_method
+    def calculate_ACRL_61a(self):
+        """This method calculates the value of ACRL question 61a for the given fiscal year.
+
+        ACRL 61a is the sum of "usage of digital/electronic titles whether viewed, downloaded, or streamed.  Do not include institutional repository documents.Include usage for e-books and e-media titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 61a
+            str: the error message if a query fails
+        """
+        #ToDo: TR_B1, data_type='Book', metric_type='Unique_Title_Requests'
+        #ToDo: IR_M1, data_type='Multimedia', metric_type='Total_Item_Requests'
+        pass
+
+
+    @hybrid_method
+    def calculate_ACRL_61b(self):
+        """This method calculates the value of ACRL question 61b for the given fiscal year.
+
+        ACRL 61b is the sum of "usage of e-serial titles whether viewed, downloaded, or streamed. Include usage for e-serial titles only, even if the title was purchased as part of a database."
+
+        Returns:
+            int: the answer to ACRL 61b, OA included
+            str: the error message if a query fails
+        """
+        #ToDo: TR_J1, data_type='Journal', metric_type='Unique_Item_Requests', no access_type filter
+        pass
 
 
     @hybrid_method

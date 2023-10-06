@@ -60,6 +60,18 @@ def test_calculate_ACRL_63():
     pass
 
 
+def test_calculate_ACRL_61a():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_calculate_ACRL_61b():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
 def test_calculate_ARL_18():
     """Create a test for the function."""
     #ToDo: Write test and docstring

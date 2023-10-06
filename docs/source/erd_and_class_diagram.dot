@@ -36,6 +36,8 @@ digraph erd_and_classes {
         state_data_types [shape="Mrecord"]
         calculate_ACRL_60b [shape="Mrecord"]
         calculate_ACRL_63 [shape="Mrecord"]
+        calculate_ACRL_61a [shape="Mrecord"]
+        calculate_ACRL_61b [shape="Mrecord"]
         calculate_ARL_18 [shape="Mrecord"]
         calculate_ARL_19 [shape="Mrecord"]
         calculate_ARL_20 [shape="Mrecord"]

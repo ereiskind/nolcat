@@ -78,6 +78,12 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_63()`:
             #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_63()`
             return redirect(url_for('annual_stats.show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_61a()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_61a()`
+            return redirect(url_for('annual_stats.show_fiscal_year_details'))
+        #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ACRL_61b()`:
+            #ToDo: Flash result of `fiscal_year_PK.calculate_ACRL_61b()`
+            return redirect(url_for('annual_stats.show_fiscal_year_details'))
         #ToDo: if run_annual_stats_methods_form.annual_stats_method.data is the number for `calculate_ARL_18()`:
             #ToDo: Flash result of `fiscal_year_PK.calculate_ARL_18()`
             return redirect(url_for('annual_stats.show_fiscal_year_details'))

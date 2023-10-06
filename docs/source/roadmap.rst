@@ -54,6 +54,8 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_app.test_match_direct_SUSHI_harvest_result()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_63()``
+* Write ``tests.test_FiscalYears.test_calculate_ACRL_61a()``
+* Write ``tests.test_FiscalYears.test_calculate_ACRL_61b()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_18()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
