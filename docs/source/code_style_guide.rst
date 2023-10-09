@@ -124,10 +124,12 @@ File I/O
     * In the ``models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`` method
     * Structure:
 
-      * Success: ""
+      * Success: ``nolcat.app.upload_file_to_S3_bucket()`` successful return value followed by ``nolcat.app.update_database()`` successful return value
       * Failure:
 
         * File features invalid file extension: "The file extension of <full file path of uploaded file> is invalid. Please convert the file to use one of the following extensions and try again:\n<list of valid file extension from ``file_extensions_and_mimetypes()``>"
+        * Error from ``nolcat.app.upload_file_to_S3_bucket()``: Return value from that function passed through
+        * S3 upload succeeds but database update fails: "<successful return value from ``nolcat.app.upload_file_to_S3_bucket()``>, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
 
 * File downloads
 

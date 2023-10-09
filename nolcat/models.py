@@ -1598,7 +1598,9 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)
             return f"{logging_message[:-1]}, but u{message[1:]}"
-        return f"{logging_message[:-1]} and s{update_result[1:]}"
+        message = f"{logging_message[:-1]} and s{update_result[1:]}"
+        log.debug(message)
+        return message
     
 
     @hybrid_method
