@@ -97,14 +97,18 @@ def collect_FY_and_vendor_data():
             engine=db.engine,
         )
         if fiscalYears_load_result.startwith("Loading data into the fiscalYears relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(fiscalYears_load_result)
+        #SQLDatabaseLoadSuccess
         vendors_load_result = load_data_into_database(
             df=vendors_dataframe,
             relation='vendors',
             engine=db.engine,
         )
         if vendors_load_result.startwith("Loading data into the vendors relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(vendors_load_result)
+        #SQLDatabaseLoadSuccess
         vendorNotes_load_result = load_data_into_database(
             df=vendorNotes_dataframe,
             relation='vendorNotes',
@@ -112,7 +116,9 @@ def collect_FY_and_vendor_data():
             load_index=False,
         )
         if vendorNotes_load_result.startwith("Loading data into the vendorNotes relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(vendorNotes_load_result)
+        #SQLDatabaseLoadSuccess
         if data_load_errors:
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
@@ -232,7 +238,9 @@ def collect_sources_data():
             engine=db.engine,
         )
         if statisticsSources_load_result.startwith("Loading data into the statisticsSources relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(statisticsSources_load_result)
+        #SQLDatabaseLoadSuccess
         statisticsSourceNotes_load_result = load_data_into_database(
             df=statisticsSourceNotes_dataframe,
             relation='statisticsSourceNotes',
@@ -240,14 +248,18 @@ def collect_sources_data():
             load_index=False,
         )
         if statisticsSourceNotes_load_result.startwith("Loading data into the statisticsSourceNotes relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(statisticsSourceNotes_load_result)
+        #SQLDatabaseLoadSuccess
         resourceSources_load_result = load_data_into_database(
             df=resourceSources_dataframe,
             relation='resourceSources',
             engine=db.engine,
         )
         if resourceSources_load_result.startwith("Loading data into the resourceSources relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(resourceSources_load_result)
+        #SQLDatabaseLoadSuccess
         resourceSourceNotes_load_result = load_data_into_database(
             df= resourceSourceNotes_dataframe,
             relation='resourceSourceNotes',
@@ -255,14 +267,18 @@ def collect_sources_data():
             load_index=False,
         )
         if resourceSourceNotes_load_result.startwith("Loading data into the resourceSourceNotes relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(resourceSourceNotes_load_result)
+        #SQLDatabaseLoadSuccess
         statisticsResourceSources_load_result = load_data_into_database(
             df=statisticsResourceSources_dataframe,
             relation='statisticsResourceSources',
             engine=db.engine,
         )
         if statisticsResourceSources_load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(statisticsResourceSources_load_result)
+        #SQLDatabaseLoadSuccess
         if data_load_errors:
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_sources_data'))
@@ -394,7 +410,9 @@ def collect_AUCT_and_historical_COUNTER_data():
             index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
         if annualUsageCollectionTracking_load_result.startwith("Loading data into the annualUsageCollectionTracking relation raised the error"):
+            #SQLDatabaseLoadFailed
             data_load_errors.append(annualUsageCollectionTracking_load_result)
+        #SQLDatabaseLoadSuccess
         #COUNTERData_load_result = load_data_into_database(
         #    df=COUNTER_reports_df,
         #    relation='COUNTERData',
@@ -402,7 +420,9 @@ def collect_AUCT_and_historical_COUNTER_data():
         #    index_field_name='COUNTER_data_ID',
         #)
         #if COUNTERData_load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            #SQLDatabaseLoadFailed
         #    data_load_errors.append(COUNTERData_load_result)
+        #SQLDatabaseLoadSuccess
         if data_load_errors:
             flash(data_load_errors)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))

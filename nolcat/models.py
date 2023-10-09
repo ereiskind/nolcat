@@ -506,7 +506,9 @@ class FiscalYears(db.Model):
             index_field_name='COUNTER_data_ID',
         )
         if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            #SQLDatabaseLoadFailure
             return (load_result, all_flash_statements)
+        #SQLDatabaseLoadSuccess
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
@@ -1126,6 +1128,9 @@ class StatisticsSources(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
+        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            pass #SQLDatabaseLoadFailed
+        #SQLDatabaseLoadSuccess
         return (load_result, flash_statements)
 
 
@@ -1548,7 +1553,9 @@ class AnnualUsageCollectionTracking(db.Model):
             index_field_name='COUNTER_data_ID',
         )
         if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            #SQLDatabaseLoadFailed
             return (load_result, flash_statements)
+        #SQLDatabaseLoadSuccess
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
