@@ -57,9 +57,9 @@ class UploadCOUNTERReports:
             # When using the web app, `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>; `FileStorage_object.stream._file` is <class '_io.BytesIO'>
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
-                log.debug(f"Loading data from workbook {str(FileStorage_object.filename)}.")  #FileIO
+                log.debug(f"Successfully loaded the workbook {str(FileStorage_object.filename)}.")
             except Exception as error:
-                log.error(f"The workbook {str(FileStorage_object.filename)} couldn't be loaded because of the error {error}.")  #FileIOError
+                log.error(f"Loading the workbook {str(FileStorage_object.filename)} raised the error {error}.")
                 continue
             
             try:
