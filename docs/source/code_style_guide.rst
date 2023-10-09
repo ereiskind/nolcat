@@ -34,7 +34,9 @@ Logging Markers
   * Debug or info logging statement
   * A marker that something is about to happen, so if the program crashes immediately after that log statement, what the program was doing when it crashed is clear
   * Includes starting iterations
-  * Structure: **???**
+  * Structure:
+
+      * About to upload/download file (also serves as file name declaration): "About to <upload/download> file "<name of file>" from <origin location> to <destination location>."
 
 General Errors and In-Test Issues
 ---------------------------------
@@ -43,6 +45,8 @@ General Errors and In-Test Issues
   * Requested report not offered: "<report> not offered by this statistics source."
   * Requested report returned a SUSHI error: "The test is being skipped because the API call returned a server-based SUSHI error."
   * Requested report returned no data: "The test is being skipped because the API call returned no data."
+  * Fixture needed data that wasn't available: "Unable to create fixture because it relied on <slightly modified error message>"
+  * Test needed data that wasn't available: "Unable to run test because it relied on <slightly modified error message>"
 
 * Variable value declarations in fixtures
 
@@ -51,85 +55,16 @@ General Errors and In-Test Issues
   * When the value is a pathlib.Path object, ``.resolve()`` is added to output an absolute file path
   * Structure: "In `<fixture function name>()`, the `<variable name>` is <value>."
 
+* Fixtures initializing relation class objects
+
+    * Info logging statement
+    * Structure: "`<fixture function name>()` returning the following `<name of relation class>` object which was initialized based on the query results:\n<object>."
+
 * Finding values for a given field are longer than the field's max length
 
   * Critical logging statement
   * In the ``ConvertJSONDictToDataframe`` class
   * Structure: "Increase the `<attribute name>` max field length to <length of the value found + 10%>."
-
-* Managing data files in the repo --> #FileIOError, #FileIO
-
-  * Structure:
-
-    * Success:
-
-      * Check for a previously existing file in repo:
-
-        * Debug logging statement
-        * Information about the logging statement's relative location in a function can be added at the very beginning of the statement
-        * Structure:
-
-          * Check for a single file: "There's a file at <absolute path to file>: <Boolean>."
-          * Check the contents of a folder: "The files in the folder <absolute path to folder>\n<list of files in folder separated by newlines>"
-
-      * File successfully created:
-      * File name successfully created:
-      * Other:
-
-    * Failure:
-
-      * Other:
-
-* File I/O with the host machine --> #FileIOError, #FileIO
-
-  * Structure:
-
-    * Success:
-
-      * File uploaded:
-      * WTForms FileField value ingested
-
-        * Debug logging statement
-        * In the ``nolcat.initialization.views`` module
-        * Structure: "The `<relation name>` FileField data:\n<FileField object>"
-
-      * File downloaded:
-
-    * Failure:
-
-      * Upload features invalid file extension:
-
-        * Error logging statement
-        * Structure: "The file extension of <full file path of uploaded file> is invalid. Please convert the file to use one of the following extensions and try again:\n<list of valid file extension from ``file_extensions_and_mimetypes()``>"
-
-      * Blank file uploaded
-
-        * Error logging statement
-        * In the ``nolcat.initialization.views`` module
-        * Structure: "The `<relation name>` relation data file was read in with no data."
-
-* File I/O with S3 --> #FileIOError, #FileIO
-
-  * Structure:
-
-    * Success:
-
-      * File loaded into S3:
-
-        * Info logging statement
-        * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
-        * Structure: "Successfully loaded the file <name given to file> into the <name of bucket> S3 bucket."
-
-    * Failure:
-
-      * Unable to upload file to S3 bucket:
-
-        * Error logging statement if final; warning logging statement if not
-        * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
-        * Structure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
-        * If the logging statement isn't final, a statement that another function will be tried is added to the end
-
-      * Unable to delete file in S3 bucket:
 
 * Unable to convert file or JSON into dataframe
 
@@ -142,6 +77,62 @@ General Errors and In-Test Issues
 * **#404** Page not found
 
   * Error logging statement
+
+File I/O
+--------
+* File management
+
+  * Check for a previously existing file in repo:
+
+    * Debug logging statement
+    * Information about the logging statement's relative location in a function can be added at the very beginning of the statement
+    * Structure:
+
+      * Check for a single file: "There's a file at <absolute path to file>: <Boolean>."
+      * Check the contents of a folder: "The files in the folder <absolute path to folder>\n<list of files in folder separated by newlines>"
+
+  * Unable to delete file in S3 bucket after tests
+
+* File uploads
+
+  * File loaded into S3
+
+    * Info logging statement; errors are error logging statement if final; warning logging statement if not
+    * In the ``nolcat.app.upload_file_to_S3_bucket()`` function
+    * Structure:
+
+      * Success: "Successfully loaded the file <name given to file> into the <name of bucket> S3 bucket."
+      * Failure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
+
+        * If the logging statement isn't final, a statement that another function will be tried is added to the end
+
+  * Indication of upload to S3 in calling function
+  * Upload database initialization relations
+
+    * Debug logging statement; errors are error logging statement
+    * In the ``nolcat.initialization.views`` module
+    * Structure:
+
+      * Success: "The `<relation name>` FileField data:\n<FileField object>"
+      * Failure:
+
+        * Blank file uploaded: "The `<relation name>` relation data file was read in with no data."
+
+  * Upload nonstandard usage files
+
+    * Debug logging statement; errors are warning logging statement
+    * In the ``models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`` method
+    * Structure:
+
+      * Success: ""
+      * Failure:
+
+        * File features invalid file extension: "The file extension of <full file path of uploaded file> is invalid. Please convert the file to use one of the following extensions and try again:\n<list of valid file extension from ``file_extensions_and_mimetypes()``>"
+
+* File downloads
+
+  * Download file from host system
+  * Download non-COUNTER usage file from S3
 
 SUSHI Calls
 -----------
