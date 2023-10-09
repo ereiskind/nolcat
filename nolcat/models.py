@@ -999,9 +999,11 @@ class StatisticsSources(db.Model):
                     temp_file_path = Path(__file__).parent / 'temp.json'
                     with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
+                    file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
+                    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
                     log_message = upload_file_to_S3_bucket(
                         temp_file_path,
-                        f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                        file_name,
                     )
                     temp_file_path.unlink()
                     log.debug(log_message)
@@ -1028,9 +1030,11 @@ class StatisticsSources(db.Model):
                 temp_file_path = Path(__file__).parent / 'temp.json'
                 with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
+                file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
+                log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
                 log_message = upload_file_to_S3_bucket(
                     temp_file_path,
-                    f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json",
+                    file_name,
                 )
                 temp_file_path.unlink()
                 log.debug(log_message)
@@ -1575,6 +1579,7 @@ class AnnualUsageCollectionTracking(db.Model):
             return message
         
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
+        log.debug(f"About to upload file '{file_name}' from WTForms FileField field {file_path} to S3 bucket {BUCKET_NAME}.")
         logging_message = upload_file_to_S3_bucket(
             file,
             file_name,
@@ -1618,7 +1623,7 @@ class AnnualUsageCollectionTracking(db.Model):
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        log.info(f"Downloading the file at `{self.usage_file_path}`.")  #FileIO
+        log.debug(f"About to download file '{self.usage_file_path}' from S3 bucket {BUCKET_NAME} to top repo folder {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,

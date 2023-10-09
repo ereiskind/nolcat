@@ -396,8 +396,7 @@ class SUSHICallAndResponse:
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
-        log.debug(f"S3 file name set to {S3_file_name}.")  #FileIO
-
+        log.debug(f"About to upload file '{S3_file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
         upload_file_to_S3_bucket(
             temp_file_path,
             S3_file_name,

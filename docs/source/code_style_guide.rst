@@ -36,7 +36,7 @@ Logging Markers
   * Includes starting iterations
   * Structure:
 
-      * About to upload/download file (also serves as file name declaration): "About to <upload/download> file "<name of file>" from <origin location> to <destination location>."
+      * About to upload/download file (also serves as file name declaration): "About to <upload/download> file '<name of file>' from <origin location> to <destination location>."
 
 General Errors and In-Test Issues
 ---------------------------------
