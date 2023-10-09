@@ -408,7 +408,7 @@ class SUSHICallAndResponse:
             message = logging_message
             log.info(message)
         temp_file_path.unlink()
-        return message  #ToDo:: Have calls handle string return indicating error
+        return message
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type):

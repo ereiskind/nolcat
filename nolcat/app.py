@@ -254,6 +254,7 @@ def first_new_PK_value(relation):
     
     Returns:
         int: the first primary key value in the data to be uploaded to the relation
+        str: a message including the error raised by the attempt to run the query
     """
     log.info(f"Starting `first_new_PK_value()` for the {relation} relation.")
     if relation == 'fiscalYears':
@@ -282,7 +283,7 @@ def first_new_PK_value(relation):
         engine=db.engine,
     )
     if isinstance(largest_PK_value, str):
-        return largest_PK_value  #ToDo:: Have calls handle string return indicating error
+        return largest_PK_value
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
@@ -518,6 +519,7 @@ def check_if_data_already_in_COUNTERData(df):
     
     Returns:
         tuple: the dataframe to be loaded into `COUNTERData`; the message to be flashed about the records not loaded or `None` if all records are being loaded (str or None)
+        str: a message including the error raised by the attempt to run the query
     """
     log.info(f"Starting `check_if_data_already_in_COUNTERData()`.")
 
@@ -551,7 +553,7 @@ def check_if_data_already_in_COUNTERData(df):
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            return number_of_matching_records  #ToDo:: Have calls handle string return indicating error
+            return number_of_matching_records
         number_of_matching_records = number_of_matching_records.iloc[0][0]
         log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")
         if number_of_matching_records > 0:
@@ -580,7 +582,7 @@ def check_if_data_already_in_COUNTERData(df):
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                return statistics_source_name  #ToDo:: Have calls handle string return indicating error
+                return statistics_source_name
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results
