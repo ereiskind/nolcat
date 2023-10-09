@@ -379,11 +379,13 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     """
     log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, the `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
     log.debug(f"About to upload file '{non_COUNTER_AUCT_object_after_upload.usage_file_path}' from file location {path_to_sample_file} to S3 bucket {BUCKET_NAME}.")
-    result = upload_file_to_S3_bucket(
+    logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
-    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")  #FileIO
+    if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+        log.warning(f"Uploading the file {non_COUNTER_AUCT_object_after_upload.usage_file_path} to S3 in `tests.conftest.non_COUNTER_file_to_download_from_S3()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
+    log.debug(logging_message)
     yield None
     try:
         s3_client.delete_object(

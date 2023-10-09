@@ -241,10 +241,14 @@ def test_S3_bucket_connection():
 
 def test_upload_file_to_S3_bucket(path_to_sample_file):
     """Tests uploading files to a S3 bucket."""
-    upload_file_to_S3_bucket(  # The function returns a string serving as a logging statement, but all error statements also feature a logging statement within the function
+    logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
+    if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+        log.warning(f"Uploading the file test_{path_to_sample_file.name} to S3 in `tests.test_app.test_upload_file_to_S3_bucket()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
+        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
+    log.debug(logging_message)
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",

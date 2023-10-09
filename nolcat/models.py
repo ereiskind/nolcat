@@ -1001,13 +1001,18 @@ class StatisticsSources(db.Model):
                         json.dump(SUSHI_data_response, JSON_file)
                     file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
                     log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                    log_message = upload_file_to_S3_bucket(
+                    logging_message = upload_file_to_S3_bucket(
                         temp_file_path,
                         file_name,
                     )
+                    if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+                        log.critical(message)
+                    else:
+                        message = logging_message
+                        log.debug(message)
                     temp_file_path.unlink()
-                    log.debug(log_message)
-                    complete_flash_message_list.append(log_message)
+                    complete_flash_message_list.append(message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
                 df['report_type'] = report
@@ -1032,16 +1037,19 @@ class StatisticsSources(db.Model):
                     json.dump(SUSHI_data_response, JSON_file)
                 file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
                 log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                log_message = upload_file_to_S3_bucket(
+                logging_message = upload_file_to_S3_bucket(
                     temp_file_path,
                     file_name,
                 )
+                if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+                    log.critical(message)
+                else:
+                    message = logging_message
+                    log.debug(message)
                 temp_file_path.unlink()
-                log.debug(log_message)
-                flash_message_list.append(log_message)
-                message = f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. Loading it into a S3 bucket returned {log_message}."
-                log.info(message)
-                return (message, flash_message_list)
+                flash_message_list.append(message)
+                return (f"Since the JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe, it was temporarily saved as a JSON file for uploading into S3. {message}", flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
@@ -1584,8 +1592,10 @@ class AnnualUsageCollectionTracking(db.Model):
             file,
             file_name,
         )
-        if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
-            return logging_message
+        if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+            message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+            log.critical(message)
+            return message
         log.debug(logging_message)
         
         update_statement = f"""

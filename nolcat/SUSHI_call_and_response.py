@@ -397,14 +397,18 @@ class SUSHICallAndResponse:
             return statistics_source_ID
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
         log.debug(f"About to upload file '{S3_file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-        upload_file_to_S3_bucket(
+        logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             S3_file_name,
         )
+        if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+            log.critical(message)
+        else:
+            message = logging_message
+            log.info(message)
         temp_file_path.unlink()
-        message = f"The file {S3_file_name} was created in S3."  #FileIO
-        log.info(message)
-        return message
+        return message  #ToDo:: Have calls handle string return indicating error
 
 
     def _handle_SUSHI_exceptions(self, error_contents, report_type):

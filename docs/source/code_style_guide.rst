@@ -108,6 +108,19 @@ File I/O
         * If the logging statement isn't final, a statement that another function will be tried is added to the end
 
   * Indication of upload to S3 in calling function
+
+    * Debug logging statement; errors are critical logging statement
+
+      * In fixture and test functions, errors are warning logging statement
+
+    * In the function that called ``nolcat.app.upload_file_to_S3_bucket()``
+    * Structure:
+
+      * Success: Repeat the ``nolcat.app.upload_file_to_S3_bucket()`` response
+      * Failure: "Uploading the file <file name> to S3 in `<function name, including path>()` failed because <error message starting with lowercase letter> NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+
+    * For either of the above, when being used as the first value in a return value tuple, the string begins with "Since the JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe, it was temporarily saved as a JSON file for uploading into S3."
+
   * Upload database initialization relations
 
     * Debug logging statement; errors are error logging statement
