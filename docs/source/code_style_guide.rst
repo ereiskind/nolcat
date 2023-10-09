@@ -133,7 +133,7 @@ General Errors and In-Test Issues
 
 * Unable to convert file or JSON into dataframe
 
-  * Warning logging statement
+  * Error logging statement
   * Structure:
 
     * From SUSHI: "JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe."
