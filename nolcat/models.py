@@ -1631,10 +1631,10 @@ class AnnualUsageCollectionTracking(db.Model):
         )
         if self.usage_file_path in [str(p.name) for p in Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1]).iterdir()]:
             Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], self.usage_file_path).rename(file_download_path)
-            #ToDo: #FileIO
+            log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
             return file_download_path
         else:
-            #ToDo: #FileIOError
+            log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
             return False
 
 

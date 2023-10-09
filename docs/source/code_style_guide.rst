@@ -144,6 +144,13 @@ File I/O
 
   * Download non-COUNTER usage file from S3
 
+    * Info logging statement; errors are error logging statement
+    * In the ``models.AnnualUsageCollectionTracking.download_nonstandard_usage_file()`` method
+    * Structure:
+
+      * Success: "Successfully downloaded <file name> to the top-level repo folder <absolute file path to uppermost file in repo>."
+      * Failure: "The file <file name> wasn't downloaded because it couldn't be found in <absolute file path to uppermost file in repo>."
+
 SUSHI Calls
 -----------
 * API call responses
