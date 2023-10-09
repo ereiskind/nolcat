@@ -518,8 +518,7 @@ def check_if_data_already_in_COUNTERData(df):
         df (dataframe): the data to be loaded into the `COUNTERData` relation
     
     Returns:
-        tuple: the dataframe to be loaded into `COUNTERData`; the message to be flashed about the records not loaded or `None` if all records are being loaded (str or None)
-        str: a message including the error raised by the attempt to run the query
+        tuple: the dataframe to be loaded into `COUNTERData` or `None` if if no records are being loaded; the message to be flashed about the records not loaded or `None` if all records are being loaded (str or None)
     """
     log.info(f"Starting `check_if_data_already_in_COUNTERData()`.")
 
@@ -553,7 +552,7 @@ def check_if_data_already_in_COUNTERData(df):
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            return number_of_matching_records
+            return (None, number_of_matching_records)
         number_of_matching_records = number_of_matching_records.iloc[0][0]
         log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")
         if number_of_matching_records > 0:
@@ -582,7 +581,7 @@ def check_if_data_already_in_COUNTERData(df):
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                return statistics_source_name
+                return (None, statistics_source_name)
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results
