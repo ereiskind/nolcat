@@ -1233,8 +1233,8 @@ class ResourceSources(db.Model):
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
             #ToDo: log.warning()
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
-        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+            pass  #SQLDatabaseUpdateFailed
+        pass  #SQLDatabaseUpdateSuccess
 
 
     @hybrid_method
@@ -1255,8 +1255,8 @@ class ResourceSources(db.Model):
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
             #ToDo: log.warning()
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
-        pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+            pass  #SQLDatabaseUpdateFailed
+        pass  #SQLDatabaseUpdateSuccess
 
 
     @hybrid_method
@@ -1282,14 +1282,14 @@ class ResourceSources(db.Model):
         )
         if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
             #ToDo: log.warning()
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
+            pass  #SQLDatabaseUpdateFailed
         
         check_for_existing_record = query_database(
             query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
             engine=db.engine,
         )
         if isinstance(check_for_existing_record, str):
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem in line with the "Indication of query result in calling function" section of the code style guide
+            pass  #SQLDatabaseQueryFailed
         
         if check_for_existing_record.empty:
             log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1315,8 +1315,8 @@ class ResourceSources(db.Model):
                 engine=db.engine,
             )
             if load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
-                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+                pass  #SQLDatabaseLoadFailed
+            pass  #SQLDatabaseLoadSuccess
 
         else:
             log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
@@ -1330,8 +1330,8 @@ class ResourceSources(db.Model):
             )
             if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
                 #ToDo: log.warning()
-                pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that there was a problem
-            pass  #ToDo: Return value that will indicate to "view_lists/edit_record.html" that the record was updated
+                pass  #SQLDatabaseUpdateFailed
+            pass  #SQLDatabaseUpdateSuccess
 
 
     @hybrid_method

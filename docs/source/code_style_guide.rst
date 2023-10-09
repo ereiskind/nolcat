@@ -29,7 +29,7 @@ Logging Markers
   * Debug logging statement
   * Structure: "Added `COUNTERData.<dictionary key>` value <dictionary value> to `<name of dict>`."
 
-* About to take an action --> #AboutTo
+* About to take an action --> **#AboutTo**
 
   * Debug or info logging statement
   * A marker that something is about to happen, so if the program crashes immediately after that log statement, what the program was doing when it crashed is clear
@@ -139,7 +139,7 @@ General Errors and In-Test Issues
     * From SUSHI: "JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe."
     * From workbooks: "Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error <error>."
 
-* Page not found --> #404
+* **#404** Page not found
 
   * Error logging statement
 
@@ -235,8 +235,8 @@ MySQL I/O
   * In the function that called ``load_data_into_database()``
   * Structure:
 
-    * Success: *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
-    * Failure: *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
+    * Success: **#SQLDatabaseLoadSuccess** Return value that will indicate to "view_lists.views" that the record was updated
+    * Failure: **#SQLDatabaseLoadFailed** Return value that will indicate to "view_lists.views" that the attempted change failed
 
 * Indication of query result in calling function
 
@@ -262,8 +262,9 @@ MySQL I/O
       * Fixture function: "Unable to create fixture because it relied on <slightly modified error message>" in ``pytest.skip()``
       * Test function: "Unable to run test because it relied on <slightly modified error message>" in ``pytest.skip()``
       * Non-homepage view function: "Unable to load requested page because it relied on <slightly modified error message>" in flashed message, return to blueprint homepage
-      * Homepage view function: page outside of blueprints for sharing this message--> #HomepageSQLError
-      * Replace when methods in `Vendors` relation class are written --> #SQLDataframeReturnError
+      * **#HomepageSQLError** Homepage view function: page outside of blueprints for sharing this message
+      * **#SQLDataframeReturnError** Replace when methods in `Vendors` relation class are written
+      * **#SQLDatabaseQueryFailed** Return value that will indicate to "view_lists.views" that there was a problem
 
 * Indication of update result in calling function
 
@@ -274,7 +275,7 @@ MySQL I/O
     * Success:
 
       * Database updated to reflect successfully loaded data: ``load_data_into_database()`` response followed by ``update_database()`` response
-      * *Return value that will indicate to "view_lists/edit_record.html" that the record was updated*
+      * **#SQLDatabaseUpdateSuccess** Return value that will indicate to "view_lists.views" that the record was updated
 
     * Failure:
 
@@ -283,8 +284,7 @@ MySQL I/O
         * Logging statement: "Updating the `<name of relation>` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
         * Overall function return value features ``load_data_into_database()`` response followed by the above logging statement
 
-      * *Return value that will indicate to "view_lists/edit_record.html" that the attempted change failed*
-      * *Return value that will indicate to "view_lists/edit_record.html" that there was a problem*
+      * **#SQLDatabaseUpdateFailed** Return value that will indicate to "view_lists.views" that the attempted change failed
 
 reStructured Text
 *****************
