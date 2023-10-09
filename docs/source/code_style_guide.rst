@@ -279,7 +279,7 @@ MySQL I/O
     * Failure:
 
       * Returning string: Repeat the ``query_database()`` error message
-      * Helper function: Pass the ``query_database()`` error message to the database that called the helper function --> #ToDo:: Have calls handle string return indicating error
+      * Helper function: Pass the ``query_database()`` error message to the database that called the helper function
       * Returning integer: "Unable to return requested sum because it relied on <slightly modified error message>"
       * Fixture function: "Unable to create fixture because it relied on <slightly modified error message>" in ``pytest.skip()``
       * Test function: "Unable to run test because it relied on <slightly modified error message>" in ``pytest.skip()``
