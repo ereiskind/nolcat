@@ -93,6 +93,9 @@ File I/O
 
   * Unable to delete file in S3 bucket after tests
 
+    * Error logging statement
+    * Structure: "Trying to remove file `<file name>` from the S3 bucket raised <Python exception>."
+
 * File uploads
 
   * File loaded into S3

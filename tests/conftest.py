@@ -355,7 +355,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")
     log.debug(f"In `remove_file_from_S3()`, the `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}.")
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")  #FileIO
+    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")
     yield None
     try:
         s3_client.delete_object(
@@ -363,7 +363,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  #FileIOError
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
 
 
 @pytest.fixture
@@ -391,7 +391,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
             Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")  #FileIOError
+        log.error(f"Trying to remove file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
