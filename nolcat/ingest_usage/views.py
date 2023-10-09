@@ -43,13 +43,20 @@ def upload_COUNTER_reports():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         try:
-            df, message = check_if_data_already_in_COUNTERData(df)
+            df, message_to_flash = check_if_data_already_in_COUNTERData(df)
         except Exception as error:
             message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        if df is None:
+            flash(message_to_flash)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
+        if message_to_flash is None:
+            messages_to_flash = []
+        else:
+            messages_to_flash = [message_to_flash]
         df.index += first_new_PK_value('COUNTERData')
         load_result = load_data_into_database(
             df=df,
@@ -59,8 +66,10 @@ def upload_COUNTER_reports():
         )
         if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailed
-        #SQLDatabaseLoadSuccess
-        flash(load_result)
+            messages_to_flash.append(load_result)
+        #else:
+            #SQLDatabaseLoadSuccess
+        flash(messages_to_flash)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         log.error(f"`form.errors`: {form.errors}")  #404
