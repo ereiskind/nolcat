@@ -324,9 +324,9 @@ def collect_AUCT_and_historical_COUNTER_data():
                 encoding='utf-8',
                 errors='backslashreplace',  # For encoding errors
             )
-            log.debug(f"The AUCT template CSV was created successfully: {template_save_location.is_file()}")  #FileIO
+            log.debug(f"Successfully created `annualUsageCollectionTracking` relation template CSV at {template_save_location}.")
         except Exception as error:
-            log.error(f"The AUCT template CSV wasn't created because of the error {error}.")  #FileIOError
+            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised the error {error}.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
                 message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
                 log.error(message)
