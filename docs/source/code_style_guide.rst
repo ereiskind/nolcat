@@ -134,6 +134,14 @@ File I/O
 * File downloads
 
   * Download file from host system
+
+    * Info logging statement
+    * Because the ``nolcat.app.create_app().download_file()`` route method preforms its intended purpose--downloading a file from the host file system--in its return statement, there's no way to add a logging statement after that purpose to the function. Statements in the calling function cannot be a complete replacement as most calls to the method occur in Jinja. As a result, the logging statements related to ``nolcat.app.create_app().download_file()`` are intended as more general markers than most other logging statements are.
+    * Structure:
+
+      * In the method: "`file_path` after type juggling is '<the file path>' (type <the file path type>) which is an absolute file path: <Boolean>."
+      * Before calling in route functions: "The `<name of file>` file was created successfully: <Boolean>"
+
   * Download non-COUNTER usage file from S3
 
 SUSHI Calls

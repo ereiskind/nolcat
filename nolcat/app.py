@@ -202,7 +202,7 @@ def create_app():
             *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
             *Path(file_path).parts[Path(file_path).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
         )
-        log.info(f"`file_path` after type juggling is {file_path} (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")  #FileIO
+        log.info(f"`file_path` after type juggling is '{file_path}' (type {type(file_path)}) which is an absolute file path: {file_path.is_absolute()}.")
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
