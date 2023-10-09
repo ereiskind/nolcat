@@ -45,8 +45,6 @@ General Errors and In-Test Issues
   * Requested report not offered: "<report> not offered by this statistics source."
   * Requested report returned a SUSHI error: "The test is being skipped because the API call returned a server-based SUSHI error."
   * Requested report returned no data: "The test is being skipped because the API call returned no data."
-  * Fixture needed data that wasn't available: "Unable to create fixture because it relied on <slightly modified error message>"
-  * Test needed data that wasn't available: "Unable to run test because it relied on <slightly modified error message>"
 
 * Variable value declarations in fixtures
 
