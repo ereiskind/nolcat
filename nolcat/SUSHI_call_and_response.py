@@ -95,14 +95,22 @@ class SUSHICallAndResponse:
             messages_to_flash = [message]
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            return (message, messages_to_flash)
+            if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=flash_message) is None:
+                message = f"{message[:-1]}, so the program attempted u{flash_message[1:].replace(' failed', ', which failed')}"
+                log.error(message)
+                return (message, messages_to_flash)
+            return (f"{message[:-1]}, so the program s{flash_message[1:]}", messages_to_flash)
         
         if isinstance(API_response, Exception):
             message = f"Calling the `_convert_Response_to_JSON()` method raised the Python error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            return (message, messages_to_flash)
+            if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=flash_message) is None:
+                message = f"{message[:-1]}, so the program attempted u{flash_message[1:].replace(' failed', ', which failed')}"
+                log.error(message)
+                return (message, messages_to_flash)
+            return (f"{message[:-1]}, so the program s{flash_message[1:]}", messages_to_flash)
         log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes

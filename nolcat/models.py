@@ -986,14 +986,17 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and re.match(r'returned no( usage)? data', string=SUSHI_data_response):
+                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', string=SUSHI_data_response):
                     log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.*")
                     no_usage_returned_count += 1
+                    log.warning(SUSHI_data_response)
+                    continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                elif isinstance(SUSHI_data_response, str):
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 
