@@ -238,7 +238,32 @@ def test_S3_bucket_connection():
     assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
-def test_upload_file_to_S3_bucket(path_to_sample_file):
+@pytest.fixture
+def remove_file_from_S3(path_to_sample_file):
+    """Removes a file loaded into S3 with the `app.upload_file_to_S3_bucket()` method.
+
+    The file name includes the `test_` prefix utilized in the `tests.test_app.test_upload_file_to_S3_bucket()` test function.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+
+    Yields:
+        None
+    """
+    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")
+    file_name = f"test_{path_to_sample_file.name}"
+    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+
+
+def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
