@@ -387,22 +387,38 @@ def collect_AUCT_and_historical_COUNTER_data():
         log.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
         #Subsection: Ingest COUNTER Reports
-        #ToDo: Uncomment this subsection during Planned Iteration 2
-        #try:
-        #    COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-        #    log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
-        #    COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-        #    COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        #    log.info(f"`COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n")
-        #    log.debug(f"`COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
-        #except Exception as error:
-        #    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe raised the error {error}."
-        #    log.error(message)
-        #    #ToDo: Flash message
-        # ToDo: Run `check_if_data_already_in_COUNTERData()` (see `import_usage.upload_COUNTER_reports()` for details)
+        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
+        try:
+            COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+            COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+        except Exception as error:
+            message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
+
+        try:
+            COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
+        except Exception as error:
+            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        if COUNTER_reports_df is None:
+            flash(message_to_flash)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        if message_to_flash is None:
+            messages_to_flash = []
+        else:
+            messages_to_flash = [message_to_flash]
+        COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
+        log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
+        '''
+        messages_to_flash = []  #ToDo: Replace by above during Planned Iteration 2
 
         #Subsection: Load Data into Database
-        data_load_errors = []
         annualUsageCollectionTracking_load_result = load_data_into_database(
             df=AUCT_dataframe,
             relation='annualUsageCollectionTracking',
@@ -411,22 +427,25 @@ def collect_AUCT_and_historical_COUNTER_data():
         )
         if annualUsageCollectionTracking_load_result.startwith("Loading data into the annualUsageCollectionTracking relation raised the error"):
             #SQLDatabaseLoadFailed
-            data_load_errors.append(annualUsageCollectionTracking_load_result)
-        #SQLDatabaseLoadSuccess
-        #COUNTERData_load_result = load_data_into_database(
-        #    df=COUNTER_reports_df,
-        #    relation='COUNTERData',
-        #    engine=db.engine,
-        #    index_field_name='COUNTER_data_ID',
-        #)
-        #if COUNTERData_load_result.startwith("Loading data into the COUNTERData relation raised the error"):
-            #SQLDatabaseLoadFailed
-        #    data_load_errors.append(COUNTERData_load_result)
-        #SQLDatabaseLoadSuccess
-        if data_load_errors:
-            flash(data_load_errors)
+            messages_to_flash.append(annualUsageCollectionTracking_load_result)
+            flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        #SQLDatabaseLoadSuccess
+        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
+        COUNTERData_load_result = load_data_into_database(
+            df=COUNTER_reports_df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        if COUNTERData_load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+            #SQLDatabaseLoadFailed
+            #ToDo: Additional note about needing to upload all workbooks through `ingest_usage` blueprint
+            messages_to_flash.append(COUNTERData_load_result)
+        #SQLDatabaseLoadSuccess
+        '''
 
+        flash(messages_to_flash)
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
 

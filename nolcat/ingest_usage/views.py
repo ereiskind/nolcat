@@ -41,6 +41,7 @@ def upload_COUNTER_reports():
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        log.debug(f"`COUNTERData` data:\n{df}\n")
         
         try:
             df, message_to_flash = check_if_data_already_in_COUNTERData(df)
@@ -52,12 +53,13 @@ def upload_COUNTER_reports():
         if df is None:
             flash(message_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        
         if message_to_flash is None:
             messages_to_flash = []
         else:
             messages_to_flash = [message_to_flash]
         df.index += first_new_PK_value('COUNTERData')
+        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
+        log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
         load_result = load_data_into_database(
             df=df,
             relation='COUNTERData',
