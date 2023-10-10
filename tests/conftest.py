@@ -10,6 +10,7 @@ from datetime import date
 import calendar
 from random import choice
 import re
+import html
 from sqlalchemy import create_engine
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -443,7 +444,7 @@ def no_SUSHI_data_regex_object():
     yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
 
 
-#Section: Test Helper Function Not Possible in `nolcat.app`
+#Section: Test Helper Functions Not Possible in `nolcat.app`
 def match_direct_SUSHI_harvest_result(number_of_records, caplog):
     """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
@@ -521,6 +522,19 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
     yield list_of_reports
+
+
+def prepare_HTML_page_for_comparison(page_data):
+    """A test helper function changing raw binary data with HTML character references into a Unicode string.
+
+    Args:
+        page_data (bytes): the content of a page returned by a HTTP request
+
+    Yields:
+        str: the page content as a Unicode string
+    """
+    log.info(f"`page_data` is:\n{page_data}")
+    yield html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
 
 
 #Section: Replacement Classes

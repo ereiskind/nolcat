@@ -12,6 +12,7 @@ import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
+from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.ingest_usage import *
 
@@ -59,7 +60,6 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
         headers=header_value,
         data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.data` is:\n{POST_response.data}")
 
     # This is the HTML file of the page the redirect goes to
     with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
@@ -78,7 +78,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.match(rb'Successfully loaded \d* records into the .* relation\.', string=POST_response.data)  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.match(r'Successfully loaded \d* records into the .* relation\.', string=prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
@@ -144,7 +144,6 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.data` is:\n{POST_response.data}")
 
     # This is the HTML file of the page the redirect goes to
     with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
@@ -153,10 +152,9 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    log.info(POST_response.data)
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.search(rb'Successfully loaded \d* records into the database.', string=POST_response.data) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail    #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
+    assert re.search(r'Successfully loaded \d* records into the database.', string=prepare_HTML_page_for_comparison(POST_response.data)) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail    #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
