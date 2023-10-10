@@ -78,7 +78,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert b'Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
-    #TEST: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
+    #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
