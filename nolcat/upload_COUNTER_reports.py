@@ -41,6 +41,7 @@ class UploadCOUNTERReports:
 
         Returns:
             dataframe: COUNTER data ready for normalization
+            #ToDo:: Add list of workbooks and worksheets that couldn't be used in second part of tuple
         """
         '''Known issues with specific stats sources (taken from webpage instructions):
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
@@ -48,6 +49,7 @@ class UploadCOUNTERReports:
         '''
         log.info("Starting `UploadCOUNTERReports.create_dataframe()`.")
         all_dataframes_to_concatenate = []
+        #ToDo:: Create part two tuple list
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
 
 
@@ -60,17 +62,20 @@ class UploadCOUNTERReports:
                 log.debug(f"Successfully loaded the workbook {str(FileStorage_object.filename)}.")
             except Exception as error:
                 log.error(f"Loading the workbook {str(FileStorage_object.filename)} raised the error {error}.")
+                #ToDo:: Add above to part two tuple list
                 continue
             
             try:
                 statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object.filename))[0])  # `findall` always produces a list
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
+                #ToDo:: Add above to part two tuple list
                 continue
 
             for report_type in file.sheetnames:
                 if report_type not in valid_report_types:
                     log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
+                    #ToDo:: Add above to part two tuple list
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
                 log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")  #AboutTo
@@ -445,4 +450,4 @@ class UploadCOUNTERReports:
 
         #Section: Return Dataframe
         log.info(f"Final dataframe:\n{combined_df}\nand dtypes:\n{combined_df.dtypes}")
-        return combined_df
+        return combined_df  #ToDo:: Add part two of tuple
