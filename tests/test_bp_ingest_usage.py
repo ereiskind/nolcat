@@ -144,6 +144,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.data` is:\n{POST_response.data}")
 
     # This is the HTML file of the page the redirect goes to
     with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
