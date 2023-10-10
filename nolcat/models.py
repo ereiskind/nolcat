@@ -498,7 +498,13 @@ class FiscalYears(db.Model):
         
         #Section: Update Data in Database
         df = pd.concat(dfs)
-        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            log.warning(message)
+            all_flash_statements.append(message)
+            return (message, all_flash_statements)
         load_result = load_data_into_database(
             df=df,
             relation='COUNTERData',
@@ -1120,7 +1126,13 @@ class StatisticsSources(db.Model):
             return (df, flash_statements)
         else:
             log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} successfully found {df.shape[1]} records.")
-        df.index += first_new_PK_value('COUNTERData')  #ToDo: Running the method occasionally prompts a duplicate primary key error, but rerunning the call doesn't prompt the error
+        try:
+            df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            log.warning(message)
+            flash_statements.append(message)
+            return (message, flash_statements)
         log.debug(f"The dataframe after adjusting the index:\n{df}")
         load_result = load_data_into_database(
             df=df,
@@ -1545,7 +1557,13 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(df)
             return (df, flash_statements)
         log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
-        df.index += first_new_PK_value('COUNTERData')
+        try:
+            df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            log.warning(message)
+            flash_statements.append(message)
+            return (message, flash_statements)
         load_result = load_data_into_database(
             df=df,
             relation='COUNTERData',

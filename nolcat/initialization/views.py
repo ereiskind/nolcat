@@ -412,7 +412,15 @@ def collect_AUCT_and_historical_COUNTER_data():
             messages_to_flash = []
         else:
             messages_to_flash = [message_to_flash]
-        COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        
+        try:
+            COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            log.warning(message)
+            messages_to_flash.append(message)
+            flash(messages_to_flash)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
         log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
         log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
         '''

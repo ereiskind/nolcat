@@ -72,6 +72,12 @@ General Errors and In-Test Issues
     * From SUSHI: "JSON-like dictionary of <report type> for <statistics source name> couldn't be converted into a dataframe."
     * From workbooks: "Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error <error>."
 
+* Unable to get updated primary key values
+
+  * Warning logging statement
+  * In the function that called ``nolcat.app.first_new_PK_value()``
+  * Structure: "Running the function `first_new_PK_value()` for the relation `<relation>` raised the error <Python exception>."
+
 * **#404** Page not found
 
   * Error logging statement

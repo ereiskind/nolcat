@@ -57,7 +57,15 @@ def upload_COUNTER_reports():
             messages_to_flash = []
         else:
             messages_to_flash = [message_to_flash]
-        df.index += first_new_PK_value('COUNTERData')
+        
+        try:
+            df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = f"Running the function `first_new_PK_value()` for the relation `<relation>` raised the error {error}."
+            log.warning(message)
+            messages_to_flash.append(message)
+            flash(messages_to_flash)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
         log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
         load_result = load_data_into_database(
