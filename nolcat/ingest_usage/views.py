@@ -74,7 +74,7 @@ def upload_COUNTER_reports():
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailed
             messages_to_flash.append(load_result)
         #else:

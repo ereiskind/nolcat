@@ -511,7 +511,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailure
             return (load_result, all_flash_statements)
         #SQLDatabaseLoadSuccess
@@ -1143,7 +1143,7 @@ class StatisticsSources(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             pass #SQLDatabaseLoadFailed
         #SQLDatabaseLoadSuccess
         return (load_result, flash_statements)
@@ -1346,7 +1346,7 @@ class ResourceSources(db.Model):
                 relation='statisticsResourceSources',
                 engine=db.engine,
             )
-            if load_result.startwith("Loading data into the statisticsResourceSources relation raised the error"):
+            if load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):
                 pass  #SQLDatabaseLoadFailed
             pass  #SQLDatabaseLoadSuccess
 
@@ -1573,7 +1573,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startwith("Loading data into the COUNTERData relation raised the error"):
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailed
             return (load_result, flash_statements)
         #SQLDatabaseLoadSuccess
