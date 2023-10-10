@@ -150,6 +150,33 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
 
 
 #Section: Upload and Download Nonstandard Usage File
+@pytest.fixture
+def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
+    """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
+
+    The `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method creates a name for the file in S3 based on class attributes, so a standard fixture for creating and removing the file won't work. This fixture uses the file and class attributes to determine the name of the file the method will create, yields a null value as no data is needed from it, then performs teardown operations using the previously determined file name.
+
+    Args:
+        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+
+    Yields:
+        None
+    """
+    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")
+    log.debug(f"In `remove_file_from_S3()`, the `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}.")
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")
+    yield None
+    try:
+        s3_client.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=PATH_WITHIN_BUCKET + file_name
+        )
+    except botocore.exceptions as error:
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+
+
 @pytest.mark.dependency()
 def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_COUNTER_AUCT_object_before_upload, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Test uploading a file with non-COUNTER usage statistics to S3 and updating the AUCT relation accordingly."""
