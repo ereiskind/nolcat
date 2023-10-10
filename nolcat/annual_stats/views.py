@@ -103,5 +103,5 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
         #ToDo: Get values below for the form submitted
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
+        # log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)

@@ -36,15 +36,15 @@ def view_lists_homepage(list):
         log.error(f"The route function didn't understand the argument `{list}`.")  #404
         return abort(404)
     
-    #ToDo: df = query_database(
-    #ToDo:     query=SQL_query,
-    #ToDo:     engine=db.engine,
-    #ToDo: )
-    #ToDo: if isinstance(df, str):
-    #ToDo:     #HomepageSQLError
-    #ToDo: df = df.astype({dict setting correct dtypes})
-    #ToDo: Add field with links to see details for each record
-    #ToDo: Display the returned dataframe
+    # df = query_database(
+    #     query=SQL_query,
+    #     engine=db.engine,
+    # )
+    # if isinstance(df, str):
+    #     #HomepageSQLError
+    # df = df.astype({dict setting correct dtypes})
+    # Add field with links to see details for each record
+    # Display the returned dataframe
         # https://stackoverflow.com/q/52644035
         # https://stackoverflow.com/q/22180993
     return render_template('view_lists/index.html', title=title)
@@ -63,20 +63,20 @@ def view_list_record(list, PK):
     log.info(f"Starting `view_list_record()` for {list}.")
     #ToDo: form = Write form for adding notes
     if request.method == 'GET':
-        #ToDo: df = query_database(
-        #ToDo:     query=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-        #ToDo:     engine=db.engine,
-        #ToDo: )
+        # df = query_database(
+        #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+        #     engine=db.engine,
+        # )
         #ToDo: df = df.astype({dict setting correct dtypes})
         return render_template('view_lists/page.html')#ToDo:, form=form)
-    #ToDo: elif form.validate_on_submit():
+    # elif form.validate_on_submit():
         #ToDo: Run one of the methods below based on the list type
             # Vendors.add_note()
             # StatisticsSources.add_note()
             # ResourceSources.add_note()
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))
     else:
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
+        # log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)
     
 
@@ -98,27 +98,28 @@ def edit_list_record(list, PK):
             #ToDo: Show page without prefilled values
             return render_template('view_lists/page.html')#ToDo:, form=form)
         #ToDo: if `PK` is in the relation
-            #ToDo: df = query_database(
-            #ToDo:     query=Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
-            #ToDo:     engine=db.engine,
-            #ToDo: )
-            #ToDo: if isinstance(df, str):
-            #ToDo:     flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
-            #ToDo:     return redirect(url_for(view_lists.view_lists_homepage))
-            #ToDo: df = df.astype({dict setting correct dtypes})
+            # df = query_database(
+            #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
+            #     engine=db.engine,
+            # )
+            # if isinstance(df, str):
+            #     flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            #     return redirect(url_for(view_lists.view_lists_homepage))
+            # df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
                 # https://stackoverflow.com/q/35892144
                 # https://stackoverflow.com/q/23712986
                 # https://stackoverflow.com/q/42984453
                 # https://stackoverflow.com/q/28941504
-        #ToDo: return render_template('view_lists/page.html', form=form)
-    #ToDo: elif form.validate_on_submit():
+        # return render_template('view_lists/page.html', form=form)
+    # elif form.validate_on_submit():
         #ToDo: add_access_stop_date()
         #ToDo: remove_access_stop_date()
         #ToDo: change_StatisticsSource()
             #ToDo: Above has a statistics source PK as its argument--provide a drop-down of names of all statistics sources via "if stats source changes, pick new one here" drop-down listing on a resource source details page which triggers this method
         #ToDo: Use `update_database()` as necessary for any other edits
-        #ToDo: return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  #ToDo: Add message flashing about successful upload
+        #ToDo: Add message flashing about successful upload
+        # return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  
     else:
-        #ToDo: log.error(f"`form.errors`: {form.errors}")  #404
+        # log.error(f"`form.errors`: {form.errors}")  #404
         return abort(404)

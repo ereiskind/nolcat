@@ -581,23 +581,23 @@ class Vendors(db.Model):
             dataframe: a filtered copy of the `statisticsSources` relation
         """
         log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
-        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
-        #ToDo: df = query_database(
-        #ToDo:     query=f"""
-        #ToDo:         SELECT
-        #ToDo:             statistics_source_ID,
-        #ToDo:             statistics_source_name,
-        #ToDo:             statistics_source_retrieval_code
-        #ToDo:         FROM statisticsSources
-        #ToDo:         WHERE vendor_ID={vendor_PK};
-        #ToDo:     """,
-        #ToDo:     engine=db.engine,
-        #ToDo:     index='statistics_source_ID',
-        #ToDo: )
-        #ToDo: if isinstance(df, str):
-        #ToDo:     #SQLDataframeReturnError
-        #ToDo: log.debug(f"The result of the query for a list of statistics sources associated with {self.vendor_name}:\n{df}")
-        #ToDo: return df
+        # vendor_PK = the int value that serves as the primary key for the vendor
+        # df = query_database(
+        #     query=f"""
+        #         SELECT
+        #             statistics_source_ID,
+        #             statistics_source_name,
+        #             statistics_source_retrieval_code
+        #         FROM statisticsSources
+        #         WHERE vendor_ID={vendor_PK};
+        #     """,
+        #     engine=db.engine,
+        #     index='statistics_source_ID',
+        # )
+        # if isinstance(df, str):
+        #     #SQLDataframeReturnError
+        # log.debug(f"The result of the query for a list of statistics sources associated with {self.vendor_name}:\n{df}")
+        # return df
         pass
 
 
@@ -609,24 +609,24 @@ class Vendors(db.Model):
             dataframe: a filtered copy of the `resourceSources` relation
         """
         log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
-        #ToDo: vendor_PK = the int value that serves as the primary key for the vendor
-        #ToDo: df = query_database(
-        #ToDo:     query=f"""
-        #ToDo:         SELECT
-        #ToDo:             resource_source_ID,
-        #ToDo:             resource_source_name,
-        #ToDo:             source_in_use,
-        #ToDo:             access_stop_date
-        #ToDo:         FROM resourceSources
-        #ToDo:         WHERE vendor_ID={vendor_PK};
-        #ToDo:     """,
-        #ToDo:     engine=db.engine,
-        #ToDo:     index='resource_source_ID',
-        #ToDo: )
-        #ToDo: if isinstance(df, str):
-        #ToDo:     #SQLDataframeReturnError
-        #ToDo: log.debug(f"The result of the query for list of a resource sources associated with {self.vendor_name}:\n{df}")
-        #ToDo: return df
+        # vendor_PK = the int value that serves as the primary key for the vendor
+        # df = query_database(
+        #     query=f"""
+        #         SELECT
+        #             resource_source_ID,
+        #             resource_source_name,
+        #             source_in_use,
+        #             access_stop_date
+        #         FROM resourceSources
+        #         WHERE vendor_ID={vendor_PK};
+        #     """,
+        #     engine=db.engine,
+        #     index='resource_source_ID',
+        # )
+        # if isinstance(df, str):
+        #     #SQLDataframeReturnError
+        # log.debug(f"The result of the query for list of a resource sources associated with {self.vendor_name}:\n{df}")
+        # return df
         pass
 
 

@@ -473,7 +473,7 @@ def upload_historical_non_COUNTER_usage():
     '''
     form = FormClass()
     if request.method == 'GET':
-        #ToDo: Below directly from `ingest_usage`
+        #Alert: Below directly from `ingest_usage`
         non_COUNTER_files_needed = query_database(
             query=f"""
                 SELECT
