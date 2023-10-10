@@ -59,6 +59,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
         headers=header_value,
         data=form_submissions,  #ToDo: Find a way to make this simulate multiple files
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.data` is:\n{POST_response.data}")
 
     # This is the HTML file of the page the redirect goes to
     with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'ingest_usage', 'templates', 'ingest_usage', 'index.html'), 'br') as HTML_file:
@@ -77,7 +78,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert b'Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation' in POST_response.data  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.match(rb'Usage file for .* uploaded successfully.', string=POST_response.data)  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
