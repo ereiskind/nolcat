@@ -12,6 +12,7 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
+from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.initialization import *
@@ -433,8 +434,8 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    assert str(HTML_file_title) in prepare_HTML_page_for_comparison(POST_response.data)
+    assert str(HTML_file_page_title) in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
@@ -524,8 +525,8 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    assert str(HTML_file_title) in prepare_HTML_page_for_comparison(POST_response.data)
+    assert str(HTML_file_page_title) in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
@@ -610,8 +611,8 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
+    #assert str(HTML_file_title) in prepare_HTML_page_for_comparison(POST_response.data)
+    #assert str(HTML_file_page_title) in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 
