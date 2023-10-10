@@ -103,7 +103,7 @@ File I/O
     * Structure:
 
       * Success: "Successfully loaded the file <name given to file> into the <name of bucket> S3 bucket."
-      * Failure: "Running the function `<function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
+      * Failure: "Running the function `<S3 upload function>()` on <variable on which the function was run> (type <variable on which the function was run>) raised the error <Python exception>."
 
         * If the logging statement isn't final, a statement that another function will be tried is added to the end
 
