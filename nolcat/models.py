@@ -514,7 +514,6 @@ class FiscalYears(db.Model):
         if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailure
             return (load_result, all_flash_statements)
-        #SQLDatabaseLoadSuccess
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'
@@ -1145,7 +1144,6 @@ class StatisticsSources(db.Model):
         )
         if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             pass #SQLDatabaseLoadFailed
-        #SQLDatabaseLoadSuccess
         return (load_result, flash_statements)
 
 
@@ -1348,7 +1346,7 @@ class ResourceSources(db.Model):
             )
             if load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):
                 pass  #SQLDatabaseLoadFailed
-            pass  #SQLDatabaseLoadSuccess
+            return load_result  #ToDo: Format according to return type
 
         else:
             log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
@@ -1576,7 +1574,6 @@ class AnnualUsageCollectionTracking(db.Model):
         if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
             #SQLDatabaseLoadFailed
             return (load_result, flash_statements)
-        #SQLDatabaseLoadSuccess
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
             SET collection_status='Collection complete'

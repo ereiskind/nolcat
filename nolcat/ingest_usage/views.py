@@ -75,10 +75,8 @@ def upload_COUNTER_reports():
             index_field_name='COUNTER_data_ID',
         )
         if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            #SQLDatabaseLoadFailed
-            messages_to_flash.append(load_result)
-        #else:
-            #SQLDatabaseLoadSuccess
+            pass #SQLDatabaseLoadFailed
+        messages_to_flash.append(load_result)
         flash(messages_to_flash)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:

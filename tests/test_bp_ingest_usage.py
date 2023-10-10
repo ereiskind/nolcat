@@ -78,7 +78,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert re.match(rb'Usage file for .* uploaded successfully\.', string=POST_response.data)  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.match(rb'Successfully loaded \d* records into the .* relation\.', string=POST_response.data)  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 

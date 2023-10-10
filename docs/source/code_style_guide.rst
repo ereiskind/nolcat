@@ -263,7 +263,7 @@ MySQL I/O
   * In the function that called ``load_data_into_database()``
   * Structure:
 
-    * Success: **#SQLDatabaseLoadSuccess** Return value that will indicate to "view_lists.views" that the record was updated
+    * Success: ``load_data_into_database()`` successful return value
     * Failure: **#SQLDatabaseLoadFailed** Return value that will indicate to "view_lists.views" that the attempted change failed
 
 * Indication of query result in calling function
