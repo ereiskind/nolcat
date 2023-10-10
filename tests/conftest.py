@@ -446,7 +446,7 @@ def no_SUSHI_data_regex_object():
 
 #Section: Test Helper Functions Not Possible in `nolcat.app`
 def match_direct_SUSHI_harvest_result(number_of_records, caplog):
-    """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
+    """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
 
@@ -454,7 +454,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         number_of_records (int): the number of records in the SUSHI pull
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
-    Yields:
+    Returns:
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -493,18 +493,18 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
     else:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
-    yield df
+    return df
 
 
 def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
-    """A test helper function generating a list of all the customizable reports offered by the given statistics source.
+    """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
 
     Args:
         statistics_source_name (str): the name of the statistics source
         URL (str): the base URL for the SUSHI API call
         credentials (dict): the SUSHI credentials for the API call
     
-    Yields:
+    Returns:
         list: the uppercase abbreviation of all the customizable COUNTER R5 reports offered by the given statistics source
     """
     response = SUSHICallAndResponse(
@@ -521,20 +521,20 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
             if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
-    yield list_of_reports
+    return list_of_reports
 
 
 def prepare_HTML_page_for_comparison(page_data):
-    """A test helper function changing raw binary data with HTML character references into a Unicode string.
+    """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
 
     Args:
         page_data (bytes): the content of a page returned by a HTTP request
 
-    Yields:
+    Returns:
         str: the page content as a Unicode string
     """
     log.info(f"`page_data` is:\n{page_data}")
-    yield html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
+    return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
 
 
 #Section: Replacement Classes
