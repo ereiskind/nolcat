@@ -83,7 +83,7 @@ for row in sheet.rows:
         
         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
         try:
-            if re.match(r'^[Cc]omponent', field_name.value):
+            if re.fullmatch(r'^[Cc]omponent', field_name.value):
                 continue  # The rarely used `Component` subtype fields aren't captured by this program
         except TypeError:
             pass

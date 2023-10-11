@@ -117,7 +117,7 @@ class UploadCOUNTERReports:
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
-                            if re.match(r'^[Cc]omponent', field_name):
+                            if re.fullmatch(r'^[Cc]omponent', field_name):
                                 continue  # The rarely used `Component` subtype fields aren't captured by this program
                         except TypeError:
                             pass
@@ -276,7 +276,7 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe field names with statistics source ID and without reporting period: {df_field_names}")
 
                 #Subsection: Remove Total Rows
-                if re.match(r'PR1?', string=report_type) is None:  # `re.match` returns `None` if there isn't a match, so this selects everything but platform reports in both R4 and R5
+                if re.fullmatch(r'PR1?', string=report_type) is None:
                     number_of_rows_with_totals = df.shape[1]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
@@ -285,7 +285,7 @@ class UploadCOUNTERReports:
                     log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
-                if re.match(r'TR[1|2]', string=report_type) is not None:  # `re.match` returns `None` if there isn't a match, so this selects all title reports
+                if re.fullmatch(r'TR[1|2]', string=report_type) is not None:
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
                     df['print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
                     df['online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
