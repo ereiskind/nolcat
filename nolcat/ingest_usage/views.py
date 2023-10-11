@@ -131,7 +131,10 @@ def harvest_SUSHI_statistics():
         try:
             result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
-            flash(flash_messages)
+            if [item for sublist in flash_messages.values() for item in sublist]:
+                flash(flash_messages)
+            else:  # So success message shows instead of a lack of error messages
+                flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"The SUSHI call raised {error}."
