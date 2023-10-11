@@ -200,7 +200,7 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
-        if not re.fullmatch(r'Successfully loaded the file \d*_\d*\.\w{3,4} into the .* S3 bucket and successfully preformed the update `.*`\.', string=response):  # Inverted to remain consistent with rest of program
+        if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
             flash(response)

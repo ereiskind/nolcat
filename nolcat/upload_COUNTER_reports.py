@@ -66,7 +66,7 @@ class UploadCOUNTERReports:
                 continue
             
             try:
-                statistics_source_ID = int(re.findall(r'(\d*)_.*\.xlsx', string=str(FileStorage_object.filename))[0])  # `findall` always produces a list
+                statistics_source_ID = int(re.search(r'(\d*)_.*\.xlsx', str(FileStorage_object.filename)))
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 #ToDo:: Add above to part two tuple list
@@ -117,13 +117,13 @@ class UploadCOUNTERReports:
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
-                            if re.fullmatch(r'^[Cc]omponent', field_name):
+                            if re.fullmatch(r'[Cc]omponent', field_name):
                                 continue  # The rarely used `Component` subtype fields aren't captured by this program
                         except TypeError:
                             pass
 
                         try:  
-                            date_as_string = re.findall(r'([A-Z][a-z]{2})\-(\d{4})', string=field_name)
+                            date_as_string = re.findall(r'([A-Z][a-z]{2})\-(\d{4})', field_name)
                         except TypeError:
                             date_as_string = False
                         
@@ -276,7 +276,7 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe field names with statistics source ID and without reporting period: {df_field_names}")
 
                 #Subsection: Remove Total Rows
-                if re.fullmatch(r'PR1?', string=report_type) is None:
+                if re.fullmatch(r'PR1?', report_type) is None:
                     number_of_rows_with_totals = df.shape[1]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
@@ -285,7 +285,7 @@ class UploadCOUNTERReports:
                     log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
-                if re.fullmatch(r'TR[1|2]', string=report_type) is not None:
+                if re.fullmatch(r'TR[1|2]', report_type):
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
                     df['print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
                     df['online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')

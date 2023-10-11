@@ -523,7 +523,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             all_flash_statements.append(message)
@@ -809,7 +809,7 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
+        if isinstance(SUSHI_info['URL'], str) and re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
@@ -863,7 +863,7 @@ class StatisticsSources(db.Model):
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
                         for report_detail_keys, report_detail_values in report_details_dict.items():
-                            if re.fullmatch(r'^[Rr]eport_[Ii][Dd]', report_detail_keys):
+                            if isinstance(report_detail_keys, str) and re.fullmatch(r'[Rr]eport_[Ii][Dd]', report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             elif isinstance(SUSHI_reports_response, str):
@@ -928,10 +928,10 @@ class StatisticsSources(db.Model):
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
-                elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', string=SUSHI_data_response):
+                elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
                     log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.*")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
@@ -967,7 +967,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', string=subset_of_months_to_harvest):
+        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest):
             message = f"When attempting to check if the data was already in the database, t{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
@@ -985,12 +985,12 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', string=SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', string=SUSHI_data_response):
+                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):
                     log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.*")
                     no_usage_returned_count += 1
                     log.warning(SUSHI_data_response)
@@ -1015,7 +1015,7 @@ class StatisticsSources(db.Model):
                         temp_file_path,
                         file_name,
                     )
-                    if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
                         message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
                         log.critical(message)
                     else:
@@ -1051,7 +1051,7 @@ class StatisticsSources(db.Model):
                     temp_file_path,
                     file_name,
                 )
-                if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
                     message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
                     log.critical(message)
                 else:
@@ -1261,7 +1261,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         pass  #SQLDatabaseUpdateSuccess
@@ -1283,7 +1283,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         pass  #SQLDatabaseUpdateSuccess
@@ -1310,7 +1310,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         
@@ -1358,7 +1358,7 @@ class ResourceSources(db.Model):
                 """,
                 engine=db.engine,
             )
-            if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
                 #ToDo: log.warning()
                 pass  #SQLDatabaseUpdateFailed
             pass  #SQLDatabaseUpdateSuccess
@@ -1583,7 +1583,8 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+            #SQLDatabaseUpdateFailed
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             flash_statements.append(message)
@@ -1617,7 +1618,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file,
             file_name,
         )
-        if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=logging_message) is None:
+        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
             message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
             log.critical(message)
             return message
@@ -1633,7 +1634,8 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if re.findall(r'Running the update statement `.*` raised the error .*\.', string=update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+            #SQLDatabaseUpdateFailed
             single_line_update_statement = update_statement.replace('\n', ' ')
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)

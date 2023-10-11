@@ -97,7 +97,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r'https?://.*\.\w{3}(/.*)?/', string=credentials['URL'])
+    assert re.fullmatch(r'https?://.*\.\w{3}(/.*)?/', credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -225,7 +225,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if re.search(r'returned no( usage)? data', string=SUSHI_response):
+    if re.search(r'returned no( usage)? data', SUSHI_response):
         pytest.skip("The test is being skipped because the API call returned no data.")  # Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
@@ -280,7 +280,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     )
     SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_response, tuple)
-    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', string=SUSHI_response[0])
+    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', SUSHI_response[0])
     assert isinstance(SUSHI_response[1], list)
     assert len(SUSHI_response[1]) == 1
 
@@ -341,7 +341,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
     method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source \w* successfully found (\d*) records.', string=method_response[0])  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', method_response[0])  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
