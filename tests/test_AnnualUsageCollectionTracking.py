@@ -112,9 +112,11 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        method_response = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* for FY \d{4} successfully found (\d*) records.', string=method_response[0])
-    assert method_response_match_object  # The test fails at this point because a failing condition here raises errors below
+        logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
+    log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* for FY \d{4} successfully found (\d*) records.', string=logging_statement)
+    assert method_response_match_object  # The test fails at this point because a failing condition here raises errors below #TEST: assert None
+    assert isinstance(flash_statements, list)
 
     database_update_check = query_database(
         query=f"SELECT collection_status FROM annualUsageCollectionTracking WHERE annualUsageCollectionTracking.AUCT_statistics_source={AUCT_fixture_for_SUSHI.AUCT_statistics_source} AND annualUsageCollectionTracking.AUCT_fiscal_year={AUCT_fixture_for_SUSHI.AUCT_fiscal_year};",
