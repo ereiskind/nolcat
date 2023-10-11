@@ -318,7 +318,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
     """
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     record = query_database(
-        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
+        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  #Test: On 2023-10-11, noticed AUCT records (7,0) and (8,0) have a `usage_file_path` value of '0' despite being null values in the SQL file
         engine=engine,
         # Conversion to class object easier when primary keys stay as standard fields
     )
