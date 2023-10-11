@@ -67,7 +67,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     caplog.set_level(logging.ERROR, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
 
     record = query_database(
-        record=f"""
+        query=f"""
             SELECT
                 fiscalYears.start_date,
                 fiscalYears.end_date,
