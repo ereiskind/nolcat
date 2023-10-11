@@ -502,12 +502,15 @@ def format_list_for_stdout(stdout_list):
     """Changes a list into a string which places each item of the list on its own line.
 
     Args:
-        stdout_list (list): a list for pretty printing to stdout
+        stdout_list (list or generator): a list for pretty printing to stdout
     
     Returns:
         str: the list contents with a line break between each item
     """
-    return '\n'.join(stdout_list)
+    if isinstance(stdout_list, list):
+        return '\n'.join(stdout_list)
+    else:
+        return '\n'.join([str(file_path) for file_path in stdout_list])
 
 
 def check_if_data_already_in_COUNTERData(df):

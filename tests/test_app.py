@@ -317,9 +317,14 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
-def test_format_list_for_stdout():
+def test_format_list_for_stdout_with_list():
     """Test pretty printing a list by adding a line break between each item."""
     assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
+
+
+def  test_format_list_for_stdout_with_generator():
+    """Test pretty printing a list created by a generator object by adding a line break between each item."""
+    assert format_list_for_stdout(TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests') == f"{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2020.xlsx"
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
