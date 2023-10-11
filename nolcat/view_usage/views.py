@@ -54,6 +54,8 @@ def run_custom_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+        log.debug(f"The file {file_path}, which is about to be downloaded, is closed: {file_path.closed}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
         log.error(f"`form.errors`: {form.errors}")  #404
@@ -195,6 +197,8 @@ def use_predefined_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+        log.debug(f"The file {file_path}, which is about to be downloaded, is closed: {file_path.closed}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
         log.error(f"`form.errors`: {form.errors}")  #404
