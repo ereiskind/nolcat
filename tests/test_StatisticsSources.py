@@ -227,8 +227,8 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    #ToDo: if SUSHI_response contains "Call to SUSHI code \d* for reports/\w{2} returned no usage data, which may or may not be appropriate.", skip test
-    #Test: Many statistics source providers don't have usage going back this far
+    if re.search(r'returned no( usage)? data', string=SUSHI_response):
+        pytest.skip("The test is being skipped because the API call returned no data.")  # Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
