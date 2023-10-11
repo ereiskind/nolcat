@@ -228,8 +228,9 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if isinstance(SUSHI_response, str) and re.search(r'returned no( usage)? data', SUSHI_response):
+    if isinstance(SUSHI_response, str) and re.search(r'returned no( usage)? data', SUSHI_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
         pytest.skip("The test is being skipped because the API call returned no data.")  # Many statistics source providers don't have usage going back this far
+    #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
     assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
     assert pd.concat([
         SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
