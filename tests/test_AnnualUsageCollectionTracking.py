@@ -183,23 +183,39 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self.upload_nonstandard_usage_file()`
     caplog.set_level(logging.INFO, logger='botocore')
 
+    #Section: Make Function Call
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)
-    upload_result = re.fullmatch(r'Successfully uploaded `(.*)` to S3 and updated `annualUsageCollectionTracking.usage_file_path` with complete S3 file name.', string=upload_result)
-    log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
-    log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
 
+    #Section: Check Results with Assert Statements
+    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    
+    #Subsection: Check Function Return Value
+    log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
+    upload_result = re.fullmatch(
+        r'Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `.*`\.', string=upload_result)
+    try:
+        log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp  #TEST: AttributeError: 'NoneType' object has no attribute 'group'
+        log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
+    except AttributeError:
+        pass
+    assert upload_result is not None
+    # assert upload_result.group(1) == file_name
+
+    #Subsection: Check File Upload to S3
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
-        Prefix=f"{PATH_WITHIN_BUCKET}",
+        Prefix=PATH_WITHIN_BUCKET,
     )
-    log.info(f"`list_objects_response`:\n{list_objects_response}")  #temp
+    log.debug(f"Raw list of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{list_objects_response} (type {type(list_objects_response)}).")
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
-    log.info(f"`bucket_contents`:\n{bucket_contents}")  #temp
-
+    bucket_contents = [file_name.replace(PATH_WITHIN_BUCKET, "") for file_name in bucket_contents]
+    log.info(f"List of `{BUCKET_NAME}/{PATH_WITHIN_BUCKET}` contents:\n{format_list_for_stdout(bucket_contents)}")
+    assert file_name in bucket_contents
+    
+    #Subsection: Check Database Update
     usage_file_path_in_database = query_database(
         query=f"SELECT usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
@@ -208,10 +224,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
         pytest.skip(f"Unable to run test because it relied on t{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
     log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")
-
-    assert upload_result is not None
-    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
-    #ToDo: Add `assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" == usage_file_path_in_database` when database update and delete in method is completed
+    assert file_name == usage_file_path_in_database
 
 
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
