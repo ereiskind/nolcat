@@ -195,16 +195,19 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
     with client:
-        SUSHI_response = StatisticsSources_fixture._harvest_single_report(  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
+        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
             {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             begin_date,
             end_date,
         )
-    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
+        pytest.skip("The test is being skipped because the API call returned no data.")
+    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(flash_message_list, list)
+    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency()
