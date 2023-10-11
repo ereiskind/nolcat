@@ -325,6 +325,7 @@ def test_format_list_for_stdout_with_list():
 def test_format_list_for_stdout_with_generator():
     """Test pretty printing a list created by a generator object by adding a line break between each item."""
     file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
+    log.info(format_list_for_stdout(file_path.iterdir()))
     assert format_list_for_stdout(file_path.iterdir()) == f"{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2020.xlsx"
 
 
