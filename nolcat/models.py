@@ -523,7 +523,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             all_flash_statements.append(message)
@@ -967,7 +967,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest):
+        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest, flags=re.DOTALL):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
@@ -1261,7 +1261,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         pass  #SQLDatabaseUpdateSuccess
@@ -1283,7 +1283,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         pass  #SQLDatabaseUpdateSuccess
@@ -1310,7 +1310,7 @@ class ResourceSources(db.Model):
             """,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #ToDo: log.warning()
             pass  #SQLDatabaseUpdateFailed
         
@@ -1358,7 +1358,7 @@ class ResourceSources(db.Model):
                 """,
                 engine=db.engine,
             )
-            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
                 #ToDo: log.warning()
                 pass  #SQLDatabaseUpdateFailed
             pass  #SQLDatabaseUpdateSuccess
@@ -1583,7 +1583,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #SQLDatabaseUpdateFailed
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
@@ -1634,7 +1634,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #SQLDatabaseUpdateFailed
             single_line_update_statement = update_statement.replace('\n', ' ') #ToDo:: Not working
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"

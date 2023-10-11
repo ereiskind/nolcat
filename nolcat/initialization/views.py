@@ -343,7 +343,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                         update_statement=f"Truncate {relation};",
                         engine=db.engine,
                     )
-                    if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
+                    if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
                         message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
                         log.critical(message)
                         flash(message)
