@@ -343,7 +343,7 @@ def test_format_list_for_stdout_with_generator():
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2020.xlsx" in result
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2019.xlsx" in result
     assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2020.xlsx" in result
-    assert len() == 14
+    assert len(result.split('\n')) == 14
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
