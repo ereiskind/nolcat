@@ -221,20 +221,21 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()`
     with client:
-        SUSHI_response = StatisticsSources_fixture._harvest_single_report(
+        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_single_report(
             choice(reports_offered_by_StatisticsSource_fixture),
             SUSHI_credentials_fixture['URL'],
             {k:v for (k, v) in SUSHI_credentials_fixture.items() if k != "URL"},
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if isinstance(SUSHI_response, str) and re.search(r'returned no( usage)? data', SUSHI_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
+    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
         pytest.skip("The test is being skipped because the API call returned no data.")  # Many statistics source providers don't have usage going back this far
     #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
-    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
+    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(flash_message_list, list)
     assert pd.concat([
-        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
-        SUSHI_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
+        SUSHI_data_response['usage_date'].eq(pd.Timestamp(2020, 7, 1)),
+        SUSHI_data_response['usage_date'].eq(pd.Timestamp(2020, 8, 1)),
     ], axis='columns').any(axis='columns').all()
 
 
@@ -247,10 +248,11 @@ def test_harvest_R5_SUSHI(client, StatisticsSources_fixture, most_recent_month_w
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()`
     with client:
-        SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
-    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+        SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(most_recent_month_with_usage[0], most_recent_month_with_usage[1])
+    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(flash_message_list, dict)
+    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -266,10 +268,11 @@ def test_harvest_R5_SUSHI_with_report_to_harvest(StatisticsSources_fixture, most
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
-    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
-    assert isinstance(SUSHI_response, pd.core.frame.DataFrame)
-    assert SUSHI_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
-    assert SUSHI_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(flash_message_list, dict)
+    assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
+    assert SUSHI_data_response['report_creation_date'].map(lambda dt: dt.strftime('%Y-%m-%d')).eq(datetime.utcnow().strftime('%Y-%m-%d')).all()  # Inconsistencies in timezones and UTC application among vendors mean time cannot be used to confirm the recency of an API call response
 
 
 @pytest.mark.dependency(depends=['test_harvest_single_report'])
@@ -282,11 +285,11 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
         end_date.month,
         calendar.monthrange(end_date.year, end_date.month)[1],
     )
-    SUSHI_response = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
-    assert isinstance(SUSHI_response, tuple)
-    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', SUSHI_response[0])
-    assert isinstance(SUSHI_response[1], list)
-    assert len(SUSHI_response[1]) == 1
+    SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
+    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(flash_message_list, dict)
+    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', SUSHI_data_response)
+    assert len(flash_message_list) == 1
 
 
 #Subsection: Test `StatisticsSources.collect_usage_statistics()`
@@ -324,7 +327,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
         caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
 
     Yields:
-        dataframe: a dataframe containing all of the R5 COUNTER data
+        tuple: a dataframe containing all of the R5 COUNTER data; a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
     """
     caplog.set_level(logging.ERROR, logger='nolcat.SUSHI_call_and_response')  # For `make_SUSHI_call()`
     caplog.set_level(logging.ERROR, logger='nolcat.app')  # For `upload_file_to_S3_bucket()` called in `SUSHICallAndResponse.make_SUSHI_call()` and `self._harvest_single_report()`
@@ -344,18 +347,19 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
-    method_response = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', method_response[0])  #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
+    SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)
+    assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
     try:
-        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
         #TEST: Test is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
         r1 = records_loaded_by_method.reset_index()
-        r2 = harvest_R5_SUSHI_result.reset_index()
+        r2 = harvest_R5_SUSHI_result[0].reset_index()
         log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
-        s2 = harvest_R5_SUSHI_result.sort_values(
+        s2 = harvest_R5_SUSHI_result[0].sort_values(
             by=records_loaded_by_method.columns.to_list(),
             ignore_index=True,
         )
@@ -364,10 +368,12 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
             ignore_index=True,
         )
         log.info(f"Differences after sorting by all fields:\n{s1.compare(s2[s1.columns.to_list()])}")
-    except:
+    except Exception as error:
+        log.info(f"Performing dataframe comparisons raised the error {error}.")
         log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
-        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
+        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result[0].index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+
 
 #Section: Test `StatisticsSources.add_note()`
 def test_add_note():
