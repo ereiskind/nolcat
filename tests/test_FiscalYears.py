@@ -92,25 +92,39 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record, caplog):
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
-    
-    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record is added to the `fiscalYears` relation and used for the method.
-    """
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    FY_instance, FY_df = FiscalYears_object_and_record
+@pytest.fixture
+def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, caplog):
+    """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
-    #Section: Update Relation and Run Method
-    load_data_into_database(
-        df=FY_df,
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        FiscalYears_object_and_record (tuple): a FiscalYears object; a single-record dataframe for the fiscalYears relation corresponding to that object
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    
+    Yields:
+        None
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
+    method_result = load_data_into_database(
+        df=FiscalYears_object_and_record[1],
         relation='fiscalYears',
         engine=engine,
         index_field_name='fiscal_year_ID',
     )
+    if isinstance(method_result, str) and re.fullmatch(r'Loading data into the .* relation raised the error .*\.', method_result):
+        pytest.skip(f"Unable to create fixture because it relied on {method_result[0].lower()}{method_result[1:].replace(' raised', ', which raised')}")
+    yield None
+
+
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record, caplog):
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    #Section: Call Method
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
-    if "error" in method_result:  # If this is true,  pass
-        assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
+        method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+    if isinstance(method_result, str) and re.search(r' raised the error .*\.$', method_result):
+        assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
     retrieved_data = query_database(
@@ -239,7 +253,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    assert method_result == "Successfully loaded 10 AUCT records for FY 2023 into the database."
+    assert method_result == "Successfully loaded 10 records into the annualUsageCollectionTracking relation."
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 

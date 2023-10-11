@@ -264,7 +264,11 @@ MySQL I/O
   * Structure:
 
     * Success: ``load_data_into_database()`` successful return value
-    * Failure: **#SQLDatabaseLoadFailed** Return value that will indicate to "view_lists.views" that the attempted change failed
+    * Failure: 
+
+      * **#SQLDatabaseLoadFailed** Return value that will indicate to "view_lists.views" that the attempted change failed
+      * Fixture function: "Unable to create fixture because it relied on <slightly modified error message>" in ``pytest.skip()``
+      * Test function: "Unable to run test because it relied on <slightly modified error message>" in ``pytest.skip()``
 
 * Indication of query result in calling function
 
