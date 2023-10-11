@@ -66,7 +66,7 @@ class UploadCOUNTERReports:
                 continue
             
             try:
-                statistics_source_ID = int(re.search(r'(\d*)_.*\.xlsx', str(FileStorage_object.filename)))
+                statistics_source_ID = int(re.search(r'(\d*)_.*\.xlsx', str(FileStorage_object.filename)).group(1))
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
                 #ToDo:: Add above to part two tuple list
