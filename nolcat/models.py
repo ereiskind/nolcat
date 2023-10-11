@@ -1667,7 +1667,8 @@ class AnnualUsageCollectionTracking(db.Model):
             Filename=self.usage_file_path,
         )
         if self.usage_file_path in [str(p.name) for p in TOP_NOLCAT_DIRECTORY.iterdir()]:
-            TOP_NOLCAT_DIRECTORY / self.usage_file_path.rename(file_download_path)
+            temp_usage_file_path = TOP_NOLCAT_DIRECTORY / self.usage_file_path  # Temp variable used because the `rename()` method used below just executes on the string that should be the final component of the path
+            temp_usage_file_path.rename(file_download_path)
             log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
             return file_download_path
         else:
