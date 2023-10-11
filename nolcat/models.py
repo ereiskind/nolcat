@@ -1636,7 +1636,7 @@ class AnnualUsageCollectionTracking(db.Model):
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result):
             #SQLDatabaseUpdateFailed
-            single_line_update_statement = update_statement.replace('\n', ' ')
+            single_line_update_statement = update_statement.replace('\n', ' ') #ToDo:: Not working
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)
             return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"
