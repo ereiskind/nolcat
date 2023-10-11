@@ -323,10 +323,27 @@ def test_format_list_for_stdout_with_list():
 
 
 def test_format_list_for_stdout_with_generator():
-    """Test pretty printing a list created by a generator object by adding a line break between each item."""
+    """Test pretty printing a list created by a generator object by adding a line break between each item.
+    
+    The `file_path` variable is created because using the `iterdir()` method on the end of that file path won't work; the method just executes on the string that should be the final component of the path. The assert statements, which look for every file that should be in the created string and then check that there are only that many items in the string, is used to compensate for `iterdir()` not outputting the files in an exact order.
+    """
     file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
-    log.info(format_list_for_stdout(file_path.iterdir()))
-    assert format_list_for_stdout(file_path.iterdir()) == f"{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\0_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\1_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2017.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2018.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\2_2020.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2019.xlsx\n{TOP_NOLCAT_DIRECTORY}\\tests\\bin\\COUNTER_workbooks_for_tests\\3_2020.xlsx"
+    result = format_list_for_stdout(file_path.iterdir())
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2017.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2018.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2019.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2020.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2017.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2018.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2019.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2020.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2017.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2018.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2019.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2020.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2019.xlsx" in result
+    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2020.xlsx" in result
+    assert len() == 14
 
 
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
