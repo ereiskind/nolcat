@@ -154,7 +154,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     assert POST_response.status == "200 OK"
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
-    assert re.search(r'Successfully loaded \d* records into the database.', string=prepare_HTML_page_for_comparison(POST_response.data)) is not None   # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail    #TEST: Test fails at this point because `nolcat.models` isn't adjusted to accept tuples from SUSHI call class
+    assert re.search(r'Successfully loaded \d* records into the .* relation\.', string=prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
