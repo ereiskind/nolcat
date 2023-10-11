@@ -300,7 +300,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(f"The result of the query for the AUCT Cartesian product dataframe:\n{df}")
 
@@ -487,7 +487,7 @@ def upload_historical_non_COUNTER_usage():
             engine=db.engine,
         )
         if isinstance(non_COUNTER_files_needed, str):
-            flash(f"Unable to load requested page because it relied on t{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('homepage'))
         #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
         return render_template('initialization/initial-data-upload-4.html', form=form)
@@ -499,7 +499,7 @@ def upload_historical_non_COUNTER_usage():
                 engine=db.engine,
             )
             if isinstance(df, str):
-                message = f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}"  #ToDo: Edit language, since page isn't being loaded here
+                message = f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}"  #ToDo: Edit language, since page isn't being loaded here
                 log.error(message)
                 #ToDo: Add `message` to error message list in some form
                 continue

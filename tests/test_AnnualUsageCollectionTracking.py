@@ -30,7 +30,7 @@ def AUCT_fixture_for_SUSHI(engine):
         engine=engine,
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -85,7 +85,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         engine=engine,
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
@@ -121,7 +121,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         engine=engine,
     )
     if isinstance(database_update_check, str):
-        pytest.skip(f"Unable to run test because it relied on t{database_update_check[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {database_update_check[0].lower()}{database_update_check[1:].replace(' raised', ', which raised')}")
     database_update_check = database_update_check.iloc[0][0]
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
@@ -220,7 +220,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
         engine=engine,
     )
     if isinstance(usage_file_path_in_database, str):
-        pytest.skip(f"Unable to run test because it relied on t{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {usage_file_path_in_database[0].lower()}{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
     log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")
     assert file_name == usage_file_path_in_database

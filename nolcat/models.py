@@ -142,7 +142,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"
             log.warning(message)
             return message
         else:
@@ -158,7 +158,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"
             log.warning(message)
             return message
         else:
@@ -174,7 +174,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_J1_df, str):
-            message = f"Unable to return requested sum because it relied on t{TR_J1_df[1:]}"
+            message = f"Unable to return requested sum because it relied on {TR_J1_df[0].lower()}{TR_J1_df[1:]}"
             log.warning(message)
             return message
         else:
@@ -204,7 +204,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
             log.warning(message)
             return message
         ACRL_63 = df.iloc[0][0]
@@ -232,7 +232,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on t{TR_B1_df[1:]}"
+            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"
             log.warning(message)
             return message
         else:
@@ -248,7 +248,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on t{IR_M1_df[1:]}"
+            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"
             log.warning(message)
             return message
         else:
@@ -278,7 +278,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
             log.warning(message)
             return message
         ACRL_61b = df.iloc[0][0]
@@ -306,7 +306,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
             log.warning(message)
             return message
         ARL_18= df.iloc[0][0]
@@ -334,7 +334,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
             log.warning(message)
             return message
         ARL_19= df.iloc[0][0]
@@ -362,7 +362,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on t{df[1:]}"
+            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
             log.warning(message)
             return message
         ARL_20= df.iloc[0][0]
@@ -485,7 +485,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
             if isinstance(statistics_source, str):
-                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on t{statistics_source[1:].replace(' raised', ', which raised')}")
+                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on {statistics_source[0].lower()}{statistics_source[1:].replace(' raised', ', which raised')}")
                 continue
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             for statement in flash_statements:
@@ -527,7 +527,7 @@ class FiscalYears(db.Model):
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             all_flash_statements.append(message)
-            return (f"{load_result[:-1]}, but u{message[1:]}", all_flash_statements)
+            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", all_flash_statements)
         return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
 
 
@@ -968,7 +968,7 @@ class StatisticsSources(db.Model):
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
         if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest):
-            message = f"When attempting to check if the data was already in the database, t{subset_of_months_to_harvest[1:]}"
+            message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
             log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")  #AboutTo
@@ -1016,7 +1016,7 @@ class StatisticsSources(db.Model):
                         file_name,
                     )
                     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
                         log.critical(message)
                     else:
                         message = logging_message
@@ -1052,7 +1052,7 @@ class StatisticsSources(db.Model):
                     file_name,
                 )
                 if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
                     log.critical(message)
                 else:
                     message = logging_message
@@ -1588,7 +1588,7 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
             log.warning(message)
             flash_statements.append(message)
-            return (f"{load_result[:-1]}, but u{message[1:]}", flash_statements)
+            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", flash_statements)
         return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
 
 
@@ -1619,7 +1619,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file_name,
         )
         if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-            message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+            message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
             log.critical(message)
             return message
         log.debug(logging_message)
@@ -1639,8 +1639,8 @@ class AnnualUsageCollectionTracking(db.Model):
             single_line_update_statement = update_statement.replace('\n', ' ')
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)
-            return f"{logging_message[:-1]}, but u{message[1:]}"
-        message = f"{logging_message[:-1]} and s{update_result[1:]}"
+            return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"
+        message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
         log.debug(message)
         return message
     

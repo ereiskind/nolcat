@@ -77,7 +77,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             engine=engine,
         )
         if isinstance(query_result, str):
-            pytest.skip(f"Unable to run test because it relied on t{query_result[1:].replace(' raised', ', which raised')}")
+            pytest.skip(f"Unable to run test because it relied on {query_result[0].lower()}{query_result[1:].replace(' raised', ', which raised')}")
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     

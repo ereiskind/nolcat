@@ -119,7 +119,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     if isinstance(retrieved_data, str):
-        pytest.skip(f"Unable to run test because it relied on t{retrieved_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],

@@ -43,7 +43,7 @@ def run_custom_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('view_usage.view_usage_homepage'))
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
@@ -184,7 +184,7 @@ def use_predefined_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
@@ -231,7 +231,7 @@ def download_non_COUNTER_usage():
             engine=db.engine,
         )
         if isinstance(file_download_options, str):
-            flash(f"Unable to load requested page because it relied on t{file_download_options[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {file_download_options[0].lower()}{file_download_options[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)

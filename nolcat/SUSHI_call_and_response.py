@@ -95,11 +95,11 @@ class SUSHICallAndResponse:
             messages_to_flash = [message]
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            if re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', string=flash_message) is None:
-                message = f"{message[:-1]}, so the program attempted u{flash_message[1:].replace(' failed', ', which failed')}"
+            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
+                message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
-            return (f"{message[:-1]}, so the program s{flash_message[1:]}", messages_to_flash)
+            return (f"{message[:-1]}, so the program {flash_message[0].lower()}{flash_message[1:]}", messages_to_flash)
         
         if isinstance(API_response, Exception):
             message = f"Calling the `_convert_Response_to_JSON()` method raised the Python error {str(API_response)}."
@@ -107,10 +107,10 @@ class SUSHICallAndResponse:
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
             if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
-                message = f"{message[:-1]}, so the program attempted u{flash_message[1:].replace(' failed', ', which failed')}"
+                message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
-            return (f"{message[:-1]}, so the program s{flash_message[1:]}", messages_to_flash)
+            return (f"{message[:-1]}, so the program {flash_message[0].lower()}{flash_message[1:]}", messages_to_flash)
         log.debug(f"`_convert_Response_to_JSON()` returned an `API_response` of type {type(API_response)}.")
 
         #Section: Check for SUSHI Error Codes
@@ -410,7 +410,7 @@ class SUSHICallAndResponse:
             S3_file_name,
         )
         if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
             log.critical(message)
         else:
             message = logging_message

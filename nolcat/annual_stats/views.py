@@ -55,7 +55,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
-            flash(f"Unable to load requested page because it relied on t{fiscal_year_details[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {fiscal_year_details[0].lower()}{fiscal_year_details[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
@@ -65,7 +65,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             index='AUCT_statistics_source',
         )
         if isinstance(fiscal_year_reporting, str):
-            flash(f"Unable to load requested page because it relied on t{fiscal_year_reporting[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {fiscal_year_reporting[0].lower()}{fiscal_year_reporting[1:].replace(' raised', ', which raised')}")
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display

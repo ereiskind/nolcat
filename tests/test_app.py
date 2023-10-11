@@ -95,7 +95,7 @@ def test_query_database(engine, vendors_relation):
         index='vendor_ID',
     )
     if isinstance(retrieved_vendors_data, str):
-        pytest.skip(f"Unable to run test because it relied on t{retrieved_vendors_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {retrieved_vendors_data[0].lower()}{retrieved_vendors_data[1:].replace(' raised', ', which raised')}")
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
@@ -136,7 +136,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     if isinstance(retrieved_data, str):
-        pytest.skip(f"Unable to run test because it relied on t{retrieved_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
@@ -271,7 +271,7 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-        log.warning(f"Uploading the file test_{path_to_sample_file.name} to S3 in `tests.test_app.test_upload_file_to_S3_bucket()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
+        log.warning(f"Uploading the file test_{path_to_sample_file.name} to S3 in `tests.test_app.test_upload_file_to_S3_bucket()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     log.debug(logging_message)
     list_objects_response = s3_client.list_objects_v2(
@@ -368,7 +368,7 @@ def test_update_database(engine, updated_vendors_relation):
         index='vendor_ID',
     )
     if isinstance(retrieved_updated_vendors_data, str):
-        pytest.skip(f"Unable to run test because it relied on t{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {retrieved_updated_vendors_data[0].lower()}{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
     assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."

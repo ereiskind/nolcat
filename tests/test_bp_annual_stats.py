@@ -38,7 +38,7 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on t{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"

@@ -286,7 +286,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -323,7 +323,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on t{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -358,7 +358,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-        log.warning(f"Uploading the file {non_COUNTER_AUCT_object_after_upload.usage_file_path} to S3 in `tests.conftest.non_COUNTER_file_to_download_from_S3()` failed because r{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
+        log.warning(f"Uploading the file {non_COUNTER_AUCT_object_after_upload.usage_file_path} to S3 in `tests.conftest.non_COUNTER_file_to_download_from_S3()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
     log.debug(logging_message)
     yield None
     try:
@@ -471,7 +471,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         engine=db.engine,
     )
     if isinstance(df, str):
-        pytest.skip(f"Unable to create fixture because it relied on t{df[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})

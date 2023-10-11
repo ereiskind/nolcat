@@ -103,7 +103,7 @@ def edit_list_record(list, PK):
             #     engine=db.engine,
             # )
             # if isinstance(df, str):
-            #     flash(f"Unable to load requested page because it relied on t{df[1:].replace(' raised', ', which raised')}")
+            #     flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
             #     return redirect(url_for(view_lists.view_lists_homepage))
             # df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
