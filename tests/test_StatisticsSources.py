@@ -435,11 +435,17 @@ def non_duplicate_COUNTER_data():
     yield df
 
 
-def test_check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
+def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTER_data, non_duplicate_COUNTER_data):
     """Tests the check for statistics source/report type/usage date combinations already in the database.
     
     While the function being tested here is in `nolcat.app`, the test is in this module because it requires the `COUNTERData` relation to contain data, while the `nolcat.app` test module starts with an empty database and never loads data into that relation.
     """
+    number_of_records = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    if number_of_records.iloc[0][0] == 0:
+        pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     log.info(f"`df` data:\n{df}")  #temp
     log.info(f"`non_duplicate_COUNTER_data` data:\n{non_duplicate_COUNTER_data}")  #temp
