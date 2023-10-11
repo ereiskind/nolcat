@@ -37,6 +37,7 @@ DATABASE_SCHEMA_NAME = secrets.Database
 SECRET_KEY = secrets.Secret
 BUCKET_NAME = secrets.Bucket
 PATH_WITHIN_BUCKET = "raw-vendor-reports/"  #ToDo: The location of files within a S3 bucket isn't sensitive information; should it be included in the "nolcat_secrets.py" file?
+TOP_NOLCAT_DIRECTORY = Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])
 
 
 def configure_logging(app):

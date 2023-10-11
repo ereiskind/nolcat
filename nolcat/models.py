@@ -1658,18 +1658,18 @@ class AnnualUsageCollectionTracking(db.Model):
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        log.debug(f"About to download file '{self.usage_file_path}' from S3 bucket {BUCKET_NAME} to top repo folder {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
+        log.debug(f"About to download file '{self.usage_file_path}' from S3 bucket {BUCKET_NAME} to top repo folder {TOP_NOLCAT_DIRECTORY}.")
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,
             Filename=self.usage_file_path,
         )
-        if self.usage_file_path in [str(p.name) for p in Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1]).iterdir()]:
-            Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], self.usage_file_path).rename(file_download_path)
-            log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
+        if self.usage_file_path in [str(p.name) for p in TOP_NOLCAT_DIRECTORY.iterdir()]:
+            TOP_NOLCAT_DIRECTORY / self.usage_file_path.rename(file_download_path)
+            log.info(f"Successfully downloaded {self.usage_file_path} to the top-level repo folder {TOP_NOLCAT_DIRECTORY}.")
             return file_download_path
         else:
-            log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1])}.")
+            log.error(f"The file {self.usage_file_path} wasn't downloaded because it couldn't be found in {TOP_NOLCAT_DIRECTORY}.")
             return False
 
 

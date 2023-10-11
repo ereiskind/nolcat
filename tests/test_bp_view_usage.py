@@ -25,7 +25,7 @@ def test_view_usage_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'templates', 'view_usage', 'index.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -49,7 +49,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
     log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
     log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
     df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
@@ -57,7 +57,7 @@ def test_run_custom_SQL_query(client, header_value, caplog):
     log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")  #temp
 
     assert POST_response.status == "200 OK"
-    assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
@@ -97,7 +97,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     CSV_df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
@@ -115,7 +115,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -142,7 +142,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     #CSV_df = pd.read_csv(
-    #    Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+    #    TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
     #    index_col='COUNTER_data_ID',
     #    parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
     #    date_parser=date_parser,
@@ -160,7 +160,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #database_df = database_df.astype(COUNTERData.state_data_types())
 
     #assert POST_response.status == "200 OK"
-    #assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    #assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     #assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
     pass
@@ -185,7 +185,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
             str(child.string),
         ))
     
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'templates', 'view_usage', 'download-non-COUNTER-usage.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'download-non-COUNTER-usage.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
