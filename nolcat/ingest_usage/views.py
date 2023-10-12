@@ -138,7 +138,7 @@ def harvest_SUSHI_statistics():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
             message = f"The SUSHI call raised {error}."
-            log.warning(message)  #TEST: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
+            log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
