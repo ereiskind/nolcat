@@ -932,11 +932,11 @@ class StatisticsSources(db.Model):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
                 elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
-                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.*")
                     no_usage_returned_count += 1
+                    log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
-            if len(custom_report_dataframes) == no_usage_returned_count:
+            if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 log.warning(message)
                 return (message, all_flashed_statements)
