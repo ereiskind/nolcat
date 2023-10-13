@@ -113,7 +113,6 @@ def collect_FY_and_vendor_data():
             df=vendorNotes_dataframe,
             relation='vendorNotes',
             engine=db.engine,
-            load_index=False,
         )
         if vendorNotes_load_result.startswith("Loading data into the vendorNotes relation raised the error"):
             #SQLDatabaseLoadFailed
