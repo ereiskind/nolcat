@@ -107,6 +107,8 @@ def collect_FY_and_vendor_data():
         if vendors_load_result.startswith("Loading data into the vendors relation raised the error"):
             #SQLDatabaseLoadFailed
             data_load_errors.append(vendors_load_result)
+        vendorNotes_load_result.index += first_new_PK_value('vendorNotes')
+        vendorNotes_load_result.index.name = 'vendor_notes_ID'
         vendorNotes_load_result = load_data_into_database(
             df=vendorNotes_dataframe,
             relation='vendorNotes',
@@ -237,11 +239,12 @@ def collect_sources_data():
         if statisticsSources_load_result.startswith("Loading data into the statisticsSources relation raised the error"):
             #SQLDatabaseLoadFailed
             data_load_errors.append(statisticsSources_load_result)
+        statisticsSourceNotes_load_result.index += first_new_PK_value('statisticsSourceNotes')
+        statisticsSourceNotes_load_result.index.name = 'statistics_source_notes_ID'
         statisticsSourceNotes_load_result = load_data_into_database(
             df=statisticsSourceNotes_dataframe,
             relation='statisticsSourceNotes',
             engine=db.engine,
-            load_index=False,
         )
         if statisticsSourceNotes_load_result.startswith("Loading data into the statisticsSourceNotes relation raised the error"):
             #SQLDatabaseLoadFailed
@@ -254,11 +257,12 @@ def collect_sources_data():
         if resourceSources_load_result.startswith("Loading data into the resourceSources relation raised the error"):
             #SQLDatabaseLoadFailed
             data_load_errors.append(resourceSources_load_result)
+        resourceSourceNotes_load_result.index += first_new_PK_value('resourceSourceNotes')
+        resourceSourceNotes_load_result.index.name = 'resource_source_notes_ID'
         resourceSourceNotes_load_result = load_data_into_database(
             df= resourceSourceNotes_dataframe,
             relation='resourceSourceNotes',
             engine=db.engine,
-            load_index=False,
         )
         if resourceSourceNotes_load_result.startswith("Loading data into the resourceSourceNotes relation raised the error"):
             #SQLDatabaseLoadFailed
