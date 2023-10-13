@@ -20,6 +20,7 @@
     <ol>
         <li>Download <a href="{{ url_for('download_file', file_path=AUCT_file_path) }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>
         <li>Fill out the CSV from existing documentation:
+            <!--ToDo: Edit instructions to use full sentences-->
             <ul>
                 <li>For statistics source and year combinations which don't exist (meaning either the statistics source didn't exist that year or no resource sources which used that statistics source were provided that year), delete the corresponding row in the CSV</li>
                 <li>For statistics source and year combinations not requiring usage collection, set `usage_is_being_collected` to false and choose the appropriate `collection_status`</li>
@@ -42,6 +43,7 @@
             </ul>
         </li>
         <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
+        <li>Save the CSV, ensuring the encoding is UTF-8 and that any date fields appear as dates.</li>
     </ol>
 
     <!--ToDo: Add COUNTER tabular workbook consolidation and renaming instructions-->
