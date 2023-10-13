@@ -1452,9 +1452,9 @@ class AnnualUsageCollectionTracking(db.Model):
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
         self.usage_is_being_collected (boolean): indicates if usage needs to be collected
-        self.manual_collection_required (boolean): indicates if usage needs to be collected manually
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; if some but not all usage does, this value is `false`
         self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
-        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; if some but not all usage is, this value is `true`
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PATH_WITHIN_BUCKET` section (see note)
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year
