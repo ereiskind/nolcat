@@ -4,6 +4,7 @@
 import pytest
 import logging
 from pathlib import Path
+from datetime import date
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -404,3 +405,8 @@ def test_update_database(engine, updated_vendors_relation):
 def test_prepare_HTML_page_for_comparison():
     """Tests creating an Unicode string from HTML page data."""
     assert prepare_HTML_page_for_comparison(b'<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Ingest Usage</title>\n</head>\n<body>\n    <h1>Ingest Usage Homepage</h1>\n\n    \n        \n            <p>[{&#39;DR&#39;: [], &#39;IR&#39;: [], &#39;PR&#39;: [], &#39;reports&#39;: [], &#39;status&#39;: []}]</p>\n        \n    \n\n    <ul>\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\n    </ul>\n\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\n</body>\n</html>') == '<!DOCTYPE html>\\n<html lang="en">\\n<head>\\n    <meta charset="UTF-8">\\n    <meta http-equiv="X-UA-Compatible" content="IE=edge">\\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\\n    <title>Ingest Usage</title>\\n</head>\\n<body>\\n    <h1>Ingest Usage Homepage</h1>\\n\\n    \\n        \\n            <p>[{\'DR\': [], \'IR\': [], \'PR\': [], \'reports\': [], \'status\': []}]</p>\\n        \\n    \\n\\n    <ul>\\n        <li>To upload a tabular COUNTER report, <a href="/ingest_usage/upload-COUNTER">click here</a>.</li>\\n        <li>To make a SUSHI call, <a href="/ingest_usage/harvest">click here</a>.</li>\\n        <li>To save a non-COUNTER usage file, <a href="/ingest_usage/upload-non-COUNTER">click here</a>.</li>\\n    </ul>\\n\\n    <p>To return to the homepage, <a href="/">click here</a>.</p>\\n</body>\\n</html>'
+
+
+def test_save_unconverted_data_via_upload():
+    """Tests saving data that can't be transformed for loading into the database to a file in S3."""
+    pass
