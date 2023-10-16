@@ -57,7 +57,7 @@ class SUSHICallAndResponse:
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        self.parameters = {key: (requests.utils.unquote(value) if isinstance(value, str) else value.strftime("%Y-%m")) for key, value in parameters.items()}
+        self.parameters = {key: (requests.utils.unquote(value) if isinstance(value, str) else value.strftime("%Y-%m-%d")) for key, value in parameters.items()}
     
 
     def __repr__(self):
