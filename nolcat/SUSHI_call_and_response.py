@@ -39,6 +39,7 @@ class SUSHICallAndResponse:
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
         _stop_API_calls_message: Creates the return message for when the API calls are being stopped.
+        _stdout_API_response_based_on_size: A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -218,16 +219,7 @@ class SUSHICallAndResponse:
             number_of_report_items = len(API_response['Report_Items'])
             log.info(f"The SUSHI API response header: {API_response['Report_Header']}")
             log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(range(number_of_report_items))]}")
-            if number_of_report_items < 30:
-                log.debug(f"The SUSHI API response as a JSON:\n{API_response}")
-            else:
-                log.debug("A sample of the SUSHI API response:")
-                if number_of_report_items > 300:
-                    for n in random.sample(range(number_of_report_items), k=30):
-                        log.debug(API_response['Report_Items'][n])
-                else:
-                    for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
-                        log.debug(API_response['Report_Items'][n])
+            log.debug(self._stdout_API_response_based_on_size(API_response))
         else:
             log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
         if messages_to_flash:
@@ -377,7 +369,7 @@ class SUSHICallAndResponse:
                 return (json.JSONDecodeError(message), message)
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
-        log.debug(f"SUSHI data:\n{API_response}")
+        log.debug(self._stdout_API_response_based_on_size(API_response))
         return (API_response, [])
     
 
@@ -562,3 +554,28 @@ class SUSHICallAndResponse:
             return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI errors\n{message}\nAPI calls to {self.calling_to} have stopped and no other calls will be made."
         else:
             return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI error {message} API calls to {self.calling_to} have stopped and no other calls will be made."
+    
+
+    def stdout_API_response_based_on_size(API_response):
+        """A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
+
+        Args:
+            API_response (dict): the API response with Python data types
+        
+        Returns:
+            str: the string for stdout
+        """
+        number_of_report_items = len(API_response)
+        if number_of_report_items < 30:
+            return f"The SUSHI API response as a JSON:\n{API_response}"
+        else:
+            return_value_start = "A sample of the SUSHI API response:\n"
+            return_value_list = []
+            if number_of_report_items > 300:
+                for n in random.sample(range(number_of_report_items), k=30):
+                    return_value_list.append(str(API_response['Report_Items'][n]))
+                return return_value_start + " ".join(return_value_list)
+            else:
+                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
+                    return_value_list.append(str(API_response['Report_Items'][n]))
+                return return_value_start + " ".join(return_value_list)
