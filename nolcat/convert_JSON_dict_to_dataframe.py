@@ -529,7 +529,10 @@ class ConvertJSONDictToDataframe:
             records_orient_list,
             default=ConvertJSONDictToDataframe._serialize_dates,
         )
-        log.debug(f"`records_orient_list` after `json.dumps()`:\n{records_orient_list}")
+        if len(records_orient_list) > 7500:
+            log.debug("`records_orient_list` after `json.dumps()` is too long to display.")
+        else:
+            log.debug(f"`records_orient_list` after `json.dumps()`:\n{records_orient_list}")
         df = pd.read_json(
             records_orient_list,
             orient='records',
