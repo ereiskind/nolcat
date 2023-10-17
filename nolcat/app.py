@@ -658,16 +658,19 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     #Subsection: Save File
     if temp_file_name == 'temp.json':
         with open(temp_file_path, 'wb') as file:
+            log.debug(f"About to write JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
             json.dump(data, file)
             log.debug(f"Data written as JSON to file object {file}.")
     else:
         try:
             with open(temp_file_path, 'wb') as file:
+                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")  #AboutTo
                 file.write(data)
                 log.debug(f"Data written as bytes to file object {file}.")
         except Exception as binary_error:
             try:
                 with open(temp_file_path, 'wt', encoding='utf-8', errors='backslashreplace') as file:
+                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")  #AboutTo
                     file.write(data)
                     log.debug(f"Data written as text to file object {file}.")
             except Exception as text_error:
