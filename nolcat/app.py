@@ -512,7 +512,7 @@ def format_list_for_stdout(stdout_list):
     return '\n'.join([str(file_path) for file_path in stdout_list])
 
 
-def check_if_data_already_in_COUNTERData(df):
+def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
