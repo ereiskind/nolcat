@@ -688,7 +688,7 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     log.info(f"Contents of `{Path(__file__).parent}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
     log.info()
     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-        message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+        message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)
     else:
         message = logging_message

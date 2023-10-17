@@ -391,31 +391,22 @@ class SUSHICallAndResponse:
             str: an error message to flash indicating the creation of the bailout file
         """
         log.info("Starting `_save_raw_Response_text()`.")
-        
-        temp_file_path = Path(__file__).parent / 'temp.txt'
-        with open(temp_file_path, 'xb') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-            file.write(Response_text)
-        log.debug(f"Temp file successfully created.")
-        
         statistics_source_ID = query_database(
             query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
             engine=db.engine,
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
-        S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
-        log.debug(f"About to upload file '{S3_file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-        logging_message = upload_file_to_S3_bucket(
-            temp_file_path,
-            S3_file_name,
+        logging_message = save_unconverted_data_via_upload(
+            data=Response_text,
+            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-            log.critical(message)
-        else:
+        if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
             message = logging_message
-            log.info(message)
-        temp_file_path.unlink()
+            log.debug(message)
+        else:
+            message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+            log.critical(message)
         return message
 
 

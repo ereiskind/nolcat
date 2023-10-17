@@ -1005,23 +1005,17 @@ class StatisticsSources(db.Model):
                     return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:
-                    log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path(__file__).parent / 'temp.json'
-                    with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                    logging_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        file_name,
+                    logging_message = save_unconverted_data_via_upload(
+                        data=SUSHI_data_response,
+                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                     )
-                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-                        log.critical(message)
-                    else:
+                    if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
                         message = logging_message
                         log.debug(message)
-                    temp_file_path.unlink()
+                    else:
+                        message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                        log.critical(message)
+                    message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
                     complete_flash_message_list.append(message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
@@ -1041,25 +1035,19 @@ class StatisticsSources(db.Model):
                 return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:
-                log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                temp_file_path = Path(__file__).parent / 'temp.json'
-                with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                    json.dump(SUSHI_data_response, JSON_file)
-                file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                logging_message = upload_file_to_S3_bucket(
-                    temp_file_path,
-                    file_name,
+                logging_message = save_unconverted_data_via_upload(
+                    data=SUSHI_data_response,
+                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                 )
-                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-                    log.critical(message)
-                else:
+                if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
                     message = logging_message
                     log.debug(message)
-                temp_file_path.unlink()
+                else:
+                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                    log.critical(message)
+                message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
                 flash_message_list.append(message)
-                return (f"Since the JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe, it was temporarily saved as a JSON file for uploading into S3. {message}", flash_message_list)
+                return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
