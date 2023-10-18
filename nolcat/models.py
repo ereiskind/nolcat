@@ -998,6 +998,7 @@ class StatisticsSources(db.Model):
                 elif isinstance(SUSHI_data_response, str):
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."

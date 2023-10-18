@@ -277,6 +277,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Remove Total Rows
                 if re.fullmatch(r'PR1?', report_type) is None:
+                    log.debug("About to remove total rows from non-platform reports.")  #AboutTo
                     number_of_rows_with_totals = df.shape[1]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
@@ -286,6 +287,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.fullmatch(r'TR[1|2]', report_type):
+                    log.debug("About to separate identifiers in COUNTER R4 title report.")
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
                     df['print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
                     df['online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
@@ -315,6 +317,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Put Placeholder in for Null Values
                 df = df.fillna("`None`")
+                log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
                     to_replace='^\s*$',
                     # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
