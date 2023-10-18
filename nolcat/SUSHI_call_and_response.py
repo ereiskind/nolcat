@@ -384,7 +384,7 @@ class SUSHICallAndResponse:
         """
         log.info("Starting `_save_raw_Response_text()`.")
         statistics_source_ID = query_database(
-            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
+            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
             engine=db.engine,
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
