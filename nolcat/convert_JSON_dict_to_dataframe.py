@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil import parser
 import json
 from copy import deepcopy
+import io
 import pandas as pd
 
 from .app import *
@@ -525,21 +526,32 @@ class ConvertJSONDictToDataframe:
         df_dtypes['usage_count'] = 'int'
         log.info(f"`df_dtypes`: {df_dtypes}")
 
+        log.debug(f"`records_orient_list` before `json.dumps()`  is type {type(records_orient_list)}.")
         records_orient_list = json.dumps(  # `pd.read_json` takes a string, conversion done before method for ease in handling type conversions
             records_orient_list,
             default=ConvertJSONDictToDataframe._serialize_dates,
         )
-        if len(records_orient_list) > 7500:
-            log.debug("`records_orient_list` after `json.dumps()` is too long to display.")
+        if len(records_orient_list) > 1500:
+            log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}) is too long to display.")
         else:
-            log.debug(f"`records_orient_list` after `json.dumps()`:\n{records_orient_list}")
-        df = pd.read_json(
-            records_orient_list,
-            orient='records',
-            dtype=df_dtypes,  # This only sets numeric data types
-            encoding='utf-8',
-            encoding_errors='backslashreplace',
-        )
+            log.debug(f"`records_orient_list` after `json.dumps()` (type {type(records_orient_list)}):\n{records_orient_list}")
+        try:
+            df = pd.read_json(
+                records_orient_list,
+                orient='records',
+                dtype=df_dtypes,  # This only sets numeric data types
+                encoding='utf-8',
+                encoding_errors='backslashreplace',
+            )
+        except Exception as error:
+            log.debug(f"Converting `records_orient_list` directly to dataframe raises the error {error}.")
+            df = pd.read_json(
+                io.StringIO(records_orient_list),  # From https://stackoverflow.com/a/63655099
+                orient='records',
+                dtype=df_dtypes,  # This only sets numeric data types
+                encoding='utf-8',
+                encoding_errors='backslashreplace',
+            )
         log.info(f"Dataframe info immediately after dataframe creation:\n{return_string_of_dataframe_info(df)}")
 
         df = df.astype(df_dtypes)  # This sets the string data types
