@@ -741,7 +741,7 @@ class StatisticsSources(db.Model):
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
-            log.debug("*JSON with SUSHI credentials loaded.*")
+            log.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
                     if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
@@ -932,7 +932,7 @@ class StatisticsSources(db.Model):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
                 elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
-                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.*")
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
@@ -991,7 +991,7 @@ class StatisticsSources(db.Model):
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
                 elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):
-                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.*")
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                     no_usage_returned_count += 1
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
