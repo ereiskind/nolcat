@@ -556,7 +556,7 @@ class SUSHICallAndResponse:
             return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI error {message} API calls to {self.calling_to} have stopped and no other calls will be made."
     
 
-    def stdout_API_response_based_on_size(API_response):
+    def _stdout_API_response_based_on_size(API_response):
         """A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
 
         Args:
