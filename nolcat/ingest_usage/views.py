@@ -39,8 +39,9 @@ def upload_COUNTER_reports():
         except Exception as error:
             message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
             log.error(message)
-            messages_to_flash.append(message)
-            flash(messages_to_flash)
+            #ToDo:: messages_to_flash.append(message)
+            #ToDo:: flash(messages_to_flash)
+            flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         log.debug(f"`COUNTERData` data:\n{df}\n")
         
