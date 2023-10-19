@@ -278,20 +278,23 @@ class UploadCOUNTERReports:
                 #Subsection: Remove Total Rows
                 if re.fullmatch(r'PR1?', report_type) is None:
                     log.debug("About to remove total rows from non-platform reports.")  #AboutTo
-                    number_of_rows_with_totals = df.shape[1]
-                    log.debug(f"`number_of_rows_with_totals` is {number_of_rows_with_totals} (type {type(number_of_rows_with_totals)})")
+                    log.debug(f"`df` is\n{df}")  #temp
+                    number_of_rows_with_totals = df.shape[0]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
-                    log.debug(f"`common_summary_rows` is {common_summary_rows} (type {type(common_summary_rows)})")
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
-                    log.debug(f"`uncommon_summary_rows` is {uncommon_summary_rows} (type {type(uncommon_summary_rows)})")
-                    summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
-                    log.debug(f"`summary_rows_are_false` is {summary_rows_are_false} (type {type(summary_rows_are_false)})")
-                    df = df[summary_rows_are_false]
-                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
+                    summary_rows_are_false = common_summary_rows | uncommon_summary_rows
+                    log.debug(f"`summary_rows_are_false` is (type {type(summary_rows_are_false)})\n{summary_rows_are_false}")  #temp
+                    df = df.join(summary_rows_are_false)
+                    log.debug(f"`df` after `join()` is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
+                    df = df.drop(df[df[(df['summary_rows_are_false'] == True)]].index)
+                    log.debug(f"`df` after row drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
+                    df = df.drop(columns=['summary_rows_are_false'])
+                    log.debug(f"`df` after field drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
+                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[0]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.fullmatch(r'TR[1|2]', report_type):
-                    log.debug("About to separate identifiers in COUNTER R4 title report.")
+                    log.debug("About to separate identifiers in COUNTER R4 title report.")  #AboutTo
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
                     df['print_ISSN'] = df['Print ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
                     df['online_ISSN'] = df['Online ID'].str.match(r'\d{4}\-\d{3}[\dXx]')
