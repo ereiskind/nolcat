@@ -468,31 +468,33 @@ class SUSHICallAndResponse:
     def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
-        SUSHI has multiple possible error codes (see https://cop5.projectcounter.org/en/5.1/appendices/d-handling-errors-and-exceptions.html), and  not all of them should be handled in the same way:
-            * For 10*, 20*, and 3031 SUSHI errors, return the SUSHI error as an error and flash a message to try again later, possibly after double checking their SUSHI credentials
-            * For 3030 SUSHI errors, flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
-            * For 3032 and 3040 SUSHI errors, flash the error message and add a `statisticsSourceNotes` record for the statistics source with the error message
-
         Args:
             error_contents (dict): the contents of the error message
         
         Returns:
-            tuple: an error message if appropriate (None or str); the message to flash (str)
+            tuple: an error message if the error indicates harvesting should stop (None or str); the message to flash (str)
         """
         log.info(f"Starting `_evaluate_individual_SUSHI_exception()` for error {error_contents}.")
+
+        #Section: Identify Error Code
         errors_and_codes = {
             'Service Not Available': '1000',
             'Service Busy': '1010',
             'Report Queued for Processing': '1011',
             'Client has made too many requests': '1020',
             'Insufficient Information to Process Request': '1030',
-            'Usage Not Ready for Requested Dates': '3031',
             'Requestor Not Authorized to Access Service': '2000',
             'Requestor is Not Authorized to Access Usage for Institution': '2010',
             'APIKey Invalid': '2020',
+            'Invalid Date Arguments': '3020',
             'No Usage Available for Requested Dates': '3030',
+            'Usage Not Ready for Requested Dates': '3031',
             'Usage No Longer Available for Requested Dates': '3032',
             'Partial Data Returned': '3040',
+            'Parameter Not Recognized in this Context': '3050',
+            'Invalid ReportFilter Value': '3060',
+            'Incongruous ReportFilter Value': '3061',
+            'Invalid ReportAttribute Value': '3062',
         }
         error_code = errors_and_codes.get(error_contents['Message'])
         if error_code is None:
@@ -511,41 +513,45 @@ class SUSHICallAndResponse:
                     return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
-        if error_code == '3030':
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
+        #Section: Handle Error
+        message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
+        if error_contents.get('Data'):
+            message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
+        
+        #Subsection: Handle Errors Only Needing Flash Message
+        if error_code == '3030' or error_code == '3032' or error_code == '3040':
+            if error_code == '3032' or error_code == '3040':
+                #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
+                df = query_database(
+                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                    engine=db.engine,
+                )
+                if isinstance(df, str):  # The variable is an error message
+                    return (df, [message, df])
+                log.debug("This is before the `StatisticsSources` constructor in `_evaluate_individual_SUSHI_exception()`")  #temp
+                statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                    statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+                    statistics_source_name = str(df.at[0,'statistics_source_name']),
+                    statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                    vendor_ID = int(df.at[0,'vendor_ID']),
+                )  # Without the `int` constructors, a numpy int type is used
+                log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
+                statistics_source_object.add_note(message)
             log.error(message)
             return (None, message)
-        elif error_code == '3032' or error_code == '3040':
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
-                #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
-            df = query_database(
-                query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-                engine=db.engine,
-            )
-            if isinstance(df, str):  # The variable is an error message
-                return (df, [message, df])
-            statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-                statistics_source_ID = int(df.at[0,'statistics_source_ID']),
-                statistics_source_name = str(df.at[0,'statistics_source_name']),
-                statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-                vendor_ID = int(df.at[0,'vendor_ID']),
-            )  # Without the `int` constructors, a numpy int type is used
-            log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
-            statistics_source_object.add_note(message)
-            log.error(message)
-            return (None, message)
-        else:
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
-            message = message + " Try the call again later, after checking credentials if needed."
-            log.error(message)
-            return (message, message)
-    
+
+        #Subsection: Handle Errors Stopping API Calls
+        elif error_code == '1000' or error_code == '1010' or error_code == '1011' or error_code == '1020' or error_code == '3031':
+            message = message + " Try the call again later."
+        elif error_code == '2000' or error_code == '2010' or error_code == '2020':
+            message = message + " Check and Update the credentials in the R5 SUSHI credentials JSON, then try the call again."
+        elif error_code == '3020' :
+            message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
+        elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
+            message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request a tabular R5 report from the admin platform and upload that file instead."
+        log.error(message)
+        return (message, message)
+
 
     def _stop_API_calls_message(self, message):
         """Creates the return message for when the API calls are being stopped.
