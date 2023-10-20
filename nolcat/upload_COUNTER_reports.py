@@ -5,6 +5,7 @@ from datetime import datetime
 import html
 from openpyxl import load_workbook
 import pandas as pd
+from pandas.api.types import is_string_dtype
 
 from .app import *
 from .models import *
@@ -344,10 +345,11 @@ class UploadCOUNTERReports:
                 for character in possible_delimiter_characters:
                     fields_checked = 0
                     for field in df_non_date_field_names:
-                        if df[field].apply(lambda cell_value: character in cell_value).any():
-                            break
-                        else:
-                            fields_checked += 1
+                        if is_string_dtype(df[field]):
+                            if df[field].apply(lambda cell_value: character in cell_value).any():
+                                break
+                            else:
+                                fields_checked += 1
                     if fields_checked == len(df_non_date_field_names):
                         delimiter_character = character
                         log.debug(f"The delimiter character is set to '{delimiter_character}'.")
