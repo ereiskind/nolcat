@@ -3,6 +3,8 @@ import logging
 from pathlib import Path
 from datetime import datetime
 from itertools import product
+import json
+import re
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -347,7 +349,7 @@ def restore_boolean_values_to_boolean_field(series):
 
 
 def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
-    """The function for uploading files to a S3 bucket.
+    """The function for uploading files to a S3 bucket.  #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
 
@@ -435,14 +437,13 @@ def create_AUCT_SelectField_options(df):
     return list(s.items())
 
 
-def load_data_into_database(df, relation, engine, load_index=True, index_field_name=None):
+def load_data_into_database(df, relation, engine, index_field_name=None):
     """A wrapper for the pandas `to_sql()` method that includes the error handling.
 
     Args:
         df (dataframe): the data to load into the database
         relation (str): the relation the data is being loaded into
         engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-        load_index (bool): include the dataframe index in the loaded data; default is `True`, same as in the wrapped method
         index_field_name (str or list of str): the name of the field(s) in the relation that the dataframe index values should be loaded into; default is `None`, same as in the wrapped method, which means the index field name(s) are matched to field(s) in the relation
 
     Returns:
@@ -455,7 +456,6 @@ def load_data_into_database(df, relation, engine, load_index=True, index_field_n
             con=engine,
             if_exists='append',
             chunksize=1000,
-            index=load_index,
             index_label=index_field_name,
         )
         message = f"Successfully loaded {df.shape[0]} records into the {relation} relation."
@@ -512,7 +512,7 @@ def format_list_for_stdout(stdout_list):
     return '\n'.join([str(file_path) for file_path in stdout_list])
 
 
-def check_if_data_already_in_COUNTERData(df):
+def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
     Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype.
@@ -629,3 +629,70 @@ def update_database(update_statement, engine):
         message = f"Running the update statement `{update_statement}` raised the error {error}."
         log.error(message)
         return message
+
+
+def save_unconverted_data_via_upload(data, file_name_stem):
+    """A wrapper for the `upload_file_to_S3_bucket()` when saving SUSHI data that couldn't change data types when needed.
+
+    Data going into the S3 bucket must be saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects. These files have a specific naming convention, but the file name stem is an argument in the function call to simplify both this function and its testing.
+
+    Args:
+        data (dict or str): the data to be saved to a file in S3
+        file_name_stem (str): the stem of the name the file will be saved with in S3
+    
+    Returns:
+        str: a message indicating success or including the error raised by the attempt to load the data
+    """
+    log.info(f"Starting `save_unconverted_data_via_upload()`.")
+
+    #Section: Create Temporary File
+    #Subsection: Create File Path
+    if isinstance(data, dict):
+        temp_file_name = 'temp.json'
+    else:
+        temp_file_name = 'temp.txt'
+    temp_file_path = TOP_NOLCAT_DIRECTORY / temp_file_name
+    temp_file_path.unlink(missing_ok=True)
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at start of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
+
+    #Subsection: Save File
+    if temp_file_name == 'temp.json':
+        with open(temp_file_path, 'wb') as file:
+            log.debug(f"About to write JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+            json.dump(data, file)
+            log.debug(f"Data written as JSON to file object {file}.")
+    else:
+        try:
+            with open(temp_file_path, 'wb') as file:
+                log.debug(f"About to write bytes `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                file.write(data)
+                log.debug(f"Data written as bytes to file object {file}.")
+        except Exception as binary_error:
+            try:
+                with open(temp_file_path, 'wt', encoding='utf-8', errors='backslashreplace') as file:
+                    log.debug(f"About to write text `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                    file.write(data)
+                    log.debug(f"Data written as text to file object {file}.")
+            except Exception as text_error:
+                message = f"Writing data into a binary file raised the error {binary_error}; writing that data into a text file raised the error {text_error}."
+                log.error(message)
+                return message
+    log.debug(f"File at {temp_file_path} successfully created.")
+
+    #Section: Upload File to S3
+    file_name = file_name_stem + temp_file_path.suffix
+    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
+    logging_message = upload_file_to_S3_bucket(
+        temp_file_path,
+        file_name,
+    )
+    log.info(f"Contents of `{Path(__file__).parent}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+    temp_file_path.unlink()
+    log.info(f"Contents of `{Path(__file__).parent}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
+        message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
+        log.critical(message)
+    else:
+        message = logging_message
+        log.debug(message)
+    return message

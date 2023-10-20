@@ -809,7 +809,10 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
+        if isinstance(SUSHI_info['URL'], str) and (re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']) or re.match(r'https?://.*clarivate.*\.\w{3}/', SUSHI_info['URL'])):
+            # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
+                # MathSciNet `status` endpoint returns HTTP status code 400
+                # Web of Science includes `Alerts` with information about most recent month with usage available
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
@@ -932,11 +935,11 @@ class StatisticsSources(db.Model):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
                 elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
-                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.*")
                     no_usage_returned_count += 1
+                    log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 custom_report_dataframes.append(SUSHI_data_response)
-            if len(custom_report_dataframes) == no_usage_returned_count:
+            if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 log.warning(message)
                 return (message, all_flashed_statements)
@@ -998,6 +1001,7 @@ class StatisticsSources(db.Model):
                 elif isinstance(SUSHI_data_response, str):
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
@@ -1005,23 +1009,17 @@ class StatisticsSources(db.Model):
                     return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if df.empty:
-                    log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                    temp_file_path = Path(__file__).parent / 'temp.json'
-                    with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                    log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                    logging_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        file_name,
+                    logging_message = save_unconverted_data_via_upload(
+                        data=SUSHI_data_response,
+                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                     )
-                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-                        log.critical(message)
-                    else:
+                    if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
                         message = logging_message
                         log.debug(message)
-                    temp_file_path.unlink()
+                    else:
+                        message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                        log.critical(message)
+                    message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
                     complete_flash_message_list.append(message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
@@ -1041,25 +1039,19 @@ class StatisticsSources(db.Model):
                 return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if df.empty:
-                log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")
-                temp_file_path = Path(__file__).parent / 'temp.json'
-                with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                    json.dump(SUSHI_data_response, JSON_file)
-                file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                log.debug(f"About to upload file '{file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-                logging_message = upload_file_to_S3_bucket(
-                    temp_file_path,
-                    file_name,
+                logging_message = save_unconverted_data_via_upload(
+                    data=SUSHI_data_response,
+                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                 )
-                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-                    log.critical(message)
-                else:
+                if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
                     message = logging_message
                     log.debug(message)
-                temp_file_path.unlink()
+                else:
+                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                    log.critical(message)
+                message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
                 flash_message_list.append(message)
-                return (f"Since the JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe, it was temporarily saved as a JSON file for uploading into S3. {message}", flash_message_list)
+                return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
@@ -1636,7 +1628,7 @@ class AnnualUsageCollectionTracking(db.Model):
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
             #SQLDatabaseUpdateFailed
-            single_line_update_statement = update_statement.replace('\n', ' ') #ToDo:: Not working
+            single_line_update_statement = update_statement.replace('\n', ' ') #ToDo: Not working
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
             log.warning(message)
             return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"

@@ -39,6 +39,7 @@ class SUSHICallAndResponse:
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
         _stop_API_calls_message: Creates the return message for when the API calls are being stopped.
+        _stdout_API_response_based_on_size: A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -57,7 +58,7 @@ class SUSHICallAndResponse:
         self.calling_to = calling_to
         self.call_URL = call_URL
         self.call_path = call_path
-        self.parameters = {key: (requests.utils.unquote(value) if isinstance(value, str) else value.strftime("%Y-%m")) for key, value in parameters.items()}
+        self.parameters = {key: (requests.utils.unquote(value) if isinstance(value, str) else value.strftime("%Y-%m-%d")) for key, value in parameters.items()}
     
 
     def __repr__(self):
@@ -218,16 +219,7 @@ class SUSHICallAndResponse:
             number_of_report_items = len(API_response['Report_Items'])
             log.info(f"The SUSHI API response header: {API_response['Report_Header']}")
             log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(range(number_of_report_items))]}")
-            if number_of_report_items < 30:
-                log.debug(f"The SUSHI API response as a JSON:\n{API_response}")
-            else:
-                log.debug("A sample of the SUSHI API response:")
-                if number_of_report_items > 300:
-                    for n in random.sample(range(number_of_report_items), k=30):
-                        log.debug(API_response['Report_Items'][n])
-                else:
-                    for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
-                        log.debug(API_response['Report_Items'][n])
+            log.debug(self._stdout_API_response_based_on_size(API_response))
         else:
             log.info(f"The SUSHI API response to a {self.call_path} call as a JSON:\n{API_response}")
         if messages_to_flash:
@@ -377,7 +369,7 @@ class SUSHICallAndResponse:
                 return (json.JSONDecodeError(message), message)
         
         log.info(f"SUSHI data converted to {repr(type(API_response))}.")
-        log.debug(f"SUSHI data:\n{API_response}")
+        log.debug(self._stdout_API_response_based_on_size(API_response))
         return (API_response, [])
     
 
@@ -391,31 +383,26 @@ class SUSHICallAndResponse:
             str: an error message to flash indicating the creation of the bailout file
         """
         log.info("Starting `_save_raw_Response_text()`.")
-        
-        temp_file_path = Path(__file__).parent / 'temp.txt'
-        with open(temp_file_path, 'xb') as file:  # The response text is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-            file.write(Response_text)
-        log.debug(f"Temp file successfully created.")
-        
         statistics_source_ID = query_database(
-            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name={self.calling_to};",
+            query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
             engine=db.engine,
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
-        S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
-        log.debug(f"About to upload file '{S3_file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")
-        logging_message = upload_file_to_S3_bucket(
-            temp_file_path,
-            S3_file_name,
+        if self.parameters.get('begin_date') and self.parameters.get('end_date'):
+            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
+        else:  # `status` and `report` requests don't include dates
+            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
+        logging_message = save_unconverted_data_via_upload(
+            data=Response_text,
+            file_name_stem=file_name_stem,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
-            log.critical(message)
-        else:
+        if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
             message = logging_message
-            log.info(message)
-        temp_file_path.unlink()
+            log.debug(message)
+        else:
+            message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+            log.critical(message)
         return message
 
 
@@ -485,78 +472,92 @@ class SUSHICallAndResponse:
     def _evaluate_individual_SUSHI_exception(self, error_contents):
         """This method determines what to do upon the occurrence of an error depending on the type of error.
 
-        SUSHI has multiple possible error codes (see https://cop5.projectcounter.org/en/5.1/appendices/d-handling-errors-and-exceptions.html), and  not all of them should be handled in the same way:
-            * For 10*, 20*, and 3031 SUSHI errors, return the SUSHI error as an error and flash a message to try again later, possibly after double checking their SUSHI credentials
-            * For 3030 SUSHI errors, flash the error message; if all reports return this error, update `annualUsageCollectionTracking.collection_status` to 'No usage to report'
-            * For 3032 and 3040 SUSHI errors, flash the error message and add a `statisticsSourceNotes` record for the statistics source with the error message
-
         Args:
             error_contents (dict): the contents of the error message
         
         Returns:
-            tuple: an error message if appropriate (None or str); the message to flash (str)
+            tuple: an error message if the error indicates harvesting should stop (None or str); the message to flash (str)
         """
         log.info(f"Starting `_evaluate_individual_SUSHI_exception()` for error {error_contents}.")
+
+        #Section: Identify Error Code
         errors_and_codes = {
             'Service Not Available': '1000',
             'Service Busy': '1010',
             'Report Queued for Processing': '1011',
             'Client has made too many requests': '1020',
             'Insufficient Information to Process Request': '1030',
-            'Usage Not Ready for Requested Dates': '3031',
             'Requestor Not Authorized to Access Service': '2000',
             'Requestor is Not Authorized to Access Usage for Institution': '2010',
             'APIKey Invalid': '2020',
+            'Invalid Date Arguments': '3020',
             'No Usage Available for Requested Dates': '3030',
+            'Usage Not Ready for Requested Dates': '3031',
             'Usage No Longer Available for Requested Dates': '3032',
             'Partial Data Returned': '3040',
+            'Parameter Not Recognized in this Context': '3050',
+            'Invalid ReportFilter Value': '3060',
+            'Incongruous ReportFilter Value': '3061',
+            'Invalid ReportAttribute Value': '3062',
         }
+        if error_contents.get('Message') is None:
+            message = f" had no key `Message`; this is not a standard error message and thus isn't being managed as such."
+            log.debug(message)
+            return (None, message)
         error_code = errors_and_codes.get(error_contents['Message'])
-        if not error_code:
+        if error_code is None:
             if error_contents.get('Code') in [v for v in errors_and_codes.values()] or error_contents.get('Code') in [int(v) for v in errors_and_codes.values()]:
                 error_code = str(error_contents['Code'])
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
             else:
-                message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
-                log.error(message)
-                return (message, message)
+                try:
+                    message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
+                    log.error(message)
+                    return (message, message)
+                except Exception as error:
+                    message = f" had the error message {error_contents}, but trying to match it to a known COUNTER error raised the error {error}."
+                    log.error(message)
+                    return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
-        if error_code == '3030':
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
+        #Section: Handle Error
+        message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
+        if error_contents.get('Data'):
+            message = message[:-1] + f" due to {error_contents['Data'][0].lower()}{error_contents['Data'][1:]}."
+        
+        #Subsection: Handle Errors Only Needing Flash Message
+        if error_code == '3030' or error_code == '3032' or error_code == '3040':
+            if error_code == '3032' or error_code == '3040':
+                #ToDo: Should there be an attempt to get the dates for the request if they aren't already in the message?
+                df = query_database(
+                    query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
+                    engine=db.engine,
+                )
+                if isinstance(df, str):  # The variable is an error message
+                    return (df, [message, df])
+                statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+                    statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+                    statistics_source_name = str(df.at[0,'statistics_source_name']),
+                    statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+                    vendor_ID = int(df.at[0,'vendor_ID']),
+                )  # Without the `int` constructors, a numpy int type is used
+                log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
+                statistics_source_object.add_note(message)
+            elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
+                message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
             return (None, message)
-        elif error_code == '3032' or error_code == '3040':
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
-                #ToDo: Should there be an attempt to get the dates for the request if they aren't here?
-            df = query_database(
-                query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
-                engine=db.engine,
-            )
-            if isinstance(df, str):  # The variable is an error message
-                return (df, [message, df])
-            statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-                statistics_source_ID = int(df['statistics_source_ID'][0]),
-                statistics_source_name = str(df['statistics_source_name'][0]),
-                statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-                vendor_ID = int(df['vendor_ID'][0]),
-            )  # Without the `int` constructors, a numpy int type is used
-            log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
-            statistics_source_object.add_note(message)
-            log.error(message)
-            return (None, message)
-        else:
-            message = f" request raised error {error_code}: {error_contents['Message']}."  # Report type added to start sentence in `_handle_SUSHI_exceptions()`
-            if error_contents.get('Data'):
-                message = message[:-1] + f" due to {error_contents['Data']}."
-            message = message + " Try the call again later, after checking credentials if needed."
-            log.error(message)
-            return (message, message)
-    
+
+        #Subsection: Handle Errors Stopping API Calls
+        elif error_code == '1000' or error_code == '1010' or error_code == '1011' or error_code == '1020' or error_code == '3031':
+            message = message + " Try the call again later."
+        elif error_code == '2000' or error_code == '2010' or error_code == '2020':
+            message = message + " Check and Update the credentials in the R5 SUSHI credentials JSON, then try the call again."
+        elif error_code == '3020' :
+            message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
+        log.error(message)
+        return (message, message)
+
 
     def _stop_API_calls_message(self, message):
         """Creates the return message for when the API calls are being stopped.
@@ -571,3 +572,28 @@ class SUSHICallAndResponse:
             return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI errors\n{message}\nAPI calls to {self.calling_to} have stopped and no other calls will be made."
         else:
             return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI error {message} API calls to {self.calling_to} have stopped and no other calls will be made."
+    
+
+    def _stdout_API_response_based_on_size(self, API_response):
+        """A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
+
+        Args:
+            API_response (dict): the API response with Python data types
+        
+        Returns:
+            str: the string for stdout
+        """
+        number_of_report_items = len(API_response)
+        if number_of_report_items < 10:
+            return f"The SUSHI API response as a JSON:\n{API_response}"
+        else:
+            return_value_start = "A sample of the SUSHI API response:\n"
+            return_value_list = []
+            if number_of_report_items > 100:
+                for n in random.sample(range(number_of_report_items), k=10):
+                    return_value_list.append(str(API_response['Report_Items'][n]))
+                return return_value_start + " ".join(return_value_list)
+            else:
+                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
+                    return_value_list.append(str(API_response['Report_Items'][n]))
+                return return_value_start + " ".join(return_value_list)

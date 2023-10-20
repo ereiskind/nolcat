@@ -39,6 +39,8 @@ def upload_COUNTER_reports():
         except Exception as error:
             message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
             log.error(message)
+            #ToDo:: messages_to_flash.append(message)
+            #ToDo:: flash(messages_to_flash)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         log.debug(f"`COUNTERData` data:\n{df}\n")
@@ -112,10 +114,10 @@ def harvest_SUSHI_statistics():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-            statistics_source_ID = int(df['statistics_source_ID'][0]),
-            statistics_source_name = str(df['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-            vendor_ID = int(df['vendor_ID'][0]),
+            statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+            statistics_source_name = str(df.at[0,'statistics_source_name']),
+            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
         log.info(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")
 
