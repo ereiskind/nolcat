@@ -377,6 +377,7 @@ class UploadCOUNTERReports:
                 if "YOP" in df_dtypes.keys():
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
                 log.debug(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"`df_dtypes`:\n{df_dtypes}")  #temp
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
                     df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")

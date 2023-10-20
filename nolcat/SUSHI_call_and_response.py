@@ -389,6 +389,7 @@ class SUSHICallAndResponse:
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
+        log.debug(f"`self.parameters['begin_date']` is {self.parameters['begin_date']} (type {type(self.parameters['begin_date'])})")  #temp
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}",
@@ -496,7 +497,14 @@ class SUSHICallAndResponse:
             'Incongruous ReportFilter Value': '3061',
             'Invalid ReportAttribute Value': '3062',
         }
+        log.debug("this is the other side of the dict")  #temp
         error_code = errors_and_codes.get(error_contents['Message'])
+        #temp
+        try:
+            log.debug(f"before the `if` block, `error_code` is {error_code}")
+        except Exception as error:
+            log.debug(f"`error_code` in a log statement raised {error}")
+        #temp end
         if error_code is None:
             log.debug("`error_contents['Message']` not matched")  #temp
             if error_contents.get('Code') in [v for v in errors_and_codes.values()] or error_contents.get('Code') in [int(v) for v in errors_and_codes.values()]:
