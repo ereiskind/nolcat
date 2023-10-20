@@ -333,12 +333,35 @@ class UploadCOUNTERReports:
 
 
                 #Section: Stack Dataframe
-                #Subsection: Create Temp Index Field with All Metadata Values
+                #Subsection: Create Lists for Sorting Fields
                 list_of_field_names_from_df = df.columns.values.tolist()
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
+
+                #Subsection: Determine Delimiter Character
+                # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
+                possible_delimiter_characters = ['~', '@', '^', '`', '|', '$', '#']
+                for character in possible_delimiter_characters:
+                    fields_checked = 0
+                    for field in df_non_date_field_names:
+                        if df[field].apply(lambda cell_value: character in cell_value).any():
+                            break
+                        else:
+                            fields_checked += 1
+                    if fields_checked == len(df_non_date_field_names):
+                        delimiter_character = character
+                        log.debug(f"The delimiter character is set to '{delimiter_character}'.")
+                try:
+                    log.info(f"Using '{delimiter_character}' as the delimiter.")
+                except Exception as error:
+                    message = "None of the possible delimiter characters were viable, so the `delimiter_character` variable, which the program needs to continue, wasn't set."
+                    log.critical(message)
+                    continue  #ToDo:: Add this workbook/worksheet to the list for the second part of the tuple
+
+                #Subsection: Create Temp Index Field with All Metadata Values
+                # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
                 df['temp_index'] = df[df.columns[boolean_identifying_metadata_fields]].apply(
-                    lambda cell_value: '~'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied; `~` is used as the delimiter because pandas 1.3 doesn't seem to handle multi-character literal string delimiters
+                    lambda cell_value: delimiter_character.join(cell_value.astype(str)),  
                     axis='columns'
                 )
                 df = df.drop(columns=df_non_date_field_names)
@@ -360,7 +383,7 @@ class UploadCOUNTERReports:
                 log.debug(f"`df_non_date_field_names` (length {len(df_non_date_field_names)}) is {df_non_date_field_names}")  #temp
                 log.debug(f"`boolean_identifying_metadata_fields` (length {len(boolean_identifying_metadata_fields)}) is {boolean_identifying_metadata_fields}")  #temp
                 log.debug(f"fields from before creation of single field with all metadata values\n{temp}")  #temp
-                df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
+                df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
                 log.debug(f"Fully transposed dataframe:\n{df}")
