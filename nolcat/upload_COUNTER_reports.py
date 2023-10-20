@@ -283,6 +283,7 @@ class UploadCOUNTERReports:
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
                     summary_rows_are_false = common_summary_rows | uncommon_summary_rows
+                    summary_rows_are_false.name = 'summary_rows_are_false'  # Before this, the series is named `resource_name`, just like the series it was filtered from
                     log.debug(f"`summary_rows_are_false` is (type {type(summary_rows_are_false)})\n{summary_rows_are_false}")  #temp
                     df = df.join(summary_rows_are_false)
                     log.debug(f"`df` after `join()` is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
