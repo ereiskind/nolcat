@@ -278,18 +278,17 @@ class UploadCOUNTERReports:
                 #Subsection: Remove Total Rows
                 if re.fullmatch(r'PR1?', report_type) is None:
                     log.debug("About to remove total rows from non-platform reports.")  #AboutTo
-                    log.debug(f"`df` is\n{df}")  #temp
                     number_of_rows_with_totals = df.shape[0]
                     common_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*', regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
-                    summary_rows_are_false = common_summary_rows | uncommon_summary_rows
-                    summary_rows_are_false.name = 'summary_rows_are_false'  # Before this, the series is named `resource_name`, just like the series it was filtered from
-                    log.debug(f"`summary_rows_are_false` is (type {type(summary_rows_are_false)})\n{summary_rows_are_false}")  #temp
-                    df = df.join(summary_rows_are_false)
+                    summary_rows = common_summary_rows | uncommon_summary_rows
+                    summary_rows.name = 'summary_rows'  # Before this, the series is named `resource_name`, just like the series it was filtered from
+                    log.debug(f"`summary_rows` is (type {type(summary_rows)})\n{summary_rows}")  #temp
+                    df = df.join(summary_rows)
                     log.debug(f"`df` after `join()` is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
-                    df = df.drop(df[df[(df['summary_rows_are_false'] == True)]].index)
+                    df = df[~df['summary_rows']]
                     log.debug(f"`df` after row drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
-                    df = df.drop(columns=['summary_rows_are_false'])
+                    df = df.drop(columns=['summary_rows'])
                     log.debug(f"`df` after field drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
                     log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[0]}.")
 
