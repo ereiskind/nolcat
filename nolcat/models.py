@@ -809,7 +809,10 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
+        if isinstance(SUSHI_info['URL'], str) and (re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']) or re.match(r'https?://.*clarivate.*\.\w{3}/', SUSHI_info['URL'])):
+            # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
+                # MathSciNet `status` endpoint returns HTTP status code 400
+                # Web of Science includes `Alerts` with information about most recent month with usage available
             log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
