@@ -330,7 +330,6 @@ class UploadCOUNTERReports:
                 )
 
                 log.debug(f"Dataframe with pre-stacking changes:\n{df}\n{return_string_of_dataframe_info(df)}")
-                temp = return_string_of_dataframe_info(df)  #temp
 
 
                 #Section: Stack Dataframe
@@ -343,12 +342,17 @@ class UploadCOUNTERReports:
                 # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
                 possible_delimiter_characters = ['~', '@', '^', '`', '|', '$', '#']
                 for character in possible_delimiter_characters:
+                    log.debug(f"checking delimiter {character}")  #temp
                     fields_checked = 0
                     for field in df_non_date_field_names:
+                        log.debug(f"checking field {field}")  #temp
                         if is_string_dtype(df[field]):
+                            log.debug(f"field {field} is a string, so checking for delimiter {character}")  #temp
                             if df[field].apply(lambda cell_value: character in cell_value).any():
+                                log.debug(f"delimiter {character} was in field {field}")  #temp
                                 break
                             else:
+                                log.debug(f"delimiter {character} wasn't in field {field}")  #temp
                                 fields_checked += 1
                     if fields_checked == len(df_non_date_field_names):
                         delimiter_character = character
@@ -382,9 +386,6 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                log.debug(f"`df_non_date_field_names` (length {len(df_non_date_field_names)}) is {df_non_date_field_names}")  #temp
-                log.debug(f"`boolean_identifying_metadata_fields` (length {len(boolean_identifying_metadata_fields)}) is {boolean_identifying_metadata_fields}")  #temp
-                log.debug(f"fields from before creation of single field with all metadata values\n{temp}")  #temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
