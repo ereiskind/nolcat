@@ -340,7 +340,6 @@ class UploadCOUNTERReports:
                 list_of_field_names_from_df = df.columns.values.tolist()
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
-                log.debug(f"`boolean_identifying_metadata_fields` is {boolean_identifying_metadata_fields}")  #temp
                 df['temp_index'] = df[df.columns[boolean_identifying_metadata_fields]].apply(
                     lambda cell_value: '~'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied; `~` is used as the delimiter because pandas 1.3 doesn't seem to handle multi-character literal string delimiters
                     axis='columns'
@@ -352,7 +351,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Reshape with Stacking
                 df = df.stack()  # This creates a series with a multiindex: the multiindex is the metadata, then the dates; the data is the usage counts
-                log.debug(f"Dataframe immediately after stacking:\n{df}\n{return_string_of_dataframe_info(df)}")
+                log.debug(f"Dataframe immediately after stacking:\n{df}")
                 df = df.reset_index()
                 df = df.rename(columns={
                     'level_1': 'usage_date',
