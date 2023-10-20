@@ -283,13 +283,9 @@ class UploadCOUNTERReports:
                     uncommon_summary_rows = df['resource_name'].str.contains(r'^[Tt]otal\s[Ss]earches', regex=True)
                     summary_rows = common_summary_rows | uncommon_summary_rows
                     summary_rows.name = 'summary_rows'  # Before this, the series is named `resource_name`, just like the series it was filtered from
-                    log.debug(f"`summary_rows` is (type {type(summary_rows)})\n{summary_rows}")  #temp
                     df = df.join(summary_rows)
-                    log.debug(f"`df` after `join()` is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
                     df = df[~df['summary_rows']]
-                    log.debug(f"`df` after row drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
                     df = df.drop(columns=['summary_rows'])
-                    log.debug(f"`df` after field drop is\n{df}\n{return_string_of_dataframe_info(df)}")  #temp
                     log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[0]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
@@ -333,6 +329,7 @@ class UploadCOUNTERReports:
                 )
 
                 log.debug(f"Dataframe with pre-stacking changes:\n{df}\n{return_string_of_dataframe_info(df)}")
+                temp = return_string_of_dataframe_info(df)  #temp
 
 
                 #Section: Stack Dataframe
@@ -360,10 +357,9 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                log.debug(f"`df_non_date_field_names` is {df_non_date_field_names} ({len(df_non_date_field_names)})")  #temp
-                log.debug(f"`df['temp_index'].str.split(pat='~', expand=True)` is")  #temp
-                x = df['temp_index'].str.split(pat='~', expand=True)  #temp
-                log.debug(f"{x}\n{return_string_of_dataframe_info(x)}")  #temp
+                log.debug(f"`df_non_date_field_names` (length {len(df_non_date_field_names)}) is {df_non_date_field_names}")  #temp
+                log.debug(f"`boolean_identifying_metadata_fields` (length {len(boolean_identifying_metadata_fields)}) is {boolean_identifying_metadata_fields}")  #temp
+                log.debug(f"fields from before creation of single field with all metadata values\n{temp}")  #temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')

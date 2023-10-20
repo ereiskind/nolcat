@@ -505,14 +505,7 @@ class SUSHICallAndResponse:
             log.debug(message)
             return (None, message)
         error_code = errors_and_codes.get(error_contents['Message'])
-        #temp
-        try:
-            log.debug(f"before the `if` block, `error_code` is {error_code}")
-        except Exception as error:
-            log.debug(f"`error_code` in a log statement raised {error}")
-        #temp end
         if error_code is None:
-            log.debug("`error_contents['Message']` not matched")  #temp
             if error_contents.get('Code') in [v for v in errors_and_codes.values()] or error_contents.get('Code') in [int(v) for v in errors_and_codes.values()]:
                 error_code = str(error_contents['Code'])
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
@@ -542,10 +535,6 @@ class SUSHICallAndResponse:
                 )
                 if isinstance(df, str):  # The variable is an error message
                     return (df, [message, df])
-                log.debug(f"`statistics_source_ID` is {int(df.at[0,'statistics_source_ID'])}")  #temp
-                log.debug(f"`statistics_source_name` is {str(df.at[0,'statistics_source_name'])}")  #temp
-                log.debug(f"`statistics_source_retrieval_code` is {str(df.at[0,'statistics_source_retrieval_code']).split('.')[0]}")  #temp
-                log.debug(f"`vendor_ID` is {int(df.at[0,'vendor_ID'])}")  #temp
                 statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                     statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                     statistics_source_name = str(df.at[0,'statistics_source_name']),
