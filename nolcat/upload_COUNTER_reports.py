@@ -343,14 +343,11 @@ class UploadCOUNTERReports:
                 possible_delimiter_characters = ['~', '@', '^', '`', '|', '$', '#']
                 string_type_df_fields = [field for field in df_non_date_field_names if is_string_dtype(df[field])]
                 for character in possible_delimiter_characters:
-                    log.debug(f"checking delimiter {character}")  #temp
                     fields_without_possible_delimiter = 0
                     for field in string_type_df_fields:
                         if df[field].apply(lambda cell_value: character in cell_value).any():
-                            log.debug(f"delimiter {character} was in field {field}")  #temp
                             break
                         else:
-                            log.debug(f"delimiter {character} wasn't in field {field}")  #temp
                             fields_without_possible_delimiter += 1
                     log.debug(f"Check of field {field} completed, and `fields_without_possible_delimiter` is {fields_without_possible_delimiter}")
                     if fields_without_possible_delimiter == len(string_type_df_fields):
