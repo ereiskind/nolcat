@@ -498,7 +498,10 @@ class SUSHICallAndResponse:
             'Incongruous ReportFilter Value': '3061',
             'Invalid ReportAttribute Value': '3062',
         }
-        log.debug("this is the other side of the dict")  #temp
+        if error_contents.get('Message') is None:
+            message = f" had no key `Message`; this is not a standard error message and thus isn't being managed as such."
+            log.debug(message)
+            return (None, message)
         error_code = errors_and_codes.get(error_contents['Message'])
         #temp
         try:
