@@ -495,14 +495,20 @@ class SUSHICallAndResponse:
             'Partial Data Returned': '3040',
         }
         error_code = errors_and_codes.get(error_contents['Message'])
-        if not error_code:
+        if error_code is None:
+            log.debug("`error_contents['Message']` not matched")  #temp
             if error_contents.get('Code') in [v for v in errors_and_codes.values()] or error_contents.get('Code') in [int(v) for v in errors_and_codes.values()]:
                 error_code = str(error_contents['Code'])
                 error_contents['Message'] = [k for (k, v) in errors_and_codes.items() if v==error_code][0]
             else:
-                message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
-                log.error(message)
-                return (message, message)
+                try:
+                    message = f" had `error_contents['Message']` {error_contents.get('Message')} and `error_contents['Code']` {error_contents.get('Code')}, neither of which matched a known error."
+                    log.error(message)
+                    return (message, message)
+                except Exception as error:
+                    message = f" had the error message {error_contents}, but trying to match it to a known COUNTER error raised the error {error}."
+                    log.error(message)
+                    return (message, message)
         log.info(f"The error code is {error_code} and the message is {error_contents['Message']}.")
         
         if error_code == '3030':
