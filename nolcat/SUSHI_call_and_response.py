@@ -572,13 +572,13 @@ class SUSHICallAndResponse:
             str: the string for stdout
         """
         number_of_report_items = len(API_response)
-        if number_of_report_items < 30:
+        if number_of_report_items < 10:
             return f"The SUSHI API response as a JSON:\n{API_response}"
         else:
             return_value_start = "A sample of the SUSHI API response:\n"
             return_value_list = []
-            if number_of_report_items > 300:
-                for n in random.sample(range(number_of_report_items), k=30):
+            if number_of_report_items > 100:
+                for n in random.sample(range(number_of_report_items), k=10):
                     return_value_list.append(str(API_response['Report_Items'][n]))
                 return return_value_start + " ".join(return_value_list)
             else:
