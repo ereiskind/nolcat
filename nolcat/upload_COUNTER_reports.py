@@ -360,7 +360,10 @@ class UploadCOUNTERReports:
                 log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                log.debug(f"`df_non_date_field_names` is {df_non_date_field_names}")  #temp
+                log.debug(f"`df_non_date_field_names` is {df_non_date_field_names} ({len(df_non_date_field_names)})")  #temp
+                log.debug(f"`df['temp_index'].str.split(pat='~', expand=True)` is")  #temp
+                x = df['temp_index'].str.split(pat='~', expand=True)  #temp
+                log.debug(f"{x}\n{return_string_of_dataframe_info(x)}")  #temp
                 df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
                 log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
