@@ -389,11 +389,13 @@ class SUSHICallAndResponse:
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
-        for k, v in self.parameters.items():
-            log.debug(f"Parameters `{k}` is {v} (types {type(k)} and {type(v)})")
+        if self.parameters.get('begin_date') and self.parameters.get('end_date'):
+            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
+        else:  # `status` and `report` requests don't include dates
+            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
-            file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}",
+            file_name_stem=file_name_stem,
         )
         if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
             message = logging_message
