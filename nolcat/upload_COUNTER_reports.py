@@ -349,10 +349,8 @@ class UploadCOUNTERReports:
                             break
                         else:
                             fields_without_possible_delimiter += 1
-                    log.debug(f"Check of field {field} completed, and `fields_without_possible_delimiter` is {fields_without_possible_delimiter}")
                     if fields_without_possible_delimiter == len(string_type_df_fields):
                         delimiter_character = character
-                        log.debug(f"The delimiter character is set to '{delimiter_character}'.")
                         break
                 try:
                     log.info(f"Using '{delimiter_character}' as the delimiter.")
