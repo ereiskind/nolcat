@@ -537,6 +537,8 @@ class SUSHICallAndResponse:
                 )  # Without the `int` constructors, a numpy int type is used
                 log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source_object}.")
                 statistics_source_object.add_note(message)
+            elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
+                message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request this report in tabular form from the admin platform and upload that file instead."
             log.error(message)
             return (None, message)
 
@@ -547,8 +549,6 @@ class SUSHICallAndResponse:
             message = message + " Check and Update the credentials in the R5 SUSHI credentials JSON, then try the call again."
         elif error_code == '3020' :
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
-        elif error_code == '1030' or error_code == '3050' or error_code == '3060' or error_code == '3061' or error_code == '3062':
-            message = message + " If the error can be solved by changing the nature of the call, then do so, otherwise, request a tabular R5 report from the admin platform and upload that file instead."
         log.error(message)
         return (message, message)
 
