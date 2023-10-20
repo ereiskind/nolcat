@@ -389,7 +389,8 @@ class SUSHICallAndResponse:
         )
         if isinstance(statistics_source_ID, str):  # The variable is an error message
             return statistics_source_ID
-        log.debug(f"`self.parameters['begin_date']` is {self.parameters['begin_date']} (type {type(self.parameters['begin_date'])})")  #temp
+        for k, v in self.parameters.items():
+            log.debug(f"Parameters `{k}` is {v} (types {type(k)} and {type(v)})")
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}",
@@ -536,7 +537,10 @@ class SUSHICallAndResponse:
                 )
                 if isinstance(df, str):  # The variable is an error message
                     return (df, [message, df])
-                log.debug("This is before the `StatisticsSources` constructor in `_evaluate_individual_SUSHI_exception()`")  #temp
+                log.debug(f"`statistics_source_ID` is {int(df.at[0,'statistics_source_ID'])}")  #temp
+                log.debug(f"`statistics_source_name` is {str(df.at[0,'statistics_source_name'])}")  #temp
+                log.debug(f"`statistics_source_retrieval_code` is {str(df.at[0,'statistics_source_retrieval_code']).split('.')[0]}")  #temp
+                log.debug(f"`vendor_ID` is {int(df.at[0,'vendor_ID'])}")  #temp
                 statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                     statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                     statistics_source_name = str(df.at[0,'statistics_source_name']),
