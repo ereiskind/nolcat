@@ -72,7 +72,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
         index='COUNTER_data_ID',
     )
     if isinstance(COUNTERData_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {COUNTERData_relation_data[0].lower()}{COUNTERData_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {COUNTERData_relation_data[0].lower()}{COUNTERData_relation_data[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
@@ -106,7 +106,7 @@ def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"
@@ -130,7 +130,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         engine=engine,
     )
     if isinstance(primary_key_list, str):
-        pytest.skip(f"Unable to run test because it relied on {primary_key_list[0].lower()}{primary_key_list[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {primary_key_list[0].lower()}{primary_key_list[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     primary_key_list = change_single_field_dataframe_into_series(primary_key_list).astype('string').to_list()
     form_input = {
         'statistics_source': choice(primary_key_list),
@@ -182,7 +182,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     #ToDo: `assert page.status == "200 OK"` when route is completed

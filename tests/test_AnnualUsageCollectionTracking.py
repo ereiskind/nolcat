@@ -30,7 +30,7 @@ def AUCT_fixture_for_SUSHI(engine):
         engine=engine,
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -43,7 +43,7 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`AUCT_fixture_for_SUSHI()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")
+    log.info(f"`AUCT_fixture_for_SUSHI()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")  ##initialize_relation_class_object_statement()
     yield yield_object
 
 
@@ -85,7 +85,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         engine=engine,
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     
     start_date = record.at[0,'start_date']
     end_date = record.at[0,'end_date']
@@ -95,7 +95,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
-    log.debug(f"The query returned a dataframe from which the start date {start_date} (type {type(start_date)}), the end date {end_date} (type {type(end_date)}), and the `StatisticsSources` object {StatisticsSources_object} were extracted.")
+    log.debug(f"The query returned a dataframe from which the start date {start_date} (type {type(start_date)}), the end date {end_date} (type {type(end_date)}), and the `StatisticsSources` object {StatisticsSources_object} were extracted.")  ##return_value_from_query_statement()
     yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
     yield yield_object
@@ -115,7 +115,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* for FY \d{4} successfully found (\d*) records.', string=logging_statement)
-    assert method_response_match_object  # The test fails at this point because a failing condition here raises errors below #TEST: assert None
+    assert method_response_match_object  # The test fails at this point because a failing condition here raises errors below
     assert isinstance(flash_statements, list)
 
     database_update_check = query_database(
@@ -123,7 +123,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
         engine=engine,
     )
     if isinstance(database_update_check, str):
-        pytest.skip(f"Unable to run test because it relied on {database_update_check[0].lower()}{database_update_check[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {database_update_check[0].lower()}{database_update_check[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     database_update_check = database_update_check.iloc[0][0]
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
@@ -164,10 +164,10 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")
-    log.debug(f"In `remove_file_from_S3()`, the `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}.")
+    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")  ##fixture_variable_value_declaration_statement()
+    log.debug(f"In `remove_file_from_S3()`, the `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}.")  ##fixture_variable_value_declaration_statement()
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")
+    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")  ##fixture_variable_value_declaration_statement()
     yield None
     try:
         s3_client.delete_object(
@@ -175,7 +175,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  ##unable_to_delete_test_file_in_S3_statement()
 
 
 @pytest.mark.dependency()
@@ -196,7 +196,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
     upload_result = re.fullmatch(r'Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `.*`\.', upload_result, flags=re.DOTALL)
     try:
-        log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp  #TEST: AttributeError: 'NoneType' object has no attribute 'group'
+        log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
         log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
     except AttributeError:
         pass
@@ -222,9 +222,9 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
         engine=engine,
     )
     if isinstance(usage_file_path_in_database, str):
-        pytest.skip(f"Unable to run test because it relied on {usage_file_path_in_database[0].lower()}{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {usage_file_path_in_database[0].lower()}{usage_file_path_in_database[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
-    log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")
+    log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")  ##return_value_from_query_statement()
     assert file_name == usage_file_path_in_database
 
 
@@ -232,8 +232,8 @@ def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, n
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
     log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #temp
-    log.debug(f"Before `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")
+    log.debug(f"Before `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")  ##list_folder_contents_statement()
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
-    log.debug(f"After `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")
+    log.debug(f"After `download_nonstandard_usage_file()`, the files in the folder {str(download_destination.resolve())}:\n{format_list_for_stdout([file_path for file_path in download_destination.iterdir()])}")  ##list_folder_contents_statement()
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()

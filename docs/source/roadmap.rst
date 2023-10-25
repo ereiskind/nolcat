@@ -19,7 +19,11 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Standardize logging output; record standards in code style guide
+* Standardize logging output
+
+  * Create functions for assembling statements in ``nolcat.statements``
+  * Create regex versions of functions indicating success and success messages for helper functions
+  * For error detection upon function return, use "if <<if not returning string when OK: isinstance(vaurable, str) and>> not regex_pattern_matching_success.search/fullmatch(variable): what to do if an error is returned"
 
 Iteration 1: Complete Current Data I/O
 ======================================

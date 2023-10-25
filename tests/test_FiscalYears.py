@@ -112,7 +112,7 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
         index_field_name='fiscal_year_ID',
     )
     if isinstance(method_result, str) and re.fullmatch(r'Loading data into the .* relation raised the error .*\.', method_result):
-        pytest.skip(f"Unable to create fixture because it relied on {method_result[0].lower()}{method_result[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to create fixture because it relied on {method_result[0].lower()}{method_result[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     yield None
 
 
@@ -133,7 +133,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     if isinstance(retrieved_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],

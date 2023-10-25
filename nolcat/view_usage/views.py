@@ -33,9 +33,9 @@ def run_custom_SQL_query():
     form = CustomSQLQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, there's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
+        log.debug(f"Before `unlink()`, there's a file at {str(file_path.resolve())}: {file_path.is_file()}.")  ##check_if_folder_exists_statement()
         file_path.unlink(missing_ok=True)
-        log.info(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
+        log.info(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")  ##check_if_folder_exists_statement()
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
         df = query_database(
@@ -43,7 +43,7 @@ def run_custom_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('view_usage.view_usage_homepage'))
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
@@ -57,7 +57,7 @@ def run_custom_SQL_query():
         log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
         return abort(404)
 
 
@@ -68,16 +68,16 @@ def use_predefined_SQL_query():
     form = QueryWizardForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, there's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
+        log.debug(f"Before `unlink()`, there's a file at {str(file_path.resolve())}: {file_path.is_file()}.")  ##check_if_folder_exists_statement()
         file_path.unlink(missing_ok=True)
-        log.info(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
+        log.info(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")  ##check_if_folder_exists_statement()
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
         log.info(f"Querying NoLCAT for a {form.query_options.data} standard report with the begin date {form.begin_date.data} and the end date {form.end_date.data}.")
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+            message = f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {begin_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."  ##attempted_SUSHI_call_with_invalid_dates_statement()
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
@@ -184,7 +184,7 @@ def use_predefined_SQL_query():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
@@ -199,7 +199,7 @@ def use_predefined_SQL_query():
         log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
         return abort(404)
 
 
@@ -210,11 +210,11 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, the files in the folder {str(Path(__file__).parent.resolve())}:\n{format_list_for_stdout([file.name for file in Path(__file__).parent.iterdir()])}")
+        log.debug(f"Before `unlink()`, the files in the folder {str(Path(__file__).parent.resolve())}:\n{format_list_for_stdout([file.name for file in Path(__file__).parent.iterdir()])}")  ##list_folder_contents_statement()
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
-                log.debug(f"There's a file at {str(file.resolve())}: {file.is_file()}.")
+                log.debug(f"There's a file at {str(file.resolve())}: {file.is_file()}.")  ##check_if_folder_exists_statement()
 
         file_download_options = query_database(
             query=f"""
@@ -231,7 +231,7 @@ def download_non_COUNTER_usage():
             engine=db.engine,
         )
         if isinstance(file_download_options, str):
-            flash(f"Unable to load requested page because it relied on {file_download_options[0].lower()}{file_download_options[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {file_download_options[0].lower()}{file_download_options[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
@@ -245,5 +245,5 @@ def download_non_COUNTER_usage():
         # return redirect(url_for('download_file', file_path=str(file_path)))
         pass
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
         return abort(404)

@@ -284,13 +284,13 @@ def first_new_PK_value(relation):
         engine=db.engine,
     )
     if isinstance(largest_PK_value, str):
-        return largest_PK_value
+        return largest_PK_value  ##database_query_fail_statement()
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
     else:
         largest_PK_value = largest_PK_value.iloc[0][0]
-        log.debug(f"The query returned a dataframe from which {largest_PK_value} (type {type(largest_PK_value)}) was extracted.")
+        log.debug(f"The query returned a dataframe from which {largest_PK_value} (type {type(largest_PK_value)}) was extracted.")  ##return_value_from_query_statement()
         return int(largest_PK_value) + 1
 
 
@@ -373,7 +373,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #AboutTo
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  ##about_to_statement()
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
@@ -546,7 +546,7 @@ def check_if_data_already_in_COUNTERData(df):
 
     #Section: Check Database for Combinations of Above
     combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")  #AboutTo
+    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")  ##about_to_statement()
     total_number_of_matching_records = 0
     matching_record_instances = []
     for combo in combinations_to_check:
@@ -555,9 +555,9 @@ def check_if_data_already_in_COUNTERData(df):
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            return (None, number_of_matching_records)
+            return (None, number_of_matching_records)  ##database_query_fail_statement()
         number_of_matching_records = number_of_matching_records.iloc[0][0]
-        log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")
+        log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")  ##return_value_from_query_statement()
         if number_of_matching_records > 0:
             matching_record_instances.append({
                 'statistics_source_ID': combo[0],
@@ -584,7 +584,7 @@ def check_if_data_already_in_COUNTERData(df):
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                return (None, statistics_source_name)
+                return (None, statistics_source_name)  ##database_query_fail_statement()
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results
@@ -622,6 +622,9 @@ def update_database(update_statement, engine):
     log.info(f"Starting `update_database()` for the update statement {update_statement}.")
     try:
         engine.execute(update_statement)
+        log.debug(f"`update_statement` is {update_statement}")  #temp
+        single_line_update_statement = update_statement.replace('\n', ' ')
+        log.debug(f"`single_line_update_statement` is {single_line_update_statement}")  #temp
         message = f"Successfully preformed the update `{update_statement}`."
         log.info(message)
         return message

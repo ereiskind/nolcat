@@ -27,14 +27,15 @@ def annual_stats_homepage():
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
-            return abort(404)  #HomepageSQLError
+            flash() ##database_query_fail_statement()
+            return abort(404)
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('annual_stats/index.html', form=form)
     elif form.validate_on_submit():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
         return abort(404)
 
 
@@ -55,7 +56,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             engine=db.engine,
         )
         if isinstance(fiscal_year_details, str):
-            flash(f"Unable to load requested page because it relied on {fiscal_year_details[0].lower()}{fiscal_year_details[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {fiscal_year_details[0].lower()}{fiscal_year_details[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_details = fiscal_year_details.astype(FiscalYears.state_data_types())
         #ToDo: Pass `fiscal_year_details` single-record dataframe to page for display
@@ -65,7 +66,7 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
             index='AUCT_statistics_source',
         )
         if isinstance(fiscal_year_reporting, str):
-            flash(f"Unable to load requested page because it relied on {fiscal_year_reporting[0].lower()}{fiscal_year_reporting[1:].replace(' raised', ', which raised')}")
+            flash(f"Unable to load requested page because it relied on {fiscal_year_reporting[0].lower()}{fiscal_year_reporting[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('annual_stats.annual_stats_homepage'))
         fiscal_year_reporting = fiscal_year_reporting.astype(AnnualUsageCollectionTracking.state_data_types())
         #ToDo: Pass `fiscal_year_reporting` dataframe to page for display
@@ -102,5 +103,5 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
         #ToDo: Get values below for the form submitted
-        # log.error(f"`form.errors`: {form.errors}")  #404
+        # log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
         return abort(404)

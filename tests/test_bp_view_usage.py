@@ -111,7 +111,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
-        pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -156,7 +156,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    index='COUNTER_data_ID',
     #)
     #if isinstance(database_df, str):
-    #    pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")
+    #    pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     #database_df = database_df.astype(COUNTERData.state_data_types())
 
     #assert POST_response.status == "200 OK"
@@ -204,7 +204,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"
