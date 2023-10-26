@@ -136,7 +136,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     if isinstance(retrieved_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+        pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
@@ -387,7 +387,7 @@ def test_update_database(engine, updated_vendors_relation):
         index='vendor_ID',
     )
     if isinstance(retrieved_updated_vendors_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_updated_vendors_data[0].lower()}{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
     assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."

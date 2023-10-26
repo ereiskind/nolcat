@@ -287,7 +287,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+        pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -324,7 +324,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+        pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -452,7 +452,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         engine=db.engine,
     )
     if isinstance(df, str):
-        pytest.skip(f"Unable to create fixture because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+        pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})

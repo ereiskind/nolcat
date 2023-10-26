@@ -74,15 +74,6 @@ def Flask_error_statement():
     pass
 
 
-def database_function_skip_statements():
-    '''Indication that ``query_database()``, ``load_data_into_database()``, or ``update_database()`` failed, so the fixture or test is being skipped to avoid it doing the same
-    
-    ?
-    '''
-    #"Unable to <create fixture/run test> because it relied on <slightly modified return value for database function>"
-    pass
-
-
 #Section: Files, File Organization, and File I/O
 #Subsection: Logging/Output Statements
 def file_IO_statement():
@@ -198,6 +189,22 @@ def add_data_success_and_update_database_fail_statement():
     '''
     #"<``load_data_into_database()`` or ``upload_file_to_S3_bucket()`` response>, but updating the `<name of relation>` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
     pass
+
+
+def database_function_skip_statements(return_value, is_test_function=True):
+    """This statement provides the logging output when a pytest skip is initiated after a `nolcat.app.query_database()`, `nolcat.app.load_data_into_database()`, or `nolcat.app.update_database()` function fails.
+    
+    Args:
+        return_value (str): the error message returned by the database helper function
+        is_test_function (bool): indicates if this function is being called within a test function; defaults to `True` 
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if is_test_function:
+        return f"Unable to run test because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
+    else:
+        return f"Unable to create fixture because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
 
 
 #Section: SUSHI API Calls

@@ -77,7 +77,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             engine=engine,
         )
         if isinstance(query_result, str):
-            pytest.skip(f"Unable to run test because it relied on {query_result[0].lower()}{query_result[1:].replace(' raised', ', which raised')}")  ##database_function_skip_statements()
+            pytest.skip(database_function_skip_statements(query_result, False))
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
@@ -440,8 +440,10 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
+    if isinstance(number_of_records, str):
+        pytest.skip(database_function_skip_statements(number_of_records))
     if number_of_records.iloc[0][0] == 0:
-        pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")  ##database_function_skip_statements()
+        pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
     log.info(f"`df` data:\n{df}")  #temp
     log.info(f"`non_duplicate_COUNTER_data` data:\n{non_duplicate_COUNTER_data}")  #temp
