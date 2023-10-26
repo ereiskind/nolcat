@@ -23,6 +23,7 @@ from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
 
@@ -351,7 +352,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yield:
         None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
     """
-    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, the `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  ##fixture_variable_value_declaration_statement()
+    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
     log.debug(f"About to upload file '{non_COUNTER_AUCT_object_after_upload.usage_file_path}' from file location {path_to_sample_file} to S3 bucket {BUCKET_NAME}.")  ##file_IO_statement()
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,

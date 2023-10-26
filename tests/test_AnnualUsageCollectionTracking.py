@@ -9,6 +9,7 @@ from pandas.testing import assert_frame_equal
 from conftest import match_direct_SUSHI_harvest_result
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -164,10 +165,10 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")  ##fixture_variable_value_declaration_statement()
-    log.debug(f"In `remove_file_from_S3()`, the `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}.")  ##fixture_variable_value_declaration_statement()
+    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
+    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_before_upload", non_COUNTER_AUCT_object_before_upload))
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")  ##fixture_variable_value_declaration_statement()
+    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(

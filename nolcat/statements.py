@@ -1,6 +1,8 @@
 """The repo features a wide variety of logging statements and log-like output statements. Many of these are consistent within a function or module, but others are standardized with a specific logging level and structure throughout the entire repository; to avoid repetition, such statements are established as functions here. All logging statements and log-like output statements are full sentences ending in periods.
 """
 
+from pathlib import Path
+
 
 #Section: General Statements
 #Subsection: Logging/Output Statements
@@ -25,14 +27,20 @@ def initialize_relation_class_object_statement():
     pass
 
 
-def fixture_variable_value_declaration_statement():
-    '''Statements at the start of fixture functions adding the variables to stdout/logging for troubleshooting purposes
+def fixture_variable_value_declaration_statement(variable_name, variable_value):
+    """This statement adds the value of any arguments used in fixture functions to the logging output for troubleshooting purposes.
+
+    Args:
+        variable_name (str): the name of the argument/variable
+        variable_value (object): the argument/variable value
     
-    Debug logging statement
-    When the value is a pathlib.Path object, ``.resolve()`` is added to output an absolute file path
-    '''
-    #"In `<fixture function name>()`, the `<variable name>` is <value>."
-    pass
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if isinstance(variable_value, Path):
+        return f"The `{variable_name}` is {variable_value.resolve()}."
+    else:
+        return f"The `{variable_name}` is {variable_value}."
 
 
 #Subsection: Error Statements

@@ -15,6 +15,7 @@ import flask
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -250,9 +251,9 @@ def remove_file_from_S3(path_to_sample_file):
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")  ##fixture_variable_value_declaration_statement()
+    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
     file_name = f"test_{path_to_sample_file.name}"
-    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")  ##fixture_variable_value_declaration_statement()
+    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
