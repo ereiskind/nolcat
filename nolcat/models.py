@@ -14,6 +14,7 @@ from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
 from .app import *
+from .statements import *
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -501,7 +502,7 @@ class FiscalYears(db.Model):
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."  ##unable_to_get_updated_primary_key_values_statement()
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             all_flash_statements.append(message)
             return (message, all_flash_statements)
@@ -1130,7 +1131,7 @@ class StatisticsSources(db.Model):
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."  ##unable_to_get_updated_primary_key_values_statement()
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             flash_statements.append(message)
             return (message, flash_statements)
@@ -1556,7 +1557,7 @@ class AnnualUsageCollectionTracking(db.Model):
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."  ##unable_to_get_updated_primary_key_values_statement()
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             flash_statements.append(message)
             return (message, flash_statements)

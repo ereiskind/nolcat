@@ -14,6 +14,7 @@ from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ def upload_COUNTER_reports():
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `<relation>` raised the error {error}."  ##unable_to_get_updated_primary_key_values_statement()
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             messages_to_flash.append(message)
             flash(messages_to_flash)

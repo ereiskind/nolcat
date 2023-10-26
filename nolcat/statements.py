@@ -53,14 +53,17 @@ def unable_to_convert_SUSHI_data_to_dataframe_statement():
     pass
 
 
-def unable_to_get_updated_primary_key_values_statement():
-    '''Unable to get updated primary key values
+def unable_to_get_updated_primary_key_values_statement(relation, error):
+    """This statement prepares the error raised by `nolcat.app.first_new_PK_value()` for the logging output.
+
+    Args:
+        relation (str): the relation name
+        error (Exception): the Python Exception raised by `nolcat.app.first_new_PK_value()`
     
-    Warning logging statement
-    In the function that called ``nolcat.app.first_new_PK_value()``
-    '''
-    #"Running the function `first_new_PK_value()` for the relation `<relation>` raised the error <Python exception>."
-    pass
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
 
 
 def Flask_error_statement():
