@@ -404,7 +404,7 @@ class SUSHICallAndResponse:
         if isinstance(statistics_source_ID, str):
             return statistics_source_ID  ##database_query_fail_statement()
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
-        log.debug(f"About to upload file '{S3_file_name}' from temporary file location {temp_file_path} to S3 bucket {BUCKET_NAME}.")  ##file_IO_statement()
+        log.debug(file_IO_statement(S3_file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
         logging_message = upload_file_to_S3_bucket(
             temp_file_path,
             S3_file_name,
