@@ -14,6 +14,8 @@ from numpy import squeeze
 import boto3
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
+from .statements import *
+
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
 The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multiple possible import statements in try-except blocks are used to handle the problem.
@@ -72,31 +74,6 @@ log = logging.getLogger(__name__)
 csrf = CSRFProtect()
 db = SQLAlchemy()
 s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
-
-
-def file_extensions_and_mimetypes():
-    """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.
-    
-    This helper function is called in `create_app()` and thus must be before that function.
-    """
-    return {
-        ".xlsx": "application/vnd.ms-excel",
-        ".csv": "text/csv",
-        ".tsv": "text/tab-separated-values",
-        ".pdf": "application/pdf",
-        ".docx": "application/msword",
-        ".pptx": "application/vnd.ms-powerpoint",
-        ".txt": "text/plain",
-        ".jpeg": "image/jpeg",
-        ".jpg":"image/jpeg",
-        ".png": "image/png",
-        ".svg": "image/svg+xml",
-        ".json": "application/json",
-        ".html": "text/html",
-        ".htm": "text/html",
-        ".xml": "text/xml",
-        ".zip": "application/zip",
-    }
 
 
 def page_not_found(error):
@@ -496,20 +473,6 @@ def query_database(query, engine, index=None):
         message = f"Running the query `{query}` raised the error {error}."
         log.error(message)
         return message
-
-
-def format_list_for_stdout(stdout_list):
-    """Changes a list into a string which places each item of the list on its own line.
-
-    Using the list comprehension allows the function to accept generators, which are transformed into lists by the comprehension, and to handle both lists and generators with individual items that aren't strings by type juggling.
-
-    Args:
-        stdout_list (list or generator): a list for pretty printing to stdout
-    
-    Returns:
-        str: the list contents with a line break between each item
-    """
-    return '\n'.join([str(file_path) for file_path in stdout_list])
 
 
 def check_if_data_already_in_COUNTERData(df):

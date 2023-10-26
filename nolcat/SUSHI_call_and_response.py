@@ -12,7 +12,7 @@ import pandas as pd
 import pyinputplus
 
 from .app import *
-from nolcat.models import *
+from .models import *
 
 log = logging.getLogger(__name__)
 
