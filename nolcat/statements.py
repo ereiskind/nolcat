@@ -155,14 +155,23 @@ def list_folder_contents_statement(file_path, alone=True):
         return "t" + main_value
 
 
-def check_if_folder_exists_statement():
-    '''Checks if file at given path exists
+def check_if_folder_exists_statement(file_path, alone=True):
+    """This statement indicates if there's a file at the given file path for the logging output.
 
-    Debug logging statement
-    Information about the logging statement's relative location in a function can be added at the very beginning of the statement
-    '''
-    #"There's a file at <absolute path to file>: <Boolean>."
-    pass
+   Information about the logging statement's relative location in a function can be added at the very beginning of the statement.
+
+    Args:
+        file_path (pathlib.Path): the path to the file being checked
+        alone (bool): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    main_value = f"here's a file at {file_path.resolve()}: {file_path.is_file()}"
+    if alone:
+        return "T" + main_value
+    else:
+        return " t" + main_value
 
 
 #Subsection: Error Statements
