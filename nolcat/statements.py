@@ -136,14 +136,23 @@ def file_IO_statement(name_of_file, origin_location, destination_location, uploa
         return f"About to download file '{name_of_file}' from {origin_location} to {destination_location}."
 
 
-def list_folder_contents_statement():
-    '''Lists contents of folder
+def list_folder_contents_statement(file_path, alone=True):
+    """This statement lists the contents of a folder for the logging output.
 
-    Debug logging statement
-    Information about the logging statement's relative location in a function can be added at the very beginning of the statement 
-    '''
-    #"The files in the folder <absolute path to folder>\n<list of files in folder separated by newlines>"
-    pass
+    Information about the logging statement's relative location in a function can be added at the very beginning of the statement.
+
+    Args:
+        file_path (pathlib.Path): the folder whose contents are being listed
+        alone (bool): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    main_value = f"he files in the folder {file_path.resolve()}\n{format_list_for_stdout(file_path.iterdir())}"
+    if alone:
+        return "T" + main_value
+    else:
+        return "t" + main_value
 
 
 def check_if_folder_exists_statement():

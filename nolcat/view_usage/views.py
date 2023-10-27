@@ -196,7 +196,7 @@ def use_predefined_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")  ##check_if_folder_exists_statement()
-        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")  ##list_folder_contents_statement()
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
         log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
@@ -210,7 +210,7 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, the files in the folder {str(Path(__file__).parent.resolve())}:\n{format_list_for_stdout([file.name for file in Path(__file__).parent.iterdir()])}")  ##list_folder_contents_statement()
+        log.debug("Before `unlink()`," + list_folder_contents_statement(Path(__file__).parent, False))
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
