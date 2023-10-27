@@ -152,7 +152,7 @@ def list_folder_contents_statement(file_path, alone=True):
     if alone:
         return "T" + main_value
     else:
-        return "t" + main_value
+        return " t" + main_value
 
 
 def check_if_folder_exists_statement(file_path, alone=True):
