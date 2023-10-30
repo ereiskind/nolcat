@@ -95,7 +95,7 @@ class SUSHICallAndResponse:
             messages_to_flash = [message]
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
+            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):  ##CheckStatement
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
@@ -106,7 +106,7 @@ class SUSHICallAndResponse:
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
+            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):  ##CheckStatement
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
@@ -409,7 +409,7 @@ class SUSHICallAndResponse:
             temp_file_path,
             S3_file_name,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
+        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
             message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"  ##failed_upload_to_S3_statement()
             log.critical(message)
         else:

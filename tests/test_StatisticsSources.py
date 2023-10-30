@@ -196,7 +196,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             begin_date,
             end_date,
         )
-    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
+    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##CheckStatement
         pytest.skip("The test is being skipped because the API call returned no data.")
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)

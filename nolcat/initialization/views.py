@@ -97,14 +97,14 @@ def collect_FY_and_vendor_data():
             relation='fiscalYears',
             engine=db.engine,
         )
-        if fiscalYears_load_result.startswith("Loading data into the fiscalYears relation raised the error"):
+        if fiscalYears_load_result.startswith("Loading data into the fiscalYears relation raised the error"):  ##CheckStatement
             data_load_errors.append(fiscalYears_load_result)
         vendors_load_result = load_data_into_database(
             df=vendors_dataframe,
             relation='vendors',
             engine=db.engine,
         )
-        if vendors_load_result.startswith("Loading data into the vendors relation raised the error"):
+        if vendors_load_result.startswith("Loading data into the vendors relation raised the error"):  ##CheckStatement
             data_load_errors.append(vendors_load_result)
         vendorNotes_load_result = load_data_into_database(
             df=vendorNotes_dataframe,
@@ -112,7 +112,7 @@ def collect_FY_and_vendor_data():
             engine=db.engine,
             load_index=False,
         )
-        if vendorNotes_load_result.startswith("Loading data into the vendorNotes relation raised the error"):
+        if vendorNotes_load_result.startswith("Loading data into the vendorNotes relation raised the error"):  ##CheckStatement
             data_load_errors.append(vendorNotes_load_result)
         if data_load_errors:
             flash(data_load_errors)
@@ -232,7 +232,7 @@ def collect_sources_data():
             relation='statisticsSources',
             engine=db.engine,
         )
-        if statisticsSources_load_result.startswith("Loading data into the statisticsSources relation raised the error"):
+        if statisticsSources_load_result.startswith("Loading data into the statisticsSources relation raised the error"):  ##CheckStatement
             data_load_errors.append(statisticsSources_load_result)
         statisticsSourceNotes_load_result = load_data_into_database(
             df=statisticsSourceNotes_dataframe,
@@ -240,14 +240,14 @@ def collect_sources_data():
             engine=db.engine,
             load_index=False,
         )
-        if statisticsSourceNotes_load_result.startswith("Loading data into the statisticsSourceNotes relation raised the error"):
+        if statisticsSourceNotes_load_result.startswith("Loading data into the statisticsSourceNotes relation raised the error"):  ##CheckStatement
             data_load_errors.append(statisticsSourceNotes_load_result)
         resourceSources_load_result = load_data_into_database(
             df=resourceSources_dataframe,
             relation='resourceSources',
             engine=db.engine,
         )
-        if resourceSources_load_result.startswith("Loading data into the resourceSources relation raised the error"):
+        if resourceSources_load_result.startswith("Loading data into the resourceSources relation raised the error"):  ##CheckStatement
             data_load_errors.append(resourceSources_load_result)
         resourceSourceNotes_load_result = load_data_into_database(
             df= resourceSourceNotes_dataframe,
@@ -255,14 +255,14 @@ def collect_sources_data():
             engine=db.engine,
             load_index=False,
         )
-        if resourceSourceNotes_load_result.startswith("Loading data into the resourceSourceNotes relation raised the error"):
+        if resourceSourceNotes_load_result.startswith("Loading data into the resourceSourceNotes relation raised the error"):  ##CheckStatement
             data_load_errors.append(resourceSourceNotes_load_result)
         statisticsResourceSources_load_result = load_data_into_database(
             df=statisticsResourceSources_dataframe,
             relation='statisticsResourceSources',
             engine=db.engine,
         )
-        if statisticsResourceSources_load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):
+        if statisticsResourceSources_load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):  ##CheckStatement
             data_load_errors.append(statisticsResourceSources_load_result)
         if data_load_errors:
             flash(data_load_errors)
@@ -336,7 +336,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                         update_statement=f"Truncate {relation};",
                         engine=db.engine,
                     )
-                    if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
+                    if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
                         message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
                         log.critical(message)
                         flash(message)
@@ -418,7 +418,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
-        if annualUsageCollectionTracking_load_result.startswith("Loading data into the annualUsageCollectionTracking relation raised the error"):
+        if annualUsageCollectionTracking_load_result.startswith("Loading data into the annualUsageCollectionTracking relation raised the error"):  ##CheckStatement
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -429,7 +429,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if COUNTERData_load_result.startswith("Loading data into the COUNTERData relation raised the error"):
+        if COUNTERData_load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##CheckStatement
             #ToDo: Additional note about needing to upload all workbooks through `ingest_usage` blueprint
             messages_to_flash.append(COUNTERData_load_result)
         '''
@@ -506,7 +506,7 @@ def upload_historical_non_COUNTER_usage():
                 notes=df.at[0,'notes'],
             )
             response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
-            if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):
+            if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):  ##CheckStatement
                 #ToDo: Do any other actions need to be taken?
                 log.error(response)
                 #ToDo: Add `message` to error message list in some form
