@@ -810,7 +810,7 @@ class StatisticsSources(db.Model):
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
         if isinstance(SUSHI_info['URL'], str) and re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  ##successful_SUSHI_call_statement()
+            log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
@@ -818,7 +818,7 @@ class StatisticsSources(db.Model):
             log.warning(message)
             return (message, all_flashed_statements)
         else:
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")  ##successful_SUSHI_call_statement()
+            log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
 
 
@@ -858,7 +858,7 @@ class StatisticsSources(db.Model):
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-                log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")  ##successful_SUSHI_call_statement()
+                log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
                 all_available_reports = []
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:

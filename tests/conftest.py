@@ -494,7 +494,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
-    log.info(f"Call to `reports` endpoint for {statistics_source_name} successful.")  ##successful_SUSHI_call_statement()
+    log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:

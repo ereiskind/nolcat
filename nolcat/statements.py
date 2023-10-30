@@ -301,14 +301,17 @@ def database_function_skip_statements(return_value, is_test_function=True):
 
 #Section: SUSHI API Calls
 #Subsection: Logging/Output Statements
-def successful_SUSHI_call_statement():
-    '''Successful SUSHI call
+def successful_SUSHI_call_statement(call_path, statistics_source_name):
+    """This statement indicates a successful call to `SUSHICallAndResponse.make_SUSHI_call()`.
 
-    Info logging statement
-    In the ``SUSHICallAndResponse.make_SUSHI_call()`` method
-    '''
-    #"Call to `<type of endpoint>` endpoint for <statistics source name> successful."
-    pass
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"Call to `{call_path}` endpoint for {statistics_source_name} successful."
 
 
 def _harvest_R5_SUSHI_success_statement():
