@@ -368,7 +368,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
             Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")  ##unable_to_delete_test_file_in_S3_statement()
+        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 

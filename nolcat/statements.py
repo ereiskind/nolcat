@@ -188,13 +188,17 @@ def failed_upload_to_S3_statement(file_name, error_message):
     return f"Uploading the file {file_name} to S3 failed because {error_message[0].lower()}{error_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
 
 
-def unable_to_delete_test_file_in_S3_statement():
-    '''Unable to delete file in S3 bucket after tests
-    
-    Error logging statement
-    '''
-    #"Trying to remove file `<file name>` from the S3 bucket raised the error <error>."
-    pass
+def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
+    """This statement indicates that a file uploaded to a S3 bucket as part of a test function couldn't be removed from the bucket.
+
+    Args:
+        file_name (str): the final part of the name of the file in S3
+        error_message (str): the AWS error message returned by the attempt to delete the file
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"Trying to remove file {file_name} from the S3 bucket raised the error {error_message}."
 
 
 #Section: Database Interactions

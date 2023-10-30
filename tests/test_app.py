@@ -261,7 +261,7 @@ def remove_file_from_S3(path_to_sample_file):
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  ##unable_to_delete_test_file_in_S3_statement()
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test

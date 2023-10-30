@@ -176,7 +176,7 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")  ##unable_to_delete_test_file_in_S3_statement()
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 @pytest.mark.dependency()
