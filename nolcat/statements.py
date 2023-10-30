@@ -349,13 +349,17 @@ def no_data_returned_by_SUSHI_statement():
     pass
 
 
-def attempted_SUSHI_call_with_invalid_dates_statement():
-    '''SUSHI call attempted with invalid dates
+def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
+    """This statement indicates an attempter SUSHI call with an invalid date range.
 
-    Error logging statement
-    '''
-    #"The given end date of <end date> is before the given start date of <start date>, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
-    pass
+    Args:
+        end_date (datetime.date): the given end date of the range
+        start_date (datetime.date): the given start date of the range
+    
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
 
 
 """Other standardized logging statements, including those in a single class:
