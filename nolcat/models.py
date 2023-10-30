@@ -1016,7 +1016,7 @@ class StatisticsSources(db.Model):
                         file_name,
                     )
                     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-                        message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"  ##failed_upload_to_S3_statement()
+                        message = failed_upload_to_S3_statement(file_name, logging_message)
                         log.critical(message)
                     else:
                         message = logging_message
@@ -1052,7 +1052,7 @@ class StatisticsSources(db.Model):
                     file_name,
                 )
                 if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-                    message = f"Uploading the file {file_name} to S3 in `nolcat.models.StatisticsSources._harvest_single_report()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"  ##failed_upload_to_S3_statement()
+                    message = failed_upload_to_S3_statement(file_name, logging_message)
                     log.critical(message)
                 else:
                     message = logging_message
@@ -1613,7 +1613,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file_name,
         )
         if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-            message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"  ##failed_upload_to_S3_statement()
+            message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message
         log.debug(logging_message)

@@ -358,9 +358,9 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-        log.warning(f"Uploading the file {non_COUNTER_AUCT_object_after_upload.usage_file_path} to S3 in `tests.conftest.non_COUNTER_file_to_download_from_S3()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")  ##failed_upload_to_S3_statement()
     log.debug(logging_message)
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+        pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield None
     try:
         s3_client.delete_object(

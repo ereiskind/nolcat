@@ -270,10 +270,9 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         path_to_sample_file,
         f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-        log.warning(f"Uploading the file test_{path_to_sample_file.name} to S3 in `tests.test_app.test_upload_file_to_S3_bucket()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")  ##failed_upload_to_S3_statement()
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     log.debug(logging_message)
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",

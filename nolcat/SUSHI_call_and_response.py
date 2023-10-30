@@ -410,7 +410,7 @@ class SUSHICallAndResponse:
             S3_file_name,
         )
         if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-            message = f"Uploading the file {S3_file_name} to S3 in `nolcat.SUSHICallAndResponse._save_raw_Response_text()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"  ##failed_upload_to_S3_statement()
+            message = failed_upload_to_S3_statement(S3_file_name, logging_message)
             log.critical(message)
         else:
             message = logging_message
