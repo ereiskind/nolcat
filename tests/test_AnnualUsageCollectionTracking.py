@@ -96,7 +96,7 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
         statistics_source_retrieval_code = str(record.at[0,'statistics_source_retrieval_code']).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
         vendor_ID = int(record.at[0,'vendor_ID']),
     )
-    log.debug(f"The query returned a dataframe from which the start date {start_date} (type {type(start_date)}), the end date {end_date} (type {type(end_date)}), and the `StatisticsSources` object {StatisticsSources_object} were extracted.")  ##return_value_from_query_statement()
+    log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
     yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
     yield yield_object
@@ -225,7 +225,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     if isinstance(usage_file_path_in_database, str):
         pytest.skip(database_function_skip_statements(usage_file_path_in_database))
     usage_file_path_in_database = usage_file_path_in_database.iloc[0][0]
-    log.debug(f"The query returned a dataframe from which {usage_file_path_in_database} (type {type(usage_file_path_in_database)}) was extracted.")  ##return_value_from_query_statement()
+    log.debug(return_value_from_query_statement(usage_file_path_in_database))
     assert file_name == usage_file_path_in_database
 
 

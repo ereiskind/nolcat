@@ -203,15 +203,31 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
 
 #Section: Database Interactions
 #Subsection: Logging/Output Statements
-def return_value_from_query_statement():
-    '''Individual value or sequence of values returned by SQL query
+def return_value_from_query_statement(return_value, type_of_query=None):
+    """This statement shows an individual value or sequence of values returned by a call to `nolcat.app.query_database()`.
 
-    Debug logging statement
-    In the function that called ``query_database()``
-    '''
-    #"The <type of query, optional> query returned a dataframe from which <value from dataframe> (type <type of data from dataframe>) was extracted."
-    #For multiple value, repeat the statement of the values and their data types and end with "were extracted."
-    pass
+    Args:
+        return_value (str, int, or tuple): the value(s) returned by `nolcat.app.query_database()`
+        type_of_query (str, optional): some descriptive information about the query; defaults to `None`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if type_of_query:
+        main_value = f"The {type_of_query} query returned a dataframe from which "
+    else:
+        main_value = f"The query returned a dataframe from which "
+    
+    if isinstance(return_value, tuple):
+        i = 0
+        for value in return_value:
+            if i==len(return_value)-1:
+                main_value = main_value + "and "
+            main_value = f"{main_value}{return_value} (type {type(return_value)}), "
+            i += 1
+        return f"{main_value[:-2]} were extracted."
+    else:
+        return f"{main_value}{return_value} (type {type(return_value)}) was extracted."
 
 
 def return_database_from_query_statement():

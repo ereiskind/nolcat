@@ -148,7 +148,7 @@ class FiscalYears(db.Model):
             return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
-            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
             query=f"""
@@ -164,7 +164,7 @@ class FiscalYears(db.Model):
             return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
-            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         TR_J1_df = query_database(
             query=f"""
@@ -180,7 +180,7 @@ class FiscalYears(db.Model):
             return message
         else:
             TR_J1_sum = TR_J1_df.iloc[0][0]
-            log.debug(f"The e-serials sum query returned a dataframe from which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
@@ -209,7 +209,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         ACRL_63 = df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement(ACRL_63))
         return ACRL_63
     
 
@@ -238,7 +238,7 @@ class FiscalYears(db.Model):
             return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
-            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
             query=f"""
@@ -254,7 +254,7 @@ class FiscalYears(db.Model):
             return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
-            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
 
@@ -283,7 +283,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         ACRL_61b = df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ACRL_61b} (type {type(ACRL_61b)}) was extracted")  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement(ACRL_61b))
         return ACRL_61b
 
 
@@ -311,7 +311,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         ARL_18= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_18} (type {type(ARL_18)}) was extracted")  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement(ARL_18))
         return ARL_18
 
     
@@ -339,7 +339,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         ARL_19= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_19} (type {type(ARL_19)}) was extracted")  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement(ARL_19))
         return ARL_19
 
 
@@ -367,7 +367,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             return message
         ARL_20= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_20} (type {type(ARL_20)}) was extracted")  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement(ARL_20))
         return ARL_20
 
 
@@ -1094,7 +1094,7 @@ class StatisticsSources(db.Model):
             if isinstance(number_of_records, str):
                 return number_of_records  ##database_query_fail_statement()
             number_of_records = number_of_records.iloc[0][0]
-            log.debug(f"The records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} query returned a dataframe from which {number_of_records} (type {type(number_of_records)}) was extracted.")  ##return_value_from_query_statement()
+            log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
                 months_to_harvest.append(month_being_checked)
             else:
@@ -1530,7 +1530,7 @@ class AnnualUsageCollectionTracking(db.Model):
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        log.debug(f"The query returned a dataframe from which {start_date} (type {type(start_date)}), {end_date} (type {type(end_date)}), and {fiscal_year} (type {type(fiscal_year)}) were extracted.")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type  ##return_value_from_query_statement()
+        log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
