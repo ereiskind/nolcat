@@ -115,7 +115,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* for FY \d{4} successfully found (\d*) records.', string=logging_statement)
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* for FY \d{4} successfully found (\d*) records.', string=logging_statement)  ##MatchesADesignatedString
     assert method_response_match_object  # The test fails at this point because a failing condition here raises errors below
     assert isinstance(flash_statements, list)
 
@@ -195,7 +195,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
-    upload_result = re.fullmatch(r'Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `.*`\.', upload_result, flags=re.DOTALL)
+    upload_result = re.fullmatch(r'Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `.*`\.', upload_result, flags=re.DOTALL)  ##MatchesADesignatedString
     try:
         log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
         log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp

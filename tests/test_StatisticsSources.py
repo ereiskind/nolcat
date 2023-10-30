@@ -344,7 +344,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)  ##MatchesADesignatedString
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 

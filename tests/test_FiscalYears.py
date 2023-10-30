@@ -253,7 +253,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    assert method_result == "Successfully loaded 10 records into the annualUsageCollectionTracking relation."
+    assert method_result == "Successfully loaded 10 records into the annualUsageCollectionTracking relation."  ##MatchesADesignatedString
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
@@ -267,5 +267,5 @@ def test_collect_fiscal_year_usage_statistics(caplog):
     #This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. This test needs a FiscalYears object for a record in the test data that will return records with a small but limited number of SUSHI calls that can easily be made and returned so the result of the method can be verified.
     #ToDo: Calling the method on `FY_instance` when it's instantiated via `FY_instance, FY_df = FiscalYears_object_and_record` will return no data
     #ToDo: Will three results of `StatisticsSources._harvest_R5_SUSHI()` concatenated be the same as a result like `match_direct_SUSHI_harvest_result()`?
-    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple for which `re.fullmatch(r'Successfully loaded \d* records into the .* relation and preformed the update `.*`\.', method_response[0], flags=re.DOTALL)` will be true if the SUSHI pull and database load is a success
+    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple for which `re.fullmatch(r'Successfully loaded \d* records into the .* relation and preformed the update `.*`\.', method_response[0], flags=re.DOTALL)` will be true if the SUSHI pull and database load is a success  ##MatchesADesignatedString
     pass

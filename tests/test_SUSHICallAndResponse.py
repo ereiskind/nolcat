@@ -239,5 +239,5 @@ def test_call_with_invalid_credentials(SUSHI_credentials_fixture, caplog):
     SUSHI_credentials['customer_id'] = "deliberatelyIncorrect"
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
-    assert response[0].startswith(f"GET request to StatisticsSources.statistics_source_name raised")  # Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error--so a more specific match can't be made
+    assert response[0].startswith(f"GET request to StatisticsSources.statistics_source_name raised")  # Each platform seems to handle invalid credentials slightly differently--some use HTTP 400, some use HTTP 500, some use SUSHI error--so a more specific match can't be made  ##MatchesADesignatedString
     assert isinstance(response[1], list)

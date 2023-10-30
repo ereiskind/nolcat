@@ -79,7 +79,7 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert POST_response.status == "200 OK"
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
-    assert re.search(r'Successfully loaded \d* records into the .* relation\.', prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(r'Successfully loaded \d* records into the .* relation\.', prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  ##MatchesADesignatedString
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
 
@@ -155,7 +155,7 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
     assert POST_response.status == "200 OK"
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
-    assert re.search(r'Successfully loaded \d* records into the .* relation\.', prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
+    assert re.search(r'Successfully loaded \d* records into the .* relation\.', prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail  ##MatchesADesignatedString
 
 
 def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):

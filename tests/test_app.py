@@ -81,7 +81,7 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    assert result == "Successfully loaded 8 records into the vendors relation."
+    assert result == "Successfully loaded 8 records into the vendors relation."  ##MatchesADesignatedString
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
@@ -361,7 +361,7 @@ def test_update_database(engine, updated_vendors_relation):
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
-    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."
+    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."  ##MatchesADesignatedString
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
