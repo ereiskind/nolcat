@@ -143,7 +143,7 @@ def list_folder_contents_statement(file_path, alone=True):
 
     Args:
         file_path (pathlib.Path): the folder whose contents are being listed
-        alone (bool): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
     
     Returns:
         str: the statement for outputting the arguments to logging
@@ -162,7 +162,7 @@ def check_if_folder_exists_statement(file_path, alone=True):
 
     Args:
         file_path (pathlib.Path): the path to the file being checked
-        alone (bool): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
 
     Returns:
         str: the statement for outputting the arguments to logging
@@ -272,7 +272,7 @@ def database_function_skip_statements(return_value, is_test_function=True):
     
     Args:
         return_value (str): the error message returned by the database helper function
-        is_test_function (bool): indicates if this function is being called within a test function; defaults to `True` 
+        is_test_function (bool, optional): indicates if this function is being called within a test function; defaults to `True` 
     
     Returns:
         str: the statement for outputting the arguments to logging
