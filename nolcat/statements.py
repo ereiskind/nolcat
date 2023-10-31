@@ -271,18 +271,17 @@ def database_query_fail_statement(error_message, value_type="load requested page
         return f"Unable to {value_type} because {error_message[0].lower()}{error_message[1:]}"
 
 
-def database_update_fail_statement(relation_name, update_statement):
+def database_update_fail_statement(update_statement):
     """This statement indicates the failure of a call to `nolcat.app.update_database()`.
 
     Args:
-        relation_name (str): the name of the relation that should've been updated
         update_statement (str): the SQL update statement
 
     Returns:
         str: the statement for outputting the arguments to logging
     """
     update_statement = update_statement.replace('\n', ' ')
-    return f"Updating the {relation_name} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+    return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 
 def add_data_success_and_update_database_fail_statement():
