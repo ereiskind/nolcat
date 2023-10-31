@@ -293,7 +293,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
+            flash(database_query_fail_statement(df))
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         log.debug(return_database_from_query_statement("the AUCT Cartesian product dataframe", df))
 
@@ -490,7 +490,7 @@ def upload_historical_non_COUNTER_usage():
                 engine=db.engine,
             )
             if isinstance(df, str):
-                message = f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}"  #ToDo: Edit language, since page isn't being loaded here  ##database_query_fail_statement()
+                message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
                 log.error(message)
                 #ToDo: Add `message` to error message list in some form
                 continue

@@ -261,7 +261,8 @@ def first_new_PK_value(relation):
         engine=db.engine,
     )
     if isinstance(largest_PK_value, str):
-        return largest_PK_value  ##database_query_fail_statement()
+        log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
+        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
@@ -518,7 +519,7 @@ def check_if_data_already_in_COUNTERData(df):
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            return (None, number_of_matching_records)  ##database_query_fail_statement()
+            return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
         number_of_matching_records = number_of_matching_records.iloc[0][0]
         log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
@@ -547,7 +548,7 @@ def check_if_data_already_in_COUNTERData(df):
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                return (None, statistics_source_name)  ##database_query_fail_statement()
+                return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results

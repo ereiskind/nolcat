@@ -402,7 +402,7 @@ class SUSHICallAndResponse:
             engine=db.engine,
         )
         if isinstance(statistics_source_ID, str):
-            return statistics_source_ID  ##database_query_fail_statement()
+            return database_query_fail_statement(statistics_source_ID, "return requested value")
         S3_file_name = f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'].strftime('%Y-%m')}_{self.parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.txt"
         log.debug(file_IO_statement(S3_file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
         logging_message = upload_file_to_S3_bucket(
@@ -538,7 +538,8 @@ class SUSHICallAndResponse:
                 engine=db.engine,
             )
             if isinstance(df, str):
-                return (df, [message, df])  ##database_query_fail_statement()
+                error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
+                return (error_message, [message, error_message])
             statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                 statistics_source_ID = int(df['statistics_source_ID'][0]),
                 statistics_source_name = str(df['statistics_source_name'][0]),

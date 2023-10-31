@@ -97,7 +97,6 @@ Iteration 1: View Lists
 Iteration 2: Update Statistics Sources to Resource Sources Relationship
 =======================================================================
 * Update "view_lists/edit_list_record.html" and accompanying form as necessary
-* Finish ``nolcat.models.ResourceSources.change_StatisticsSource()``
 * Write ``tests.test_ResourceSources.test_change_StatisticsSource()``
 
 Iteration 3: Update Access Stop Date Attribute

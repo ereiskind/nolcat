@@ -143,7 +143,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(TR_B1_df, "return requested value")
             log.warning(message)
             return message
         else:
@@ -159,7 +159,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(IR_M1_df, "return requested value")
             log.warning(message)
             return message
         else:
@@ -175,7 +175,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_J1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_J1_df[0].lower()}{TR_J1_df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(TR_J1_df, "return requested value")
             log.warning(message)
             return message
         else:
@@ -205,7 +205,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ACRL_63 = df.iloc[0][0]
@@ -233,7 +233,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(TR_B1_df, "return requested value")
             log.warning(message)
             return message
         else:
@@ -249,7 +249,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(IR_M1_df, "return requested value")
             log.warning(message)
             return message
         else:
@@ -279,7 +279,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ACRL_61b = df.iloc[0][0]
@@ -307,7 +307,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_18= df.iloc[0][0]
@@ -335,7 +335,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_19= df.iloc[0][0]
@@ -363,7 +363,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"  ##database_query_fail_statement()
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_20= df.iloc[0][0]
@@ -387,7 +387,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(current_statistics_sources, str):
-            return current_statistics_sources  ##database_query_fail_statement()
+            return database_query_fail_statement(current_statistics_sources, "return requested series")
         log.debug(return_database_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
@@ -425,7 +425,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of all the statements that should be flashed in their various formats
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
@@ -451,7 +451,8 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(AUCT_objects_to_collect_df, str):
-            return (AUCT_objects_to_collect_df, [AUCT_objects_to_collect_df])  ##database_query_fail_statement()
+            message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
+            return (message, [message])
         log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -486,7 +487,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
             if isinstance(statistics_source, str):
-                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on {statistics_source[0].lower()}{statistics_source[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
+                all_flash_statements.append(database_query_fail_statement(statistics_source, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}"))
                 continue
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             for statement in flash_statements:
@@ -578,6 +579,7 @@ class Vendors(db.Model):
 
         Returns:
             dataframe: a filtered copy of the `statisticsSources` relation
+            str: an error message if the request for the data fails
         """
         log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
         # vendor_PK = the int value that serves as the primary key for the vendor
@@ -594,7 +596,9 @@ class Vendors(db.Model):
         #     index='statistics_source_ID',
         # )
         # if isinstance(df, str):
-        #     ##database_query_fail_statement()
+        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     log.warning(message)
+        #     return message
         # log.debug(return_database_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
         # return df
         pass
@@ -606,6 +610,7 @@ class Vendors(db.Model):
 
         Returns:
             dataframe: a filtered copy of the `resourceSources` relation
+            str: an error message if the request for the data fails
         """
         log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
         # vendor_PK = the int value that serves as the primary key for the vendor
@@ -623,7 +628,9 @@ class Vendors(db.Model):
         #     index='resource_source_ID',
         # )
         # if isinstance(df, str):
-        #     ##database_query_fail_statement()
+        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     log.warning(message)
+        #     return message
         # log.debug(return_database_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
         # return df
         pass
@@ -1094,7 +1101,7 @@ class StatisticsSources(db.Model):
                 engine=db.engine,
             )
             if isinstance(number_of_records, str):
-                return number_of_records  ##database_query_fail_statement()
+                return database_query_fail_statement(number_of_records, "return requested value")
             number_of_records = number_of_records.iloc[0][0]
             log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
@@ -1319,7 +1326,9 @@ class ResourceSources(db.Model):
             engine=db.engine,
         )
         if isinstance(check_for_existing_record, str):
-            pass  ##database_query_fail_statement()
+            message = database_query_fail_statement(check_for_existing_record, "return requested record")
+            log.warning(message)
+            return message
         
         if check_for_existing_record.empty:
             log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1528,7 +1537,9 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(fiscal_year_data, str):
-            return (fiscal_year_data, [fiscal_year_data])  ##database_query_fail_statement()
+            message = database_query_fail_statement(fiscal_year_data, "return requested values")
+            log.warning(message)
+            return (fiscal_year_data, {"Before SUSHI": message})
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
@@ -1541,7 +1552,9 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(statistics_source_data, str):
-            return (statistics_source_data, [statistics_source_data])  ##database_query_fail_statement()
+            message = database_query_fail_statement(statistics_source_data, "return requested values")
+            log.warning(message)
+            return (fiscal_year_data, {"Before SUSHI": message})
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),

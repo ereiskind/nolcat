@@ -41,7 +41,8 @@ def view_lists_homepage(list):
     #     engine=db.engine,
     # )
     # if isinstance(df, str):
-    #     ##database_query_fail_statement()
+    #     flash(database_query_fail_statement(df))
+    #     return abort(404)
     # df = df.astype({dict setting correct dtypes})
     # Add field with links to see details for each record
     # Display the returned dataframe
@@ -103,7 +104,7 @@ def edit_list_record(list, PK):
             #     engine=db.engine,
             # )
             # if isinstance(df, str):
-            #     flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
+            #     flash(database_query_fail_statement(df))
             #     return redirect(url_for(view_lists.view_lists_homepage))
             # df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
