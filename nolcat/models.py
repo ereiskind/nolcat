@@ -1257,20 +1257,22 @@ class ResourceSources(db.Model):
             access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; defaults to `date.today()`
         
         Returns:
-            _type_: _description_  #ToDo: Update on completion of method
+            str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE resourceSources
+            SET access_stop_date='{access_stop_date}' AND source_in_use=false
+            WHERE resource_source_ID={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE resourceSources
-                SET access_stop_date='{access_stop_date}' AND source_in_use=false
-                WHERE resource_source_ID={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            #ToDo: log.warning()
-            pass  ##database_update_fail_statement()
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
         return update_result
 
 
@@ -1279,20 +1281,22 @@ class ResourceSources(db.Model):
         """Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
 
         Returns:
-            _type_: _description_  #ToDo: Update on completion of method
+            str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE resourceSources
+            SET access_stop_date IS NONE AND source_in_use=true
+            WHERE resource_source_ID={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE resourceSources
-                SET access_stop_date IS NONE AND source_in_use=true
-                WHERE resource_source_ID={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            #ToDo: log.warning()
-            pass  ##database_update_fail_statement()
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
         return update_result
 
 
@@ -1309,17 +1313,19 @@ class ResourceSources(db.Model):
             str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE statisticsResourceSources
+            SET current_statistics_source=false
+            WHERE SRS_resource_source={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE statisticsResourceSources
-                SET current_statistics_source=false
-                WHERE SRS_resource_source={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            #ToDo: log.warning()
-            pass  ##database_update_fail_statement()
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
         
         check_for_existing_record = query_database(
             query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
@@ -1357,17 +1363,19 @@ class ResourceSources(db.Model):
 
         else:
             log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
+            update_statement=f"""
+                UPDATE statisticsResourceSources
+                SET current_statistics_source=true
+                WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
+            """
             update_result = update_database(
-                update_statement=f"""
-                    UPDATE statisticsResourceSources
-                    SET current_statistics_source=true
-                    WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
-                """,
+                update_statement=update_statement,
                 engine=db.engine,
             )
             if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-                #ToDo: log.warning()
-                pass  ##database_update_fail_statement()
+                message = database_update_fail_statement(update_statement)
+                log.warning(message)
+                return message
             return update_result
 
 
