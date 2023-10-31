@@ -238,14 +238,20 @@ def return_value_from_query_statement(return_value, type_of_query=None):
         return f"{main_value}{return_value} (type {type(return_value)}) was extracted."
 
 
-def return_database_from_query_statement():
-    '''Dataframe returned by SQL query
+def return_database_from_query_statement(query_subject, df):
+    """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
 
-    Debug logging statement
-    In the function that called ``query_database()``
-    '''
-    #"The result of the query for <what was being queried for>:\n<dataframe>"
-    pass
+    Args:
+        query_subject (str): a short summary of what the query was for
+        df (dataframe): the dataframe returned by `nolcat.app.query_database()`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if df.shape[1] > 20:
+        return f"The beginning and the end of the query for {query_subject}:\n{df.head(10)}\n...\n{df.tail(10)}"
+    else:
+        return f"The result of the query for {query_subject}:\n{df}"
 
 
 def add_data_and_update_database_success_statement():

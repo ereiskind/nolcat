@@ -295,7 +295,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         if isinstance(df, str):
             flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")  ##database_query_fail_statement()
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
-        log.debug(f"The result of the query for the AUCT Cartesian product dataframe:\n{df}")  ##return_database_from_query_statement()
+        log.debug(return_database_from_query_statement("the AUCT Cartesian product dataframe", df))
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={
