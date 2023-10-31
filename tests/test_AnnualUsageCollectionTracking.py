@@ -44,7 +44,7 @@ def AUCT_fixture_for_SUSHI(engine):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`AUCT_fixture_for_SUSHI()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")  ##initialize_relation_class_object_statement()
+    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
     yield yield_object
 
 

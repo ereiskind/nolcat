@@ -1546,7 +1546,7 @@ class AnnualUsageCollectionTracking(db.Model):
             statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
-        log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")  ##initialize_relation_class_object_statement()
+        log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
         df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)

@@ -56,17 +56,17 @@ def about_to_statement():
     pass
 
 
-def initialize_relation_class_object_statement():
-    '''Successful initialization of a relation class object
-    
-    In the function that called ``query_database()``
-        Debug logging statement
-    Fixture:
-        Info logging statement
-    '''
-    #"The following `<name of relation class>` object was initialized based on the query results:\n<object>"
-    #"`<fixture function name>()` returning the following `<name of relation class>` object which was initialized based on the query results:\n<object>."
-    pass
+def initialize_relation_class_object_statement(relation_class_name, object_value):
+    """This statement shows the value of a relation class object initialized using the values returned from a query.
+
+    Args:
+        relation_class_name (str): the name of the relation class
+        object_value (nolcat.models): a relation class object
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    return f"The following {relation_class_name} object was initialized based on the query results:\n{object_value}"
 
 
 def fixture_variable_value_declaration_statement(variable_name, variable_value):

@@ -116,7 +116,7 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(df['vendor_ID'][0]),
         )  # Without the `int` constructors, a numpy int type is used
-        log.info(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")  ##initialize_relation_class_object_statement()
+        log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
