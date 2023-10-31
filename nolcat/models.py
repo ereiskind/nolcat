@@ -388,7 +388,7 @@ class FiscalYears(db.Model):
         )
         if isinstance(current_statistics_sources, str):
             return database_query_fail_statement(current_statistics_sources, "return requested series")
-        log.debug(return_database_from_query_statement("current statistics sources PKs", current_statistics_sources))
+        log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
@@ -599,7 +599,7 @@ class Vendors(db.Model):
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     log.warning(message)
         #     return message
-        # log.debug(return_database_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
+        # log.debug(return_dataframe_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
         # return df
         pass
 
@@ -631,7 +631,7 @@ class Vendors(db.Model):
         #     message = database_query_fail_statement(df, "return requested dataframe")
         #     log.warning(message)
         #     return message
-        # log.debug(return_database_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
+        # log.debug(return_dataframe_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
         # return df
         pass
 

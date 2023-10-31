@@ -238,7 +238,7 @@ def return_value_from_query_statement(return_value, type_of_query=None):
         return f"{main_value}{return_value} (type {type(return_value)}) was extracted."
 
 
-def return_database_from_query_statement(query_subject, df):
+def return_dataframe_from_query_statement(query_subject, df):
     """This statement shows the dataframe returned by a call to `nolcat.app.query_database()`.
 
     Args:

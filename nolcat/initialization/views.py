@@ -295,7 +295,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         if isinstance(df, str):
             flash(database_query_fail_statement(df))
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
-        log.debug(return_database_from_query_statement("the AUCT Cartesian product dataframe", df))
+        log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={
