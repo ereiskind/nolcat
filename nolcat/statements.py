@@ -254,15 +254,6 @@ def return_database_from_query_statement(query_subject, df):
         return f"The result of the query for {query_subject}:\n{df}"
 
 
-def add_data_and_update_database_success_statement():
-    '''Indication that adding COUNTER data to database and updating corresponding values succeeded
-
-    Debug logging statement
-    '''
-    #``load_data_into_database()`` or ``upload_file_to_S3_bucket()`` response followed by ``update_database()`` response
-    pass
-
-
 #Subsection: Error Statements
 def database_query_fail_statement():
     '''Indication that database query failed

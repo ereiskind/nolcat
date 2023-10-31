@@ -528,7 +528,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             all_flash_statements.append(message)
             return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", all_flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)  ##add_data_and_update_database_success_statement()
+        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
 
 
 class Vendors(db.Model):
@@ -1585,7 +1585,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(message)
             flash_statements.append(message)
             return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)  ##add_data_and_update_database_success_statement()
+        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
 
 
     @hybrid_method
@@ -1634,7 +1634,7 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"  ##add_data_success_and_update_database_fail_statement()
             log.warning(message)
             return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"
-        message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"  ##add_data_and_update_database_success_statement()
+        message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
         log.debug(message)
         return message
     
