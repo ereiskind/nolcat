@@ -377,7 +377,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects  #ToDo:: Returns tuple, second part is list of error messages for workbooks and worksheets rejected
             COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
         except Exception as error:
-            message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."  ##unable_to_convert_SUSHI_data_to_dataframe_statement()
+            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
             log.error(message)
             flash(message)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))

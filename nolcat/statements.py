@@ -86,13 +86,21 @@ def fixture_variable_value_declaration_statement(variable_name, variable_value):
 
 
 #Subsection: Error Statements
-def unable_to_convert_SUSHI_data_to_dataframe_statement():
-    '''Unable to convert file or JSON into dataframe
+def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_type=None, statistics_source_name=None):
+    """This statement indicates that the provided COUNTER data couldn't be converted into a dataframe.
 
-    Error logging statement
-    '''
-    # "Changing the <JSON-like dictionary of <report type> for <statistics source name>/uploaded COUNTER data workbooks> into a dataframe raised the error <error>."
-    pass
+    Args:
+        error_message (str): the error message returned by the attempt to convert the COUNTER data to a dataframe
+        report_type (str, optional): the type of report for a SUSHI call; defaults to `None`
+        statistics_source_name (str, optional): the name of the statistics source for a SUSHI call; defaults to `None`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if report_type and statistics_source_name:
+        return f"Changing the JSON-like dictionary of {report_type} for {statistics_source_name} into a dataframe raised the error {error_message}."
+    else:
+        return f"Changing the uploaded COUNTER data workbooks into a dataframe raised the error {error_message}."
 
 
 def unable_to_get_updated_primary_key_values_statement(relation, error):

@@ -1005,7 +1005,8 @@ class StatisticsSources(db.Model):
                     return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
                 if isinstance(df, str):
-                    log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")  ##unable_to_convert_SUSHI_data_to_dataframe_statement()
+                    message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                    log.warning(message)
                     temp_file_path = Path(__file__).parent / 'temp.json'
                     with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                         json.dump(SUSHI_data_response, JSON_file)
@@ -1016,10 +1017,10 @@ class StatisticsSources(db.Model):
                         file_name,
                     )
                     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-                        message = failed_upload_to_S3_statement(file_name, logging_message)
+                        message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                         log.critical(message)
                     else:
-                        message = logging_message
+                        message = message + " " + logging_message
                         log.debug(message)
                     temp_file_path.unlink()
                     complete_flash_message_list.append(message)
@@ -1041,7 +1042,8 @@ class StatisticsSources(db.Model):
                 return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
             if isinstance(df, str):
-                log.warning(f"JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe.")  ##unable_to_convert_SUSHI_data_to_dataframe_statement()
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                log.warning(message)
                 temp_file_path = Path(__file__).parent / 'temp.json'
                 with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
                     json.dump(SUSHI_data_response, JSON_file)
@@ -1052,14 +1054,14 @@ class StatisticsSources(db.Model):
                     file_name,
                 )
                 if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
-                    message = failed_upload_to_S3_statement(file_name, logging_message)
+                    message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                     log.critical(message)
                 else:
-                    message = logging_message
+                    message = message + " " + logging_message
                     log.debug(message)
                 temp_file_path.unlink()
                 flash_message_list.append(message)
-                return (f"Since the JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe, it was temporarily saved as a JSON file for uploading into S3. {message}", flash_message_list)  ##unable_to_convert_SUSHI_data_to_dataframe_statement()
+                return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
             df['report_type'] = report
             df['report_type'] = df['report_type'].astype(COUNTERData.state_data_types()['report_type'])
