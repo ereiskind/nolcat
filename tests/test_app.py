@@ -112,13 +112,14 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
-    load_data_into_database(
+    check = load_data_into_database(
         df=statisticsSources_relation,
         relation='statisticsSources',
         engine=engine,
         index_field_name='statistics_source_ID',
     )
-    ##database_function_skip_statements()
+    if not load_data_into_database_success_regex().fullmatch(check):  ##CheckStatement
+        pytest.skip(database_function_skip_statements(check))
     retrieved_data = query_database(
         query="""
             SELECT
