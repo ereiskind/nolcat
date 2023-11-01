@@ -899,6 +899,8 @@ class StatisticsSources(db.Model):
 
             #Section: Make Customizable Report SUSHI Calls
             #Subsection: Set Up Loop Through Customizable Reports
+            for report_name in available_custom_reports:
+                all_flashed_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             custom_report_dataframes = []
             complete_flash_message_list = []
             no_usage_returned_count = 0
