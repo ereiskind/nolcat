@@ -525,10 +525,10 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"  ##add_data_success_and_update_database_fail_statement()
+            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             all_flash_statements.append(message)
-            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", all_flash_statements)
+            return (message, all_flash_statements)
         return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
 
 
@@ -1602,10 +1602,10 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"  ##add_data_success_and_update_database_fail_statement()
+            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             flash_statements.append(message)
-            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", flash_statements)
+            return (message, flash_statements)
         return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
 
 
@@ -1652,9 +1652,9 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
-            message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"  ##add_data_success_and_update_database_fail_statement()
+            message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             log.warning(message)
-            return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"
+            return message
         message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
         log.debug(message)
         return message

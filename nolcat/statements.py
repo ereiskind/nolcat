@@ -281,13 +281,18 @@ def database_update_fail_statement(update_statement):
     return f"Updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 
-def add_data_success_and_update_database_fail_statement():
-    '''Indication that adding records to database succeeded, but updating corresponding values failed
-    
-    Warning logging statement
-    '''
-    #"<``load_data_into_database()`` or ``upload_file_to_S3_bucket()`` response>, but updating the `<name of relation>` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n<SQL update statement>"
-    pass
+def add_data_success_and_update_database_fail_statement(load_data_response, update_statement):
+    """This statement indicates that data was successfully loaded into the database or the S3 bucket, but the corresponding update to the database failed.
+
+    Args:
+        load_data_response (str): the return value indicating success from `nolcat.app.load_data_into_database()` or `nolcat.app.upload_file_to_S3_bucket()`
+        update_statement (str): the SQL update statement
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    update_statement = update_statement.replace('\n', ' ')
+    return f"{load_data_response[:-1]}, but updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 
 def database_function_skip_statements(return_value, is_test_function=True):
