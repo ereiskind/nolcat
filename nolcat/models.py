@@ -821,7 +821,7 @@ class StatisticsSources(db.Model):
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised the error {SUSHI_status_response}."  ##failed_SUSHI_call_statement_statement()
+            message = failed_SUSHI_call_statement_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)
             log.warning(message)
             return (message, all_flashed_statements)
         else:

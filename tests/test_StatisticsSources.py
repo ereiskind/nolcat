@@ -222,7 +222,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if SUSHI_server_error_regex_object.match(string=response[0]):  ##failed_SUSHI_call_statement_statement() regex
+    if SUSHI_server_error_regex_object.match(string=response[0]):  ##MatchesADesignatedString
         pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")
     elif no_SUSHI_data_regex_object.match(string=response[0]):  ##no_data_returned_by_SUSHI_statement() regex  #ToDo: Adjust to catch more SUSHI error (see note below)
         pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  # Many statistics source providers don't have usage going back this far

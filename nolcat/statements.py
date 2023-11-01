@@ -344,17 +344,36 @@ def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records
 
 
 #Subsection: Error Statements
-def failed_SUSHI_call_statement_statement():
-    '''Failed ``SUSHICallAndResponse.make_SUSHI_call()`` methods
+def failed_SUSHI_call_statement_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
+    """This statement indicates a failed call to `SUSHICallAndResponse.make_SUSHI_call()`.
 
-    Warning logging statement
-    "SUSHI" is included when the error is a SUSHI error handled by the program
-    "returned no usage data because the call" is included when the SUSHI error indicates no usage is being returned
-    '''
-    #"The call to the `<name of report>` endpoint for <statistics source name> <returned no usage data because the call> raised the <SUSHI> error<s> <error; in the case of multiple SUSHI error message, line breaks before, after, and in between each error statement>."
-    #Additionally, when part of a month-by-month gathering: "None of the SUSHI data for that endpoint and statistics source will be loaded into the database."
-    #Additionally, if any listed SUSHI error is causing API calls to stop: "API calls to <statistics source name> have stopped and no other calls will be made."
-    pass
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+        error_messages (str): the message detailing the error(s) returned by `SUSHICallAndResponse.make_SUSHI_call()`
+        SUSHI_error (bool, optional): Boolean indicating if the error is a SUSHI error handled by the program; default is `True`
+        no_usage_data (bool, optional): Boolean indicating if the error indicates that there shouldn't be any usage data; default is `False`
+        stop_API_calls (bool, optional): Boolean indicating if the error is stopping all SUSHI calls to the given statistics source; default is `False`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if '\n' in error_messages:
+        error_messages = f"s\n{error_messages}\n"
+    else:
+        error_messages = f" {error_messages} "
+    
+    if SUSHI_error:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the SUSHI error{error_messages}"
+    else:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} raised the error{error_messages}"
+    
+    if no_usage_data:
+        return f"{main_value[:-1]}, so the call returned no usage data."
+    elif stop_API_calls:
+        return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
+    else:
+        return main_value
 
 
 def no_data_returned_by_SUSHI_statement():
