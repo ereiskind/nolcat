@@ -57,7 +57,9 @@ def run_custom_SQL_query():
         log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -199,7 +201,9 @@ def use_predefined_SQL_query():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -245,5 +249,7 @@ def download_non_COUNTER_usage():
         # return redirect(url_for('download_file', file_path=str(file_path)))
         pass
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)

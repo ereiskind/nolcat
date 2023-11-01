@@ -79,7 +79,9 @@ def upload_COUNTER_reports():
         flash(messages_to_flash)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -141,7 +143,9 @@ def harvest_SUSHI_statistics():
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -209,5 +213,7 @@ def upload_non_COUNTER_reports():
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)

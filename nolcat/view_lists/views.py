@@ -77,7 +77,9 @@ def view_list_record(list, PK):
             # ResourceSources.add_note()
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))
     else:
-        # log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        #message = Flask_error_statement(form.errors)
+        #log.error(message)
+        #flash(message)
         return abort(404)
     
 
@@ -122,5 +124,7 @@ def edit_list_record(list, PK):
         #ToDo: Add message flashing about successful upload
         # return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  
     else:
-        # log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        #message = Flask_error_statement(form.errors)
+        #log.error(message)
+        #flash(message)
         return abort(404)

@@ -35,7 +35,9 @@ def annual_stats_homepage():
         fiscal_year_PK = form.fiscal_year.data
         return redirect(url_for('annual_stats.show_fiscal_year_details'))  #ToDo: Use https://stackoverflow.com/a/26957478 to add variable path information
     else:
-        log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -102,6 +104,14 @@ def show_fiscal_year_details():  #ToDo: Add variable path information for the PK
         #ToDo: Set up message flashing that change was made
         return redirect(url_for('annual_stats.show_fiscal_year_details'))
     else:
-        #ToDo: Get values below for the form submitted
-        # log.error(f"`form.errors`: {form.errors}")  ##Flask_error_statement()
+        if run_annual_stats_methods_form.errors:
+            message = Flask_error_statement(run_annual_stats_methods_form.errors)
+        elif edit_fiscalYear_form.errors:
+            message = Flask_error_statement(edit_fiscalYear_form.errors)
+        elif edit_AUCT_form.errors:
+            message = Flask_error_statement(edit_AUCT_form.errors)
+        else:
+            message = "The page was reached with a POST request, and the forms on the page neither validated themselves on submission nor returned error values."
+        log.error(message)
+        flash(message)
         return abort(404)

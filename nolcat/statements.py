@@ -108,12 +108,17 @@ def unable_to_get_updated_primary_key_values_statement(relation, error):
     return f"Running the function `first_new_PK_value()` for the relation `{relation}` raised the error {error}."
 
 
-def Flask_error_statement():
-    '''Page not found
+def Flask_error_statement(error_statement):
+    """This statement provides details on why the form couldn't be successfully submitted.
 
-    Error logging statement
-    '''
-    pass
+    Args:
+        error_statement (dict): the error(s) returned by the form submission
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    formatted_dict = '\n'.join([f"{k}: {v}" for k, v in error_statement.items()])
+    return f"The form submission failed because of the following error(s):\n{formatted_dict}"
 
 
 #Section: Files, File Organization, and File I/O
