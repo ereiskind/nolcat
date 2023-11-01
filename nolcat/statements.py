@@ -48,14 +48,6 @@ def format_list_for_stdout(stdout_list):
 
 #Section: General Statements
 #Subsection: Logging/Output Statements
-def about_to_statement():
-    '''A marker that something is about to happen, so if the program crashes immediately after that log statement, what the program was doing when it crashed is clear 
-    
-    Debug logging statement
-    '''
-    pass
-
-
 def initialize_relation_class_object_statement(relation_class_name, object_value):
     """This statement shows the value of a relation class object initialized using the values returned from a query.
 
@@ -381,7 +373,9 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
 
 * Adding to dictionary in the ``ConvertJSONDictToDataframe.create_dataframe()`` method
     * Debug logging statement
-    * Structure: "Added `COUNTERData.<dictionary key>` value <dictionary value> to `<name of dict>`."
+    * Structure:
+        * Before: "Preparing to add <dictionary key> value `<dictionary value>` to the record."
+        * After: "Added `COUNTERData.<dictionary key>` value <dictionary value> to `<name of dict>`."
 
 * Finding values for a given field are longer than the field's max length
     * Critical logging statement

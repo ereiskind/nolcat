@@ -351,7 +351,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  ##about_to_statement()
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
@@ -510,7 +510,7 @@ def check_if_data_already_in_COUNTERData(df):
 
     #Section: Check Database for Combinations of Above
     combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")  ##about_to_statement()
+    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")
     total_number_of_matching_records = 0
     matching_record_instances = []
     for combo in combinations_to_check:

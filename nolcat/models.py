@@ -810,7 +810,7 @@ class StatisticsSources(db.Model):
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
-        log.info(f"Making SUSHI calls for {self.statistics_source_name}.")  ##about_to_statement()
+        log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
 
         #Section: Confirm SUSHI API Functionality
@@ -904,7 +904,7 @@ class StatisticsSources(db.Model):
             no_usage_returned_count = 0
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
-                log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")  ##about_to_statement()
+                log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
 
                 #Subsection: Add Parameters for Customizable Report Type
                 if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
@@ -978,7 +978,7 @@ class StatisticsSources(db.Model):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
-            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")  ##about_to_statement()
+            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
             individual_month_dfs = []
             complete_flash_message_list = []
             no_usage_returned_count = 0
@@ -1038,7 +1038,7 @@ class StatisticsSources(db.Model):
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")  ##about_to_statement()
+                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
                 return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date

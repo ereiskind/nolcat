@@ -257,7 +257,7 @@ class SUSHICallAndResponse:
 
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
-                log.info(f"Calling {self.calling_to} for {self.call_path} again.")  ##about_to_statement()
+                log.info(f"Calling {self.calling_to} for {self.call_path} again.")
                 time.sleep(1)
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 log.info(f"GET response code: {API_response}")

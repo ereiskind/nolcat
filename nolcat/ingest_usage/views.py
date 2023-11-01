@@ -122,10 +122,10 @@ def harvest_SUSHI_statistics():
         end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
-            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")  ##about_to_statement()
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
         else:
             report_to_harvest = form.report_to_harvest.data
-            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  ##about_to_statement()
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
             result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)

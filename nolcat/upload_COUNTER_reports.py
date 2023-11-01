@@ -55,7 +55,7 @@ class UploadCOUNTERReports:
 
         #Section: Load the Workbook(s)
         for FileStorage_object in self.COUNTER_report_files:
-            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}.")  ##about_to_statement()
+            log.debug(f"Starting iteration for uploading workbook {FileStorage_object}.")
             # When using the web app, `FileStorage_object` is <class 'werkzeug.datastructures.FileStorage'>; `FileStorage_object.stream._file` is <class '_io.BytesIO'>
             try:
                 file = load_workbook(filename=FileStorage_object.stream._file, read_only=True)
@@ -78,7 +78,7 @@ class UploadCOUNTERReports:
                     #ToDo:: Add above to part two tuple list
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
-                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")  ##about_to_statement()
+                log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")
 
 
                 #Section: Identify the Header Row
@@ -113,7 +113,7 @@ class UploadCOUNTERReports:
                     values_only=True,
                 ):  # Creates a tuple with the field names as elements
                     for field_name in iterable_of_field_names:
-                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")  ##about_to_statement()
+                        log.debug(f"Getting standardized field name for field {field_name} (type {type(field_name)}).")
 
                         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
                         try:
