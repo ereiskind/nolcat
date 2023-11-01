@@ -231,7 +231,7 @@ def return_value_from_query_statement(return_value, type_of_query=None):
         for value in return_value:
             if i==len(return_value)-1:
                 main_value = main_value + "and "
-            main_value = f"{main_value}{return_value} (type {type(return_value)}), "
+            main_value = f"{main_value}{value} (type {type(value)}), "
             i += 1
         return f"{main_value[:-2]} were extracted."
     else:
