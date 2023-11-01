@@ -376,16 +376,27 @@ def failed_SUSHI_call_statement_statement(call_path, statistics_source_name, err
         return main_value
 
 
-def no_data_returned_by_SUSHI_statement():
-    '''Indicates a report that returned no data without a SUSHI error indicating why
+def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_empty_string=False, has_Report_Items=True):
+    """This statement indicates a SUSHI call that returned no usage data but didn't contain a SUSHI error explaining the lack of data
 
-    Warning logging statement
-    In the ``StatisticsSources._harvest_R5_SUSHI()`` method
-    "because the SUSHI data didn't have a `Report_Items` section" included only if true
-    "usage" is excluded if the SUSHI call returns an empty string
-    '''
-    #"The call to the `<name of report>` endpoint for <statistics source name> returned no <usage> data <because the SUSHI data didn't have a `Report_Items` section>."
-    pass
+    Args:
+        call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
+        statistics_source_name (str): the name of the statistics source
+        is_empty_string (bool, optional): Boolean indicating if the SUSHI call returned an empty string; default is `False`
+        has_Report_Items (bool, optional): Boolean indicating if the data returned by the SUSHI call had a `Report_Items` section; default is `True`
+
+    Returns:
+        str: the statement for outputting the arguments to logging
+    """
+    if is_empty_string:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} returned no data"
+    else:
+        main_value = f"The call to the `{call_path}` endpoint for {statistics_source_name} returned no usage data"
+    
+    if has_Report_Items:
+        return main_value + "."
+    else:
+        return main_value + " because the SUSHI data didn't have a `Report_Items` section."
 
 
 def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):

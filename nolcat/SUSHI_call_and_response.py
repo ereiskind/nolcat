@@ -81,7 +81,7 @@ class SUSHICallAndResponse:
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
-            message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no data."  ##no_data_returned_by_SUSHI_statement()
+            message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, is_empty_string=True)
             log.warning(message)
             return (message, [message])
         
@@ -197,17 +197,17 @@ class SUSHICallAndResponse:
                     return (message, messages_to_flash)
                 elif messages_to_flash:
                     if Report_Items_status == 0:
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."  ##no_data_returned_by_SUSHI_statement()
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)
                     elif Report_Items_status == 'No `Report_Items` key':
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the SUSHI data didn't have a `Report_Items` section."  ##no_data_returned_by_SUSHI_statement()
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)
                     messages_to_flash.append(message)
                     log.warning(message)
                     return (message, messages_to_flash)
                 else:
                     if Report_Items_status == 0:
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."  ##no_data_returned_by_SUSHI_statement()
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)
                     elif Report_Items_status == 'No `Report_Items` key':
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the SUSHI data didn't have a `Report_Items` section."  ##no_data_returned_by_SUSHI_statement()
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)
                     log.warning(message)
                     return (message, [message])
         
