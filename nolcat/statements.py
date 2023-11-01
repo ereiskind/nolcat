@@ -121,6 +121,10 @@ def Flask_error_statement(error_statement):
     return f"The form submission failed because of the following error(s):\n{formatted_dict}"
 
 
+#Subsection: Success Regexes
+#ToDo: Create success regex for `##pytest.skip`
+
+
 #Section: Files, File Organization, and File I/O
 #Subsection: Logging/Output Statements
 def file_IO_statement(name_of_file, origin_location, destination_location, upload=True):
@@ -204,6 +208,17 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
         str: the statement for outputting the arguments to logging
     """
     return f"Trying to remove file {file_name} from the S3 bucket raised the error {error_message}."
+
+
+#Subsection: Success Regexes
+def upload_file_to_S3_bucket_success_regex():
+    '''For ##Check-upload_file_to_S3_bucket'''
+    pass
+
+
+def upload_nonstandard_usage_file_success_regex():
+    '''For ##Check-upload_nonstandard_usage_file'''
+    pass
 
 
 #Section: Database Interactions
@@ -311,6 +326,17 @@ def database_function_skip_statements(return_value, is_test_function=True):
         return f"Unable to create fixture because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
 
 
+#Subsection: Success Regexes
+def load_data_into_database_success_regex():
+    '''For ##Check-load_data_into_database'''
+    pass
+
+
+def update_database_success_regex():
+    '''For ##Check-update_database'''
+    pass
+
+
 #Section: SUSHI API Calls
 #Subsection: Logging/Output Statements
 def successful_SUSHI_call_statement(call_path, statistics_source_name):
@@ -410,6 +436,12 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
         str: the statement for outputting the arguments to logging
     """
     return f"The given end date of {end_date.strftime('%Y-%m-%d')} is before the given start date of {start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+
+
+#Subsection: Success Regexes
+#ToDo: Create success regex for `##Check-count_reports_with_no_usage`
+#ToDo: Create success regex for `##Check-no_more_API_calls`
+#ToDo: Create success regex for `##pytest.skip-no_data`
 
 
 """Other standardized logging statements, including those in a single class:

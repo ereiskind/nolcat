@@ -513,7 +513,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##CheckStatement
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##Check-load_data_into_database
             return (load_result, all_flash_statements)
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
@@ -524,7 +524,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             all_flash_statements.append(message)
@@ -935,13 +935,13 @@ class StatisticsSources(db.Model):
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):  ##CheckStatement
-                    log.error(SUSHI_data_response)
-                    return (SUSHI_data_response, all_flashed_statements)
-                elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##CheckStatement
+                if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##Check-count_reports_with_no_usage
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                elif isinstance(SUSHI_data_response, str):
+                    log.error(SUSHI_data_response)
+                    return (SUSHI_data_response, all_flashed_statements)
                 custom_report_dataframes.append(SUSHI_data_response)
             if len(custom_report_dataframes) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
@@ -974,7 +974,7 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
@@ -992,12 +992,12 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):  ##CheckStatement
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):  ##Check-no_more_API_calls
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):  ##CheckStatement
+                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):  ##Check-count_reports_with_no_usage
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                     no_usage_returned_count += 1
                     log.warning(SUSHI_data_response)
@@ -1023,7 +1023,7 @@ class StatisticsSources(db.Model):
                         temp_file_path,
                         file_name,
                     )
-                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
                         message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                         log.critical(message)
                     else:
@@ -1060,7 +1060,7 @@ class StatisticsSources(db.Model):
                     temp_file_path,
                     file_name,
                 )
-                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
                     message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                     log.critical(message)
                 else:
@@ -1269,7 +1269,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1293,7 +1293,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1322,7 +1322,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1372,7 +1372,7 @@ class ResourceSources(db.Model):
                 update_statement=update_statement,
                 engine=db.engine,
             )
-            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
                 message = database_update_fail_statement(update_statement)
                 log.warning(message)
                 return message
@@ -1590,7 +1590,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##CheckStatement
+        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##Check-load_data_into_database
             return (load_result, flash_statements)
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
@@ -1601,7 +1601,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             flash_statements.append(message)
@@ -1635,7 +1635,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file,
             file_name,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message
@@ -1651,7 +1651,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##CheckStatement
+        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
             message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             log.warning(message)
             return message

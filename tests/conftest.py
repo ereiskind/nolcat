@@ -359,7 +359,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
     log.debug(logging_message)
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##CheckStatement
+    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield None
     try:
@@ -494,6 +494,8 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
+    if isinstance(response, str):
+        pytest.skip()  ##pytest.skip
     log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []

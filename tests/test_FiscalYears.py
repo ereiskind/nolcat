@@ -111,7 +111,7 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
         engine=engine,
         index_field_name='fiscal_year_ID',
     )
-    if isinstance(method_result, str) and re.fullmatch(r'Loading data into the .* relation raised the error .*\.', method_result):  ##CheckStatement
+    if isinstance(method_result, str) and re.fullmatch(r'Loading data into the .* relation raised the error .*\.', method_result):  ##Check-load_data_into_database
         pytest.skip(database_function_skip_statements(method_result, False))
     yield None
 
@@ -123,7 +123,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     #Section: Call Method
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
-    if isinstance(method_result, str) and re.search(r' raised the error .*\.$', method_result):  ##CheckStatement
+    if isinstance(method_result, str) and re.search(r' raised the error .*\.$', method_result):  ##Check-load_data_into_database_success_regex
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
