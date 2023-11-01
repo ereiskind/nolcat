@@ -496,7 +496,7 @@ class FiscalYears(db.Model):
                 continue
             dfs.append(df)
             where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records. Those records and the `annualUsageCollectionTracking` relation composite primary key value have been saved for loaded into the database.")  ##_harvest_R5_SUSHI_success_statement()
+            log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], self.fiscal_year))
         
         #Section: Update Data in Database
         df = pd.concat(dfs)
@@ -1136,7 +1136,7 @@ class StatisticsSources(db.Model):
             log.warning(df)
             return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} successfully found {df.shape[1]} records.")  ##_harvest_R5_SUSHI_success_statement()
+            log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[1]))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
@@ -1576,7 +1576,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
-        log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")  ##_harvest_R5_SUSHI_success_statement()
+        log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], fiscal_year))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
