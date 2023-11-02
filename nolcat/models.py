@@ -529,7 +529,7 @@ class FiscalYears(db.Model):
             log.warning(message)
             all_flash_statements.append(message)
             return (message, all_flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
+        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
 
 
 class Vendors(db.Model):
@@ -994,7 +994,7 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):  ##Check-no_more_API_calls
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the (SUSHI )?errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
@@ -1608,7 +1608,7 @@ class AnnualUsageCollectionTracking(db.Model):
             log.warning(message)
             flash_statements.append(message)
             return (message, flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
+        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", flash_statements)
 
 
     @hybrid_method

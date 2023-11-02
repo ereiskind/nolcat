@@ -121,10 +121,6 @@ def Flask_error_statement(error_statement):
     return f"The form submission failed because of the following error(s):\n{formatted_dict}"
 
 
-#Subsection: Success Regexes
-#ToDo: Create success regex for `##pytest.skip`
-
-
 #Section: Files, File Organization, and File I/O
 #Subsection: Logging/Output Statements
 def file_IO_statement(name_of_file, origin_location, destination_location, upload=True):
@@ -213,11 +209,13 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
 #Subsection: Success Regexes
 def upload_file_to_S3_bucket_success_regex():
     '''For ##Check-upload_file_to_S3_bucket'''
+    #ToDo: Create regex matching success return value for `nolcat.app.upload_file_to_S3_bucket()`
     pass
 
 
 def upload_nonstandard_usage_file_success_regex():
     '''For ##Check-upload_nonstandard_usage_file'''
+    #ToDo: Create regex matching success return value for `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     pass
 
 
@@ -310,18 +308,25 @@ def add_data_success_and_update_database_fail_statement(load_data_response, upda
     return f"{load_data_response[:-1]}, but updating the {update_statement.split()[1]} relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
 
 
-def database_function_skip_statements(return_value, is_test_function=True):
+def database_function_skip_statements(return_value, is_test_function=True, SUSHI_error=False, no_data=False):
     """This statement provides the logging output when a pytest skip is initiated after a `nolcat.app.query_database()`, `nolcat.app.load_data_into_database()`, or `nolcat.app.update_database()` function fails.
     
     Args:
         return_value (str): the error message returned by the database helper function
         is_test_function (bool, optional): indicates if this function is being called within a test function; defaults to `True` 
+        SUSHI_error (bool, optional): indicates if the skip is because a SUSHI call returned a SUSHI error; default is `False`
+        no_data (bool, optional): indicates if the skip is because a SUSHI call returned no data; default is `False`
     
     Returns:
         str: the statement for outputting the arguments to logging
     """
     if is_test_function:
-        return f"Unable to run test because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
+        if SUSHI_error:
+            return f"Unable to run test because the API call raised a server-based SUSHI error, specifically {return_value[0].lower()}{return_value[1:]}"
+        elif no_data:
+            return f"Unable to run test because no SUSHI data was in the API call response, specifically raising {return_value[0].lower()}{return_value[1:]}"
+        else:
+            return f"Unable to run test because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
     else:
         return f"Unable to create fixture because it relied on {return_value[0].lower()}{return_value[1:].replace(' raised', ', which raised')}"
 
@@ -329,11 +334,13 @@ def database_function_skip_statements(return_value, is_test_function=True):
 #Subsection: Success Regexes
 def load_data_into_database_success_regex():
     '''For ##Check-load_data_into_database'''
+    #ToDo: Create regex matching success return value of `nolcat.app.load_data_into_database()`
     pass
 
 
 def update_database_success_regex():
     '''For ##Check-update_database'''
+    #ToDo: Create regex matching success return value of `nolcat.app.update_database()`
     pass
 
 
@@ -439,9 +446,22 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
 
 
 #Subsection: Success Regexes
-#ToDo: Create success regex for `##Check-count_reports_with_no_usage`
-#ToDo: Create success regex for `##Check-no_more_API_calls`
-#ToDo: Create success regex for `##pytest.skip-no_data`
+def count_reports_with_no_usage_regex():
+    '''For ##Check-count_reports_with_no_usage'''
+    #ToDo: Create regex matching all statements in `no_data_returned_by_SUSHI_statement()` and the no usage data option in `failed_SUSHI_call_statement_statement()`
+    pass
+
+
+def pytest_skip_SUSHI_error_regex():
+    '''For ##pytest.skip-SUSHI_error'''
+    #ToDo: Create regex matching all possible results of `failed_SUSHI_call_statement_statement()`
+    pass
+
+
+def pytest_skip_no_data_regex():
+    '''For ##pytest.skip-no_data'''
+    #ToDo: Create regex matching all possible results of `no_data_returned_by_SUSHI_statement()`
+    pass
 
 
 """Other standardized logging statements, including those in a single class:

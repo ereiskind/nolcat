@@ -198,7 +198,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             end_date,
         )
     if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##pytest.skip-no_data
-        pytest.skip("The test is being skipped because the API call returned no data.")
+        pytest.skip("The test is being skipped because the API call returned no data.")  ##database_function_skip_statements
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -223,10 +223,10 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if SUSHI_server_error_regex_object.match(string=response[0]):  ##MatchesADesignatedString
-        pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")
+    if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
+        pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
     elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data  #ToDo: Adjust to catch more SUSHI error (see note below)
-        pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  # Many statistics source providers don't have usage going back this far
+        pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  # Many statistics source providers don't have usage going back this far  ##database_function_skip_statements
     #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
@@ -285,7 +285,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
-    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', SUSHI_data_response)  ##MatchesADesignatedString
+    assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
     assert len(flash_message_list) == 1
 
 
@@ -345,7 +345,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)  ##MatchesADesignatedString
+    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)  ##Check-load_data_into_database
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
