@@ -524,7 +524,7 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             all_flash_statements.append(message)
@@ -1271,7 +1271,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1295,7 +1295,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1324,7 +1324,7 @@ class ResourceSources(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = database_update_fail_statement(update_statement)
             log.warning(message)
             return message
@@ -1374,7 +1374,7 @@ class ResourceSources(db.Model):
                 update_statement=update_statement,
                 engine=db.engine,
             )
-            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+            if not update_database_success_regex().fullmatch(update_result):
                 message = database_update_fail_statement(update_statement)
                 log.warning(message)
                 return message
@@ -1603,7 +1603,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             flash_statements.append(message)
@@ -1653,7 +1653,7 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):  ##Check-update_database
+        if not update_database_success_regex().fullmatch(update_result):
             message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             log.warning(message)
             return message

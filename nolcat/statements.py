@@ -343,9 +343,14 @@ def load_data_into_database_success_regex():
 
 
 def update_database_success_regex():
-    '''For ##Check-update_database'''
-    #ToDo: Create regex matching success return value of `nolcat.app.update_database()`
-    pass
+    """This regex object matches the success return statement for `nolcat.app.update_database()`.
+
+    The variable capitalization of the first letter allows the regex to match when it's being used as the latter half of a statement. The `re.DOTALL` flag is included because update statements include line breaks.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
+    """
+    return re.compile(r'[Ss]uccessfully preformed the update `.*`\.', flags=re.DOTALL)
 
 
 #Section: SUSHI API Calls

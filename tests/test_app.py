@@ -363,9 +363,8 @@ def test_update_database(engine, updated_vendors_relation):
     if isinstance(retrieved_updated_vendors_data, str):
         pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
-    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."  ##Check-update_database
-    #ToDo: assert `.group(1)` attribute of `##Check-update_database` regex match object is update_result
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
