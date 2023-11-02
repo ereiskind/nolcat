@@ -129,7 +129,7 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = failed_SUSHI_call_statement_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
                     return (message, messages_to_flash)
 
@@ -153,7 +153,7 @@ class SUSHICallAndResponse:
                     messages_to_flash.append(statement)
                 log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
             if flash_message_list and SUSHI_exceptions:
-                message = failed_SUSHI_call_statement_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
+                message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                 log.warning(message)
                 return (message, messages_to_flash)
 
@@ -173,7 +173,7 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = failed_SUSHI_call_statement_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
                     return (message, messages_to_flash)
 
@@ -192,7 +192,7 @@ class SUSHICallAndResponse:
                 if messages_to_flash and SUSHI_error_flash_messages:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
-                    message = failed_SUSHI_call_statement_statement(self.call_path, self.calling_to, message, no_usage_data=True)
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, message, no_usage_data=True)
                     log.warning(message)
                     return (message, messages_to_flash)
                 elif messages_to_flash:
@@ -316,7 +316,7 @@ class SUSHICallAndResponse:
                 
             if isinstance(API_response, list):
                 if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
-                    message = failed_SUSHI_call_statement_statement("reports", self.calling_to, API_response)
+                    message = failed_SUSHI_call_statement("reports", self.calling_to, API_response)
                     log.error(message)
                     return (ValueError(message), message)
                 log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")

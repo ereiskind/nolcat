@@ -377,7 +377,7 @@ def harvest_R5_SUSHI_success_statement(statistics_source_name, number_of_records
 
 
 #Subsection: Error Statements
-def failed_SUSHI_call_statement_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
+def failed_SUSHI_call_statement(call_path, statistics_source_name, error_messages, SUSHI_error=True, no_usage_data=False, stop_API_calls=False):
     """This statement indicates a failed call to `SUSHICallAndResponse.make_SUSHI_call()`.
 
     Args:
@@ -448,13 +448,13 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
 #Subsection: Success Regexes
 def count_reports_with_no_usage_regex():
     '''For ##Check-count_reports_with_no_usage'''
-    #ToDo: Create regex matching all statements in `no_data_returned_by_SUSHI_statement()` and the no usage data option in `failed_SUSHI_call_statement_statement()`
+    #ToDo: Create regex matching all statements in `no_data_returned_by_SUSHI_statement()` and the no usage data option in `failed_SUSHI_call_statement()`
     pass
 
 
 def pytest_skip_SUSHI_error_regex():
     '''For ##pytest.skip-SUSHI_error'''
-    #ToDo: Create regex matching all possible results of `failed_SUSHI_call_statement_statement()`
+    #ToDo: Create regex matching all possible results of `failed_SUSHI_call_statement()`
     pass
 
 
