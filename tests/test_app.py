@@ -81,8 +81,10 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    assert result == "Successfully loaded 8 records into the vendors relation."  ##Check-load_data_into_database
-    #ToDo: assert `.group(1)` attribute of `##Check-load_data_into_database` regex match object is `8`
+    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
+    assert regex_match_object is not None
+    assert regex_match_object.group(1) == 8
+    assert regex_match_object.group(2) == "vendors"
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
@@ -119,7 +121,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         engine=engine,
         index_field_name='statistics_source_ID',
     )
-    if not load_data_into_database_success_regex().fullmatch(check):  ##Check-load_data_into_database
+    if not load_data_into_database_success_regex().fullmatch(check):
         pytest.skip(database_function_skip_statements(check))
     retrieved_data = query_database(
         query="""

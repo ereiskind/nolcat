@@ -513,7 +513,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##Check-load_data_into_database
+        if not load_data_into_database_success_regex().fullmatch(load_result):
             return (load_result, all_flash_statements)
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
@@ -1592,7 +1592,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):  ##Check-load_data_into_database
+        if not load_data_into_database_success_regex().fullmatch(load_result):
             return (load_result, flash_statements)
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking

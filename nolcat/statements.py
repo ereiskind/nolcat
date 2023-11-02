@@ -2,6 +2,7 @@
 """
 
 from pathlib import Path
+import re
 
 
 #Section: Simple Helper Functions
@@ -333,9 +334,12 @@ def database_function_skip_statements(return_value, is_test_function=True, SUSHI
 
 #Subsection: Success Regexes
 def load_data_into_database_success_regex():
-    '''For ##Check-load_data_into_database'''
-    #ToDo: Create regex matching success return value of `nolcat.app.load_data_into_database()`
-    pass
+    """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
+    """
+    return re.compile(r'Successfully loaded (\d*) records into the (.*) relation\.')
 
 
 def update_database_success_regex():

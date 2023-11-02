@@ -111,7 +111,7 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
         engine=engine,
         index_field_name='fiscal_year_ID',
     )
-    if isinstance(method_result, str) and re.fullmatch(r'Loading data into the .* relation raised the error .*\.', method_result):  ##Check-load_data_into_database
+    if not load_data_into_database_success_regex().fullmatch(method_result):
         pytest.skip(database_function_skip_statements(method_result, False))
     yield None
 
@@ -123,7 +123,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     #Section: Call Method
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
-    if isinstance(method_result, str) and re.search(r' raised the error .*\.$', method_result):  ##Check-load_data_into_database_success_regex
+    if not load_data_into_database_success_regex().fullmatch(method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
@@ -253,8 +253,10 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    assert method_result == "Successfully loaded 10 records into the annualUsageCollectionTracking relation."  ##Check-load_data_into_database
-    #ToDo: assert `.group(1)` and `.group(2)` attributes of `##Check-load_data_into_database` regex match object are `10` and `annualUsageCollectionTracking`
+    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
+    assert regex_match_object is not None
+    assert regex_match_object.group(1) == 10
+    assert regex_match_object.group(2) == "annualUsageCollectionTracking"
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
@@ -267,7 +269,7 @@ def test_collect_fiscal_year_usage_statistics(caplog):
 
     #ToDo: This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. Right now, no record in the test data meets those criteria.
     # logging_statement, flash_messages = FiscalYears.collect_fiscal_year_usage_statistics()
-    #ToDo: logging_statement start matches regex `##Check-load_data_into_database`
+    # assert load_data_into_database_success_regex().match(logging_statement)
     #ToDo: logging_statement includes match for regex `update_database_success_regex`
     # assert isinstance(flash_messages, list)
     pass
