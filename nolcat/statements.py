@@ -83,8 +83,8 @@ def unable_to_convert_SUSHI_data_to_dataframe_statement(error_message, report_ty
 
     Args:
         error_message (str): the error message returned by the attempt to convert the COUNTER data to a dataframe
-        report_type (str, optional): the type of report for a SUSHI call; defaults to `None`
-        statistics_source_name (str, optional): the name of the statistics source for a SUSHI call; defaults to `None`
+        report_type (str, optional): the type of report for a SUSHI call; default is `None`
+        statistics_source_name (str, optional): the name of the statistics source for a SUSHI call; default is `None`
 
     Returns:
         str: the statement for outputting the arguments to logging
@@ -148,7 +148,7 @@ def list_folder_contents_statement(file_path, alone=True):
 
     Args:
         file_path (pathlib.Path): the folder whose contents are being listed
-        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; default is `True`
     
     Returns:
         str: the statement for outputting the arguments to logging
@@ -167,7 +167,7 @@ def check_if_folder_exists_statement(file_path, alone=True):
 
     Args:
         file_path (pathlib.Path): the path to the file being checked
-        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; defaults to `True`
+        alone (bool, optional): indicates if any of the aforementioned information about the statement's location is included; default is `True`
 
     Returns:
         str: the statement for outputting the arguments to logging
@@ -226,7 +226,7 @@ def return_value_from_query_statement(return_value, type_of_query=None):
 
     Args:
         return_value (str, int, or tuple): the value(s) returned by `nolcat.app.query_database()`
-        type_of_query (str, optional): some descriptive information about the query; defaults to `None`
+        type_of_query (str, optional): some descriptive information about the query; default is `None`
 
     Returns:
         str: the statement for outputting the arguments to logging
@@ -313,7 +313,7 @@ def database_function_skip_statements(return_value, is_test_function=True, SUSHI
     
     Args:
         return_value (str): the error message returned by the database helper function
-        is_test_function (bool, optional): indicates if this function is being called within a test function; defaults to `True` 
+        is_test_function (bool, optional): indicates if this function is being called within a test function; default is `True`
         SUSHI_error (bool, optional): indicates if the skip is because a SUSHI call returned a SUSHI error; default is `False`
         no_data (bool, optional): indicates if the skip is because a SUSHI call returned no data; default is `False`
     
@@ -384,9 +384,9 @@ def failed_SUSHI_call_statement_statement(call_path, statistics_source_name, err
         call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         statistics_source_name (str): the name of the statistics source
         error_messages (str): the message detailing the error(s) returned by `SUSHICallAndResponse.make_SUSHI_call()`
-        SUSHI_error (bool, optional): Boolean indicating if the error is a SUSHI error handled by the program; default is `True`
-        no_usage_data (bool, optional): Boolean indicating if the error indicates that there shouldn't be any usage data; default is `False`
-        stop_API_calls (bool, optional): Boolean indicating if the error is stopping all SUSHI calls to the given statistics source; default is `False`
+        SUSHI_error (bool, optional): indicates if the error is a SUSHI error handled by the program; default is `True`
+        no_usage_data (bool, optional): indicates if the error indicates that there shouldn't be any usage data; default is `False`
+        stop_API_calls (bool, optional): indicates if the error is stopping all SUSHI calls to the given statistics source; default is `False`
 
     Returns:
         str: the statement for outputting the arguments to logging
@@ -415,8 +415,8 @@ def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_em
     Args:
         call_path (str): the last element(s) of the API URL path before the parameters, which represent what is being requested by the API call
         statistics_source_name (str): the name of the statistics source
-        is_empty_string (bool, optional): Boolean indicating if the SUSHI call returned an empty string; default is `False`
-        has_Report_Items (bool, optional): Boolean indicating if the data returned by the SUSHI call had a `Report_Items` section; default is `True`
+        is_empty_string (bool, optional): indicates if the SUSHI call returned an empty string; default is `False`
+        has_Report_Items (bool, optional): indicates if the data returned by the SUSHI call had a `Report_Items` section; default is `True`
 
     Returns:
         str: the statement for outputting the arguments to logging
