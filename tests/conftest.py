@@ -359,7 +359,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
     log.debug(logging_message)
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield None
     try:

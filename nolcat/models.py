@@ -1025,7 +1025,7 @@ class StatisticsSources(db.Model):
                         temp_file_path,
                         file_name,
                     )
-                    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
+                    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                         message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                         log.critical(message)
                     else:
@@ -1062,7 +1062,7 @@ class StatisticsSources(db.Model):
                     temp_file_path,
                     file_name,
                 )
-                if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
+                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                     message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                     log.critical(message)
                 else:
@@ -1637,7 +1637,7 @@ class AnnualUsageCollectionTracking(db.Model):
             file,
             file_name,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message

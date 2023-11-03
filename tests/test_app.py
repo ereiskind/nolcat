@@ -275,7 +275,7 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
     log.debug(logging_message)
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):  ##Check-upload_file_to_S3_bucket
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
         assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,

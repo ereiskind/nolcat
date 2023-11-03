@@ -209,9 +209,12 @@ def unable_to_delete_test_file_in_S3_statement(file_name, error_message):
 
 #Subsection: Success Regexes
 def upload_file_to_S3_bucket_success_regex():
-    '''For ##Check-upload_file_to_S3_bucket'''
-    #ToDo: Create regex matching success return value for `nolcat.app.upload_file_to_S3_bucket()`
-    pass
+    """This regex object matches the success return statement for `nolcat.app.upload_file_to_S3_bucket()`.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
+    """
+    return re.compile(r"Successfully loaded the file (.*) into the .* S3 bucket\.")
 
 
 def upload_nonstandard_usage_file_success_regex():
