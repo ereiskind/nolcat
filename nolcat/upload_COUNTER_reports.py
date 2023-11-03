@@ -41,8 +41,7 @@ class UploadCOUNTERReports:
         This method prepares the data from tabular COUNTER reports for upload into the database. This method transforms tabular COUNTER reports on sheets in Excel workbooks into dataframes, but to become complete and valid records in the relation, enhancements are needed, including cleaning the data, filling in data R4 provided through its multiple different report types, and adding the statistics source of the data, which is taken from the first part of the file name.
 
         Returns:
-            dataframe: COUNTER data ready for normalization
-            #ToDo:: Add list of workbooks and worksheets that couldn't be used in second part of tuple
+            tuple: COUNTER data ready for normalization (dataframe); list of workbooks and worksheets with data not in dataframe
         """
         '''Known issues with specific stats sources (taken from webpage instructions):
             * Gale reports needed to be copied and pasted as values with the paste special dialog box to work in OpenRefine
@@ -50,7 +49,7 @@ class UploadCOUNTERReports:
         '''
         log.info("Starting `UploadCOUNTERReports.create_dataframe()`.")
         all_dataframes_to_concatenate = []
-        #ToDo:: Create part two tuple list
+        data_not_in_dataframes = []
         valid_report_types = ("BR1", "BR2", "BR3", "BR5", "DB1", "DB2", "JR1", "JR2", "MR1", "PR1", "TR1", "TR2", "PR", "DR", "TR", "IR")
         dates_as_string_regex = re.compile(r"([A-Z][a-z]{2})\-(\d{4})")
 
@@ -64,20 +63,20 @@ class UploadCOUNTERReports:
                 log.debug(f"Successfully loaded the workbook {str(FileStorage_object.filename)}.")
             except Exception as error:
                 log.error(f"Loading the workbook {str(FileStorage_object.filename)} raised the error {error}.")
-                #ToDo:: Add above to part two tuple list
+                data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
                 continue
             
             try:
                 statistics_source_ID = int(re.search(r"(\d*)_.*\.xlsx", str(FileStorage_object.filename)).group(1))
             except Exception as error:
                 log.warning(f"The workbook {str(FileStorage_object.filename)} wasn't be loaded because attempting to extract the statistics source ID from the file name raised {error}. Remember the program is looking for a file with a name that begins with the statistics source ID followed by an underscore and ends with the Excel file extension.")
-                #ToDo:: Add above to part two tuple list
+                data_not_in_dataframes.append(f"Workbook {str(FileStorage_object.filename)}")
                 continue
 
             for report_type in file.sheetnames:
                 if report_type not in valid_report_types:
                     log.warning(f"The sheet name {report_type} isn't a valid report type, so the sheet couldn't be loaded. Please correct the sheet name and try again.")
-                    #ToDo:: Add above to part two tuple list
+                    data_not_in_dataframes.append(f"Worksheet {report_type} in workbook {str(FileStorage_object.filename)}")
                     continue
                 sheet = file[report_type]  # `report_type` is the name of the sheet as a string, so it can be used as an index operator
                 log.info(f"Loading data from sheet {report_type} from workbook {str(FileStorage_object.filename)}.")
@@ -358,7 +357,8 @@ class UploadCOUNTERReports:
                 except Exception as error:
                     message = "None of the possible delimiter characters were viable, so the `delimiter_character` variable, which the program needs to continue, wasn't set."
                     log.critical(message)
-                    continue  #ToDo:: Add this workbook/worksheet to the list for the second part of the tuple
+                    data_not_in_dataframes.append(f"Worksheet {report_type} in workbook {str(FileStorage_object.filename)}")
+                    continue
 
                 #Subsection: Create Temp Index Field with All Metadata Values
                 # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
@@ -487,4 +487,4 @@ class UploadCOUNTERReports:
 
         #Section: Return Dataframe
         log.info(f"Final dataframe:\n{combined_df}\nand dtypes:\n{combined_df.dtypes}")
-        return combined_df  #ToDo:: Add part two of tuple
+        return (combined_df, data_not_in_dataframes)
