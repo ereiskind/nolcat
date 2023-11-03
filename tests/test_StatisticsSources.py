@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ def current_month_like_most_recent_month_with_usage():
 
 
 @pytest.fixture(scope='module')
-def StatisticsSources_fixture(engine, most_recent_month_with_usage):
+def StatisticsSources_fixture(engine, most_recent_month_with_usage, caplog):
     """A fixture simulating a `StatisticsSources` object containing the necessary data to make a real SUSHI call.
     
     The SUSHI API has no test values, so testing SUSHI calls requires using actual SUSHI credentials. This fixture creates a `StatisticsSources` object with mocked values in all fields except `statisticsSources_relation['Statistics_Source_Retrieval_Code']`, which uses a random value taken from the R5 SUSHI credentials file. Because the `_harvest_R5_SUSHI()` method includes a check preventing SUSHI calls to stats source/date combos already in the database, stats sources current with the available usage statistics are filtered out to prevent their use.
@@ -56,6 +57,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     Yields:
         StatisticsSources: a StatisticsSources object connected to valid SUSHI data
     """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     retrieval_codes_as_interface_IDs = []  # The list of `StatisticsSources.statistics_source_retrieval_code` values from the JSON, which are labeled as `interface_id` in the JSON
     with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
         SUSHI_data_file = json.load(JSON_file)
@@ -77,7 +79,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             engine=engine,
         )
         if isinstance(query_result, str):
-            pytest.skip(f"Unable to run test because it relied on {query_result[0].lower()}{query_result[1:].replace(' raised', ', which raised')}")
+            pytest.skip(database_function_skip_statements(query_result, False))
         if not query_result.empty or not query_result.isnull().all().all():  # `empty` returns Boolean based on if the dataframe contains data elements; `isnull().all().all()` returns a Boolean based on a dataframe of Booleans based on if the value of the data element is null or not
             retrieval_codes.append(interface)
     
@@ -97,7 +99,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r'https?://.*\.\w{3}(/.*)?/', credentials['URL'])
+    assert re.fullmatch(r"https?://.*\.\w{3}(/.*)?/", credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
@@ -163,12 +165,6 @@ def test_check_if_data_in_database_yes(engine, client, StatisticsSources_fixture
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
     report = choice(reports_offered_by_StatisticsSource_fixture)
     last_month_with_usage_in_test_data = date(2020, 6, 1)
-    test_could_pass = query_database(
-        query=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={StatisticsSources_fixture.statistics_source_ID} AND report_type='{report}' AND usage_date='{last_month_with_usage_in_test_data.strftime('%Y-%m-%d')}';",
-        engine=engine,
-    )
-    if test_could_pass.iloc[0][0] == 0:
-        pytest.skip(f"{report} not offered by this statistics source.")
     with client:
         data_check = StatisticsSources_fixture._check_if_data_in_database(
             report,
@@ -202,8 +198,8 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             begin_date,
             end_date,
         )
-    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
-        pytest.skip("The test is being skipped because the API call returned no data.")
+    if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -228,8 +224,10 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
-        pytest.skip("The test is being skipped because the API call returned no data.")  # Many statistics source providers don't have usage going back this far
+    if pytest_skip_SUSHI_error_regex().match(SUSHI_data_response):
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
+    elif reports_with_no_usage_regex().fullmatch(SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))  # Many statistics source providers don't have usage going back this far
     #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
@@ -288,7 +286,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, dict)
-    assert re.fullmatch(r'The given end date of \d{4}-\d{2}-\d{2} is before the given start date of \d{4}-\d{2}-\d{2}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made\. Please correct the dates and try again\.', SUSHI_data_response)
+    assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
     assert len(flash_message_list) == 1
 
 
@@ -348,7 +346,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     
     SUSHI_method_response, flash_message_list = StatisticsSources_fixture.collect_usage_statistics(month_before_month_like_most_recent_month_with_usage[0], month_before_month_like_most_recent_month_with_usage[1])
-    method_response_match_object = re.fullmatch(r'The SUSHI harvest for statistics source .* successfully found (\d*) records.', SUSHI_method_response)
+    method_response_match_object = load_data_into_database_success_regex().fullmatch(SUSHI_method_response)
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
@@ -444,6 +442,8 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
+    if isinstance(number_of_records, str):
+        pytest.skip(database_function_skip_statements(number_of_records))
     if number_of_records.iloc[0][0] == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)

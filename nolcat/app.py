@@ -16,6 +16,8 @@ from numpy import squeeze
 import boto3
 import botocore.exceptions  # `botocore` is a dependency of `boto3`
 
+from .statements import *
+
 """Since GitHub is used to manage the code, and the repo is public, secret information is stored in a file named `nolcat_secrets.py` exclusive to the Docker container and imported into this file.
 
 The overall structure of this app doesn't facilitate a separate module for a SQLAlchemy `create_engine` function: when `nolcat/__init__.py` is present, keeping these functions in a separate module and importing them causes a ``ModuleNotFoundError: No module named 'database_connectors'`` error when starting up the Flask server, but with no `__init__` file, the blueprint folder imports don't work. With Flask-SQLAlchemy, a string for the config variable `SQLALCHEMY_DATABASE_URI` is all that's needed, so the data the string needs are imported from a `nolcat_secrets.py` file saved to Docker and added to this directory during the build process. This import has been problematic; moving the file from the top-level directory to this directory and providing multiple possible import statements in try-except blocks are used to handle the problem.
@@ -74,31 +76,6 @@ log = logging.getLogger(__name__)
 csrf = CSRFProtect()
 db = SQLAlchemy()
 s3_client = boto3.client('s3')  # Authentication is done through a CloudFormation init file
-
-
-def file_extensions_and_mimetypes():
-    """A dictionary of the file extensions for the types of files that can be downloaded to S3 via NoLCAT and their mimetypes.
-    
-    This helper function is called in `create_app()` and thus must be before that function.
-    """
-    return {
-        ".xlsx": "application/vnd.ms-excel",
-        ".csv": "text/csv",
-        ".tsv": "text/tab-separated-values",
-        ".pdf": "application/pdf",
-        ".docx": "application/msword",
-        ".pptx": "application/vnd.ms-powerpoint",
-        ".txt": "text/plain",
-        ".jpeg": "image/jpeg",
-        ".jpg":"image/jpeg",
-        ".png": "image/png",
-        ".svg": "image/svg+xml",
-        ".json": "application/json",
-        ".html": "text/html",
-        ".htm": "text/html",
-        ".xml": "text/xml",
-        ".zip": "application/zip",
-    }
 
 
 def page_not_found(error):
@@ -286,13 +263,14 @@ def first_new_PK_value(relation):
         engine=db.engine,
     )
     if isinstance(largest_PK_value, str):
-        return largest_PK_value
+        log.debug(database_query_fail_statement(largest_PK_value, "return requested value"))
+        return largest_PK_value  # Only passing the initial returned error statement to `nolcat.statements.unable_to_get_updated_primary_key_values_statement()`
     elif largest_PK_value.empty:  # If there's no data in the relation, the dataframe is empty, and the primary key numbering should start at zero
         log.debug(f"The {relation} relation is empty.")
         return 0
     else:
         largest_PK_value = largest_PK_value.iloc[0][0]
-        log.debug(f"The query returned a dataframe from which {largest_PK_value} (type {type(largest_PK_value)}) was extracted.")
+        log.debug(return_value_from_query_statement(largest_PK_value))
         return int(largest_PK_value) + 1
 
 
@@ -375,7 +353,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
  
 
     #Section: Upload File to Bucket
-    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")  #AboutTo
+    log.debug(f"Loading object {file} (type {type(file)}) with file name `{file_name}` into S3 location `{bucket}/{bucket_path}`.")
     #Subsection: Upload File with `upload_fileobj()`
     try:
         file_object = open(file, 'rb')
@@ -498,20 +476,6 @@ def query_database(query, engine, index=None):
         return message
 
 
-def format_list_for_stdout(stdout_list):
-    """Changes a list into a string which places each item of the list on its own line.
-
-    Using the list comprehension allows the function to accept generators, which are transformed into lists by the comprehension, and to handle both lists and generators with individual items that aren't strings by type juggling.
-
-    Args:
-        stdout_list (list or generator): a list for pretty printing to stdout
-    
-    Returns:
-        str: the list contents with a line break between each item
-    """
-    return '\n'.join([str(file_path) for file_path in stdout_list])
-
-
 def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFORMING AS EXPECTED, NOT STOPPING CALLS
     """Checks if records for a given combination of statistics source, report type, and date are already in the `COUNTERData` relation.
 
@@ -546,7 +510,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
 
     #Section: Check Database for Combinations of Above
     combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")  #AboutTo
+    log.info(f"Checking the database for the existence of records with the following statistics source ID, report type, and usage date combinations: {combinations_to_check}")
     total_number_of_matching_records = 0
     matching_record_instances = []
     for combo in combinations_to_check:
@@ -555,9 +519,9 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
             engine=db.engine,
         )
         if isinstance(number_of_matching_records, str):
-            return (None, number_of_matching_records)
+            return (None, database_query_fail_statement(number_of_matching_records, "return requested value"))
         number_of_matching_records = number_of_matching_records.iloc[0][0]
-        log.debug(f"The {combo} query returned a dataframe from which {number_of_matching_records} (type {type(number_of_matching_records)}) was extracted.")
+        log.debug(return_value_from_query_statement(number_of_matching_records, f"existing usage for statistics_source_ID {combo[0]}, report {combo[1]}, and date {combo[2].strftime('%Y-%m-%d')}"))
         if number_of_matching_records > 0:
             matching_record_instances.append({
                 'statistics_source_ID': combo[0],
@@ -584,7 +548,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
                 engine=db.engine,
             )
             if isinstance(statistics_source_name, str):
-                return (None, statistics_source_name)
+                return (None, database_query_fail_statement(statistics_source_name, "return requested value"))
             instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
         
         #Subsection: Return Results
@@ -622,6 +586,9 @@ def update_database(update_statement, engine):
     log.info(f"Starting `update_database()` for the update statement {update_statement}.")
     try:
         engine.execute(update_statement)
+        log.debug(f"`update_statement` is {update_statement}")  #temp
+        single_line_update_statement = update_statement.replace('\n', ' ')
+        log.debug(f"`single_line_update_statement` is {single_line_update_statement}")  #temp
         message = f"Successfully preformed the update `{update_statement}`."
         log.info(message)
         return message
@@ -696,3 +663,12 @@ def save_unconverted_data_via_upload(data, file_name_stem):
         message = logging_message
         log.debug(message)
     return message
+
+
+  def ISSN_regex():
+    """A regex object matching an ISSN.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")

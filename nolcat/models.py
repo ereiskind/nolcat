@@ -14,6 +14,7 @@ from dateutil.rrule import rrule
 from dateutil.rrule import MONTHLY
 
 from .app import *
+from .statements import *
 from .SUSHI_call_and_response import SUSHICallAndResponse
 from .convert_JSON_dict_to_dataframe import ConvertJSONDictToDataframe
 
@@ -41,7 +42,7 @@ def PATH_TO_CREDENTIALS_FILE():
     """
     file_path = Path('/nolcat/nolcat/R5_SUSHI_credentials.json')
     if file_path.exists():
-        log.debug(f"There's a file at {str(file_path.resolve())}: {file_path.is_file()}.")
+        log.debug(check_if_folder_exists_statement(file_path))
         return str(file_path)
     log.critical("The R5 SUSHI credentials file could not be located. The program is ending.")
     sys.exit()
@@ -142,12 +143,12 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"
+            message = database_query_fail_statement(TR_B1_df, "return requested value")
             log.warning(message)
             return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
-            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+            log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
             query=f"""
@@ -158,12 +159,12 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"
+            message = database_query_fail_statement(IR_M1_df, "return requested value")
             log.warning(message)
             return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
-            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+            log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         TR_J1_df = query_database(
             query=f"""
@@ -174,12 +175,12 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_J1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_J1_df[0].lower()}{TR_J1_df[1:]}"
+            message = database_query_fail_statement(TR_J1_df, "return requested value")
             log.warning(message)
             return message
         else:
             TR_J1_sum = TR_J1_df.iloc[0][0]
-            log.debug(f"The e-serials sum query returned a dataframe from which {TR_J1_sum} ({type(TR_J1_sum)}) was extracted.")
+            log.debug(return_value_from_query_statement(TR_J1_sum, "TR_J1"))
         
         return TR_B1_sum + IR_M1_sum + TR_J1_sum
 
@@ -204,11 +205,11 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ACRL_63 = df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ACRL_63} (type {type(ACRL_63)}) was extracted")
+        log.debug(return_value_from_query_statement(ACRL_63))
         return ACRL_63
     
 
@@ -232,12 +233,12 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(TR_B1_df, str):
-            message = f"Unable to return requested sum because it relied on {TR_B1_df[0].lower()}{TR_B1_df[1:]}"
+            message = database_query_fail_statement(TR_B1_df, "return requested value")
             log.warning(message)
             return message
         else:
             TR_B1_sum = TR_B1_df.iloc[0][0]
-            log.debug(f"The e-book sum query returned a dataframe from which {TR_B1_sum} ({type(TR_B1_sum)}) was extracted.")
+            log.debug(return_value_from_query_statement(TR_B1_sum, "TR_B1"))
 
         IR_M1_df = query_database(
             query=f"""
@@ -248,12 +249,12 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(IR_M1_df, str):
-            message = f"Unable to return requested sum because it relied on {IR_M1_df[0].lower()}{IR_M1_df[1:]}"
+            message = database_query_fail_statement(IR_M1_df, "return requested value")
             log.warning(message)
             return message
         else:
             IR_M1_sum = IR_M1_df.iloc[0][0]
-            log.debug(f"The e-media sum query returned a dataframe from which {IR_M1_sum} ({type(IR_M1_sum)}) was extracted.")
+            log.debug(return_value_from_query_statement(IR_M1_sum, "IR_M1"))
 
         return TR_B1_sum + IR_M1_sum
 
@@ -278,11 +279,11 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ACRL_61b = df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ACRL_61b} (type {type(ACRL_61b)}) was extracted")
+        log.debug(return_value_from_query_statement(ACRL_61b))
         return ACRL_61b
 
 
@@ -306,11 +307,11 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_18= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_18} (type {type(ARL_18)}) was extracted")
+        log.debug(return_value_from_query_statement(ARL_18))
         return ARL_18
 
     
@@ -334,11 +335,11 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_19= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_19} (type {type(ARL_19)}) was extracted")
+        log.debug(return_value_from_query_statement(ARL_19))
         return ARL_19
 
 
@@ -362,11 +363,11 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(df, str):
-            message = f"Unable to return requested sum because it relied on {df[0].lower()}{df[1:]}"
+            message = database_query_fail_statement(df, "return requested value")
             log.warning(message)
             return message
         ARL_20= df.iloc[0][0]
-        log.debug(f"The sum query returned a dataframe from which {ARL_20} (type {type(ARL_20)}) was extracted")
+        log.debug(return_value_from_query_statement(ARL_20))
         return ARL_20
 
 
@@ -386,8 +387,8 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(current_statistics_sources, str):
-            return current_statistics_sources
-        log.debug(f"The result of the query for current statistics sources PKs:\n{current_statistics_sources}")
+            return database_query_fail_statement(current_statistics_sources, "return requested series")
+        log.debug(return_dataframe_from_query_statement("current statistics sources PKs", current_statistics_sources))
         current_statistics_sources_PKs = [(PK, self.fiscal_year_ID) for PK in current_statistics_sources['SRS_statistics_source'].unique().tolist()]  # `uniques()` method returns a numpy array, so numpy's `tolist()` method is used
 
         #Section: Create Dataframe to Load into Relation
@@ -424,7 +425,7 @@ class FiscalYears(db.Model):
         A helper method encapsulating `_harvest_R5_SUSHI` to load its result into the `COUNTERData` relation.
 
         Returns:
-            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a dictionary of harvested reports and the list of the statements that should be flashed returned by those reports (dict, key: str, value: list of str)
+            tuple: the logging statement to indicate if calling and loading the data succeeded or failed (str); a list of all the statements that should be flashed in their various formats
         """
         log.info(f"Starting `FiscalYears.collect_fiscal_year_usage_statistics()` for {self.fiscal_year}.")
         #Section: Get AUCT Records for Statistics Sources to be Pulled
@@ -450,7 +451,8 @@ class FiscalYears(db.Model):
             engine=db.engine,
         )
         if isinstance(AUCT_objects_to_collect_df, str):
-            return (AUCT_objects_to_collect_df, [AUCT_objects_to_collect_df])
+            message = database_query_fail_statement(AUCT_objects_to_collect_df, "return requested dataframe")
+            return (message, [message])
         log.debug(f"The dataframe of the AUCT records of the statistics sources that need their usage collected for FY {self.fiscal_year}:\n{AUCT_objects_to_collect_df}")
         AUCT_objects_to_collect = [
             AnnualUsageCollectionTracking(
@@ -485,7 +487,7 @@ class FiscalYears(db.Model):
                 engine=db.engine,
             )
             if isinstance(statistics_source, str):
-                all_flash_statements.append(f"Unable to collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source} because it relied on {statistics_source[0].lower()}{statistics_source[1:].replace(' raised', ', which raised')}")
+                all_flash_statements.append(database_query_fail_statement(statistics_source, f"collect usage statistics for the statistics source with primary key {AUCT_object.AUCT_statistics_source}"))
                 continue
             df, flash_statements = statistics_source._harvest_R5_SUSHI(self.start_date, self.end_date)
             for statement in flash_statements:
@@ -494,14 +496,14 @@ class FiscalYears(db.Model):
                 continue
             dfs.append(df)
             where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
-            log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {self.fiscal_year} successfully found {df.shape[1]} records. Those records and the `annualUsageCollectionTracking` relation composite primary key value have been saved for loaded into the database.")
+            log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], self.fiscal_year))
         
         #Section: Update Data in Database
         df = pd.concat(dfs)
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             all_flash_statements.append(message)
             return (message, all_flash_statements)
@@ -511,8 +513,7 @@ class FiscalYears(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            #SQLDatabaseLoadFailure
+        if not load_data_into_database_success_regex().fullmatch(load_result):
             return (load_result, all_flash_statements)
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
@@ -523,12 +524,12 @@ class FiscalYears(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+        if not update_database_success_regex().fullmatch(update_result):
+            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             all_flash_statements.append(message)
-            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", all_flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", all_flash_statements)
+            return (message, all_flash_statements)
+        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", all_flash_statements)
 
 
 class Vendors(db.Model):
@@ -578,6 +579,7 @@ class Vendors(db.Model):
 
         Returns:
             dataframe: a filtered copy of the `statisticsSources` relation
+            str: an error message if the request for the data fails
         """
         log.info(f"Starting `Vendors.get_statisticsSources_records()` for {self.vendor_name}.")
         # vendor_PK = the int value that serves as the primary key for the vendor
@@ -594,8 +596,10 @@ class Vendors(db.Model):
         #     index='statistics_source_ID',
         # )
         # if isinstance(df, str):
-        #     #SQLDataframeReturnError
-        # log.debug(f"The result of the query for a list of statistics sources associated with {self.vendor_name}:\n{df}")
+        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     log.warning(message)
+        #     return message
+        # log.debug(return_dataframe_from_query_statement(f"a list of statistics sources associated with {self.vendor_name}", df))
         # return df
         pass
 
@@ -606,6 +610,7 @@ class Vendors(db.Model):
 
         Returns:
             dataframe: a filtered copy of the `resourceSources` relation
+            str: an error message if the request for the data fails
         """
         log.info(f"Starting `Vendors.get_resourceSources_records()` for {self.vendor_name}.")
         # vendor_PK = the int value that serves as the primary key for the vendor
@@ -623,8 +628,10 @@ class Vendors(db.Model):
         #     index='resource_source_ID',
         # )
         # if isinstance(df, str):
-        #     #SQLDataframeReturnError
-        # log.debug(f"The result of the query for list of a resource sources associated with {self.vendor_name}:\n{df}")
+        #     message = database_query_fail_statement(df, "return requested dataframe")
+        #     log.warning(message)
+        #     return message
+        # log.debug(return_dataframe_from_query_statement(f"a list of resource sources associated with {self.vendor_name}", df))
         # return df
         pass
 
@@ -741,7 +748,7 @@ class StatisticsSources(db.Model):
         #Subsection: Retrieve Data from JSON
         with open(PATH_TO_CREDENTIALS_FILE()) as JSON_file:
             SUSHI_data_file = json.load(JSON_file)
-            log.debug("*JSON with SUSHI credentials loaded.*")
+            log.debug("JSON with SUSHI credentials loaded.")
             for vendor in SUSHI_data_file:  # No index operator needed--outermost structure is a list
                 for statistics_source_dict in vendor['interface']:  # `interface` is a key within the `vendor` dictionary, and its value, a list, is the only info needed, so the index operator is used to reference the specific key
                     if statistics_source_dict['interface_id'] == self.statistics_source_retrieval_code:
@@ -796,32 +803,32 @@ class StatisticsSources(db.Model):
         #Section: Get API Call URL and Parameters
         log.info(f"Starting `StatisticsSources._harvest_R5_SUSHI()` for {self.statistics_source_name} for {usage_start_date.strftime('%Y-%m-%d')} to {usage_end_date.strftime('%Y-%m-%d')}.")
         if usage_start_date > usage_end_date:
-            message = f"The given end date of {usage_end_date.strftime('%Y-%m-%d')} is before the given start date of {usage_start_date.strftime('%Y-%m-%d')}, which will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made. Please correct the dates and try again."
+            message = attempted_SUSHI_call_with_invalid_dates_statement(usage_end_date, usage_start_date)
             log.error(message)
             return (message, {'dates': [message]})
         SUSHI_info = self.fetch_SUSHI_information()
         log.debug(f"`StatisticsSources.fetch_SUSHI_information()` method returned the credentials {SUSHI_info} for a SUSHI API call.")  # This is nearly identical to the logging statement just before the method return statement and is for checking that the program does return to this method
         SUSHI_parameters = {key: value for key, value in SUSHI_info.items() if key != "URL"}
         all_flashed_statements = {}
-        log.info(f"Making SUSHI calls for {self.statistics_source_name}.")  #AboutTo
+        log.info(f"Making SUSHI calls for {self.statistics_source_name}.")
 
 
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and (re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']) or re.match(r'https?://.*clarivate.*\.\w{3}/', SUSHI_info['URL'])):
+        if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
             # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
                 # MathSciNet `status` endpoint returns HTTP status code 400
                 # Web of Science includes `Alerts` with information about most recent month with usage available
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
+            log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
         elif isinstance(SUSHI_status_response, str) or isinstance(SUSHI_status_response, Exception):
-            message = f"The call to the `status` endpoint for {self.statistics_source_name} raised the error {SUSHI_status_response}."
+            message = failed_SUSHI_call_statement("status", self.statistics_source_name, SUSHI_status_response, SUSHI_error=False)
             log.warning(message)
             return (message, all_flashed_statements)
         else:
-            log.info(f"Call to `status` endpoint for {self.statistics_source_name} successful.")
+            log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
 
 
@@ -861,12 +868,12 @@ class StatisticsSources(db.Model):
             SUSHI_reports_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "reports", SUSHI_parameters).make_SUSHI_call()
             all_flashed_statements['reports'] = flash_message_list
             if len(SUSHI_reports_response) == 1 and list(SUSHI_reports_response.keys())[0] == "reports":  # The `reports` route should return a list; to make it match all the other routes, the `make_SUSHI_call()` method makes it the value in a one-item dict with the key `reports`
-                log.info(f"Call to `reports` endpoint for {self.statistics_source_name} successful.")
+                log.info(successful_SUSHI_call_statement("reports", self.statistics_source_name))
                 all_available_reports = []
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
                         for report_detail_keys, report_detail_values in report_details_dict.items():
-                            if isinstance(report_detail_keys, str) and re.fullmatch(r'[Rr]eport_[Ii][Dd]', report_detail_keys):
+                            if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             elif isinstance(SUSHI_reports_response, str):
@@ -878,7 +885,7 @@ class StatisticsSources(db.Model):
                 return (message, all_flashed_statements)
 
             #Subsection: Get List of Available Customizable Reports
-            available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+            available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
             available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
             log.info(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}.")
 
@@ -895,12 +902,14 @@ class StatisticsSources(db.Model):
 
             #Section: Make Customizable Report SUSHI Calls
             #Subsection: Set Up Loop Through Customizable Reports
+            for report_name in available_custom_reports:
+                all_flashed_statements[report_name] = "Report available but not pulled"  # If the API calls are stopped before all available reports are called, this will indicate that there were reports not attempted; once the SUSHI call for the report is made, the value is overwritten
             custom_report_dataframes = []
             complete_flash_message_list = []
             no_usage_returned_count = 0
             for custom_report in available_custom_reports:
                 report_name = custom_report.upper()
-                log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")  #AboutTo
+                log.info(f"Starting SUSHI calls to {self.statistics_source_name} for report {report_name}.")
 
                 #Subsection: Add Parameters for Customizable Report Type
                 if "include_parent_details" in list(SUSHI_parameters.keys()):  # When included in reports other than IR, this parameter often causes an error message to appear
@@ -931,13 +940,14 @@ class StatisticsSources(db.Model):
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the .* endpoint for .* raised the SUSHI error.*API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
-                    log.error(SUSHI_data_response)
-                    return (SUSHI_data_response, all_flashed_statements)
-                elif isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
                     log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                elif isinstance(SUSHI_data_response, str):
+                    log.error(SUSHI_data_response)
+                    return (SUSHI_data_response, all_flashed_statements)
                 custom_report_dataframes.append(SUSHI_data_response)
             if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
@@ -970,11 +980,11 @@ class StatisticsSources(db.Model):
         """
         log.info(f"Starting `StatisticsSources._harvest_single_report()` for {report} from {self.statistics_source_name} for {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         subset_of_months_to_harvest = self._check_if_data_in_database(report, start_date, end_date)
-        if isinstance(subset_of_months_to_harvest, str) and re.fullmatch(r'Running the query `.*` raised the error .*\.', subset_of_months_to_harvest, flags=re.DOTALL):
+        if isinstance(subset_of_months_to_harvest, str):
             message = f"When attempting to check if the data was already in the database, {subset_of_months_to_harvest[0].lower()}{subset_of_months_to_harvest[1:]}"
             return (message, [message])
         elif subset_of_months_to_harvest:
-            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")  #AboutTo
+            log.info(f"Calling `reports/{report.lower()}` endpoint for {self.statistics_source_name} for individual months to avoid adding duplicate data in the database.")
             individual_month_dfs = []
             complete_flash_message_list = []
             no_usage_returned_count = 0
@@ -988,13 +998,13 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the SUSHI errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.*` endpoint for .* raised the (SUSHI )?errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.", SUSHI_data_response):
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):
-                    log.debug("*The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.*")
+                elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
+                    log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                     no_usage_returned_count += 1
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
@@ -1008,18 +1018,19 @@ class StatisticsSources(db.Model):
                     log.warning(message)
                     return (message, complete_flash_message_list)
                 df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-                if df.empty:
+                if isinstance(df, str):
+                    message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                    log.warning(message)
                     logging_message = save_unconverted_data_via_upload(
                         data=SUSHI_data_response,
                         file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                     )
-                    if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
-                        message = logging_message
-                        log.debug(message)
-                    else:
-                        message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                        message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                         log.critical(message)
-                    message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
+                    else:
+                        message = message + " " + logging_message
+                        log.debug(message)
                     complete_flash_message_list.append(message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
@@ -1028,7 +1039,7 @@ class StatisticsSources(db.Model):
                 log.debug(f"Dataframe for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{df}")
                 log.info(f"Dataframe info for SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')}:\n{return_string_of_dataframe_info(df)}")
                 individual_month_dfs.append(df)
-                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")  #AboutTo
+                log.info(f"Combining {len(individual_month_dfs)} single-month dataframes to load into the database.")
                 return (pd.concat(individual_month_dfs, ignore_index=True), complete_flash_message_list)  # Without `ignore_index=True`, the autonumbering from the creation of each individual dataframe is retained, causing a primary key error when attempting to load the dataframe into the database
         else:
             SUSHI_parameters['begin_date'] = start_date
@@ -1038,18 +1049,19 @@ class StatisticsSources(db.Model):
                 log.warning(SUSHI_data_response)
                 return (SUSHI_data_response, flash_message_list)
             df = ConvertJSONDictToDataframe(SUSHI_data_response).create_dataframe()
-            if df.empty:
-                logging_message = save_unconverted_data_via_upload(
+            if isinstance(df, str):
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
+                log.warning(message)
+                 logging_message = save_unconverted_data_via_upload(
                     data=SUSHI_data_response,
                     file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                 )
-                if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
-                    message = logging_message
-                    log.debug(message)
-                else:
-                    message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
+                if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+                    message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
                     log.critical(message)
-                message = f"The JSON-like dictionary of {report} for {self.statistics_source_name} couldn't be converted into a dataframe. {message}"
+                else:
+                    message = message + " " + logging_message
+                    log.debug(message)
                 flash_message_list.append(message)
                 return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
@@ -1084,9 +1096,9 @@ class StatisticsSources(db.Model):
                 engine=db.engine,
             )
             if isinstance(number_of_records, str):
-                return number_of_records
+                return database_query_fail_statement(number_of_records, "return requested value")
             number_of_records = number_of_records.iloc[0][0]
-            log.debug(f"The records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')} query returned a dataframe from which {number_of_records} (type {type(number_of_records)}) was extracted.")
+            log.debug(return_value_from_query_statement(number_of_records, f"records for {self.statistics_source_name} in {month_being_checked.strftime('%Y-%m')}"))
             if number_of_records == 0:
                 months_to_harvest.append(month_being_checked)
             else:
@@ -1119,11 +1131,11 @@ class StatisticsSources(db.Model):
             log.warning(df)
             return (df, flash_statements)
         else:
-            log.debug(f"The SUSHI harvest for statistics source {self.statistics_source_name} successfully found {df.shape[1]} records.")
+            log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[1]))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             flash_statements.append(message)
             return (message, flash_statements)
@@ -1134,8 +1146,6 @@ class StatisticsSources(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            pass #SQLDatabaseLoadFailed
         return (load_result, flash_statements)
 
 
@@ -1242,21 +1252,23 @@ class ResourceSources(db.Model):
             access_stop_date (datetime.date, optional): the date when the access to the content on the platform ended; defaults to `date.today()`
         
         Returns:
-            _type_: _description_  #ToDo: Update on completion of method
+            str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE resourceSources
+            SET access_stop_date='{access_stop_date}' AND source_in_use=false
+            WHERE resource_source_ID={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE resourceSources
-                SET access_stop_date='{access_stop_date}' AND source_in_use=false
-                WHERE resource_source_ID={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            #ToDo: log.warning()
-            pass  #SQLDatabaseUpdateFailed
-        pass  #SQLDatabaseUpdateSuccess
+        if not update_database_success_regex().fullmatch(update_result):
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
+        return update_result
 
 
     @hybrid_method
@@ -1264,21 +1276,23 @@ class ResourceSources(db.Model):
         """Indicate that a resource is in use again by removing the date from `access_stop_date` and changing the `source_in_use` value to `True`.
 
         Returns:
-            _type_: _description_  #ToDo: Update on completion of method
+            str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE resourceSources
+            SET access_stop_date IS NONE AND source_in_use=true
+            WHERE resource_source_ID={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE resourceSources
-                SET access_stop_date IS NONE AND source_in_use=true
-                WHERE resource_source_ID={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            #ToDo: log.warning()
-            pass  #SQLDatabaseUpdateFailed
-        pass  #SQLDatabaseUpdateSuccess
+        if not update_database_success_regex().fullmatch(update_result):
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
+        return update_result
 
 
     @hybrid_method
@@ -1291,27 +1305,31 @@ class ResourceSources(db.Model):
             statistics_source_PK (int): the primary key from the `statisticsSources` record for the statistics source now used by the given resource source
         
         Returns:
-            _type_: _description_  #ToDo: Update on completion of method
+            str: a message indicating success or including the error raised by the attempt to update the data
         """
         log.info(f"Starting `ResourceSources.change_StatisticsSource()` for {self.resource_source_name}.")
+        update_statement=f"""
+            UPDATE statisticsResourceSources
+            SET current_statistics_source=false
+            WHERE SRS_resource_source={self.resource_source_ID};
+        """
         update_result = update_database(
-            update_statement=f"""
-                UPDATE statisticsResourceSources
-                SET current_statistics_source=false
-                WHERE SRS_resource_source={self.resource_source_ID};
-            """,
+            update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            #ToDo: log.warning()
-            pass  #SQLDatabaseUpdateFailed
+        if not update_database_success_regex().fullmatch(update_result):
+            message = database_update_fail_statement(update_statement)
+            log.warning(message)
+            return message
         
         check_for_existing_record = query_database(
             query=f"SELECT * FROM statisticsResourceSources WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};",
             engine=db.engine,
         )
         if isinstance(check_for_existing_record, str):
-            pass  #SQLDatabaseQueryFailed
+            message = database_query_fail_statement(check_for_existing_record, "return requested record")
+            log.warning(message)
+            return message
         
         if check_for_existing_record.empty:
             log.debug("Adding a new record to the `statisticsResourceSources` relation.")
@@ -1336,24 +1354,24 @@ class ResourceSources(db.Model):
                 relation='statisticsResourceSources',
                 engine=db.engine,
             )
-            if load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):
-                pass  #SQLDatabaseLoadFailed
-            return load_result  #ToDo: Format according to return type
+            return load_result
 
         else:
             log.debug("Updating an existing record in the `statisticsResourceSources` relation.")
+            update_statement=f"""
+                UPDATE statisticsResourceSources
+                SET current_statistics_source=true
+                WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
+            """
             update_result = update_database(
-                update_statement=f"""
-                    UPDATE statisticsResourceSources
-                    SET current_statistics_source=true
-                    WHERE SRS_statistics_source={statistics_source_PK} AND SRS_resource_source={self.resource_source_ID};
-                """,
+                update_statement=update_statement,
                 engine=db.engine,
             )
-            if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-                #ToDo: log.warning()
-                pass  #SQLDatabaseUpdateFailed
-            pass  #SQLDatabaseUpdateSuccess
+            if not update_database_success_regex().fullmatch(update_result):
+                message = database_update_fail_statement(update_statement)
+                log.warning(message)
+                return message
+            return update_result
 
 
     @hybrid_method
@@ -1522,11 +1540,13 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(fiscal_year_data, str):
-            return (fiscal_year_data, [fiscal_year_data])
+            message = database_query_fail_statement(fiscal_year_data, "return requested values")
+            log.warning(message)
+            return (fiscal_year_data, {"Before SUSHI": message})
         start_date = fiscal_year_data['start_date'][0]
         end_date = fiscal_year_data['end_date'][0]
         fiscal_year = fiscal_year_data['fiscal_year'][0]
-        log.debug(f"The query returned a dataframe from which {start_date} (type {type(start_date)}), {end_date} (type {type(end_date)}), and {fiscal_year} (type {type(fiscal_year)}) were extracted.")  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
+        log.debug(return_value_from_query_statement((start_date, end_date, fiscal_year), f"start date, end date, and fiscal year"))  #ToDo: Confirm that the variables are `datetime.date` objects, and if not, change them to that type
         
         #Subsection: Get Data from `statisticsSources`
         # Using SQLAlchemy to pull a record object doesn't work because the `StatisticsSources` class isn't recognized
@@ -1535,25 +1555,27 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
         )
         if isinstance(statistics_source_data, str):
-            return (statistics_source_data, [statistics_source_data])
+            message = database_query_fail_statement(statistics_source_data, "return requested values")
+            log.warning(message)
+            return (fiscal_year_data, {"Before SUSHI": message})
         statistics_source = StatisticsSources(
             statistics_source_ID = self.AUCT_statistics_source,
             statistics_source_name = str(statistics_source_data['statistics_source_name'][0]),
             statistics_source_retrieval_code = str(statistics_source_data['statistics_source_retrieval_code'][0]).split(".")[0],  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(statistics_source_data['vendor_ID'][0]),
         )
-        log.debug(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")
+        log.debug(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         #Section: Collect and Load SUSHI Data
         df, flash_statements = statistics_source._harvest_R5_SUSHI(start_date, end_date)
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
-        log.debug(f"The SUSHI harvest for statistics source {statistics_source.statistics_source_name} for FY {fiscal_year} successfully found {df.shape[1]} records.")
+        log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], fiscal_year))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             flash_statements.append(message)
             return (message, flash_statements)
@@ -1563,8 +1585,7 @@ class AnnualUsageCollectionTracking(db.Model):
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(load_result):
             return (load_result, flash_statements)
         update_statement = update_statement=f"""
             UPDATE annualUsageCollectionTracking
@@ -1575,13 +1596,12 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            #SQLDatabaseUpdateFailed
-            message = f"Updating the `annualUsageCollectionTracking` relation automatically failed, so the SQL update statement needs to be submitted via the SQL command line:\n{update_statement}"
+        if not update_database_success_regex().fullmatch(update_result):
+            message = add_data_success_and_update_database_fail_statement(load_result, update_statement)
             log.warning(message)
             flash_statements.append(message)
-            return (f"{load_result[:-1]}, but {message[0].lower()}{message[1:]}", flash_statements)
-        return (f"{load_result[:-1]} and {update_result[13:]}", flash_statements)
+            return (message, flash_statements)
+        return (f"{load_result[:-1]} and {update_result[0].lower()}{update_result[1:]}", flash_statements)
 
 
     @hybrid_method
@@ -1605,13 +1625,13 @@ class AnnualUsageCollectionTracking(db.Model):
             return message
         
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
-        log.debug(f"About to upload file '{file_name}' from WTForms FileField field {file_path} to S3 bucket {BUCKET_NAME}.")
+        log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
         logging_message = upload_file_to_S3_bucket(
             file,
             file_name,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-            message = f"Uploading the file {file_name} to S3 in `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!"
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+            message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message
         log.debug(logging_message)
@@ -1626,12 +1646,10 @@ class AnnualUsageCollectionTracking(db.Model):
             update_statement=update_statement,
             engine=db.engine,
         )
-        if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
-            #SQLDatabaseUpdateFailed
-            single_line_update_statement = update_statement.replace('\n', ' ') #ToDo: Not working
-            message = f"Updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n{single_line_update_statement}"
+        if not update_database_success_regex().fullmatch(update_result):
+            message = add_data_success_and_update_database_fail_statement(logging_message, update_statement)
             log.warning(message)
-            return f"{logging_message[:-1]}, but {message[0].lower()}{message[1:]}"
+            return message
         message = f"{logging_message[:-1]} and {update_result[0].lower()}{update_result[1:]}"
         log.debug(message)
         return message
@@ -1652,7 +1670,7 @@ class AnnualUsageCollectionTracking(db.Model):
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.download_nonstandard_usage_file()`.")
         file_download_path = web_app_download_folder / self.usage_file_path
-        log.debug(f"About to download file '{self.usage_file_path}' from S3 bucket {BUCKET_NAME} to top repo folder {TOP_NOLCAT_DIRECTORY}.")
+        log.debug(file_IO_statement(self.usage_file_path, f"S3 bucket {BUCKET_NAME}", f"top repo folder {TOP_NOLCAT_DIRECTORY.resolve()}", False))
         client.download_file(
             Bucket=bucket,
             Key=bucket_path + self.usage_file_path,

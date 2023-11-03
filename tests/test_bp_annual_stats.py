@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
+from nolcat.statements import *
 from nolcat.annual_stats import *
 
 log = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ def test_GET_request_for_annual_stats_homepage(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = list(db_select_field_options.itertuples(index=False, name=None))
 
     assert page.status == "200 OK"

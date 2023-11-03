@@ -23,6 +23,7 @@ from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
 
@@ -286,7 +287,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -299,7 +300,7 @@ def non_COUNTER_AUCT_object_before_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning the following `StatisticsSources` object which was initialized based on the query results:\n{yield_object}")
+    log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
     yield yield_object
 
 
@@ -323,7 +324,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         # Conversion to class object easier when primary keys stay as standard fields
     )
     if isinstance(record, str):
-        pytest.skip(f"Unable to create fixture because it relied on {record[0].lower()}{record[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(record, False))
     record = record.sample().reset_index()
     yield_object = AnnualUsageCollectionTracking(
         AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
@@ -336,7 +337,7 @@ def non_COUNTER_AUCT_object_after_upload(engine, caplog):
         usage_file_path=record.at[0,'usage_file_path'],
         notes=record.at[0,'notes'],
     )
-    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning the following `AnnualUsageCollectionTracking` object which was initialized based on the query results:\n{yield_object}")
+    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
     yield yield_object
 
 
@@ -351,15 +352,15 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yield:
         None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
     """
-    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, the `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
-    log.debug(f"About to upload file '{non_COUNTER_AUCT_object_after_upload.usage_file_path}' from file location {path_to_sample_file} to S3 bucket {BUCKET_NAME}.")
+    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 bucket {BUCKET_NAME}"))
     logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-        log.warning(f"Uploading the file {non_COUNTER_AUCT_object_after_upload.usage_file_path} to S3 in `tests.conftest.non_COUNTER_file_to_download_from_S3()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
     log.debug(logging_message)
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield None
     try:
         s3_client.delete_object(
@@ -367,7 +368,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
             Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
@@ -424,26 +425,6 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     pass  #Test: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
 
 
-@pytest.fixture
-def SUSHI_server_error_regex_object():
-    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because of a server-side issue.
-
-    Yields:
-        re.Pattern: the regex object matching SUSHI server error messages
-    """
-    yield re.compile(r'Call to .* returned the SUSHI error\(s\) (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) request raised error (1000|1010|1011|1020):')
-
-
-@pytest.fixture
-def no_SUSHI_data_regex_object():
-    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because no data is returned.
-
-    Yields:
-       re.Pattern: the regex object matching SUSHI server error messages
-    """
-    yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
-
-
 #Section: Test Helper Functions Not Possible in `nolcat.app`
 def match_direct_SUSHI_harvest_result(number_of_records, caplog):
     """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
@@ -471,7 +452,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         engine=db.engine,
     )
     if isinstance(df, str):
-        pytest.skip(f"Unable to create fixture because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
@@ -513,12 +494,14 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
-    log.info(f"Call to `reports` endpoint for {statistics_source_name} successful.")
+    if isinstance(response, str):
+        pytest.skip(f"The SUSHI call for the list of reports raised the error {response}.")
+    log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
     return list_of_reports

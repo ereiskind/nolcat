@@ -13,6 +13,7 @@ from pandas.testing import assert_frame_equal
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.view_usage import *
 
 log = logging.getLogger(__name__)
@@ -111,7 +112,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         index='COUNTER_data_ID',
     )
     if isinstance(database_df, str):
-        pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
@@ -156,7 +157,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    index='COUNTER_data_ID',
     #)
     #if isinstance(database_df, str):
-    #    pytest.skip(f"Unable to run test because it relied on {database_df[0].lower()}{database_df[1:].replace(' raised', ', which raised')}")
+    #    pytest.skip(database_function_skip_statements(database_df))
     #database_df = database_df.astype(COUNTERData.state_data_types())
 
     #assert POST_response.status == "200 OK"
@@ -179,7 +180,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     log.info(f"`GET_soup`:\n{GET_soup}")  #temp
     log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #temp
     for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
-        tuple_content = re.search(r'\((\d*),\s(\d*)\)', child['value'])
+        tuple_content = re.search(r"\((\d*),\s(\d*)\)", child['value'])
         GET_select_field_options.append((
             tuple([int(i) for i in tuple_content.group(1, 2)]),
             str(child.string),
@@ -204,7 +205,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
         engine=engine,
     )
     if isinstance(db_select_field_options, str):
-        pytest.skip(f"Unable to run test because it relied on {db_select_field_options[0].lower()}{db_select_field_options[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"

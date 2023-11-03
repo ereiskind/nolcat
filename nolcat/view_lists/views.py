@@ -11,6 +11,7 @@ from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ def view_lists_homepage(list):
         title = "Vendors"
         #ToDo: SQL_query = Write query that provides all fields in human-understandable data
     else:
-        log.error(f"The route function didn't understand the argument `{list}`.")  #404
+        log.error(f"The route function didn't understand the argument `{list}`.")  ##Flask_error_statement()
         return abort(404)
     
     # df = query_database(
@@ -41,7 +42,8 @@ def view_lists_homepage(list):
     #     engine=db.engine,
     # )
     # if isinstance(df, str):
-    #     #HomepageSQLError
+    #     flash(database_query_fail_statement(df))
+    #     return abort(404)
     # df = df.astype({dict setting correct dtypes})
     # Add field with links to see details for each record
     # Display the returned dataframe
@@ -76,7 +78,9 @@ def view_list_record(list, PK):
             # ResourceSources.add_note()
         return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))
     else:
-        # log.error(f"`form.errors`: {form.errors}")  #404
+        #message = Flask_error_statement(form.errors)
+        #log.error(message)
+        #flash(message)
         return abort(404)
     
 
@@ -103,7 +107,7 @@ def edit_list_record(list, PK):
             #     engine=db.engine,
             # )
             # if isinstance(df, str):
-            #     flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            #     flash(database_query_fail_statement(df))
             #     return redirect(url_for(view_lists.view_lists_homepage))
             # df = df.astype({dict setting correct dtypes})
             #ToDo: Prepopulate the fields
@@ -121,5 +125,7 @@ def edit_list_record(list, PK):
         #ToDo: Add message flashing about successful upload
         # return redirect(url_for('view_lists.view_list_record', list=list, PK=PK))  
     else:
-        # log.error(f"`form.errors`: {form.errors}")  #404
+        #message = Flask_error_statement(form.errors)
+        #log.error(message)
+        #flash(message)
         return abort(404)

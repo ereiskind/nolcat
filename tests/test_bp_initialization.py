@@ -15,6 +15,7 @@ from pandas.testing import assert_series_equal
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.initialization import *
 
 log = logging.getLogger(__name__)
@@ -402,7 +403,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         index='fiscal_year_ID',
     )
     if isinstance(fiscalYears_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {fiscalYears_relation_data[0].lower()}{fiscalYears_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
@@ -413,7 +414,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         index='vendor_ID',
     )
     if isinstance(vendors_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {vendors_relation_data[0].lower()}{vendors_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(vendors_relation_data))
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
     vendorNotes_relation_data = query_database(
@@ -422,7 +423,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         index='vendor_notes_ID',
     )
     if isinstance(vendorNotes_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {vendorNotes_relation_data[0].lower()}{vendorNotes_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
@@ -473,7 +474,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         index='statistics_source_ID',
     )
     if isinstance(statisticsSources_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {statisticsSources_relation_data[0].lower()}{statisticsSources_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
     statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
@@ -483,7 +484,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         index='statistics_source_notes_ID',
     )
     if isinstance(statisticsSourceNotes_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {statisticsSourceNotes_relation_data[0].lower()}{statisticsSourceNotes_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
@@ -493,7 +494,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         index='resource_source_ID',
     )
     if isinstance(resourceSources_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {resourceSources_relation_data[0].lower()}{resourceSources_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(resourceSources_relation_data))
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
     resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
 
@@ -503,7 +504,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         index='resource_source_notes_ID',
     )
     if isinstance(resourceSourceNotes_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {resourceSourceNotes_relation_data[0].lower()}{resourceSourceNotes_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
@@ -513,7 +514,7 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
         index=['SRS_statistics_source', 'SRS_resource_source'],
     )
     if isinstance(statisticsResourceSources_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {statisticsResourceSources_relation_data[0].lower()}{statisticsResourceSources_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
@@ -587,7 +588,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
         index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
     if isinstance(annualUsageCollectionTracking_relation_data, str):
-        pytest.skip(f"Unable to run test because it relied on {annualUsageCollectionTracking_relation_data[0].lower()}{annualUsageCollectionTracking_relation_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
     #COUNTERData_relation_data = query_database(
@@ -596,7 +597,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     #    index="COUNTER_data_ID",
     #)
     #if isinstance(COUNTERData_relation_data, str):
-    #    pytest.skip(f"Unable to run test because it relied on {COUNTERData_relation_data[0].lower()}{COUNTERData_relation_data[1:].replace(' raised', ', which raised')}")
+    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])

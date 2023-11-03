@@ -14,6 +14,7 @@ from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ def upload_COUNTER_reports():
             df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects  #ToDo:: Returns tuple, second part is list of error messages for workbooks and worksheets rejected
             df['report_creation_date'] = pd.to_datetime(None)
         except Exception as error:
-            message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
+            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
             log.error(message)
             #ToDo:: messages_to_flash.append(message)
             #ToDo:: flash(messages_to_flash)
@@ -63,7 +64,7 @@ def upload_COUNTER_reports():
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `<relation>` raised the error {error}."
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             messages_to_flash.append(message)
             flash(messages_to_flash)
@@ -76,13 +77,13 @@ def upload_COUNTER_reports():
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            pass #SQLDatabaseLoadFailed
         messages_to_flash.append(load_result)
         flash(messages_to_flash)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -100,7 +101,7 @@ def harvest_SUSHI_statistics():
             engine=db.engine,
         )
         if isinstance(statistics_source_options, str):
-            flash(f"Unable to load requested page because it relied on {statistics_source_options[0].lower()}{statistics_source_options[1:].replace(' raised', ', which raised')}")
+            flash(database_query_fail_statement(statistics_source_options))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
@@ -110,7 +111,7 @@ def harvest_SUSHI_statistics():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
@@ -119,16 +120,16 @@ def harvest_SUSHI_statistics():
             statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
             vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
-        log.info(f"The following `StatisticsSources` object was initialized based on the query results:\n{statistics_source}.")
+        log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
-            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")  #AboutTo
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
         else:
             report_to_harvest = form.report_to_harvest.data
-            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")  #AboutTo
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
             result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
@@ -144,7 +145,9 @@ def harvest_SUSHI_statistics():
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -177,7 +180,7 @@ def upload_non_COUNTER_reports():
             engine=db.engine,
         )
         if isinstance(non_COUNTER_files_needed, str):
-            flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
+            flash(database_query_fail_statement(non_COUNTER_files_needed))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
@@ -188,7 +191,7 @@ def upload_non_COUNTER_reports():
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         AUCT_object = AnnualUsageCollectionTracking(
             AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
@@ -202,7 +205,7 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
-        if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):
+        if not upload_nonstandard_usage_file_success_regex().fullmatch(response)
             #ToDo: Do any other actions need to be taken?
             log.error(response)
             flash(response)
@@ -212,5 +215,7 @@ def upload_non_COUNTER_reports():
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)

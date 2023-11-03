@@ -12,6 +12,7 @@ from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -96,16 +97,14 @@ def collect_FY_and_vendor_data():
             relation='fiscalYears',
             engine=db.engine,
         )
-        if fiscalYears_load_result.startswith("Loading data into the fiscalYears relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(fiscalYears_load_result):
             data_load_errors.append(fiscalYears_load_result)
         vendors_load_result = load_data_into_database(
             df=vendors_dataframe,
             relation='vendors',
             engine=db.engine,
         )
-        if vendors_load_result.startswith("Loading data into the vendors relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(vendors_load_result):
             data_load_errors.append(vendors_load_result)
         vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
         vendorNotes_dataframe.index.name = 'vendor_notes_ID'
@@ -114,8 +113,7 @@ def collect_FY_and_vendor_data():
             relation='vendorNotes',
             engine=db.engine,
         )
-        if vendorNotes_load_result.startswith("Loading data into the vendorNotes relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
             data_load_errors.append(vendorNotes_load_result)
         if data_load_errors:
             flash(data_load_errors)
@@ -124,7 +122,9 @@ def collect_FY_and_vendor_data():
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -235,8 +235,7 @@ def collect_sources_data():
             relation='statisticsSources',
             engine=db.engine,
         )
-        if statisticsSources_load_result.startswith("Loading data into the statisticsSources relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(statisticsSources_load_result):
             data_load_errors.append(statisticsSources_load_result)
         statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
         statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
@@ -245,16 +244,14 @@ def collect_sources_data():
             relation='statisticsSourceNotes',
             engine=db.engine,
         )
-        if statisticsSourceNotes_load_result.startswith("Loading data into the statisticsSourceNotes relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(statisticsSourceNotes_load_result):
             data_load_errors.append(statisticsSourceNotes_load_result)
         resourceSources_load_result = load_data_into_database(
             df=resourceSources_dataframe,
             relation='resourceSources',
             engine=db.engine,
         )
-        if resourceSources_load_result.startswith("Loading data into the resourceSources relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(resourceSources_load_result):
             data_load_errors.append(resourceSources_load_result)
         resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
         resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
@@ -263,16 +260,14 @@ def collect_sources_data():
             relation='resourceSourceNotes',
             engine=db.engine,
         )
-        if resourceSourceNotes_load_result.startswith("Loading data into the resourceSourceNotes relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(resourceSourceNotes_load_result):
             data_load_errors.append(resourceSourceNotes_load_result)
         statisticsResourceSources_load_result = load_data_into_database(
             df=statisticsResourceSources_dataframe,
             relation='statisticsResourceSources',
             engine=db.engine,
         )
-        if statisticsResourceSources_load_result.startswith("Loading data into the statisticsResourceSources relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(statisticsResourceSources_load_result):
             data_load_errors.append(statisticsResourceSources_load_result)
         if data_load_errors:
             flash(data_load_errors)
@@ -281,7 +276,9 @@ def collect_sources_data():
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -303,9 +300,9 @@ def collect_AUCT_and_historical_COUNTER_data():
             index=["statistics_source_ID", "fiscal_year_ID"],
         )
         if isinstance(df, str):
-            flash(f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}")
+            flash(database_query_fail_statement(df))
             return redirect(url_for('initialization.collect_FY_and_vendor_data'))
-        log.debug(f"The result of the query for the AUCT Cartesian product dataframe:\n{df}")
+        log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={
@@ -346,7 +343,7 @@ def collect_AUCT_and_historical_COUNTER_data():
                         update_statement=f"Truncate {relation};",
                         engine=db.engine,
                     )
-                    if isinstance(update_result, str) and re.fullmatch(r'Running the update statement `.*` raised the error .*\.', update_result, flags=re.DOTALL):
+                    if not update_database_success_regex().fullmatch(update_result):
                         message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
                         log.critical(message)
                         flash(message)
@@ -387,7 +384,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects  #ToDo:: Returns tuple, second part is list of error messages for workbooks and worksheets rejected
             COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
         except Exception as error:
-            message = f"Trying to consolidate the uploaded COUNTER data workbooks into a single dataframe raised the error {error}."
+            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
             log.error(message)
             flash(message)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -411,7 +408,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         try:
             COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
-            message = f"Running the function `first_new_PK_value()` for the relation `COUNTERData` raised the error {error}."
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
             log.warning(message)
             messages_to_flash.append(message)
             flash(messages_to_flash)
@@ -428,8 +425,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
         )
-        if annualUsageCollectionTracking_load_result.startswith("Loading data into the annualUsageCollectionTracking relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
             messages_to_flash.append(annualUsageCollectionTracking_load_result)
             flash(messages_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
@@ -440,8 +436,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             engine=db.engine,
             index_field_name='COUNTER_data_ID',
         )
-        if COUNTERData_load_result.startswith("Loading data into the COUNTERData relation raised the error"):
-            #SQLDatabaseLoadFailed
+        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
             #ToDo: Additional note about needing to upload all workbooks through `ingest_usage` blueprint
             messages_to_flash.append(COUNTERData_load_result)
         '''
@@ -451,7 +446,9 @@ def collect_AUCT_and_historical_COUNTER_data():
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -502,7 +499,7 @@ def upload_historical_non_COUNTER_usage():
                 engine=db.engine,
             )
             if isinstance(df, str):
-                message = f"Unable to load requested page because it relied on {df[0].lower()}{df[1:].replace(' raised', ', which raised')}"  #ToDo: Edit language, since page isn't being loaded here
+                message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
                 log.error(message)
                 #ToDo: Add `message` to error message list in some form
                 continue
@@ -518,7 +515,7 @@ def upload_historical_non_COUNTER_usage():
                 notes=df.at[0,'notes'],
             )
             response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
-            if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):
+            if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
                 #ToDo: Do any other actions need to be taken?
                 log.error(response)
                 #ToDo: Add `message` to error message list in some form
@@ -527,7 +524,9 @@ def upload_historical_non_COUNTER_usage():
             log.debug(message)
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
-        log.error(f"`form.errors`: {form.errors}")  #404
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
     '''
     pass

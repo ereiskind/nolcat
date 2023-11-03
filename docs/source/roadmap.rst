@@ -19,7 +19,7 @@ This is a list of issues encountered over the course of development that require
 Planned Iterations
 ******************
 * Add documentation about adding records to ``fiscalYears`` relation via SQL command line
-* Standardize logging output; record standards in code style guide
+* Update classes in ERD
 
 Iteration 1: Complete Current Data I/O
 ======================================
@@ -93,7 +93,6 @@ Iteration 1: View Lists
 Iteration 2: Update Statistics Sources to Resource Sources Relationship
 =======================================================================
 * Update "view_lists/edit_list_record.html" and accompanying form as necessary
-* Finish ``nolcat.models.ResourceSources.change_StatisticsSource()``
 * Write ``tests.test_ResourceSources.test_change_StatisticsSource()``
 
 Iteration 3: Update Access Stop Date Attribute

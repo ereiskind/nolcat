@@ -16,6 +16,7 @@ import flask
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -81,7 +82,10 @@ def test_load_data_into_database(engine, vendors_relation):
         engine=engine,
         index_field_name='vendor_ID',
     )
-    assert result == "Successfully loaded 8 records into the vendors relation."
+    regex_match_object = load_data_into_database_success_regex().fullmatch(result)
+    assert regex_match_object is not None
+    assert regex_match_object.group(1) == 8
+    assert regex_match_object.group(2) == "vendors"
 
 
 @pytest.mark.dependency(depends=['test_load_data_into_database'])
@@ -95,8 +99,6 @@ def test_query_database(engine, vendors_relation):
         engine=engine,
         index='vendor_ID',
     )
-    if isinstance(retrieved_vendors_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_vendors_data[0].lower()}{retrieved_vendors_data[1:].replace(' raised', ', which raised')}")
     retrieved_vendors_data = retrieved_vendors_data.astype(Vendors.state_data_types())
     assert_frame_equal(vendors_relation, retrieved_vendors_data)
 
@@ -114,12 +116,14 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         "alma_vendor_code": Vendors.state_data_types()['alma_vendor_code'],
     }
 
-    load_data_into_database(
+    check = load_data_into_database(
         df=statisticsSources_relation,
         relation='statisticsSources',
         engine=engine,
         index_field_name='statistics_source_ID',
     )
+    if not load_data_into_database_success_regex().fullmatch(check):
+        pytest.skip(database_function_skip_statements(check))
     retrieved_data = query_database(
         query="""
             SELECT
@@ -137,7 +141,7 @@ def test_loading_connected_data_into_other_relation(engine, statisticsSources_re
         # Each stats source appears only once, so the PKs can still be used--remember that pandas doesn't have a problem with duplication in the index
     )
     if isinstance(retrieved_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_data[0].lower()}{retrieved_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype(df_dtypes)
 
     expected_output_data = pd.DataFrame(
@@ -252,9 +256,9 @@ def remove_file_from_S3(path_to_sample_file):
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, the `path_to_sample_file` is {path_to_sample_file.resolve()}.")
+    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
     file_name = f"test_{path_to_sample_file.name}"
-    log.info(f"In `remove_file_from_S3()`, the `file_name` is {file_name}.")
+    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
@@ -262,7 +266,7 @@ def remove_file_from_S3(path_to_sample_file):
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
 
 
 def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
@@ -271,10 +275,9 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         path_to_sample_file,
         f"test_{path_to_sample_file.name}",  # The prefix will allow filtering that prevents the test from failing
     )
-    if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
-        log.warning(f"Uploading the file test_{path_to_sample_file.name} to S3 in `tests.test_app.test_upload_file_to_S3_bucket()` failed because {logging_message[0].lower()}{logging_message[1:]} NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY!")
-        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     log.debug(logging_message)
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        assert False  # Entering this block means the function that's being tested raised an error, so continuing with the test won't provide anything meaningful
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}test_",
@@ -318,35 +321,6 @@ def test_create_AUCT_SelectField_options():
     assert create_AUCT_SelectField_options(df) == result_list
 
 
-def test_format_list_for_stdout_with_list():
-    """Test pretty printing a list by adding a line break between each item."""
-    assert format_list_for_stdout(['a', 'b', 'c']) == "a\nb\nc"
-
-
-def test_format_list_for_stdout_with_generator():
-    """Test pretty printing a list created by a generator object by adding a line break between each item.
-    
-    The `file_path` variable is created because using the `iterdir()` method on the end of that file path won't work; the method just executes on the string that should be the final component of the path. The assert statements, which look for every file that should be in the created string and then check that there are only that many items in the string, is used to compensate for `iterdir()` not outputting the files in an exact order.
-    """
-    file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'bin' / 'COUNTER_workbooks_for_tests'
-    result = format_list_for_stdout(file_path.iterdir())
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2017.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2018.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2019.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/0_2020.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2017.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2018.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2019.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/1_2020.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2017.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2018.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2019.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/2_2020.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2019.xlsx" in result
-    assert "/nolcat/tests/bin/COUNTER_workbooks_for_tests/3_2020.xlsx" in result
-    assert len(result.split('\n')) == 14
-
-
 # `test_check_if_data_already_in_COUNTERData()` and its related fixtures are in `tests.test_StatisticsSources` because the test requires the test data to be loaded into the `COUNTERData` relation while every other test function in this module relies upon the test suite starting with an empty database.
 
 
@@ -388,10 +362,10 @@ def test_update_database(engine, updated_vendors_relation):
         index='vendor_ID',
     )
     if isinstance(retrieved_updated_vendors_data, str):
-        pytest.skip(f"Unable to run test because it relied on {retrieved_updated_vendors_data[0].lower()}{retrieved_updated_vendors_data[1:].replace(' raised', ', which raised')}")
+        pytest.skip(database_function_skip_statements(retrieved_updated_vendors_data))
     retrieved_updated_vendors_data = retrieved_updated_vendors_data.astype(Vendors.state_data_types())
+    assert update_database_success_regex().fullmatch(update_result).group(0) == update_result
     assert_frame_equal(updated_vendors_relation, retrieved_updated_vendors_data)
-    assert update_result == "Successfully preformed the update `UPDATE vendors SET alma_vendor_code='CODE' WHERE vendor_ID=2;`."
 
 
 #ToDo: test_match_direct_SUSHI_harvest_result()
@@ -410,3 +384,10 @@ def test_prepare_HTML_page_for_comparison():
 def test_save_unconverted_data_via_upload():
     """Tests saving data that can't be transformed for loading into the database to a file in S3."""
     pass
+
+
+  def test_ISSN_regex():
+    """Tests matching the regex object to ISSN strings."""
+    assert ISSN_regex().fullmatch("1234-5678") is not None
+    assert ISSN_regex().fullmatch("1123-000x") is not None
+    assert ISSN_regex().fullmatch("0987-6543 ") is not None

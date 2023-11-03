@@ -12,7 +12,8 @@ import pandas as pd
 import pyinputplus
 
 from .app import *
-from nolcat.models import *
+from .models import *
+from .statements import *
 
 log = logging.getLogger(__name__)
 
@@ -38,8 +39,6 @@ class SUSHICallAndResponse:
         _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
-        _stop_API_calls_message: Creates the return message for when the API calls are being stopped.
-        _stdout_API_response_based_on_size: A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -83,8 +82,8 @@ class SUSHICallAndResponse:
 
         #Section: Confirm Usage Data in Response
         if API_response.text == "":
-            message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no data."
-            log.error(message)
+            message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, is_empty_string=True)
+            log.warning(message)
             return (message, [message])
         
         #Section: Convert Response to Python Data Types
@@ -96,18 +95,18 @@ class SUSHICallAndResponse:
             messages_to_flash = [message]
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
+            if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
             return (f"{message[:-1]}, so the program {flash_message[0].lower()}{flash_message[1:]}", messages_to_flash)
         
         if isinstance(API_response, Exception):
-            message = f"Calling the `_convert_Response_to_JSON()` method raised the Python error {str(API_response)}."
+            message = f"A type conversion in the `_convert_Response_to_JSON()` method raised the error {str(API_response)}."
             log.error(f"{message} Since the conversion to native Python data types failed, the `requests.Response.text` value is being saved to a file instead.")
             flash_message = self._save_raw_Response_text(API_response.text)
             messages_to_flash.append(flash_message)
-            if isinstance(flash_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', flash_message):
+            if not upload_file_to_S3_bucket_success_regex().fullmatch(flash_message):
                 message = f"{message[:-1]}, so the program attempted {flash_message[0].lower()}{flash_message[1:].replace(' failed', ', which failed')}"
                 log.error(message)
                 return (message, messages_to_flash)
@@ -131,7 +130,7 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = self._stop_API_calls_message(SUSHI_exceptions)
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
                     return (message, messages_to_flash)
 
@@ -155,7 +154,7 @@ class SUSHICallAndResponse:
                     messages_to_flash.append(statement)
                 log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
             if flash_message_list and SUSHI_exceptions:
-                message = self._stop_API_calls_message(SUSHI_exceptions)
+                message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                 log.warning(message)
                 return (message, messages_to_flash)
 
@@ -175,17 +174,17 @@ class SUSHICallAndResponse:
                         messages_to_flash.append(statement)
                     log.debug(f"Added the following items to `messages_to_flash`:\n{flash_message_list}")
                 if flash_message_list and SUSHI_exceptions:
-                    message = self._stop_API_calls_message(SUSHI_exceptions)
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, SUSHI_exceptions, stop_API_calls=True)
                     log.warning(message)
                     return (message, messages_to_flash)
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
-        custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
+        custom_report_regex = re.compile(r"reports/[PpDdTtIi][Rr]")
         Report_Items_status = len(API_response.get('Report_Items', 'No `Report_Items` key'))  # Combining the check for the existence of the key and the length of its value list allows for deduplication of log and return statements
         if Report_Items_status == 0 or Report_Items_status == 'No `Report_Items` key':
             if custom_report_regex.search(self.call_path):
-                log.debug("*Report has no data; checking to see why and if existing flash statements from SUSHI errors provide an explanation.*")
+                log.debug("Report has no data; checking to see why and if existing flash statements from SUSHI errors provide an explanation.")
                 SUSHI_error_flash_messages = []
                 for message in messages_to_flash:
                     if '3030' in message or '3031' in message or '3032' in message:
@@ -194,22 +193,22 @@ class SUSHICallAndResponse:
                 if messages_to_flash and SUSHI_error_flash_messages:
                     for message in SUSHI_error_flash_messages:
                         messages_to_flash.append(message)
-                    message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the call raised the following error(s):\n{format_list_for_stdout(SUSHI_error_flash_messages)}"
+                    message = failed_SUSHI_call_statement(self.call_path, self.calling_to, message, no_usage_data=True)
                     log.warning(message)
                     return (message, messages_to_flash)
                 elif messages_to_flash:
                     if Report_Items_status == 0:
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)
                     elif Report_Items_status == 'No `Report_Items` key':
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the SUSHI data didn't have a `Report_Items` section."
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)
                     messages_to_flash.append(message)
                     log.warning(message)
                     return (message, messages_to_flash)
                 else:
                     if Report_Items_status == 0:
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data."
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to)
                     elif Report_Items_status == 'No `Report_Items` key':
-                        message = f"The call to the `{self.call_path}` endpoint for {self.calling_to} returned no usage data because the SUSHI data didn't have a `Report_Items` section."
+                        message = no_data_returned_by_SUSHI_statement(self.call_path, self.calling_to, has_Report_Items=False)
                     log.warning(message)
                     return (message, [message])
         
@@ -249,7 +248,7 @@ class SUSHICallAndResponse:
 
         except Timeout as error:
             try:  # Timeout errors seem to be random, so going to try get request again with more time
-                log.info(f"Calling {self.calling_to} for {self.call_path} again.")  #AboutTo
+                log.info(f"Calling {self.calling_to} for {self.call_path} again.")
                 time.sleep(1)
                 API_response = requests.get(API_call_URL, params=self.parameters, timeout=299, headers=self.header_value)
                 log.info(f"GET response code: {API_response}")
@@ -288,7 +287,7 @@ class SUSHICallAndResponse:
         if self.call_path == "reports":
             if isinstance(API_response.text, str):
                 try:
-                    log.debug("*The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.*")
+                    log.debug("The returned text was read from a downloaded JSON file but was the response to a `reports` call and should thus be a list.")
                     API_response = ast.literal_eval(API_response.content.decode('utf-8'))
                 except Exception as error:
                     message = f"Converting a string with `ast.literal_eval(string.content.decode('utf-8'))` raised {error}."
@@ -296,7 +295,7 @@ class SUSHICallAndResponse:
                     return (error, message)
             elif isinstance(API_response.text, list):
                 try:
-                    log.debug("*The returned text is in list format and is the list of reports.*")
+                    log.debug("The returned text is in list format and is the list of reports.")
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except Exception as error:
                     message = f"Converting a list with `json.loads(list.content.decode('utf-8'))` raised {error}."
@@ -309,10 +308,10 @@ class SUSHICallAndResponse:
                 
             if isinstance(API_response, list):
                 if API_response[0].get('Exception') or API_response[0].get('Exceptions') or API_response[0].get('Alert') or API_response[0].get('Alerts'):  # Because the usual reports response is in a list, the error checking in `make_SUSHI_call()` doesn't work
-                    message = f"The call to the `reports` endpoint for {self.calling_to} raised the SUSHI error {API_response}."
+                    message = failed_SUSHI_call_statement("reports", self.calling_to, API_response)
                     log.error(message)
                     return (ValueError(message), message)
-                log.debug("*The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.*")
+                log.debug("The returned text was or was converted into a list of reports and, to match the other reports' data types, made the value of an one-item dictionary.")
                 API_response = dict(reports = API_response)
             else:
                 message = f"Call to {self.calling_to} returned a downloaded JSON file with data of a {repr(type(API_response))} text type that couldn't be converted into the value of a native Python dictionary."
@@ -322,7 +321,7 @@ class SUSHICallAndResponse:
         #Section: Convert Text Attributes for Calls to Other Endpoints
         else:
             if isinstance(API_response.text, str):
-                log.debug("*The returned text was read from a downloaded JSON file.*")
+                log.debug("The returned text was read from a downloaded JSON file.")
                 try:
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except:  # This will transform values that don't decode as JSONs (generally lists)
@@ -334,10 +333,10 @@ class SUSHICallAndResponse:
                         return (error, message)
                 
                 if isinstance(API_response, dict):
-                    log.debug("*The returned text was converted to a dictionary.*")
+                    log.debug("The returned text was converted to a dictionary.")
                 
                 elif isinstance(API_response, list) and len(API_response) == 1 and isinstance(API_response[0], dict):
-                    log.debug("*The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.*")
+                    log.debug("The returned text was converted to a a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = API_response[0]
                 
                 else:
@@ -347,7 +346,7 @@ class SUSHICallAndResponse:
             
             elif isinstance(API_response.text, dict):
                 try:
-                    log.debug("*The returned text is in dictionary format, so it's ready to be converted to native Python data types.*")
+                    log.debug("The returned text is in dictionary format, so it's ready to be converted to native Python data types.")
                     API_response = json.loads(API_response.content.decode('utf-8'))
                 except Exception as error:
                     message = f"Converting a dict with `json.loads(dict.content.decode('utf-8'))` raised {error}."
@@ -356,7 +355,7 @@ class SUSHICallAndResponse:
             
             elif isinstance(API_response.text, list) and len(API_response.text) == 1 and isinstance(API_response[0].text, dict):
                 try:
-                    log.debug("*The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.*")
+                    log.debug("The returned text is a dictionary wrapped in a single-item list, so the item in the list will be converted to native Python data types.")
                     API_response = json.loads(API_response[0].content.decode('utf-8'))
                 except Exception as error:
                     message = f"Converting a list with `json.loads(list[0].content.decode('utf-8'))` raised {error}."
@@ -387,17 +386,19 @@ class SUSHICallAndResponse:
             query=f"SELECT statistics_source_ID FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
             engine=db.engine,
         )
-        if isinstance(statistics_source_ID, str):  # The variable is an error message
-            return statistics_source_ID
+        if isinstance(statistics_source_ID, str):
+            return database_query_fail_statement(statistics_source_ID, "return requested value")
+        
         if self.parameters.get('begin_date') and self.parameters.get('end_date'):
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
+        log.debug(file_IO_statement(S3_file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
             file_name_stem=file_name_stem,
         )
-        if isinstance(logging_message, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket\.', logging_message):
+        if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = logging_message
             log.debug(message)
         else:
@@ -418,11 +419,11 @@ class SUSHICallAndResponse:
         """
         log.info(f"Starting `_handle_SUSHI_exceptions()` for error(s) {error_contents}.")
         if error_contents is None:
-            log.info("*This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.*")
+            log.info("This statistics source had a key for a SUSHI error with null value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
             return (None, None)
         elif isinstance(error_contents, dict):
             if len(error_contents['Message']) == 0:
-                log.info("*This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.*")
+                log.info("This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
                 return (None, None)
             log.debug(f"Handling a SUSHI error for a {report_type} in dictionary format.")
             SUSHI_exception, flash_message = self._evaluate_individual_SUSHI_exception(error_contents)
@@ -433,7 +434,7 @@ class SUSHICallAndResponse:
             return (SUSHI_exception, [flash_message])
         elif isinstance(error_contents, list):
             if len(error_contents) == 0:
-                log.info("*This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.*")
+                log.info("This statistics source had a key for a SUSHI error with an empty value, which occurs for some status reports. Since there is no actual SUSHI error, the API call will continue as normal.")
                 return (None, None)
             log.debug(f"Handling a SUSHI error for a {report_type} in list format.")
             if len(error_contents) == 1:
@@ -533,8 +534,9 @@ class SUSHICallAndResponse:
                     query=f"SELECT * FROM statisticsSources WHERE statistics_source_name='{self.calling_to}';",
                     engine=db.engine,
                 )
-                if isinstance(df, str):  # The variable is an error message
-                    return (df, [message, df])
+                if isinstance(df, str):
+                    error_message = database_query_fail_statement(df, "create StatisticsSources object to use `add_note()` method")
+                    return (error_message, [message, error_message])
                 statistics_source_object = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
                     statistics_source_ID = int(df.at[0,'statistics_source_ID']),
                     statistics_source_name = str(df.at[0,'statistics_source_name']),
@@ -557,43 +559,3 @@ class SUSHICallAndResponse:
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
         log.error(message)
         return (message, message)
-
-
-    def _stop_API_calls_message(self, message):
-        """Creates the return message for when the API calls are being stopped.
-
-        Args:
-            message (str): the list of error messages, where multiple messages are separated by line breaks
-        
-        Returns:
-            str: the return message
-        """
-        if '\n' in message:
-            return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI errors\n{message}\nAPI calls to {self.calling_to} have stopped and no other calls will be made."
-        else:
-            return f"The call to the `{self.call_path}` endpoint for {self.calling_to} raised the SUSHI error {message} API calls to {self.calling_to} have stopped and no other calls will be made."
-    
-
-    def _stdout_API_response_based_on_size(self, API_response):
-        """A function that only shows a sample of the API response when it's large to minimize the amount of space it take up in stdout.
-
-        Args:
-            API_response (dict): the API response with Python data types
-        
-        Returns:
-            str: the string for stdout
-        """
-        number_of_report_items = len(API_response)
-        if number_of_report_items < 10:
-            return f"The SUSHI API response as a JSON:\n{API_response}"
-        else:
-            return_value_start = "A sample of the SUSHI API response:\n"
-            return_value_list = []
-            if number_of_report_items > 100:
-                for n in random.sample(range(number_of_report_items), k=10):
-                    return_value_list.append(str(API_response['Report_Items'][n]))
-                return return_value_start + " ".join(return_value_list)
-            else:
-                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
-                    return_value_list.append(str(API_response['Report_Items'][n]))
-                return return_value_start + " ".join(return_value_list)

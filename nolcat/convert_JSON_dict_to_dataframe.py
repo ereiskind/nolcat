@@ -45,6 +45,8 @@ class ConvertJSONDictToDataframe:
     DOI_LENGTH = 95
     PROPRIETARY_ID_LENGTH = 100
     URI_LENGTH = 450
+    proprietary_ID_regex = re.compile(r"[Pp]roprietary(_ID)?")
+    author_regex = re.compile("[Aa]uthor")
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
@@ -63,7 +65,8 @@ class ConvertJSONDictToDataframe:
         This method is a wrapper that sends the JSON-like dictionaries containing all the data from the SUSHI API responses to either the `ConvertJSONDictToDataframe._transform_R5_JSON()` or the `ConvertJSONDictToDataframe._transform_R5b1_JSON()` methods depending on the release version of the API call. The `statistics_source_ID` and `report_type` fields are added after the dataframe is returned to the `StatisticsSources._harvest_R5_SUSHI()` method: the former because that information is proprietary to the NoLCAT instance; the latter because adding it there is less computing-intensive.
 
         Returns:
-            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation or an empty dataframe to indicate an error
+            dataframe: COUNTER data ready to be loaded into the `COUNTERData` relation
+            str: the error message if the conversion fails
         """
         log.info("Starting `ConvertJSONDictToDataframe.create_dataframe()`.")
         try:
@@ -77,17 +80,20 @@ class ConvertJSONDictToDataframe:
             try:
                 df = self._transform_R5_JSON(report_header_creation_date)
             except Exception as error:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
-                return pd.DataFrame()
+                message = f"Attempting to convert the JSON-like dictionary created from a R5 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                log.error(message)
+                return message
         elif COUNTER_release == "5.1":
             try:
                 df = self._transform_R5b1_JSON()
             except Exception as error:
-                log.error(f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
-                return pd.DataFrame()
+                message = f"Attempting to convert the JSON-like dictionary created from a R5.1 SUSHI call unexpectedly raised the error {error}, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+                log.error(message)
+                return message
         else:
-            log.error(f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead.")
-            return pd.DataFrame()
+            message = f"The release of the JSON-like dictionary couldn't be identified, meaning the data couldn't be loaded into the database. The JSON data is being saved instead."
+            log.error(message)
+            return message
         return df  # The method will only get here if one of the private harvest methods was successful
 
 
@@ -137,19 +143,20 @@ class ConvertJSONDictToDataframe:
 
         #Section: Iterate Through JSON Records to Create Single-Level Dictionaries
         for record in self.SUSHI_JSON_dictionary['Report_Items']:
-            log.debug(f"Starting iteration for new JSON record {record}.")  #AboutTo
+            log.debug(f"Starting iteration for new JSON record {record}.")
             record_dict = {"report_creation_date": report_creation_date}  # This resets the contents of `record_dict`, including removing any keys that might not get overwritten because they aren't included in the next iteration
             for key, value in record.items():
 
                 #Subsection: Capture `resource_name` Value
                 if key == "Database" or key == "Title" or key == "Item":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['resource_name'] = value
                         log.debug(f"Added `COUNTERData.resource_name` value {record_dict['resource_name']} to `record_dict`.")
                     elif len(value) > self.RESOURCE_NAME_LENGTH:
-                        log.critical(f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}.")
-                        return pd.DataFrame()
+                        message = f"Increase the `COUNTERData.resource_name` max field length to {int(len(value) + (len(value) * 0.1))}."
+                        log.critical(message)
+                        return message
                     else:
                         record_dict['resource_name'] = value
                         include_in_df_dtypes['resource_name'] = 'string'
@@ -157,13 +164,14 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publisher` Value
                 elif key == "Publisher":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher'] = value
                         log.debug(f"Added `COUNTERData.publisher` value {record_dict['publisher']} to `record_dict`.")
                     elif len(value) > self.PUBLISHER_LENGTH:
-                        log.critical(f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}.")
-                        return pd.DataFrame()
+                        message = f"Increase the `COUNTERData.publisher` max field length to {int(len(value) + (len(value) * 0.1))}."
+                        log.critical(message)
+                        return message
                     else:
                         record_dict['publisher'] = value
                         include_in_df_dtypes['publisher'] = 'string'
@@ -171,24 +179,26 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publisher_ID` Value
                 elif key == "Publisher_ID":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['publisher_ID'] = value
                         log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     elif len(value) == 1:
                         if len(value[0]['Value']) > self.PUBLISHER_ID_LENGTH:
-                            log.critical(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}.")
-                            return pd.DataFrame()
+                            message = f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(value[0]['Value']) + (len(value[0]['Value']) * 0.1))}."
+                            log.critical(message)
+                            return message
                         else:
                             record_dict['publisher_ID'] = value[0]['Value']
                             include_in_df_dtypes['publisher_ID'] = 'string'
                             log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     else:
                         for type_and_value in value:
-                            if re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                            if self.proprietary_ID_regex.search(type_and_value['Type']):
                                 if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
-                                    log.critical(f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                    return pd.DataFrame()
+                                    message = f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                    log.critical(message)
+                                    return message
                                 else:
                                     record_dict['publisher_ID'] = type_and_value['Value']
                                     include_in_df_dtypes['publisher_ID'] = 'string'
@@ -198,22 +208,23 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `platform` Value
                 elif key == "Platform":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if value is None:  # This value handled first because `len()` of null value raises an error
                         record_dict['platform'] = value
                         log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                     elif len(value) > self.PLATFORM_LENGTH:
-                        log.critical(f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}.")
-                        return pd.DataFrame()
+                        message = f"Increase the `COUNTERData.platform` max field length to {int(len(value) + (len(value) * 0.1))}."
+                        log.critical(message)
+                        return message
                     else:
                         record_dict['platform'] = value
                         log.debug(f"Added `COUNTERData.platform` value {record_dict['platform']} to `record_dict`.")
                 
                 #Subsection: Capture `authors` Value
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
-                        if re.search(r'[Aa]uthor', type_and_value['Type']):
+                        if self.author_regex.search(type_and_value['Type']):
                             if record_dict.get('authors'):  # If the author name value is null, this will never be true
                                 if record_dict['authors'].endswith(" et al."):
                                     continue  # The `for type_and_value in value` loop
@@ -229,8 +240,9 @@ class ConvertJSONDictToDataframe:
                                     record_dict['authors'] = type_and_value['Name']
                                     log.debug(f"Added `COUNTERData.authors` value {record_dict['authors']} to `record_dict`.")
                                 elif len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                    log.critical(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
-                                    return pd.DataFrame()
+                                    message = f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}."
+                                    log.critical(message)
+                                    return message
                                 else:
                                     record_dict['authors'] = type_and_value['Name']
                                     include_in_df_dtypes['authors'] = 'string'
@@ -238,7 +250,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `publication_date` Value
                 elif key == "Item_Dates":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         if type_and_value['Value'] == "1000-01-01" or type_and_value['Value'] == "1753-01-01" or type_and_value['Value'] == "1900-01-01":
                             continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
@@ -252,7 +264,7 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `article_version` Value
                 elif key == "Item_Attributes":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                             record_dict['article_version'] = type_and_value['Value']
@@ -262,24 +274,26 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture Standard Identifiers
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_ID":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
                         
                         #Subsection: Capture `DOI` Value
                         if type_and_value['Type'] == "DOI":
                             if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                log.critical(f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                return pd.DataFrame()
+                                message = f"Increase the `COUNTERData.DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                log.critical(message)
+                                return message
                             else:
                                 record_dict['DOI'] = type_and_value['Value']
                                 include_in_df_dtypes['DOI'] = 'string'
                                 log.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
                         
                         #Subsection: Capture `proprietary_ID` Value
-                        elif re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                        elif self.proprietary_ID_regex.search(type_and_value['Type']):
                             if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                log.critical(f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                return pd.DataFrame()
+                                message = f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                log.critical(message)
+                                return message
                             else:
                                 record_dict['proprietary_ID'] = type_and_value['Value']
                                 include_in_df_dtypes['proprietary_ID'] = 'string'
@@ -293,7 +307,7 @@ class ConvertJSONDictToDataframe:
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
-                            if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                            if ISSN_regex().fullmatch(type_and_value['Value']):
                                 record_dict['print_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['print_ISSN'] = 'string'
                                 log.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
@@ -304,7 +318,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `online_ISSN` Value
                         elif type_and_value['Type'] == "Online_ISSN":
-                            if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                            if ISSN_regex().fullmatch(type_and_value['Value']):
                                 record_dict['online_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['online_ISSN'] = 'string'
                                 log.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
@@ -316,8 +330,9 @@ class ConvertJSONDictToDataframe:
                         #Subsection: Capture `URI` Value
                         elif type_and_value['Type'] == "URI":
                             if len(type_and_value['Value']) > self.URI_LENGTH:
-                                log.critical(f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                return pd.DataFrame()
+                                message = f"Increase the `COUNTERData.URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                log.critical(message)
+                                return message
                             else:
                                 record_dict['URI'] = type_and_value['Value']
                                 include_in_df_dtypes['URI'] = 'string'
@@ -327,21 +342,21 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `data_type` Value
                 elif key == "Data_Type":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['data_type'] = value
                     include_in_df_dtypes['data_type'] = 'string'
                     log.debug(f"Added `COUNTERData.data_type` value {record_dict['data_type']} to `record_dict`.")
                 
                 #Subsection: Capture `section_Type` Value
                 elif key == "Section_Type":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['section_type'] = value
                     include_in_df_dtypes['section_type'] = 'string'
                     log.debug(f"Added `COUNTERData.section_type` value {record_dict['section_type']} to `record_dict`.")
 
                 #Subsection: Capture `YOP` Value
                 elif key == "YOP":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     try:
                         record_dict['YOP'] = int(value)  # The Int16 dtype doesn't have a constructor, so this value is saved as an int for now and transformed when when the dataframe is created
                         include_in_df_dtypes['YOP'] = 'Int16'  # `smallint` in database; using the pandas data type here because it allows null values
@@ -351,14 +366,14 @@ class ConvertJSONDictToDataframe:
                 
                 #Subsection: Capture `access_type` Value
                 elif key == "Access_Type":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['access_type'] = value
                     include_in_df_dtypes['access_type'] = 'string'
                     log.debug(f"Added `COUNTERData.access_type` value {record_dict['access_type']} to `record_dict`.")
                 
                 #Subsection: Capture `access_method` Value
                 elif key == "Access_Method":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['access_method'] = value
                     include_in_df_dtypes['access_method'] = 'string'
                     log.debug(f"Added `COUNTERData.access_method` value {record_dict['access_method']} to `record_dict`.")
@@ -366,17 +381,18 @@ class ConvertJSONDictToDataframe:
                 #Subsection: Capture Parent Resource Metadata
                 # Null value handling isn't needed because all null values are removed
                 elif key == "Item_Parent":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     if isinstance(value, list) and len(value) == 1:  # The `Item_Parent` value should be a dict, but sometimes that dict is within a one-item list; this removes the outer list
                         value = value[0]
                     for key_for_parent, value_for_parent in value.items():
 
                         #Subsection: Capture `parent_title` Value
                         if key_for_parent == "Item_Name":
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             if len(value_for_parent) > self.RESOURCE_NAME_LENGTH:
-                                log.critical(f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}.")
-                                return pd.DataFrame()
+                                message = f"Increase the `COUNTERData.parent_title` max field length to {int(len(value_for_parent) + (len(value_for_parent) * 0.1))}."
+                                log.critical(message)
+                                return message
                             else:
                                 record_dict['parent_title'] = value_for_parent
                                 include_in_df_dtypes['parent_title'] = 'string'
@@ -384,9 +400,9 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_authors` Value
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
-                                if re.search(r'[Aa]uthor', type_and_value['Type']):
+                                if self.author_regex.search(type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
                                             continue  # The `for type_and_value in value_for_parent` loop
@@ -398,8 +414,9 @@ class ConvertJSONDictToDataframe:
                                             log.debug(f"Updated `COUNTERData.parent_authors` value to {record_dict['parent_authors']} in `record_dict`.")
                                     else:
                                         if len(type_and_value['Name']) > self.AUTHORS_LENGTH:
-                                            log.critical(f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}.")
-                                            return pd.DataFrame()
+                                            message = f"Increase the `COUNTERData.authors` max field length to {int(len(type_and_value['Name']) + (len(type_and_value['Name']) * 0.1))}."
+                                            log.critical(message)
+                                            return message
                                         else:
                                             record_dict['parent_authors'] = type_and_value['Name']
                                             include_in_df_dtypes['parent_authors'] = 'string'
@@ -407,7 +424,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_publication_date` Value
                         elif key_for_parent == "Item_Dates":
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 if type_and_value['Value'] == "1000-01-01" or type_and_value['Value'] == "1753-01-01" or type_and_value['Value'] == "1900-01-01":
                                     continue  # The `for type_and_value in value` loop; these dates are common RDBMS/spreadsheet minimum date data type values and are generally placeholders for null values or bad data
@@ -418,7 +435,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `parent_article_version` Value
                         elif key_for_parent == "Item_Attributes":
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 if type_and_value['Type'] == "Article_Version":  # Very unlikely to be more than one
                                     record_dict['parent_article_version'] = type_and_value['Value']
@@ -427,30 +444,32 @@ class ConvertJSONDictToDataframe:
 
                         #Subsection: Capture `parent_data_type` Value
                         elif key_for_parent == "Data_Type":
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             record_dict['parent_data_type'] = value_for_parent
                             include_in_df_dtypes['parent_data_type'] = 'string'
                             log.debug(f"Added `COUNTERData.parent_data_type` value {record_dict['parent_data_type']} to `record_dict`.")
                         
                         elif key_for_parent == "Item_ID":
-                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")  #AboutTo
+                            log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
                                 
                                 #Subsection: Capture `parent_DOI` Value
                                 if type_and_value['Type'] == "DOI":
                                     if len(type_and_value['Value']) > self.DOI_LENGTH:
-                                        log.critical(f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                        return pd.DataFrame()
+                                        message = f"Increase the `COUNTERData.parent_DOI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                        log.critical(message)
+                                        return message
                                     else:
                                         record_dict['parent_DOI'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_DOI'] = 'string'
                                         log.debug(f"Added `COUNTERData.parent_DOI` value {record_dict['parent_DOI']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
-                                elif re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                                elif self.proprietary_ID_regex.search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
-                                        log.critical(f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                        return pd.DataFrame()
+                                        message = f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                        log.critical(message)
+                                        return message
                                     else:
                                         record_dict['parent_proprietary_ID'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_proprietary_ID'] = 'string'
@@ -464,7 +483,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_print_ISSN` Value
                                 elif type_and_value['Type'] == "Print_ISSN":
-                                    if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                                    if ISSN_regex().fullmatch(type_and_value['Value']):
                                         record_dict['parent_print_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         log.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
@@ -475,7 +494,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_online_ISSN` Value
                                 elif type_and_value['Type'] == "Online_ISSN":
-                                    if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                                    if ISSN_regex().fullmatch(type_and_value['Value']):
                                         record_dict['parent_online_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         log.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")
@@ -487,8 +506,9 @@ class ConvertJSONDictToDataframe:
                                 #Subsection: Capture `parent_URI` Value
                                 elif type_and_value['Type'] == "URI":
                                     if len(type_and_value['Value']) > self.URI_LENGTH:
-                                        log.critical(f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}.")
-                                        return pd.DataFrame()
+                                        message = f"Increase the `COUNTERData.parent_URI` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
+                                        log.critical(message)
+                                        return message
                                     else:
                                         record_dict['parent_URI'] = type_and_value['Value']
                                         include_in_df_dtypes['parent_URI'] = 'string'
@@ -498,7 +518,7 @@ class ConvertJSONDictToDataframe:
                             continue  # The `for key_for_parent, value_for_parent in value.items()` loop
 
                 elif key == "Performance":
-                    log.debug(f"Preparing to add {key} value `{value}` to the record.")  #AboutTo
+                    log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     record_dict['temp'] = value
 
                 else:
@@ -507,7 +527,7 @@ class ConvertJSONDictToDataframe:
             
             #Section: Create Records by Iterating Through `Performance` Section of SUSHI JSON
             performance = record_dict.pop('temp')
-            log.debug(f"Preparing to add date, metric type, and usage count values `{performance}` to the record.")  #AboutTo
+            log.debug(f"Preparing to add date, metric type, and usage count values `{performance}` to the record.")
             for period_grouping in performance:
                 record_dict['usage_date'] = date.fromisoformat(period_grouping['Period']['Begin_Date'])
                 for instance in period_grouping['Instance']:
