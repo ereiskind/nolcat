@@ -5,6 +5,7 @@ from datetime import datetime
 import html
 from openpyxl import load_workbook
 import pandas as pd
+from pandas.api.types import is_string_dtype
 
 from .app import *
 from .models import *
@@ -278,15 +279,20 @@ class UploadCOUNTERReports:
 
                 #Subsection: Remove Total Rows
                 if re.fullmatch(r"PR1?", report_type) is None:
-                    number_of_rows_with_totals = df.shape[1]
+                    log.debug("About to remove total rows from non-platform reports.")
+                    number_of_rows_with_totals = df.shape[0]
                     common_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ff]or\s[Aa]ll\s\w*", regex=True)  # `\w*` is because values besides `title` are used in various reports
                     uncommon_summary_rows = df['resource_name'].str.contains(r"^[Tt]otal\s[Ss]earches", regex=True)
-                    summary_rows_are_false = ~(common_summary_rows + uncommon_summary_rows)
-                    df = df[summary_rows_are_false]
-                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[1]}.")
+                    summary_rows = common_summary_rows | uncommon_summary_rows
+                    summary_rows.name = 'summary_rows'  # Before this, the series is named `resource_name`, just like the series it was filtered from
+                    df = df.join(summary_rows)
+                    df = df[~df['summary_rows']]
+                    df = df.drop(columns=['summary_rows'])
+                    log.debug(f"Number of rows in report of type {report_type} reduced from {number_of_rows_with_totals} to {df.shape[0]}.")
 
                 #Subsection: Split ISBNs and ISSNs in TR
                 if re.fullmatch(r"TR[1|2]", report_type):
+                    log.debug("About to separate identifiers in COUNTER R4 title report.")
                     # Creates fields containing `True` if the original field's value matches the regex, `False` if it doesn't match the regex, and null if the original field is also null
                     df['print_ISSN'] = df['Print ID'].str.match(ISSN_regex())
                     df['online_ISSN'] = df['Online ID'].str.match(ISSN_regex())
@@ -316,6 +322,7 @@ class UploadCOUNTERReports:
 
                 #Subsection: Put Placeholder in for Null Values
                 df = df.fillna("`None`")
+                log.debug("Null values in dataframe replaced with string placeholder.")
                 df = df.replace(
                     to_replace='^\s*$',
                     # The regex is designed to find the blank but not null cells by finding those cells containing nothing (empty strings) or only whitespace. The whitespace metacharacter `\s` is marked with a deprecation warning, and without the anchors, the replacement is applied not just to whitespaces but to spaces between characters as well.
@@ -323,20 +330,44 @@ class UploadCOUNTERReports:
                     regex=True
                 )
 
-                log.debug(f"Dataframe with pre-stacking changes:\n{df}")
+                log.debug(f"Dataframe with pre-stacking changes:\n{df}\n{return_string_of_dataframe_info(df)}")
 
 
                 #Section: Stack Dataframe
-                #Subsection: Create Temp Index Field with All Metadata Values
+                #Subsection: Create Lists for Sorting Fields
                 list_of_field_names_from_df = df.columns.values.tolist()
                 df_non_date_field_names = [field_name for field_name in df_field_names if field_name not in df_date_field_names]  # Reassigning this variable with the same statement because one of the values in the statement has changed
                 boolean_identifying_metadata_fields = [True if field_name in df_non_date_field_names else False for field_name in list_of_field_names_from_df]
+
+                #Subsection: Determine Delimiter Character
+                # To properly separate the values being combined in the next subsection, the delimiter cannot be present in any of the fields being combined, and a single character must be used because pandas 1.3 doesn't seem to handle multi-character literal string delimiters. Possible delimiters are tested before their use to prevent problems later on.
+                possible_delimiter_characters = ['~', '@', '^', '`', '|', '$', '#']
+                string_type_df_fields = [field for field in df_non_date_field_names if is_string_dtype(df[field])]
+                for character in possible_delimiter_characters:
+                    fields_without_possible_delimiter = 0
+                    for field in string_type_df_fields:
+                        if df[field].apply(lambda cell_value: character in cell_value).any():
+                            break
+                        else:
+                            fields_without_possible_delimiter += 1
+                    if fields_without_possible_delimiter == len(string_type_df_fields):
+                        delimiter_character = character
+                        break
+                try:
+                    log.info(f"Using '{delimiter_character}' as the delimiter.")
+                except Exception as error:
+                    message = "None of the possible delimiter characters were viable, so the `delimiter_character` variable, which the program needs to continue, wasn't set."
+                    log.critical(message)
+                    continue  #ToDo:: Add this workbook/worksheet to the list for the second part of the tuple
+
+                #Subsection: Create Temp Index Field with All Metadata Values
+                # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied
                 df['temp_index'] = df[df.columns[boolean_identifying_metadata_fields]].apply(
-                    lambda cell_value: '~'.join(cell_value.astype(str)),  # Combines all values in the fields specified by the index operator of the dataframe to which the `apply` method is applied; `~` is used as the delimiter because pandas 1.3 doesn't seem to handle multi-character literal string delimiters
+                    lambda cell_value: delimiter_character.join(cell_value.astype(str)),  
                     axis='columns'
                 )
                 df = df.drop(columns=df_non_date_field_names)
-                log.debug(f"Dataframe with without metadata columns:\n{df}")
+                log.debug(f"Dataframe with without metadata columns:\n{df}\n{return_string_of_dataframe_info(df)}")
                 df = df.set_index('temp_index')
                 log.debug(f"Dataframe with new index column:\n{df}")
 
@@ -348,10 +379,11 @@ class UploadCOUNTERReports:
                     'level_1': 'usage_date',
                     0: 'usage_count',
                 })
-                log.debug(f"Dataframe with reset index:\n{df}")
+                log.debug(f"Dataframe with reset index:\n{df}\n{return_string_of_dataframe_info(df)}")
 
                 #Subsection: Recreate Metadata Fields
-                df[df_non_date_field_names] = df['temp_index'].str.split(pat="~", expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
+                df[df_non_date_field_names] = df['temp_index'].str.split(pat=delimiter_character, expand=True)  # This splits the metadata values in the index, which are separated by `~`, into their own fields and applies the appropriate names to those fields
+                log.debug(f"Dataframe after splitting temp index:\n{return_string_of_dataframe_info(df)}")
                 df = df.drop(columns='temp_index')
                 log.debug(f"Fully transposed dataframe:\n{df}")
 
@@ -368,12 +400,16 @@ class UploadCOUNTERReports:
                     df_dtypes['YOP'] = df_dtypes['YOP'].lower()  # The `YOP` field cannot be converted directly to a pandas nullable int type; this overwrites that dtype value from the `COUNTERData.state_data_types()` method in favor of an intermediary numpy dtype
                 log.debug(f"Dataframe info before any null or dtype adjustments:\n{return_string_of_dataframe_info(df)}")
                 for field in {k: v for (k, v) in df_dtypes.items() if v != "string"}.keys():  # The null placeholders need to be converted in non-string fields before the dtype conversion because the placeholders are strings and thus can't be converted into the other types
-                    df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
+                    if field == "YOP":  # At this point, is `int16`, which doesn't accept null values
+                        df[field] = df[field].replace(["`None`"], [0])  # Values must be enclosed in lists for method to work
+                    else:
+                        df[field] = df[field].replace(["`None`"], [None])  # Values must be enclosed in lists for method to work
                     log.debug(f"Dataframe info after removing null placeholders in `{field}`:\n{return_string_of_dataframe_info(df)}")
                 log.debug(f"Dataframe info before dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.astype(df_dtypes)
                 if "YOP" in df_dtypes.keys():
                     df = df.astype({'YOP': COUNTERData.state_data_types()['YOP']})  # This converts the `YOP` field from the intermediary numpy dtype to the final pandas dtype
+                    df['YOP'] = df['YOP'].replace(0, pd.NA)
                 log.debug(f"Dataframe info after dtype conversion:\n{return_string_of_dataframe_info(df)}")
                 df = df.replace(["`None`"], [None])  # The null placeholders need to be converted in string fields after the dtype conversion because having `NoneType` values in fields can cause object to string conversion to fail
                 log.debug(f"Dataframe info after dtype and null conversions:\n{return_string_of_dataframe_info(df)}")

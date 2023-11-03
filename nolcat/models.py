@@ -816,7 +816,10 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
+        if isinstance(SUSHI_info['URL'], str) and (re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']) or re.match(r"https?://.*clarivate.*\.\w{3}/", SUSHI_info['URL'])):
+            # Certain statistics sources don't follow the standard and will cause an error here, even when all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint for those statistics sources via `re.match()`
+                # MathSciNet `status` endpoint returns HTTP status code 400
+                # Web of Science includes `Alerts` with information about most recent month with usage available
             log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
@@ -940,12 +943,13 @@ class StatisticsSources(db.Model):
                 if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
+                    log.debug(f"The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` has been increased to {no_usage_returned_count}; if it reaches {len(available_custom_reports)}, then it means none of the SUSHI calls returned data.") 
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
                 elif isinstance(SUSHI_data_response, str):
                     log.error(SUSHI_data_response)
                     return (SUSHI_data_response, all_flashed_statements)
                 custom_report_dataframes.append(SUSHI_data_response)
-            if len(custom_report_dataframes) == no_usage_returned_count:
+            if len(available_custom_reports) == no_usage_returned_count:
                 message = f"All of the calls to {self.statistics_source_name} returned no usage data."
                 log.warning(message)
                 return (message, all_flashed_statements)
@@ -1007,6 +1011,7 @@ class StatisticsSources(db.Model):
                 elif isinstance(SUSHI_data_response, str):
                     log.warning(SUSHI_data_response)
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
+                log.debug(f"The SUSHI call for {report} report from {self.statistics_source_name} for {month_to_harvest.strftime('%Y-%m')} is complete.")
                 
                 if len(subset_of_months_to_harvest) == no_usage_returned_count:
                     message = f"The calls to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} returned no usage data."
@@ -1016,14 +1021,9 @@ class StatisticsSources(db.Model):
                 if isinstance(df, str):
                     message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                     log.warning(message)
-                    temp_file_path = Path(__file__).parent / 'temp.json'
-                    with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                        json.dump(SUSHI_data_response, JSON_file)
-                    file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                    log.debug(file_IO_statement(file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
-                    logging_message = upload_file_to_S3_bucket(
-                        temp_file_path,
-                        file_name,
+                    logging_message = save_unconverted_data_via_upload(
+                        data=SUSHI_data_response,
+                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                     )
                     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                         message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
@@ -1031,7 +1031,6 @@ class StatisticsSources(db.Model):
                     else:
                         message = message + " " + logging_message
                         log.debug(message)
-                    temp_file_path.unlink()
                     complete_flash_message_list.append(message)
                     continue  # A `return` statement here would keep any other reports from being pulled and processed
                 df['statistics_source_ID'] = self.statistics_source_ID
@@ -1053,14 +1052,9 @@ class StatisticsSources(db.Model):
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)
-                temp_file_path = Path(__file__).parent / 'temp.json'
-                with open(temp_file_path, 'xb') as JSON_file:  # The JSON-like dict is being saved to a file because `upload_file_to_S3_bucket()` takes file-like objects or path-like objects that lead to file-like objects
-                    json.dump(SUSHI_data_response, JSON_file)
-                file_name = f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}.json"
-                log.debug(file_IO_statement(file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
-                logging_message = upload_file_to_S3_bucket(
-                    temp_file_path,
-                    file_name,
+                 logging_message = save_unconverted_data_via_upload(
+                    data=SUSHI_data_response,
+                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
                 )
                 if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
                     message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
@@ -1068,7 +1062,6 @@ class StatisticsSources(db.Model):
                 else:
                     message = message + " " + logging_message
                     log.debug(message)
-                temp_file_path.unlink()
                 flash_message_list.append(message)
                 return (message, flash_message_list)
             df['statistics_source_ID'] = self.statistics_source_ID
@@ -1469,9 +1462,9 @@ class AnnualUsageCollectionTracking(db.Model):
         self.AUCT_statistics_source (int): part of the composite primary key; the foreign key for `statisticsSources`
         self.AUCT_fiscal_year (int): part of the composite primary key; the foreign key for `fiscalYears`
         self.usage_is_being_collected (boolean): indicates if usage needs to be collected
-        self.manual_collection_required (boolean): indicates if usage needs to be collected manually
+        self.manual_collection_required (boolean): indicates if usage needs to be collected manually; if some but not all usage does, this value is `false`
         self.collection_via_email (boolean): indicates if usage needs to be requested by sending an email
-        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant
+        self.is_COUNTER_compliant (boolean): indicates if usage is COUNTER R4 or R5 compliant; if some but not all usage is, this value is `true`
         self.collection_status (enum): the status of the usage statistics collection
         self.usage_file_path (string): the name of the file containing the non-COUNTER usage statistics, not including the `PATH_WITHIN_BUCKET` section (see note)
         self.notes (text): notes about collecting usage statistics for the particular statistics source and fiscal year

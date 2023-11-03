@@ -106,11 +106,12 @@ def collect_FY_and_vendor_data():
         )
         if not load_data_into_database_success_regex().fullmatch(vendors_load_result):
             data_load_errors.append(vendors_load_result)
+        vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        vendorNotes_dataframe.index.name = 'vendor_notes_ID'
         vendorNotes_load_result = load_data_into_database(
             df=vendorNotes_dataframe,
             relation='vendorNotes',
             engine=db.engine,
-            load_index=False,
         )
         if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
             data_load_errors.append(vendorNotes_load_result)
@@ -236,11 +237,12 @@ def collect_sources_data():
         )
         if not load_data_into_database_success_regex().fullmatch(statisticsSources_load_result):
             data_load_errors.append(statisticsSources_load_result)
+        statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
         statisticsSourceNotes_load_result = load_data_into_database(
             df=statisticsSourceNotes_dataframe,
             relation='statisticsSourceNotes',
             engine=db.engine,
-            load_index=False,
         )
         if not load_data_into_database_success_regex().fullmatch(statisticsSourceNotes_load_result):
             data_load_errors.append(statisticsSourceNotes_load_result)
@@ -251,11 +253,12 @@ def collect_sources_data():
         )
         if not load_data_into_database_success_regex().fullmatch(resourceSources_load_result):
             data_load_errors.append(resourceSources_load_result)
+        resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
         resourceSourceNotes_load_result = load_data_into_database(
             df= resourceSourceNotes_dataframe,
             relation='resourceSourceNotes',
             engine=db.engine,
-            load_index=False,
         )
         if not load_data_into_database_success_regex().fullmatch(resourceSourceNotes_load_result):
             data_load_errors.append(resourceSourceNotes_load_result)

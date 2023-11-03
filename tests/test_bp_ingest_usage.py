@@ -192,9 +192,83 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
-def test_upload_non_COUNTER_reports():
+def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
-    #ToDo: caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
-    #ToDo: Write test
-    #ToDo: Make one of the `assert` conditions the appearance of the flashed message
-    pass
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
+
+    #Section: Create Form Submission
+    #Subsection: Create `AUCT_options` Index
+    statistics_source_name = query_database(
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source};",
+        engine=engine,
+    )
+    if isinstance(statistics_source_name, str):
+        pytest.skip(f"Unable to run test because it relied on {statistics_source_name[0].lower()}{statistics_source_name[1:].replace(' raised', ', which raised')}")
+    fiscal_year = query_database(
+        query=f"SELECT fiscal_year FROM fiscalYears WHERE fiscal_year_ID={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+        engine=engine,
+    )
+    if isinstance(fiscal_year, str):
+        pytest.skip(f"Unable to run test because it relied on {fiscal_year[0].lower()}{fiscal_year[1:].replace(' raised', ', which raised')}")
+    df = pd.DataFrame(
+        [
+            non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source,
+            non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year,
+            statistics_source_name,
+            fiscal_year,
+        ],
+        columns=['AUCT_statistics_source', 'AUCT_fiscal_year', 'statistics_source_name', 'fiscal_year'],
+    )
+
+    #Subsection: Create MultipartEncoder
+    if path_to_sample_file.suffix == '.json':
+        open_mode = 'rt'
+    else:
+        open_mode = 'rb'
+    form_submissions = MultipartEncoder(
+        fields={
+            'AUCT_option': create_AUCT_SelectField_options(df)[0],
+            'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode)),
+        },
+        encoding='utf-8',
+    )
+
+    #Section: Perform Test Actions
+    header_value['Content-Type'] = form_submissions.content_type
+    POST_response = client.post(
+        '/ingest_usage/upload-non-COUNTER',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    
+    check_database_update = query_database(
+        query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
+        engine=engine,
+        index=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+    )
+
+    list_objects_response = s3_client.list_objects_v2(
+        Bucket=BUCKET_NAME,
+        Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
+    )
+    bucket_contents = []
+    for contents_dict in list_objects_response['Contents']:
+        bucket_contents.append(contents_dict['Key'])
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
+
+    #Section: Assert Statements
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
+    assert check_database_update.at[0,'collection_status'] == 'Collection complete'
+    assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    #ToDo: ingest_usage.views.upload_non_COUNTER_reports() flash message after validate_on_submit  in post_response.data
+    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
