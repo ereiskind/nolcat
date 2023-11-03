@@ -344,10 +344,12 @@ def database_function_skip_statements(return_value, is_test_function=True, SUSHI
 def load_data_into_database_success_regex():
     """This regex object matches the success return statement for `nolcat.app.load_data_into_database()`.
 
+    The optional period at the end allows the regex to match when it's being used as the beginning of a statement.
+
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r"Successfully loaded (\d*) records into the (.*) relation\.")
+    return re.compile(r"Successfully loaded (\d*) records into the (.*) relation\.?")
 
 
 def update_database_success_regex():

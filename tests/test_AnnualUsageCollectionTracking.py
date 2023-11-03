@@ -115,8 +115,9 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
+    method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
     # The test fails at this point because a failing condition here raises errors below
-    assert load_data_into_database_success_regex().match(logging_statement)
+    assert method_response_match_object is not None
     assert update_database_success_regex().search(logging_statement)
     assert isinstance(flash_statements, list)
 

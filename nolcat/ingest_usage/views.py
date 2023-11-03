@@ -205,7 +205,7 @@ def upload_non_COUNTER_reports():
             notes=df.at[0,'notes'],
         )
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
-        if not upload_nonstandard_usage_file_success_regex().fullmatch(response)
+        if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
             flash(response)

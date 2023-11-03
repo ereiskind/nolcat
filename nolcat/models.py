@@ -1021,12 +1021,13 @@ class StatisticsSources(db.Model):
                 if isinstance(df, str):
                     message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                     log.warning(message)
+                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
                     logging_message = save_unconverted_data_via_upload(
                         data=SUSHI_data_response,
-                        file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
+                        file_name_stem=file_name_stem,
                     )
                     if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
-                        message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
+                        message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                         log.critical(message)
                     else:
                         message = message + " " + logging_message
@@ -1052,12 +1053,13 @@ class StatisticsSources(db.Model):
             if isinstance(df, str):
                 message = unable_to_convert_SUSHI_data_to_dataframe_statement(df, report, self.statistics_source_name)
                 log.warning(message)
-                 logging_message = save_unconverted_data_via_upload(
+                file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}"
+                logging_message = save_unconverted_data_via_upload(
                     data=SUSHI_data_response,
-                    file_name_stem=f"{self.statistics_source_ID}_reports-{report.lower()}_{SUSHI_parameters['begin_date'].strftime('%Y-%m')}_{SUSHI_parameters['end_date'].strftime('%Y-%m')}_{datetime.now().isoformat()}",
+                    file_name_stem=file_name_stem,
                 )
                 if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
-                    message = message + " " + failed_upload_to_S3_statement(file_name, logging_message)
+                    message = message + " " + failed_upload_to_S3_statement(f"{file_name_stem}.json", logging_message)
                     log.critical(message)
                 else:
                     message = message + " " + logging_message
