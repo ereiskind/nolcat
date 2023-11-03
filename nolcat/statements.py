@@ -415,7 +415,7 @@ def failed_SUSHI_call_statement(call_path, statistics_source_name, error_message
     elif stop_API_calls:
         return main_value + f"API calls to {statistics_source_name} have stopped and no other calls will be made."
     else:
-        return main_value
+        return main_value[:-1]  # Removing the whitespace character at the end
 
 
 def no_data_returned_by_SUSHI_statement(call_path, statistics_source_name, is_empty_string=False, has_Report_Items=True):
