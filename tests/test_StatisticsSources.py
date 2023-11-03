@@ -199,7 +199,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             end_date,
         )
     if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
-        pytest.skip("The test is being skipped because the API call returned no data.")  ##database_function_skip_statements
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
     assert SUSHI_data_response['statistics_source_ID'].eq(StatisticsSources_fixture.statistics_source_ID).all()
@@ -225,9 +225,9 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 8, 1),
         )
     if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
-        pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
     elif reports_with_no_usage_regex().fullmatch(SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
-        pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  # Many statistics source providers don't have usage going back this far  ##database_function_skip_statements
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))  # Many statistics source providers don't have usage going back this far
     #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
