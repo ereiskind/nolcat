@@ -455,21 +455,20 @@ def attempted_SUSHI_call_with_invalid_dates_statement(end_date, start_date):
 
 
 #Subsection: Success Regexes
-def count_reports_with_no_usage_regex():
-    '''For ##Check-count_reports_with_no_usage'''
-    #ToDo: Create regex matching all statements in `no_data_returned_by_SUSHI_statement()` and the no usage data option in `failed_SUSHI_call_statement()`
-    pass
+def reports_with_no_usage_regex():
+    """This regex object matches the return statements in `no_data_returned_by_SUSHI_statement()` and `failed_SUSHI_call_statement()` that indicate no usage data was returned.
+
+    In the pytest modules, the statements using this function are looking just for those SUSHI responses with neither data nor a SUSHI error, but this regex matches all return values that indicate no usage data was returned; having the `pytest_skip_SUSHI_error_regex()` comparison first in test functions means `failed_SUSHI_call_statement()` return values indicating no usage data are never compared to this regex.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
+    """
+    return re.compile(r"The call to the `.*` endpoint for .* returned no (usage )?data( because the SUSHI data didn't have a `Report_Items` section)?\.")
 
 
 def pytest_skip_SUSHI_error_regex():
     '''For ##pytest.skip-SUSHI_error'''
     #ToDo: Create regex matching all possible results of `failed_SUSHI_call_statement()`
-    pass
-
-
-def pytest_skip_no_data_regex():
-    '''For ##pytest.skip-no_data'''
-    #ToDo: Create regex matching all possible results of `no_data_returned_by_SUSHI_statement()`
     pass
 
 

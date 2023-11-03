@@ -10,6 +10,7 @@ import pyinputplus
 
 # `conftest.py` fixtures are imported automatically
 from conftest import COUNTER_reports_offered_by_statistics_source
+from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import SUSHICallAndResponse
 
 log = logging.getLogger(__name__)
@@ -88,7 +89,7 @@ def test_status_call(SUSHI_credentials_fixture, SUSHI_server_error_regex_object,
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     assert isinstance(response[0], dict) or (isinstance(response[0][0], dict) and len(response[0]) == 1)  # EBSCO's is a dict inside a list as of 2022-12-14
 
@@ -117,7 +118,7 @@ def test_reports_call(SUSHI_credentials_fixture, SUSHI_server_error_regex_object
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     assert isinstance(response[0], dict)
 
@@ -168,7 +169,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     else:
         assert response[0].get('Report_Header').get('Report_ID') == "PR" or response[0].get('Report_Header').get('Report_ID') == "pr"
@@ -186,7 +187,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     else:
         assert response[0].get('Report_Header').get('Report_ID') == "DR" or response[0].get('Report_Header').get('Report_ID') == "dr"
@@ -204,7 +205,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     else:
         assert response[0].get('Report_Header').get('Report_ID') == "TR" or response[0].get('Report_Header').get('Report_ID') == "tr"
@@ -222,7 +223,7 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, SUSHI_serv
     if isinstance(response[0], str):
         if SUSHI_server_error_regex_object.match(string=response[0]):  ###pytest.skip-SUSHI_error
             pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-        elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data
+        elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  ##database_function_skip_statements
     else:
         assert response[0].get('Report_Header').get('Report_ID') == "IR" or response[0].get('Report_Header').get('Report_ID') == "ir"

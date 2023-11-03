@@ -197,7 +197,7 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             begin_date,
             end_date,
         )
-    if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##pytest.skip-no_data
+    if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
         pytest.skip("The test is being skipped because the API call returned no data.")  ##database_function_skip_statements
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
@@ -225,7 +225,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         )
     if SUSHI_server_error_regex_object.match(string=response[0]):  ##pytest.skip-SUSHI_error
         pytest.skip("The test is being skipped because the API call returned a server-based SUSHI error.")  ##database_function_skip_statements
-    elif no_SUSHI_data_regex_object.match(string=response[0]):  ##pytest.skip-no_data  #ToDo: Adjust to catch more SUSHI error (see note below)
+    elif reports_with_no_usage_regex().fullmatch(SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
         pytest.skip("The test is being skipped because no SUSHI data was in the API call response.")  # Many statistics source providers don't have usage going back this far  ##database_function_skip_statements
     #TEST: nolcat.models::1040 - The call to the `reports/pr` endpoint for SUSHI code 92 raised the SUSHI error reports/pr request raised error 3031: Usage Not Ready for Requested Dates due to 6/1/2020. Try the call again later, after checking credentials if needed. API calls to SUSHI code 92 have stopped and no other calls will be made.
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)

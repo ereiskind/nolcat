@@ -937,7 +937,7 @@ class StatisticsSources(db.Model):
                 all_flashed_statements[report_name] = flash_message_list
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.search(r'returned no( usage)? data', SUSHI_data_response):  ##Check-count_reports_with_no_usage
+                if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_R5_SUSHI()` is being increased.")
                     no_usage_returned_count += 1
                     continue  # A `return` statement here would keep any other valid reports from being pulled and processed
@@ -999,7 +999,7 @@ class StatisticsSources(db.Model):
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)
                     return (SUSHI_data_response, complete_flash_message_list)
-                elif isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* returned no( usage)? data.*', SUSHI_data_response):  ##Check-count_reports_with_no_usage
+                elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
                     log.debug("The `no_usage_returned_count` counter in `StatisticsSources._harvest_single_report()` is being increased.")
                     no_usage_returned_count += 1
                     log.warning(SUSHI_data_response)
