@@ -117,7 +117,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     # The test fails at this point because a failing condition here raises errors below
     assert load_data_into_database_success_regex().match(logging_statement)
-    #ToDo: logging_statement includes match for regex `update_database_success_regex`
+    assert update_database_success_regex().search(logging_statement)
     assert isinstance(flash_statements, list)
 
     database_update_check = query_database(

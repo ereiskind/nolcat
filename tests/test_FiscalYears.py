@@ -271,6 +271,6 @@ def test_collect_fiscal_year_usage_statistics(caplog):
     #ToDo: This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. Right now, no record in the test data meets those criteria.
     # logging_statement, flash_messages = FiscalYears.collect_fiscal_year_usage_statistics()
     # assert load_data_into_database_success_regex().match(logging_statement)
-    #ToDo: logging_statement includes match for regex `update_database_success_regex`
+    # assert update_database_success_regex().search(logging_statement)
     # assert isinstance(flash_messages, list)
     pass
