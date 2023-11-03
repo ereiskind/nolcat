@@ -15,6 +15,7 @@ from pandas.testing import assert_series_equal
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.initialization import *
 
 log = logging.getLogger(__name__)

@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta  # dateutil is a pandas depende
 from conftest import match_direct_SUSHI_harvest_result
 from conftest import COUNTER_reports_offered_by_statistics_source
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
