@@ -102,7 +102,7 @@ def test_status_call_validity(SUSHI_credentials_fixture, caplog):
     # The test uses the `Service_Active` key having a true value to verify the status response, but a reference to a nonexistant key will result in a key error, and the test will fail as a result. Because the capitalization and punctuation of the key is inconsistent, a regex is used to find the key.
     service_active_value = None  # The variable is initialized here so the `assert` statement won't be referencing an unassigned variable
     for key in list(response[0].keys()):
-        if re.fullmatch(r'[sS]ervice.?[aA]ctive', key):
+        if re.fullmatch(r"[sS]ervice.?[aA]ctive", key):
             service_active_value = response[0][key]  # The value that goes with `key` in `response[0]`
     assert service_active_value == True or service_active_value == "True" or service_active_value == "true"
 
@@ -133,7 +133,7 @@ def test_reports_call_validity(SUSHI_credentials_fixture, caplog):
     number_of_valid_Report_ID_values = 0
     for report in list_of_reports:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'(Silverchair:CR_)?(LL_C)?[PpDdTtIi]?[Rr](_\w\d)?', report["Report_ID"]):
+            if re.fullmatch(r"(Silverchair:CR_)?(LL_C)?[PpDdTtIi]?[Rr](_\w\d)?", report["Report_ID"]):
                 number_of_valid_Report_ID_values += 1
     assert number_of_reports_available == number_of_valid_Report_ID_values
 

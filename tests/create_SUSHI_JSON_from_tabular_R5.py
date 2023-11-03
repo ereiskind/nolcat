@@ -83,7 +83,7 @@ for row in sheet.rows:
         
         # `None` in regex methods raises a TypeError, so they need to be in try-except blocks
         try:
-            if re.fullmatch(r'^[Cc]omponent', field_name.value):
+            if re.fullmatch(r"^[Cc]omponent", field_name.value):
                 continue  # The rarely used `Component` subtype fields aren't captured by this program
         except TypeError:
             pass
@@ -125,7 +125,7 @@ log.info(f"Dataframe summary info:\n{return_string_of_dataframe_info(df)}")
 
 
 #Section: Update Dataframe
-df = df.replace(r'\n', '', regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
+df = df.replace(r"\n", "", regex=True)  # Removes errant newlines found in some reports, primarily at the end of resource names
 df = df.replace("licence", "license")  # "Have `license` always use American English spelling
 df['End_Date'] = df['Begin_Date'].map(last_day_of_month)
 try:
@@ -352,7 +352,7 @@ if report_type == "IR":
             #Subsection: Prepare for Inner Nesting
             item_parent_values_df = item_parent_values_df.stack().reset_index()  # If the index isn't reset, the stack method returns a series
             item_parent_values_df = item_parent_values_df.rename(columns={item_parent_values_df.columns[-2]: 'Type', 0: 'Value'})  # The name of the `Type` field is `level_#` where `#` is the position in a zero-based order of the columns in the dataframe; since the exact name that needs to be changed cannot be know in advanced, it must be found from its penultimate position in the list of field names
-            item_parent_values_df['Type'] = item_parent_values_df['Type'].map(lambda type: re.search(r'Parent_(.*)', type)[1] if isinstance(type, str) else type).replace("Title", "Item_Name").replace("Authors", "Author")
+            item_parent_values_df['Type'] = item_parent_values_df['Type'].map(lambda type: re.search(r"Parent_(.*)", type)[1] if isinstance(type, str) else type).replace("Title", "Item_Name").replace("Authors", "Author")
 
             #Subsection: Remove Null Values and Repetitions
             item_parent_values_df = item_parent_values_df.loc[item_parent_values_df['Value'] != "`None`"]  # Because the null placeholders are targeted for removal, they don't need to be replaced

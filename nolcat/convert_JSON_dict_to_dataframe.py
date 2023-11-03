@@ -44,6 +44,8 @@ class ConvertJSONDictToDataframe:
     DOI_LENGTH = 75
     PROPRIETARY_ID_LENGTH = 100
     URI_LENGTH = 450
+    proprietary_ID_regex = re.compile(r"[Pp]roprietary(_ID)?")
+    author_regex = re.compile("[Aa]uthor")
 
     def __init__(self, SUSHI_JSON_dictionary):
         """The constructor method for `ConvertJSONDictToDataframe`, which instantiates the dictionary object.
@@ -191,7 +193,7 @@ class ConvertJSONDictToDataframe:
                             log.debug(f"Added `COUNTERData.publisher_ID` value {record_dict['publisher_ID']} to `record_dict`.")
                     else:
                         for type_and_value in value:
-                            if re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                            if self.proprietary_ID_regex.search(type_and_value['Type']):
                                 if len(type_and_value['Value']) > self.PUBLISHER_ID_LENGTH:
                                     message = f"Increase the `COUNTERData.publisher_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
                                     log.critical(message)
@@ -221,7 +223,7 @@ class ConvertJSONDictToDataframe:
                 elif key == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                     log.debug(f"Preparing to add {key} value `{value}` to the record.")
                     for type_and_value in value:
-                        if re.search(r'[Aa]uthor', type_and_value['Type']):
+                        if self.author_regex.search(type_and_value['Type']):
                             if record_dict.get('authors'):  # If the author name value is null, this will never be true
                                 if record_dict['authors'].endswith(" et al."):
                                     continue  # The `for type_and_value in value` loop
@@ -286,7 +288,7 @@ class ConvertJSONDictToDataframe:
                                 log.debug(f"Added `COUNTERData.DOI` value {record_dict['DOI']} to `record_dict`.")
                         
                         #Subsection: Capture `proprietary_ID` Value
-                        elif re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                        elif self.proprietary_ID_regex.search(type_and_value['Type']):
                             if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
                                 message = f"Increase the `COUNTERData.proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
                                 log.critical(message)
@@ -304,7 +306,7 @@ class ConvertJSONDictToDataframe:
                         
                         #subsection: Capture `print_ISSN` Value
                         elif type_and_value['Type'] == "Print_ISSN":
-                            if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                            if ISSN_regex().fullmatch(type_and_value['Value']):
                                 record_dict['print_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['print_ISSN'] = 'string'
                                 log.debug(f"Added `COUNTERData.print_ISSN` value {record_dict['print_ISSN']} to `record_dict`.")
@@ -315,7 +317,7 @@ class ConvertJSONDictToDataframe:
                         
                         #Subsection: Capture `online_ISSN` Value
                         elif type_and_value['Type'] == "Online_ISSN":
-                            if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                            if ISSN_regex().fullmatch(type_and_value['Value']):
                                 record_dict['online_ISSN'] = type_and_value['Value'].strip()
                                 include_in_df_dtypes['online_ISSN'] = 'string'
                                 log.debug(f"Added `COUNTERData.online_ISSN` value {record_dict['online_ISSN']} to `record_dict`.")
@@ -399,7 +401,7 @@ class ConvertJSONDictToDataframe:
                         elif key_for_parent == "Item_Contributors":  # `Item_Contributors` uses `Name` instead of `Value`
                             log.debug(f"Preparing to add {key_for_parent} value `{value_for_parent}` to the record.")
                             for type_and_value in value_for_parent:
-                                if re.search(r'[Aa]uthor', type_and_value['Type']):
+                                if self.author_regex.search(type_and_value['Type']):
                                     if record_dict.get('parent_authors'):
                                         if record_dict['parent_authors'].endswith(" et al."):
                                             continue  # The `for type_and_value in value_for_parent` loop
@@ -462,7 +464,7 @@ class ConvertJSONDictToDataframe:
                                         log.debug(f"Added `COUNTERData.parent_DOI` value {record_dict['parent_DOI']} to `record_dict`.")
 
                                 #Subsection: Capture `parent_proprietary_ID` Value
-                                elif re.search(r'[Pp]roprietary(_ID)?', type_and_value['Type']):
+                                elif self.proprietary_ID_regex.search(type_and_value['Type']):
                                     if len(type_and_value['Value']) > self.PROPRIETARY_ID_LENGTH:
                                         message = f"Increase the `COUNTERData.parent_proprietary_ID` max field length to {int(len(type_and_value['Value']) + (len(type_and_value['Value']) * 0.1))}."
                                         log.critical(message)
@@ -480,7 +482,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_print_ISSN` Value
                                 elif type_and_value['Type'] == "Print_ISSN":
-                                    if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                                    if ISSN_regex().fullmatch(type_and_value['Value']):
                                         record_dict['parent_print_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_print_ISSN'] = 'string'
                                         log.debug(f"Added `COUNTERData.parent_print_ISSN` value {record_dict['parent_print_ISSN']} to `record_dict`.")
@@ -491,7 +493,7 @@ class ConvertJSONDictToDataframe:
 
                                 #Subsection: Capture `parent_online_ISSN` Value
                                 elif type_and_value['Type'] == "Online_ISSN":
-                                    if re.fullmatch(r'\d{4}\-\d{3}[\dxX]\s*', type_and_value['Value']):
+                                    if ISSN_regex().fullmatch(type_and_value['Value']):
                                         record_dict['parent_online_ISSN'] = type_and_value['Value'].strip()
                                         include_in_df_dtypes['parent_online_ISSN'] = 'string'
                                         log.debug(f"Added `COUNTERData.parent_online_ISSN` value {record_dict['parent_online_ISSN']} to `record_dict`.")

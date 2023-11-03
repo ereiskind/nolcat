@@ -501,7 +501,7 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if isinstance(report["Report_ID"], str) and re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
     log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
     return list_of_reports

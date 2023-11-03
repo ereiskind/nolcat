@@ -816,7 +816,7 @@ class StatisticsSources(db.Model):
         #Section: Confirm SUSHI API Functionality
         SUSHI_status_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_info['URL'], "status", SUSHI_parameters).make_SUSHI_call()
         all_flashed_statements['status'] = flash_message_list
-        if isinstance(SUSHI_info['URL'], str) and re.match(r'https?://.*mathscinet.*\.\w{3}/', SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
+        if isinstance(SUSHI_info['URL'], str) and re.match(r"https?://.*mathscinet.*\.\w{3}/", SUSHI_info['URL']):  # MathSciNet `status` endpoint returns HTTP status code 400, which will cause an error here, but all the other reports are viable; this specifically bypasses the error checking for the SUSHI call to the `status` endpoint to the domain starting with `mathscinet` via `re.match()`
             log.info(successful_SUSHI_call_statement("status", self.statistics_source_name))
             pass
         #ToDo: Is there a way to bypass `HTTPSConnectionPool` errors caused by `SSLError(CertificateError`?
@@ -870,7 +870,7 @@ class StatisticsSources(db.Model):
                 for report_call_response in SUSHI_reports_response.values():  # The dict only has one value, so there will only be one iteration
                     for report_details_dict in report_call_response:
                         for report_detail_keys, report_detail_values in report_details_dict.items():
-                            if isinstance(report_detail_keys, str) and re.fullmatch(r'[Rr]eport_[Ii][Dd]', report_detail_keys):
+                            if isinstance(report_detail_keys, str) and re.fullmatch(r"[Rr]eport_[Ii][Dd]", report_detail_keys):
                                 all_available_reports.append(report_detail_values)
                 log.debug(f"All reports provided by {self.statistics_source_name}: {all_available_reports}.")
             elif isinstance(SUSHI_reports_response, str):
@@ -882,7 +882,7 @@ class StatisticsSources(db.Model):
                 return (message, all_flashed_statements)
 
             #Subsection: Get List of Available Customizable Reports
-            available_reports = [report for report in all_available_reports if re.search(r'\w{2}(_\w\d)?', report)]
+            available_reports = [report for report in all_available_reports if re.search(r"\w{2}(_\w\d)?", report)]
             available_custom_reports = [custom_report for custom_report in available_reports if "_" not in custom_report]
             log.info(f"Customizable reports provided by {self.statistics_source_name}: {available_custom_reports}.")
 
@@ -994,7 +994,7 @@ class StatisticsSources(db.Model):
                 SUSHI_data_response, flash_message_list = SUSHICallAndResponse(self.statistics_source_name, SUSHI_URL, f"reports/{report.lower()}", SUSHI_parameters).make_SUSHI_call()
                 for item in flash_message_list:
                     complete_flash_message_list.append(item)
-                if isinstance(SUSHI_data_response, str) and re.fullmatch(r'The call to the `.*` endpoint for .* raised the (SUSHI )?errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.', SUSHI_data_response):
+                if isinstance(SUSHI_data_response, str) and re.fullmatch(r"The call to the `.*` endpoint for .* raised the (SUSHI )?errors?[\n\s].*[\n\s]API calls to .* have stopped and no other calls will be made\.", SUSHI_data_response):
                     message = f"Data collected from the call to the `reports/{report.lower()}` endpoint for {self.statistics_source_name} before this point won't be loaded into the database."
                     log.warning(SUSHI_data_response + " " + message)
                     complete_flash_message_list.append(message)

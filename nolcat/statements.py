@@ -339,7 +339,7 @@ def load_data_into_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r'Successfully loaded (\d*) records into the (.*) relation\.')
+    return re.compile(r"Successfully loaded (\d*) records into the (.*) relation\.")
 
 
 def update_database_success_regex():
@@ -350,7 +350,7 @@ def update_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.update_database()`
     """
-    return re.compile(r'[Ss]uccessfully preformed the update `.*`\.', flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully preformed the update `.*`\.", flags=re.DOTALL)
 
 
 #Section: SUSHI API Calls

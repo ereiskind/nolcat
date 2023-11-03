@@ -179,7 +179,7 @@ class SUSHICallAndResponse:
 
         #Subsection: Check Customizable Reports for Data
         # Customizable reports can contain no data for various reasons; no actions that qualify as COUNTER metrics may occur, which may be because the action isn't possible on the platform (an empty DR from a statistics source without databases is a common example.) These are usually, but not always, marked with SUSHI error codes in the header, but in all cases, there should be a flashed message to let the user know about the empty report. This subsection ensures that the aforementioned flash message exists, then returns a tuple containing a message stopping the processing of the SUSHI data (which doesn't exist) and all flash messages.
-        custom_report_regex = re.compile(r'reports/[PpDdTtIi][Rr]')
+        custom_report_regex = re.compile(r"reports/[PpDdTtIi][Rr]")
         Report_Items_status = len(API_response.get('Report_Items', 'No `Report_Items` key'))  # Combining the check for the existence of the key and the length of its value list allows for deduplication of log and return statements
         if Report_Items_status == 0 or Report_Items_status == 'No `Report_Items` key':
             if custom_report_regex.search(self.call_path):

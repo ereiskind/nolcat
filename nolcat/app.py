@@ -596,3 +596,12 @@ def update_database(update_statement, engine):
         message = f"Running the update statement `{update_statement}` raised the error {error}."
         log.error(message)
         return message
+
+
+def ISSN_regex():
+    """A regex object matching an ISSN.
+
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
