@@ -665,7 +665,7 @@ def save_unconverted_data_via_upload(data, file_name_stem):
     return message
 
 
-  def ISSN_regex():
+def ISSN_regex():
     """A regex object matching an ISSN.
 
     Returns:
