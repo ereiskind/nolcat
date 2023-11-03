@@ -218,9 +218,14 @@ def upload_file_to_S3_bucket_success_regex():
 
 
 def upload_nonstandard_usage_file_success_regex():
-    '''For ##Check-upload_nonstandard_usage_file'''
-    #ToDo: Create regex matching success return value for `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
-    pass
+    """This regex object matches the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.
+
+    The `re.DOTALL` flag is included because update statements include line breaks.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
+    """
+    return re.compile(r"Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `(.*)`\.", flags=re.DOTALL)
 
 
 #Section: Database Interactions

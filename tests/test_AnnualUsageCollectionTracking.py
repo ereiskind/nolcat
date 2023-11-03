@@ -196,14 +196,14 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
-    upload_result = re.fullmatch(r'Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `.*`\.', upload_result, flags=re.DOTALL)  ##Check-upload_nonstandard_usage_file
+    upload_result = upload_nonstandard_usage_file_success_regex().fullmatch(upload_result)
     try:
         log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
         log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
     except AttributeError:
         pass
     assert upload_result is not None
-    # assert upload_result.group(1) == file_name
+    assert upload_result.group(1) == file_name
 
     #Subsection: Check File Upload to S3
     list_objects_response = s3_client.list_objects_v2(

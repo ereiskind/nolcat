@@ -512,7 +512,7 @@ def upload_historical_non_COUNTER_usage():
                 notes=df.at[0,'notes'],
             )
             response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
-            if isinstance(response, str) and re.fullmatch(r'Successfully loaded the file .* into the .* S3 bucket, but updating the `annualUsageCollectionTracking` relation failed, so the SQL update statement needs to be submitted via the SQL command line:\n.*', response):  ##Check-upload_nonstandard_usage_file
+            if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
                 #ToDo: Do any other actions need to be taken?
                 log.error(response)
                 #ToDo: Add `message` to error message list in some form
