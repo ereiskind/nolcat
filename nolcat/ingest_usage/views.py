@@ -35,13 +35,13 @@ def upload_COUNTER_reports():
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
         try:
-            df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects  #ToDo:: Returns tuple, second part is list of error messages for workbooks and worksheets rejected
+            df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
+            if data_not_in_df:
+                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
         except Exception as error:
             message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
             log.error(message)
-            #ToDo:: messages_to_flash.append(message)
-            #ToDo:: flash(messages_to_flash)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         log.debug(f"`COUNTERData` data:\n{df}\n")

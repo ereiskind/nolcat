@@ -379,10 +379,13 @@ def collect_AUCT_and_historical_COUNTER_data():
         log.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
         #Subsection: Ingest COUNTER Reports
+        messages_to_flash = []
         ''' #ToDo: Uncomment this subsection during Planned Iteration 2
         try:
-            COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects  #ToDo:: Returns tuple, second part is list of error messages for workbooks and worksheets rejected
+            COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+            if data_not_in_df:
+                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
         except Exception as error:
             message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
             log.error(message)
@@ -400,10 +403,8 @@ def collect_AUCT_and_historical_COUNTER_data():
         if COUNTER_reports_df is None:
             flash(message_to_flash)
             return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
-        if message_to_flash is None:
-            messages_to_flash = []
-        else:
-            messages_to_flash = [message_to_flash]
+        if message_to_flash:
+            messages_to_flash.append(message_to_flash)
         
         try:
             COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
@@ -416,7 +417,6 @@ def collect_AUCT_and_historical_COUNTER_data():
         log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
         log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
         '''
-        messages_to_flash = []  #ToDo: Replace by above during Planned Iteration 2
 
         #Subsection: Load Data into Database
         annualUsageCollectionTracking_load_result = load_data_into_database(
