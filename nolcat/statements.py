@@ -475,9 +475,14 @@ def reports_with_no_usage_regex():
 
 
 def pytest_skip_SUSHI_error_regex():
-    '''For ##pytest.skip-SUSHI_error'''
-    #ToDo: Create regex matching all possible results of `failed_SUSHI_call_statement()`
-    pass
+    """This regex object matches the return statements in `failed_SUSHI_call_statement()`.
+
+    The `failed_SUSHI_call_statement()` return value can end so many different ways, so this regex is designed to capture the shared beginning of all those return statements and be used with the `re.match()` method.
+
+    Returns:
+        re.Pattern: the regex object for the success return statement for `failed_SUSHI_call_statement()`
+    """
+    return re.compile(r"The call to the `.*` endpoint for .* raised the (SUSHI )?errors?")
 
 
 """Other standardized logging statements, including those in a single class:
