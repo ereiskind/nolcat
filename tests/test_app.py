@@ -386,7 +386,7 @@ def test_save_unconverted_data_via_upload():
     pass
 
 
-  def test_ISSN_regex():
+def test_ISSN_regex():
     """Tests matching the regex object to ISSN strings."""
     assert ISSN_regex().fullmatch("1234-5678") is not None
     assert ISSN_regex().fullmatch("1123-000x") is not None
