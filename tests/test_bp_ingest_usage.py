@@ -9,6 +9,7 @@ import os
 import re
 from bs4 import BeautifulSoup
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
@@ -272,3 +273,37 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     #ToDo: ingest_usage.views.upload_non_COUNTER_reports() flash message after validate_on_submit  in post_response.data
     assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
+
+
+def test_add_SQL_insert_statements(engine, client, header_value):
+    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
+    SQL_file_path = #ToDo: pathlib.Path to a SQL file with data that can be added to the end of COUNTERData
+    form_submissions = MultipartEncoder(
+        fields={
+            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rt')),
+        },
+        encoding='utf-8',
+    )
+    POST_response = client.post(
+        '/ingest_usage/upload-non-COUNTER',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    check_database_update = query_database(
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT #ToDo: Number of records being inserted;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+        engine=engine,
+    )
+    insert_statement_data = #ToDo: dataframe with the same data as is in the insert statements in the SQL file
+
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
+    assert_frame_equal(check_database_update, insert_statement_data)

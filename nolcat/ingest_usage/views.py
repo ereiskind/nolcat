@@ -219,3 +219,43 @@ def upload_non_COUNTER_reports():
         log.error(message)
         flash(message)
         return abort(404)
+
+
+@bp.route('/insert-statements', methods=['GET', 'POST'])
+def add_SQL_insert_statements():
+    """The route function for updating the `COUNTERData` relation with SQL insert statements."""
+    log.info("Starting `add_SQL_insert_statements()`.")
+    form = InsertStatementForm()
+    if request.method == 'GET':
+        return render_template('ingest_usage/add-insert-statements.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: `form.SQL_file.data` of <class 'werkzeug.datastructures.FileStorage'>
+        #ToDo: `form.SQL_file.data.stream` is the input stream
+
+        insert_statements = []
+        try:
+            # for line in SQL_file:
+                #ToDo: if line is insert statements for COUNTERData:
+                    # insert_statements.append(line)
+        except Exception as error:
+            message = f"Extracting the COUNTERData insert statements from the SQL file raised the error {error}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        
+        messages_to_flash = []
+        for statement in insert_statements:
+            try:
+                #ToDo: apply insert statement to database
+            except Exception as error:
+                message = f"Updating the database with the statement {statement} raised the error {error}."
+                log.error(message)
+                messages_to_flash.append(message)
+        
+        flash(messages_to_flash)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)

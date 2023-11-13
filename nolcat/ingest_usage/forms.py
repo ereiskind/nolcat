@@ -30,3 +30,8 @@ class UsageFileForm(FlaskForm):
     """Creates a form for selecting a given statistics source and fiscal year combination and uploading a file containing non-COUNTER usage data for that selection."""
     AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.", validators=[DataRequired()])
+
+
+class InsertStatementForm(FlaskForm):
+    """Creates a form for uploading a SQL file with insert statements for the `COUNTERData` relation."""
+    SQL_file = FileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.", validators=[DataRequired()])
