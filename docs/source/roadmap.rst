@@ -18,7 +18,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Add fixture to remove files at ``nolcat/nolcat/view_usage/nolcat_download.csv`` in ``tests.test_bp_view_usage``
 * Update classes in ERD
 
 Iteration 1: Complete Current Data I/O
