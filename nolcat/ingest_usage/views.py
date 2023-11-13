@@ -229,14 +229,14 @@ def add_SQL_insert_statements():
     if request.method == 'GET':
         return render_template('ingest_usage/add-insert-statements.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: `form.SQL_file.data` of <class 'werkzeug.datastructures.FileStorage'>
-        #ToDo: `form.SQL_file.data.stream` is the input stream
-
+        SQL_file_data = form.SQL_file.data.stream
+        log.info(f"The SQL file data stream is (type {type(SQL_file_data)}):\n{SQL_file_data}")
         insert_statements = []
         try:
-            # for line in SQL_file:
-                #ToDo: if line is insert statements for COUNTERData:
-                    # insert_statements.append(line)
+            for line in SQL_file_data:
+                log.debug(f"The line in the SQL file data stream is (type {type(line)}):\n{line}")
+                if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
+                    insert_statements.append(line)
         except Exception as error:
             message = f"Extracting the COUNTERData insert statements from the SQL file raised the error {error}."
             log.error(message)
