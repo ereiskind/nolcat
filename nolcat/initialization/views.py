@@ -353,7 +353,6 @@ def collect_AUCT_and_historical_COUNTER_data():
             infinite_loop_error = True
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
         
-        #ToDo: Confirm AUCT template CSV downloads successfully
         return render_template('initialization/initial-data-upload-3.html', form=form, AUCT_file_path=str(template_save_location))
 
     #Section: After Form Submission

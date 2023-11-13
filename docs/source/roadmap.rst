@@ -18,15 +18,15 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Add documentation about adding records to ``fiscalYears`` relation via SQL command line
+* Add fixture to remove files at ``nolcat/nolcat/view_usage/nolcat_download.csv`` in ``tests.test_bp_view_usage``
 * Update classes in ERD
 
 Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
 * Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
+* Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
 * Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
@@ -36,16 +36,13 @@ Iteration 2: Add Historical Data
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms``
+* Copy ``nolcat.ingest_usage.forms.UsageFileForm()`` to ``nolcat.initialization.forms`` for use in ``initialization.views.upload_historical_non_COUNTER_usage()``
 * Write "initialization/initial-data-upload-4.html" page
-* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` with ``nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_files()``
+* Finish ``initialization.views.upload_historical_non_COUNTER_usage()`` from existing psuedocode
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
-* Set redirect at end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()`` to ``nolcat.initialization.views.upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Remove commenting out from ``tests.test_bp_initialization.test_COUNTERData_relation_to_database()``
 * Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Write ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()``
 * Write "ingest_usage/upload-non-COUNTER-usage.html" page
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
@@ -78,36 +75,28 @@ Iteration 1: View Lists
 =======================
 * Confirm variable routes in "annual_stats/index.html" work
 * Finish ``nolcat.view_lists.views.view_lists_homepage()``
-* Create "view_lists/index.html" page
-* Write ``tests.test_bp_view_list.test_view_lists_homepage()``
+* Write "view_lists/index.html" page
+* Finish ``tests.test_bp_view_list.test_view_lists_homepage()``
 * Write ``tests.test_bp_view_list.test_GET_request_for_view_list_record()``
 * Finish ``nolcat.view_lists.views.view_list_record()``
-* Create "view_lists/view_record.html" page
-* Finish ``nolcat.view_lists.views.edit_list_record()``
-* Create "view_lists/edit_record.html" page
-* Create form classes needed for editing
+* Create "view_lists/view-record.html" page
 * Write ``tests.test_bp_view_list.test_GET_request_for_edit_list_record_for_existing_record()``
+
+Iteration 2: Edit Lists
+=======================
+* Create form classes needed for editing
+* Finish ``nolcat.view_lists.views.edit_list_record()``
+* Create "view_lists/edit-record.html" page
 * Write ``tests.test_bp_view_list.test_GET_request_for_edit_list_record_for_new_record()``
 * Write ``tests.test_bp_view_list.test_edit_list_record()``
-
-Iteration 2: Update Statistics Sources to Resource Sources Relationship
-=======================================================================
-* Update "view_lists/edit_list_record.html" and accompanying form as necessary
 * Write ``tests.test_ResourceSources.test_change_StatisticsSource()``
-
-Iteration 3: Update Access Stop Date Attribute
-==============================================
-* Update "view_lists/edit_list_record.html" and accompanying form as necessary
-* Finish ``nolcat.models.ResourceSources.add_access_stop_date()``
-* Finish ``nolcat.models.ResourceSources.remove_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_add_access_stop_date()``
 * Write ``tests.test_ResourceSources.test_remove_access_stop_date()``
 
-Iteration 4: Add Notes
+Iteration 3: Add Notes
 ======================
 * Write form class for adding notes
 * Add form for adding notes to "view_lists/view_record.html"
-* Write ``tests.test_bp_view_list.test_view_list_record()``
 * Write ``nolcat.models.StatisticsSources.add_note()``
 * Write ``tests.test_StatisticsSources.test_add_note()``
 * Write ``nolcat.models.Vendors.add_note()``
@@ -115,50 +104,38 @@ Iteration 4: Add Notes
 * Write ``nolcat.models.ResourceSources.add_note()``
 * Write ``tests.test_ResourceSources.test_add_note()``
 
-Iteration 5: Create Drop-Down Lists
-===================================
-* If unable to previously get drop-downs to work, make ``nolcat.ingest_usage.forms.UsageFileForm.AUCT_option`` a drop-down field and adjust ``nolcat.ingest_usage.views.upload_non_COUNTER_reports()`` as needed
-* If unable to previously get drop-downs to work, finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Make ``nolcat.ingest_usage.forms.SUSHIParametersForm.statistics_source`` a drop-down field
+Iteration 4: Show and Edit Fiscal Year Information
+==================================================
+* Finish ``nolcat.annual_stats.forms.RunAnnualStatsMethodsForm()``
+* Finish ``nolcat.annual_stats.forms.EditFiscalYearForm()``
+* Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
+* Finish ``nolcat.annual_stats.views.show_fiscal_year_details()``
+* Finish "annual_stats/fiscal-year-details.html"
+* Finish ``tests.test_bp_annual_stats.test_GET_request_for_annual_stats_homepage()``
+* Write ``tests.test_bp_annual_stats.test_GET_request_for_show_fiscal_year_details()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
+* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 6: Create Query Wizard
+Iteration 5: Create Query Wizard
 ================================
 * Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
 * Craft queries to use
 * Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
-* Write ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
+* Finish ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
 * Finish form in "query-wizard.html"
 
-Iteration 7: Show Fiscal Year Information
-=========================================
-* Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
-* Finish ``nolcat.annual_stats.views.show_fiscal_year_details()``
-* Finish ``nolcat.annual_stats.forms.RunAnnualStatsMethodsForm()``
-* Finish ``nolcat.annual_stats.forms.EditFiscalYearForm()``
-* Finish "annual_stats/fiscal-year-details.html"
-* Write ``tests.test_bp_annual_stats.test_GET_request_for_show_fiscal_year_details()``
-* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_RunAnnualStatsMethodsForm()``
-* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
-
-Iteration 8: Show Annual Usage Collection Tracking Information
-==============================================================
-* Finish ``nolcat.annual_stats.views.annual_stats_homepage()``
-* Finish ``nolcat.annual_stats.forms.EditAUCTForm()``
-* Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
-
-Iteration 9: Switch Message Display from Stdout to Flask
+Iteration 6: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
-* Write ``tests.test_StatisticsSources.test_fetch_SUSHI_information_for_display()``
-* Use tkinter messagebox to get information from user in ``nolcat.SUSHI_call_and_response.SUSHICallAndResponse._handle_SUSHI_exceptions()``
 
-Iteration 10: Create UI Design and Jinja Templates
+Iteration 7: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
-Iteration 11: Interact with Host File System
+Iteration 8: Interact with Host File System
 ============================================
 * Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
 * Finish ``tests.test_app.default_download_folder()``
@@ -168,16 +145,11 @@ Open Source Iterations
 **********************
 These iterations contain updates necessary for NoLCAT to be used as an open source program.
 
-Iteration 1: Create Downloadable AUCT Template
-==============================================
-* Finish creation of "initialize_annualUsageCollectionTracking.csv" in ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
-* Update ``tests.test_bp_initialization.test_GET_request_for_collect_AUCT_and_historical_COUNTER_data()``
-
-Iteration 2: Make Initialization Forms Downloadable
+Iteration 1: Make Initialization Forms Downloadable
 ===================================================
 * Get Jinja download to work in "initialization/index.html", "initialization/initial-data-upload-2.html", and "initialization/initial-data-upload-3.html"
 
-Iteration 3: Write ``__repr__`` Methods
+Iteration 2: Write ``__repr__`` Methods
 =======================================
 * Write ``nolcat.models.FiscalYears.__repr__()``
 * Write ``nolcat.models.Vendors.__repr__()``
@@ -189,22 +161,22 @@ Iteration 3: Write ``__repr__`` Methods
 * Write ``nolcat.models.AnnualUsageCollectionTracking.__repr__()``
 * Write ``nolcat.models.COUNTERData.__repr__()``
 
-Iteration 4: Formalize Documentation
+Iteration 3: Formalize Documentation
 ====================================
 * Update and flesh out README according to best practices
 * Run command line operations ``sphinx-apidoc -o docs/source/ nolcat`` and ``make html`` for Sphinx
 * Organize custom documentation pages on Sphinx index
 
-Iteration 5: Display Data Uploaded at End of Initialization
+Iteration 4: Display Data Uploaded at End of Initialization
 ===========================================================
 * Add display of all data in the database to "initialization/show-loaded-data.html"
 * Write ``tests.test_bp_initialization.test_data_load_complete()``
 
-Iteration 6: Correct 500 Error Function
+Iteration 5: Correct 500 Error Function
 =======================================
 * Get HTTP 500 error handler to work
 
-Iteration 7: Confirm Flask-SQLAlchemy Enum
+Iteration 6: Confirm Flask-SQLAlchemy Enum
 ==========================================
 * Confirm that ``nolcat.models.AnnualUsageCollectionTracking.collection_status`` properly creates and behaves as an enum
 

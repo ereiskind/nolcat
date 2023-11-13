@@ -70,7 +70,7 @@ def view_list_record(list, PK):
         #     engine=db.engine,
         # )
         #ToDo: df = df.astype({dict setting correct dtypes})
-        return render_template('view_lists/page.html')#ToDo:, form=form)
+        return "render_template('view_lists/view-record.html', form=form)"
     # elif form.validate_on_submit():
         #ToDo: Run one of the methods below based on the list type
             # Vendors.add_note()
@@ -100,7 +100,7 @@ def edit_list_record(list, PK):
     if request.method == 'GET':
         #ToDo: if request came from adding new record link/PK not in relation:
             #ToDo: Show page without prefilled values
-            return render_template('view_lists/page.html')#ToDo:, form=form)
+            return "render_template('view_lists/edit-record.html', form=form)"
         #ToDo: if `PK` is in the relation
             # df = query_database(
             #     query=#ToDo:Write query returning all fields in human-understandable data and notes (and statistics and resource sources if a vendor) for the record with primary key `PK` in the relation indicated by `list`,
