@@ -15,6 +15,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
+from nolcat.models import *
 from nolcat.statements import *
 from nolcat.ingest_usage import *
 
@@ -277,7 +278,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
 
 def test_add_SQL_insert_statements(engine, client, header_value):
     """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
-    SQL_file_path = #ToDo: pathlib.Path to a SQL file with data that can be added to the end of COUNTERData
+    SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
             'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rt')),
@@ -296,14 +297,35 @@ def test_add_SQL_insert_statements(engine, client, header_value):
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
-    check_database_update = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT #ToDo: Number of records being inserted;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+    check_relation_size = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
-    insert_statement_data = #ToDo: dataframe with the same data as is in the insert statements in the SQL file
+    check_database_update = query_database(
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+        engine=engine,
+    )
+    insert_statement_data = pd.DataFrame(
+        [
+            [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None],
+            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", None, "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", None, "0363-0277", None, None, "Journal", None, 2019, "Controlled", "Regular", "Library Journal", None, None, None, "Journal", None, "ProQuest:40955", None, "0363-0277", None, None, "Unique_Item_Investigations", "2020-07-01", 3, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4, None],
+            [2, "TR", "Library Journal", "Library Journals, LLC", None, "Gale", None, None, None, None, "Gale:1273", None, "0363-0277", None, None, "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3, None],
+            [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None],
+            [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
+    )
+    df = df.astype(COUNTERData.state_data_types())
+    df["publication_date"] = pd.to_datetime(df["publication_date"])
+    df["parent_publication_date"] = pd.to_datetime(df["parent_publication_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert_frame_equal(check_database_update, insert_statement_data)
+    assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
+    assert_frame_equal(check_database_update.reset_index().drop(columns='COUNTER_data_ID'), insert_statement_data)
