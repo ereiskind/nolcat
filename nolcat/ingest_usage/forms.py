@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import MultipleFileField
-from wtforms.fields import FileField
+from flask_wtf.file import FileField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 
