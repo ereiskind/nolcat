@@ -232,7 +232,7 @@ def add_SQL_insert_statements():
     elif form.validate_on_submit():
         #`form.SQL_file` is <input id="SQL_file" name="SQL_file" required type="file"> (type <class 'wtforms.fields.simple.FileField'>)
         temp_file_path = Path(__file__).parent / secure_filename(form.SQL_file.data)
-        form.SQL_file.data.save(temp_file_path)
+        form.SQL_file.save(temp_file_path)
         log.info(check_if_file_exists_statement(temp_file_path))
 
         insert_statements = []
@@ -242,6 +242,8 @@ def add_SQL_insert_statements():
                 if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
                     log.debug(f"Adding the following to the list of insert statements:\n{line}")
                     insert_statements.append(line)
+        temp_file_path.unlink()
+        log.info(check_if_file_exists_statement(temp_file_path))
         
         messages_to_flash = []
         for statement in insert_statements:
