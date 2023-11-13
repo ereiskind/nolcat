@@ -245,12 +245,14 @@ def add_SQL_insert_statements():
         
         messages_to_flash = []
         for statement in insert_statements:
-            try:
-                #ToDo: apply insert statement to database
-            except Exception as error:
-                message = f"Updating the database with the statement {statement} raised the error {error}."
-                log.error(message)
-                messages_to_flash.append(message)
+            update_result = update_database(
+                update_statement=statement,
+                engine=db.engine,
+            )
+            if not update_database_success_regex().fullmatch(update_result):
+                message = database_update_fail_statement(statement)
+                log.warning(message)
+                messages_to_flash.append(message)   
         
         flash(messages_to_flash)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
