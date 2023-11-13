@@ -161,7 +161,7 @@ def list_folder_contents_statement(file_path, alone=True):
         return " t" + main_value
 
 
-def check_if_folder_exists_statement(file_path, alone=True):
+def check_if_file_exists_statement(file_path, alone=True):
     """This statement indicates if there's a file at the given file path for the logging output.
 
    Information about the logging statement's relative location in a function can be added at the very beginning of the statement.
