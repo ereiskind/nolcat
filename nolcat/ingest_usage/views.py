@@ -9,6 +9,7 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 import pandas as pd
+from werkzeug.utils import secure_filename
 
 from . import bp
 from .forms import *
@@ -230,26 +231,17 @@ def add_SQL_insert_statements():
         return render_template('ingest_usage/add-insert-statements.html', form=form)
     elif form.validate_on_submit():
         #`form.SQL_file` is <input id="SQL_file" name="SQL_file" required type="file"> (type <class 'wtforms.fields.simple.FileField'>)
-        # form.SQL_file.stream is invalid
-        log.info(f"`form.SQL_file.process()` is {form.SQL_file.process()} (type {type(form.SQL_file.process())})")  #`form.SQL_file.process` is <bound method Field.process of <wtforms.fields.simple.FileField object at 0x7f05e5374490>> (type <class 'method'>)
-        log.info(f"`form.SQL_file.process_data()` is {form.SQL_file.process_data()} (type {type(form.SQL_file.process_data())})")  #`form.SQL_file.process_data` is <bound method Field.process_data of <wtforms.fields.simple.FileField object at 0x7f05e5374490>> (type <class 'method'>)
-        log.info(f"`form.SQL_file.process_formdata()` is {form.SQL_file.process_formdata()} (type {type(form.SQL_file.process_formdata())})")  #`form.SQL_file.process_formdata` is <bound method Field.process_formdata of <wtforms.fields.simple.FileField object at 0x7f05e5374490>>(type <class 'method'>)
-        # `form.SQL_file.raw_data` is ['insert_statements_test_file.sql'] (type <class 'list'>)
-        # `form.SQL_file.object_data` is None (type <class 'NoneType'>)
-        SQL_file_data = form.SQL_file.data
-        log.info(f"The SQL file data is (type {type(SQL_file_data)}):\n{SQL_file_data}")
+        temp_file_path = Path(__file__).parent / secure_filename(form.SQL_file.data)
+        form.SQL_file.data.save(temp_file_path)
+        log.info(check_if_file_exists_statement(temp_file_path))
+
         insert_statements = []
-        try:
-            for line in SQL_file_data:
+        with open(temp_file_path, 'rt') as file:
+            for line in file:
                 log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
                 if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
                     log.debug(f"Adding the following to the list of insert statements:\n{line}")
                     insert_statements.append(line)
-        except Exception as error:
-            message = f"Extracting the COUNTERData insert statements from the SQL file raised the error {error}."
-            log.error(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
         messages_to_flash = []
         for statement in insert_statements:
