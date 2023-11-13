@@ -393,7 +393,7 @@ class SUSHICallAndResponse:
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}_{self.parameters['begin_date'][:-3]}_{self.parameters['end_date'][:-3]}_{datetime.now().isoformat()}"
         else:  # `status` and `report` requests don't include dates
             file_name_stem=f"{statistics_source_ID.iloc[0][0]}_{self.call_path.replace('/', '-')}__{datetime.now().isoformat()}"
-        log.debug(file_IO_statement(S3_file_name, f"temporary file location {temp_file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+        log.debug(file_IO_statement(file_name_stem + ".txt", f"temporary file location {file_name_stem.resolve()}.txt", f"S3 bucket {BUCKET_NAME}"))
         logging_message = save_unconverted_data_via_upload(
             data=Response_text,
             file_name_stem=file_name_stem,
