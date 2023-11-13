@@ -229,18 +229,27 @@ def add_SQL_insert_statements():
     if request.method == 'GET':
         return render_template('ingest_usage/add-insert-statements.html', form=form)
     elif form.validate_on_submit():
+        log.info(f"`form.SQL_file` is {form.SQL_file} (type {type(form.SQL_file)})")  #`form.SQL_file` is <input id="SQL_file" name="SQL_file" required type="file"> (type <class 'wtforms.fields.simple.FileField'>)
+        log.info(f"`form.SQL_file.data` is {form.SQL_file.data} (type {type(form.SQL_file.data)})")  #`form.SQL_file.data` is insert_statements_test_file.sql (type <class 'str'>)
+        # form.SQL_file.stream is invalid
         try:
-            log.info(f"`form.SQL_file` is {form.SQL_file} (type {type(form.SQL_file)})")
+            log.info(f"`form.SQL_file.process` is {form.SQL_file.process} (type {type(form.SQL_file.process)})")
         except:
             pass
-
         try:
-            log.info(f"`form.SQL_file.data` is {form.SQL_file.data} (type {type(form.SQL_file.data)})")
+            log.info(f"`form.SQL_file.process_data` is {form.SQL_file.process_data} (type {type(form.SQL_file.process_data)})")
         except:
             pass
-
         try:
-            log.info(f"`form.SQL_file.stream` is {form.SQL_file.stream} (type {type(form.SQL_file.stream)})")
+            log.info(f"`form.SQL_file.process_formdata` is {form.SQL_file.process_formdata} (type {type(form.SQL_file.process_formdata)})")
+        except:
+            pass
+        try:
+            log.info(f"`form.SQL_file.raw_data` is {form.SQL_file.raw_data} (type {type(form.SQL_file.raw_data)})")
+        except:
+            pass
+        try:
+            log.info(f"`form.SQL_file.object_data` is {form.SQL_file.object_data} (type {type(form.SQL_file.object_data)})")
         except:
             pass
         SQL_file_data = form.SQL_file.data
