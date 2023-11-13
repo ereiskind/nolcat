@@ -18,7 +18,6 @@ This is a list of issues encountered over the course of development that require
 
 Planned Iterations
 ******************
-* Update classes in ERD
 
 Iteration 1: Complete Current Data I/O
 ======================================
