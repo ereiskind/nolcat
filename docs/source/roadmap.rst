@@ -23,7 +23,6 @@ Iteration 1: Complete Current Data I/O
 ======================================
 * Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
 * Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
