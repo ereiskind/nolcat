@@ -39,7 +39,10 @@ def upload_COUNTER_data():
         mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
         for file in file_objects:
             log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
-            mimetype_set.add(file.mimetype)
+            if file.mimetype == 'application/octet-stream' and file.filename.endswith('.sql'):  # SQL files can have the generic `octet-stream` mimetype (before IANA RFC6922, SQL did use that mimetype)
+                mimetype_set.add('application/sql')
+            else:
+                mimetype_set.add(file.mimetype)
         
         if len(mimetype_set) > 1:
             message = "The form submission failed because the upload included multiple file types. Please try again with only SQL files or Excel workbooks."
@@ -93,7 +96,7 @@ def upload_COUNTER_data():
             messages_to_flash.append(load_result)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        elif list(mimetype_set)[0] == 'application/octet-stream':
+        elif list(mimetype_set)[0] == 'application/sql':
             insert_statements = []
             for file in file_objects:
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
