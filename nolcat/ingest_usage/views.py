@@ -98,7 +98,7 @@ def upload_COUNTER_data():
             for file in file_objects:
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
                     log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
-                    if re.fullmatch(r"INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);\s*", line):  # The `\s*` after the semicolon is for the new line character(s)
+                    if re.fullmatch(br"INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);\s*", line):  # The `\s*` after the semicolon is for the new line character(s)
                         log.debug(f"Adding the following to the list of insert statements:\n{line}")
                         insert_statements.append(line)
             messages_to_flash = []
