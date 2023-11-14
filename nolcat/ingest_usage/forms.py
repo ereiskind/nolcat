@@ -34,5 +34,4 @@ class UsageFileForm(FlaskForm):
 
 class InsertStatementForm(FlaskForm):
     """Creates a form for uploading a SQL file with insert statements for the `COUNTERData` relation."""
-    SQL_file = FileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.", validators=[DataRequired()])
-    fiscalYears_CSV = FileField("Select the filled out \"initialize_fiscalYears.csv\" file here.", validators=[DataRequired()])
+    SQL_file = MultipleFileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.", validators=[DataRequired()])  # Multiple files aren't expected; the change was made primarily because the FileField constructor was returning a `wtforms.fields.simple.FileField` object from which data couldn't be obtained
