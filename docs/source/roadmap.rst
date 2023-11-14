@@ -53,7 +53,7 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
-* Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
 
 Basic Enhancement Iterations
 ****************************
