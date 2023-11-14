@@ -7,9 +7,9 @@ from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 
 
-class COUNTERReportsForm(FlaskForm):
-    """Creates a form for uploading Excel workbooks containing COUNTER reports."""
-    COUNTER_reports = MultipleFileField("Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
+class COUNTERDataForm(FlaskForm):
+    """Creates a form for uploading files containing COUNTER data."""
+    COUNTER_reports = MultipleFileField("Select the file(s) containing COUNTER data. If uploading multiple files where all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
 
 
 class SUSHIParametersForm(FlaskForm):
@@ -30,8 +30,3 @@ class UsageFileForm(FlaskForm):
     """Creates a form for selecting a given statistics source and fiscal year combination and uploading a file containing non-COUNTER usage data for that selection."""
     AUCT_option = SelectField("Select the statistics source and fiscal year for the usage data to be uploaded.", validators=[InputRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     usage_file = FileField("Select the file containing the usage statistics for the statistics source and fiscal year stated above.", validators=[DataRequired()])
-
-
-class InsertStatementForm(FlaskForm):
-    """Creates a form for uploading a SQL file with insert statements for the `COUNTERData` relation."""
-    SQL_file = MultipleFileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.", validators=[DataRequired()])  # Multiple files aren't expected; the change was made primarily because the FileField constructor was returning a `wtforms.fields.simple.FileField` object from which data couldn't be obtained
