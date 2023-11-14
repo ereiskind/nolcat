@@ -34,4 +34,4 @@ class UsageFileForm(FlaskForm):
 
 class InsertStatementForm(FlaskForm):
     """Creates a form for uploading a SQL file with insert statements for the `COUNTERData` relation."""
-    SQL_file = FileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.", validators=[DataRequired()])
+    SQL_file = FileField("Select the SQL file with the insert statements for the `COUNTERData` relation. All other data in the file, including data definition language and insert statements for other relations, will be ignored.")  # With validator, returning error `'This field is required.'` even when a file is submitted
