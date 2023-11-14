@@ -96,33 +96,21 @@ def upload_COUNTER_data():
         elif list(mimetype_set)[0] == 'application/octet-stream':
             insert_statements = []
             for file in file_objects:
-                log.info(f"`file.stream` is {file.stream} (type {type(file.stream)})")
-                for line in file.stream:
-                    log.info(f"`line` is {line} (type {type(line)})")
-
-            #temp_file_path = Path(__file__).parent / secure_filename(file_objects)
-            #form.COUNTER_data.save(temp_file_path)
-            #log.info(check_if_file_exists_statement(temp_file_path))
-
-            #with open(temp_file_path, 'rt') as file:
-            #    for line in file:
-            #        log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
-            #        if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
-            #            log.debug(f"Adding the following to the list of insert statements:\n{line}")
-            #            insert_statements.append(line)
-            #temp_file_path.unlink()
-            #log.info(check_if_file_exists_statement(temp_file_path))
-            
-            #messages_to_flash = []
-            #for statement in insert_statements:
-            #    update_result = update_database(
-            #        update_statement=statement,
-            #        engine=db.engine,
-            #    )
-            #    if not update_database_success_regex().fullmatch(update_result):
-            #        message = database_update_fail_statement(statement)
-            #        log.warning(message)
-            #        messages_to_flash.append(message)   
+                for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
+                    log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
+                    if re.fullmatch(r"INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);\s*", line):  # The `\s*` after the semicolon is for the new line character(s)
+                        log.debug(f"Adding the following to the list of insert statements:\n{line}")
+                        insert_statements.append(line)
+            messages_to_flash = []
+            for statement in insert_statements:
+                update_result = update_database(
+                    update_statement=statement,
+                    engine=db.engine,
+                )
+                if not update_database_success_regex().fullmatch(update_result):
+                    message = database_update_fail_statement(statement)
+                    log.warning(message)
+                    messages_to_flash.append(message)   
             
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
