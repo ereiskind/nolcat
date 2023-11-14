@@ -126,7 +126,6 @@ def upload_COUNTER_data():
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
             '''
         else:
-            # invalid for type
             message = f"The form submission failed because the upload was made up of {mimetype_set[0]} file(s). Please try again with only SQL files or Excel workbooks."
             log.error(message)
             flash(message)
