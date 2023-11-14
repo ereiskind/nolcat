@@ -101,9 +101,11 @@ def upload_COUNTER_data():
             for file in file_objects:
                 for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
                     log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
-                    if re.fullmatch(br"INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);\s*", line):  # The `\s*` after the semicolon is for the new line character(s)
-                        log.debug(f"Adding the following to the list of insert statements:\n{line}")
-                        insert_statements.append(line)
+                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
+                    if COUNTERData_insert_statement:
+                        COUNTERData_insert_statement = COUNTERData_insert_statement.groups()[0].decode('utf-8')
+                        log.debug(f"Adding the following to the list of insert statements:\n{COUNTERData_insert_statement}")
+                        insert_statements.append(COUNTERData_insert_statement)
             messages_to_flash = []
             for statement in insert_statements:
                 update_result = update_database(
