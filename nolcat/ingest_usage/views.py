@@ -36,7 +36,7 @@ def upload_COUNTER_data():
         return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
         file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
-        mimetype_set = set()  # Using a set for automatic deduplication
+        mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
         for file in file_objects:
             log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
             mimetype_set.add(file.mimetype)
@@ -46,7 +46,7 @@ def upload_COUNTER_data():
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        elif mimetype_set.pop() == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        elif list(mimetype_set)[0] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
                 df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
                 df['report_creation_date'] = pd.to_datetime(None)
@@ -93,7 +93,7 @@ def upload_COUNTER_data():
             messages_to_flash.append(load_result)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        elif mimetype_set.pop() == 'application/octet-stream':
+        elif list(mimetype_set)[0] == 'application/octet-stream':
             insert_statements = []
             for file in file_objects:
                 try:
@@ -136,7 +136,7 @@ def upload_COUNTER_data():
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         else:
-            message = f"The form submission failed because the upload was made up of {mimetype_set.pop()} file(s). Please try again with only SQL files or Excel workbooks."
+            message = f"The form submission failed because the upload was made up of {list(mimetype_set)[0]} file(s). Please try again with only SQL files or Excel workbooks."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
