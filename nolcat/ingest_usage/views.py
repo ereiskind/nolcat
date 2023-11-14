@@ -35,14 +35,19 @@ def upload_COUNTER_reports():
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"The file is {form.COUNTER_reports} (type {type(form.COUNTER_reports)}).")  #temp
-        log.info(f"`dir(form.COUNTER_reports)`:\n{dir(form.COUNTER_reports)}")  #temp
-        log.info(f"`vars(form.COUNTER_reports)`:\n{vars(form.COUNTER_reports)}")  #temp
-        log.info(f"`form.COUNTER_reports.__dict__`:\n{form.COUNTER_reports.__dict__}")  #temp
-        log.info(f"The file data is {form.COUNTER_reports.data} (type {type(form.COUNTER_reports.data)}).")  #temp
-        log.info(f"`dir(form.COUNTER_reports.data)`:\n{dir(form.COUNTER_reports.data)}")  #temp
-        log.info(f"`vars(form.COUNTER_reports.data)`:\n{vars(form.COUNTER_reports.data)}")  #temp
-        log.info(f"`form.COUNTER_reports.data.__dict__`:\n{form.COUNTER_reports.data.__dict__}")  #temp
+        log.info(f"`form.COUNTER_reports.data[0]` is {form.COUNTER_reports.data[0]} (type {type(form.COUNTER_reports.data[0])}).")  #temp
+        try:
+            log.info(f"`dir(form.COUNTER_reports.data[0])`:\n{dir(form.COUNTER_reports.data[0])}")  #temp
+        except:
+            pass
+        try:
+            log.info(f"`vars(form.COUNTER_reports.data[0])`:\n{vars(form.COUNTER_reports.data[0])}")  #temp
+        except:
+            pass
+        try:
+            log.info(f"`form.COUNTER_reports.data[0].__dict__`:\n{form.COUNTER_reports.data[0].__dict__}")  #temp
+        except:
+            pass
         try:
             df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
