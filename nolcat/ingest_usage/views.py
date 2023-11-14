@@ -35,6 +35,14 @@ def upload_COUNTER_reports():
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
+        log.info(f"The file is {form.COUNTER_reports} (type {type(form.COUNTER_reports)}).")  #temp
+        log.info(f"`dir(form.COUNTER_reports)`:\n{dir(form.COUNTER_reports)}")  #temp
+        log.info(f"`vars(form.COUNTER_reports)`:\n{vars(form.COUNTER_reports)}")  #temp
+        log.info(f"`form.COUNTER_reports.__dict__`:\n{form.COUNTER_reports.__dict__}")  #temp
+        log.info(f"The file data is {form.COUNTER_reports.data} (type {type(form.COUNTER_reports.data)}).")  #temp
+        log.info(f"`dir(form.COUNTER_reports.data)`:\n{dir(form.COUNTER_reports.data)}")  #temp
+        log.info(f"`vars(form.COUNTER_reports.data)`:\n{vars(form.COUNTER_reports.data)}")  #temp
+        log.info(f"`form.COUNTER_reports.data.__dict__`:\n{form.COUNTER_reports.data.__dict__}")  #temp
         try:
             df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
@@ -230,7 +238,14 @@ def add_SQL_insert_statements():
     if request.method == 'GET':
         return render_template('ingest_usage/add-insert-statements.html', form=form)
     elif form.validate_on_submit():
+        log.info(f"The SQL file is {form.SQL_file} (type {type(form.SQL_file)}).")
+        log.info(f"`dir(form.SQL_file)`:\n{dir(form.SQL_file)}")  #temp
+        log.info(f"`vars(form.SQL_file)`:\n{vars(form.SQL_file)}")  #temp
+        log.info(f"`form.SQL_file.__dict__`:\n{form.SQL_file.__dict__}")  #temp
         log.info(f"The SQL file data is {form.SQL_file.data} (type {type(form.SQL_file.data)}).")
+        log.info(f"`dir(form.SQL_file.data)`:\n{dir(form.SQL_file.data)}")  #temp
+        log.info(f"`vars(form.SQL_file.data)`:\n{vars(form.SQL_file.data)}")  #temp
+        log.info(f"`form.SQL_file.data.__dict__`:\n{form.SQL_file.data.__dict__}")  #temp
         temp_file_path = Path(__file__).parent / secure_filename(form.SQL_file.data)
         form.SQL_file.save(temp_file_path)
         log.info(check_if_file_exists_statement(temp_file_path))
