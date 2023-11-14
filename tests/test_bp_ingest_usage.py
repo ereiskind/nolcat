@@ -9,11 +9,13 @@ import os
 import re
 from bs4 import BeautifulSoup
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 # `conftest.py` fixtures are imported automatically
 from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
+from nolcat.models import *
 from nolcat.statements import *
 from nolcat.ingest_usage import *
 
@@ -37,7 +39,7 @@ def test_ingest_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relation, caplog):
+def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData_relation, caplog):
     """Tests adding data to the `COUNTERData` relation by uploading files with the `ingest_usage.COUNTERReportsForm` form."""
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
@@ -81,6 +83,64 @@ def test_upload_COUNTER_reports(engine, client, header_value, COUNTERData_relati
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
+
+
+def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
+    """Tests updating the `COUNTERData` relation with insert statements in an uploaded SQL file."""
+    SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
+    form_submissions = MultipartEncoder(
+        fields={
+            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rt')),
+        },
+        encoding='utf-8',
+    )
+    POST_response = client.post(
+        '/ingest_usage/upload-non-COUNTER',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_submissions,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title.string.encode('utf-8')
+        HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
+    check_relation_size = query_database(
+        query=f"SELECT COUNT(*) FROM COUNTERData;",
+        engine=engine,
+    )
+    check_database_update = query_database(
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+        engine=engine,
+    )
+    insert_statement_data = pd.DataFrame(
+        [
+            [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None],
+            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", None, "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", None, "0363-0277", None, None, "Journal", None, 2019, "Controlled", "Regular", "Library Journal", None, None, None, "Journal", None, "ProQuest:40955", None, "0363-0277", None, None, "Unique_Item_Investigations", "2020-07-01", 3, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4, None],
+            [2, "TR", "Library Journal", "Library Journals, LLC", None, "Gale", None, None, None, None, "Gale:1273", None, "0363-0277", None, None, "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3, None],
+            [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None],
+            [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
+        ],
+        columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
+    )
+    df = df.astype(COUNTERData.state_data_types())
+    df["publication_date"] = pd.to_datetime(df["publication_date"])
+    df["parent_publication_date"] = pd.to_datetime(df["parent_publication_date"])
+    df["usage_date"] = pd.to_datetime(df["usage_date"])
+    df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
+
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
+    assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
+    assert_frame_equal(check_database_update.reset_index().drop(columns='COUNTER_data_ID'), insert_statement_data)
+
+
+# Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
 
 
 def test_GET_request_for_harvest_SUSHI_statistics(engine, client, caplog):

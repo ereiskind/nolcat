@@ -21,9 +21,6 @@ Planned Iterations
 
 Iteration 1: Complete Current Data I/O
 ======================================
-* Create ability to ingest SQL file with proper insert statements [Search file, extract lines matching regex ``^INSERT INTO `COUNTERData` VALUES.*;$``, and load them into database]
-* Add instructions to "ingest_usage/upload-COUNTER-reports.html" page
-* Get drop-down in "view_usage/download-non-COUNTER-usage.html" to work
 * Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
 * Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
 * Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
@@ -55,7 +52,7 @@ Iteration 3: Minimum Viable Product with Tests and Test Database
 * Write ``tests.test_FiscalYears.test_calculate_ARL_19()``
 * Write ``tests.test_FiscalYears.test_calculate_ARL_20()``
 * Write ``tests.test_FiscalYears.test_collect_fiscal_year_usage_statistics()``
-* Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_reports()``
+* Figure out how to handle MultipleFileField input in ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()`` and ``tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()``
 
 Basic Enhancement Iterations
 ****************************

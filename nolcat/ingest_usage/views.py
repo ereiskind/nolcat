@@ -9,6 +9,7 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 import pandas as pd
+from werkzeug.utils import secure_filename
 
 from . import bp
 from .forms import *
@@ -27,59 +28,102 @@ def ingest_usage_homepage():
 
 
 @bp.route('/upload-COUNTER', methods=['GET', 'POST'])
-def upload_COUNTER_reports():
-    """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
-    log.info("Starting `upload_COUNTER_reports()`.")
-    form = COUNTERReportsForm()
+def upload_COUNTER_data():
+    """The route function for uploading COUNTER data into the `COUNTERData` relation."""
+    log.info("Starting `upload_COUNTER_data()`.")
+    form = COUNTERDataForm()
     if request.method == 'GET':
-        return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
+        return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
-        try:
-            df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-            df['report_creation_date'] = pd.to_datetime(None)
-            if data_not_in_df:
-                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
-        except Exception as error:
-            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+        file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
+        mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
+        for file in file_objects:
+            log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
+            if file.mimetype == 'application/octet-stream' and file.filename.endswith('.sql'):  # SQL files can have the generic `octet-stream` mimetype (before IANA RFC6922, SQL did use that mimetype)
+                mimetype_set.add('application/sql')
+            else:
+                mimetype_set.add(file.mimetype)
+        
+        if len(mimetype_set) > 1:
+            message = "The form submission failed because the upload included multiple file types. Please try again with only SQL files or Excel workbooks."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        log.debug(f"`COUNTERData` data:\n{df}\n")
-        
-        try:
-            df, message_to_flash = check_if_data_already_in_COUNTERData(df)
-        except Exception as error:
-            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
-            log.error(message)
-            flash(message)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        if df is None:
-            flash(message_to_flash)
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        if message_to_flash is None:
-            messages_to_flash = []
-        else:
-            messages_to_flash = [message_to_flash]
-        
-        try:
-            df.index += first_new_PK_value('COUNTERData')
-        except Exception as error:
-            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
-            log.warning(message)
-            messages_to_flash.append(message)
+        elif list(mimetype_set)[0] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            try:
+                df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
+                df['report_creation_date'] = pd.to_datetime(None)
+                if data_not_in_df:
+                    messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+            except Exception as error:
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                log.error(message)
+                flash(message)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            log.debug(f"`COUNTERData` data:\n{df}\n")
+            
+            try:
+                df, message_to_flash = check_if_data_already_in_COUNTERData(df)
+            except Exception as error:
+                message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+                log.error(message)
+                flash(message)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if df is None:
+                flash(message_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if message_to_flash is None:
+                messages_to_flash = []
+            else:
+                messages_to_flash = [message_to_flash]
+            
+            try:
+                df.index += first_new_PK_value('COUNTERData')
+            except Exception as error:
+                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
+            log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
+            load_result = load_data_into_database(
+                df=df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
+            )
+            messages_to_flash.append(load_result)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
-        log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
-        load_result = load_data_into_database(
-            df=df,
-            relation='COUNTERData',
-            engine=db.engine,
-            index_field_name='COUNTER_data_ID',
-        )
-        messages_to_flash.append(load_result)
-        flash(messages_to_flash)
-        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        elif list(mimetype_set)[0] == 'application/sql':
+            insert_statements = []
+            for file in file_objects:
+                for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
+                    log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
+                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO COUNTERData (\(.*\) )?VALUES.*\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
+                    if COUNTERData_insert_statement:
+                        COUNTERData_insert_statement = COUNTERData_insert_statement.groups()[0].decode('utf-8')
+                        log.debug(f"Adding the following to the list of insert statements:\n{COUNTERData_insert_statement}")
+                        insert_statements.append(COUNTERData_insert_statement)
+            messages_to_flash = []
+            for statement in insert_statements:
+                update_result = update_database(
+                    update_statement=statement,
+                    engine=db.engine,
+                )
+                if not update_database_success_regex().fullmatch(update_result):
+                    message = database_update_fail_statement(statement)
+                    log.warning(message)
+                    messages_to_flash.append(message)   
+            
+            flash(messages_to_flash)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        else:
+            message = f"The form submission failed because the upload was made up of {list(mimetype_set)[0]} file(s). Please try again with only SQL files or Excel workbooks."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)

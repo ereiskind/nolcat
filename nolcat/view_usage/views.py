@@ -34,9 +34,9 @@ def run_custom_SQL_query():
     form = CustomSQLQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`," + check_if_folder_exists_statement(file_path, False))
+        log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
-        log.info(check_if_folder_exists_statement(file_path))
+        log.info(check_if_file_exists_statement(file_path))
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
         df = query_database(
@@ -71,9 +71,9 @@ def use_predefined_SQL_query():
     form = QueryWizardForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`," + check_if_folder_exists_statement(file_path, False))
+        log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
-        log.info(check_if_folder_exists_statement(file_path))
+        log.info(check_if_file_exists_statement(file_path))
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
         log.info(f"Querying NoLCAT for a {form.query_options.data} standard report with the begin date {form.begin_date.data} and the end date {form.end_date.data}.")
@@ -198,7 +198,7 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"After writing the dataframe to download to a CSV," + check_if_folder_exists_statement(file_path, False))
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
@@ -219,7 +219,7 @@ def download_non_COUNTER_usage():
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
-                log.debug(check_if_folder_exists_statement(file))
+                log.debug(check_if_file_exists_statement(file))
 
         file_download_options = query_database(
             query=f"""

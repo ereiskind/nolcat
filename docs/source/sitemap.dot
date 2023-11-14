@@ -27,10 +27,10 @@ digraph nolcat_sitemap {
 
     /* *** `ingest_usage` Blueprint *** */
     ingest_usage_homepage [shape="house"]
-        ingest_usage_homepage -> upload_COUNTER_reports
+        ingest_usage_homepage -> upload_COUNTER_data
         ingest_usage_homepage -> harvest_SUSHI_for_custom_dates
         ingest_usage_homepage -> upload_non_COUNTER_reports
-    upload_COUNTER_reports
+    upload_COUNTER_data
     harvest_SUSHI_for_custom_dates
     upload_non_COUNTER_reports
 
