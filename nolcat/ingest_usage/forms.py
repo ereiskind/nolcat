@@ -9,7 +9,7 @@ from wtforms.validators import InputRequired
 
 class COUNTERDataForm(FlaskForm):
     """Creates a form for uploading files containing COUNTER data."""
-    COUNTER_reports = MultipleFileField("Select the file(s) containing COUNTER data. If uploading multiple files where all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
+    COUNTER_data = MultipleFileField("Select the file(s) containing COUNTER data. If uploading multiple files where all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
 
 
 class SUSHIParametersForm(FlaskForm):

@@ -35,7 +35,7 @@ def upload_COUNTER_data():
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
-        file_objects = form.COUNTER_reports.data  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
+        file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
         mimetype_set = set()  # Using a set for automatic deduplication
         for file in file_objects:
             log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
@@ -49,7 +49,7 @@ def upload_COUNTER_data():
         #ToDo: if mimetype_set[0] == Excel:
             '''
             try:
-                df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  
+                df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
                 df['report_creation_date'] = pd.to_datetime(None)
                 if data_not_in_df:
                     messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
@@ -97,8 +97,8 @@ def upload_COUNTER_data():
             '''
         #ToDo: if mimetype_set[0] == SQL:
             '''
-            temp_file_path = Path(__file__).parent / secure_filename(form.SQL_file.data)
-            form.SQL_file.save(temp_file_path)
+            temp_file_path = Path(__file__).parent / secure_filename(file_objects)
+            form.COUNTER_data.save(temp_file_path)
             log.info(check_if_file_exists_statement(temp_file_path))
 
             insert_statements = []
