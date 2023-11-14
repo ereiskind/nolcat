@@ -35,7 +35,6 @@ def upload_COUNTER_reports():
     if request.method == 'GET':
         return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`form.COUNTER_reports.data` is {form.COUNTER_reports.data} (type {type(form.COUNTER_reports.data)}) (mimetype {form.COUNTER_reports.data.mimetype})")
         try:
             df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
             df['report_creation_date'] = pd.to_datetime(None)
