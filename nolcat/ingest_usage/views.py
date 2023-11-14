@@ -46,8 +46,7 @@ def upload_COUNTER_data():
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        #ToDo: if mimetype_set[0] == Excel:
-            '''
+        elif mimetype_set.pop() == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
                 df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
                 df['report_creation_date'] = pd.to_datetime(None)
@@ -94,39 +93,50 @@ def upload_COUNTER_data():
             messages_to_flash.append(load_result)
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            '''
-        #ToDo: if mimetype_set[0] == SQL:
-            '''
-            temp_file_path = Path(__file__).parent / secure_filename(file_objects)
-            form.COUNTER_data.save(temp_file_path)
-            log.info(check_if_file_exists_statement(temp_file_path))
-
+        elif mimetype_set.pop() == 'application/octet-stream':
             insert_statements = []
-            with open(temp_file_path, 'rt') as file:
-                for line in file:
-                    log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
-                    if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
-                        log.debug(f"Adding the following to the list of insert statements:\n{line}")
-                        insert_statements.append(line)
-            temp_file_path.unlink()
-            log.info(check_if_file_exists_statement(temp_file_path))
+            for file in file_objects:
+                try:
+                    log.info(f"`dir(file)`\n{dir(file)}")
+                except:
+                    pass
+                try:
+                    log.info(f"`vars(file)`\n{vars(file)}")
+                except:
+                    pass
+                try:
+                    log.info(f"`file.__dict__`\n{file.__dict__}")
+                except:
+                    pass
+
+            #temp_file_path = Path(__file__).parent / secure_filename(file_objects)
+            #form.COUNTER_data.save(temp_file_path)
+            #log.info(check_if_file_exists_statement(temp_file_path))
+
+            #with open(temp_file_path, 'rt') as file:
+            #    for line in file:
+            #        log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
+            #        if re.fullmatch(r"^INSERT INTO `COUNTERData` (\(.*\) )?VALUES.*\);$", line):
+            #            log.debug(f"Adding the following to the list of insert statements:\n{line}")
+            #            insert_statements.append(line)
+            #temp_file_path.unlink()
+            #log.info(check_if_file_exists_statement(temp_file_path))
             
-            messages_to_flash = []
-            for statement in insert_statements:
-                update_result = update_database(
-                    update_statement=statement,
-                    engine=db.engine,
-                )
-                if not update_database_success_regex().fullmatch(update_result):
-                    message = database_update_fail_statement(statement)
-                    log.warning(message)
-                    messages_to_flash.append(message)   
+            #messages_to_flash = []
+            #for statement in insert_statements:
+            #    update_result = update_database(
+            #        update_statement=statement,
+            #        engine=db.engine,
+            #    )
+            #    if not update_database_success_regex().fullmatch(update_result):
+            #        message = database_update_fail_statement(statement)
+            #        log.warning(message)
+            #        messages_to_flash.append(message)   
             
             flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            '''
         else:
-            message = f"The form submission failed because the upload was made up of {mimetype_set[0]} file(s). Please try again with only SQL files or Excel workbooks."
+            message = f"The form submission failed because the upload was made up of {mimetype_set.pop()} file(s). Please try again with only SQL files or Excel workbooks."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
