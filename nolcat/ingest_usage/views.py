@@ -230,6 +230,7 @@ def add_SQL_insert_statements():
     if request.method == 'GET':
         return render_template('ingest_usage/add-insert-statements.html', form=form)
     elif form.validate_on_submit():
+        log.debug(f"The `fiscalYears` FileField data:\n{form.fiscalYears_CSV.data}\n")  #ALERT: temp--copied from route function where desired result `<FileStorage: 'initialize_fiscalYears.csv' ('text/csv')>` is the answer
         log.info(f"`form.SQL_file.data` is {form.SQL_file.data} (type {type(form.SQL_file.data)})")  #`form.SQL_file` is <input id="SQL_file" name="SQL_file" required type="file"> (type <class 'wtforms.fields.simple.FileField'>)
         temp_file_path = Path(__file__).parent / secure_filename(form.SQL_file.data)
         form.SQL_file.save(temp_file_path)
