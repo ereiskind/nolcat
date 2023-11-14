@@ -96,18 +96,9 @@ def upload_COUNTER_data():
         elif list(mimetype_set)[0] == 'application/octet-stream':
             insert_statements = []
             for file in file_objects:
-                try:
-                    log.info(f"`dir(file)`\n{dir(file)}")
-                except:
-                    pass
-                try:
-                    log.info(f"`vars(file)`\n{vars(file)}")
-                except:
-                    pass
-                try:
-                    log.info(f"`file.__dict__`\n{file.__dict__}")
-                except:
-                    pass
+                log.info(f"`file.stream` is {file.stream} (type {type(file.stream)})")
+                for line in file.stream:
+                    log.info(f"`line` is {line} (type {type(line)})")
 
             #temp_file_path = Path(__file__).parent / secure_filename(file_objects)
             #form.COUNTER_data.save(temp_file_path)
