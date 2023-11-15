@@ -87,7 +87,7 @@ def test_status_call(SUSHI_credentials_fixture, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "status", SUSHI_credentials).make_SUSHI_call()  # The argument "StatisticsSources.statistics_source_name" is a placeholder
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))
@@ -116,7 +116,7 @@ def test_reports_call(SUSHI_credentials_fixture, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))
@@ -167,7 +167,7 @@ def test_PR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/pr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))
@@ -185,7 +185,7 @@ def test_DR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/dr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))
@@ -203,7 +203,7 @@ def test_TR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/tr", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))
@@ -221,7 +221,7 @@ def test_IR_call_validity(SUSHI_credentials_fixture, list_of_reports, caplog):
     response = SUSHICallAndResponse("StatisticsSources.statistics_source_name", URL, "reports/ir", SUSHI_credentials).make_SUSHI_call()
     assert isinstance(response, tuple)
     if isinstance(response[0], str):
-        if pytest_skip_SUSHI_error_regex().match(response[0]):
+        if skip_test_due_to_SUSHI_error_regex().match(response[0]):
             pytest.skip(database_function_skip_statements(response[0], SUSHI_error=True))
         elif reports_with_no_usage_regex().fullmatch(response[0]):
             pytest.skip(database_function_skip_statements(response[0], no_data=True))

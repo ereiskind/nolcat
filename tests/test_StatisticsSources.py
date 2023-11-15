@@ -224,7 +224,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
             date(2020, 6, 1),  # The last month with usage in the test data
             date(2020, 8, 1),
         )
-    if pytest_skip_SUSHI_error_regex().match(SUSHI_data_response):
+    if skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
     elif reports_with_no_usage_regex().fullmatch(SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
         pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))  # Many statistics source providers don't have usage going back this far
