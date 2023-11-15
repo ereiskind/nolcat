@@ -189,6 +189,8 @@ def collect_sources_data():
             log.error("The `resourceSources` relation data file was read in with no data.")
             return render_template('initialization/empty-dataframes-warning.html', relation="`resourceSources`")
         
+        log.info(f"`resourceSources_dataframe`:\n{resourceSources_dataframe}")  #ALERT: temp
+        log.info(f"`resourceSources_dataframe` info:\n{return_string_of_dataframe_info(resourceSources_dataframe)}")  #ALERT: temp
         resourceSources_dataframe = resourceSources_dataframe.astype({k: v for (k, v) in ResourceSources.state_data_types().items() if v != "datetime64[ns]"})  # Datetimes are excluded because their data type was set with the `date_parser` argument
         log.debug(f"`resourceSources` dataframe dtypes before encoding conversions:\n{resourceSources_dataframe.dtypes}\n")
         resourceSources_dataframe['resource_source_name'] = resourceSources_dataframe['resource_source_name'].apply(lambda value: value if pd.isnull(value) == True else value.encode('utf-8').decode('unicode-escape'))
