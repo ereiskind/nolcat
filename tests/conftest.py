@@ -149,7 +149,18 @@ def vendorNotes_relation():
     Yields:
         dataframe: a relation of test data
     """
-    yield relations.vendorNotes_relation()
+    #TEST::
+    '''
+    nolcat.initialization.views::90 - `vendorNotes` dataframe:
+    vendor_notes_ID              note written_by date_written  vendor_ID
+    0                0  No longer exists   Jane Doe   2022-11-30          4
+    1                1  No longer exists   Jane Doe   2022-11-30          5
+    2                2  No longer exists   Jane Doe   2022-11-30          6
+    '''
+    #yield relations.vendorNotes_relation()
+    temp = relations.vendorNotes_relation()
+    log.critical(temp)
+    yield temp
 
 
 @pytest.fixture

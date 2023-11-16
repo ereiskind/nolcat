@@ -389,7 +389,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     )
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
-        '/initialization/',
+        '/initialization/',  #TEST:: `vendorNotes` is being ingested with `vendor_notes_ID` as separate field from index, so attempt to load --> Loading data into the vendorNotes relation raised the error duplicate name in index/columns: cannot insert vendor_notes_ID, already exists.
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
