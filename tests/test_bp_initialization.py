@@ -89,7 +89,7 @@ def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
     """
     yield vendorNotes_relation.to_csv(
         tmp_path / 'vendorNotes_relation.csv',
-        index_label="vendor_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
@@ -129,7 +129,7 @@ def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relati
     """
     yield statisticsSourceNotes_relation.to_csv(
         tmp_path / 'statisticsSourceNotes_relation.csv',
-        index_label="statistics_source_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
@@ -169,7 +169,7 @@ def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
     """
     yield resourceSourceNotes_relation.to_csv(
         tmp_path / 'resourceSourceNotes_relation.csv',
-        index_label="resource_source_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
