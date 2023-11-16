@@ -159,7 +159,8 @@ def vendorNotes_relation():
     '''
     #yield relations.vendorNotes_relation()
     temp = relations.vendorNotes_relation()
-    log.critical(temp)
+    log.critical(f"The `vendorNotes` dataframe:\n{temp}")
+    log.critical(f"The `vendorNotes` dataframe data:\n{return_string_of_dataframe_info(temp)}")
     yield temp
 
 
