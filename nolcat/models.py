@@ -1259,7 +1259,9 @@ class ResourceSources(db.Model):
         log.info(f"Starting `ResourceSources.add_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
             UPDATE resourceSources
-            SET access_stop_date='{access_stop_date}' AND source_in_use=false
+            SET
+                access_stop_date='{access_stop_date}',
+                source_in_use=false
             WHERE resource_source_ID={self.resource_source_ID};
         """
         update_result = update_database(
@@ -1283,7 +1285,9 @@ class ResourceSources(db.Model):
         log.info(f"Starting `ResourceSources.remove_access_stop_date()` for {self.resource_source_name}.")
         update_statement=f"""
             UPDATE resourceSources
-            SET access_stop_date IS NONE AND source_in_use=true
+            SET
+                access_stop_date IS NONE,
+                source_in_use=true
             WHERE resource_source_ID={self.resource_source_ID};
         """
         update_result = update_database(
@@ -1640,8 +1644,9 @@ class AnnualUsageCollectionTracking(db.Model):
         
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
-            SET usage_file_path='{file_name}'
-            AND collection_status='Collection complete'
+            SET
+                usage_file_path='{file_name}',
+                collection_status='Collection complete'
             WHERE AUCT_statistics_source={self.AUCT_statistics_source} AND AUCT_fiscal_year={self.AUCT_fiscal_year};
         """
         update_result = update_database(  # This updates the fields in the relation so the uploaded file can be downloaded later
