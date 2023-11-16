@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Failing 2023-09-13 ##########
+########## Passing 2023-11-16 ##########
 
 import pytest
 import logging
@@ -136,25 +136,6 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     database_update_check = database_update_check.iloc[0][0]
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
-    try:
-        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
-        #TEST: Test this is based on is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
-        r1 = records_loaded_by_method.reset_index()
-        r2 = harvest_R5_SUSHI_result.reset_index()
-        log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
-        s2 = harvest_R5_SUSHI_result.sort_values(
-            by=records_loaded_by_method.columns.to_list(),
-            ignore_index=True,
-        )
-        s1 = records_loaded_by_method.sort_values(
-            by=records_loaded_by_method.columns.to_list(),
-            ignore_index=True,
-        )
-        log.info(f"Differences after sorting by all fields:\n{s1.compare(s2[s1.columns.to_list()])}")
-    except:
-        log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
-        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result.index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")
-    
     assert database_update_check == "Collection complete"
     assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
@@ -169,7 +150,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 
     #Section: Make Function Call
     with client:
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)  #TEST:: `update_database()` in `upload_nonstandard_usage_file()` is returning message indicating success, but the update isn't actually happening
+        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)
 
     #Section: Check Results with Assert Statements
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
