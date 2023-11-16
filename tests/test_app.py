@@ -241,37 +241,6 @@ def test_restore_boolean_values_to_boolean_field():
     assert_series_equal(restore_boolean_values_to_boolean_field(tinyint_s), boolean_s)
 
 
-def test_S3_bucket_connection():
-    """Tests that the S3 bucket created by the instantiated client exists and can be accessed by NoLCAT."""
-    bucket_header = s3_client.head_bucket(Bucket=BUCKET_NAME)
-    assert bucket_header['ResponseMetadata']['HTTPStatusCode'] == 200
-
-
-@pytest.fixture
-def remove_file_from_S3(path_to_sample_file):
-    """Removes a file loaded into S3 with the `app.upload_file_to_S3_bucket()` method.
-
-    The file name includes the `test_` prefix utilized in the `tests.test_app.test_upload_file_to_S3_bucket()` test function.
-
-    Args:
-        path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
-
-    Yields:
-        None
-    """
-    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
-    file_name = f"test_{path_to_sample_file.name}"
-    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
-    yield None
-    try:
-        s3_client.delete_object(
-            Bucket=BUCKET_NAME,
-            Key=PATH_WITHIN_BUCKET + file_name
-        )
-    except botocore.exceptions as error:
-        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
-
-
 def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests uploading files to a S3 bucket."""
     logging_message = upload_file_to_S3_bucket(
