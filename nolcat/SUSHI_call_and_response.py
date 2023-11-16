@@ -573,14 +573,16 @@ class SUSHICallAndResponse:
             str: the content for stdout, including whatever amount of `API_response` is necessary
         """
         log.info("Starting `_stdout_API_response_based_on_size()`.")
-        log.debug(API_response)  #TEST:: temp
-        number_of_report_items = len(API_response['Report_Items'])
-        if number_of_report_items < 30:
-            return f"The SUSHI API response as a JSON:\n{API_response}"
-        else:
-            if number_of_report_items > 300:
-                for n in random.sample(range(number_of_report_items), k=30):
-                    return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
+        if API_response.get('Report_Items'):
+            number_of_report_items = len(API_response['Report_Items'])
+            if number_of_report_items < 30:
+                return f"The SUSHI API response as a JSON:\n{API_response}"
             else:
-                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
-                    return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
+                if number_of_report_items > 300:
+                    for n in random.sample(range(number_of_report_items), k=30):
+                        return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
+                else:
+                    for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
+                        return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
+        else:  # For `status` and `reports` calls
+            return f"The SUSHI API response as a JSON:\n{API_response}"
