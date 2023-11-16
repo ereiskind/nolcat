@@ -49,7 +49,7 @@ def AUCT_fixture_for_SUSHI(engine):
 
 
 @pytest.fixture  # Since this fixture is only called once, there's no functional difference between setting it at a function scope and setting it at a module scope
-def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
+def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, remove_file_from_S3, caplog):
     """A fixture with the result of all the SUSHI calls that will be made in `test_collect_annual_usage_statistics()`.
 
     The `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` method loads the data collected by the SUSHI call made to the designated statistics source for the dates indicated by the fiscal year into the database. To confirm that the data was loaded successfully, a copy of the data that was loaded is needed for comparison. This fixture yields the same dataframe that `AnnualUsageCollectionTracking.collect_annual_usage_statistics()` loads into the database by calling `StatisticsSources._harvest_R5_SUSHI()`, just like the method being tested. Because the method being tested calls the method featured in this fixture, both methods being called in the same test function outputs two nearly identical collections of logging statements in the log of a single test; placing `StatisticsSources._harvest_R5_SUSHI()` in a fixture separates its log from that of `AnnualUsageCollectionTracking.collect_annual_usage_statistics()`.
@@ -99,6 +99,12 @@ def harvest_R5_SUSHI_result(engine, AUCT_fixture_for_SUSHI, caplog):
     log.debug(return_value_from_query_statement((start_date, end_date, StatisticsSources_object), f"start date, end date, and `StatisticsSources` object"))
     yield_object = StatisticsSources_object._harvest_R5_SUSHI(start_date, end_date)
     log.debug(f"`harvest_R5_SUSHI_result()` fixture using StatisticsSources object {StatisticsSources_object}, start date {start_date}, and end date {end_date} returned the following:\n{yield_object}.")
+    if isinstance(yield_object[0], str):
+        file_name_match_object = upload_file_to_S3_bucket_success_regex().match(yield_object[0])
+        if file_name_match_object:
+            file_name = file_name_match_object.group(1)
+            remove_file_from_S3(file_name)
+        pytest.skip(f"Unable to create fixture because `_harvest_R5_SUSHI()` returned the errors {yield_object}.")
     yield yield_object
 
 

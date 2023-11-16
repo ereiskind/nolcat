@@ -214,7 +214,7 @@ def upload_file_to_S3_bucket_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.upload_file_to_S3_bucket()`
     """
-    return re.compile(r"Successfully loaded the file (.*) into the .* S3 bucket\.")
+    return re.compile(r"[Ss]uccessfully loaded the file (.*) into the .* S3 bucket\.?")
 
 
 def upload_nonstandard_usage_file_success_regex():
@@ -225,7 +225,7 @@ def upload_nonstandard_usage_file_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`
     """
-    return re.compile(r"Successfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `(.*)`\.", flags=re.DOTALL)
+    return re.compile(r"[Ss]uccessfully loaded the file (.*) into the .* S3 bucket and successfully preformed the update `(.*)`\.", flags=re.DOTALL)
 
 
 #Section: Database Interactions
@@ -349,7 +349,7 @@ def load_data_into_database_success_regex():
     Returns:
         re.Pattern: the regex object for the success return statement for `nolcat.app.load_data_into_database()`
     """
-    return re.compile(r"Successfully loaded (\d*) records into the (.*) relation\.?")
+    return re.compile(r"[Ss]uccessfully loaded (\d*) records into the (.*) relation\.?")
 
 
 def update_database_success_regex():
