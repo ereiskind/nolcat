@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2023-10-10 ##########
+########## Passing 2023-11-16 ##########
 
 import pytest
 import logging
@@ -389,7 +389,7 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     )
     header_value['Content-Type'] = CSV_files.content_type
     POST_response = client.post(
-        '/initialization/',  #TEST:: `vendorNotes` is being ingested with `vendor_notes_ID` as separate field from index, so attempt to load --> Loading data into the vendorNotes relation raised the error duplicate name in index/columns: cannot insert vendor_notes_ID, already exists.
+        '/initialization/',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
@@ -435,7 +435,6 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    log.error(f"`prepare_HTML_page_for_comparison(POST_response.data)` (type {type(prepare_HTML_page_for_comparison(POST_response.data))}):\n{prepare_HTML_page_for_comparison(POST_response.data)}")  #TEST:: temp
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
