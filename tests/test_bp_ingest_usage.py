@@ -51,7 +51,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
             # Could the classes in "test_UploadCOUNTERReports.py" be used?
             # Can a direct list of Werkzeug FileStorage object(s) be used?
         fields={
-            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb')),
+            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         },
         encoding='utf-8',
     )
@@ -91,7 +91,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
-            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rb')),
+            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rb'), 'application/sql'),
         },
         encoding='utf-8',
     )
@@ -284,12 +284,14 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     #Subsection: Create MultipartEncoder
     if path_to_sample_file.suffix == '.json':
         open_mode = 'rt'
+        mimetype = 'application/json'
     else:
         open_mode = 'rb'
+        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     form_submissions = MultipartEncoder(
         fields={
             'AUCT_option': create_AUCT_SelectField_options(df)[0],
-            'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode)),
+            'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
         },
         encoding='utf-8',
     )
