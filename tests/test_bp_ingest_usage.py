@@ -77,8 +77,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     if isinstance(COUNTERData_relation_data, str):
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
 
-    log.error(f"`POST_response.history`: {POST_response.history}")
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST::  IndexError: tuple index out of range
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
@@ -272,12 +271,12 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     if isinstance(fiscal_year, str):
         pytest.skip(f"Unable to run test because it relied on {fiscal_year[0].lower()}{fiscal_year[1:].replace(' raised', ', which raised')}")
     df = pd.DataFrame(
-        [
+        [[  # This creates a dataframe with a single row/record
             non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source,
             non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year,
             statistics_source_name,
             fiscal_year,
-        ],
+        ]],
         columns=['AUCT_statistics_source', 'AUCT_fiscal_year', 'statistics_source_name', 'fiscal_year'],
     )
 
