@@ -446,5 +446,7 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
     if number_of_records.iloc[0][0] == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
-    assert_frame_equal(df.reset_index(), non_duplicate_COUNTER_data.reset_index())
+    log.warning(f"`df.reset_index()`:\n{df.reset_index()}")
+    log.warning(f"`non_duplicate_COUNTER_data.reset_index()`:\n{non_duplicate_COUNTER_data.reset_index()}")
+    assert_frame_equal(df.reset_index(), non_duplicate_COUNTER_data.reset_index())  #TEST:: AssertionError: DataFrame are different -- [left]:  (7, 36) | [right]: (2, 36)
     assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"

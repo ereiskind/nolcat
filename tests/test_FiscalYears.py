@@ -117,7 +117,7 @@ def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, cap
     yield None
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record, caplog):
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_records_into_fiscalYears, FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
     """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 

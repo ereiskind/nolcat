@@ -132,7 +132,8 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     insert_statement_data["usage_date"] = pd.to_datetime(insert_statement_data["usage_date"])
     insert_statement_data["report_creation_date"] = pd.to_datetime(insert_statement_data["report_creation_date"])
 
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    log.warning(f"`POST_response.history`: {POST_response.history}")  #TEST:: temp
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST:: IndexError: tuple index out of range
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
@@ -287,9 +288,11 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     else:
         open_mode = 'rb'
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    AUCT_option_tuple_list = create_AUCT_SelectField_options(df)
+    log.warning(f"`AUCT_option_tuple_list` (type {type(AUCT_option_tuple_list)}):\n{AUCT_option_tuple_list} ")  #TEST:: temp
     form_submissions = MultipartEncoder(
         fields={
-            'AUCT_option': create_AUCT_SelectField_options(df)[0],
+            'AUCT_option': AUCT_option_tuple_list[0],  #TEST:: TypeError: sequence item 0: expected str instance, DataFrame found
             'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
         },
         encoding='utf-8',
