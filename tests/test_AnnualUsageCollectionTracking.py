@@ -112,7 +112,7 @@ def test_collect_annual_usage_statistics(engine, client, AUCT_fixture_for_SUSHI,
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
-    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
+    with client:
         logging_statement, flash_statements = AUCT_fixture_for_SUSHI.collect_annual_usage_statistics()
     log.debug(f"The `collect_annual_usage_statistics()` response is `{logging_statement}` and the logging statements are `{flash_statements}`.")
     method_response_match_object = load_data_into_database_success_regex().match(logging_statement)
@@ -189,8 +189,8 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     caplog.set_level(logging.INFO, logger='botocore')
 
     #Section: Make Function Call
-    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)
+    with client:
+        upload_result = non_COUNTER_AUCT_object_before_upload.upload_nonstandard_usage_file(path_to_sample_file)  #TEST:: `update_database()` in `upload_nonstandard_usage_file()` is returning message indicating success, but the update isn't actually happening
 
     #Section: Check Results with Assert Statements
     file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
@@ -198,11 +198,6 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     #Subsection: Check Function Return Value
     log.debug(f"`AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` return value is {upload_result} (type {type(upload_result)}).")
     upload_result = upload_nonstandard_usage_file_success_regex().fullmatch(upload_result)
-    try:
-        log.info(f"`upload_result.group(0)` is {upload_result.group(0)} (type {type(upload_result.group(0))})")  #temp
-        log.info(f"`upload_result.group(1)` is {upload_result.group(1)} (type {type(upload_result.group(1))})")  #temp
-    except AttributeError:
-        pass
     assert upload_result is not None
     assert upload_result.group(1) == file_name
 
@@ -234,7 +229,7 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
 def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
-    log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #temp
+    log.info(f"`non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")  #temp  #TEST:: See note in `non_COUNTER_AUCT_object_after_upload()` for source of problem
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))

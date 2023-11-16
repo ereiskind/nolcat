@@ -122,7 +122,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     #Section: Call Method
-    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
+    with client:
         method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
     if not load_data_into_database_success_regex().fullmatch(method_result):
         assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function

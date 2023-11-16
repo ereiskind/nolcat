@@ -77,7 +77,8 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     if isinstance(COUNTERData_relation_data, str):
         pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
 
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    log.error(f"`POST_response.history`: {POST_response.history}")
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST::  IndexError: tuple index out of range
     assert POST_response.status == "200 OK"
     assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
@@ -90,7 +91,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
-            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rt')),
+            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rb')),
         },
         encoding='utf-8',
     )

@@ -68,6 +68,8 @@ def test_404_page(client):
         HTML_markup = HTML_file.read().replace(b"\r", b"")
         HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
     assert nonexistent_page.status == "404 NOT FOUND"
+    log.error(f"`nonexistent_page.data`:\n{nonexistent_page.data}")  #TEST:: temp
+    log.error(f"`HTML_markup`:\n{HTML_markup}")  #TEST:: temp
     assert nonexistent_page.data == HTML_markup
 
 
@@ -85,7 +87,7 @@ def test_load_data_into_database(engine, vendors_relation):
     )
     regex_match_object = load_data_into_database_success_regex().fullmatch(result)
     assert regex_match_object is not None
-    assert regex_match_object.group(1) == 8
+    assert int(regex_match_object.group(1)) == 8
     assert regex_match_object.group(2) == "vendors"
 
 
@@ -429,7 +431,9 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
+    log.error(f"`bucket_contents` before list comprehension:\n{bucket_contents}")  #TEST:: temp
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
+    log.error(f"`bucket_contents` after list comprehension ('test_' prefix should be removed):\n{bucket_contents}")  #TEST:: temp
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:

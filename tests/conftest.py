@@ -78,7 +78,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
+    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules. Additionally, this fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104).
 
     Args:
         app (flask.Flask): a Flask object

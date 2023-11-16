@@ -526,7 +526,7 @@ def check_if_data_already_in_COUNTERData(df):  #ALERT: NOT WORKING -- NOT PERFOR
             matching_record_instances.append({
                 'statistics_source_ID': combo[0],
                 'report_type': combo[1],
-                'date': combo[2],
+                'usage_date': combo[2],
             })
             log.debug(f"The list of combinations with matches in the database now includes {matching_record_instances[-1]}.")
             total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
@@ -624,10 +624,16 @@ def save_unconverted_data_via_upload(data, file_name_stem):
 
     #Subsection: Save File
     if temp_file_name == 'temp.json':
-        with open(temp_file_path, 'wb') as file:
-            log.debug(f"About to write JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
-            json.dump(data, file)
-            log.debug(f"Data written as JSON to file object {file}.")
+        try:
+            with open(temp_file_path, 'wb') as file:
+                log.debug(f"About to write bytes JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                json.dump(data, file)
+            log.debug(f"Data written as bytes JSON to file object {file}.")
+        except Exception as TypeError:
+            with open(temp_file_path, 'wt') as file:
+                log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
+                file.write(data)
+                log.debug(f"Data written as text JSON to file object {file}.")
     else:
         try:
             with open(temp_file_path, 'wb') as file:
