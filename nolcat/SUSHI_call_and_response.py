@@ -399,11 +399,11 @@ class SUSHICallAndResponse:
             file_name_stem=file_name_stem,
         )
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
-            message = logging_message
-            log.debug(message)
-        else:
             message = f"NoLCAT HAS NOT SAVED THIS DATA IN ANY WAY: {logging_message[0].lower()}{logging_message[1:]}"
             log.critical(message)
+        else:
+            message = logging_message
+            log.debug(message)
         return message
 
 
