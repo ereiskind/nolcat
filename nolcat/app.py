@@ -632,7 +632,7 @@ def save_unconverted_data_via_upload(data, file_name_stem):
         except Exception as TypeError:
             with open(temp_file_path, 'wt') as file:
                 log.debug(f"About to write text JSON `data` (type {type(data)}) to file object {file}.")  #AboutTo
-                file.write(data)
+                file.write(json.dumps(data))
                 log.debug(f"Data written as text JSON to file object {file}.")
     else:
         try:

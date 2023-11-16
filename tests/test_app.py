@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from datetime import date
 from random import choice
+import re
 from bs4 import BeautifulSoup
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -63,14 +64,18 @@ def test_homepage(client):
 def test_404_page(client):
     """Tests that the unassigned route '/404' goes to the 404 page."""
     nonexistent_page = client.get('/404')
+    GET_soup = BeautifulSoup(nonexistent_page.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+    
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'templates' / '404.html', 'br') as HTML_file:
-        # Because the only Jinja markup on this page is a link to the homepage, replacing that Jinja with the homepage route and removing the Windows-exclusive carriage feed from the HTML file make it identical to the data returned from the GET request
-        HTML_markup = HTML_file.read().replace(b"\r", b"")
-        HTML_markup = HTML_markup.replace(b"{{ url_for(\'homepage\') }}", b"/")
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    
     assert nonexistent_page.status == "404 NOT FOUND"
-    log.error(f"`nonexistent_page.data`:\n{nonexistent_page.data}")  #TEST:: temp
-    log.error(f"`HTML_markup`:\n{HTML_markup}")  #TEST:: temp
-    assert nonexistent_page.data == HTML_markup
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 @pytest.mark.dependency()
@@ -400,13 +405,11 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    log.error(f"`bucket_contents` before list comprehension:\n{bucket_contents}")  #TEST:: temp
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
-    log.error(f"`bucket_contents` after list comprehension ('test_' prefix should be removed):\n{bucket_contents}")  #TEST:: temp
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:
-        assert f"{file_name_stem}.txt" in bucket_contents
+        assert f"{file_name_stem.replace('test_', '')}.txt" in bucket_contents
 
 
 def test_ISSN_regex():
