@@ -587,7 +587,7 @@ def update_database(update_statement, engine):
     try:
         engine.execute(update_statement)
         single_line_update_statement = update_statement.replace('\n', ' ')
-        message = f"Successfully preformed the update `{single_line_update_statement}`."
+        message = f"Successfully performed the update `{single_line_update_statement}`."
         log.info(message)
         return message
     except Exception as error:
