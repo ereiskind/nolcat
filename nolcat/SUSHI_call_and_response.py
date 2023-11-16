@@ -39,6 +39,7 @@ class SUSHICallAndResponse:
         _save_raw_Response_text: Saves the `text` attribute of a `requests.Response` object that couldn't be converted to native Python data types to a text file.
         _handle_SUSHI_exceptions: This method determines if SUSHI data with an error should be added to the database, and if so, how to update the `annualUsageCollectionTracking` relation.
         _evaluate_individual_SUSHI_exception: This method determines what to do upon the occurrence of an error depending on the type of error.
+        _stdout_API_response_based_on_size: A method for limiting the amount of text written to stdout when viewing SUSHI harvest results.
     """
     header_value = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
@@ -214,7 +215,6 @@ class SUSHICallAndResponse:
         
         #Section: Display to Stdout and Return `API_response`
         if custom_report_regex.search(self.call_path):
-            # For some custom reports, the complete `API_response` value can be so long that it keeps most of the pytest log from appearing in stdout; the following is meant to prevent that
             number_of_report_items = len(API_response['Report_Items'])
             log.info(f"The SUSHI API response header: {API_response['Report_Header']}")
             log.info(f"A SUSHI API report item: {API_response['Report_Items'][random.choice(range(number_of_report_items))]}")
@@ -559,3 +559,26 @@ class SUSHICallAndResponse:
             message = message + " Adjust the date range, splitting it up into two calls with date ranges contained within a calendar year if necessary, then try the call again."
         log.error(message)
         return (message, message)
+    
+
+    def _stdout_API_response_based_on_size(self, API_response):
+        """A method for limiting the amount of text written to stdout when viewing SUSHI harvest results.
+
+        For some custom reports, the complete `API_response` value can be so long that it keeps most of the pytest log from appearing in stdout; this limits the amount of data shown in stdout.
+
+        Args:
+            API_response (dict): the SUSHI harvest response in Python data types
+        
+        Returns:
+            str: the content for stdout, including whatever amount of `API_response` is necessary
+        """
+        number_of_report_items = len(API_response['Report_Items'])
+        if number_of_report_items < 30:
+            return f"The SUSHI API response as a JSON:\n{API_response}"
+        else:
+            if number_of_report_items > 300:
+                for n in random.sample(range(number_of_report_items), k=30):
+                    return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
+            else:
+                for n in random.sample(range(number_of_report_items), k=int(number_of_report_items/10)):
+                    return f"A sample of the SUSHI API response:\n{API_response['Report_Items'][n]}"
