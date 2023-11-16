@@ -572,6 +572,8 @@ class SUSHICallAndResponse:
         Returns:
             str: the content for stdout, including whatever amount of `API_response` is necessary
         """
+        log.info("Starting `_stdout_API_response_based_on_size()`.")
+        log.debug(API_response)  #TEST:: temp
         number_of_report_items = len(API_response['Report_Items'])
         if number_of_report_items < 30:
             return f"The SUSHI API response as a JSON:\n{API_response}"
