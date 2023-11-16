@@ -586,14 +586,12 @@ def update_database(update_statement, engine):
     log.info(f"Starting `update_database()` for the update statement {update_statement}.")
     try:
         engine.execute(update_statement)
-        log.debug(f"`update_statement` is {update_statement}")  #temp
         single_line_update_statement = update_statement.replace('\n', ' ')
-        log.debug(f"`single_line_update_statement` is {single_line_update_statement}")  #temp
-        message = f"Successfully preformed the update `{update_statement}`."
+        message = f"Successfully preformed the update `{single_line_update_statement}`."
         log.info(message)
         return message
     except Exception as error:
-        message = f"Running the update statement `{update_statement}` raised the error {error}."
+        message = f"Running the update statement `{single_line_update_statement}` raised the error {error}."
         log.error(message)
         return message
 
@@ -659,9 +657,9 @@ def save_unconverted_data_via_upload(data, file_name_stem):
         temp_file_path,
         file_name,
     )
-    log.info(f"Contents of `{Path(__file__).parent}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` before `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     temp_file_path.unlink()
-    log.info(f"Contents of `{Path(__file__).parent}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+    log.info(f"Contents of `{TOP_NOLCAT_DIRECTORY}` after `unlink()` at end of `save_unconverted_data_via_upload()`:\n{format_list_for_stdout(TOP_NOLCAT_DIRECTORY.iterdir())}")
     if isinstance(logging_message, str) and re.fullmatch(r'Running the function `.*\(\)` on .* \(type .*\) raised the error .*\.', logging_message):
         message = f"Uploading the file {file_name} to S3 failed because {logging_message[0].lower()}{logging_message[1:]}"
         log.critical(message)

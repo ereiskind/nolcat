@@ -405,11 +405,11 @@ def test_save_unconverted_data_via_upload(file_name_stem_and_data):
     bucket_contents = []
     for contents_dict in list_objects_response['Contents']:
         bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
+    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "test_") for file_name in bucket_contents]  # `test_` prefix retained to match file name from `file_name_stem_and_data()` fixture
     if isinstance(data, dict):
         assert f"{file_name_stem}.json" in bucket_contents
     else:
-        assert f"{file_name_stem.replace('test_', '')}.txt" in bucket_contents
+        assert f"{file_name_stem}.txt" in bucket_contents
 
 
 def test_ISSN_regex():
