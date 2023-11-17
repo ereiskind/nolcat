@@ -10,15 +10,28 @@
 <body>
     <h1>Database Initialization Wizard: Page 3</h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+        <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <h2>6. Create the `annualUsageCollectionTracking` Relation</h2>
     <ol>
-        <li>Download <a href="{{ url_for('initialization.download_file', filename='initialize_annualUsageCollectionTracking.csv') }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>  <!--ToDo: Confirm that the template file is being retrieved from the correct location-->
+        <li>Download <a href="{{ url_for('download_file', file_path=AUCT_file_path) }}">"initialize_annualUsageCollectionTracking.csv"</a>.</li>
         <li>Fill out the CSV from existing documentation:
+            <!--ToDo: Edit instructions to use full sentences-->
             <ul>
                 <li>For statistics source and year combinations which don't exist (meaning either the statistics source didn't exist that year or no resource sources which used that statistics source were provided that year), delete the corresponding row in the CSV</li>
                 <li>For statistics source and year combinations not requiring usage collection, set `usage_is_being_collected` to false and choose the appropriate `collection_status`</li>
                 <li>For statistics source and year combinations which had manually collected non-COUNTER compliant usage (including COUNTER R3 and earlier), set `usage_is_being_collected` and `manual_collection_required` to true, `is_COUNTER_compliant` to false, choose the appropriate `collection_status`, and if a file with the usage exists, put "true" in `usage_file_path`</li>
                 <li>For statistics source and year combinations with R5 SUSHI, set `usage_is_being_collected` and `is_COUNTER_compliant` to true and `collection_status` to "Collection not started"</li>
+                <li>Minor clarifications
+                    <ul>
+                        <li>If some but not all of a statistics source and year combination's usage is COUNTER complaint, `is_COUNTER_compliant` is true</li>
+                        <li>If not all of a statistics source and year combination's usage requires being collected manually, `manual_collection_required` is false</li>
+                    </ul>
+                </li>
                 <li>For statistics source and year combinations with manually collected COUNTER reports, set `usage_is_being_collected`, `manual_collection_required`, and `is_COUNTER_compliant` to true, choose the appropriate `collection_status`, then prepare the R4 reports:
                     <ol>
                         <li>Save the reports in an Excel workbook where each sheet name is the abbreviation of the name of the report in that sheet</li>
@@ -30,6 +43,7 @@
             </ul>
         </li>
         <li>Delete the columns with the `statisticsSources.statistics_source_name` and `fiscalYears.year` fields</li>
+        <li>Save the CSV, ensuring the encoding is UTF-8 and that any date fields appear as dates.</li>
     </ol>
 
     <!--ToDo: Add COUNTER tabular workbook consolidation and renaming instructions-->

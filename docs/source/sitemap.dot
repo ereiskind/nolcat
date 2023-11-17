@@ -10,7 +10,7 @@ digraph nolcat_sitemap {
         homepage -> manage_usage_collection_homepage
         homepage -> view_usage_homepage
         homepage -> Sphinx_homepage
-    
+
 
     /* *** `login` Blueprint *** */
     login_page
@@ -27,10 +27,10 @@ digraph nolcat_sitemap {
 
     /* *** `ingest_usage` Blueprint *** */
     ingest_usage_homepage [shape="house"]
-        ingest_usage_homepage -> upload_COUNTER_reports
+        ingest_usage_homepage -> upload_COUNTER_data
         ingest_usage_homepage -> harvest_SUSHI_for_custom_dates
         ingest_usage_homepage -> upload_non_COUNTER_reports
-    upload_COUNTER_reports
+    upload_COUNTER_data
     harvest_SUSHI_for_custom_dates
     upload_non_COUNTER_reports
 
@@ -68,8 +68,8 @@ digraph nolcat_sitemap {
     create_report_from_saved_queries // SQL statements that are either complete or only ask for one input for commonly asked questions
         create_report_from_saved_queries -> view_report
     view_report
-    
-    
+
+
     /* *** Sphinx *** */
     Sphinx_homepage [shape="house"]
         Sphinx_homepage -> Sphinx_other_pages

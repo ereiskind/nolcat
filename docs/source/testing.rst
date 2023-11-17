@@ -86,7 +86,7 @@ Create Tabular COUNTER Reports
 ------------------------------
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
-3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_reports.py".
+3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_data.py".
 4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
 
 Create `COUNTERData` Relation Fixture Data
@@ -110,6 +110,38 @@ Create ``ConvertJSONDictToDataframe`` Test Fixtures
 1. For each report to be used in testing the ``ConvertJSONDictToDataframe`` class, either open the corresponding OpenRefine project modified by "tests\\data\\create_JSON_base.json" or load the Excel workbook from "\\tests\\bin\\workbooks_to_transform_into_JSONs\\" into OpenRefine.
 2. Apply "tests\\data\\create_dataframe_from_JSON.jsonc" to each project, remembering there's a manual step added via comment in the file.
 3. Download each project in Excel, then use the ``df`` column for the data in the dataframe constructor in the appropriate fixture in "\\tests\\test_ConvertJSONDictToDataframe.py".
+
+Transaction Rollbacks
+=====================
+The preferred setup for testing database interactions involves performing all tests as transactions which are rolled back before the completion of the test suite; ideally, this configuration could also be used to accommodate the fact that certain test modules have preconditions involving data in some or all of the relations. To minimize the frequency of database resets during testing, the following order is recommended for running tests:
+
+1. Tests loading data into a limited number of relations, after which the database must be cleared of data
+
+  * ``test_app``
+
+2. Tests loading data into all relations but ``COUNTERData``
+
+  * ``test_bp_initialization``
+
+3. Tests needing data in all relations but ``COUNTERData`` -- *Does NOT load all test data into ``COUNTERData``*
+
+  * ``test_bp_ingest_usage``
+
+4. Tests needing all test data in all relations and/or capable of running with data in all relations
+
+  * ``test_AnnualUsageCollectionTracking``
+  * ``test_bp_annual_stats``
+  * ``test_bp_login``
+  * ``test_bp_view_lists``
+  * ``test_bp_view_usage``
+  * ``test_ConvertJSONDictToDataframe``
+  * ``test_FiscalYears``
+  * ``test_ResourceSources``
+  * ``test_statements``
+  * ``test_StatisticsSources``
+  * ``test_SUSHICallAndResponse``
+  * ``test_UploadCOUNTERReports``
+  * ``test_Vendors``
 
 SUSHI Variations
 ****************

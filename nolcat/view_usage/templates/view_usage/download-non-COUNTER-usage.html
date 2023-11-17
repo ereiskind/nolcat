@@ -12,8 +12,8 @@
     <form action="{{ url_for('view_usage.download_non_COUNTER_usage') }}" method="POST">
         {{ form.csrf_token }}
         <label>
-            {{ form.file_download.label}}
-            {{ form.file_download }}
+            {{ form.AUCT_of_file_download.label}}
+            {{ form.AUCT_of_file_download }}
         </label>
         <input type="submit" value="Submit">
     </form>
