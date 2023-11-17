@@ -258,6 +258,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
+    log.info(f"Comparison:\n{retrieved_data.compare(expected_output_data)}")  #TEST:: temp
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
