@@ -85,7 +85,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     
     fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
     yield_object = StatisticsSources(
-        statistics_source_ID = 3,
+        statistics_source_ID = 0,
         statistics_source_name = f"SUSHI code {fixture_retrieval_code}",
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
@@ -384,8 +384,6 @@ def test_add_note():
 @pytest.fixture
 def partially_duplicate_COUNTER_data():
     """COUNTER data, some of which is in the `COUNTERData_relation` dataframe.
-
-    The duplicate records are duplicates of data in `tests\bin\COUNTER_workbooks_for_tests\3_2020.xlsx`, meaning the data will be in the database after `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()` runs.
 
     Yields:
         dataframe: data formatted for loading into the `COUNTERData` relation

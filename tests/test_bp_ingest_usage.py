@@ -51,7 +51,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
             # Could the classes in "test_UploadCOUNTERReports.py" be used?
             # Can a direct list of Werkzeug FileStorage object(s) be used?
         fields={
-            'COUNTER_data': ('3_2020.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '3_2020.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),  # This file is loaded because tests in `tests.test_StatisticsSources` make use of the data it contains
+            'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         },
         encoding='utf-8',
     )
