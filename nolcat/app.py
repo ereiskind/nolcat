@@ -583,10 +583,10 @@ def update_database(update_statement, engine):
     Returns:
         str: a message indicating success or including the error raised by the attempt to update the data
     """
-    log.info(f"Starting `update_database()` for the update statement {update_statement}.")
+    single_line_update_statement = update_statement.replace('\n', ' ')
+    log.info(f"Starting `update_database()` for the update statement {single_line_update_statement}.")
     try:
         engine.execute(update_statement)
-        single_line_update_statement = update_statement.replace('\n', ' ')
         message = f"Successfully performed the update `{single_line_update_statement}`."
         log.info(message)
         return message
