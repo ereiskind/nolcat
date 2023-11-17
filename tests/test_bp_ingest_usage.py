@@ -94,6 +94,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         },
         encoding='utf-8',
     )
+    header_value['Content-Type'] = form_submissions.content_type
     POST_response = client.post(
         '/ingest_usage/upload-COUNTER',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
