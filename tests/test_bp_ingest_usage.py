@@ -114,7 +114,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     if isinstance(check_relation_size, str):
         pytest.skip(database_function_skip_statements(check_relation_size))
     check_database_update = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
         engine=engine,
     )
     if isinstance(check_database_update, str):
@@ -123,14 +123,14 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     check_database_update = check_database_update.drop(columns='COUNTER_data_ID')
     log.info(f"`check_database_update` after `drop()`:\n{check_database_update}\n{return_string_of_dataframe_info(check_database_update)}")  #TEST:: temp
     insert_statement_data = pd.DataFrame(
-        [
-            [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None],
-            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", None, "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", None, "0363-0277", None, None, "Journal", None, 2019, "Controlled", "Regular", "Library Journal", None, None, None, "Journal", None, "ProQuest:40955", None, "0363-0277", None, None, "Unique_Item_Investigations", "2020-07-01", 3, None],
-            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3, None],
-            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4, None],
-            [2, "TR", "Library Journal", "Library Journals, LLC", None, "Gale", None, None, None, None, "Gale:1273", None, "0363-0277", None, None, "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3, None],
-            [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None],
+        [  # These records are in reverse order from the SQL file because getting the last seven records requires a SQL query that places the most recently loaded (aka last) records at the top
             [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
+            [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None],
+            [2, "TR", "Library Journal", "Library Journals, LLC", None, "Gale", None, None, None, None, "Gale:1273", None, "0363-0277", None, None, "Journal", "Article", 1998, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Requests", "2020-07-01", 3, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 4, None],
+            [1, "TR", "The Yellow Wallpaper", "Open Road Media", None, "EBSCOhost", None, None, None, None, "EBSCOhost:KBID:8016659", None, None, None, None, "Book", "Book", 2016, "Controlled", "Regular", None, None, None, None, None, None, None, None, None, None, None, "Total_Item_Investigations", "2020-07-01", 3, None],
+            [0, "IR", "Where Function Meets Fabulous", "MSI Information Services", None, "ProQuest", "LJ", "2019-11-01", None, None, "ProQuest:2309469258", None, "0363-0277", None, None, "Journal", None, 2019, "Controlled", "Regular", "Library Journal", None, None, None, "Journal", None, "ProQuest:40955", None, "0363-0277", None, None, "Unique_Item_Investigations", "2020-07-01", 3, None],
+            [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None], 
         ],
         columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
     )
