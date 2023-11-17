@@ -406,9 +406,16 @@ def create_AUCT_SelectField_options(df):
     Returns:
         list: a list of tuples; see the docstring's detailed description for the contents of the list
     """
-    log.info(f"Starting `create_AUCT_SelectField_options()` for the {df} dataframe.")
+    log.info(f"Starting `create_AUCT_SelectField_options()` for the\n{df}\ndataframe.")
     df = df.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
+    #TEST:: temp start
+    log.info(f"`df`:\n{df}")
+    df['temp'] = df[['statistics_source_name', 'fiscal_year']]
+    log.info(f"`df` with temp field:\n{df}")
+    df = df.drop(columns=['temp'])
+    #TEST:: temp end
     df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
+    log.info(f"`df` with `field_display:\n{df}")  #TEST:: temp
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")
