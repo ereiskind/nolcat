@@ -105,7 +105,7 @@ def test_fetch_SUSHI_information_for_API(StatisticsSources_fixture):
     """Test collecting SUSHI credentials based on a `StatisticsSources.statistics_source_retrieval_code` value and returning a value suitable for use in a API call."""
     credentials = StatisticsSources_fixture.fetch_SUSHI_information()
     assert isinstance(credentials, dict)
-    assert re.fullmatch(r"https?://.*\.(\w{3}|\w{2}\.\w{2})(/.*)?/", credentials['URL'])
+    assert re.fullmatch(r"https?://.*\.(\w{3}|\w{2,3}\.\w{2})(/.*)?/", credentials['URL'])
 
 
 def test_fetch_SUSHI_information_for_display(StatisticsSources_fixture):
