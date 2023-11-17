@@ -102,7 +102,6 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.warning(f"`POST_response`:\n{POST_response}")  #TEST:: temp
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -135,10 +134,12 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     insert_statement_data["usage_date"] = pd.to_datetime(insert_statement_data["usage_date"])
     insert_statement_data["report_creation_date"] = pd.to_datetime(insert_statement_data["report_creation_date"])
 
-    assert POST_response.status == "200 OK"  #TEST:: AssertionError: assert '404 NOT FOUND' == '200 OK'
+    assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
+    log.info(f"`check_database_update.reset_index().drop(columns='COUNTER_data_ID')`:\n{check_database_update.reset_index().drop(columns='COUNTER_data_ID')}")  #TEST:: temp
+    log.info(f"`insert_statement_data`:\n{insert_statement_data}")  #TEST:: temp
     assert_frame_equal(check_database_update.reset_index().drop(columns='COUNTER_data_ID'), insert_statement_data)
 
 
