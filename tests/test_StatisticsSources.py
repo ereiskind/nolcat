@@ -198,7 +198,9 @@ def test_harvest_single_report(client, StatisticsSources_fixture, most_recent_mo
             begin_date,
             end_date,
         )
-    if isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
+    if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
+        pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
+    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
@@ -226,7 +228,7 @@ def test_harvest_single_report_with_partial_date_range(client, StatisticsSources
         )
     if isinstance(SUSHI_data_response, str) and skip_test_due_to_SUSHI_error_regex().match(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, SUSHI_error=True))
-    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):  #ToDo: Adjust to catch more SUSHI error (see note below)
+    elif isinstance(SUSHI_data_response, str) and reports_with_no_usage_regex().fullmatch(SUSHI_data_response):
         pytest.skip(database_function_skip_statements(SUSHI_data_response, no_data=True))  # Many statistics source providers don't have usage going back this far
     assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
     assert isinstance(flash_message_list, list)
