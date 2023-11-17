@@ -90,13 +90,13 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     SQL_file_path = TOP_NOLCAT_DIRECTORY / 'tests' / 'data' / 'insert_statements_test_file.sql'
     form_submissions = MultipartEncoder(
         fields={
-            'SQL_file': (SQL_file_path.name, open(SQL_file_path, 'rb'), 'application/sql'),
+            'COUNTER_data': (SQL_file_path.name, open(SQL_file_path, 'rb'), 'application/sql'),
         },
         encoding='utf-8',
     )
     POST_response = client.post(
-        '/ingest_usage/upload-non-COUNTER',
-        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        '/ingest_usage/upload-COUNTER',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_submissions,
