@@ -85,7 +85,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     
     fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
     yield_object = StatisticsSources(
-        statistics_source_ID = 0,
+        statistics_source_ID = 3,
         statistics_source_name = f"SUSHI code {fixture_retrieval_code}",
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
@@ -283,7 +283,7 @@ def test_harvest_R5_SUSHI_with_invalid_dates(StatisticsSources_fixture, most_rec
         calendar.monthrange(end_date.year, end_date.month)[1],
     )
     SUSHI_data_response, flash_message_list = StatisticsSources_fixture._harvest_R5_SUSHI(begin_date, end_date, choice(reports_offered_by_StatisticsSource_fixture))
-    assert isinstance(SUSHI_data_response, pd.core.frame.DataFrame)
+    assert isinstance(SUSHI_data_response, str)
     assert isinstance(flash_message_list, dict)
     assert SUSHI_data_response == attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
     assert len(flash_message_list) == 1
@@ -385,6 +385,8 @@ def test_add_note():
 def partially_duplicate_COUNTER_data():
     """COUNTER data, some of which is in the `COUNTERData_relation` dataframe.
 
+    The duplicate records are duplicates of data in `tests\bin\COUNTER_workbooks_for_tests\3_2020.xlsx`, meaning the data will be in the database after `tests.test_bp_ingest_usage.test_upload_COUNTER_data_via_Excel()` runs.
+
     Yields:
         dataframe: data formatted for loading into the `COUNTERData` relation
     """
@@ -446,7 +448,5 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
     if number_of_records.iloc[0][0] == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
-    log.warning(f"`df.reset_index()`:\n{df.reset_index()}")
-    log.warning(f"`non_duplicate_COUNTER_data.reset_index()`:\n{non_duplicate_COUNTER_data.reset_index()}")
     assert_frame_equal(df.reset_index(), non_duplicate_COUNTER_data.reset_index())  #TEST:: AssertionError: DataFrame are different -- [left]:  (7, 36) | [right]: (2, 36)
     assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"
