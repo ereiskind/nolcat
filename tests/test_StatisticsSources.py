@@ -85,7 +85,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
     
     fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
     statistics_source_name = query_database(
-        query=f"SELECT statistics_source_name from StatisticsSources WHERE statistics_source_retrieval_code={fixture_retrieval_code}",
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={fixture_retrieval_code}",
         engine=engine,
     )
     if isinstance(statistics_source_name, str):
