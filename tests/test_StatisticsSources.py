@@ -358,26 +358,10 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
-    try:
-        log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
-        #TEST: Test is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
-        r1 = records_loaded_by_method.reset_index()
-        r2 = harvest_R5_SUSHI_result[0].reset_index()
-        log.info(f"Differences after the indexes are reset:\n{r1.compare(r2[r1.columns.to_list()])}")
-        s2 = harvest_R5_SUSHI_result[0].sort_values(
-            by=records_loaded_by_method.columns.to_list(),
-            ignore_index=True,
-        )
-        s1 = records_loaded_by_method.sort_values(
-            by=records_loaded_by_method.columns.to_list(),
-            ignore_index=True,
-        )
-        log.info(f"Differences after sorting by all fields:\n{s1.compare(s2[s1.columns.to_list()])}")
-    except Exception as error:
-        log.info(f"Performing dataframe comparisons raised the error {error}.")
-        log.info(f"Dataframe from database has index {records_loaded_by_method.index} and fields\n{return_string_of_dataframe_info(records_loaded_by_method)}")
-        log.info(f"Dataframe from SUSHI has index {harvest_R5_SUSHI_result[0].index} and fields\n{return_string_of_dataframe_info(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
-    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
+    log.info(f"`records_loaded_by_method`:\n{records_loaded_by_method}")  #TEST:: temp
+    log.info(f"`harvest_R5_SUSHI_result`:\n{harvest_R5_SUSHI_result}")  #TEST:: temp
+    log.info(f"Differences after sorting by all fields:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[records_loaded_by_method.columns.to_list()])}")  #TEST:: temp
+    assert_frame_equal(records_loaded_by_method, harvest_R5_SUSHI_result, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order  #TEST::  AssertionError: DataFrame Expected type <class 'pandas.core.frame.DataFrame'>, found <class 'tuple'> instead
 
 
 #Section: Test `StatisticsSources.add_note()`
