@@ -132,8 +132,6 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     insert_statement_data["usage_date"] = pd.to_datetime(insert_statement_data["usage_date"])
     insert_statement_data["report_creation_date"] = pd.to_datetime(insert_statement_data["report_creation_date"])
 
-    log.warning(f"`POST_response.history`: {POST_response.history}")  #TEST:: temp
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect  #TEST:: IndexError: tuple index out of range
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
