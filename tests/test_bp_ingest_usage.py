@@ -112,7 +112,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         engine=engine,
     )
     check_database_update = query_database(
-        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID DESC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
+        query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
         engine=engine,
     )
     insert_statement_data = pd.DataFrame(
