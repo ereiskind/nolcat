@@ -408,9 +408,7 @@ def create_AUCT_SelectField_options(df):
     """
     log.info(f"Starting `create_AUCT_SelectField_options()` for the\n{df}\ndataframe.")
     df = df.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
-    log.info(f"`df`:\n{df}")  #TEST:: temp
-    df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`
-    log.info(f"`df` with `field_display:\n{df}")  #TEST:: temp
+    df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`  #TEST: Tests raise `TypeError: sequence item 0: expected str instance, DataFrame found` but no problems occur in web app or IDLE
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")

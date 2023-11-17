@@ -101,6 +101,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         headers=header_value,
         data=form_submissions,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.warning(f"`POST_response`:\n{POST_response}")  #TEST:: temp
 
     with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'ingest_usage' / 'templates' / 'ingest_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
@@ -132,7 +133,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     insert_statement_data["usage_date"] = pd.to_datetime(insert_statement_data["usage_date"])
     insert_statement_data["report_creation_date"] = pd.to_datetime(insert_statement_data["report_creation_date"])
 
-    assert POST_response.status == "200 OK"
+    assert POST_response.status == "200 OK"  #TEST:: AssertionError: assert '404 NOT FOUND' == '200 OK'
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
@@ -251,7 +252,7 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
+def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test  #TEST: Test fails due to problem in `nolcat.app.create_AUCT_SelectField_options()`
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
@@ -286,11 +287,9 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     else:
         open_mode = 'rb'
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    AUCT_option_tuple_list = create_AUCT_SelectField_options(df)
-    log.warning(f"`AUCT_option_tuple_list` (type {type(AUCT_option_tuple_list)}):\n{AUCT_option_tuple_list} ")  #TEST:: temp
     form_submissions = MultipartEncoder(
         fields={
-            'AUCT_option': AUCT_option_tuple_list[0],  #TEST:: TypeError: sequence item 0: expected str instance, DataFrame found
+            'AUCT_option': create_AUCT_SelectField_options(df)[0],  #TEST: TypeError: sequence item 0: expected str instance, DataFrame found
             'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
         },
         encoding='utf-8',

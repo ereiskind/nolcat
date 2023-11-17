@@ -334,7 +334,7 @@ def harvest_R5_SUSHI_result(StatisticsSources_fixture, month_before_month_like_m
 
 
 @pytest.mark.dependency(depends=['test_harvest_R5_SUSHI'])
-def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
+def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_before_month_like_most_recent_month_with_usage, harvest_R5_SUSHI_result, caplog):
     """Tests that the `StatisticsSources.collect_usage_statistics()` successfully loads COUNTER data into the `COUNTERData` relation.
     
     The `harvest_R5_SUSHI_result` fixture contains the same data that the method being tested should've loaded into the database, so it is used to see if the test passes. There isn't a good way to review the flash messages returned by the method from a testing perspective.
@@ -349,7 +349,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
-    records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1), caplog)
+    records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
     try:
         log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
         #TEST: Test is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
@@ -446,7 +446,5 @@ def test_check_if_data_already_in_COUNTERData(engine, partially_duplicate_COUNTE
     if number_of_records.iloc[0][0] == 0:
         pytest.skip(f"The prerequisite test data isn't in the database, so this test will fail if run.")
     df, message = check_if_data_already_in_COUNTERData(partially_duplicate_COUNTER_data)
-    log.info(f"`df.reset_index()`:\n{df.reset_index()}")  #TEST:: temp
-    log.info(f"`non_duplicate_COUNTER_data.reset_index()`:\n{non_duplicate_COUNTER_data.reset_index()}")  #TEST:: temp
-    assert_frame_equal(df.reset_index(), non_duplicate_COUNTER_data.reset_index())  #TEST:: AssertionError: DataFrame are different -- [left]:  (7, 36) | [right]: (2, 36)
+    assert_frame_equal(df.reset_index(drop=True), non_duplicate_COUNTER_data.reset_index(drop=True))  # The `drop` argument handles the fact that `check_if_data_already_in_COUNTERData()` returns the matched records with the index values from the dataframe used as the function argument
     assert message == f"Usage statistics for the report type, usage date, and statistics source combination(s) below, which were included in the upload, are already in the database; as a result, it wasn't uploaded to the database. If the data needs to be re-uploaded, please remove the existing data from the database first.\nTR  | 2020-01-01 | Duke UP (ID 3)\nTR  | 2020-03-01 | Duke UP (ID 3)\nBR2 | 2018-04-01 | Gale Cengage Learning (ID 2)\nBR2 | 2018-08-01 | Gale Cengage Learning (ID 2)"
