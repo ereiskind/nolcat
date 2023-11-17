@@ -86,7 +86,7 @@ Create Tabular COUNTER Reports
 ------------------------------
 1. Gather COUNTER reports from a small number of statistics sources and remove most of the resources, keeping as many edge cases as possible.
 2. Change all non-zero usage numbers in the COUNTER reports for confidentiality, making them safe to add to the public repo.
-3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_reports.py".
+3. Save all the COUNTER reports in the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, using the workbook and worksheet naming conventions required by "\\nolcat\\upload_COUNTER_data.py".
 4. Create the workbook "\\tests\\bin\\all_COUNTER_workbooks_for_tests_in_order.xlsx" and copy all usage into its single worksheet in the order in which the reports would be pulled from the "\\tests\\bin\\COUNTER_workbooks_for_tests\\" folder, aligning the data in the appropriate fields.
 
 Create `COUNTERData` Relation Fixture Data
@@ -123,11 +123,11 @@ The preferred setup for testing database interactions involves performing all te
 
   * ``test_bp_initialization``
 
-3. Tests needing data in all relations but ``COUNTERData`` and loading data into ``COUNTERData``
+3. Tests needing data in all relations but ``COUNTERData`` -- *Does NOT load all test data into ``COUNTERData``*
 
   * ``test_bp_ingest_usage``
 
-4. Tests needing data in all relations and/or capable of running with data in all relations
+4. Tests needing all test data in all relations and/or capable of running with data in all relations
 
   * ``test_AnnualUsageCollectionTracking``
   * ``test_bp_annual_stats``
@@ -137,6 +137,7 @@ The preferred setup for testing database interactions involves performing all te
   * ``test_ConvertJSONDictToDataframe``
   * ``test_FiscalYears``
   * ``test_ResourceSources``
+  * ``test_statements``
   * ``test_StatisticsSources``
   * ``test_SUSHICallAndResponse``
   * ``test_UploadCOUNTERReports``

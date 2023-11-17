@@ -5,12 +5,14 @@ from flask import redirect
 from flask import url_for
 from flask import request
 from flask import abort
+from flask import flash
 import pandas as pd
 
 from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -23,6 +25,7 @@ def collect_FY_and_vendor_data():
     
     The route function renders the page showing the templates for the `fiscalYears`, `vendors`, and `vendorNotes` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_sources_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
+    log.info("Starting `collect_FY_and_vendor_data()`.")
     form = FYAndVendorsDataForm()
     if request.method == 'GET':
         return render_template('initialization/index.html', form=form, CWD=str(Path(__file__).parent))
@@ -32,7 +35,7 @@ def collect_FY_and_vendor_data():
         # When Excel saves worksheets with non-Latin characters as CSVs, it defaults to UTF-16. The "save as" option "CSV UTF-8", which isn't available in all version of Excel, must be used.
         #ALERT: An error in the encoding statement can cause the logging statement directly above it to not appear in the output
         #Subsection: Upload `fiscalYears` CSV File
-        log.debug(f"`fiscalYears` data:\n{form.fiscalYears_CSV.data}\n")
+        log.debug(f"The `fiscalYears` FileField data:\n{form.fiscalYears_CSV.data}\n")
         fiscalYears_dataframe = pd.read_csv(
             form.fiscalYears_CSV.data,
             index_col='fiscal_year_ID',
@@ -52,7 +55,7 @@ def collect_FY_and_vendor_data():
         log.info(f"`fiscalYears` dataframe:\n{fiscalYears_dataframe}\n")
 
         #Subsection: Upload `vendors` CSV File
-        log.debug(f"`vendors` data:\n{form.vendors_CSV.data}\n")
+        log.debug(f"The `vendors` FileField data:\n{form.vendors_CSV.data}\n")
         vendors_dataframe = pd.read_csv(
             form.vendors_CSV.data,
             index_col='vendor_ID',
@@ -69,7 +72,7 @@ def collect_FY_and_vendor_data():
         log.info(f"`vendors` dataframe:\n{vendors_dataframe}\n")
 
         #Subsection: Upload `vendorNotes` CSV File
-        log.debug(f"`vendorNotes` data:\n{form.vendorNotes_CSV.data}\n")
+        log.debug(f"The `vendorNotes` FileField data:\n{form.vendorNotes_CSV.data}\n")
         vendorNotes_dataframe = pd.read_csv(
             form.vendorNotes_CSV.data,
             parse_dates=['date_written'],
@@ -88,36 +91,40 @@ def collect_FY_and_vendor_data():
 
 
         #Section: Load Data into Database
-        try:
-            fiscalYears_dataframe.to_sql(
-                'fiscalYears',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `fiscal_year_ID`
-            )
-            log.debug("Relation `fiscalYears` loaded into the database.")
-            vendors_dataframe.to_sql(
-                'vendors',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `vendor_ID`
-            )
-            log.debug("Relation `vendors` loaded into the database.")
-            vendorNotes_dataframe.to_sql(
-                'vendorNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `vendorNotes` loaded into the database.")
-            log.info("All relations loaded into the database.")
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")
+        data_load_errors = []
+        fiscalYears_load_result = load_data_into_database(
+            df=fiscalYears_dataframe,
+            relation='fiscalYears',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(fiscalYears_load_result):
+            data_load_errors.append(fiscalYears_load_result)
+        vendors_load_result = load_data_into_database(
+            df=vendors_dataframe,
+            relation='vendors',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(vendors_load_result):
+            data_load_errors.append(vendors_load_result)
+        vendorNotes_dataframe.index += first_new_PK_value('vendorNotes')
+        vendorNotes_dataframe.index.name = 'vendor_notes_ID'
+        vendorNotes_load_result = load_data_into_database(
+            df=vendorNotes_dataframe,
+            relation='vendorNotes',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(vendorNotes_load_result):
+            data_load_errors.append(vendorNotes_load_result)
+        if data_load_errors:
+            flash(data_load_errors)
+            return redirect(url_for('initialization.collect_FY_and_vendor_data'))
         
         return redirect(url_for('initialization.collect_sources_data'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -127,13 +134,14 @@ def collect_sources_data():
 
     The route function renders the page showing the templates for the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations as well as the form for submitting the completed templates. When the CSVs containing the data for those relations are submitted, the function saves the data by loading it into the database, then redirects to the `collect_AUCT_and_historical_COUNTER_data()` route function. The creation of the initial relation CSVs is split into two route functions/pages to split up the instructions and to comply with the limit on the number of files that can be uploaded at once found in most browsers.
     """
+    log.info("Starting `collect_sources_data()`.")
     form = SourcesDataForm()
     if request.method == 'GET':
         return render_template('initialization/initial-data-upload-2.html', form=form, CWD=str(Path(__file__).parent))
     elif form.validate_on_submit():
         #Section: Ingest Data from Uploaded CSVs
         #Subsection: Upload `statisticsSources` CSV File
-        log.debug(f"`statisticsSources` data:\n{form.statisticsSources_CSV.data}\n")
+        log.debug(f"The `statisticsSources` FileField data:\n{form.statisticsSources_CSV.data}\n")
         statisticsSources_dataframe = pd.read_csv(
             form.statisticsSources_CSV.data,
             index_col='statistics_source_ID',
@@ -150,7 +158,7 @@ def collect_sources_data():
         log.info(f"`statisticsSources` dataframe:\n{statisticsSources_dataframe}\n")
 
         #Subsection: Upload `statisticsSourceNotes` CSV File
-        log.debug(f"`statisticsSourceNotes` data:\n{form.statisticsSourceNotes_CSV.data}\n")
+        log.debug(f"The `statisticsSourceNotes` FileField data:\n{form.statisticsSourceNotes_CSV.data}\n")
         statisticsSourceNotes_dataframe = pd.read_csv(
             form.statisticsSourceNotes_CSV.data,
             encoding='utf-8',
@@ -168,11 +176,11 @@ def collect_sources_data():
         log.info(f"`statisticsSourceNotes` dataframe:\n{statisticsSourceNotes_dataframe}\n")
 
         #Subsection: Upload `resourceSources` CSV File
-        log.debug(f"`resourceSources` data:\n{form.resourceSources_CSV.data}\n")
+        log.debug(f"The `resourceSources` FileField data:\n{form.resourceSources_CSV.data}\n")
         resourceSources_dataframe = pd.read_csv(
             form.resourceSources_CSV.data,
             index_col='resource_source_ID',
-            parse_dates=['use_stop_date'],
+            parse_dates=['access_stop_date'],
             date_parser=date_parser,
             encoding='utf-8',
             encoding_errors='backslashreplace',
@@ -187,7 +195,7 @@ def collect_sources_data():
         log.info(f"`resourceSources` dataframe:\n{resourceSources_dataframe}\n")
 
         #Subsection: Upload `resourceSourceNotes` CSV File
-        log.debug(f"`resourceSourceNotes` data:\n{form.resourceSourceNotes_CSV.data}\n")
+        log.debug(f"The `resourceSourceNotes` FileField data:\n{form.resourceSourceNotes_CSV.data}\n")
         resourceSourceNotes_dataframe = pd.read_csv(
             form.resourceSourceNotes_CSV.data,
             parse_dates=['date_written'],
@@ -205,7 +213,7 @@ def collect_sources_data():
         log.info(f"`resourceSourceNotes` dataframe:\n{resourceSourceNotes_dataframe}\n")
 
         #Subsection: Upload `statisticsResourceSources` CSV File
-        log.debug(f"`statisticsResourceSources` data:\n{form.statisticsResourceSources_CSV.data}\n")
+        log.debug(f"The `statisticsResourceSources` FileField data:\n{form.statisticsResourceSources_CSV.data}\n")
         statisticsResourceSources_dataframe = pd.read_csv(
             form.statisticsResourceSources_CSV.data,
             index_col=['SRS_statistics_source', 'SRS_resource_source'],
@@ -221,50 +229,56 @@ def collect_sources_data():
 
 
         #Section: Load Data into Database
-        try:
-            statisticsSources_dataframe.to_sql(
-                'statisticsSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `statistics_source_ID`
-            )
-            log.debug("Relation `statisticsSources` loaded into the database.")
-            statisticsSourceNotes_dataframe.to_sql(
-                'statisticsSourceNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `statisticsSourceNotes` loaded into the database.")
-            resourceSources_dataframe.to_sql(
-                'resourceSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe index and primary key field both named `resource_source_ID`
-            )
-            log.debug("Relation `resourceSources` loaded into the database.")
-            resourceSourceNotes_dataframe.to_sql(
-                'resourceSourceNotes',
-                con=db.engine,
-                if_exists='append',
-                index=False,
-            )
-            log.debug("Relation `resourceSourceNotes` loaded into the database.")
-            statisticsResourceSources_dataframe.to_sql(
-                'statisticsResourceSources',
-                con=db.engine,
-                if_exists='append',
-                # Dataframe multiindex fields and composite primary key fields both named `SRS_statistics_source` and `SRS_resource_source`
-            )
-            log.debug("Relation `statisticsResourceSources` loaded into the database.")
-            log.info("All relations loaded into the database")
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")
+        data_load_errors = []
+        statisticsSources_load_result = load_data_into_database(
+            df=statisticsSources_dataframe,
+            relation='statisticsSources',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(statisticsSources_load_result):
+            data_load_errors.append(statisticsSources_load_result)
+        statisticsSourceNotes_dataframe.index += first_new_PK_value('statisticsSourceNotes')
+        statisticsSourceNotes_dataframe.index.name = 'statistics_source_notes_ID'
+        statisticsSourceNotes_load_result = load_data_into_database(
+            df=statisticsSourceNotes_dataframe,
+            relation='statisticsSourceNotes',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(statisticsSourceNotes_load_result):
+            data_load_errors.append(statisticsSourceNotes_load_result)
+        resourceSources_load_result = load_data_into_database(
+            df=resourceSources_dataframe,
+            relation='resourceSources',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(resourceSources_load_result):
+            data_load_errors.append(resourceSources_load_result)
+        resourceSourceNotes_dataframe.index += first_new_PK_value('resourceSourceNotes')
+        resourceSourceNotes_dataframe.index.name = 'resource_source_notes_ID'
+        resourceSourceNotes_load_result = load_data_into_database(
+            df= resourceSourceNotes_dataframe,
+            relation='resourceSourceNotes',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(resourceSourceNotes_load_result):
+            data_load_errors.append(resourceSourceNotes_load_result)
+        statisticsResourceSources_load_result = load_data_into_database(
+            df=statisticsResourceSources_dataframe,
+            relation='statisticsResourceSources',
+            engine=db.engine,
+        )
+        if not load_data_into_database_success_regex().fullmatch(statisticsResourceSources_load_result):
+            data_load_errors.append(statisticsResourceSources_load_result)
+        if data_load_errors:
+            flash(data_load_errors)
+            return redirect(url_for('initialization.collect_sources_data'))
         
         return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -274,17 +288,21 @@ def collect_AUCT_and_historical_COUNTER_data():
 
     Upon redirect, this route function renders the page for downloading the template for the `annualUsageCollectionTracking` relation and the form to upload that filled-out template and any tabular R4 and R5 COUNTER reports. When the `annualUsageCollectionTracking` relation and COUNTER reports are submitted, the function saves the `annualUsageCollectionTracking` relation data by loading it into the database, then processes the COUNTER reports by transforming them into a dataframe with `UploadCOUNTERReports.create_dataframe()` and loading the resulting dataframe into the database.
     """
+    log.info("Starting `collect_AUCT_and_historical_COUNTER_data()`.")
     form = AUCTAndCOUNTERForm()
     
     #Section: Before Page Renders
     if request.method == 'GET':  # `POST` goes to HTTP status code 302 because of `redirect`, subsequent 200 is a GET
         #Subsection: Get Cartesian Product of `fiscalYears` and `statisticsSources` Primary Keys via Database Query
-        df = pd.read_sql(
-            sql="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
-            con=db.engine,
-            index_col=["statistics_source_ID", "fiscal_year_ID"],
+        df = query_database(
+            query="SELECT statisticsSources.statistics_source_ID, fiscalYears.fiscal_year_ID, statisticsSources.statistics_source_name, fiscalYears.fiscal_year FROM statisticsSources JOIN fiscalYears;",
+            engine=db.engine,
+            index=["statistics_source_ID", "fiscal_year_ID"],
         )
-        log.debug(f"AUCT Cartesian product dataframe:\n{df}")
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('initialization.collect_FY_and_vendor_data'))
+        log.debug(return_dataframe_from_query_statement("the AUCT Cartesian product dataframe", df))
 
         #Subsection: Create `annualUsageConnectionTracking` Relation Template File
         df = df.rename_axis(index={
@@ -295,7 +313,7 @@ def collect_AUCT_and_historical_COUNTER_data():
             "statistics_source_name": "Statistics Source",
             "fiscal_year": "Fiscal Year",
         })
-        log.debug(f"AUCT dataframe with fields renamed:\n{df}")
+        log.debug(f"`annualUsageCollectionTracking` dataframe with fields renamed:\n{df}")
 
         df['usage_is_being_collected'] = None
         df['manual_collection_required'] = None
@@ -304,7 +322,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         df['collection_status'] = None
         df['usage_file_path'] = None
         df['notes'] = None
-        log.info(f"AUCT template dataframe:\n{df}")
+        log.info(f"`annualUsageCollectionTracking` template dataframe:\n{df}")
 
         template_save_location = Path(__file__).parent / 'initialize_annualUsageCollectionTracking.csv'
         try:
@@ -314,18 +332,27 @@ def collect_AUCT_and_historical_COUNTER_data():
                 encoding='utf-8',
                 errors='backslashreplace',  # For encoding errors
             )
-            log.debug(f"The AUCT template CSV was created successfully: {template_save_location.is_file()}")
+            log.debug(f"Successfully created `annualUsageCollectionTracking` relation template CSV at {template_save_location}.")
         except Exception as error:
-            log.error(f"The AUCT template CSV wasn't created because of the error {error}.")
+            log.error(f"Creating the `annualUsageCollectionTracking` relation template CSV raised the error {error}.")
             if infinite_loop_error in locals():  # This is triggered the second time this code block is reached
-                log.error("Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again.")
-                #ToDo: Truncate the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations
-                # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+                message = "Multiple attempts to create the AUCT template CSV have failed. Please try uploading the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations again."
+                log.error(message)
+                for relation in ['statisticsSources', 'statisticsSourceNotes', 'resourceSources', 'resourceSourceNotes', 'statisticsResourceSources']:
+                    update_result = update_database(
+                        update_statement=f"Truncate {relation};",
+                        engine=db.engine,
+                    )
+                    if not update_database_success_regex().fullmatch(update_result):
+                        message = f"Multiple problems of unclear origin have occurred in the process of attempting to initialize the database. Please truncate all relations via the SQL command line and restart the initialization wizard."
+                        log.critical(message)
+                        flash(message)
+                        return redirect(url_for('initialization.collect_FY_and_vendor_data'))
+                flash(message)
                 return redirect(url_for('initialization.collect_sources_data'))
             infinite_loop_error = True
             return render_template('initialization/initial-data-upload-3.html', form=form)  # This will restart the route function
         
-        #ToDo: Confirm AUCT template CSV downloads successfully
         return render_template('initialization/initial-data-upload-3.html', form=form, AUCT_file_path=str(template_save_location))
 
     #Section: After Form Submission
@@ -333,7 +360,7 @@ def collect_AUCT_and_historical_COUNTER_data():
         if 'template_save_location' in locals():  # Submitting the form calls the function again, so the initialized variable isn't saved
             template_save_location.unlink(missing_ok=True)
         #Subsection: Ingest `annualUsageCollectionTracking` Data
-        log.debug(f"`annualUsageCollectionTracking` data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
+        log.debug(f"The `annualUsageCollectionTracking` FileField data:\n{form.annualUsageCollectionTracking_CSV.data}\n")
         AUCT_dataframe = pd.read_csv(
             form.annualUsageCollectionTracking_CSV.data,
             index_col=['AUCT_statistics_source', 'AUCT_fiscal_year'],
@@ -351,41 +378,76 @@ def collect_AUCT_and_historical_COUNTER_data():
         log.info(f"`annualUsageCollectionTracking` dataframe:\n{AUCT_dataframe}\n")
 
         #Subsection: Ingest COUNTER Reports
-        #ToDo: Uncomment this subsection during Planned Iteration 2
-        # COUNTER_reports_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-        # log.debug(COUNTER_reports_df)
-        #ToDo: Does there need to be a warning here about if the above method returns no data?
-        # COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
-        # COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
-        # log.info(COUNTER_reports_df.head())
-        # log.debug(COUNTER_reports_df)
+        messages_to_flash = []
+        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
+        try:
+            COUNTER_reports_df, data_not_in_df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
+            COUNTER_reports_df['report_creation_date'] = pd.to_datetime(None)
+            if data_not_in_df:
+                messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+        except Exception as error:
+            message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+            log.error(message)
+            flash(message)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        log.debug(f"`COUNTERData` data:\n{COUNTER_reports_df}\n")
+
+        try:
+            COUNTER_reports_df, message_to_flash = check_if_data_already_in_COUNTERData(COUNTER_reports_df)
+        except Exception as error:
+            message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        if COUNTER_reports_df is None:
+            flash(message_to_flash)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        if message_to_flash:
+            messages_to_flash.append(message_to_flash)
+        
+        try:
+            COUNTER_reports_df.index += first_new_PK_value('COUNTERData')
+        except Exception as error:
+            message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
+            log.warning(message)
+            messages_to_flash.append(message)
+            flash(messages_to_flash)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df.head()}\n...\n{COUNTER_reports_df.tail()}\n")
+        log.debug(f"Data to load into `COUNTERData` dataframe:\n{COUNTER_reports_df}\n")
+        '''
 
         #Subsection: Load Data into Database
-        try:
-            AUCT_dataframe.to_sql(
-                'annualUsageCollectionTracking',
-                con=db.engine,
-                if_exists='append',
-                index_label=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-            )
-            log.debug("Relation `annualUsageCollectionTracking` loaded into the database.")
+        annualUsageCollectionTracking_load_result = load_data_into_database(
+            df=AUCT_dataframe,
+            relation='annualUsageCollectionTracking',
+            engine=db.engine,
+            index_field_name=['AUCT_statistics_source', 'AUCT_fiscal_year'],
+        )
+        if not load_data_into_database_success_regex().fullmatch(annualUsageCollectionTracking_load_result):
+            messages_to_flash.append(annualUsageCollectionTracking_load_result)
+            flash(messages_to_flash)
+            return redirect(url_for('initialization.collect_AUCT_and_historical_COUNTER_data'))
+        ''' #ToDo: Uncomment this subsection during Planned Iteration 2
+        COUNTERData_load_result = load_data_into_database(
+            df=COUNTER_reports_df,
+            relation='COUNTERData',
+            engine=db.engine,
+            index_field_name='COUNTER_data_ID',
+        )
+        if not load_data_into_database_success_regex().fullmatch(COUNTERData_load_result):
+            #ToDo: Additional note about needing to upload all workbooks through `ingest_usage` blueprint
+            messages_to_flash.append(COUNTERData_load_result)
+        '''
 
-            # COUNTER_reports_df.to_sql(
-            #     'COUNTERData',
-            #     con=db.engine,
-            #     if_exists='append',
-            #     index_label='COUNTER_data_ID',
-            # )
-            # log.debug("Relation `COUNTERData` loaded into the database.")
-            log.info("All relations loaded into the database.")
-        except Exception as error:
-            log.error(f"The `to_sql` methods raised the error {error}.")
-
+        flash(messages_to_flash)
         # return redirect(url_for('initialization.upload_historical_non_COUNTER_usage'))  #ToDo: Replace below during Planned Iteration 3
         return redirect(url_for('initialization.data_load_complete'))
 
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -396,21 +458,74 @@ def upload_historical_non_COUNTER_usage():
     
     The route function renders the page showing <what the page shows>. When the <describe form> is submitted, the function saves the data by <how the data is processed and saved>, then redirects to the `<route function name>` route function.
     """
+    log.info("Starting `upload_historical_non_COUNTER_usage()`.")
     '''
     form = FormClass()
     if request.method == 'GET':
-        #ToDo: `SELECT AUCT_Statistics_Source, AUCT_Fiscal_Year FROM annualUsageCollectionTracking WHERE Usage_File_Path='true';` to get all non-COUNTER stats source/date combos
-        #ToDo: Create an iterable to pass all the records returned by the above to a form
-        #ToDo: For each item in the above iterable, use `form` to provide the opportunity for a file upload
+        #Alert: Below directly from `ingest_usage`
+        non_COUNTER_files_needed = query_database(
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
+                    annualUsageCollectionTracking.usage_file_path IS NULL AND
+                    (
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
+                    );
+            """,
+            engine=db.engine,
+        )
+        if isinstance(non_COUNTER_files_needed, str):
+            flash(f"Unable to load requested page because it relied on {non_COUNTER_files_needed[0].lower()}{non_COUNTER_files_needed[1:].replace(' raised', ', which raised')}")
+            return redirect(url_for('homepage'))
+        #ToDo: Create a FileField for each of the items in the list returned by `create_AUCT_SelectField_options(non_COUNTER_files_needed)`
         return render_template('initialization/initial-data-upload-4.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: For each file uploaded in the form
-            #ToDo: Save the file in a TBD location in the container using the AUCT_Statistics_Source and AUCT_Fiscal_Year values for the file name
-            #ToDo: `UPDATE annualUsageCollectionTracking SET Usage_File_Path='<file path of the file saved above>' WHERE AUCT_Statistics_Source=<the composite PK value> AND AUCT_Fiscal_Year=<the composite PK value>`
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
+        #ToDo: Create list of error messages--one list, multiple lists, dict where the values are the different lists?
+        #ToDo: For each FileField in the form
+            df = query_database(
+                query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={form.name_of_field_which_captured_the_AUCT_statistics_source.data} AND AUCT_fiscal_year={form.name_of_field_which_captured_the_AUCT_fiscal_year.data};",
+                engine=db.engine,
+            )
+            if isinstance(df, str):
+                message = database_query_fail_statement(df, "upload the usage file for statisticsSources.statistics_source_ID {form.name_of_field_which_captured_the_AUCT_statistics_source.data} and fiscalYears.fiscal_year_ID {form.name_of_field_which_captured_the_AUCT_fiscal_year.data}")
+                log.error(message)
+                #ToDo: Add `message` to error message list in some form
+                continue
+            AUCT_object = AnnualUsageCollectionTracking(
+                AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+                AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
+                usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+                manual_collection_required=df.at[0,'manual_collection_required'],
+                collection_via_email=df.at[0,'collection_via_email'],
+                is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+                collection_status=df.at[0,'collection_status'],
+                usage_file_path=df.at[0,'usage_file_path'],
+                notes=df.at[0,'notes'],
+            )
+            response = AUCT_object.upload_nonstandard_usage_file(form.name_of_field_which_captured_the_file_data.data)
+            if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
+                #ToDo: Do any other actions need to be taken?
+                log.error(response)
+                #ToDo: Add `message` to error message list in some form
+                continue
+            message = f"message using `AUCT_object` to indicate that the file was uploaded successfully"
+            log.debug(message)
         return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
     '''
     pass

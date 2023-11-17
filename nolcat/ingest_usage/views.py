@@ -1,7 +1,6 @@
 import logging
 from datetime import date
 import calendar
-from itertools import product
 from ast import literal_eval
 from flask import render_template
 from flask import request
@@ -10,11 +9,13 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 import pandas as pd
+from werkzeug.utils import secure_filename
 
 from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 from ..upload_COUNTER_reports import UploadCOUNTERReports
 
 log = logging.getLogger(__name__)
@@ -27,94 +28,106 @@ def ingest_usage_homepage():
 
 
 @bp.route('/upload-COUNTER', methods=['GET', 'POST'])
-def upload_COUNTER_reports():
-    """The route function for uploading tabular COUNTER reports into the `COUNTERData` relation."""
-    form = COUNTERReportsForm()
+def upload_COUNTER_data():
+    """The route function for uploading COUNTER data into the `COUNTERData` relation."""
+    log.info("Starting `upload_COUNTER_data()`.")
+    form = COUNTERDataForm()
     if request.method == 'GET':
-        return render_template('ingest_usage/upload-COUNTER-reports.html', form=form)
+        return render_template('ingest_usage/upload-COUNTER-data.html', form=form)
     elif form.validate_on_submit():
-        try:
+        file_objects = form.COUNTER_data.data  # `form.COUNTER_data.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects, the mimetypes of which need to be determined
+        mimetype_set = set()  # Using a set for automatic deduplication; when referencing contents, list constructor is used to change set into a list, making it compatible with index operators
+        for file in file_objects:
+            log.debug(f"Uploading the file {file} (type {type(file)}; mimetype {file.mimetype}).")
+            if file.mimetype == 'application/octet-stream' and file.filename.endswith('.sql'):  # SQL files can have the generic `octet-stream` mimetype (before IANA RFC6922, SQL did use that mimetype)
+                mimetype_set.add('application/sql')
+            else:
+                mimetype_set.add(file.mimetype)
+        
+        if len(mimetype_set) > 1:
+            message = "The form submission failed because the upload included multiple file types. Please try again with only SQL files or Excel workbooks."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        elif list(mimetype_set)[0] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
-                try:
-                    df = UploadCOUNTERReports(form.COUNTER_reports.data).create_dataframe()  # `form.COUNTER_reports.data` is a list of <class 'werkzeug.datastructures.FileStorage'> objects
-                    df['report_creation_date'] = pd.to_datetime(None)
-                except Exception as error:
-                    message = f"Trying to consolidate the uploaded COUNTER data into a single dataframe returned the error {error}."
-                    log.error(message)
-                    flash(message)
-                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-                
-                log.debug("Starting the duplication check against what's already in the database.")  # Individual attribute lists are deduplicated with `list(set())` construction because `pandas.Series.unique()` method returns numpy arrays or experimental pandas arrays depending on the origin series' dtype
-                statistics_sources_in_dataframe = df['statistics_source_ID'].tolist()
-                log.debug(f"`df['statistics_source_ID']` as a list: {statistics_sources_in_dataframe}")
-                statistics_sources_in_dataframe = list(set(statistics_sources_in_dataframe))
-                log.debug(f"`df['statistics_source_ID']` as a deduped list: {statistics_sources_in_dataframe}")
-
-                report_types_in_dataframe = df['report_type'].tolist()
-                log.debug(f"`df['report_type']` as a list: {report_types_in_dataframe}")
-                report_types_in_dataframe = list(set(report_types_in_dataframe))
-                log.debug(f"`df['report_type']` as a deduped list: {report_types_in_dataframe}")
-
-                dates_in_dataframe = df['usage_date'].tolist()
-                log.debug(f"`df['usage_date']` as a list: {dates_in_dataframe}")
-                dates_in_dataframe = list(set(dates_in_dataframe))
-                log.debug(f"`df['usage_date']` as a deduped list: {dates_in_dataframe}")
-
-                combinations_to_check = tuple(product(statistics_sources_in_dataframe, report_types_in_dataframe, dates_in_dataframe))
-                log.info(f"Checking the database for the existence of records with the following statistics source ID, report, and date combinations: {combinations_to_check}")
-                total_number_of_matching_records = 0
-                matching_record_instances = []
-                for combo in combinations_to_check:
-                    number_of_matching_records = pd.read_sql(
-                        sql=f"SELECT COUNT(*) FROM COUNTERData WHERE statistics_source_ID={combo[0]} AND report_type='{combo[1]}' AND usage_date='{combo[2].strftime('%Y-%m-%d')}';",
-                        con=db.engine,
-                    )
-                    number_of_matching_records = number_of_matching_records.iloc[0][0]
-                    log.debug(f"The {combo} combination matched {number_of_matching_records} records in the database.")
-                    if number_of_matching_records > 0:
-                        matching_record_instances.append({
-                            'statistics_source_ID': combo[0],
-                            'report_type': combo[1],
-                            'date': combo[2],
-                        })
-                        log.debug(f"The combination {matching_record_instances[-1]} was added to `matching_record_instances`.")
-                        total_number_of_matching_records = total_number_of_matching_records + number_of_matching_records
-                if total_number_of_matching_records > 0:
-                    for instance in matching_record_instances:
-                        statistics_source_name = pd.read_sql(
-                            sql=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={instance['statistics_source_ID']};",
-                            con=db.engine,
-                        )
-                        instance['statistics_source_name'] = statistics_source_name.iloc[0][0]
-                    message = f"Usage statistics for the statistics source, report, and date combination(s) below, which were included in the upload, are already in the database. Please try the upload again without that data. If the data needs to be re-uploaded, please remove the existing data from the database first.\n{matching_record_instances}"
-                    log.error(message)
-                    flash(message)
-                    return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+                df, data_not_in_df = UploadCOUNTERReports(file_objects).create_dataframe()  
+                df['report_creation_date'] = pd.to_datetime(None)
+                if data_not_in_df:
+                    messages_to_flash.append(f"The following worksheets and workbooks weren't included in the loaded data:\n{format_list_for_stdout(data_not_in_df)}")
+            except Exception as error:
+                message = unable_to_convert_SUSHI_data_to_dataframe_statement(error)
+                log.error(message)
+                flash(message)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            log.debug(f"`COUNTERData` data:\n{df}\n")
+            
+            try:
+                df, message_to_flash = check_if_data_already_in_COUNTERData(df)
             except Exception as error:
                 message = f"The uploaded data wasn't added to the database because the check for possible duplication raised {error}."
                 log.error(message)
                 flash(message)
                 return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if df is None:
+                flash(message_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            if message_to_flash is None:
+                messages_to_flash = []
+            else:
+                messages_to_flash = [message_to_flash]
             
-            log.debug("About to load dataframe into database.")
-            df.index += first_new_PK_value('COUNTERData')
-            df.to_sql(
-                'COUNTERData',
-                con=db.engine,
-                if_exists='append',
-                index_label='COUNTER_data_ID',
+            try:
+                df.index += first_new_PK_value('COUNTERData')
+            except Exception as error:
+                message = unable_to_get_updated_primary_key_values_statement("COUNTERData", error)
+                log.warning(message)
+                messages_to_flash.append(message)
+                flash(messages_to_flash)
+                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            log.info(f"Sample of data to load into `COUNTERData` dataframe:\n{df.head()}\n...\n{df.tail()}\n")
+            log.debug(f"Data to load into `COUNTERData` dataframe:\n{df}\n")
+            load_result = load_data_into_database(
+                df=df,
+                relation='COUNTERData',
+                engine=db.engine,
+                index_field_name='COUNTER_data_ID',
             )
-            message = "Successfully loaded the data from the tabular COUNTER reports into the `COUNTERData` relation."
-            log.info(message)
-            flash(message)
+            messages_to_flash.append(load_result)
+            flash(messages_to_flash)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"Loading the data from the tabular COUNTER reports into the `COUNTERData` relation failed due to the error {error}."
+        elif list(mimetype_set)[0] == 'application/sql':
+            insert_statements = []
+            for file in file_objects:
+                for line in file.stream:  # `file.stream` is a <class 'tempfile.SpooledTemporaryFile'> object and can be treated like a file object created with `open()`
+                    log.debug(f"The line in the SQL file data is (type {type(line)}):\n{line}")
+                    COUNTERData_insert_statement = re.fullmatch(br"(INSERT INTO COUNTERData (\(.*\) )?VALUES.*\);)\s*", line)  # The `\s*` after the semicolon is for the new line character(s)
+                    if COUNTERData_insert_statement:
+                        COUNTERData_insert_statement = COUNTERData_insert_statement.groups()[0].decode('utf-8')
+                        log.debug(f"Adding the following to the list of insert statements:\n{COUNTERData_insert_statement}")
+                        insert_statements.append(COUNTERData_insert_statement)
+            messages_to_flash = []
+            for statement in insert_statements:
+                update_result = update_database(
+                    update_statement=statement,
+                    engine=db.engine,
+                )
+                if not update_database_success_regex().fullmatch(update_result):
+                    message = database_update_fail_statement(statement)
+                    log.warning(message)
+                    messages_to_flash.append(message)   
+            
+            flash(messages_to_flash)
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        else:
+            message = f"The form submission failed because the upload was made up of {list(mimetype_set)[0]} file(s). Please try again with only SQL files or Excel workbooks."
             log.error(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
@@ -124,144 +137,129 @@ def harvest_SUSHI_statistics():
     
     This page lets the user input custom parameters for an R5 SUSHI call, then executes the `StatisticsSources.collect_usage_statistics()` method. From this page, SUSHI calls for specific statistics sources with date ranges other than the fiscal year can be performed. 
     """
+    log.info("Starting `harvest_SUSHI_statistics()`.")
     form = SUSHIParametersForm()
     if request.method == 'GET':
-        statistics_source_options = pd.read_sql(
-            sql="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
-            con=db.engine,
+        statistics_source_options = query_database(
+            query="SELECT statistics_source_ID, statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code IS NOT NULL;",
+            engine=db.engine,
         )
+        if isinstance(statistics_source_options, str):
+            flash(database_query_fail_statement(statistics_source_options))
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.statistics_source.choices = list(statistics_source_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/make-SUSHI-call.html', form=form)
     elif form.validate_on_submit():
-        try:
-            df = pd.read_sql(
-                sql=f"SELECT * FROM statisticsSources WHERE statistics_source_ID = {form.statistics_source.data};",
-                con=db.engine,
-            )
-        except Exception as error:
-            message = f"The query for the statistics source record failed due to the error {error}."
-            log.error(message)
-            flash(message)
+        df = query_database(
+            query=f"SELECT * FROM statisticsSources WHERE statistics_source_ID={form.statistics_source.data};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         
-        stats_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
-            statistics_source_ID = int(df['statistics_source_ID'][0]),
-            statistics_source_name = str(df['statistics_source_name'][0]),
-            statistics_source_retrieval_code = str(df['statistics_source_retrieval_code'][0]).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-            vendor_ID = int(df['vendor_ID'][0]),
+        statistics_source = StatisticsSources(  # Even with one value, the field of a single-record dataframe is still considered a series, making type juggling necessary
+            statistics_source_ID = int(df.at[0,'statistics_source_ID']),
+            statistics_source_name = str(df.at[0,'statistics_source_name']),
+            statistics_source_retrieval_code = str(df.at[0,'statistics_source_retrieval_code']).split(".")[0],  #String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
+            vendor_ID = int(df.at[0,'vendor_ID']),
         )  # Without the `int` constructors, a numpy int type is used
+        log.info(initialize_relation_class_object_statement("StatisticsSources", statistics_source))
 
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if form.report_to_harvest.data == 'null':  # All possible responses returned by a select field must be the same data type, so `None` can't be returned
             report_to_harvest = None
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the date range {begin_date} to {end_date}.")
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the date range {begin_date} to {end_date}.")
         else:
             report_to_harvest = form.report_to_harvest.data
-            log.debug(f"Preparing to make SUSHI call to statistics source {stats_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
+            log.debug(f"Preparing to make SUSHI call to statistics source {statistics_source} for the {report_to_harvest} the date range {begin_date} to {end_date}.")
         
         try:
-            result_message, flash_messages = stats_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
+            result_message, flash_messages = statistics_source.collect_usage_statistics(begin_date, end_date, report_to_harvest)
             log.info(result_message)
-            flash(flash_messages)
+            if [item for sublist in flash_messages.values() for item in sublist]:
+                flash(flash_messages)
+            else:  # So success message shows instead of a lack of error messages
+                flash(result_message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         except Exception as error:
-            message = f"The SUSHI request form submission failed due to the error {error}."
-            log.warning(message)  #TEST: The SUSHI request form submission failed due to the error 'NoneType' object has no attribute 'get'.
+            message = f"The SUSHI call raised {error}."
+            log.warning(message)
             flash(message)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
 @bp.route('/upload-non-COUNTER', methods=['GET', 'POST'])
 def upload_non_COUNTER_reports():
     """The route function for uploading files containing non-COUNTER data into the container."""
+    log.info("Starting `upload_non_COUNTER_reports()`.")
     form = UsageFileForm()
     if request.method == 'GET':
-        non_COUNTER_files_needed = pd.read_sql(
-            sql=f"""
+        non_COUNTER_files_needed = query_database(
+            query=f"""
                 SELECT
                     annualUsageCollectionTracking.AUCT_statistics_source,
                     annualUsageCollectionTracking.AUCT_fiscal_year,
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE
-                    annualUsageCollectionTracking.usage_is_being_collected = true AND
-                    annualUsageCollectionTracking.is_COUNTER_compliant = false AND
+                    annualUsageCollectionTracking.usage_is_being_collected=true AND
+                    annualUsageCollectionTracking.is_COUNTER_compliant=false AND
                     annualUsageCollectionTracking.usage_file_path IS NULL AND
                     (
-                        annualUsageCollectionTracking.collection_status = 'Collection not started' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection in process (see notes)' OR
-                        annualUsageCollectionTracking.collection_status = 'Collection issues requiring resolution'
+                        annualUsageCollectionTracking.collection_status='Collection not started' OR
+                        annualUsageCollectionTracking.collection_status='Collection in process (see notes)' OR
+                        annualUsageCollectionTracking.collection_status='Collection issues requiring resolution'
                     );
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(non_COUNTER_files_needed, str):
+            flash(database_query_fail_statement(non_COUNTER_files_needed))
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        try:
-            valid_file_extensions = (  # File types allowed are limited to those that can be downloaded in `nolcat.view_usage.views.download_non_COUNTER_usage()`
-                "xlsx",
-                "csv",
-                "tsv",
-                "pdf",
-                "docx",
-                "pptx",
-                "txt",
-                "jpeg",
-                "jpg",
-                "png",
-                "svg",
-                "json",
-                "html",
-                "htm",
-                "xml",
-                "zip",
-            )
-            statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
-            file_extension = Path(form.usage_file.data.filename).suffix
-            if file_extension not in valid_file_extensions:
-                message = f"The file type of `{form.usage_file.data.filename}` is invalid. Please convert the file to one of the following file types and try again:\n{valid_file_extensions}"
-                log.error(message)
-                flash(message)
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-            file_name = f"{statistics_source_ID}_{fiscal_year_ID}.{file_extension}"
-            log.debug(f"The non-COUNTER usage file will be named `{file_name}`.")
-            
-            logging_message = upload_file_to_S3_bucket(
-                form.usage_file.data,
-                file_name,
-            )
-            if re.fullmatch(r'The file `.*` has been successfully uploaded to the `.*` S3 bucket\.') is None:  # Meaning `upload_file_to_S3_bucket()` returned an error message
-                message = f"As a result, the usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} hasn't been saved."
-                log.error(message)
-                flash(f"{logging_message} {message}")
-                return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-
-            update_query = pd.read_sql(
-                sql=f'''
-                    UPDATE annualUsageCollectionTracking
-                    SET usage_file_path = {file_name}
-                    WHERE AUCT_statistics_source = {statistics_source_ID} AND AUCT_fiscal_year = {fiscal_year_ID};
-                ''',
-                con=db.engine,
-            )
-            # Use https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.Engine.execute for database update and delete operations
-            message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
-            log.debug(message)
-            flash(message)
+        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+        df = query_database(
+            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};",
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        except Exception as error:
-            message = f"The file upload failed due to the error {error}."
-            log.error(message)
-            flash(message)
+        AUCT_object = AnnualUsageCollectionTracking(
+            AUCT_statistics_source=df.at[0,'AUCT_statistics_source'],
+            AUCT_fiscal_year=df.at[0,'AUCT_fiscal_year'],
+            usage_is_being_collected=df.at[0,'usage_is_being_collected'],
+            manual_collection_required=df.at[0,'manual_collection_required'],
+            collection_via_email=df.at[0,'collection_via_email'],
+            is_COUNTER_compliant=df.at[0,'is_COUNTER_compliant'],
+            collection_status=df.at[0,'collection_status'],
+            usage_file_path=df.at[0,'usage_file_path'],
+            notes=df.at[0,'notes'],
+        )
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
+        if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
+            #ToDo: Do any other actions need to be taken?
+            log.error(response)
+            flash(response)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
+        log.debug(message)
+        flash(message)
+        return redirect(url_for('ingest_usage.ingest_usage_homepage'))
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)

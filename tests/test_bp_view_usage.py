@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2023-09-08 ##########
+########## Failing 2023-11-15 ########## Since the downloads themselves work, getting these tests to pass is not a priority
 
 import pytest
 import logging
@@ -13,9 +13,27 @@ from pandas.testing import assert_frame_equal
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.view_usage import *
 
 log = logging.getLogger(__name__)
+
+
+@pytest.fixture
+def remove_NoLCAT_download_CSV():
+    """Removes a CSV download of the usage data.
+
+    This fixture exists purely for cleanup--the file should be created by the function being tested.
+
+    Yields:
+        None
+    """
+    file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
+    yield None
+    try:
+        file_path.unlink()
+    except Exception as error:
+        log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
 
 def test_view_usage_homepage(client):
@@ -25,7 +43,7 @@ def test_view_usage_homepage(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'templates', 'view_usage', 'index.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -35,7 +53,7 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, caplog):
+def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
@@ -46,24 +64,25 @@ def test_run_custom_SQL_query(client, header_value, caplog):
         headers=header_value,
         data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
     df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
-    log.info(f"`df` is\n{df}")
-    log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")
+    log.info(f"`df` is\n{df}")  #temp
+    log.info(f"`df.iloc[0][0]` (type {type(df.iloc[0][0])}) is {df.iloc[0][0]}")  #temp
 
     assert POST_response.status == "200 OK"
-    assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, caplog):
+def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
@@ -92,11 +111,11 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     CSV_df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
@@ -104,22 +123,25 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
         encoding_errors='backslashreplace',
     )
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    database_df = pd.read_sql(
-        sql=query_options[1],
-        con=engine,
-        index_col='COUNTER_data_ID',
+    database_df = query_database(
+        query=query_options[1],
+        engine=engine,
+        index='COUNTER_data_ID',
     )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, caplog):
+def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     #form_input = {
     #    'begin_date': '2016-07-01',
@@ -134,11 +156,11 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    headers=header_value,
     #    data=form_input,
     #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
-    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
+    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
     #CSV_df = pd.read_csv(
-    #    Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv'),
+    #    TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
     #    index_col='COUNTER_data_ID',
     #    parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
     #    date_parser=date_parser,
@@ -146,15 +168,17 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
     #    encoding_errors='backslashreplace',
     #)
     #CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    #database_df = pd.read_sql(
-    #    sql=#ToDo: The query created with the query wizard
-    #    con=engine,
-    #    index_col='COUNTER_data_ID',
+    #database_df = query_database(
+    #    query=#ToDo: The query created with the query wizard
+    #    engine=engine,
+    #    index='COUNTER_data_ID',
     #)
+    #if isinstance(database_df, str):
+    #    pytest.skip(database_function_skip_statements(database_df))
     #database_df = database_df.astype(COUNTERData.state_data_types())
 
     #assert POST_response.status == "200 OK"
-    #assert Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    #assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
     #assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
     pass
@@ -162,7 +186,7 @@ def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, capl
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
 
     page = client.get('/view_usage/non-COUNTER-downloads')
@@ -170,33 +194,35 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
     GET_select_field_options = []
-    log.info(f"`GET_soup`:\n{GET_soup}")
-    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")
+    log.info(f"`GET_soup`:\n{GET_soup}")  #temp
+    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #temp
     for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
-        tuple_content = re.search(r'\((\d*),\s(\d*)\)', string=child['value'])
+        tuple_content = re.search(r"\((\d*),\s(\d*)\)", child['value'])
         GET_select_field_options.append((
             tuple([int(i) for i in tuple_content.group(1, 2)]),
             str(child.string),
         ))
     
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'view_usage', 'templates', 'view_usage', 'download-non-COUNTER-usage.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'download-non-COUNTER-usage.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
-    db_select_field_options = pd.read_sql(
-        sql="""
+    db_select_field_options = query_database(
+        query="""
                 SELECT
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year,
                     annualUsageCollectionTracking.AUCT_statistics_source,
                     annualUsageCollectionTracking.AUCT_fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
             """,
-        con=engine,
+        engine=engine,
     )
+    if isinstance(db_select_field_options, str):
+        pytest.skip(database_function_skip_statements(db_select_field_options))
     db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
 
     assert page.status == "200 OK"

@@ -16,6 +16,7 @@ from . import bp
 from .forms import *
 from ..app import *
 from ..models import *
+from ..statements import *
 
 log = logging.getLogger(__name__)
 
@@ -29,19 +30,22 @@ def view_usage_homepage():
 @bp.route('/custom-SQL', methods=['GET', 'POST'])
 def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
+    log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
-        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.info(check_if_file_exists_statement(file_path))
         return render_template('view_usage/write-SQL-queries.html', form=form)
     elif form.validate_on_submit():
-        #ToDo: Set up handling for invalid query
-        df = pd.read_sql(
-            sql=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
-            con=db.engine,
+        df = query_database(
+            query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
+            engine=db.engine,
         )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -51,28 +55,32 @@ def run_custom_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
 @bp.route('query-wizard', methods=['GET', 'POST'])
 def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
+    log.info("Starting `use_predefined_SQL_query()`.")
     form = QueryWizardForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        log.debug(f"Before `unlink()`, the `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
-        log.info(f"The `NoLCAT_download.csv` file exists: {file_path.is_file()}")
+        log.info(check_if_file_exists_statement(file_path))
         return render_template('view_usage/query-wizard.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`use_predefined_SQL_query()` received {form.begin_date.data} as the being date, {form.end_date.data} as the end date, and {form.query_options.data} as the query option from the form.")
+        log.info(f"Querying NoLCAT for a {form.query_options.data} standard report with the begin date {form.begin_date.data} and the end date {form.end_date.data}.")
         begin_date = form.begin_date.data
         end_date = form.end_date.data
         if end_date < begin_date:
-            message = "The last day of the provided date range was before the beginning of the date range. Please correct the dates and try again."
+            message = attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date)
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
@@ -174,11 +182,14 @@ def use_predefined_SQL_query():
             query = f"""
             """
 
-        df = pd.read_sql(
-            sql=query,
-            con=db.engine,
+        df = query_database(
+            query=query,
+            engine=db.engine,
         )
-        log.debug(f"The query result:\n{df}")
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -187,49 +198,58 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
 
 
 @bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
 def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
+    log.info("Starting `download_non_COUNTER_usage()`.")
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
-        file_name_format = re.compile(r'\d*_\d{4}\.\w{3,4}')
-        log.debug(f"Before `unlink()`, `{str(Path(__file__).parent)}` contains the following files:\n{[file.name for file in Path(__file__).parent.iterdir()]}")
+        file_name_format = re.compile(r"\d*_\d{4}\.\w{3,4}")
+        log.debug("Before `unlink()`," + list_folder_contents_statement(Path(__file__).parent, False))
         for file in Path(__file__).parent.iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
-                log.info(f"The `{str(file.name)}` file exists: {file.is_file()}")
+                log.debug(check_if_file_exists_statement(file))
 
-        file_download_options = pd.read_sql(
-            sql=f"""
+        file_download_options = query_database(
+            query=f"""
                 SELECT
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year,
                     annualUsageCollectionTracking.AUCT_statistics_source,
                     annualUsageCollectionTracking.AUCT_fiscal_year
                 FROM annualUsageCollectionTracking
-                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
-                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
                 WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
             """,
-            con=db.engine,
+            engine=db.engine,
         )
+        if isinstance(file_download_options, str):
+            flash(database_query_fail_statement(file_download_options))
+            return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
 
-        #ToDo: file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
-        #ToDo: return redirect(url_for('download_file', file_path=str(file_path)))
+        # file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
+        #log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
+        # return redirect(url_for('download_file', file_path=str(file_path)))
         pass
     else:
-        log.error(f"`form.errors`: {form.errors}")
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
         return abort(404)
