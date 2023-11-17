@@ -10,6 +10,7 @@ from datetime import date
 import calendar
 from random import choice
 import re
+import html
 from sqlalchemy import create_engine
 import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -22,6 +23,7 @@ from nolcat.app import configure_logging
 from nolcat.app import s3_client
 from nolcat.app import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_SCHEMA_NAME, BUCKET_NAME, PATH_WITHIN_BUCKET
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.SUSHI_call_and_response import *
 from data import relations
 
@@ -66,7 +68,7 @@ def app():
     configure_logging(app)
     context = app.app_context()
     context.push()  # Binds the application context to the current context/Flask application
-    log.info(f"`tests.conftest.app()` yields {app} (type {type(app)}), which is bound to {context}.")
+    log.info(f"`tests.conftest.app()` yields {app} (type {type(app)}), which is bound to `context` {context} (type {type(context)}).")
     yield app
     context.pop()  # Removes and deletes the application context; placement after the yield statement means the action occurs at the end of the session
     log.info("`tests.conftest.app()` teardown complete.")
@@ -76,7 +78,7 @@ def app():
 def client(app):
     """Creates an instance of the Flask test client.
     
-    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules.
+    The Flask test client lets tests make HTTP requests without running the server. This fixture is used in `tests.test_app`, `tests.test_FiscalYears`, and all the blueprint test modules. Additionally, this fixture is used whenever a test function calls a function in the `nolcat/nolcat` folder that requires database interaction; without this fixture, the error `RuntimeError: No application found.` is raised (using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104).
 
     Args:
         app (flask.Flask): a Flask object
@@ -257,97 +259,30 @@ def path_to_sample_file(request):
     file_path = request.param
     file_name = choice([file.name for file in file_path.iterdir()])
     file_path_and_name = file_path / file_name
-    log.info(f"`path_to_sample_file()` returning file {file_path_and_name}.")
+    log.info(f"`path_to_sample_file()` yields {file_path_and_name} (type {type(file_path_and_name)}).")
     yield file_path_and_name
 
 
 @pytest.fixture
-def non_COUNTER_AUCT_object_before_upload(engine):
-    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload=None):
+    """Removes a file loaded into S3.
 
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-    
-    Yields:
-        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
-    """
-    record = pd.read_sql(
-        sql=f"""
-            SELECT * FROM annualUsageCollectionTracking WHERE
-                usage_is_being_collected=true AND
-                is_COUNTER_compliant=false AND
-                collection_status='Collection not started' AND
-                usage_file_path IS NULL;
-        """,
-        con=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")
-    yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
-        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
-        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
-        manual_collection_required=record.at[0,'manual_collection_required'],
-        collection_via_email=record.at[0,'collection_via_email'],
-        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
-        collection_status=record.at[0,'collection_status'],
-        usage_file_path=record.at[0,'usage_file_path'],
-        notes=record.at[0,'notes'],
-    )
-    log.info(f"`non_COUNTER_AUCT_object_before_upload()` returning {yield_object}.")
-    yield yield_object
-
-
-@pytest.fixture
-def non_COUNTER_AUCT_object_after_upload(engine):
-    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
-
-    Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
-
-    Args:
-        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
-
-    Yields:
-        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
-    """
-    record = pd.read_sql(
-        sql=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",
-        con=engine,
-        # Conversion to class object easier when primary keys stay as standard fields
-    ).sample().reset_index()
-    log.info(f"The record as a dataframe is\n{record}")
-    yield_object = AnnualUsageCollectionTracking(
-        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
-        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
-        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
-        manual_collection_required=record.at[0,'manual_collection_required'],
-        collection_via_email=record.at[0,'collection_via_email'],
-        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
-        collection_status=record.at[0,'collection_status'],
-        usage_file_path=record.at[0,'usage_file_path'],
-        notes=record.at[0,'notes'],
-    )
-    log.info(f"`non_COUNTER_AUCT_object_after_upload()` returning {yield_object}.")
-    yield yield_object
-
-
-@pytest.fixture
-def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_upload):
-    """Removes a file loaded into S3 with the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method.
-
-    The `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method creates a name for the file in S3 based on class attributes, so a standard fixture for creating and removing the file won't work. This fixture uses the file and class attributes to determine the name of the file the method will create, yields a null value as no data is needed from it, then performs teardown operations using the previously determined file name.
+    This fixture creates a name for the file in S3 based either the name of the file or, in the case of the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method, a combination of the file name and class attributes. The yield is a null value as no data is needed from it; the teardown operations using the previously determined file name is the primary purpose of this fixture.
 
     Args:
         path_to_sample_file (pathlib.Path): an absolute file path to a randomly selected file
-        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+        non_COUNTER_AUCT_object_before_upload (nolcat.models.AnnualUsageCollectionTracking, optional): an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded; default is `None`
 
     Yields:
         None
     """
-    log.debug(f"In `remove_file_from_S3()`, `path_to_sample_file` is {path_to_sample_file}")
-    log.debug(f"In `remove_file_from_S3()`, `non_COUNTER_AUCT_object_before_upload` is {non_COUNTER_AUCT_object_before_upload}")
-    file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
-    log.info(f"File name in `remove_file_from_S3()` is {file_name}.")
+    log.debug(fixture_variable_value_declaration_statement("path_to_sample_file", path_to_sample_file))
+    if non_COUNTER_AUCT_object_before_upload:
+        log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_before_upload", non_COUNTER_AUCT_object_before_upload))
+        file_name = f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
+    else:
+        file_name = f"test_{path_to_sample_file.name}"
+    log.info(fixture_variable_value_declaration_statement("file_name", file_name))
     yield None
     try:
         s3_client.delete_object(
@@ -355,7 +290,85 @@ def remove_file_from_S3(path_to_sample_file, non_COUNTER_AUCT_object_before_uplo
             Key=PATH_WITHIN_BUCKET + file_name
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove file `{file_name}` from the S3 bucket raised {error}.")
+        log.error(unable_to_delete_test_file_in_S3_statement(file_name, error))
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_before_upload(engine, caplog):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file could be but has not yet been uploaded.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record which can have a non-COUNTER usage file uploaded
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"""
+            SELECT * FROM annualUsageCollectionTracking WHERE
+                usage_is_being_collected=true AND
+                is_COUNTER_compliant=false AND
+                collection_status='Collection not started' AND
+                usage_file_path IS NULL;
+        """,
+        engine=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    )
+    if isinstance(record, str):
+        pytest.skip(database_function_skip_statements(record, False))
+    record = record.sample().reset_index()
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(initialize_relation_class_object_statement("StatisticsSources", yield_object))
+    yield yield_object
+
+
+@pytest.fixture
+def non_COUNTER_AUCT_object_after_upload(engine, caplog):
+    """Creates an `AnnualUsageCollectionTracking` object from a randomly selected record where a non-COUNTER usage file has been uploaded.
+
+    Because the `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` method is what adds values to the `annualUsageCollectionTracking.usage_file_path` field/attribute, only a record where that method has run will have a non-null record/attribute.
+
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+
+    Yields:
+        nolcat.models.AnnualUsageCollectionTracking: an AnnualUsageCollectionTracking object corresponding to a record with a non-null `usage_file_path` attribute
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    record = query_database(
+        query=f"SELECT * FROM annualUsageCollectionTracking WHERE usage_file_path IS NOT NULL;",  # For both records loaded via `test_bp_initialization` and the initialization test data file, all values for `usage_file_path` other than the file names appear as null in the MySQL CLI
+        engine=engine,
+        # Conversion to class object easier when primary keys stay as standard fields
+    )
+    if isinstance(record, str):
+        pytest.skip(database_function_skip_statements(record, False))
+    record = record.sample().reset_index()
+    yield_object = AnnualUsageCollectionTracking(
+        AUCT_statistics_source=record.at[0,'AUCT_statistics_source'],
+        AUCT_fiscal_year=record.at[0,'AUCT_fiscal_year'],
+        usage_is_being_collected=record.at[0,'usage_is_being_collected'],
+        manual_collection_required=record.at[0,'manual_collection_required'],
+        collection_via_email=record.at[0,'collection_via_email'],
+        is_COUNTER_compliant=record.at[0,'is_COUNTER_compliant'],
+        collection_status=record.at[0,'collection_status'],
+        usage_file_path=record.at[0,'usage_file_path'],
+        notes=record.at[0,'notes'],
+    )
+    log.info(initialize_relation_class_object_statement("AnnualUsageCollectionTracking", yield_object))
+    yield yield_object
 
 
 @pytest.fixture
@@ -369,12 +382,15 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
     Yield:
         None: the `AnnualUsageCollectionTracking.usage_file_path` attribute contains contains the name of the file used to download it from S3
     """
-    log.debug(f"In `non_COUNTER_file_to_download_from_S3()`, `non_COUNTER_AUCT_object_after_upload` is {non_COUNTER_AUCT_object_after_upload}")
-    result = upload_file_to_S3_bucket(
+    log.debug(fixture_variable_value_declaration_statement("non_COUNTER_AUCT_object_after_upload", non_COUNTER_AUCT_object_after_upload))
+    log.debug(file_IO_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, f"file location {path_to_sample_file.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+    logging_message = upload_file_to_S3_bucket(
         path_to_sample_file,
         non_COUNTER_AUCT_object_after_upload.usage_file_path,
     )
-    log.info(f"Upload of test file {path_to_sample_file} in `non_COUNTER_file_to_download_from_S3()` returned {result}.")
+    log.debug(logging_message)
+    if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
+        pytest.skip(failed_upload_to_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, logging_message))
     yield None
     try:
         s3_client.delete_object(
@@ -382,7 +398,7 @@ def non_COUNTER_file_to_download_from_S3(path_to_sample_file, non_COUNTER_AUCT_o
             Key=PATH_WITHIN_BUCKET + non_COUNTER_AUCT_object_after_upload.usage_file_path,
         )
     except botocore.exceptions as error:
-        log.error(f"Trying to remove the file `{non_COUNTER_AUCT_object_after_upload.usage_file_path}` from the S3 bucket raised {error}.")
+        log.error(unable_to_delete_test_file_in_S3_statement(non_COUNTER_AUCT_object_after_upload.usage_file_path, error))
     Path(download_destination / non_COUNTER_AUCT_object_after_upload.usage_file_path).unlink(missing_ok=True)
 
 
@@ -394,7 +410,7 @@ def header_value():
     Yields:
         dict: HTTP header data
     """
-    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+    yield {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
 
 
 @pytest.fixture(scope='session')
@@ -419,6 +435,7 @@ def most_recent_month_with_usage():
         begin_date.month,
         calendar.monthrange(begin_date.year, begin_date.month)[1],
     )
+    log.info(f"`most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
 
@@ -435,43 +452,26 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     file_names = []
     for workbook in folder_path.iterdir():
         file_names.append(workbook)
-    pass  #TEST: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
+    pass  #Test: This fixture isn't being used in other test modules yet; the `MultipartEncoder.fields` dictionary can only handle a single file per form field
 
 
-@pytest.fixture
-def SUSHI_server_error_regex_object():
-    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because of a server-side issue.
-
-    Yields:
-        re.Pattern: the regex object matching SUSHI server error messages
-    """
-    yield re.compile(r'Call to .* returned the SUSHI error\(s\) (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) request raised error (1000|1010|1011|1020):')
-
-
-@pytest.fixture
-def no_SUSHI_data_regex_object():
-    """Creates a regex object matching the beginning of the value returned if a SUSHI API call fails because no data is returned.
-
-    Returns:
-       re.Pattern: the regex object matching SUSHI server error messages
-    """
-    yield re.compile(r'Call to .* for (status|reports|reports/pr|reports/dr|reports/tr|reports/ir) returned no usage data')
-
-
-#Section: Test Helper Function Not Possible in `nolcat.app`
-def match_direct_SUSHI_harvest_result(number_of_records):
-    """Transforms the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
+#Section: Test Helper Functions Not Possible in `nolcat.app`
+def match_direct_SUSHI_harvest_result(engine, number_of_records, caplog):
+    """A test helper function (used because fixture functions cannot take arguments in the test function) transforming the records most recently loaded into the `COUNTERData` relation into a dataframe like that produced by the `StatisticsSources._harvest_R5_SUSHI()` method.
 
     Tests of functions that load SUSHI data into the database cannot be readily compared against static data; instead, they're compared against the results of the `StatisticsSources._harvest_R5_SUSHI()` method, the underlying part of the function being tested which makes the API call and converts the result into a dataframe. That method's result, however, doesn't exactly match the contents of what's in the `COUNTERData` relation; this helper function pulls the matching number of records out of that relation and modifies the resulting dataframe so it matches the output of the `StatisticsSources._harvest_R5_SUSHI()` method. This function's call of a class method from `nolcat.models` means it can't be initialized in `nolcat.app`.
 
     Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
         number_of_records (int): the number of records in the SUSHI pull
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
     
     Returns:
         dataframe: the records from `COUNTERData` formatted as if from the `StatisticsSources._harvest_R5_SUSHI()` method
     """
-    df = pd.read_sql(
-        sql=f"""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    df = query_database(
+        query=f"""
             SELECT *
             FROM (
                 SELECT * FROM COUNTERData
@@ -480,8 +480,10 @@ def match_direct_SUSHI_harvest_result(number_of_records):
             ) subquery
             ORDER BY COUNTER_data_ID ASC;
         """,
-        con=db.engine,
+        engine=engine,
     )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df, False))
     df = df.drop(columns='COUNTER_data_ID')
     df = df[[field for field in df.columns if df[field].notnull().any()]]  # The list comprehension removes fields containing entirely null values
     df = df.astype({k: v for (k, v) in COUNTERData.state_data_types().items() if k in df.columns.to_list()})
@@ -499,11 +501,15 @@ def match_direct_SUSHI_harvest_result(number_of_records):
         )
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
+    if df.shape[0] > 20:
+        log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
+    else:
+        log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
     return df
 
 
 def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, credentials):
-    """A test helper function generating a list of all the customizable reports offered by the given statistics source.
+    """A test helper function (used because fixture functions cannot take arguments in the test function) generating a list of all the customizable reports offered by the given statistics source.
 
     Args:
         statistics_source_name (str): the name of the statistics source
@@ -519,15 +525,30 @@ def COUNTER_reports_offered_by_statistics_source(statistics_source_name, URL, cr
         "reports",
         credentials,
     ).make_SUSHI_call()
+    if isinstance(response, str):
+        pytest.skip(f"The SUSHI call for the list of reports raised the error {response}.")
+    log.info(successful_SUSHI_call_statement("reports", statistics_source_name))
     response_as_list = [report for report in list(response[0].values())[0]]
-    log.debug(f"The response to the reports request as a list is:\n{response_as_list}")
     list_of_reports = []
     for report in response_as_list:
         if "Report_ID" in list(report.keys()):
-            if re.fullmatch(r'[PpDdTtIi][Rr]', report["Report_ID"]):
+            if isinstance(report["Report_ID"], str) and re.fullmatch(r"[PpDdTtIi][Rr]", report["Report_ID"]):
                 list_of_reports.append(report["Report_ID"].upper())
-    log.debug(f"The stats source at {URL} offers the following reports: {list_of_reports}.")
+    log.info(f"`COUNTER_reports_offered_by_statistics_source()` for {URL} yields {list_of_reports} (type {type(list_of_reports)}).")
     return list_of_reports
+
+
+def prepare_HTML_page_for_comparison(page_data):
+    """A test helper function (used because fixture functions cannot take arguments in the test function) changing raw binary data with HTML character references into a Unicode string.
+
+    Args:
+        page_data (bytes): the content of a page returned by a HTTP request
+
+    Returns:
+        str: the page content as a Unicode string
+    """
+    log.info(f"`page_data` is:\n{page_data}")
+    return html.unescape(str(page_data))[2:-1]  # `html.unescape()` returns a string including the bytes indicator and the opening and closing quotes
 
 
 #Section: Replacement Classes

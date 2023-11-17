@@ -10,6 +10,12 @@
 <body>
     <h1>Database Initialization Wizard: Page 4</h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+        <p>The data just loaded should be investigated, and probably removed and reloaded, because it raised the error(s)<br>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <!--
     <ol>
         <li><h2>Upload Historical R4 Usage</h2>

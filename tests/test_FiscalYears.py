@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2023-09-08 ##########
+########## Passing 2023-11-17 ##########
 
 import pytest
 import logging
@@ -10,6 +10,7 @@ from pandas.testing import assert_frame_equal
 # `conftest.py` fixtures are imported automatically
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 
 log = logging.getLogger(__name__)
 
@@ -31,8 +32,10 @@ def FiscalYears_object_and_record():
         fiscal_year = fiscal_year_value,
         start_date = start_date_value,
         end_date = end_date_value,
-        ACRL_60b = None,
-        ACRL_63 = None,
+        depreciated_ACRL_60b = None,
+        depreciated_ACRL_63 = None,
+        ACRL_61a = None,
+        ACRL_61b = None,
         ARL_18 = None,
         ARL_19 = None,
         ARL_20 = None,
@@ -40,21 +43,33 @@ def FiscalYears_object_and_record():
         notes_on_corrections_after_submission = None,
     )
     FY_df = pd.DataFrame(
-        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None]],
+        [[fiscal_year_value, start_date_value, end_date_value, None, None, None, None, None, None, None, None, None]],
         index=[primary_key_value],
-        columns=["fiscal_year", "start_date", "end_date", "ACRL_60b", "ACRL_63", "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
+        columns=["fiscal_year", "start_date", "end_date", "depreciated_ACRL_60b", "depreciated_ACRL_63","ACRL_61a", "ACRL_61b",  "ARL_18", "ARL_19", "ARL_20", "notes_on_statisticsSources_used", "notes_on_corrections_after_submission"],
     )
     FY_df.index.name = "fiscal_year_ID"
     yield (FY_instance, FY_df)
 
 
-def test_calculate_ACRL_60b():
+def test_calculate_depreciated_ACRL_60b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass
 
 
-def test_calculate_ACRL_63():
+def test_calculate_depreciated_ACRL_63():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_calculate_ACRL_61a():
+    """Create a test for the function."""
+    #ToDo: Write test and docstring
+    pass
+
+
+def test_calculate_ACRL_61b():
     """Create a test for the function."""
     #ToDo: Write test and docstring
     pass
@@ -78,33 +93,48 @@ def test_calculate_ARL_20():
     pass
 
 
-def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYears_object_and_record):
-    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source.
-    
-    The test data AUCT relation includes all of the years in the fiscal years relation, so to avoid primary key duplication, a new record is added to the `fiscalYears` relation and used for the method.
-    """
-    FY_instance, FY_df = FiscalYears_object_and_record
+@pytest.fixture
+def load_new_records_into_fiscalYears(engine, FiscalYears_object_and_record, caplog):
+    """Since the test data AUCT relation includes all of the years in the fiscal years relation, to avoid primary key duplication, a new record is added to the `fiscalYears` relation for the `test_create_usage_tracking_records_for_fiscal_year()` test function.
 
-    #Section: Update Relation and Run Method
-    FY_df.to_sql(
-        name='fiscalYears',
-        con=engine,
-        if_exists='append',
-        chunksize=1000,
-        index=True,
-        index_label='fiscal_year_ID',
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+        FiscalYears_object_and_record (tuple): a FiscalYears object; a single-record dataframe for the fiscalYears relation corresponding to that object
+        caplog (pytest.logging.caplog): changes the logging capture level of individual test modules during test runtime
+    
+    Yields:
+        None
+    """
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `load_data_into_database()`
+    method_result = load_data_into_database(
+        df=FiscalYears_object_and_record[1],
+        relation='fiscalYears',
+        engine=engine,
+        index_field_name='fiscal_year_ID',
     )
-    with client:  # `client` fixture results from `test_client()` method, without which, the error `RuntimeError: No application found.` is raised; using the test client as a solution for this error comes from https://stackoverflow.com/a/67314104
-        method_result = FY_instance.create_usage_tracking_records_for_fiscal_year()
-    if "error" in method_result:  # If this is true,  pass
-        assert False  # If the code comes here, the new AUCT records weren't successfully loaded into the relation; failing the test here means not needing add handling for this error to the database I/O later in the test
+    if not load_data_into_database_success_regex().fullmatch(method_result):
+        pytest.skip(database_function_skip_statements(method_result, False))
+    yield None
+
+
+def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_records_into_fiscalYears, FiscalYears_object_and_record, caplog):  # `load_new_records_into_fiscalYears()` not called but used to load record needed for test
+    """Tests creating a record in the `annualUsageCollectionTracking` relation for the given fiscal year for each current statistics source."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    #Section: Call Method
+    with client:
+        method_result = FiscalYears_object_and_record[0].create_usage_tracking_records_for_fiscal_year()
+    if not load_data_into_database_success_regex().fullmatch(method_result):
+        assert False  # If the code comes here, the method call being tested failed; by failing and thus ending the test here, error handling isn't needed in the remainder of the test function
     
     #Section: Create and Compare Dataframes
-    retrieved_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    retrieved_data = query_database(
+        query="SELECT * FROM annualUsageCollectionTracking;",
+        engine=engine,
+        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    if isinstance(retrieved_data, str):
+        pytest.skip(database_function_skip_statements(retrieved_data))
     retrieved_data = retrieved_data.astype({
         "collection_status": AnnualUsageCollectionTracking.state_data_types()["collection_status"],
         "usage_file_path": AnnualUsageCollectionTracking.state_data_types()["usage_file_path"],
@@ -224,7 +254,10 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, FiscalYea
     )
     expected_output_data = expected_output_data.astype(AnnualUsageCollectionTracking.state_data_types())
     
-    assert method_result == "Successfully loaded 10 AUCT records for FY 2023 into the database."
+    regex_match_object = load_data_into_database_success_regex().fullmatch(method_result)
+    assert regex_match_object is not None
+    assert int(regex_match_object.group(1)) == 10
+    assert regex_match_object.group(2) == "annualUsageCollectionTracking"
     assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
@@ -235,8 +268,9 @@ def test_collect_fiscal_year_usage_statistics(caplog):
     caplog.set_level(logging.INFO, logger='nolcat.convert_JSON_dict_to_dataframe')  # For `create_dataframe()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `self._check_if_data_in_database()` called in `self._harvest_single_report()` called in `self._harvest_R5_SUSHI()`
 
-    #This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. This test needs a FiscalYears object for a record in the test data that will return records with a small but limited number of SUSHI calls that can easily be made and returned so the result of the method can be verified.
-    #ToDo: Calling the method on `FY_instance` when it's instantiated via `FY_instance, FY_df = FiscalYears_object_and_record` will return no data
-    #ToDo: Will three results of `StatisticsSources._harvest_R5_SUSHI()` concatenated be the same as a result like `match_direct_SUSHI_harvest_result()`?
-    #ToDo: `FiscalYears.collect_fiscal_year_usage_statistics()` returns a tuple, the first value of which will be f"Successfully loaded {df.shape[0]} records for FY {self.fiscal_year} into the database." if the SUSHI pull and database load is a success
+    #ToDo: This method makes a SUSHI call for every AnnualUsageCollectionTracking record for the given FY where `AnnualUsageCollectionTracking.usage_is_being_collected` is `True` and `AnnualUsageCollectionTracking.manual_collection_required` is `False`. Right now, no record in the test data meets those criteria.
+    # logging_statement, flash_messages = FiscalYears.collect_fiscal_year_usage_statistics()
+    # assert load_data_into_database_success_regex().match(logging_statement)
+    # assert update_database_success_regex().search(logging_statement)
+    # assert isinstance(flash_messages, list)
     pass

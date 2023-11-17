@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2023-09-08 ##########
+########## Passing 2023-11-16 ##########
 
 import pytest
 import logging
@@ -12,8 +12,10 @@ from pandas.testing import assert_frame_equal
 from pandas.testing import assert_series_equal
 
 # `conftest.py` fixtures are imported automatically
+from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
+from nolcat.statements import *
 from nolcat.initialization import *
 
 log = logging.getLogger(__name__)
@@ -87,7 +89,7 @@ def create_vendorNotes_CSV_file(tmp_path, vendorNotes_relation):
     """
     yield vendorNotes_relation.to_csv(
         tmp_path / 'vendorNotes_relation.csv',
-        index_label="vendor_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
@@ -127,7 +129,7 @@ def create_statisticsSourceNotes_CSV_file(tmp_path, statisticsSourceNotes_relati
     """
     yield statisticsSourceNotes_relation.to_csv(
         tmp_path / 'statisticsSourceNotes_relation.csv',
-        index_label="statistics_source_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
@@ -167,7 +169,7 @@ def create_resourceSourceNotes_CSV_file(tmp_path, resourceSourceNotes_relation):
     """
     yield resourceSourceNotes_relation.to_csv(
         tmp_path / 'resourceSourceNotes_relation.csv',
-        index_label="resource_source_notes_ID",
+        index_label=False,  # Index column not specified when this CSV is read in
         encoding='utf-8',
         errors='backslashreplace',
     )
@@ -361,7 +363,7 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
     GET_response_title = GET_soup.head.title
     GET_response_page_title = GET_soup.body.h1
 
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'index.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'index.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title
         HTML_file_page_title = file_soup.body.h1
@@ -372,14 +374,16 @@ def test_GET_request_for_collect_FY_and_vendor_data(client):
 
 
 @pytest.mark.dependency()
-def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, create_fiscalYears_CSV_file, fiscalYears_relation, create_vendors_CSV_file, vendors_relation, create_vendorNotes_CSV_file, vendorNotes_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `fiscalYears`, `vendors`, and `vendorNotes` relations and loading that data into the database."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
-            'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb')),
-            'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb')),
-            'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb')),
+            'fiscalYears_CSV': ('fiscalYears_relation.csv', open(tmp_path / 'fiscalYears_relation.csv', 'rb'), 'text/csv'),
+            'vendors_CSV': ('vendors_relation.csv', open(tmp_path / 'vendors_relation.csv', 'rb'), 'text/csv'),
+            'vendorNotes_CSV': ('vendorNotes_relation.csv', open(tmp_path / 'vendorNotes_relation.csv', 'rb'), 'text/csv'),
         },
         encoding='utf-8',
     )
@@ -393,56 +397,64 @@ def test_collect_FY_and_vendor_data(engine, client, tmp_path, header_value, crea
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    fiscalYears_relation_data = pd.read_sql(
-        sql="SELECT * FROM fiscalYears;",
-        con=engine,
-        index_col='fiscal_year_ID',
+    fiscalYears_relation_data = query_database(
+        query="SELECT * FROM fiscalYears;",
+        engine=engine,
+        index='fiscal_year_ID',
     )
+    if isinstance(fiscalYears_relation_data, str):
+        pytest.skip(database_function_skip_statements(fiscalYears_relation_data))
     fiscalYears_relation_data = fiscalYears_relation_data.astype(FiscalYears.state_data_types())
     fiscalYears_relation_data["start_date"] = pd.to_datetime(fiscalYears_relation_data["start_date"])
     fiscalYears_relation_data["end_date"] = pd.to_datetime(fiscalYears_relation_data["end_date"])
 
-    vendors_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendors;",
-        con=engine,
-        index_col='vendor_ID',
+    vendors_relation_data = query_database(
+        query="SELECT * FROM vendors;",
+        engine=engine,
+        index='vendor_ID',
     )
+    if isinstance(vendors_relation_data, str):
+        pytest.skip(database_function_skip_statements(vendors_relation_data))
     vendors_relation_data = vendors_relation_data.astype(Vendors.state_data_types())
 
-    vendorNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM vendorNotes;",
-        con=engine,
-        index_col='vendor_notes_ID',
+    vendorNotes_relation_data = query_database(
+        query="SELECT * FROM vendorNotes;",
+        engine=engine,
+        index='vendor_notes_ID',
     )
+    if isinstance(vendorNotes_relation_data, str):
+        pytest.skip(database_function_skip_statements(vendorNotes_relation_data))
     vendorNotes_relation_data = vendorNotes_relation_data.astype(VendorNotes.state_data_types())
     vendorNotes_relation_data["date_written"] = pd.to_datetime(vendorNotes_relation_data["date_written"])
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-2.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-2.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
+    assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(fiscalYears_relation_data, fiscalYears_relation)
     assert_frame_equal(vendors_relation_data, vendors_relation)
     assert_frame_equal(vendorNotes_relation_data, vendorNotes_relation)
 
 
 @pytest.mark.dependency(depends=['test_collect_FY_and_vendor_data'])  # Test will fail without primary keys in relations loaded in this test
-def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
+def test_collect_sources_data(engine, client, tmp_path, header_value, create_statisticsSources_CSV_file, statisticsSources_relation, create_statisticsSourceNotes_CSV_file, statisticsSourceNotes_relation, create_resourceSources_CSV_file, resourceSources_relation, create_resourceSourceNotes_CSV_file, resourceSourceNotes_relation, create_statisticsResourceSources_CSV_file, statisticsResourceSources_relation, caplog):  # CSV creation fixture names aren't invoked, but without them, the files yielded by those fixtures aren't available in the test function
     """Tests uploading CSVs with data in the `statisticsSources`, `statisticsSourceNotes`, `resourceSources`, `resourceSourceNotes`, and `statisticsResourceSources` relations and loading that data into the database."""
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     CSV_files = MultipartEncoder(
         fields={
-            'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb')),
-            'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb')),
-            'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb')),
-            'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb')),
-            'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb')),
+            'statisticsSources_CSV': ('statisticsSources_relation.csv', open(tmp_path / 'statisticsSources_relation.csv', 'rb'), 'text/csv'),
+            'statisticsSourceNotes_CSV': ('statisticsSourceNotes_relation.csv', open(tmp_path / 'statisticsSourceNotes_relation.csv', 'rb'), 'text/csv'),
+            'resourceSources_CSV': ('resourceSources_relation.csv', open(tmp_path / 'resourceSources_relation.csv', 'rb'), 'text/csv'),
+            'resourceSourceNotes_CSV': ('resourceSourceNotes_relation.csv', open(tmp_path / 'resourceSourceNotes_relation.csv', 'rb'), 'text/csv'),
+            'statisticsResourceSources_CSV': ('statisticsResourceSources_relation.csv', open(tmp_path / 'statisticsResourceSources_relation.csv', 'rb'), 'text/csv'),
         },
         encoding='utf-8',
     )
@@ -456,56 +468,66 @@ def test_collect_sources_data(engine, client, tmp_path, header_value, create_sta
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    statisticsSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSources;",
-        con=engine,
-        index_col='statistics_source_ID',
+    statisticsSources_relation_data = query_database(
+        query="SELECT * FROM statisticsSources;",
+        engine=engine,
+        index='statistics_source_ID',
     )
+    if isinstance(statisticsSources_relation_data, str):
+        pytest.skip(database_function_skip_statements(statisticsSources_relation_data))
     statisticsSources_relation_data = statisticsSources_relation_data.astype(StatisticsSources.state_data_types())
     statisticsSources_relation_data['statistics_source_retrieval_code'] = statisticsSources_relation_data['statistics_source_retrieval_code'].apply(lambda string_of_float: string_of_float.split(".")[0] if not pd.isnull(string_of_float) else string_of_float).astype('string')  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed; the transformation changes the series dtype back to object, so it needs to be set to string again
 
-    statisticsSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM statisticsSourceNotes;",
-        con=engine,
-        index_col='statistics_source_notes_ID',
+    statisticsSourceNotes_relation_data = query_database(
+        query="SELECT * FROM statisticsSourceNotes;",
+        engine=engine,
+        index='statistics_source_notes_ID',
     )
+    if isinstance(statisticsSourceNotes_relation_data, str):
+        pytest.skip(database_function_skip_statements(statisticsSourceNotes_relation_data))
     statisticsSourceNotes_relation_data = statisticsSourceNotes_relation_data.astype(StatisticsSourceNotes.state_data_types())
     statisticsSourceNotes_relation_data["date_written"] = pd.to_datetime(statisticsSourceNotes_relation_data["date_written"])
 
-    resourceSources_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSources;",
-        con=engine,
-        index_col='resource_source_ID',
+    resourceSources_relation_data = query_database(
+        query="SELECT * FROM resourceSources;",
+        engine=engine,
+        index='resource_source_ID',
     )
+    if isinstance(resourceSources_relation_data, str):
+        pytest.skip(database_function_skip_statements(resourceSources_relation_data))
     resourceSources_relation_data = resourceSources_relation_data.astype(ResourceSources.state_data_types())
-    resourceSources_relation_data["use_stop_date"] = pd.to_datetime(resourceSources_relation_data["use_stop_date"])
+    resourceSources_relation_data["access_stop_date"] = pd.to_datetime(resourceSources_relation_data["access_stop_date"])
 
-    resourceSourceNotes_relation_data = pd.read_sql(
-        sql="SELECT * FROM resourceSourceNotes;",
-        con=engine,
-        index_col='resource_source_notes_ID',
+    resourceSourceNotes_relation_data = query_database(
+        query="SELECT * FROM resourceSourceNotes;",
+        engine=engine,
+        index='resource_source_notes_ID',
     )
+    if isinstance(resourceSourceNotes_relation_data, str):
+        pytest.skip(database_function_skip_statements(resourceSourceNotes_relation_data))
     resourceSourceNotes_relation_data = resourceSourceNotes_relation_data.astype(ResourceSourceNotes.state_data_types())
     resourceSourceNotes_relation_data["date_written"] = pd.to_datetime(resourceSourceNotes_relation_data["date_written"])
 
-    statisticsResourceSources_relation_data = pd.read_sql(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
-        sql="SELECT * FROM statisticsResourceSources;",
-        con=engine,
-        index_col=['SRS_statistics_source', 'SRS_resource_source'],
+    statisticsResourceSources_relation_data = query_database(  # This creates a dataframe with a multiindex and a single field, requiring the conversion below
+        query="SELECT * FROM statisticsResourceSources;",
+        engine=engine,
+        index=['SRS_statistics_source', 'SRS_resource_source'],
     )
+    if isinstance(statisticsResourceSources_relation_data, str):
+        pytest.skip(database_function_skip_statements(statisticsResourceSources_relation_data))
     statisticsResourceSources_relation_data = change_single_field_dataframe_into_series(statisticsResourceSources_relation_data)
     statisticsResourceSources_relation_data = statisticsResourceSources_relation_data.astype(StatisticsResourceSources.state_data_types())
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-3.html'), 'br') as HTML_file:
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-3.html', 'br') as HTML_file:
         file_soup = BeautifulSoup(HTML_file, 'lxml')
         HTML_file_title = file_soup.head.title.string.encode('utf-8')
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert HTML_file_title in POST_response.data
-    assert HTML_file_page_title in POST_response.data
+    assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
+    assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(statisticsSources_relation_data, statisticsSources_relation)
     assert_frame_equal(statisticsSourceNotes_relation_data, statisticsSourceNotes_relation)
     assert_frame_equal(resourceSources_relation_data, resourceSources_relation)
@@ -518,7 +540,7 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
     """Test creating the AUCT relation template CSV."""
     page = client.get('/initialization/initialization-page-3')
     AUCT_template_df = pd.read_csv(
-        Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'initialize_annualUsageCollectionTracking.csv'),
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'initialize_annualUsageCollectionTracking.csv',
         index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
         dtype=blank_annualUsageCollectionTracking_data_types,
         encoding='utf-8',
@@ -538,13 +560,14 @@ def test_GET_request_for_collect_AUCT_and_historical_COUNTER_data(client, tmp_pa
 def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, header_value, create_annualUsageCollectionTracking_CSV_file, annualUsageCollectionTracking_relation, COUNTERData_relation, caplog):  # CSV creation fixture name isn't invoked, but without it, the file yielded by that fixture isn't available in the test function
     """Tests uploading the AUCT relation CSV and historical tabular COUNTER reports and loading that data into the database."""
     caplog.set_level(logging.INFO, logger='nolcat.upload_COUNTER_reports')  # For `create_dataframe()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
+    
     #Section: Submit Forms via HTTP POST
     form_submissions = MultipartEncoder(
         fields={
-            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb')),
+            'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),
             #ToDo: Uncomment this subsection during Planned Iteration 2 along with corresponding part of route and HTML page
-            #'COUNTER_reports': #TEST: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
+            #'COUNTER_reports': #Test: Unable to find way to submit multiple files to a single MultipleFileFields field; anything involving this input won't work or pass until a solution is found
             #ToDo: The `UploadCOUNTERReports` constructor is looking for a list of Werkzeug FileStorage object(s); can this be used to the advantage of the test?
         },
         encoding='utf-8',
@@ -559,18 +582,22 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     #Section: Get Relations from Database for Comparison
-    annualUsageCollectionTracking_relation_data = pd.read_sql(
-        sql="SELECT * FROM annualUsageCollectionTracking;",
-        con=engine,
-        index_col=["AUCT_statistics_source", "AUCT_fiscal_year"],
+    annualUsageCollectionTracking_relation_data = query_database(
+        query="SELECT * FROM annualUsageCollectionTracking;",
+        engine=engine,
+        index=["AUCT_statistics_source", "AUCT_fiscal_year"],
     )
+    if isinstance(annualUsageCollectionTracking_relation_data, str):
+        pytest.skip(database_function_skip_statements(annualUsageCollectionTracking_relation_data))
     annualUsageCollectionTracking_relation_data = annualUsageCollectionTracking_relation_data.astype(AnnualUsageCollectionTracking.state_data_types())
 
-    #COUNTERData_relation_data = pd.read_sql(
-    #    sql="SELECT * FROM COUNTERData;",
-    #    con=engine,
-    #    index_col="COUNTER_data_ID",
+    #COUNTERData_relation_data = query_database(
+    #    query="SELECT * FROM COUNTERData;",
+    #    engine=engine,
+    #    index="COUNTER_data_ID",
     #)
+    #if isinstance(COUNTERData_relation_data, str):
+    #    pytest.skip(database_function_skip_statements(COUNTERData_relation_data))
     #COUNTERData_relation_data = COUNTERData_relation_data.astype(COUNTERData.state_data_types())
     #COUNTERData_relation_data["publication_date"] = pd.to_datetime(COUNTERData_relation_data["publication_date"])
     #COUNTERData_relation_data["parent_publication_date"] = pd.to_datetime(COUNTERData_relation_data["parent_publication_date"])
@@ -579,14 +606,14 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
 
     #Section: Assert Statements
     # This is the HTML file of the page the redirect goes to
-    #with open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1], 'nolcat', 'initialization', 'templates', 'initialization', 'initial-data-upload-5.html'), 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
+    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'initialization' / 'templates' / 'initialization' / 'initial-data-upload-5.html', 'br') as HTML_file:  # CWD is where the tests are being run (root for this suite)  #ToDo: Change `initialization-page-5` to `initialization-page-4` during Planned Iteration 3
     #    file_soup = BeautifulSoup(HTML_file, 'lxml')
     #    HTML_file_title = file_soup.head.title.string.encode('utf-8')
     #    HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    #assert HTML_file_title in POST_response.data
-    #assert HTML_file_page_title in POST_response.data
+    #assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
+    #assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
     assert_frame_equal(annualUsageCollectionTracking_relation_data, annualUsageCollectionTracking_relation)
     #assert_frame_equal(COUNTERData_relation_data, COUNTERData_relation)
 

@@ -2,14 +2,14 @@ from flask_wtf import FlaskForm
 from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import MultipleFileField
-from wtforms.fields import FileField
+from flask_wtf.file import FileField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 
 
-class COUNTERReportsForm(FlaskForm):
-    """Creates a form for uploading Excel workbooks containing COUNTER reports."""
-    COUNTER_reports = MultipleFileField("Select the COUNTER report workbooks. If all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
+class COUNTERDataForm(FlaskForm):
+    """Creates a form for uploading files containing COUNTER data."""
+    COUNTER_data = MultipleFileField("Select the file(s) containing COUNTER data. If uploading multiple files where all the files are in a single folder and that folder contains no other items, navigate to that folder, then use `Ctrl + a` to select all the files in the folder.", validators=[DataRequired()])
 
 
 class SUSHIParametersForm(FlaskForm):
