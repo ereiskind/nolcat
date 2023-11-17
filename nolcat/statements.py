@@ -267,7 +267,7 @@ def return_dataframe_from_query_statement(query_subject, df):
     Returns:
         str: the statement for outputting the arguments to logging
     """
-    if df.shape[1] > 20:
+    if df.shape[0] > 20:
         return f"The beginning and the end of the query for {query_subject}:\n{df.head(10)}\n...\n{df.tail(10)}"
     else:
         return f"The result of the query for {query_subject}:\n{df}"

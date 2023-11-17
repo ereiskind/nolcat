@@ -496,7 +496,7 @@ class FiscalYears(db.Model):
                 continue
             dfs.append(df)
             where_statements.append(f"(AUCT_statistics_source={AUCT_object.AUCT_statistics_source} AND AUCT_fiscal_year={AUCT_object.AUCT_fiscal_year})")
-            log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], self.fiscal_year))
+            log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], self.fiscal_year))
         
         #Section: Update Data in Database
         df = pd.concat(dfs)
@@ -1133,7 +1133,7 @@ class StatisticsSources(db.Model):
             log.warning(df)
             return (df, flash_statements)
         else:
-            log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[1]))
+            log.debug(harvest_R5_SUSHI_success_statement(self.statistics_source_name, df.shape[0]))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:
@@ -1577,7 +1577,7 @@ class AnnualUsageCollectionTracking(db.Model):
         if isinstance(df, str):
             log.warning(df)
             return (df, flash_statements)
-        log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[1], fiscal_year))
+        log.debug(harvest_R5_SUSHI_success_statement(statistics_source.statistics_source_name, df.shape[0], fiscal_year))
         try:
             df.index += first_new_PK_value('COUNTERData')
         except Exception as error:

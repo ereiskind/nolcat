@@ -464,7 +464,7 @@ def query_database(query, engine, index=None):
             con=engine,
             index_col=index,
         )
-        if df.shape[1] > 20:
+        if df.shape[0] > 20:
             log.info(f"The beginning and the end of the response to `{query}`:\n{df.head(10)}\n...\n{df.tail(10)}")
             log.debug(f"The complete response to `{query}`:\n{df}")
         else:

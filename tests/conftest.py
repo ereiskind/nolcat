@@ -500,7 +500,7 @@ def match_direct_SUSHI_harvest_result(number_of_records, caplog):
         )
     df["report_creation_date"] = pd.to_datetime(df["report_creation_date"])
     df["usage_date"] = pd.to_datetime(df["usage_date"])
-    if df.shape[1] > 20:
+    if df.shape[0] > 20:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df.head(10)}\n...\n{df.tail(10)}")
     else:
         log.info(f"`match_direct_SUSHI_harvest_result()` yields (type {type(df)}):\n{df}")
