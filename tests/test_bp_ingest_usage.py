@@ -125,9 +125,9 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
             [3, "PR", None, None, None, "Duke University Press", None, None, None, None, None, None, None, None, None, "Book", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Title_Requests", "2020-07-01", 2, None],
             [3, "IR", "Winners and Losers: Some Paradoxes in Monetary History Resolved and Some Lessons Unlearned", "Duke University Press", None, "Duke University Press", "Will E. Mason", "1977-11-01", "VoR", "10.1215/00182702-9-4-476", "Silverchair:12922", None, None, None, None, "Article", None, 1977, "Controlled", "Regular", "History of Political Economy", None, None, None, "Journal", None, "Silverchair:1000052", None, "0018-2702", "1527-1919", None, "Total_Item_Investigations", "2020-07-01", 6, None],
         ],
+        index=pd.RangeIndex(171, 178),  # Without setting primary key values both here and in the SQL file, MySQL tries to start assigning keys starting with zero, immediately raising a duplicate primary key error
         columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
     )
-    #ToDo: The upload is returning a primary key error--the inclusion of primary keys in production data isn't an issue as those PKs need to be kept constant, but for the test it is a problem--how should it be resolved?
     insert_statement_data = insert_statement_data.astype(COUNTERData.state_data_types())
     insert_statement_data["publication_date"] = pd.to_datetime(insert_statement_data["publication_date"])
     insert_statement_data["parent_publication_date"] = pd.to_datetime(insert_statement_data["parent_publication_date"])
@@ -138,9 +138,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
-    log.info(f"`check_database_update.reset_index().drop(columns='COUNTER_data_ID')`:\n{check_database_update.reset_index().drop(columns='COUNTER_data_ID')}")  #TEST:: temp
-    log.info(f"`insert_statement_data`:\n{insert_statement_data}")  #TEST:: temp
-    assert_frame_equal(check_database_update.reset_index().drop(columns='COUNTER_data_ID'), insert_statement_data)
+    assert_frame_equal(check_database_update.reset_index(drop=True), insert_statement_data)
 
 
 # Testing of `nolcat.app.check_if_data_already_in_COUNTERData()` in `tests.test_StatisticsSources.test_check_if_data_already_in_COUNTERData()`
