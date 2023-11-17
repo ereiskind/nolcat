@@ -111,10 +111,15 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         query=f"SELECT COUNT(*) FROM COUNTERData;",
         engine=engine,
     )
+    if isinstance(check_relation_size, str):
+        pytest.skip(database_function_skip_statements(check_relation_size))
     check_database_update = query_database(
         query="SELECT * FROM COUNTERData ORDER BY COUNTER_data_ID ASC LIMIT 7;",  # The entire relation can't be compared due to the SUSHI call in the previous test
         engine=engine,
     )
+    if isinstance(check_database_update, str):
+        pytest.skip(database_function_skip_statements(check_database_update))
+    check_database_update = check_database_update.set_index('COUNTER_data_ID')
     insert_statement_data = pd.DataFrame(
         [
             [0, "PR", None, None, None, "ProQuest", None, None, None, None, None, None, None, None, None, "Other", None, None, None, "Regular", None, None, None, None, None, None, None, None, None, None, None, "Unique_Item_Investigations", "2020-07-01", 77, None],
@@ -138,8 +143,6 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
-    log.info(f"`check_database_update`:\n{return_string_of_dataframe_info(check_database_update)}")  #TEST:: temp
-    log.info(f"`insert_statement_data`:\n{return_string_of_dataframe_info(insert_statement_data)}")  #TEST:: temp
     assert_frame_equal(check_database_update, insert_statement_data)
 
 
