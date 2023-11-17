@@ -1,5 +1,5 @@
 """Tests the methods in StatisticsSources."""
-########## Failing 2023-09-13 ##########
+########## Passing 2023-11-17 ##########
 
 import pytest
 import logging
@@ -362,8 +362,6 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     # The fields and records in the two dataframes are in different orders; they need to be consistent for `assert_frame_equal()` to work
     field_order = df.columns.to_list()
     records_loaded_by_method = records_loaded_by_method[field_order]
-    log.info(f"`records_loaded_by_method`:\n{records_loaded_by_method}")  #TEST:: temp
-    log.info(f"`df`:\n{df}")  #TEST:: temp
     df = df.sort_values(
         by=field_order,
         ignore_index=True,
@@ -372,9 +370,6 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
         by=field_order,
         ignore_index=True,
     )
-    log.info(f"`records_loaded_by_method` after sort:\n{records_loaded_by_method}")  #TEST:: temp
-    log.info(f"`df` after sort:\n{df}")  #TEST:: temp
-    log.info(f"Differences after sorting by all fields:\n{records_loaded_by_method.compare(df)}")
     assert_frame_equal(records_loaded_by_method[field_order], df, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order
 
 
