@@ -358,11 +358,12 @@ def test_collect_usage_statistics(engine, StatisticsSources_fixture, month_befor
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
     records_loaded_by_method = match_direct_SUSHI_harvest_result(engine, method_response_match_object.group(1), caplog)
-    field_order = harvest_R5_SUSHI_result.columns.to_list()
+    df, messages = harvest_R5_SUSHI_result
+    field_order = df.columns.to_list()
     log.info(f"`records_loaded_by_method`:\n{records_loaded_by_method[field_order]}")  #TEST:: temp
-    log.info(f"`harvest_R5_SUSHI_result`:\n{harvest_R5_SUSHI_result[field_order]}")  #TEST:: temp
-    log.info(f"Differences after sorting by all fields:\n{records_loaded_by_method[field_order].compare(harvest_R5_SUSHI_result[field_order])}")  #TEST:: temp  # TypeError: tuple indices must be integers or slices, not list
-    assert_frame_equal(records_loaded_by_method[field_order], harvest_R5_SUSHI_result[field_order], check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order  #TEST::  AssertionError: DataFrame Expected type <class 'pandas.core.frame.DataFrame'>, found <class 'tuple'> instead
+    log.info(f"`df`:\n{df}")  #TEST:: temp
+    log.info(f"Differences after sorting by all fields:\n{records_loaded_by_method[field_order].compare(df)}")  #TEST:: temp  # TypeError: tuple indices must be integers or slices, not list
+    assert_frame_equal(records_loaded_by_method[field_order], df, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order  #TEST::  AssertionError: DataFrame Expected type <class 'pandas.core.frame.DataFrame'>, found <class 'tuple'> instead
 
 
 #Section: Test `StatisticsSources.add_note()`
