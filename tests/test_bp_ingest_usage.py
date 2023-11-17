@@ -128,6 +128,7 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
         ],
         columns=["statistics_source_ID", "report_type", "resource_name", "publisher", "publisher_ID", "platform", "authors", "publication_date", "article_version", "DOI", "proprietary_ID", "ISBN", "print_ISSN", "online_ISSN", "URI", "data_type", "section_type", "YOP", "access_type", "access_method",  "parent_title", "parent_authors", "parent_publication_date", "parent_article_version", "parent_data_type", "parent_DOI", "parent_proprietary_ID", "parent_ISBN", "parent_print_ISSN", "parent_online_ISSN", "parent_URI", "metric_type", "usage_date", "usage_count", "report_creation_date"],
     )
+    #ToDo: The upload is returning a primary key error--the inclusion of primary keys in production data isn't an issue as those PKs need to be kept constant, but for the test it is a problem--how should it be resolved?
     insert_statement_data = insert_statement_data.astype(COUNTERData.state_data_types())
     insert_statement_data["publication_date"] = pd.to_datetime(insert_statement_data["publication_date"])
     insert_statement_data["parent_publication_date"] = pd.to_datetime(insert_statement_data["parent_publication_date"])
