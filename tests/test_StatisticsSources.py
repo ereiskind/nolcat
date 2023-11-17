@@ -92,7 +92,7 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
         pytest.skip(database_function_skip_statements(statistics_source_name, False))
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = statistics_source_name,  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails
+        statistics_source_name = str(statistics_source_name.at[0,'statistics_source_name']),  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
