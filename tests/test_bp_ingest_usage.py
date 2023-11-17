@@ -138,6 +138,8 @@ def test_upload_COUNTER_data_via_SQL_insert(engine, client, header_value):
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
     assert check_relation_size.iloc[0][0] > 7  # This confirms the table wasn't dropped and recreated, which would happen if all SQL in the test file was executed
+    log.info(f"`check_database_update`:\n{return_string_of_dataframe_info(check_database_update)}")  #TEST:: temp
+    log.info(f"`insert_statement_data`:\n{return_string_of_dataframe_info(insert_statement_data)}")  #TEST:: temp
     assert_frame_equal(check_database_update, insert_statement_data)
 
 
