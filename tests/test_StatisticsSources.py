@@ -84,15 +84,15 @@ def StatisticsSources_fixture(engine, most_recent_month_with_usage):
             retrieval_codes.append(interface)
     
     fixture_retrieval_code = str(choice(retrieval_codes)).split(".")[0]  # String created is of a float (aka `n.0`), so the decimal and everything after it need to be removed
-    statistics_source_name = query_database(
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={fixture_retrieval_code}",
+    statistics_source_name = query_database(  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails; the `choice()` function ensures the retrieval code chosen is in the test data
+        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_retrieval_code={choice(['1', '2', '3'])}",
         engine=engine,
     )
     if isinstance(statistics_source_name, str):
         pytest.skip(database_function_skip_statements(statistics_source_name, False))
     yield_object = StatisticsSources(
         statistics_source_ID = 0,
-        statistics_source_name = str(statistics_source_name.at[0,'statistics_source_name']),  # With a placeholder name, `SUSHICallAndResponse._evaluate_individual_SUSHI_exception()`, which makes a StatisticsSource object from a record based on that record's `statistics_source_name` value, fails
+        statistics_source_name = str(statistics_source_name.at[0,'statistics_source_name']),
         statistics_source_retrieval_code = fixture_retrieval_code,
         vendor_ID = 0,
     )
