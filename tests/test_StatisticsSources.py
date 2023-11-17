@@ -349,7 +349,7 @@ def test_collect_usage_statistics(StatisticsSources_fixture, month_before_month_
     assert isinstance(flash_message_list, dict)
     assert method_response_match_object is not None  # The test fails at this point because a failing condition here raises errors below
 
-    records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1))
+    records_loaded_by_method = match_direct_SUSHI_harvest_result(method_response_match_object.group(1), caplog)
     try:
         log.info(f"Differences:\n{records_loaded_by_method.compare(harvest_R5_SUSHI_result[0][records_loaded_by_method.columns.to_list()])}")
         #TEST: Test is failing because rows are out of order--above shows metric and number pairs are the same but on different rows--below shows possible fix options as output
