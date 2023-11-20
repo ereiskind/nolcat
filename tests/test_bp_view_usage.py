@@ -20,18 +20,15 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def remove_NoLCAT_download_CSV(file_name):
+def remove_NoLCAT_download_CSV():
     """Removes a CSV download of the usage data.
 
-    This fixture exists purely for cleanup--the file should be created by the function being tested.
-
-    Args:
-        file_name (str): the name of the file being removed
+    This fixture exists purely for cleanup--the file is created by the function being tested. Since fixtures only accept other fixtures as arguments, this cannot be used for files of various names.
 
     Yields:
         None
     """
-    file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / {file_name}
+    file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     yield None
     try:
         file_path.unlink()
@@ -56,10 +53,9 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, caplog):
+def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
-    remove_NoLCAT_download_CSV('NoLCAT_download.csv')
 
     POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/custom-SQL',
@@ -83,11 +79,10 @@ def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, 
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):
+def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    remove_NoLCAT_download_CSV('NoLCAT_download.csv')
 
     query_options = choice((
         ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
@@ -143,11 +138,10 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):
+def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-    remove_NoLCAT_download_CSV('NoLCAT_download.csv')
 
     #form_input = {
     #    'begin_date': '2016-07-01',
