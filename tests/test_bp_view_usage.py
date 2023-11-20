@@ -253,7 +253,7 @@ def test_download_non_COUNTER_usage(client, engine, header_value, non_COUNTER_AU
     tuple_for_form_input = create_AUCT_SelectField_options(df)[0]
     log.info(f"Form input is {tuple_for_form_input} (type {type(tuple_for_form_input)}).")
     form_input = {
-        'AUCT_of_file_download': tuple_for_form_input,
+        'AUCT_of_file_download': '(11, 2)',
     }
 
     POST_response = client.post(
