@@ -264,15 +264,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
 
     #Section: Create Form Submission
     if path_to_sample_file.suffix == '.json':
-        open_mode = 'rt'
         mimetype = 'application/json'
     else:
-        open_mode = 'rb'
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     form_submissions = MultipartEncoder(
         fields={
             'AUCT_option': f"({non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
-            'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
+            'usage_file': (path_to_sample_file.name, open(path_to_sample_file, 'rb'), mimetype),
         },
         encoding='utf-8',
     )

@@ -229,7 +229,7 @@ def upload_non_COUNTER_reports():
         form.AUCT_option.choices = create_AUCT_SelectField_options(non_COUNTER_files_needed)
         return render_template('ingest_usage/upload-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_options.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
+        statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
         df = query_database(
             query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};",
             engine=db.engine,
@@ -254,7 +254,7 @@ def upload_non_COUNTER_reports():
             log.error(response)
             flash(response)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_options.data]} uploaded successfully."
+        message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_option.data]} uploaded successfully."
         log.debug(message)
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
