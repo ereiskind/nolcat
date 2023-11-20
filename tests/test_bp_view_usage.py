@@ -126,49 +126,18 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
-    """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
-    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
-    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+def test_start_query_wizard():
+    """Tests the submission of the report type and date range to the query wizard."""
+    pass
 
-    #form_input = {
-    #    'begin_date': '2016-07-01',
-    #    'end_date': '2020-06-01',
-    #    'query_options': "w",
-    #    #ToDo: Fields for query wizard not yet created; once created, they'll need to be added here
-    #}
-    #POST_response = client.post(
-    #    '/view_usage/query-wizard',
-    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    data=form_input,
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #temp
-    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")  #temp
 
-    #CSV_df = pd.read_csv(
-    #    TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
-    #    index_col='COUNTER_data_ID',
-    #    parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
-    #    date_parser=date_parser,
-    #    encoding='utf-8',
-    #    encoding_errors='backslashreplace',
-    #)
-    #CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    #database_df = query_database(
-    #    query=#ToDo: The query created with the query wizard
-    #    engine=engine,
-    #    index='COUNTER_data_ID',
-    #)
-    #if isinstance(database_df, str):
-    #    pytest.skip(database_function_skip_statements(database_df))
-    #database_df = database_df.astype(COUNTERData.state_data_types())
+def test_GET_construct_query_with_wizard():
+    """Tests that the query wizard accepts the report type and date range and outputs the field appropriate for selection in the wizard."""
+    pass
 
-    #assert POST_response.status == "200 OK"
-    #assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
-    #assert_frame_equal(CSV_df, database_df)
-    #ToDo: Should the presence of the above file in the host computer's file system be checked?
+
+def test_construct_query_with_wizard():
+    """Tests that the query wizard page can download the results of a query created with a form."""
     pass
 
 

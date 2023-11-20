@@ -21,7 +21,17 @@ Planned Iterations
 
 Iteration 1: Complete Current Data I/O
 ======================================
-* Set up basic customizable SQL queries in ``nolcat.view_usage.views.run_custom_SQL_query()``
+* Write ``nolcat.view_usage.views.start_query_wizard()``
+
+  * Create page
+  * Create form
+  * Create test function
+
+* Write ``nolcat.view_usage.views.construct_query_with_wizard()``
+
+  * Create page
+  * Create form
+  * Create test function
 
 Iteration 2: Add Historical Data
 ================================

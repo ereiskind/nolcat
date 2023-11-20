@@ -203,6 +203,57 @@ def use_predefined_SQL_query():
         return abort(404)
 
 
+@bp.route('query-wizard', methods=['GET', 'POST'])
+def start_query_wizard():
+    """Collects the date range and report type for the query to be created."""
+    log.info("Starting `start_query_wizard()`.")
+    form = #ToDo: FormClass()
+    if request.method == 'GET':
+        #ToDo: Create form with report type, start date, end date fields (can either be two independently selected dates or a FY)
+        #ToDo: Create HTML page form goes on
+        return render_template('initialization/page-form-is-on.html', form=form)
+    elif form.validate_on_submit():
+        report_type = #ToDo: Get report type submitted to
+        #ToDo: Get start and end dates, pulling for `fiscalYears` relation if necessary
+        start_date = #ToDo: Convert date to ISO string
+        end_date = #ToDo: Convert date to ISO string
+        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted', report_type=report_type, start_date=start_date, end_date=end_date))
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)
+
+
+@bp.route('query-wizard/<string:report_type>/<string:start_date>/<int:number_of_months>', methods=['GET', 'POST'])
+def construct_query_with_wizard():
+    """Returns a page that allows a valid SQL query to be constructed through drop-downs and fuzzy text searches.
+    
+    Args:
+        report_type (str): the COUNTER R5 report type abbreviation
+        start_date (str): the ISO string for the first day in the date range
+        end_date (str): the ISO string for the last day in the date range
+    """
+    log.info("Starting `construct_query_with_wizard()`.")
+    '''
+    form = FormClass()
+    if request.method == 'GET':
+        #ToDo: Make form asking which fields to display and which to filter by, only offering the choices valid for the given report
+        #ToDo: Include R4 reports with the same coverage--PR1 for PR, DR1 and DR2 for DR, and all remaining reports for TR
+        return render_template('initialization/page-form-is-on.html', form=form)
+    elif form.validate_on_submit():
+        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
+        #toDo: Construct query, using answers returned by searches
+        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)
+    '''
+    pass
+
+
 @bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
 def download_non_COUNTER_usage():
     """Returns a page that allows all non-COUNTER usage files uploaded to NoLCAT to be downloaded."""
