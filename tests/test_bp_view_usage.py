@@ -237,7 +237,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
-    POST_response = client.post(
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/non-COUNTER-downloads',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,

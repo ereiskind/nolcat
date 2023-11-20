@@ -56,7 +56,7 @@ def run_custom_SQL_query():
         )
         log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
         log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
+        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -200,7 +200,7 @@ def use_predefined_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`, but above logging statement is output with value True; opening logging statement for `download_file()` route function isn't output at all
+        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -241,8 +241,7 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`vars(form.AUCT_of_file_download)`:\n{vars(form.AUCT_of_file_download)}")  #TEST: temp
-        log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")  #TEST: `form.AUCT_of_file_download.data` is <FileStorage: 'Ulrichsweb--FY 2021' ('application/octet-stream')> (type <class 'str'>).
+        log.info(f"Dropdown selection is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         AUCT_object = pd.read_sql(
             sql=f"""
@@ -279,7 +278,7 @@ def download_non_COUNTER_usage():
 
         file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_download_non_COUNTER_usage()`; above logging statements got to stdout indicating successful creation of file to download, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
