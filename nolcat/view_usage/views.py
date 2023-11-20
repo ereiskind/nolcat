@@ -239,6 +239,7 @@ def download_non_COUNTER_usage():
             flash(database_query_fail_statement(file_download_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
+        log.debug(f"The dropdown options are:\n{form.AUCT_of_file_download.choices}")
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
         log.info(f"`dir(form.AUCT_of_file_download)`:\n{dir(form.AUCT_of_file_download)}")
