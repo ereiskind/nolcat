@@ -31,6 +31,74 @@ class QueryWizardForm(FlaskForm):
         ('w', "Create a query with the wizard options below:")
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     #ToDo: Add wizard option fields
+'''
+    SELECT
+    <fields selected to display>,
+        COUNTERData.statistics_source_ID --> statisticsSources.statistics_source_name
+        COUNTERData.resource_name
+        COUNTERData.publisher
+        COUNTERData.platform
+        COUNTERData.authors
+        COUNTERData.publication_date
+        COUNTERData.article_version (display only????)
+        COUNTERData.DOI (display only)
+        COUNTERData.proprietary_ID (display only)
+        COUNTERData.ISBN (display only)
+        COUNTERData.print_ISSN (display only)
+        COUNTERData.online_ISSN (display only)
+        COUNTERData.URI (display only)
+        COUNTERData.data_type
+        COUNTERData.section_type
+        COUNTERData.YOP --> fiscalYears.year
+        COUNTERData.access_type
+        COUNTERData.access_method
+        COUNTERData.parent_title
+        COUNTERData.parent_authors (display only)
+        COUNTERData.parent_publication_date (display only)
+        COUNTERData.parent_article_version (display only)
+        COUNTERData.parent_data_type (display only)
+        COUNTERData.parent_DOI (display only)
+        COUNTERData.parent_proprietary_ID (display only)
+        COUNTERData.parent_ISBN (display only)
+        COUNTERData.parent_print_ISSN (display only)
+        COUNTERData.parent_online_ISSN (display only)
+        COUNTERData.parent_URI (display only)
+    COUNTERData.usage_date
+    SUM(COUNTERData.usage_count)
+FROM
+    <relation>
+    JOIN <other relations>
+WHERE
+    COUNTERData.report_type -- should this be mandatory?
+    <filter statements>
+        COUNTERData.statistics_source_ID (too large for a dropdown)
+        COUNTERData.resource_name (needs fuzzy search)
+        COUNTERData.publisher (too large for a dropdown)
+        COUNTERData.platform (too large for a dropdown)
+        COUNTERData.authors (needs fuzzy search)
+        COUNTERData.publication_date
+        COUNTERData.data_type
+        COUNTERData.section_type
+        COUNTERData.YOP
+        COUNTERData.access_type
+        COUNTERData.access_method
+        COUNTERData.parent_title (needs fuzzy search)
+    COUNTERData.usage_date / fiscalYears.start_date + fiscalYears.end_date
+GROUP BY
+    <fields in select not in where or with a grouping function);
+        COUNTERData.statistics_source_ID
+        COUNTERData.resource_name
+        COUNTERData.publisher
+        COUNTERData.platform
+        COUNTERData.authors
+        COUNTERData.publication_date
+        COUNTERData.data_type
+        COUNTERData.section_type
+        COUNTERData.YOP
+        COUNTERData.access_type
+        COUNTERData.access_method
+        COUNTERData.parent_title
+'''
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
