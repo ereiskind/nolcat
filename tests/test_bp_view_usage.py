@@ -20,8 +20,8 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def remove_NoLCAT_download_CSV():
-    """Removes a CSV download of the usage data.
+def remove_COUNTER_download_CSV():
+    """Removes a CSV download of COUNTER usage data.
 
     This fixture exists purely for cleanup--the file is created by the function being tested. Since fixtures only accept other fixtures as arguments, this cannot be used for files of various names.
 
@@ -53,7 +53,7 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
@@ -79,7 +79,7 @@ def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, 
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -138,7 +138,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -231,10 +231,10 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, engine, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, remove_NoLCAT_download_CSV, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
+def test_download_non_COUNTER_usage(client, engine, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, remove_COUNTER_download_CSV, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
-    remove_NoLCAT_download_CSV(f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv')
+    remove_COUNTER_download_CSV(f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv')
 
     df = pd.read_sql(
         sql=f"""
