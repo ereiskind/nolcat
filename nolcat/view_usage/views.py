@@ -246,12 +246,12 @@ def download_non_COUNTER_usage():
         AUCT_object = pd.read_sql(
             sql=f"""
                 SELECT
-                    usage_is_being_collected
-                    manual_collection_required
-                    collection_via_email
-                    is_COUNTER_compliant
-                    collection_status
-                    usage_file_path
+                    usage_is_being_collected,
+                    manual_collection_required,
+                    collection_via_email,
+                    is_COUNTER_compliant,
+                    collection_status,
+                    usage_file_path,
                     notes
                 FROM annualUsageCollectionTracking
                 WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
