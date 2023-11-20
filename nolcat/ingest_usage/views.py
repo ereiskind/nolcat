@@ -248,6 +248,8 @@ def upload_non_COUNTER_reports():
             usage_file_path=df.at[0,'usage_file_path'],
             notes=df.at[0,'notes'],
         )
+        log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
+        log.debug(f"`vars(form.usage_file.data)`:\n{vars(form.usage_file.data)}")  #TEST: temp
         response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
