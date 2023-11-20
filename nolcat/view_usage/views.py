@@ -241,13 +241,44 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
+        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
-        #ToDo: Create `AUCT_object` based on `annualUsageCollectionTracking` record with the PK above
+        AUCT_object = pd.read_sql(
+            sql=f"""
+                SELECT
+                    usage_is_being_collected
+                    manual_collection_required
+                    collection_via_email
+                    is_COUNTER_compliant
+                    collection_status
+                    usage_file_path
+                    notes
+                FROM annualUsageCollectionTracking
+                WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};
+            """,
+            con=db.engine,
+        )
+        AUCT_object['usage_is_being_collected'] = restore_boolean_values_to_boolean_field(AUCT_object['usage_is_being_collected'])
+        AUCT_object['manual_collection_required'] = restore_boolean_values_to_boolean_field(AUCT_object['manual_collection_required'])
+        AUCT_object['collection_via_email'] = restore_boolean_values_to_boolean_field(AUCT_object['collection_via_email'])
+        AUCT_object['is_COUNTER_compliant'] = restore_boolean_values_to_boolean_field(AUCT_object['is_COUNTER_compliant'])
+        AUCT_object = AUCT_object.astype(AnnualUsageCollectionTracking.state_data_types())
+        AUCT_object = AnnualUsageCollectionTracking(
+            AUCT_statistics_source=statistics_source_ID,
+            AUCT_fiscal_year=fiscal_year_ID,
+            usage_is_being_collected=AUCT_object['usage_is_being_collected'][0],
+            manual_collection_required=AUCT_object['manual_collection_required'][0],
+            collection_via_email=AUCT_object['collection_via_email'][0],
+            is_COUNTER_compliant=AUCT_object['is_COUNTER_compliant'][0],
+            collection_status=AUCT_object['collection_status'][0],
+            usage_file_path=AUCT_object['usage_file_path'][0],
+            notes=AUCT_object['notes'][0],
+        )
+        log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
-        # file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
-        #log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
-        # return redirect(url_for('download_file', file_path=str(file_path)))
-        pass
+        file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
+        log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
+        return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
