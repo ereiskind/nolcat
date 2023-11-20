@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2023-11-15 ########## Since the downloads themselves work, getting these tests to pass is not a priority
+########## Failing 2023-11-20 ########## Since the downloads themselves work, getting these tests to pass is not a priority
 
 import pytest
 import logging
@@ -20,10 +20,10 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def remove_NoLCAT_download_CSV():
-    """Removes a CSV download of the usage data.
+def remove_COUNTER_download_CSV():
+    """Removes a CSV download of COUNTER usage data.
 
-    This fixture exists purely for cleanup--the file should be created by the function being tested.
+    This fixture exists purely for cleanup--the file is created by the function being tested. Since fixtures only accept other fixtures as arguments, this cannot be used for files of various names.
 
     Yields:
         None
@@ -53,7 +53,7 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
 
@@ -79,7 +79,7 @@ def test_run_custom_SQL_query(client, header_value, remove_NoLCAT_download_CSV, 
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -138,7 +138,7 @@ def test_use_predefined_SQL_query_with_COUNTER_standard_views(engine, client, he
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_NoLCAT_download_CSV, caplog):  # `remove_NoLCAT_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query_with_wizard(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a SQL query constructed using the SQL query construction wizard and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -231,7 +231,22 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage():
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
-    #ToDo: Write test
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+    form_input = {
+        'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
+    }
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+        '/view_usage/non-COUNTER-downloads',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
+    log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
+    # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
     pass

@@ -21,13 +21,12 @@ Planned Iterations
 
 Iteration 1: Complete Current Data I/O
 ======================================
-* Finish ``nolcat.view_usage.views.download_non_COUNTER_usage()``
-* Write ``tests.test_bp_view_usage.test_download_non_COUNTER_usage()``
-* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
-* Figure out how to prevent SQL injection in ``nolcat.view_usage.views.run_custom_SQL_query()``
+* Set up basic customizable SQL queries in ``nolcat.view_usage.views.run_custom_SQL_query()``
 
 Iteration 2: Add Historical Data
 ================================
+* Write "ingest_usage/upload-non-COUNTER-usage.html" page
+* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
 * Update "initialization/initial-data-upload-3.html" by removing commented out field and adding instructions for tabular COUNTER ingest
 * Remove commenting out from end of ``nolcat.initialization.views.collect_AUCT_and_historical_COUNTER_data()``
 * Remove commenting out from end of ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
@@ -37,12 +36,12 @@ Iteration 2: Add Historical Data
 * Write ``tests.test_bp_initialization.test_GET_request_for_upload_historical_non_COUNTER_usage()``
 * Write ``tests.test_bp_initialization.test_upload_historical_non_COUNTER_usage()``
 * Remove commenting out from ``tests.test_bp_initialization.test_collect_AUCT_and_historical_COUNTER_data()``
-* Finish ``tests.test_bp_ingest_usage.test_GET_request_for_upload_non_COUNTER_reports()``
-* Write "ingest_usage/upload-non-COUNTER-usage.html" page
 
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
+* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
+* Get failing test ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to pass
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_63()``
 * Write ``tests.test_FiscalYears.test_calculate_ACRL_61a()``
