@@ -250,6 +250,8 @@ def test_download_non_COUNTER_usage(client, engine, header_value, non_COUNTER_AU
             """,
         con=engine,
     )
+    log.info(f"`create_AUCT_SelectField_options(df)` (type {type(create_AUCT_SelectField_options(df))}):\n{create_AUCT_SelectField_options(df)}")  #TEST: temp
+    log.info(f"`create_AUCT_SelectField_options(df)[0]` (type {type(create_AUCT_SelectField_options(df)[0])}):\n{create_AUCT_SelectField_options(df)[0]}")  #TEST: temp
     form_input = {
         'AUCT_of_file_download': create_AUCT_SelectField_options(df)[0],
     }
