@@ -241,7 +241,11 @@ def download_non_COUNTER_usage():
         form.AUCT_of_file_download.choices = create_AUCT_SelectField_options(file_download_options)
         return render_template('view_usage/download-non-COUNTER-usage.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")
+        log.info(f"`dir(form.AUCT_of_file_download)`:\n{dir(form.AUCT_of_file_download)}")
+        log.info(f"`vars(form.AUCT_of_file_download)`:\n{vars(form.AUCT_of_file_download)}")
+        log.info(f"`dir(form.AUCT_of_file_download.data)`:\n{dir(form.AUCT_of_file_download.data)}")
+        log.info(f"`vars(form.AUCT_of_file_download.data)`:\n{vars(form.AUCT_of_file_download.data)}")
+        log.info(f"`form.AUCT_of_file_download.data` is {form.AUCT_of_file_download.data} (type {type(form.AUCT_of_file_download.data)}).")  #TEST: `form.AUCT_of_file_download.data` is <FileStorage: 'Ulrichsweb--FY 2021' ('application/octet-stream')> (type <class 'str'>).
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_of_file_download.data)
         AUCT_object = pd.read_sql(
             sql=f"""
