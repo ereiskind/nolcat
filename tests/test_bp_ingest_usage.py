@@ -293,11 +293,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     else:
         open_mode = 'rb'
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    tuple_for_form_input = create_AUCT_SelectField_options(df)[0]  #TEST: TypeError: sequence item 0: expected str instance, DataFrame found
-    log.info(f"Form input is {tuple_for_form_input} (type {type(tuple_for_form_input)}).")
+    df_for_form_submission = create_AUCT_SelectField_options(df)  #TEST: TypeError: sequence item 0: expected str instance, DataFrame found
+    log.info(f"`df_for_form_submission`:\n{df_for_form_submission}")
+    tuple_for_form_submission = df_for_form_submission[0]
+    log.info(f"`tuple_for_form_submission`:\n{tuple_for_form_submission}")
     form_submissions = MultipartEncoder(
         fields={
-            'AUCT_option': tuple_for_form_input,
+            'AUCT_option': tuple_for_form_submission,
             'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
         },
         encoding='utf-8',
