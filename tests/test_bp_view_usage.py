@@ -231,7 +231,41 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage():
+def test_download_non_COUNTER_usage(client, engine, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
-    #ToDo: Write test
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+
+    df = pd.read_sql(
+        sql=f"""
+                SELECT
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year,
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID = annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID = annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.AUCT_statistics_source={non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source} AND
+                annualUsageCollectionTracking.AUCT_fiscal_year={non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year};
+            """,
+        con=engine,
+    )
+    form_input = {
+        'AUCT_of_file_download': create_AUCT_SelectField_options(df)[0],
+    }
+
+    POST_response = client.post(
+        '/view_usage/non-COUNTER-downloads',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
+    log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
+
+    # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
     pass
