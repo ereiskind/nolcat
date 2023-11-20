@@ -258,48 +258,20 @@ def test_GET_request_for_upload_non_COUNTER_reports(engine, client, caplog):
     #ToDo: `assert GET_select_field_options == db_select_field_options` when "ingest_usage/upload-non-COUNTER-usage.html" is finished
 
 
-def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test  #TEST: Test fails due to problem in `nolcat.app.create_AUCT_SelectField_options()`
+def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AUCT_object_before_upload, path_to_sample_file, remove_file_from_S3, caplog):  # `remove_file_from_S3()` not called but used to remove file loaded during test
     """Tests saving files uploaded to `ingest_usage.UsageFileForm` and updating the corresponding AUCT record."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `upload_file_to_S3_bucket()`
 
     #Section: Create Form Submission
-    #Subsection: Create `AUCT_options` Index
-    statistics_source_name = query_database(
-        query=f"SELECT statistics_source_name FROM statisticsSources WHERE statistics_source_ID={non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source};",
-        engine=engine,
-    )
-    if isinstance(statistics_source_name, str):
-        pytest.skip(f"Unable to run test because it relied on {statistics_source_name[0].lower()}{statistics_source_name[1:].replace(' raised', ', which raised')}")
-    fiscal_year = query_database(
-        query=f"SELECT fiscal_year FROM fiscalYears WHERE fiscal_year_ID={non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
-        engine=engine,
-    )
-    if isinstance(fiscal_year, str):
-        pytest.skip(f"Unable to run test because it relied on {fiscal_year[0].lower()}{fiscal_year[1:].replace(' raised', ', which raised')}")
-    df = pd.DataFrame(
-        [[  # This creates a dataframe with a single row/record
-            non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source,
-            non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year,
-            statistics_source_name,
-            fiscal_year,
-        ]],
-        columns=['AUCT_statistics_source', 'AUCT_fiscal_year', 'statistics_source_name', 'fiscal_year'],
-    )
-
-    #Subsection: Create MultipartEncoder
     if path_to_sample_file.suffix == '.json':
         open_mode = 'rt'
         mimetype = 'application/json'
     else:
         open_mode = 'rb'
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    df_for_form_submission = create_AUCT_SelectField_options(df)  #TEST: TypeError: sequence item 0: expected str instance, DataFrame found
-    log.info(f"`df_for_form_submission`:\n{df_for_form_submission}")
-    tuple_for_form_submission = df_for_form_submission[0]
-    log.info(f"`tuple_for_form_submission`:\n{tuple_for_form_submission}")
     form_submissions = MultipartEncoder(
         fields={
-            'AUCT_option': tuple_for_form_submission,
+            'AUCT_option': f"({non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
             'usage_file': (path_to_sample_file.name, open(path_to_sample_file, open_mode), mimetype),
         },
         encoding='utf-8',
