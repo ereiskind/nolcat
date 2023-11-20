@@ -34,48 +34,37 @@ class QueryWizardForm(FlaskForm):
 '''
     SELECT
     <fields selected to display>,
-        COUNTERData.statistics_source_ID --> statisticsSources.statistics_source_name
         COUNTERData.resource_name
         COUNTERData.publisher
         COUNTERData.platform
-        COUNTERData.authors
         COUNTERData.publication_date
-        COUNTERData.article_version (display only????)
-        COUNTERData.DOI (display only)
-        COUNTERData.proprietary_ID (display only)
-        COUNTERData.ISBN (display only)
-        COUNTERData.print_ISSN (display only)
-        COUNTERData.online_ISSN (display only)
-        COUNTERData.URI (display only)
+        COUNTERData.DOI
+        COUNTERData.ISBN
+        COUNTERData.print_ISSN
+        COUNTERData.online_ISSN
         COUNTERData.data_type
         COUNTERData.section_type
-        COUNTERData.YOP --> fiscalYears.year
-        COUNTERData.access_type
+        COUNTERData.YOP
         COUNTERData.access_method
         COUNTERData.parent_title
-        COUNTERData.parent_authors (display only)
-        COUNTERData.parent_publication_date (display only)
-        COUNTERData.parent_article_version (display only)
-        COUNTERData.parent_data_type (display only)
-        COUNTERData.parent_DOI (display only)
-        COUNTERData.parent_proprietary_ID (display only)
-        COUNTERData.parent_ISBN (display only)
-        COUNTERData.parent_print_ISSN (display only)
-        COUNTERData.parent_online_ISSN (display only)
-        COUNTERData.parent_URI (display only)
+        COUNTERData.parent_publication_date
+        COUNTERData.parent_data_type
+        COUNTERData.parent_DOI
+        COUNTERData.parent_ISBN
+        COUNTERData.parent_print_ISSN
+        COUNTERData.parent_online_ISSN
     COUNTERData.usage_date
     SUM(COUNTERData.usage_count)
-FROM
-    <relation>
-    JOIN <other relations>
+FROM COUNTERData
 WHERE
-    COUNTERData.report_type -- should this be mandatory?
+    COUNTERData.report_type -- PAGE 1
+    COUNTERData.usage_date x2 -- PAGE 1
     <filter statements>
-        COUNTERData.statistics_source_ID (too large for a dropdown)
         COUNTERData.resource_name (needs fuzzy search)
-        COUNTERData.publisher (too large for a dropdown)
-        COUNTERData.platform (too large for a dropdown)
-        COUNTERData.authors (needs fuzzy search)
+        COUNTERData.publisher (less fuzzy search)
+        COUNTERData.platform (less fuzzy search)
+        COUNTERData.ISBN
+        COUNTERData.print_ISSN OR COUNTERData.online_ISSN
         COUNTERData.publication_date
         COUNTERData.data_type
         COUNTERData.section_type
@@ -83,21 +72,10 @@ WHERE
         COUNTERData.access_type
         COUNTERData.access_method
         COUNTERData.parent_title (needs fuzzy search)
-    COUNTERData.usage_date / fiscalYears.start_date + fiscalYears.end_date
+        COUNTERData.parent_ISBN
+        COUNTERData.parent_print_ISSN OR COUNTERData.parent_online_ISSN
 GROUP BY
     <fields in select not in where or with a grouping function);
-        COUNTERData.statistics_source_ID
-        COUNTERData.resource_name
-        COUNTERData.publisher
-        COUNTERData.platform
-        COUNTERData.authors
-        COUNTERData.publication_date
-        COUNTERData.data_type
-        COUNTERData.section_type
-        COUNTERData.YOP
-        COUNTERData.access_type
-        COUNTERData.access_method
-        COUNTERData.parent_title
 '''
 
 
