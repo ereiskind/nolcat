@@ -110,25 +110,17 @@ Iteration 4: Show and Edit Fiscal Year Information
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditFiscalYearForm()``
 * Write ``tests.test_bp_annual_stats.test_show_fiscal_year_details_submitting_EditAUCTForm()``
 
-Iteration 5: Create Query Wizard
-================================
-* Finish ``nolcat.view_usage.views.use_predefined_SQL_query()``
-* Craft queries to use
-* Create drop-down fields for COUNTER elements in ``nolcat.view_usage.forms.QueryWizardForm()``
-* Finish ``tests.test_bp_view_usage.test_use_predefined_SQL_query_with_wizard()``
-* Finish form in "query-wizard.html"
-
-Iteration 6: Switch Message Display from Stdout to Flask
+Iteration 5: Switch Message Display from Stdout to Flask
 =========================================================
 * Make second return statement in ``nolcat.models.StatisticsSources.fetch_SUSHI_information()`` display in Flask
 
-Iteration 7: Create UI Design and Jinja Templates
+Iteration 6: Create UI Design and Jinja Templates
 ==================================================
 * Clean up CSS file
 * Create CSS class for flashed messages
 * Create Jinja template header and footer in "nolcat/templates/layout.html"
 
-Iteration 8: Interact with Host File System
+Iteration 7: Interact with Host File System
 ============================================
 * Figure out how tests run in the instance can get metadata about and interact with the file system of the host/host workstation
 * Finish ``tests.test_app.default_download_folder()``

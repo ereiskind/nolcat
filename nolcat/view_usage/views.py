@@ -27,7 +27,7 @@ def view_usage_homepage():
     return render_template('view_usage/index.html')
 
 
-@bp.route('/custom-SQL', methods=['GET', 'POST'])
+@bp.route('/custom-query', methods=['GET', 'POST'])
 def run_custom_SQL_query():
     """Returns a page that accepts a SQL query from the user and runs it against the database."""
     log.info("Starting `run_custom_SQL_query()`.")
@@ -37,10 +37,10 @@ def run_custom_SQL_query():
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
-        return render_template('view_usage/write-SQL-queries.html', form=form)
+        return render_template('view_usage/custom-query.html', form=form)
     elif form.validate_on_submit():
         df = query_database(
-            query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection
+            query=form.SQL_query.data,  #ToDo: Figure out how to make this safe from SQL injection: https://stackoverflow.com/a/71604821
             engine=db.engine,
         )
         if isinstance(df, str):
@@ -64,7 +64,7 @@ def run_custom_SQL_query():
         return abort(404)
 
 
-@bp.route('query-wizard', methods=['GET', 'POST'])
+@bp.route('preset-query', methods=['GET', 'POST'])
 def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     log.info("Starting `use_predefined_SQL_query()`.")
@@ -74,7 +74,7 @@ def use_predefined_SQL_query():
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
-        return render_template('view_usage/query-wizard.html', form=form)
+        return render_template('view_usage/preset-query.html', form=form)
     elif form.validate_on_submit():
         log.info(f"Querying NoLCAT for a {form.query_options.data} standard report with the begin date {form.begin_date.data} and the end date {form.end_date.data}.")
         begin_date = form.begin_date.data
@@ -176,11 +176,6 @@ def use_predefined_SQL_query():
                 AND metric_type='Total_Item_Requests';
             """
         #ToDo: Decide what other canned reports, if any, are needed
-        elif form.query_options.data == "w":
-            #ToDo: Create queries that filter on metrics with fixed vocabularies via checkboxes
-            #ToDo: Create queries where a sanitized (safe from SQL injection) free text field is fuzzily matched against a COUNTER free text field
-            query = f"""
-            """
 
         df = query_database(
             query=query,

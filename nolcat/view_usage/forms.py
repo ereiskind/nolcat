@@ -28,9 +28,7 @@ class QueryWizardForm(FlaskForm):
         ('TR_J4', "TR_J4"),
         ('IR_A1', "IR_A1"),
         ('IR_M1', "IR_M1"),
-        ('w', "Create a query with the wizard options below:")
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
-    #ToDo: Add wizard option fields
 '''
     SELECT
     <fields selected to display>,
