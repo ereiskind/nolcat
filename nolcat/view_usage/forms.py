@@ -8,6 +8,12 @@ from wtforms.validators import InputRequired
 from wtforms.validators import Optional
 
 
+data_type_values = ['Article', 'Audiovisual', 'Book', 'Book_Segment', 'Conference', 'Conference_Item', 'Database_Aggregated', 'Database_AI', 'Database_Full', 'Database_Full_Item', 'Dataset', 'Image', 'Interactive_Resource', 'Journal', 'Multimedia', 'News_Item', 'Newspaper_or_Newsletter', 'Other', 'Patent', 'Platform', 'Reference_Item', 'Reference_Work', 'Report', 'Software', 'Sound', 'Standard', 'Thesis_or_Dissertation', 'Unspecified']
+metric_type_values = ['Searches_Regular', 'Searches_Automated', 'Searches_Federated', 'Searches_Platform', 'Total_Item_Investigations', 'Unique_Item_Investigations', 'Unique_Title_Investigations', 'Total_Item_Requests', 'Unique_Item_Requests', 'Unique_Title_Requests', 'No_License', 'Limit_Exceeded']
+access_type_values = ['Controlled', 'Open', 'Free_To_Read']
+access_method_values = ['Regular', 'TDM']
+
+
 class CustomSQLQueryForm(FlaskForm):
     """Creates a form for entering a custom SQL query."""
     SQL_query = TextAreaField("Enter the SQL query:")
