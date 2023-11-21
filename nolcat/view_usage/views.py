@@ -68,7 +68,7 @@ def run_custom_SQL_query():
 def use_predefined_SQL_query():
     """Returns a page that offers pre-constructed queries and a query construction wizard."""
     log.info("Starting `use_predefined_SQL_query()`.")
-    form = QueryWizardForm()
+    form = PresetQueryForm()
     if request.method == 'GET':
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
@@ -207,10 +207,10 @@ def use_predefined_SQL_query():
 def start_query_wizard():
     """Collects the date range and report type for the query to be created."""
     log.info("Starting `start_query_wizard()`.")
-    form = #ToDo: FormClass()
+    form = StartQueryWizardForm()
     if request.method == 'GET':
         #ToDo: Create form with report type, start date, end date fields (can either be two independently selected dates or a FY)
-        #ToDo: Create HTML page form goes on
+        #ToDo: Set `form.fiscal_year.choices`
         return render_template('initialization/page-form-is-on.html', form=form)
     elif form.validate_on_submit():
         report_type = #ToDo: Get report type submitted to

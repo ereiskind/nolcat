@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import TextAreaField
 from wtforms.fields import SelectField
 from wtforms.fields import DateField
+from wtforms.fields import SelectMultipleField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 
@@ -11,7 +12,7 @@ class CustomSQLQueryForm(FlaskForm):
     SQL_query = TextAreaField("Enter the SQL query:")
 
 
-class QueryWizardForm(FlaskForm):
+class PresetQueryForm(FlaskForm):
     """Creates a form that serves as a wizard for querying the NoLCAT database."""
     begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
@@ -29,6 +30,21 @@ class QueryWizardForm(FlaskForm):
         ('IR_A1', "IR_A1"),
         ('IR_M1', "IR_M1"),
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+
+
+class StartQueryWizardForm(FlaskForm):
+    """Creates a form that collects the start date, end date, and report type for a query constructed with the wizard."""
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
+    fiscal_year = SelectField("Select the fiscal year for which usage should be collected:", coerce=int, validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    report_options = SelectField("Select the type of report you want:", choices=[
+        ('PR', "PR"),
+        ('DR', "DR"),
+        ('TR', "TR"),
+        ('IR', "IR"),
+    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+
+
 '''
     SELECT
     <fields selected to display>,
