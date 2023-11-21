@@ -8,7 +8,7 @@
 <body>
     <h1>Query Wizard <small>(continued)</small></h1>
 
-    {% if form == PRform %}
+    {% if form_to_show == "PR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <label>
@@ -40,21 +40,21 @@
         </form>
     {% endif %}
 
-    {% if form == "DRform" %}
+    {% if form_to_show == "DR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">
         </form>
     {% endif %}
 
-    {% if form == "TRform" %}
+    {% if form_to_show == "TR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">
         </form>
     {% endif %}
 
-    {% if form == "IRform" %}
+    {% if form_to_show == "IR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">
