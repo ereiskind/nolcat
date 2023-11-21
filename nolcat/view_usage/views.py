@@ -271,7 +271,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date < date.fromisoformat('2019-07-01'):
-            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
+            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")  #ALERT: This is being flashed on the homepage upon first arrival--why?
         
         if report_type == "PR":
             # report_type = PR, PR1
