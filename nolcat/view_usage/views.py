@@ -249,7 +249,7 @@ def start_query_wizard():
 
 
 @bp.route('query-wizard/<string:report_type>/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
-def construct_query_with_wizard():
+def construct_query_with_wizard(report_type, begin_date, end_date):
     """Returns a page that allows a valid SQL query to be constructed through drop-downs and fuzzy text searches.
     
     Args:
@@ -262,22 +262,146 @@ def construct_query_with_wizard():
     DRform = DRQueryWizardForm()
     TRform = TRQueryWizardForm()
     IRform = IRQueryWizardForm()
-    '''
     if request.method == 'GET':
-        #ToDo: Make form asking which fields to display and which to filter by, only offering the choices valid for the given report
-        #ToDo: Include R4 reports with the same coverage--PR1 for PR, DR1 and DR2 for DR, and all remaining reports for TR
-        return render_template('initialization/page-form-is-on.html', form=form)
-    elif form.validate_on_submit():
+        begin_date = date.fromisoformat(begin_date)
+        end_date = date.fromisoformat(end_date)
+        if begin_date < date.fromisoformat('2019-07-01'):
+            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
+        
+        if report_type == "PR":
+            # report_type = PR, PR1
+            return render_template('initialization/query-wizard-2.html', form=PRform)
+        elif report_type == "DR":
+            # report_type = DR, DB1, DB2
+            return render_template('initialization/query-wizard-2.html', form=DRform)
+        elif report_type == "TR":
+            # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
+            return render_template('initialization/query-wizard-2.html', form=TRform)
+        elif report_type == "IR":
+            # report_type = IR
+            return render_template('initialization/query-wizard-2.html', form=IRform)
+
+    elif PRform.validate_on_submit():
+        log.info(f"After `validate_on_submit()` for PR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
         #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
-        #toDo: Construct query, using answers returned by searches
-        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted'))
+        #ToDo: Construct query, using answers returned by searches
+        # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
+        '''  COPIED FROM `use_predefined_SQL_query()`
+        df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.debug(f"The result of the query:\n{df}")
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
+        )
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
+        return redirect(url_for('download_file', file_path=str(file_path)))
+        '''
+    elif DRform.validate_on_submit():
+        log.info(f"After `validate_on_submit()` for DR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
+        #ToDo: Construct query, using answers returned by searches
+        # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
+        '''  COPIED FROM `use_predefined_SQL_query()`
+        df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.debug(f"The result of the query:\n{df}")
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
+        )
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
+        return redirect(url_for('download_file', file_path=str(file_path)))
+        '''
+    elif TRform.validate_on_submit():
+        log.info(f"After `validate_on_submit()` for TR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
+        #ToDo: Construct query, using answers returned by searches
+        # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
+        '''  COPIED FROM `use_predefined_SQL_query()`
+        df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.debug(f"The result of the query:\n{df}")
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
+        )
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
+        return redirect(url_for('download_file', file_path=str(file_path)))
+        '''
+    elif IRform.validate_on_submit():
+        log.info(f"After `validate_on_submit()` for IR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
+        #ToDo: Construct query, using answers returned by searches
+        # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
+        '''  COPIED FROM `use_predefined_SQL_query()`
+        df = query_database(
+            query=query,
+            engine=db.engine,
+        )
+        if isinstance(df, str):
+            flash(database_query_fail_statement(df))
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.debug(f"The result of the query:\n{df}")
+        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        df.to_csv(
+            file_path,
+            index_label="index",
+            date_format='%Y-%m-%d',
+            errors='backslashreplace',
+        )
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
+        return redirect(url_for('download_file', file_path=str(file_path)))
+        '''
     else:
-        message = Flask_error_statement(form.errors)
+        try:
+            message = Flask_error_statement(PRform.errors)
+        except:
+            try:
+                message = Flask_error_statement(DRform.errors)
+            except:
+                try:
+                    message = Flask_error_statement(TRform.errors)
+                except:
+                    try:
+                        message = Flask_error_statement(IRform.errors)
+                    except Exception as error:
+                        message = Flask_error_statement(error)
         log.error(message)
         flash(message)
         return abort(404)
-    '''
-    pass
 
 
 @bp.route('non-COUNTER-downloads', methods=['GET', 'POST'])
