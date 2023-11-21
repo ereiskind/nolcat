@@ -219,13 +219,26 @@ def start_query_wizard():
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('view_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
-        log.info(f"`form.begin_date.data` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #ALERT: temp
-        log.info(f"`form.end_date.data` is {form.end_date.data} (type {type(form.end_date.data)})")  #ALERT: temp
-        log.info(f"`form.fiscal_year.data` is {form.fiscal_year.data} (type {type(form.fiscal_year.data)})")  #ALERT: temp
-        #begin_date = #ToDo: Convert date to ISO string
-        #end_date = #ToDo: Convert date to ISO string
-        #return redirect(url_for('blueprint.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
-        return "temp"
+        if form.begin_date.data and form.end_date.data:
+            begin_date = form.begin_date.data.isoformat()
+            end_date = form.end_date.data.isoformat()
+        elif not form.begin_date.data and not form.end_date.data:
+            fiscal_year_dates = query_database(
+                query=f"SELECT start_date, end_date FROM fiscalYears WHERE fiscal_year_ID={form.fiscal_year.data};",
+                engine=db.engine,
+            )
+            if isinstance(fiscal_year_dates, str):
+                flash(database_query_fail_statement(fiscal_year_dates))
+                return redirect(url_for('view_usage.view_usage_homepage'))
+            begin_date = fiscal_year_dates['start_date'][0].isoformat()
+            end_date = fiscal_year_dates['end_date'][0].isoformat()
+        else:
+            message = f"Only one date was provided for the custom date range. Please try again, entering either two dates for a custom date range or no dates to use a fiscal year as the date range."
+            log.error(message)
+            flash(message)
+            return redirect(url_for('view_usage.view_usage_homepage'))
+        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")
+        return redirect(url_for('blueprint.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
