@@ -54,6 +54,7 @@ class PRQueryWizardForm(FlaskForm):
             COUNTERData.platform
             COUNTERData.data_type
             COUNTERData.access_method
+        COUNTERData.metric_type
         COUNTERData.usage_date
         SUM(COUNTERData.usage_count)
     FROM COUNTERData
@@ -64,6 +65,7 @@ class PRQueryWizardForm(FlaskForm):
             COUNTERData.platform (less fuzzy search)
             COUNTERData.data_type
             COUNTERData.access_method
+            COUNTERData.metric_type
     GROUP BY
         <fields in select not in where or with a grouping function);
     '''
@@ -80,6 +82,7 @@ class DRQueryWizardForm(FlaskForm):
             COUNTERData.platform
             COUNTERData.data_type
             COUNTERData.access_method
+        COUNTERData.metric_type
         COUNTERData.usage_date
         SUM(COUNTERData.usage_count)
     FROM COUNTERData
@@ -92,6 +95,7 @@ class DRQueryWizardForm(FlaskForm):
             COUNTERData.platform (less fuzzy search)
             COUNTERData.data_type
             COUNTERData.access_method
+            COUNTERData.metric_type
     GROUP BY
         <fields in select not in where or with a grouping function);
     '''
@@ -114,6 +118,7 @@ class TRQueryWizardForm(FlaskForm):
             COUNTERData.section_type
             COUNTERData.YOP
             COUNTERData.access_method
+        COUNTERData.metric_type
         COUNTERData.usage_date
         SUM(COUNTERData.usage_count)
     FROM COUNTERData
@@ -131,6 +136,7 @@ class TRQueryWizardForm(FlaskForm):
             COUNTERData.YOP
             COUNTERData.access_type
             COUNTERData.access_method
+            COUNTERData.metric_type
     GROUP BY
         <fields in select not in where or with a grouping function);
     '''
@@ -160,7 +166,7 @@ class IRQueryWizardForm(FlaskForm):
             COUNTERData.data_type
             COUNTERData.YOP
             COUNTERData.access_method
-            
+        COUNTERData.metric_type
         COUNTERData.usage_date
         SUM(COUNTERData.usage_count)
     FROM COUNTERData
@@ -181,6 +187,7 @@ class IRQueryWizardForm(FlaskForm):
             COUNTERData.YOP
             COUNTERData.access_type
             COUNTERData.access_method
+            COUNTERData.metric_type
     GROUP BY
         <fields in select not in where or with a grouping function);
     '''
