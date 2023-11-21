@@ -215,9 +215,9 @@ def start_query_wizard():
         )
         if isinstance(fiscal_year_options, str):
             flash(database_query_fail_statement(fiscal_year_options))
-            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+            return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
-        return render_template('ingest_usage/query-wizard-1.html', form=form)
+        return render_template('view_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
         log.info(f"`form.begin_date.data` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #ALERT: temp
         log.info(f"`form.end_date.data` is {form.end_date.data} (type {type(form.end_date.data)})")  #ALERT: temp
