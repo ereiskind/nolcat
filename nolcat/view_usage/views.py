@@ -219,11 +219,13 @@ def start_query_wizard():
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('ingest_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
-        report_type = #ToDo: Get report type submitted to
-        #ToDo: Get start and end dates, pulling for `fiscalYears` relation if necessary
-        begin_date = #ToDo: Convert date to ISO string
-        end_date = #ToDo: Convert date to ISO string
-        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted', report_type=report_type, begin_date=begin_date, end_date=end_date))
+        log.info(f"`form.begin_date.data` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #ALERT: temp
+        log.info(f"`form.end_date.data` is {form.end_date.data} (type {type(form.end_date.data)})")  #ALERT: temp
+        log.info(f"`form.fiscal_year.data` is {form.fiscal_year.data} (type {type(form.fiscal_year.data)})")  #ALERT: temp
+        #begin_date = #ToDo: Convert date to ISO string
+        #end_date = #ToDo: Convert date to ISO string
+        #return redirect(url_for('blueprint.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
+        return "temp"
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
