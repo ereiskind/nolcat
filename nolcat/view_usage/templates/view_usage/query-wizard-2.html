@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Wizard (cont'd)</title>
+</head>
+<body>
+    <h1>Query Wizard <small>(continued)</small></h1>
+
+    {% if form == "PRform" %}
+        <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
+            {{ form.csrf_token }}
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+
+    {% if form == "DRform" %}
+        <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
+            {{ form.csrf_token }}
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+
+    {% if form == "TRform" %}
+        <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
+            {{ form.csrf_token }}
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+
+    {% if form == "IRform" %}
+        <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
+            {{ form.csrf_token }}
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+</body>
+</html>

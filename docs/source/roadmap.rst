@@ -23,7 +23,6 @@ Iteration 1: Complete Current Data I/O
 ======================================
 * Write ``nolcat.view_usage.views.construct_query_with_wizard()``
 
-  * Create page
   * Create form
   * Create test function
 
