@@ -126,9 +126,34 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_start_query_wizard():
+def test_start_query_wizard(client, engine, header_value):
     """Tests the submission of the report type and date range to the query wizard."""
-    pass
+    df = query_database(
+        query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
+        engine=engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.sample().reset_index()
+    form_input = {
+        'begin_date': df.at[0,'begin_date'],
+        'end_date': df.at[0,'end_date'],
+        'fiscal_year': 0,
+        'report_type': df.at[0,'report_type'],
+    }
+    log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
+    log.info(f"`df.at[0,'end_date']` is {df.at[0,'end_date']} (type {type(df.at[0,'end_date'])})")  #TEST: temp
+    log.info(f"`df.at[0,'report_type']` is {df.at[0,'report_type']} (type {type(df.at[0,'report_type'])})")  #TEST: temp
+    POST_response = client.post(
+        '/view_usage/query-wizard',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
 
 
 def test_GET_construct_query_with_wizard():

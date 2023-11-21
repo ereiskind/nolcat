@@ -21,7 +21,6 @@ Planned Iterations
 
 Iteration 1: Complete Current Data I/O
 ======================================
-* Write ``tests.test_bp_view_usage.test_start_query_wizard()``
 * Write ``nolcat.view_usage.views.construct_query_with_wizard()``
 
   * Create page
