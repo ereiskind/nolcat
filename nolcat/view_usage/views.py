@@ -209,9 +209,15 @@ def start_query_wizard():
     log.info("Starting `start_query_wizard()`.")
     form = StartQueryWizardForm()
     if request.method == 'GET':
-        #ToDo: Create form with report type, start date, end date fields (can either be two independently selected dates or a FY)
-        #ToDo: Set `form.fiscal_year.choices`
-        return render_template('initialization/page-form-is-on.html', form=form)
+        fiscal_year_options = query_database(
+            query="SELECT fiscal_year_ID, year FROM fiscalYears;",
+            engine=db.engine,
+        )
+        if isinstance(fiscal_year_options, str):
+            flash(database_query_fail_statement(fiscal_year_options))
+            return redirect(url_for('ingest_usage.ingest_usage_homepage'))
+        form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
+        return render_template('ingest_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
         report_type = #ToDo: Get report type submitted to
         #ToDo: Get start and end dates, pulling for `fiscalYears` relation if necessary
