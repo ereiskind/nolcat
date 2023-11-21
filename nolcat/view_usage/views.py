@@ -210,7 +210,7 @@ def start_query_wizard():
     form = StartQueryWizardForm()
     if request.method == 'GET':
         fiscal_year_options = query_database(
-            query="SELECT fiscal_year_ID, year FROM fiscalYears;",
+            query="SELECT fiscal_year_ID, fiscal_year FROM fiscalYears;",
             engine=db.engine,
         )
         if isinstance(fiscal_year_options, str):
