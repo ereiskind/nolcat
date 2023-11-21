@@ -215,9 +215,9 @@ def start_query_wizard():
     elif form.validate_on_submit():
         report_type = #ToDo: Get report type submitted to
         #ToDo: Get start and end dates, pulling for `fiscalYears` relation if necessary
-        start_date = #ToDo: Convert date to ISO string
+        begin_date = #ToDo: Convert date to ISO string
         end_date = #ToDo: Convert date to ISO string
-        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted', report_type=report_type, start_date=start_date, end_date=end_date))
+        return redirect(url_for('blueprint.name of the route function for the page that user should go to once form is submitted', report_type=report_type, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -225,13 +225,13 @@ def start_query_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/<string:report_type>/<string:start_date>/<int:number_of_months>', methods=['GET', 'POST'])
+@bp.route('query-wizard/<string:report_type>/<string:begin_date>/<int:number_of_months>', methods=['GET', 'POST'])
 def construct_query_with_wizard():
     """Returns a page that allows a valid SQL query to be constructed through drop-downs and fuzzy text searches.
     
     Args:
         report_type (str): the COUNTER R5 report type abbreviation
-        start_date (str): the ISO string for the first day in the date range
+        begin_date (str): the ISO string for the first day in the date range
         end_date (str): the ISO string for the last day in the date range
     """
     log.info("Starting `construct_query_with_wizard()`.")
