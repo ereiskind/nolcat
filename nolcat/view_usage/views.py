@@ -221,6 +221,11 @@ def start_query_wizard():
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
+            end_date = date(
+                end_date.year,
+                end_date.month,
+                calendar.monthrange(end_date.year, end_date.month)[1],
+            )
             begin_date = form.begin_date.data.isoformat()
             end_date = form.end_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:
