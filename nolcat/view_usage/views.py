@@ -245,7 +245,7 @@ def start_query_wizard():
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")
-        return redirect(url_for('blueprint.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
+        return redirect(url_for('view_usage.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
