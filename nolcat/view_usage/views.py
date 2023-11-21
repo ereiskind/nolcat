@@ -225,7 +225,7 @@ def start_query_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/<string:report_type>/<string:begin_date>/<int:number_of_months>', methods=['GET', 'POST'])
+@bp.route('query-wizard/<string:report_type>/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
 def construct_query_with_wizard():
     """Returns a page that allows a valid SQL query to be constructed through drop-downs and fuzzy text searches.
     
