@@ -5,6 +5,7 @@ from wtforms.fields import DateField
 from wtforms.fields import SelectMultipleField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
+from wtforms.validators import Optional
 
 
 class CustomSQLQueryForm(FlaskForm):
@@ -34,8 +35,8 @@ class PresetQueryForm(FlaskForm):
 
 class StartQueryWizardForm(FlaskForm):
     """Creates a form that collects the start date, end date, and report type for a query constructed with the wizard."""
-    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
-    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
     fiscal_year = SelectField("Select the fiscal year for which usage should be collected:", coerce=int, validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     report_type = SelectField("Select the type of report you want:", choices=[
         ('PR', "PR"),
