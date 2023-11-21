@@ -11,6 +11,31 @@
     {% if form == "PRform" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
+            <label>
+                {{ form.display_fields.label }}
+                {{ form.display_fields }}
+            </label>
+            <br>
+            <label>
+                {{ form.platform_filter.label }}
+                {{ form.platform_filter }}
+            </label>
+            <br>
+            <label>
+                {{ form.data_type_filter.label }}
+                {{ form.data_type_filter }}
+            </label>
+            <br>
+            <label>
+                {{ form.access_method_filter.label }}
+                {{ form.access_method_filter }}
+            </label>
+            <br>
+            <label>
+                {{ form.metric_type_filter.label }}
+                {{ form.metric_type_filter }}
+            </label>
+            <br>
             <input type="submit" value="Submit">
         </form>
     {% endif %}
