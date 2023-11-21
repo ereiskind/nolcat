@@ -37,7 +37,7 @@ class StartQueryWizardForm(FlaskForm):
     begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
     end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d')
     fiscal_year = SelectField("Select the fiscal year for which usage should be collected:", coerce=int, validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
-    report_options = SelectField("Select the type of report you want:", choices=[
+    report_type = SelectField("Select the type of report you want:", choices=[
         ('PR', "PR"),
         ('DR', "DR"),
         ('TR', "TR"),
