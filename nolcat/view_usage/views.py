@@ -235,8 +235,11 @@ def construct_query_with_wizard():
         end_date (str): the ISO string for the last day in the date range
     """
     log.info("Starting `construct_query_with_wizard()`.")
+    PRform = PRQueryWizardForm()
+    DRform = DRQueryWizardForm()
+    TRform = TRQueryWizardForm()
+    IRform = IRQueryWizardForm()
     '''
-    form = FormClass()
     if request.method == 'GET':
         #ToDo: Make form asking which fields to display and which to filter by, only offering the choices valid for the given report
         #ToDo: Include R4 reports with the same coverage--PR1 for PR, DR1 and DR2 for DR, and all remaining reports for TR
