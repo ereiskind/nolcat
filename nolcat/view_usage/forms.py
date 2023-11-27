@@ -68,32 +68,19 @@ class PRQueryWizardForm(FlaskForm):
 
 class DRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for database data."""
-    '''
-        SELECT
-        <fields selected to display>,
-            COUNTERData.resource_name
-            COUNTERData.publisher
-            COUNTERData.platform
-            COUNTERData.data_type
-            COUNTERData.access_method
-        COUNTERData.metric_type
-        COUNTERData.usage_date
-        SUM(COUNTERData.usage_count)
-    FROM COUNTERData
-    WHERE
-        COUNTERData.report_type -- PAGE 1
-        COUNTERData.usage_date x2 -- PAGE 1
-        <filter statements>
-            COUNTERData.resource_name (needs fuzzy search)
-            COUNTERData.publisher (less fuzzy search)
-            COUNTERData.platform (less fuzzy search)
-            COUNTERData.data_type
-            COUNTERData.access_method
-            COUNTERData.metric_type
-    GROUP BY
-        <fields in select not in where or with a grouping function);
-    '''
-    pass
+    display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
+        ('resource_name', "Database Name"),
+        ('publisher', "Publisher"),
+        ('platform', "Platform"),
+        ('data_type', "Data Type"),
+        ('access_method', "Access Method"),
+    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    resource_name_filter = StringField("Enter the name of the database the query should return:", validators=[Optional()])
+    publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
+    platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values)  #ToDo: Should all values be leaving this blank?
 
 
 class TRQueryWizardForm(FlaskForm):
