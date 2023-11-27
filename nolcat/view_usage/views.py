@@ -307,7 +307,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
                 COUNTERData.access_method --> PRform.access_method_filter
                 COUNTERData.metric_type --> PRform.metric_type_filter
         GROUP BY
-            <fields in select not in where or with a grouping function);
+            <fields in select not in where or with a grouping function>;
         '''
         #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
