@@ -114,53 +114,41 @@ class TRQueryWizardForm(FlaskForm):
 
 class IRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for item data."""
-    '''
-        SELECT
-        <fields selected to display>,
-            COUNTERData.resource_name
-            COUNTERData.publisher
-            COUNTERData.platform
-            COUNTERData.publication_date
-            COUNTERData.DOI
-            COUNTERData.ISBN
-            COUNTERData.print_ISSN
-            COUNTERData.online_ISSN
-            COUNTERData.parent_title
-            COUNTERData.parent_publication_date
-            COUNTERData.parent_data_type
-            COUNTERData.parent_DOI
-            COUNTERData.parent_ISBN
-            COUNTERData.parent_print_ISSN
-            COUNTERData.parent_online_ISSN
-            COUNTERData.data_type
-            COUNTERData.YOP
-            COUNTERData.access_method
-        COUNTERData.metric_type
-        COUNTERData.usage_date
-        SUM(COUNTERData.usage_count)
-    FROM COUNTERData
-    WHERE
-        COUNTERData.report_type -- PAGE 1
-        COUNTERData.usage_date x2 -- PAGE 1
-        <filter statements>
-            COUNTERData.resource_name (needs fuzzy search)
-            COUNTERData.publisher (less fuzzy search)
-            COUNTERData.platform (less fuzzy search)
-            COUNTERData.publication_date
-            COUNTERData.ISBN
-            COUNTERData.print_ISSN OR COUNTERData.online_ISSN
-            COUNTERData.parent_title (needs fuzzy search)
-            COUNTERData.parent_ISBN
-            COUNTERData.parent_print_ISSN OR COUNTERData.parent_online_ISSN
-            COUNTERData.data_type
-            COUNTERData.YOP
-            COUNTERData.access_type
-            COUNTERData.access_method
-            COUNTERData.metric_type
-    GROUP BY
-        <fields in select not in where or with a grouping function);
-    '''
-    pass
+    display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
+        ('resource_name', "Item Name"),
+        ('publisher', "Publisher"),
+        ('platform', "Platform"),
+        ('publication_date', "Publication Date"),
+        ('DOI', "DOI"),
+        ('ISBN', "ISBN"),
+        ('print_ISSN', "Print ISSN"),
+        ('online_ISSN', "Online ISSN"),
+        ('parent_title', "Parent Title"),
+        ('parent_publication_date', "Parent Publication Date"),
+        ('parent_data_type', "Parent Data Type"),
+        ('parent_DOI', "Parent DOI"),
+        ('parent_ISBN', "Parent ISBN"),
+        ('parent_print_ISSN', "Parent Print ISSN"),
+        ('parent_online_ISSN', "Parent Online ISSN"),
+        ('data_type', "Data Type"),
+        ('YOP', "Year of Publication"),
+        ('access_method', "Access Method"),
+    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    resource_name_filter = StringField("Enter the name of the item-level resource the query should return:", validators=[Optional()])
+    publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
+    platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
+    publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return:", validators=[Optional()])
+    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return:", validators=[Optional()])
+    ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional()])
+    ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional()])
+    parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
+    ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional()])
+    ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    YOP_filter = IntegerRangeField("Select the range for the year of publication of the item the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
+    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values)  #ToDo: Should all values be leaving this blank?
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):

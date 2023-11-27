@@ -448,6 +448,52 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         '''
     elif IRform.validate_on_submit():
         log.info(f"After `validate_on_submit()` for IR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        '''
+            SELECT
+            <fields selected to display>,
+                COUNTERData.resource_name
+                COUNTERData.publisher
+                COUNTERData.platform
+                COUNTERData.publication_date
+                COUNTERData.DOI
+                COUNTERData.ISBN
+                COUNTERData.print_ISSN
+                COUNTERData.online_ISSN
+                COUNTERData.parent_title
+                COUNTERData.parent_publication_date
+                COUNTERData.parent_data_type
+                COUNTERData.parent_DOI
+                COUNTERData.parent_ISBN
+                COUNTERData.parent_print_ISSN
+                COUNTERData.parent_online_ISSN
+                COUNTERData.data_type
+                COUNTERData.YOP
+                COUNTERData.access_method
+            COUNTERData.metric_type
+            COUNTERData.usage_date
+            SUM(COUNTERData.usage_count)
+        FROM COUNTERData
+        WHERE
+            COUNTERData.report_type -- PAGE 1
+            COUNTERData.usage_date x2 -- PAGE 1
+            <filter statements>
+                COUNTERData.resource_name (needs fuzzy search)
+                COUNTERData.publisher (less fuzzy search)
+                COUNTERData.platform (less fuzzy search)
+                COUNTERData.publication_date
+                COUNTERData.ISBN
+                COUNTERData.print_ISSN OR COUNTERData.online_ISSN
+                COUNTERData.parent_title (needs fuzzy search)
+                COUNTERData.parent_ISBN
+                COUNTERData.parent_print_ISSN OR COUNTERData.parent_online_ISSN
+                COUNTERData.data_type
+                COUNTERData.YOP
+                COUNTERData.access_type
+                COUNTERData.access_method
+                COUNTERData.metric_type
+        GROUP BY
+            <fields in select not in where or with a grouping function>;
+        '''
         #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
         # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
