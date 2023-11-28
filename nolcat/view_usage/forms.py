@@ -4,7 +4,7 @@ from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import SelectMultipleField
 from wtforms.fields import StringField
-from wtforms.fields import IntegerRangeField
+from wtforms.fields.html5 import IntegerRangeField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 from wtforms.validators import Optional
