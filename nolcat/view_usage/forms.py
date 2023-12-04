@@ -8,6 +8,9 @@ from wtforms.fields.html5 import IntegerRangeField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 from wtforms.validators import Optional
+from wtforms.validators import Regexp
+
+from nolcat.app import *
 
 
 data_type_values = ['Article', 'Audiovisual', 'Book', 'Book_Segment', 'Conference', 'Conference_Item', 'Database_Aggregated', 'Database_AI', 'Database_Full', 'Database_Full_Item', 'Dataset', 'Image', 'Interactive_Resource', 'Journal', 'Multimedia', 'News_Item', 'Newspaper_or_Newsletter', 'Other', 'Patent', 'Platform', 'Reference_Item', 'Reference_Work', 'Report', 'Software', 'Sound', 'Standard', 'Thesis_or_Dissertation', 'Unspecified']
@@ -102,8 +105,8 @@ class TRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional()])
-    ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional()])
+    ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
+    ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the title the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
@@ -139,11 +142,11 @@ class IRQueryWizardForm(FlaskForm):
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return:", validators=[Optional()])
     publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return:", validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional()])
-    ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional()])
+    ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
+    ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
-    parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional()])
-    parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional()])
+    parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
+    parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the item the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
