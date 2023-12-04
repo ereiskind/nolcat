@@ -142,8 +142,8 @@ class IRQueryWizardForm(FlaskForm):
     ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional()])
     ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional()])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional()])
-    ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional()])
+    parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional()])
+    parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional()])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the item the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
