@@ -677,3 +677,14 @@ def ISSN_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"\d{4}\-\d{3}[\dxX]\s*")
+
+
+def ISBN_regex():
+    """A regex object matching an ISBN.
+
+    Regex copied from https://stackoverflow.com/a/53482655.
+    
+    Returns:
+        re.Pattern: the regex object
+    """
+    return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
