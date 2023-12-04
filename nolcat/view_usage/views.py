@@ -287,7 +287,14 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             return render_template('view_usage/query-wizard-2.html', form=IRform, form_to_show=report_type)
 
     elif PRform.validate_on_submit():
-        log.info(f"After `validate_on_submit()` for PR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ALERT: temp
+        log.info(f"After `validate_on_submit()` for PR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
+        log.info(f"For `PRform`, `display_fields` is {PRform.display_fields} (type {type(PRform.display_fields)})")
+        log.info(f"For `PRform`, `platform_filter` is {PRform.platform_filter} (type {type(PRform.platform_filter)})")
+        log.info(f"For `PRform`, `data_type_filter` is {PRform.data_type_filter} (type {type(PRform.data_type_filter)})")
+        log.info(f"For `PRform`, `access_method_filter` is {PRform.access_method_filter} (type {type(PRform.access_method_filter)})")
+        log.info(f"For `PRform`, `metric_type_filter` is {PRform.metric_type_filter} (type {type(PRform.metric_type_filter)})")
+        #ALERT: temp end
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -334,7 +341,15 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
     elif DRform.validate_on_submit():
-        log.info(f"After `validate_on_submit()` for DR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ALERT: temp
+        log.info(f"After `validate_on_submit()` for DR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
+        log.info(f"For `DRform`, `display_fields` is {DRform.display_fields} (type {type(DRform.display_fields)})")
+        log.info(f"For `DRform`, `resource_name_filter` is {DRform.resource_name_filter} (type {type(DRform.resource_name_filter)})")
+        log.info(f"For `DRform`, `platform_filter` is {DRform.platform_filter} (type {type(DRform.platform_filter)})")
+        log.info(f"For `DRform`, `data_type_filter` is {DRform.data_type_filter} (type {type(DRform.data_type_filter)})")
+        log.info(f"For `DRform`, `access_method_filter` is {DRform.access_method_filter} (type {type(DRform.access_method_filter)})")
+        log.info(f"For `DRform`, `metric_type_filter` is {DRform.metric_type_filter} (type {type(DRform.metric_type_filter)})")
+        #ALERT: temp end
         '''
             SELECT
             <fields selected to display>,
@@ -385,7 +400,21 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
     elif TRform.validate_on_submit():
-        log.info(f"After `validate_on_submit()` for TR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ALERT: temp
+        log.info(f"After `validate_on_submit()` for TR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
+        log.info(f"For `TRform`, `display_fields` is {TRform.display_fields} (type {type(TRform.display_fields)})")
+        log.info(f"For `TRform`, `resource_name_filter` is {TRform.resource_name_filter} (type {type(TRform.resource_name_filter)})")
+        log.info(f"For `TRform`, `publisher_filter` is {TRform.publisher_filter} (type {type(TRform.publisher_filter)})")
+        log.info(f"For `TRform`, `platform_filter` is {TRform.platform_filter} (type {type(TRform.platform_filter)})")
+        log.info(f"For `TRform`, `ISBN_filter` is {TRform.ISBN_filter} (type {type(TRform.ISBN_filter)})")
+        log.info(f"For `TRform`, `ISSN_filter` is {TRform.ISSN_filter} (type {type(TRform.ISSN_filter)})")
+        log.info(f"For `TRform`, `data_type_filter` is {TRform.data_type_filter} (type {type(TRform.data_type_filter)})")
+        log.info(f"For `TRform`, `section_type_filter` is {TRform.section_type_filter} (type {type(TRform.section_type_filter)})")
+        log.info(f"For `TRform`, `YOP_filter` is {TRform.YOP_filter} (type {type(TRform.YOP_filter)})")
+        log.info(f"For `TRform`, `access_type_filter` is {TRform.access_type_filter} (type {type(TRform.access_type_filter)})")
+        log.info(f"For `TRform`, `access_method_filter` is {TRform.access_method_filter} (type {type(TRform.access_method_filter)})")
+        log.info(f"For `TRform`, `metric_type_filter` is {TRform.metric_type_filter} (type {type(TRform.metric_type_filter)})")
+        #ALERT: temp end
         '''
             SELECT
             <fields selected to display>,
@@ -447,7 +476,25 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
     elif IRform.validate_on_submit():
-        log.info(f"After `validate_on_submit()` for IR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")  #ALERT: temp
+        #ALERT: temp
+        log.info(f"After `validate_on_submit()` for IR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
+        log.info(f"For `IRform`, `display_fields` is {IRform.display_fields} (type {type(IRform.display_fields)})")
+        log.info(f"For `IRform`, `resource_name_filter` is {IRform.resource_name_filter} (type {type(IRform.resource_name_filter)})")
+        log.info(f"For `IRform`, `publisher_filter` is {IRform.publisher_filter} (type {type(IRform.publisher_filter)})")
+        log.info(f"For `IRform`, `platform_filter` is {IRform.platform_filter} (type {type(IRform.platform_filter)})")
+        log.info(f"For `IRform`, `publication_date_start_filter` is {IRform.publication_date_start_filter} (type {type(IRform.publication_date_start_filter)})")
+        log.info(f"For `IRform`, `publication_date_end_filter` is {IRform.publication_date_end_filter} (type {type(IRform.publication_date_end_filter)})")
+        log.info(f"For `IRform`, `ISBN_filter` is {IRform.ISBN_filter} (type {type(IRform.ISBN_filter)})")
+        log.info(f"For `IRform`, `ISSN_filter` is {IRform.ISSN_filter} (type {type(IRform.ISSN_filter)})")
+        log.info(f"For `IRform`, `parent_title_filter` is {IRform.parent_title_filter} (type {type(IRform.parent_title_filter)})")
+        log.info(f"For `IRform`, `parent_ISBN_filter` is {IRform.parent_ISBN_filter} (type {type(IRform.parent_ISBN_filter)})")
+        log.info(f"For `IRform`, `parent_ISSN_filter` is {IRform.parent_ISSN_filter} (type {type(IRform.parent_ISSN_filter)})")
+        log.info(f"For `IRform`, `data_type_filter` is {IRform.data_type_filter} (type {type(IRform.data_type_filter)})")
+        log.info(f"For `IRform`, `YOP_filter` is {IRform.YOP_filter} (type {type(IRform.YOP_filter)})")
+        log.info(f"For `IRform`, `access_type_filter` is {IRform.access_type_filter} (type {type(IRform.access_type_filter)})")
+        log.info(f"For `IRform`, `access_method_filter` is {IRform.access_method_filter} (type {type(IRform.access_method_filter)})")
+        log.info(f"For `IRform`, `metric_type_filter` is {IRform.metric_type_filter} (type {type(IRform.metric_type_filter)})")
+        #ALERT: temp end
         '''
             SELECT
             <fields selected to display>,
