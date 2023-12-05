@@ -36,6 +36,11 @@ def remove_COUNTER_download_CSV():
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
 
+def test_fuzzy_search_on_field():
+    """Tests the fuzzy match of a string to values in a given `COUNTERData` field."""
+    pass
+
+
 def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/view_usage/')

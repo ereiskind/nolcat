@@ -20,6 +20,22 @@ from ..statements import *
 
 log = logging.getLogger(__name__)
 
+def fuzzy_search_on_field(value, field):
+    """This function provides fuzzy matches for free text field input into the query wizard.
+
+    The query wizard allows for free text input to use as a filter for some fields, but because SQL query string filters use exact matching, the chance that no results will be returned because the input isn't an exact match for what the SUSHI reports contain is high. To counter this problem, this function will pull all of the unique values in the field to be matched, perform fuzzy matching comparing those values to the value input into the query wizard, and returns all the existing values that are a fuzzy match.
+
+    Args:
+        value (str): the string input into the query wizard
+        field (str): the `COUNTERData` field
+
+    Returns:
+        list: the filed values that are fuzzy matches
+    """
+    #ToDo: Get values of `field`
+    #ToDo: Make fuzzy match comparison--'platform' and 'publisher' `field` values will be looser matches
+    pass
+
 
 @bp.route('/')
 def view_usage_homepage():
@@ -295,6 +311,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `PRform`, `access_method_filter` is {PRform.access_method_filter} (type {type(PRform.access_method_filter)})")
         log.info(f"For `PRform`, `metric_type_filter` is {PRform.metric_type_filter} (type {type(PRform.metric_type_filter)})")
         #ALERT: temp end
+        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform")
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -316,7 +333,6 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         GROUP BY
             <fields in select not in where or with a grouping function>;
         '''
-        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
         # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
         '''  COPIED FROM `use_predefined_SQL_query()`
@@ -350,6 +366,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `DRform`, `access_method_filter` is {DRform.access_method_filter} (type {type(DRform.access_method_filter)})")
         log.info(f"For `DRform`, `metric_type_filter` is {DRform.metric_type_filter} (type {type(DRform.metric_type_filter)})")
         #ALERT: temp end
+        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name")
+        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher")
+        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform")
         '''
             SELECT
             <fields selected to display>,
@@ -375,7 +394,6 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         GROUP BY
             <fields in select not in where or with a grouping function>;
         '''
-        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
         # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
         '''  COPIED FROM `use_predefined_SQL_query()`
@@ -415,6 +433,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `TRform`, `access_method_filter` is {TRform.access_method_filter} (type {type(TRform.access_method_filter)})")
         log.info(f"For `TRform`, `metric_type_filter` is {TRform.metric_type_filter} (type {type(TRform.metric_type_filter)})")
         #ALERT: temp end
+        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name")
+        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher")
+        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform")
         '''
             SELECT
             <fields selected to display>,
@@ -451,7 +472,6 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         GROUP BY
             <fields in select not in where or with a grouping function>;
         '''
-        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
         # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
         '''  COPIED FROM `use_predefined_SQL_query()`
@@ -495,6 +515,10 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `IRform`, `access_method_filter` is {IRform.access_method_filter} (type {type(IRform.access_method_filter)})")
         log.info(f"For `IRform`, `metric_type_filter` is {IRform.metric_type_filter} (type {type(IRform.metric_type_filter)})")
         #ALERT: temp end
+        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name")
+        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher")
+        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform")
+        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title")
         '''
             SELECT
             <fields selected to display>,
@@ -541,7 +565,6 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         GROUP BY
             <fields in select not in where or with a grouping function>;
         '''
-        #ToDo: Pull fields for fuzzy searching, then do fuzzy searching in instance--don't use user input in query
         #ToDo: Construct query, using answers returned by searches
         # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
         '''  COPIED FROM `use_predefined_SQL_query()`
