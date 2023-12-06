@@ -36,19 +36,21 @@ def remove_COUNTER_download_CSV():
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
 
-def test_fuzzy_search_on_field():
+def test_fuzzy_search_on_field(client):
     """Tests the fuzzy match of a string to values in a given `COUNTERData` field."""
     #ToDo: When function is written, remove try-except blocks
     try:
-        Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
+        with client:
+            Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
+            assert Gale_test == ["Gale", "Gale a Cengage Company", "Gale, a Cengage Company"]
     except Exception as error:
         log.error(f"The Gale test raised the error {error}.")
     try:
-        TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
+        with client:
+            TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
+            assert TF_test == ["Taylor & Francis Ltd", "Taylor &amp; Francis Ltd"]
     except Exception as error:
         log.error(f"The Gale test raised the error {error}.")
-    assert Gale_test == ["Gale", "Gale a Cengage Company", "Gale, a Cengage Company"]
-    assert TF_test == ["Taylor & Francis Ltd", "Taylor &amp; Francis Ltd"]
 
 
 def test_view_usage_homepage(client):
