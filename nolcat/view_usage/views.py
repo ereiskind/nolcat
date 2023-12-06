@@ -61,7 +61,9 @@ def fuzzy_search_on_field(value, field, report):
     #Subsection: Set Up Matching
     matching_values = []
     indexing = recordlinkage.Index()
+    log.info(f"`indexing` (type {type(indexing)}):\n{indexing}")  #TEST: temp
     indexing.block(value)  # This method of indexing compares all the values in the dataframe designated by the `index()` method below to the included `value` argument
+    log.info(f"`indexing` after `block()` method (type {type(indexing)}):\n{indexing}")  #TEST: temp
     candidate_matches = indexing.index(df)
     log.info(f"`candidate_matches` (type {type(candidate_matches)}):\n{candidate_matches}")
 
