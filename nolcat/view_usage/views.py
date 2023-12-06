@@ -62,6 +62,7 @@ def fuzzy_search_on_field(value, field, report):
     df['token_set_ratio'] = df.apply(lambda record: fuzz.token_set_ratio(record[field], value), axis='columns')
     log.debug(f"Dataframe with all fuzzy matching values:\n{df}")
     df2 = df.set_index('publisher')  #TEST: temp
+    log.info(df2)  #TEST: temp
     log.info(df2['Taylor &amp; Francis Ltd'])  #TEST: temp
     df = df[
         (df['partial_ratio'] >= 70) |
