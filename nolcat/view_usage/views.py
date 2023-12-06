@@ -11,6 +11,8 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
+import recordlinkage
+from fuzzywuzzy import fuzz
 
 from . import bp
 from .forms import *
@@ -20,7 +22,7 @@ from ..statements import *
 
 log = logging.getLogger(__name__)
 
-def fuzzy_search_on_field(value, field):
+def fuzzy_search_on_field(value, field, report):
     """This function provides fuzzy matches for free text field input into the query wizard.
 
     The query wizard allows for free text input to use as a filter for some fields, but because SQL query string filters use exact matching, the chance that no results will be returned because the input isn't an exact match for what the SUSHI reports contain is high. To counter this problem, this function will pull all of the unique values in the field to be matched, perform fuzzy matching comparing those values to the value input into the query wizard, and returns all the existing values that are a fuzzy match.
@@ -28,12 +30,144 @@ def fuzzy_search_on_field(value, field):
     Args:
         value (str): the string input into the query wizard
         field (str): the `COUNTERData` field
+        report (str): the abbreviation for the report being searched for
 
     Returns:
         list: the filed values that are fuzzy matches
+        str: the error message if the query fails
     """
-    #ToDo: Get values of `field`
-    #ToDo: Make fuzzy match comparison--'platform' and 'publisher' `field` values will be looser matches
+    #Section: Get Existing Values from Database
+    if report == "PR":
+        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='PR' OR report_type='PR1';"
+    elif report == "DR":
+        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='DR' OR report_type='DB1' OR report_type='DB2';"
+    elif report == "TR":
+        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1';"
+    elif report == "IR":
+        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='IR';"
+    
+    df = query_database(
+        query=query,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        message = database_query_fail_statement(df)
+        log.error(message)
+        return message
+
+    #Section: Perform Matching
+    #Subsection: Set Up Matching
+    matching_values = []
+    #indexing = recordlinkage.Index()
+    #indexing.block(value)  # This method of indexing compares all the values in the dataframe designated by the `index()` method below to the included `value` argument
+    #candidate_matches = indexing.index(df)
+
+    #comparing = recordlinkage.Compare()
+    ''' Copied from previous NoLCAT iteration
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.65, label='levenshtein')
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.75, method='lcs', label='lcs')
+        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='smith_waterman', label='smith_waterman')
+
+        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Resource Name String Matching Threshold
+        if normalized_resource_data:
+            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'resource_name'])
+        else:
+            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data)
+            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'resource_name'])
+        
+        compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'resource_name'])
+        logging.info(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
+
+        #Subsection: Update Comparison Results Dataframe Using FuzzyWuzzy Based on High Resource Name String Matching Threshold
+        # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
+        compare_resource_name_table.dropna(
+            axis='index',
+            subset=['index_zero_resource_name', 'index_one_resource_name'],
+            inplace=True,
+        )
+        logging.info(f"Fuzzy matching resource names comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
+
+        compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
+        compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
+        compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
+        logging.info(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
+        
+        #Subsection: Filter Comparison Results Dataframe Based on High Resource Name String Matching Threshold
+        compare_resource_name_matches_table = compare_resource_name_table[
+            (compare_resource_name_table['levenshtein'] > 0) |
+            (compare_resource_name_table['jaro'] > 0) |
+            (compare_resource_name_table['jarowinkler'] > 0) |
+            (compare_resource_name_table['lcs'] > 0) |
+            (compare_resource_name_table['smith_waterman'] > 0) |
+            (compare_resource_name_table['partial_ratio'] >= 75) |
+            (compare_resource_name_table['token_sort_ratio'] >= 70) |
+            (compare_resource_name_table['token_set_ratio'] >= 80)
+        ]
+        logging.info(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
+
+        #Subsection: Update Comparison Results Based on High Resource Name String Matching Threshold
+        resource_name_matches_interim_index = compare_resource_name_matches_table.index.tolist()
+        resource_name_matches_index = []
+        # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
+        matches_already_found = matched_records.copy()  # `copy()` recreates the data at a different memory address
+        for value_set in matches_to_manually_confirm.values():
+            for index_tuple in value_set:
+                matches_already_found.add(index_tuple)
+        
+        for potential_match in resource_name_matches_interim_index:
+            if potential_match not in matches_already_found:
+                resource_name_matches_index.append(potential_match)
+        logging.info(f"Fuzzy matching resource names matching record pairs: {resource_name_matches_index}")
+
+        #Subsection: Add Matches to `matches_to_manually_confirm` Based on High Resource Name String Matching Threshold
+        if resource_name_matches_index:
+            for match in resource_name_matches_index:
+                index_zero_metadata = (
+                    new_resource_data.loc[match[0]]['resource_name'],
+                    new_resource_data.loc[match[0]]['DOI'],
+                    new_resource_data.loc[match[0]]['ISBN'],
+                    new_resource_data.loc[match[0]]['print_ISSN'],
+                    new_resource_data.loc[match[0]]['online_ISSN'],
+                    new_resource_data.loc[match[0]]['data_type'],
+                    new_resource_data.loc[match[0]]['platform'],
+                )
+                if normalized_resource_data:
+                    index_one_metadata = (
+                        normalized_resource_data.loc[match[1]]['resource_name'],
+                        normalized_resource_data.loc[match[1]]['DOI'],
+                        normalized_resource_data.loc[match[1]]['ISBN'],
+                        normalized_resource_data.loc[match[1]]['print_ISSN'],
+                        normalized_resource_data.loc[match[1]]['online_ISSN'],
+                        normalized_resource_data.loc[match[1]]['data_type'],
+                        normalized_resource_data.loc[match[1]]['platform'],
+                    )
+                else:
+                    index_one_metadata = (
+                        new_resource_data.loc[match[1]]['resource_name'],
+                        new_resource_data.loc[match[1]]['DOI'],
+                        new_resource_data.loc[match[1]]['ISBN'],
+                        new_resource_data.loc[match[1]]['print_ISSN'],
+                        new_resource_data.loc[match[1]]['online_ISSN'],
+                        new_resource_data.loc[match[1]]['data_type'],
+                        new_resource_data.loc[match[1]]['platform'],
+                    )
+                # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
+                if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+                elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
+                    matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+                else:
+                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
+                    logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
+                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
+        else:
+            logging.debug("No matches on fuzzy matching resource names")
+    '''
     pass
 
 
@@ -311,7 +445,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `PRform`, `access_method_filter` is {PRform.access_method_filter} (type {type(PRform.access_method_filter)})")
         log.info(f"For `PRform`, `metric_type_filter` is {PRform.metric_type_filter} (type {type(PRform.metric_type_filter)})")
         #ALERT: temp end
-        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform")
+        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform", "PR")
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -366,9 +500,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `DRform`, `access_method_filter` is {DRform.access_method_filter} (type {type(DRform.access_method_filter)})")
         log.info(f"For `DRform`, `metric_type_filter` is {DRform.metric_type_filter} (type {type(DRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform")
+        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name", "DR")
+        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher", "DR")
+        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform", "DR")
         '''
             SELECT
             <fields selected to display>,
@@ -433,9 +567,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `TRform`, `access_method_filter` is {TRform.access_method_filter} (type {type(TRform.access_method_filter)})")
         log.info(f"For `TRform`, `metric_type_filter` is {TRform.metric_type_filter} (type {type(TRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform")
+        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name", "TR")
+        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher", "TR")
+        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform", "TR")
         '''
             SELECT
             <fields selected to display>,
@@ -515,10 +649,10 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `IRform`, `access_method_filter` is {IRform.access_method_filter} (type {type(IRform.access_method_filter)})")
         log.info(f"For `IRform`, `metric_type_filter` is {IRform.metric_type_filter} (type {type(IRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform")
-        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title")
+        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name", "IR")
+        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher", "IR")
+        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform", "IR")
+        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title", "IR")
         '''
             SELECT
             <fields selected to display>,
