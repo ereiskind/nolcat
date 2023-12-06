@@ -53,129 +53,125 @@ def test_fuzzy_search_on_field(client):
         log.error(f"The Gale test raised the error {error}.")
 
 
-def test_view_usage_homepage(client):
+'''def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
-    #page = client.get('/view_usage/')
-    #GET_soup = BeautifulSoup(page.data, 'lxml')
-    #GET_response_title = GET_soup.head.title
-    #GET_response_page_title = GET_soup.body.h1
-#
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'index.html', 'br') as HTML_file:
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title
-    #    HTML_file_page_title = file_soup.body.h1
-    #
-    #assert page.status == "200 OK"
-    #assert HTML_file_title == GET_response_title
-    #assert HTML_file_page_title == GET_response_page_title
-    pass
+    page = client.get('/view_usage/')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'index.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
 
 
 def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
-    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
-    #POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
-    #    '/view_usage/custom-query',
-    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
-    #assert POST_response.status == "200 OK"
-    #assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
-    ##ToDo: Should the presence of the above file in the host computer's file system be checked?
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+        '/view_usage/custom-query',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
+    assert POST_response.status == "200 OK"
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
 def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
-    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
-    #caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
-#
-    #query_options = choice((
-    #    ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-    #    ("DR_D1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
-    #    ("DR_D2", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Limit_Exceeded' OR metric_type='No_License');"),
-    #    ("TR_B1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-    #    # No TR_B2: no R5 resources have access denial metric types
-    #    ("TR_B3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests');"),
-    #    ("TR_J1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-    #    # No TR_J2: no R5 resources have access denial metric types
-    #    ("TR_J3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' Or metric_type='Unique_Item_Investigations' Or metric_type='Unique_Item_Requests');"),
-    #    ("TR_J4", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-    #    ("IR_A1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
-    #    # No IR_M1: no R5 resources have multimedia data type
-    #))
-    #form_input = {
-    #    'begin_date': '2016-07-01',
-    #    'end_date': '2020-06-01',
-    #    'query_options': query_options[0],
-    #}
-    #POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
-    #    '/view_usage/preset-query',
-    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    data=form_input,
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
-#
-    #CSV_df = pd.read_csv(
-    #    TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
-    #    index_col='COUNTER_data_ID',
-    #    parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
-    #    date_parser=date_parser,
-    #    encoding='utf-8',
-    #    encoding_errors='backslashreplace',
-    #)
-    #CSV_df = CSV_df.astype(COUNTERData.state_data_types())
-    #database_df = query_database(
-    #    query=query_options[1],
-    #    engine=engine,
-    #    index='COUNTER_data_ID',
-    #)
-    #if isinstance(database_df, str):
-    #    pytest.skip(database_function_skip_statements(database_df))
-    #database_df = database_df.astype(COUNTERData.state_data_types())
-#
-    #assert POST_response.status == "200 OK"
-    #assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
-    #assert_frame_equal(CSV_df, database_df)
-    ##ToDo: Should the presence of the above file in the host computer's file system be checked?
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    query_options = choice((
+        ("PR_P1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='PR' AND access_method='Regular' AND (metric_type='Searches_Platform' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+        ("DR_D1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Searches_Automated' OR metric_type='Searches_Federated' OR metric_type='Searches_Regular' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests');"),
+        ("DR_D2", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='DR' AND access_method='Regular' AND (metric_type='Limit_Exceeded' OR metric_type='No_License');"),
+        ("TR_B1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+        # No TR_B2: no R5 resources have access denial metric types
+        ("TR_B3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Book' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests');"),
+        ("TR_J1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+        # No TR_J2: no R5 resources have access denial metric types
+        ("TR_J3", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_method='Regular' AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' Or metric_type='Unique_Item_Investigations' Or metric_type='Unique_Item_Requests');"),
+        ("TR_J4", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='TR' AND data_type='Journal' AND access_type='Controlled' AND access_method='Regular' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+        ("IR_A1", "SELECT * FROM COUNTERData WHERE usage_date>='2016-07-01' AND usage_date<='2020-06-01' AND report_type='IR' AND data_type='Article' AND access_method='Regular' AND parent_data_type='Journal' AND (metric_type='Total_Item_Requests' OR metric_type='Unique_Title_Requests');"),
+        # No IR_M1: no R5 resources have multimedia data type
+    ))
+    form_input = {
+        'begin_date': '2016-07-01',
+        'end_date': '2020-06-01',
+        'query_options': query_options[0],
+    }
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+        '/view_usage/preset-query',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
+
+    CSV_df = pd.read_csv(
+        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
+        index_col='COUNTER_data_ID',
+        parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    database_df = query_database(
+        query=query_options[1],
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype(COUNTERData.state_data_types())
+
+    assert POST_response.status == "200 OK"
+    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    assert_frame_equal(CSV_df, database_df)
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
 def test_start_query_wizard(client, engine, header_value):
     """Tests the submission of the report type and date range to the query wizard."""
-    #df = query_database(
-    #    query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
-    #    engine=engine,
-    #)
-    #if isinstance(df, str):
-    #    pytest.skip(database_function_skip_statements(df))
-    #df = df.sample().reset_index()
-    #log.info(f"`df` is\n{df}")  #TEST: temp
-    #form_input = {
-    #    'begin_date': df.at[0,'begin_date'],
-    #    'end_date': df.at[0,'end_date'],
-    #    'fiscal_year': 0,
-    #    'report_type': df.at[0,'report_type'],
-    #}
-    #log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
-    #log.info(f"`df.at[0,'end_date']` is {df.at[0,'end_date']} (type {type(df.at[0,'end_date'])})")  #TEST: temp
-    #log.info(f"`df.at[0,'report_type']` is {df.at[0,'report_type']} (type {type(df.at[0,'report_type'])})")  #TEST: temp
-    #POST_response = client.post(
-    #    '/view_usage/query-wizard',
-    #    #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    data=form_input,
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
-    #assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    #assert POST_response.status == "200 OK"
-    pass
+    df = query_database(
+        query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
+        engine=engine,
+    )
+    if isinstance(df, str):
+        pytest.skip(database_function_skip_statements(df))
+    df = df.sample().reset_index()
+    log.info(f"`df` is\n{df}")  #TEST: temp
+    form_input = {
+        'begin_date': df.at[0,'begin_date'],
+        'end_date': df.at[0,'end_date'],
+        'fiscal_year': 0,
+        'report_type': df.at[0,'report_type'],
+    }
+    log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
+    log.info(f"`df.at[0,'end_date']` is {df.at[0,'end_date']} (type {type(df.at[0,'end_date'])})")  #TEST: temp
+    log.info(f"`df.at[0,'report_type']` is {df.at[0,'report_type']} (type {type(df.at[0,'report_type'])})")  #TEST: temp
+    POST_response = client.post(
+        '/view_usage/query-wizard',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
 
 
 def test_GET_construct_query_with_wizard():
@@ -190,68 +186,67 @@ def test_construct_query_with_wizard():
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
-    #caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
-    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
-#
-    #page = client.get('/view_usage/non-COUNTER-downloads')
-    #GET_soup = BeautifulSoup(page.data, 'lxml')
-    #GET_response_title = GET_soup.head.title
-    #GET_response_page_title = GET_soup.body.h1
-    #GET_select_field_options = []
-    #log.info(f"`GET_soup`:\n{GET_soup}")  #temp
-    #log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #temp
-    #for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
-    #    tuple_content = re.search(r"\((\d*),\s(\d*)\)", child['value'])
-    #    GET_select_field_options.append((
-    #        tuple([int(i) for i in tuple_content.group(1, 2)]),
-    #        str(child.string),
-    #    ))
-    #
-    #with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'download-non-COUNTER-usage.html', 'br') as HTML_file:
-    #    file_soup = BeautifulSoup(HTML_file, 'lxml')
-    #    HTML_file_title = file_soup.head.title
-    #    HTML_file_page_title = file_soup.body.h1
-    #db_select_field_options = query_database(
-    #    query="""
-    #            SELECT
-    #                statisticsSources.statistics_source_name,
-    #                fiscalYears.fiscal_year,
-    #                annualUsageCollectionTracking.AUCT_statistics_source,
-    #                annualUsageCollectionTracking.AUCT_fiscal_year
-    #            FROM annualUsageCollectionTracking
-    #            JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
-    #            JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
-    #            WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
-    #        """,
-    #    engine=engine,
-    #)
-    #if isinstance(db_select_field_options, str):
-    #    pytest.skip(database_function_skip_statements(db_select_field_options))
-    #db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
-#
-    #assert page.status == "200 OK"
-    #assert HTML_file_title == GET_response_title
-    #assert HTML_file_page_title == GET_response_page_title
-    #assert GET_select_field_options == db_select_field_options
-    pass
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+ 
+    page = client.get('/view_usage/non-COUNTER-downloads')
+    GET_soup = BeautifulSoup(page.data, 'lxml')
+    GET_response_title = GET_soup.head.title
+    GET_response_page_title = GET_soup.body.h1
+    GET_select_field_options = []
+    log.info(f"`GET_soup`:\n{GET_soup}")  #temp
+    log.info(f"`GET_soup.find(name='select', id='AUCT_of_file_download')` (type {type(GET_soup.find(name='select', id='AUCT_of_file_download'))}):\n{GET_soup.find(name='select', id='AUCT_of_file_download')}")  #temp
+    for child in GET_soup.find(name='select', id='AUCT_of_file_download').children:
+        tuple_content = re.search(r"\((\d*),\s(\d*)\)", child['value'])
+        GET_select_field_options.append((
+            tuple([int(i) for i in tuple_content.group(1, 2)]),
+            str(child.string),
+        ))
+    
+    with open(TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'templates' / 'view_usage' / 'download-non-COUNTER-usage.html', 'br') as HTML_file:
+        file_soup = BeautifulSoup(HTML_file, 'lxml')
+        HTML_file_title = file_soup.head.title
+        HTML_file_page_title = file_soup.body.h1
+    db_select_field_options = query_database(
+        query="""
+                SELECT
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year,
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year
+                FROM annualUsageCollectionTracking
+                JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE annualUsageCollectionTracking.usage_file_path IS NOT NULL;
+            """,
+        engine=engine,
+    )
+    if isinstance(db_select_field_options, str):
+        pytest.skip(database_function_skip_statements(db_select_field_options))
+    db_select_field_options = create_AUCT_SelectField_options(db_select_field_options)
+
+    assert page.status == "200 OK"
+    assert HTML_file_title == GET_response_title
+    assert HTML_file_page_title == GET_response_page_title
+    assert GET_select_field_options == db_select_field_options
 
 
 def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
-    #caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
-    #form_input = {
-    #    'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
-    #}
-    #POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
-    #    '/view_usage/non-COUNTER-downloads',
-    #    #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-    #    follow_redirects=True,
-    #    headers=header_value,
-    #    data=form_input,
-    #)  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
-    #log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
-    #log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
-    #log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+    form_input = {
+        'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
+    }
+    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+        '/view_usage/non-COUNTER-downloads',
+        #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
+    log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
+    log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
-    pass
+    pass'''
