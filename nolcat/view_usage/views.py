@@ -60,11 +60,13 @@ def fuzzy_search_on_field(value, field, report):
     #Section: Perform Matching
     #Subsection: Set Up Matching
     matching_values = []
-    #indexing = recordlinkage.Index()
-    #indexing.block(value)  # This method of indexing compares all the values in the dataframe designated by the `index()` method below to the included `value` argument
-    #candidate_matches = indexing.index(df)
+    indexing = recordlinkage.Index()
+    indexing.block(value)  # This method of indexing compares all the values in the dataframe designated by the `index()` method below to the included `value` argument
+    candidate_matches = indexing.index(df)
+    log.info(f"`candidate_matches` (type {type(candidate_matches)}):\n{candidate_matches}")
 
-    #comparing = recordlinkage.Compare()
+    comparing = recordlinkage.Compare()
+    log.info(f"`comparing` (type {type(comparing)}):\n{comparing}")
     ''' Copied from previous NoLCAT iteration
         compare_resource_name.string('resource_name', 'resource_name', threshold=0.65, label='levenshtein')
         compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
