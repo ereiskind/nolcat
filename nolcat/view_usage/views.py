@@ -11,7 +11,6 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
-import recordlinkage
 from fuzzywuzzy import fuzz
 
 from . import bp
@@ -58,123 +57,17 @@ def fuzzy_search_on_field(value, field, report):
         return message
 
     #Section: Perform Matching
-    #Subsection: Set Up Matching
-    matching_values = []
-    indexing = recordlinkage.Index()
-    log.info(f"`indexing` (type {type(indexing)}):\n{indexing}")  #TEST: temp
-    indexing.block(value)  # This method of indexing compares all the values in the dataframe designated by the `index()` method below to the included `value` argument
-    log.info(f"`indexing` after `block()` method (type {type(indexing)}):\n{indexing}")  #TEST: temp
-    candidate_matches = indexing.index(df)
-    log.info(f"`candidate_matches` (type {type(candidate_matches)}):\n{candidate_matches}")
-
-    comparing = recordlinkage.Compare()
-    log.info(f"`comparing` (type {type(comparing)}):\n{comparing}")
-    ''' Copied from previous NoLCAT iteration
-        compare_resource_name.string('resource_name', 'resource_name', threshold=0.65, label='levenshtein')
-        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jaro', label='jaro')  # Version of jellyfish used has DepreciationWarning for this method
-        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='jarowinkler', label='jarowinkler')  # Version of jellyfish used has DepreciationWarning for this method
-        compare_resource_name.string('resource_name', 'resource_name', threshold=0.75, method='lcs', label='lcs')
-        compare_resource_name.string('resource_name', 'resource_name', threshold=0.70, method='smith_waterman', label='smith_waterman')
-
-        #Subsection: Return Dataframe with Comparison Results and Filtering Values Based on High Resource Name String Matching Threshold
-        if normalized_resource_data:
-            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data, normalized_resource_data)  #Alert: Not tested
-            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: normalized_resource_data.loc[index_value[1], 'resource_name'])
-        else:
-            compare_resource_name_table = compare_resource_name.compute(candidate_matches, new_resource_data)
-            compare_resource_name_table['index_one_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[1], 'resource_name'])
-        
-        compare_resource_name_table['index_zero_resource_name'] = compare_resource_name_table.index.map(lambda index_value: new_resource_data.loc[index_value[0], 'resource_name'])
-        logging.info(f"Fuzzy matching resource names comparison results (before FuzzyWuzzy):\n{compare_resource_name_table}")
-
-        #Subsection: Update Comparison Results Dataframe Using FuzzyWuzzy Based on High Resource Name String Matching Threshold
-        # FuzzyWuzzy throws an error when a null value is included in the comparison, and platform records have a null value for the resource name; for FuzzyWuzzy to work, the comparison table records with platforms need to be removed, which can be done by targeting the records with null values in one of the name fields
-        compare_resource_name_table.dropna(
-            axis='index',
-            subset=['index_zero_resource_name', 'index_one_resource_name'],
-            inplace=True,
-        )
-        logging.info(f"Fuzzy matching resource names comparison results (filtered in preparation for FuzzyWuzzy):\n{compare_resource_name_table}")
-
-        compare_resource_name_table['partial_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.partial_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
-        compare_resource_name_table['token_sort_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_sort_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
-        compare_resource_name_table['token_set_ratio'] = compare_resource_name_table.apply(lambda record: fuzz.token_set_ratio(record['index_zero_resource_name'], record['index_one_resource_name']), axis='columns')
-        logging.info(f"Fuzzy matching resource names comparison results:\n{compare_resource_name_table}")
-        
-        #Subsection: Filter Comparison Results Dataframe Based on High Resource Name String Matching Threshold
-        compare_resource_name_matches_table = compare_resource_name_table[
-            (compare_resource_name_table['levenshtein'] > 0) |
-            (compare_resource_name_table['jaro'] > 0) |
-            (compare_resource_name_table['jarowinkler'] > 0) |
-            (compare_resource_name_table['lcs'] > 0) |
-            (compare_resource_name_table['smith_waterman'] > 0) |
-            (compare_resource_name_table['partial_ratio'] >= 75) |
-            (compare_resource_name_table['token_sort_ratio'] >= 70) |
-            (compare_resource_name_table['token_set_ratio'] >= 80)
-        ]
-        logging.info(f"Filtered fuzzy matching resource names comparison results:\n{compare_resource_name_matches_table}")
-
-        #Subsection: Update Comparison Results Based on High Resource Name String Matching Threshold
-        resource_name_matches_interim_index = compare_resource_name_matches_table.index.tolist()
-        resource_name_matches_index = []
-        # To keep the naming convention consistent, the list of record index tuples that will be loaded into `matches_to_manually_confirm` will use the `_matches_index` name; the list of all multiindex values, including would-be duplicates, has `interim` in the name. Duplicates are removed at this point rather than by the uniqueness constraint of sets to minimize the number of records for which metadata needs to be pulled.
-        matches_already_found = matched_records.copy()  # `copy()` recreates the data at a different memory address
-        for value_set in matches_to_manually_confirm.values():
-            for index_tuple in value_set:
-                matches_already_found.add(index_tuple)
-        
-        for potential_match in resource_name_matches_interim_index:
-            if potential_match not in matches_already_found:
-                resource_name_matches_index.append(potential_match)
-        logging.info(f"Fuzzy matching resource names matching record pairs: {resource_name_matches_index}")
-
-        #Subsection: Add Matches to `matches_to_manually_confirm` Based on High Resource Name String Matching Threshold
-        if resource_name_matches_index:
-            for match in resource_name_matches_index:
-                index_zero_metadata = (
-                    new_resource_data.loc[match[0]]['resource_name'],
-                    new_resource_data.loc[match[0]]['DOI'],
-                    new_resource_data.loc[match[0]]['ISBN'],
-                    new_resource_data.loc[match[0]]['print_ISSN'],
-                    new_resource_data.loc[match[0]]['online_ISSN'],
-                    new_resource_data.loc[match[0]]['data_type'],
-                    new_resource_data.loc[match[0]]['platform'],
-                )
-                if normalized_resource_data:
-                    index_one_metadata = (
-                        normalized_resource_data.loc[match[1]]['resource_name'],
-                        normalized_resource_data.loc[match[1]]['DOI'],
-                        normalized_resource_data.loc[match[1]]['ISBN'],
-                        normalized_resource_data.loc[match[1]]['print_ISSN'],
-                        normalized_resource_data.loc[match[1]]['online_ISSN'],
-                        normalized_resource_data.loc[match[1]]['data_type'],
-                        normalized_resource_data.loc[match[1]]['platform'],
-                    )
-                else:
-                    index_one_metadata = (
-                        new_resource_data.loc[match[1]]['resource_name'],
-                        new_resource_data.loc[match[1]]['DOI'],
-                        new_resource_data.loc[match[1]]['ISBN'],
-                        new_resource_data.loc[match[1]]['print_ISSN'],
-                        new_resource_data.loc[match[1]]['online_ISSN'],
-                        new_resource_data.loc[match[1]]['data_type'],
-                        new_resource_data.loc[match[1]]['platform'],
-                    )
-                # Repetition in the COUNTER reports means that resource metadata permutations can occur separate from record index permutations; as a result, the metadata in both permutations must be tested as a key
-                if matches_to_manually_confirm.get((index_zero_metadata, index_one_metadata)):
-                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)].add(match)
-                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
-                elif matches_to_manually_confirm.get((index_one_metadata, index_zero_metadata)):
-                    matches_to_manually_confirm[(index_one_metadata, index_zero_metadata)].add(match)
-                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
-                else:
-                    matches_to_manually_confirm[(index_zero_metadata, index_one_metadata)] = set([match])  # Tuple must be wrapped in brackets to be kept as a tuple in the set
-                    logging.info(f"New matches_to_manually_confirm key ({index_zero_metadata}, {index_one_metadata}) created")
-                    logging.debug(f"{match} added as a match to manually confirm on fuzzy matching resource names")
-        else:
-            logging.debug("No matches on fuzzy matching resource names")
-    '''
-    pass
+    df['partial_ratio'] = df.apply(lambda record: fuzz.partial_ratio(record[field], value), axis='columns')
+    df['token_sort_ratio'] = df.apply(lambda record: fuzz.token_sort_ratio(record[field], value), axis='columns')
+    df['token_set_ratio'] = df.apply(lambda record: fuzz.token_set_ratio(record[field], value), axis='columns')
+    log.debug(f"Dataframe with all fuzzy matching values:\n{df}")
+    df = df[
+        (df['partial_ratio'] >= 75) |
+        (df['token_sort_ratio'] >= 70) |
+        (df['token_set_ratio'] >= 80)
+    ]
+    log.info(f"Dataframe filtered for matching values:\n{df}")
+    return df[field].to_list()
 
 
 @bp.route('/')
