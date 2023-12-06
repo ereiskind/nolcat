@@ -62,9 +62,9 @@ def fuzzy_search_on_field(value, field, report):
     df['token_set_ratio'] = df.apply(lambda record: fuzz.token_set_ratio(record[field], value), axis='columns')
     log.debug(f"Dataframe with all fuzzy matching values:\n{df}")
     df = df[
-        (df['partial_ratio'] >= 75) |
-        (df['token_sort_ratio'] >= 70) |
-        (df['token_set_ratio'] >= 80)
+        (df['partial_ratio'] >= 70) |
+        (df['token_sort_ratio'] >= 65) |
+        (df['token_set_ratio'] >= 75)
     ]
     log.info(f"Dataframe filtered for matching values:\n{df}")
     return df[field].to_list()
