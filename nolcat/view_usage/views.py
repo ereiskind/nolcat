@@ -39,13 +39,13 @@ def fuzzy_search_on_field(value, field, report):
     log.info("Starting `fuzzy_search_on_field()`.")
     #Section: Get Existing Values from Database
     if report == "PR":
-        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='PR' OR report_type='PR1';"
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='PR' OR report_type='PR1';"
     elif report == "DR":
-        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='DR' OR report_type='DB1' OR report_type='DB2';"
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='DR' OR report_type='DB1' OR report_type='DB2';"
     elif report == "TR":
-        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1';"
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1';"
     elif report == "IR":
-        query = f"SELECT UNIQUE {field} FROM COUNTERData WHERE report_type='IR';"
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='IR';"
     log.debug(f"Using the following query: {query}.")
     
     df = query_database(
