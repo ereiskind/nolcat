@@ -38,19 +38,14 @@ def remove_COUNTER_download_CSV():
 
 def test_fuzzy_search_on_field(client):
     """Tests the fuzzy match of a string to values in a given `COUNTERData` field."""
-    #ToDo: When function is written, remove try-except blocks
-    try:
-        with client:
-            Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
-            assert Gale_test == ["Gale", "Gale a Cengage Company", "Gale, a Cengage Company"]
-    except Exception as error:
-        log.error(f"The Gale test raised the error {error}.")
-    try:
-        with client:
-            TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
-            assert TF_test == ["Taylor & Francis Ltd", "Taylor &amp; Francis Ltd"]
-    except Exception as error:
-        log.error(f"The Gale test raised the error {error}.")
+    with client:
+        Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
+        TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
+    assert "Gale" in Gale_test
+    assert "Gale a Cengage Company" in Gale_test
+    assert "Gale, a Cengage Company" in Gale_test
+    assert "Taylor & Francis Ltd" in TF_test
+    assert "Taylor &amp; Francis Ltd" in TF_test
 
 
 '''def test_view_usage_homepage(client):
