@@ -318,16 +318,16 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         
         if report_type == "PR":
             # report_type = PR, PR1
-            return render_template('view_usage/query-wizard-2.html', form=PRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=PRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template('view_usage/query-wizard-2.html', form=DRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=DRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template('view_usage/query-wizard-2.html', form=TRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=TRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "IR":
             # report_type = IR
-            return render_template('view_usage/query-wizard-2.html', form=IRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=IRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
 
     elif PRform.validate_on_submit():
         #ALERT: temp
