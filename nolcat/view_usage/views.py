@@ -11,6 +11,7 @@ from flask import url_for
 from flask import abort
 from flask import flash
 import pandas as pd
+from fuzzywuzzy import fuzz
 
 from . import bp
 from .forms import *
@@ -20,7 +21,7 @@ from ..statements import *
 
 log = logging.getLogger(__name__)
 
-def fuzzy_search_on_field(value, field):
+def fuzzy_search_on_field(value, field, report):
     """This function provides fuzzy matches for free text field input into the query wizard.
 
     The query wizard allows for free text input to use as a filter for some fields, but because SQL query string filters use exact matching, the chance that no results will be returned because the input isn't an exact match for what the SUSHI reports contain is high. To counter this problem, this function will pull all of the unique values in the field to be matched, perform fuzzy matching comparing those values to the value input into the query wizard, and returns all the existing values that are a fuzzy match.
@@ -28,13 +29,45 @@ def fuzzy_search_on_field(value, field):
     Args:
         value (str): the string input into the query wizard
         field (str): the `COUNTERData` field
+        report (str): the abbreviation for the report being searched for
 
     Returns:
         list: the filed values that are fuzzy matches
+        str: the error message if the query fails
     """
-    #ToDo: Get values of `field`
-    #ToDo: Make fuzzy match comparison--'platform' and 'publisher' `field` values will be looser matches
-    pass
+    log.info("Starting `fuzzy_search_on_field()`.")
+    #Section: Get Existing Values from Database
+    if report == "PR":
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='PR' OR report_type='PR1';"
+    elif report == "DR":
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='DR' OR report_type='DB1' OR report_type='DB2';"
+    elif report == "TR":
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1';"
+    elif report == "IR":
+        query = f"SELECT DISTINCT {field} FROM COUNTERData WHERE report_type='IR';"
+    log.debug(f"Using the following query: {query}.")
+    
+    df = query_database(
+        query=query,
+        engine=db.engine,
+    )
+    if isinstance(df, str):
+        message = database_query_fail_statement(df)
+        log.error(message)
+        return message
+
+    #Section: Perform Matching
+    df['partial_ratio'] = df.apply(lambda record: fuzz.partial_ratio(record[field], value), axis='columns')
+    df['token_sort_ratio'] = df.apply(lambda record: fuzz.token_sort_ratio(record[field], value), axis='columns')
+    df['token_set_ratio'] = df.apply(lambda record: fuzz.token_set_ratio(record[field], value), axis='columns')
+    log.debug(f"Dataframe with all fuzzy matching values:\n{df}")
+    df = df[
+        (df['partial_ratio'] >= 70) |
+        (df['token_sort_ratio'] >= 65) |
+        (df['token_set_ratio'] >= 75)
+    ]
+    log.info(f"Dataframe filtered for matching values:\n{df}")
+    return df[field].to_list()
 
 
 @bp.route('/')
@@ -100,11 +133,7 @@ def use_predefined_SQL_query():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
-        end_date = date(
-            end_date.year,
-            end_date.month,
-            calendar.monthrange(end_date.year, end_date.month)[1],
-        )
+        end_date = last_day_of_month(end_date)
         log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         
         if form.query_options.data == "PR_P1":
@@ -237,11 +266,7 @@ def start_query_wizard():
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
-            end_date = date(
-                end_date.year,
-                end_date.month,
-                calendar.monthrange(end_date.year, end_date.month)[1],
-            )
+            end_date = last_day_of_month(end_date)
             begin_date = form.begin_date.data.isoformat()
             end_date = form.end_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:
@@ -311,7 +336,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `PRform`, `access_method_filter` is {PRform.access_method_filter} (type {type(PRform.access_method_filter)})")
         log.info(f"For `PRform`, `metric_type_filter` is {PRform.metric_type_filter} (type {type(PRform.metric_type_filter)})")
         #ALERT: temp end
-        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform")
+        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform", "PR")
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -366,9 +391,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `DRform`, `access_method_filter` is {DRform.access_method_filter} (type {type(DRform.access_method_filter)})")
         log.info(f"For `DRform`, `metric_type_filter` is {DRform.metric_type_filter} (type {type(DRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform")
+        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name", "DR")
+        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher", "DR")
+        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform", "DR")
         '''
             SELECT
             <fields selected to display>,
@@ -433,9 +458,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `TRform`, `access_method_filter` is {TRform.access_method_filter} (type {type(TRform.access_method_filter)})")
         log.info(f"For `TRform`, `metric_type_filter` is {TRform.metric_type_filter} (type {type(TRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform")
+        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name", "TR")
+        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher", "TR")
+        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform", "TR")
         '''
             SELECT
             <fields selected to display>,
@@ -515,10 +540,10 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.info(f"For `IRform`, `access_method_filter` is {IRform.access_method_filter} (type {type(IRform.access_method_filter)})")
         log.info(f"For `IRform`, `metric_type_filter` is {IRform.metric_type_filter} (type {type(IRform.metric_type_filter)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name")
-        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher")
-        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform")
-        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title")
+        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name", "IR")
+        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher", "IR")
+        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform", "IR")
+        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title", "IR")
         '''
             SELECT
             <fields selected to display>,

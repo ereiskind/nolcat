@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2023-11-20 ########## Since the downloads themselves work, getting these tests to pass is not a priority
+########## Failing 2023-12-07 ########## Since the downloads themselves work, getting these tests to pass is not a priority
 
 import pytest
 import logging
@@ -36,9 +36,21 @@ def remove_COUNTER_download_CSV():
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
 
-def test_fuzzy_search_on_field():
+def test_fuzzy_search_on_field(client):
     """Tests the fuzzy match of a string to values in a given `COUNTERData` field."""
-    pass
+    with client:
+        Gale_test = views.fuzzy_search_on_field("Gale", "publisher", "TR")
+        TF_test = views.fuzzy_search_on_field("Taylor and Francis", "publisher", "TR")
+        ERIC_test = views.fuzzy_search_on_field("ERIC", "resource_name", "DR")
+    assert "Gale" in Gale_test
+    assert "Gale a Cengage Company" in Gale_test
+    assert "Gale, a Cengage Company" in Gale_test
+    assert "Taylor & Francis Ltd" in TF_test
+    assert "ERIC" in ERIC_test
+    assert "ERIC (Module)" in ERIC_test
+    assert "ERICdata Higher Education Knowledge" in ERIC_test
+    assert "ProQuest Social Sciences Premium Collection->ERIC" in ERIC_test
+    assert "Social Science Premium Collection->Education Collection->ERIC" in ERIC_test
 
 
 def test_view_usage_homepage(client):
@@ -134,16 +146,17 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
 def test_start_query_wizard(client, engine, header_value):
     """Tests the submission of the report type and date range to the query wizard."""
     df = query_database(
-        query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
+        query="SELECT AUCT_fiscal_year, usage_date, report_type FROM COUNTERData GROUP BY AUCT_fiscal_year, usage_date, report_type;",
         engine=engine,
     )
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
+    log.info(f"`df` is\n{df}")  #TEST: temp
     form_input = {
-        'begin_date': df.at[0,'begin_date'],
-        'end_date': df.at[0,'end_date'],
-        'fiscal_year': 0,
+        'begin_date': df.at[0,'usage_date'],
+        'end_date': last_day_of_month(df.at[0,'usage_date']),
+        'fiscal_year': df.at[0,'AUCT_fiscal_year'],
         'report_type': df.at[0,'report_type'],
     }
     log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
@@ -175,7 +188,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
-
+ 
     page = client.get('/view_usage/non-COUNTER-downloads')
     GET_soup = BeautifulSoup(page.data, 'lxml')
     GET_response_title = GET_soup.head.title

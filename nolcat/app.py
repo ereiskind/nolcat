@@ -5,6 +5,8 @@ from datetime import datetime
 from itertools import product
 import json
 import re
+from datetime import date
+import calendar
 from sqlalchemy import log as SQLAlchemy_log
 from flask import Flask
 from flask import render_template
@@ -688,3 +690,19 @@ def ISBN_regex():
         re.Pattern: the regex object
     """
     return re.compile(r"(978-?|979-?)?\d{1,5}-?\d{1,7}-?\d{1,6}-?\d{1,3}\s*")
+
+
+def last_day_of_month(original_date):
+    """The last day of the month for the month of the given date.
+
+    Args:
+        original_date (datetime.date): the original date
+    
+    Returns:
+        datetime.date: the last day of the month
+    """
+    return date(
+        original_date.year,
+        original_date.month,
+        calendar.monthrange(original_date.year, original_date.month)[1],
+    )
