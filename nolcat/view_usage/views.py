@@ -318,16 +318,17 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         
         if report_type == "PR":
             # report_type = PR, PR1
-            return render_template('view_usage/query-wizard-2.html', form=PRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
+            return render_template('view_usage/query-wizard-2.html', form=PRform, form_to_show=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
+            #TEST: Above occurs when specified values are in `render_template`--is there a way to pass the values beyond the form?
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template('view_usage/query-wizard-2.html', form=DRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
+            return render_template('view_usage/query-wizard-2.html', form=DRform, form_to_show=report_type)
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template('view_usage/query-wizard-2.html', form=TRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
+            return render_template('view_usage/query-wizard-2.html', form=TRform, form_to_show=report_type)
         elif report_type == "IR":
             # report_type = IR
-            return render_template('view_usage/query-wizard-2.html', form=IRform, report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
+            return render_template('view_usage/query-wizard-2.html', form=IRform, form_to_show=report_type)
 
     elif PRform.validate_on_submit():
         #ALERT: temp
