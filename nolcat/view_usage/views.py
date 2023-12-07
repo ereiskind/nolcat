@@ -266,9 +266,8 @@ def start_query_wizard():
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
-            end_date = last_day_of_month(end_date)
+            end_date = last_day_of_month(form.end_date.data.isoformat())
             begin_date = form.begin_date.data.isoformat()
-            end_date = form.end_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:
             log.debug(f"Using the fiscal year with ID {form.fiscal_year.data} as the date range.")
             fiscal_year_dates = query_database(
