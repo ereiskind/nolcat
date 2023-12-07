@@ -264,11 +264,6 @@ def start_query_wizard():
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('view_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
-        log.debug("Form validated")  #TEST: temp
-        log.debug(f"`form.begin_date.data` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #TEST: temp
-        log.debug(f"`form.end_date.data` is {form.end_date.data} (type {type(form.end_date.data)})")  #TEST: temp
-        log.debug(f"`form.fiscal_year.data` is {form.fiscal_year.data} (type {type(form.fiscal_year.data)})")  #TEST: temp
-        log.debug(f"`form.report_type.data` is {form.report_type.data} (type {type(form.report_type.data)})")  #TEST: temp
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
             end_date = last_day_of_month(form.end_date.data).isoformat()
@@ -289,8 +284,8 @@ def start_query_wizard():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
-        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")
-        return "placeholder"#redirect(url_for('view_usage.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
+        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")  #TEST: Getting expected results for both date input types here; why is it being rejected below?
+        return redirect(url_for('view_usage.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -313,6 +308,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
     TRform = TRQueryWizardForm()
     IRform = IRQueryWizardForm()
     if request.method == 'GET':
+        log.debug(f"`report_type` is {report_type} (type {type(report_type)})")  #TEST: temp
+        log.debug(f"`begin_date` is {begin_date} (type {type(begin_date)})")  #TEST: temp
+        log.debug(f"`end_date` is {end_date} (type {type(end_date)})")  #TEST: temp
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date < date.fromisoformat('2019-07-01'):
