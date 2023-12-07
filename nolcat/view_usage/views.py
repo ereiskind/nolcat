@@ -133,11 +133,7 @@ def use_predefined_SQL_query():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.use_predefined_SQL_query'))
-        end_date = date(
-            end_date.year,
-            end_date.month,
-            calendar.monthrange(end_date.year, end_date.month)[1],
-        )
+        end_date = last_day_of_month(end_date)
         log.debug(f"The date range for the request is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}.")
         
         if form.query_options.data == "PR_P1":
@@ -270,11 +266,7 @@ def start_query_wizard():
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
-            end_date = date(
-                end_date.year,
-                end_date.month,
-                calendar.monthrange(end_date.year, end_date.month)[1],
-            )
+            end_date = last_day_of_month(end_date)
             begin_date = form.begin_date.data.isoformat()
             end_date = form.end_date.data.isoformat()
         elif not form.begin_date.data and not form.end_date.data:

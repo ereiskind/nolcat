@@ -430,11 +430,7 @@ def most_recent_month_with_usage():
         begin_month = current_date + relativedelta(months=-1)
         begin_date = begin_month.replace(day=1)
     
-    end_date = date(
-        begin_date.year,
-        begin_date.month,
-        calendar.monthrange(begin_date.year, begin_date.month)[1],
-    )
+    end_date = last_day_of_month(begin_date)
     log.info(f"`most_recent_month_with_usage()` yields `begin_date` {begin_date} (type {type(begin_date)}) and `end_date` {end_date} (type {type(end_date)}).")
     yield (begin_date, end_date)
 
