@@ -53,7 +53,7 @@ def test_fuzzy_search_on_field(client):
     assert "Social Science Premium Collection->Education Collection->ERIC" in ERIC_test
 
 
-'''def test_view_usage_homepage(client):
+def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/view_usage/')
     GET_soup = BeautifulSoup(page.data, 'lxml')
@@ -249,4 +249,4 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
     log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
-    pass'''
+    pass
