@@ -264,6 +264,11 @@ def start_query_wizard():
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
         return render_template('view_usage/query-wizard-1.html', form=form)
     elif form.validate_on_submit():
+        log.debug("Form validated")  #TEST: temp
+        log.debug(f"`form.begin_date.data` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #TEST: temp
+        log.debug(f"`form.end_date.data` is {form.end_date.data} (type {type(form.end_date.data)})")  #TEST: temp
+        log.debug(f"`form.fiscal_year.data` is {form.fiscal_year.data} (type {type(form.fiscal_year.data)})")  #TEST: temp
+        log.debug(f"`form.report_type.data` is {form.report_type.data} (type {type(form.report_type.data)})")  #TEST: temp
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")
             end_date = last_day_of_month(form.end_date.data.isoformat())
