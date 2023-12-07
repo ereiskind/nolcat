@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2023-11-20 ########## Since the downloads themselves work, getting these tests to pass is not a priority
+########## Failing 2023-12-07 ########## Since the downloads themselves work, getting these tests to pass is not a priority
 
 import pytest
 import logging
@@ -146,7 +146,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
 def test_start_query_wizard(client, engine, header_value):
     """Tests the submission of the report type and date range to the query wizard."""
     df = query_database(
-        query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
+        query="SELECT AUCT_fiscal_year, usage_date, report_type FROM COUNTERData GROUP BY AUCT_fiscal_year, usage_date, report_type;",
         engine=engine,
     )
     if isinstance(df, str):
@@ -154,9 +154,9 @@ def test_start_query_wizard(client, engine, header_value):
     df = df.sample().reset_index()
     log.info(f"`df` is\n{df}")  #TEST: temp
     form_input = {
-        'begin_date': df.at[0,'begin_date'],
-        'end_date': df.at[0,'end_date'],
-        'fiscal_year': 0,
+        'begin_date': df.at[0,'usage_date'],
+        'end_date': last_day_of_month(df.at[0,'usage_date']),
+        'fiscal_year': df.at[0,'AUCT_fiscal_year'],
         'report_type': df.at[0,'report_type'],
     }
     log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
