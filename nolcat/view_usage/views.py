@@ -285,7 +285,7 @@ def start_query_wizard():
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")  #TEST: Getting expected results for both date input types here; why is it being rejected below?
-        return redirect(url_for('view_usage.construct_query_with_wizard', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
+        return redirect(url_for('view_usage.query_wizard_sort_redirect', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -294,21 +294,22 @@ def start_query_wizard():
 
 
 @bp.route('query-wizard/<string:report_type>/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
-def construct_query_with_wizard(report_type, begin_date, end_date):
-    """Returns a page that allows a valid SQL query to be constructed through drop-downs and fuzzy text searches.
+def query_wizard_sort_redirect(report_type, begin_date, end_date):
+    """This route function serves purely as a redirect to the route for the query wizard for the appropriate report type.
     
+    Placing all this route's functionality in a route with the post-form submission processing for all four report types was raising a `werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'` error at the `render_template()` statements at the end of the `request.method == 'GET'` section.
+
     Args:
         report_type (str): the COUNTER R5 report type abbreviation
         begin_date (str): the ISO string for the first day in the date range
         end_date (str): the ISO string for the last day in the date range
     """
-    log.info("Starting `construct_query_with_wizard()`.")
+    log.info("Starting `query_wizard_sort_redirect()`.")
     PRform = PRQueryWizardForm()
     DRform = DRQueryWizardForm()
     TRform = TRQueryWizardForm()
     IRform = IRQueryWizardForm()
     if request.method == 'GET':
-        log.debug(f"After `request.method == 'GET'`, `report_type` is {report_type} (type {type(report_type)})")  #TEST: temp
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
@@ -318,33 +319,59 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
         
         if report_type == "PR":
-            log.debug(f"After `if report_type == 'PR':`, `begin_date` is {begin_date} (type {type(begin_date)})")  #TEST: temp
+            #ToDo: Ensure below works for passing on date values
             PRform.begin_date.default = begin_date
             PRform.end_date.default = end_date
             PRform.process()  # Without this, the above defaults aren't sent to the form
-            log.debug(f"Before `render_template`, `end_date` is {end_date} (type {type(end_date)})")  #TEST: temp
             # report_type = PR, PR1
-            return render_template('view_usage/query-wizard-2.html', report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())  #form=PRform, report_type=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
+            return render_template(url_for('view_usage.construct_PR_query_with_wizard'), form=PRform)
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template('view_usage/query-wizard-2.html', form=DRform, report_type=report_type)
+            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), form=DRform)
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template('view_usage/query-wizard-2.html', form=TRform, report_type=report_type)
+            return render_template(url_for('view_usage.construct_TR_query_with_wizard'), form=TRform)
         elif report_type == "IR":
             # report_type = IR
-            return render_template('view_usage/query-wizard-2.html', form=IRform, report_type=report_type)
+            return render_template(url_for('view_usage.construct_IR_query_with_wizard'), form=IRform)
+    else:
+        try:
+            message = Flask_error_statement(PRform.errors)
+        except:
+            try:
+                message = Flask_error_statement(DRform.errors)
+            except:
+                try:
+                    message = Flask_error_statement(TRform.errors)
+                except:
+                    try:
+                        message = Flask_error_statement(IRform.errors)
+                    except Exception as error:
+                        message = Flask_error_statement(error)
+        log.error(message)
+        flash(message)
+        return abort(404)
 
-    elif PRform.validate_on_submit():
+
+@bp.route('query-wizard/PR', methods=['GET', 'POST'])
+def construct_PR_query_with_wizard():
+    """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches."""
+    log.info("Starting `construct_PR_query_with_wizard()`.")
+    form = PRQueryWizardForm()
+    if request.method == 'GET':
+        #ToDo: Create `PR-query-wizard.html`
+        return render_template('view_usage/PR-query-wizard.html', form=form)
+    if form.validate_on_submit():
         #ALERT: temp
-        log.info(f"After `validate_on_submit()` for PR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
-        log.info(f"For `PRform`, `display_fields` is {PRform.display_fields} (type {type(PRform.display_fields)})")
-        log.info(f"For `PRform`, `platform_filter` is {PRform.platform_filter} (type {type(PRform.platform_filter)})")
-        log.info(f"For `PRform`, `data_type_filter` is {PRform.data_type_filter} (type {type(PRform.data_type_filter)})")
-        log.info(f"For `PRform`, `access_method_filter` is {PRform.access_method_filter} (type {type(PRform.access_method_filter)})")
-        log.info(f"For `PRform`, `metric_type_filter` is {PRform.metric_type_filter} (type {type(PRform.metric_type_filter)})")
+        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
+        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
+        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
+        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
+        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
+        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
+        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        platform_filter_options = fuzzy_search_on_field(PRform.platform_filter, "platform", "PR")
+        platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -389,19 +416,35 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
-    elif DRform.validate_on_submit():
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)
+
+
+@bp.route('query-wizard/DR', methods=['GET', 'POST'])
+def construct_DR_query_with_wizard():
+    """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches."""
+    log.info("Starting `construct_DR_query_with_wizard()`.")
+    form = DRQueryWizardForm()
+    if request.method == 'GET':
+        #ToDo: Create `DR-query-wizard.html`
+        return render_template('view_usage/DR-query-wizard.html', form=form)
+    if form.validate_on_submit():
         #ALERT: temp
-        log.info(f"After `validate_on_submit()` for DR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
-        log.info(f"For `DRform`, `display_fields` is {DRform.display_fields} (type {type(DRform.display_fields)})")
-        log.info(f"For `DRform`, `resource_name_filter` is {DRform.resource_name_filter} (type {type(DRform.resource_name_filter)})")
-        log.info(f"For `DRform`, `platform_filter` is {DRform.platform_filter} (type {type(DRform.platform_filter)})")
-        log.info(f"For `DRform`, `data_type_filter` is {DRform.data_type_filter} (type {type(DRform.data_type_filter)})")
-        log.info(f"For `DRform`, `access_method_filter` is {DRform.access_method_filter} (type {type(DRform.access_method_filter)})")
-        log.info(f"For `DRform`, `metric_type_filter` is {DRform.metric_type_filter} (type {type(DRform.metric_type_filter)})")
+        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
+        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
+        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
+        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
+        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
+        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
+        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
+        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(DRform.resource_name_filter, "resource_name", "DR")
-        publisher_filter_options = fuzzy_search_on_field(DRform.publisher_filter, "publisher", "DR")
-        platform_filter_options = fuzzy_search_on_field(DRform.platform_filter, "platform", "DR")
+        resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "DR")
+        publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "DR")
+        platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "DR")
         '''
             SELECT
             <fields selected to display>,
@@ -450,25 +493,41 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
-    elif TRform.validate_on_submit():
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)
+
+
+@bp.route('query-wizard/TR', methods=['GET', 'POST'])
+def construct_TR_query_with_wizard():
+    """Returns a page that allows a valid SQL query for title usage data to be constructed through drop-downs and fuzzy text searches."""
+    log.info("Starting `construct_TR_query_with_wizard()`.")
+    form = TRQueryWizardForm()
+    if request.method == 'GET':
+        #ToDo: Create `TR-query-wizard.html`
+        return render_template('view_usage/TR-query-wizard.html', form=form)
+    if form.validate_on_submit():
         #ALERT: temp
-        log.info(f"After `validate_on_submit()` for TR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
-        log.info(f"For `TRform`, `display_fields` is {TRform.display_fields} (type {type(TRform.display_fields)})")
-        log.info(f"For `TRform`, `resource_name_filter` is {TRform.resource_name_filter} (type {type(TRform.resource_name_filter)})")
-        log.info(f"For `TRform`, `publisher_filter` is {TRform.publisher_filter} (type {type(TRform.publisher_filter)})")
-        log.info(f"For `TRform`, `platform_filter` is {TRform.platform_filter} (type {type(TRform.platform_filter)})")
-        log.info(f"For `TRform`, `ISBN_filter` is {TRform.ISBN_filter} (type {type(TRform.ISBN_filter)})")
-        log.info(f"For `TRform`, `ISSN_filter` is {TRform.ISSN_filter} (type {type(TRform.ISSN_filter)})")
-        log.info(f"For `TRform`, `data_type_filter` is {TRform.data_type_filter} (type {type(TRform.data_type_filter)})")
-        log.info(f"For `TRform`, `section_type_filter` is {TRform.section_type_filter} (type {type(TRform.section_type_filter)})")
-        log.info(f"For `TRform`, `YOP_filter` is {TRform.YOP_filter} (type {type(TRform.YOP_filter)})")
-        log.info(f"For `TRform`, `access_type_filter` is {TRform.access_type_filter} (type {type(TRform.access_type_filter)})")
-        log.info(f"For `TRform`, `access_method_filter` is {TRform.access_method_filter} (type {type(TRform.access_method_filter)})")
-        log.info(f"For `TRform`, `metric_type_filter` is {TRform.metric_type_filter} (type {type(TRform.metric_type_filter)})")
+        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
+        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
+        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
+        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
+        log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
+        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")
+        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
+        log.info(f"`section_type_filter` is {form.section_type_filter.data} (type {type(form.section_type_filter.data)})")
+        log.info(f"`YOP_filter` is {form.YOP_filter.data} (type {type(form.YOP_filter.data)})")
+        log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
+        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
+        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(TRform.resource_name_filter, "resource_name", "TR")
-        publisher_filter_options = fuzzy_search_on_field(TRform.publisher_filter, "publisher", "TR")
-        platform_filter_options = fuzzy_search_on_field(TRform.platform_filter, "platform", "TR")
+        resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "TR")
+        publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "TR")
+        platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "TR")
         '''
             SELECT
             <fields selected to display>,
@@ -528,30 +587,46 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
-    elif IRform.validate_on_submit():
+    else:
+        message = Flask_error_statement(form.errors)
+        log.error(message)
+        flash(message)
+        return abort(404)
+
+
+@bp.route('query-wizard/IR', methods=['GET', 'POST'])
+def construct_IR_query_with_wizard():
+    """Returns a page that allows a valid SQL query for item usage data to be constructed through drop-downs and fuzzy text searches."""
+    log.info("Starting `construct_IR_query_with_wizard()`.")
+    form = IRQueryWizardForm()
+    if request.method == 'GET':
+        #ToDo: Create `IR-query-wizard.html`
+        return render_template('view_usage/IR-query-wizard.html', form=form)
+    if form.validate_on_submit():
         #ALERT: temp
-        log.info(f"After `validate_on_submit()` for IR, begin_date is {begin_date} (type {type(begin_date)}), end_date is {end_date} (type {type(end_date)}), and report_type is {report_type}")
-        log.info(f"For `IRform`, `display_fields` is {IRform.display_fields} (type {type(IRform.display_fields)})")
-        log.info(f"For `IRform`, `resource_name_filter` is {IRform.resource_name_filter} (type {type(IRform.resource_name_filter)})")
-        log.info(f"For `IRform`, `publisher_filter` is {IRform.publisher_filter} (type {type(IRform.publisher_filter)})")
-        log.info(f"For `IRform`, `platform_filter` is {IRform.platform_filter} (type {type(IRform.platform_filter)})")
-        log.info(f"For `IRform`, `publication_date_start_filter` is {IRform.publication_date_start_filter} (type {type(IRform.publication_date_start_filter)})")
-        log.info(f"For `IRform`, `publication_date_end_filter` is {IRform.publication_date_end_filter} (type {type(IRform.publication_date_end_filter)})")
-        log.info(f"For `IRform`, `ISBN_filter` is {IRform.ISBN_filter} (type {type(IRform.ISBN_filter)})")
-        log.info(f"For `IRform`, `ISSN_filter` is {IRform.ISSN_filter} (type {type(IRform.ISSN_filter)})")
-        log.info(f"For `IRform`, `parent_title_filter` is {IRform.parent_title_filter} (type {type(IRform.parent_title_filter)})")
-        log.info(f"For `IRform`, `parent_ISBN_filter` is {IRform.parent_ISBN_filter} (type {type(IRform.parent_ISBN_filter)})")
-        log.info(f"For `IRform`, `parent_ISSN_filter` is {IRform.parent_ISSN_filter} (type {type(IRform.parent_ISSN_filter)})")
-        log.info(f"For `IRform`, `data_type_filter` is {IRform.data_type_filter} (type {type(IRform.data_type_filter)})")
-        log.info(f"For `IRform`, `YOP_filter` is {IRform.YOP_filter} (type {type(IRform.YOP_filter)})")
-        log.info(f"For `IRform`, `access_type_filter` is {IRform.access_type_filter} (type {type(IRform.access_type_filter)})")
-        log.info(f"For `IRform`, `access_method_filter` is {IRform.access_method_filter} (type {type(IRform.access_method_filter)})")
-        log.info(f"For `IRform`, `metric_type_filter` is {IRform.metric_type_filter} (type {type(IRform.metric_type_filter)})")
+        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
+        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
+        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
+        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
+        log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
+        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
+        log.info(f"`publication_date_start_filter` is {form.publication_date_start_filter.data} (type {type(form.publication_date_start_filter.data)})")
+        log.info(f"`publication_date_end_filter` is {form.publication_date_end_filter.data} (type {type(form.publication_date_end_filter.data)})")
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")
+        log.info(f"`parent_title_filter` is {form.parent_title_filter.data} (type {type(form.parent_title_filter.data)})")
+        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")
+        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")
+        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
+        log.info(f"`YOP_filter` is {form.YOP_filter.data} (type {type(form.YOP_filter.data)})")
+        log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
+        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
+        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        resource_name_filter_options = fuzzy_search_on_field(IRform.resource_name_filter, "resource_name", "IR")
-        publisher_filter_options = fuzzy_search_on_field(IRform.publisher_filter, "publisher", "IR")
-        platform_filter_options = fuzzy_search_on_field(IRform.platform_filter, "platform", "IR")
-        parent_title_filter_options = fuzzy_search_on_field(IRform.parent_title_filter, "parent_title", "IR")
+        resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "IR")
+        publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "IR")
+        platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "IR")
+        parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter, "parent_title", "IR")
         '''
             SELECT
             <fields selected to display>,
@@ -622,19 +697,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
     else:
-        try:
-            message = Flask_error_statement(PRform.errors)
-        except:
-            try:
-                message = Flask_error_statement(DRform.errors)
-            except:
-                try:
-                    message = Flask_error_statement(TRform.errors)
-                except:
-                    try:
-                        message = Flask_error_statement(IRform.errors)
-                    except Exception as error:
-                        message = Flask_error_statement(error)
+        message = Flask_error_statement(form.errors)
         log.error(message)
         flash(message)
         return abort(404)

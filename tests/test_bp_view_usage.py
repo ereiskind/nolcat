@@ -174,13 +174,28 @@ def test_start_query_wizard(client, engine, header_value):
     assert POST_response.status == "200 OK"
 
 
-def test_GET_construct_query_with_wizard():
-    """Tests that the query wizard accepts the report type and date range and outputs the field appropriate for selection in the wizard."""
+def test_GET_query_wizard_sort_redirect():
+    """Tests that the query wizard accepts the report type and date range and redirects to the route function appropriate for selection in the wizard."""
     pass
 
 
-def test_construct_query_with_wizard():
-    """Tests that the query wizard page can download the results of a query created with a form."""
+def test_construct_PR_query_with_wizard():
+    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    pass
+
+
+def test_construct_DR_query_with_wizard():
+    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    pass
+
+
+def test_construct_TR_query_with_wizard():
+    """Tests downloading the results of a query for platform usage data constructed with a form."""
+    pass
+
+
+def test_construct_IR_query_with_wizard():
+    """Tests downloading the results of a query for platform usage data constructed with a form."""
     pass
 
 
