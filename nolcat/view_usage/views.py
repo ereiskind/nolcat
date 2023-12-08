@@ -315,7 +315,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
-            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")  #ALERT: This is being flashed on the homepage upon first arrival--why?
+            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
         
         if report_type == "PR":
             log.debug(f"After `if report_type == 'PR':`, `begin_date` is {begin_date} (type {type(begin_date)})")  #TEST: temp
@@ -324,17 +324,16 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             PRform.process()  # Without this, the above defaults aren't sent to the form
             log.debug(f"Before `render_template`, `end_date` is {end_date} (type {type(end_date)})")  #TEST: temp
             # report_type = PR, PR1
-            return render_template('view_usage/query-wizard-2.html', form=PRform, report_type=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
-            #TEST: Above occurs when specified values are in `render_template`--is there a way to pass the values beyond the form?
+            return render_template('view_usage/query-wizard-2.html', report_type=report_type, begin_date=begin_date.isoformat(), end_date=end_date.isoformat())  #form=PRform, report_type=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template('view_usage/query-wizard-2.html', form=DRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=DRform, report_type=report_type)
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template('view_usage/query-wizard-2.html', form=TRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=TRform, report_type=report_type)
         elif report_type == "IR":
             # report_type = IR
-            return render_template('view_usage/query-wizard-2.html', form=IRform, form_to_show=report_type)
+            return render_template('view_usage/query-wizard-2.html', form=IRform, report_type=report_type)
 
     elif PRform.validate_on_submit():
         #ALERT: temp
