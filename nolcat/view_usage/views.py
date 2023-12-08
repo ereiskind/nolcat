@@ -293,7 +293,7 @@ def start_query_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/<string:report_type>/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
+@bp.route('query-wizard/<string:report_type>/<string:begin_date>/<string:end_date>')
 def query_wizard_sort_redirect(report_type, begin_date, end_date):
     """This route function serves purely as a redirect to the route for the query wizard for the appropriate report type.
     
@@ -305,11 +305,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         end_date (str): the ISO string for the last day in the date range
     """
     log.info("Starting `query_wizard_sort_redirect()`.")
-    PRform = PRQueryWizardForm()
-    DRform = DRQueryWizardForm()
-    TRform = TRQueryWizardForm()
-    IRform = IRQueryWizardForm()
-    if request.method == 'GET':
+    try:
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
         if begin_date > end_date:
@@ -323,27 +319,15 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             return render_template(url_for('view_usage.construct_PR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), form=DRform)
+            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template(url_for('view_usage.construct_TR_query_with_wizard'), form=TRform)
+            return render_template(url_for('view_usage.construct_TR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "IR":
             # report_type = IR
-            return render_template(url_for('view_usage.construct_IR_query_with_wizard'), form=IRform)
-    else:
-        try:
-            message = Flask_error_statement(PRform.errors)
-        except:
-            try:
-                message = Flask_error_statement(DRform.errors)
-            except:
-                try:
-                    message = Flask_error_statement(TRform.errors)
-                except:
-                    try:
-                        message = Flask_error_statement(IRform.errors)
-                    except Exception as error:
-                        message = Flask_error_statement(error)
+            return render_template(url_for('view_usage.construct_IR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
+    except Exception as error:
+        message = Flask_error_statement(error)
         log.error(message)
         flash(message)
         return abort(404)
