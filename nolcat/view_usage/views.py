@@ -359,7 +359,6 @@ def construct_PR_query_with_wizard():
     log.info("Starting `construct_PR_query_with_wizard()`.")
     form = PRQueryWizardForm()
     if request.method == 'GET':
-        #ToDo: Create `PR-query-wizard.html`
         return render_template('view_usage/PR-query-wizard.html', form=form)
     if form.validate_on_submit():
         #ALERT: temp
@@ -429,7 +428,6 @@ def construct_DR_query_with_wizard():
     log.info("Starting `construct_DR_query_with_wizard()`.")
     form = DRQueryWizardForm()
     if request.method == 'GET':
-        #ToDo: Create `DR-query-wizard.html`
         return render_template('view_usage/DR-query-wizard.html', form=form)
     if form.validate_on_submit():
         #ALERT: temp
@@ -506,7 +504,6 @@ def construct_TR_query_with_wizard():
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
     if request.method == 'GET':
-        #ToDo: Create `TR-query-wizard.html`
         return render_template('view_usage/TR-query-wizard.html', form=form)
     if form.validate_on_submit():
         #ALERT: temp
@@ -600,7 +597,6 @@ def construct_IR_query_with_wizard():
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
     if request.method == 'GET':
-        #ToDo: Create `IR-query-wizard.html`
         return render_template('view_usage/IR-query-wizard.html', form=form)
     if form.validate_on_submit():
         #ALERT: temp

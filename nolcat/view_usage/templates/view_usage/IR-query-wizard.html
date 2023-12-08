@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IR Query Wizard</title>
+</head>
+<body>
+    <h1>IR Query Wizard <small>(continued)</small></h1>
+
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('view_usage.construct_IR_query_with_wizard') }}" method="POST">
+        {{ form.csrf_token }}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
