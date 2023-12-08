@@ -319,15 +319,11 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
         
         if report_type == "PR":
-            #ToDo: Ensure below works for passing on date values
-            PRform.begin_date.default = begin_date
-            PRform.end_date.default = end_date
-            PRform.process()  # Without this, the above defaults aren't sent to the form
             # report_type = PR, PR1
-            return render_template(url_for('view_usage.construct_PR_query_with_wizard'))#, form=PRform)
+            return render_template(url_for('view_usage.construct_PR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), begin_date=begin_date.isoformat(), end_date=end_date.isoformat())#, form=DRform)
+            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), form=DRform)
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
             return render_template(url_for('view_usage.construct_TR_query_with_wizard'), form=TRform)
@@ -353,12 +349,21 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         return abort(404)
 
 
-@bp.route('query-wizard/PR', methods=['GET', 'POST'])
-def construct_PR_query_with_wizard():
-    """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches."""
+@bp.route('query-wizard/PR/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
+def construct_PR_query_with_wizard(begin_date, end_date):
+    """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches.
+    
+    Args:
+        begin_date (str): the ISO string for the first day in the date range
+        end_date (str): the ISO string for the last day in the date range
+    """
     log.info("Starting `construct_PR_query_with_wizard()`.")
+    log.info(f"`request.method` is {request.method}")  #ALERT: temp
     form = PRQueryWizardForm()
+    log.info(f"After `form` initialization, `begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #ALERT: temp
+    log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")  #ALERT: temp
     if request.method == 'GET':
+        log.info("In `request.method == 'GET'`")  #ALERT: temp
         return render_template('view_usage/PR-query-wizard.html', form=form)
     if form.validate_on_submit():
         #ALERT: temp
@@ -422,14 +427,9 @@ def construct_PR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/DR/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
-def construct_DR_query_with_wizard(begin_date, end_date):
-    """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches.
-    
-    Args:
-        begin_date (str): the ISO string for the first day in the date range
-        end_date (str): the ISO string for the last day in the date range
-    """
+@bp.route('query-wizard/DR', methods=['GET', 'POST'])
+def construct_DR_query_with_wizard():
+    """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_DR_query_with_wizard()`.")
     form = DRQueryWizardForm()
     if request.method == 'GET':
