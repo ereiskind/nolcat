@@ -8,6 +8,12 @@
 <body>
     <h1>Query Wizard <small>(continued)</small></h1>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     {% if form_to_show == "PR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
