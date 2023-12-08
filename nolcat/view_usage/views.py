@@ -344,8 +344,8 @@ def construct_PR_query_with_wizard(begin_date, end_date):
     log.info("Starting `construct_PR_query_with_wizard()`.")
     log.info(f"`request.method` is {request.method}")  #ALERT: temp
     form = PRQueryWizardForm()
-    log.info(f"After `form` initialization, `begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")  #ALERT: temp
-    log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")  #ALERT: temp
+    log.info(f"After `form` initialization, `begin_date` is {begin_date} (type {type(begin_date)})")  #ALERT: temp
+    log.info(f"`end_date` is {end_date} (type {type(end_date)})")  #ALERT: temp
     if request.method == 'GET':
         log.info("In `request.method == 'GET'`")  #ALERT: temp
         return render_template('view_usage/PR-query-wizard.html', form=form)
