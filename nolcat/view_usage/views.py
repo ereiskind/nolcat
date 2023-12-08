@@ -320,7 +320,11 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         
         if report_type == "PR":
             # report_type = PR, PR1
-            return render_template(url_for('view_usage.construct_PR_query_with_wizard'), form=PRform)
+            PRform.begin_date.default = begin_date
+            PRform.end_date.default = end_date
+            PRform.process()  # Without this, the above defaults aren't sent to the form
+            log.info(f"About to `return render_template('view_usage/PR-query-wizard.html', form=PRform)`")  #ALERT: temp
+            return render_template('view_usage/PR-query-wizard.html', form=PRform)
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
             return render_template(url_for('view_usage.construct_DR_query_with_wizard'), form=DRform)
@@ -341,13 +345,8 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
 def construct_PR_query_with_wizard():
     """Returns a page that allows a valid SQL query for platform usage data to be constructed through drop-downs and fuzzy text searches."""
     log.info("Starting `construct_PR_query_with_wizard()`.")
-    log.info(f"`request.method` is {request.method}")  #ALERT: temp
     form = PRQueryWizardForm()
-    log.info(f"After `form` initialization, `begin_date` is {begin_date} (type {type(begin_date)})")  #ALERT: temp
-    log.info(f"`end_date` is {end_date} (type {type(end_date)})")  #ALERT: temp
-    if request.method == 'GET':
-        log.info("In `request.method == 'GET'`")  #ALERT: temp
-        return render_template('view_usage/PR-query-wizard.html', form=form)
+    # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
         #ALERT: temp
         log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
