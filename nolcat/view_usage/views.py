@@ -411,9 +411,14 @@ def construct_PR_query_with_wizard(begin_date, end_date):
         return abort(404)
 
 
-@bp.route('query-wizard/DR', methods=['GET', 'POST'])
-def construct_DR_query_with_wizard():
-    """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches."""
+@bp.route('query-wizard/DR/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
+def construct_DR_query_with_wizard(begin_date, end_date):
+    """Returns a page that allows a valid SQL query for database usage data to be constructed through drop-downs and fuzzy text searches.
+    
+    Args:
+        begin_date (str): the ISO string for the first day in the date range
+        end_date (str): the ISO string for the last day in the date range
+    """
     log.info("Starting `construct_DR_query_with_wizard()`.")
     form = DRQueryWizardForm()
     if request.method == 'GET':
@@ -487,9 +492,14 @@ def construct_DR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/TR', methods=['GET', 'POST'])
-def construct_TR_query_with_wizard():
-    """Returns a page that allows a valid SQL query for title usage data to be constructed through drop-downs and fuzzy text searches."""
+@bp.route('query-wizard/TR/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
+def construct_TR_query_with_wizard(begin_date, end_date):
+    """Returns a page that allows a valid SQL query for title usage data to be constructed through drop-downs and fuzzy text searches.
+    
+    Args:
+        begin_date (str): the ISO string for the first day in the date range
+        end_date (str): the ISO string for the last day in the date range
+    """
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
     if request.method == 'GET':
@@ -580,9 +590,14 @@ def construct_TR_query_with_wizard():
         return abort(404)
 
 
-@bp.route('query-wizard/IR', methods=['GET', 'POST'])
-def construct_IR_query_with_wizard():
-    """Returns a page that allows a valid SQL query for item usage data to be constructed through drop-downs and fuzzy text searches."""
+@bp.route('query-wizard/IR/<string:begin_date>/<string:end_date>', methods=['GET', 'POST'])
+def construct_IR_query_with_wizard(begin_date, end_date):
+    """Returns a page that allows a valid SQL query for item usage data to be constructed through drop-downs and fuzzy text searches.
+    
+    Args:
+        begin_date (str): the ISO string for the first day in the date range
+        end_date (str): the ISO string for the last day in the date range
+    """
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
     if request.method == 'GET':
