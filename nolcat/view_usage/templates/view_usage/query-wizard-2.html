@@ -12,6 +12,16 @@
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <label>
+                {{ form.begin_date.label }}
+                {{ form.begin_date }}
+            </label>
+            <br>
+            <label>
+                {{ form.end_date.label }}
+                {{ form.end_date }}
+            </label>
+            <br>
+            <label>
                 {{ form.display_fields.label }}
                 {{ form.display_fields }}
             </label>

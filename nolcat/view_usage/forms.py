@@ -59,6 +59,8 @@ class StartQueryWizardForm(FlaskForm):
 
 class PRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for platform data."""
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('platform', "Platform"),
         ('data_type', "Data Type"),
@@ -72,6 +74,8 @@ class PRQueryWizardForm(FlaskForm):
 
 class DRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for database data."""
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Database Name"),
         ('publisher', "Publisher"),
@@ -89,6 +93,8 @@ class DRQueryWizardForm(FlaskForm):
 
 class TRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for title data."""
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Title Name"),
         ('publisher', "Publisher"),
@@ -117,6 +123,8 @@ class TRQueryWizardForm(FlaskForm):
 
 class IRQueryWizardForm(FlaskForm):
     """Creates a form for selecting the fields and creating the filters for querying the `COUNTERData` relation for item data."""
+    begin_date = DateField("Enter the first day of the first month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
+    end_date = DateField("Enter the last day of the last month for which usage should be collected in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[DataRequired()])
     display_fields = SelectMultipleField("Select the fields the query should return:", choices=[
         ('resource_name', "Item Name"),
         ('publisher', "Publisher"),
