@@ -317,6 +317,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")  #ALERT: This is being flashed on the homepage upon first arrival--why?
         
         if report_type == "PR":
+            PRform.begin_date.default = begin_date
+            PRform.end_date.default = end_date
+            PRform.process()  # Without this, the above defaults aren't sent to the form
             # report_type = PR, PR1
             return render_template('view_usage/query-wizard-2.html', form=PRform, form_to_show=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
             #TEST: Above occurs when specified values are in `render_template`--is there a way to pass the values beyond the form?
