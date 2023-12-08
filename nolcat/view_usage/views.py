@@ -311,6 +311,9 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
         log.debug(f"After `request.method == 'GET'`, `report_type` is {report_type} (type {type(report_type)})")  #TEST: temp
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
+        if begin_date > end_date:
+            flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
+            return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
             flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")  #ALERT: This is being flashed on the homepage upon first arrival--why?
         
