@@ -14,7 +14,7 @@
         {% endif %}
     {% endwith %}
 
-    {% if form_to_show == "PR" %}
+    {% if report_type == "PR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <label>
@@ -56,21 +56,21 @@
         </form>
     {% endif %}
 
-    {% if form_to_show == "DR" %}
+    {% if report_type == "DR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">
         </form>
     {% endif %}
 
-    {% if form_to_show == "TR" %}
+    {% if report_type == "TR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">
         </form>
     {% endif %}
 
-    {% if form_to_show == "IR" %}
+    {% if report_type == "IR" %}
         <form action="{{ url_for('view_usage.construct_query_with_wizard') }}" method="POST">
             {{ form.csrf_token }}
             <input type="submit" value="Submit">

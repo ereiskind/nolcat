@@ -324,7 +324,7 @@ def construct_query_with_wizard(report_type, begin_date, end_date):
             PRform.process()  # Without this, the above defaults aren't sent to the form
             log.debug(f"Before `render_template`, `end_date` is {end_date} (type {type(end_date)})")  #TEST: temp
             # report_type = PR, PR1
-            return render_template('view_usage/query-wizard-2.html', form=PRform, form_to_show=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
+            return render_template('view_usage/query-wizard-2.html', form=PRform, report_type=report_type)  #TEST: werkzeug.routing.BuildError: Could not build url for endpoint 'view_usage.construct_query_with_wizard'. Did you forget to specify values ['begin_date', 'end_date', 'report_type']?
             #TEST: Above occurs when specified values are in `render_template`--is there a way to pass the values beyond the form?
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
