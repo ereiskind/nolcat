@@ -335,6 +335,10 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             # report_type = IR
             return render_template(url_for('view_usage.construct_IR_query_with_wizard'), form=IRform)
     except Exception as error:
+        log.info(f"`error` before data type check (type {type(error)}):\n{error}")  #ALERT: temp
+        if not isinstance(error, dict):  # This check is needed because the usual is statements `request.method == 'GET'` and `form.validate_on_submit()` aren't being used
+            error = vars(error)
+        log.info(f"`error` after data type check (type {type(error)}):\n{error}")  #ALERT: temp
         message = Flask_error_statement(error)
         log.error(message)
         flash(message)
