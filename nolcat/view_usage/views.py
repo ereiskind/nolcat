@@ -103,7 +103,7 @@ def run_custom_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"After writing the dataframe to download to a CSV, " + check_if_file_exists_statement(file_path, False))
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
         log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
@@ -240,7 +240,7 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"After writing the dataframe to download to a CSV, " + check_if_file_exists_statement(file_path, False))
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
         log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
