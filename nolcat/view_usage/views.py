@@ -235,9 +235,10 @@ def use_predefined_SQL_query():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         #TEST: temp
         for proc in process_iter():
-            log.info(f"\n{proc}")
-            for k in list(proc.as_dict().keys()):
-                log.info(f"{k}: {proc.as_dict(attrs=[k])}")
+            log.info(f"{proc}")
+            l = list(proc.as_dict().keys()).sort()
+            for k in l:
+                log.info(f"{k} (type {type(proc.as_dict(attrs=[k]))}): {proc.as_dict(attrs=[k])}")
         #TEST: temp end
         df.to_csv(
             file_path,
@@ -249,9 +250,10 @@ def use_predefined_SQL_query():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         #TEST: temp
         for proc in process_iter():
-            log.info(f"\n{proc}")
-            for k in list(proc.as_dict().keys()):
-                log.info(f"{k}: {proc.as_dict(attrs=[k])}")
+            log.info(f"{proc}")
+            l = list(proc.as_dict().keys()).sort()
+            for k in l:
+                log.info(f"{k} (type {type(proc.as_dict(attrs=[k]))}): {proc.as_dict(attrs=[k])}")
         #TEST: temp end
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
