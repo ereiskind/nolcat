@@ -235,6 +235,8 @@ def use_predefined_SQL_query():
         log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        for proc in process_iter():  #TEST: temp
+            log.info(f"{proc}:\n{proc.as_dict()}")  #TEST: temp
         df.to_csv(
             file_path,
             index_label="index",
@@ -244,7 +246,7 @@ def use_predefined_SQL_query():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         for proc in process_iter():  #TEST: temp
-            log.info(f"`{proc}` (type {type(proc)}):\n{vars(proc)}")  #TEST: temp
+            log.info(f"{proc}:\n{proc.as_dict()}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
