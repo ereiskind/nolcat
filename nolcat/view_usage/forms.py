@@ -13,10 +13,61 @@ from wtforms.validators import Regexp
 from nolcat.app import *
 
 
-data_type_values = ['Article', 'Audiovisual', 'Book', 'Book_Segment', 'Conference', 'Conference_Item', 'Database_Aggregated', 'Database_AI', 'Database_Full', 'Database_Full_Item', 'Dataset', 'Image', 'Interactive_Resource', 'Journal', 'Multimedia', 'News_Item', 'Newspaper_or_Newsletter', 'Other', 'Patent', 'Platform', 'Reference_Item', 'Reference_Work', 'Report', 'Software', 'Sound', 'Standard', 'Thesis_or_Dissertation', 'Unspecified']
-metric_type_values = ['Searches_Regular', 'Searches_Automated', 'Searches_Federated', 'Searches_Platform', 'Total_Item_Investigations', 'Unique_Item_Investigations', 'Unique_Title_Investigations', 'Total_Item_Requests', 'Unique_Item_Requests', 'Unique_Title_Requests', 'No_License', 'Limit_Exceeded']
-access_type_values = ['Controlled', 'Open', 'Free_To_Read']
-access_method_values = ['Regular', 'TDM']
+data_type_values = [
+    ('Article', "Article"),
+    ('Audiovisual', "Audiovisual*"),
+    ('Book', "Book"),
+    ('Book_Segment', "Book Segment"),
+    ('Conference', "Conference*"),
+    ('Conference_Item', "Conference Item*"),
+    ('Database|Database_Aggregated', "Aggregated Database*"),
+    ('Database|Database_AI', "A&I Database*"),
+    ('Database|Database_Full', "Full Text Database*"),
+    ('Database', "Database"),
+    ('Database|Database_Full_Item', "Full Text Database Item*"),
+    ('Dataset', "Dataset"),
+    ('Image', "Image*"),
+    ('Interactive_Resource', "Interactive Resource*"),
+    ('Journal', "Journal"),
+    ('Multimedia', "Multimedia"),
+    ('News_Item', "News Item*"),
+    ('Newspaper_or_Newsletter', "Newspaper/Newsletter"),
+    ('Other', "Other"),
+    ('Patent', "Patent*"),
+    ('Platform', "Platform"),
+    ('Reference_Item', "Reference Item*"),
+    ('Reference_Work', "Reference Work*"),
+    ('Report', "Report"),
+    ('Repository_Item', "Repository Item"),
+    ('Software', "Software*"),
+    ('Sound', "Sound*"),
+    ('Standard', "Standard*"),
+    ('Thesis_or_Dissertation', "Thesis/Dissertation"),
+    ('Unspecified', "Unspecified"),
+]
+metric_type_values = [
+    ('Searches_Regular', "Database Searches"),
+    ('Searches_Automated', "Automated Database Searches"),
+    ('Searches_Federated', "Federated Database Searches"),
+    ('Searches_Platform', "Platform Searches"),
+    ('Total_Item_Investigations', "Total Item Investigations"),
+    ('Unique_Item_Investigations', "Unique Item Investigations"),
+    ('Unique_Title_Investigations', "Unique Title Investigations"),
+    ('Total_Item_Requests', "Total Item Requests"),
+    ('Unique_Item_Requests', "Unique Item Requests"),
+    ('Unique_Title_Requests', "Unique Title Requests"),
+    ('No_License', "Access Denied: No License"),
+    ('Limit_Exceeded', "Access Denied: User Limit Exceeded"),
+]
+access_type_values = [
+    ('Controlled', "Controlled"),
+    ('OA_Gold|Open', "Open Access"),
+    ('Other_Free_To_Read|Free_To_Read', "Free to Read"),
+]
+access_method_values = [
+    ('Regular', "Regular"),
+    ('TDM', "TDM"),
+]
 
 
 class CustomSQLQueryForm(FlaskForm):
@@ -67,7 +118,7 @@ class PRQueryWizardForm(FlaskForm):
         ('access_method', "Access Method"),
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values)  #ToDo: Should all values be leaving this blank?
 
@@ -86,7 +137,7 @@ class DRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the database the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values)  #ToDo: Should all values be leaving this blank?
 
@@ -113,7 +164,7 @@ class TRQueryWizardForm(FlaskForm):
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the title the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
@@ -155,7 +206,7 @@ class IRQueryWizardForm(FlaskForm):
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
     parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return:", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the item the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?

@@ -362,6 +362,7 @@ def construct_PR_query_with_wizard():
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
         platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
+        # Any returned SelectField with pipes in it, split on pipes and filter OR for all the given values
         '''
             SELECT
             <fields selected to display>, --> PRform.display_fields
@@ -434,6 +435,7 @@ def construct_DR_query_with_wizard():
         resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "DR")
         publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "DR")
         platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "DR")
+        # Any returned SelectField with pipes in it, split on pipes and filter OR for all the given values
         '''
             SELECT
             <fields selected to display>,
@@ -516,6 +518,7 @@ def construct_TR_query_with_wizard():
         resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "TR")
         publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "TR")
         platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "TR")
+        # Any returned SelectField with pipes in it, split on pipes and filter OR for all the given values
         '''
             SELECT
             <fields selected to display>,
@@ -614,6 +617,7 @@ def construct_IR_query_with_wizard():
         publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "IR")
         platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "IR")
         parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter, "parent_title", "IR")
+        # Any returned SelectField with pipes in it, split on pipes and filter OR for all the given values
         '''
             SELECT
             <fields selected to display>,
