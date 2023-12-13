@@ -106,8 +106,6 @@ def run_custom_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        for proc in process_iter():  #TEST: temp
-            log.info(f"`{proc}` (type {type(proc)}):\n{vars(proc)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -235,8 +233,12 @@ def use_predefined_SQL_query():
         log.debug(f"The result of the query:\n{df}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
-        for proc in process_iter():  #TEST: temp
-            log.info(f"{proc}:\n{proc.as_dict()}")  #TEST: temp
+        #TEST: temp
+        for proc in process_iter():
+            log.info(f"\n{proc}")
+            for k in list(proc.as_dict().keys()):
+                log.info(f"{k}: {proc.as_dict(attrs=[k])}")
+        #TEST: temp end
         df.to_csv(
             file_path,
             index_label="index",
@@ -245,8 +247,12 @@ def use_predefined_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        for proc in process_iter():  #TEST: temp
-            log.info(f"{proc}:\n{proc.as_dict()}")  #TEST: temp
+        #TEST: temp
+        for proc in process_iter():
+            log.info(f"\n{proc}")
+            for k in list(proc.as_dict().keys()):
+                log.info(f"{k}: {proc.as_dict(attrs=[k])}")
+        #TEST: temp end
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -764,8 +770,6 @@ def download_non_COUNTER_usage():
         file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
         log.info(check_if_file_exists_statement(file_path))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        for proc in process_iter():  #TEST: temp
-            log.info(f"`{proc}` (type {type(proc)}):\n{vars(proc)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_download_non_COUNTER_usage()`; above logging statements got to stdout indicating successful creation of file to download, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
