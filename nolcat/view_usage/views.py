@@ -234,15 +234,14 @@ def use_predefined_SQL_query():
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         #TEST: temp
-        d = dict()
         for proc in process_iter():
-            t = {k: proc.as_dict(attrs=[k]) for k in list(proc.as_dict().keys())}
-            try:
-                d[proc] = t
-            except:
-                sproc = str(proc)
-                d[sproc] = t
-        log.info(d)
+            log.info(f"`proc` is {proc}")
+            for attr in list(proc.as_dict().keys()):
+                d = proc.as_dict(attrs=[attr])
+                log.info(f"`d` is {d} (type {type(d)})")
+                for k, v in d.items():
+                    log.info(f"`k` is {k} (type {type(k)})")
+                    log.info(f"`v` is {v} (type {type(v)})")
         #TEST: temp end
         df.to_csv(
             file_path,
@@ -253,15 +252,14 @@ def use_predefined_SQL_query():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         #TEST: temp
-        d = dict()
         for proc in process_iter():
-            t = {k: proc.as_dict(attrs=[k]) for k in list(proc.as_dict().keys())}
-            try:
-                d[proc] = t
-            except:
-                sproc = str(proc)
-                d[sproc] = t
-        log.info(d)
+            log.info(f"`proc` is {proc}")
+            for attr in list(proc.as_dict().keys()):
+                d = proc.as_dict(attrs=[attr])
+                log.info(f"`d` is {d} (type {type(d)})")
+                for k, v in d.items():
+                    log.info(f"`k` is {k} (type {type(k)})")
+                    log.info(f"`v` is {v} (type {type(v)})")
         #TEST: temp end
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
