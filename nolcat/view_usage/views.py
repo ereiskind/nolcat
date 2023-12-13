@@ -234,17 +234,13 @@ def use_predefined_SQL_query():
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         #TEST: temp
-        test_dict = dict()
         for proc in process_iter():
             log.info(f"`proc` is {proc}")
+            test_dict = dict()
             for attr in list(proc.as_dict().keys()):
-                t = dict()
                 for k, v in proc.as_dict(attrs=[attr]).items():
-                    t[k] = str(v)
-                    log.info(f"Key {proc}, subkey {k}, value {v}")
-                log.info(f'`t` is {t}')
-                test_dict[str(proc)] = t
-            log.info(f"`test_dict` at this point: {test_dict}")
+                    test_dict[k] = str(v)
+                    log.info(f"`test_dict` at this point: {test_dict}")
         log.info(test_dict)
         #TEST: temp end
         df.to_csv(
@@ -259,14 +255,11 @@ def use_predefined_SQL_query():
         test_dict = dict()
         for proc in process_iter():
             log.info(f"`proc` is {proc}")
+            test_dict = dict()
             for attr in list(proc.as_dict().keys()):
-                t = dict()
                 for k, v in proc.as_dict(attrs=[attr]).items():
-                    t[k] = str(v)
-                    log.info(f"Key {proc}, subkey {k}, value {v}")
-                log.info(f'`t` is {t}')
-                test_dict[str(proc)] = t
-            log.info(f"`test_dict` at this point: {test_dict}")
+                    test_dict[k] = str(v)
+                    log.info(f"`test_dict` at this point: {test_dict}")
         log.info(test_dict)
         #TEST: temp end
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
