@@ -240,7 +240,6 @@ def use_predefined_SQL_query():
             for attr in list(proc.as_dict().keys()):
                 for k, v in proc.as_dict(attrs=[attr]).items():
                     test_dict[k] = str(v)
-                    log.info(f"`test_dict` at this point: {test_dict}")
         log.info(test_dict)
         #TEST: temp end
         df.to_csv(
@@ -259,7 +258,6 @@ def use_predefined_SQL_query():
             for attr in list(proc.as_dict().keys()):
                 for k, v in proc.as_dict(attrs=[attr]).items():
                     test_dict[k] = str(v)
-                    log.info(f"`test_dict` at this point: {test_dict}")
         log.info(test_dict)
         #TEST: temp end
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
