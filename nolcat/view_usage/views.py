@@ -239,7 +239,7 @@ def use_predefined_SQL_query():
             log.info(f"`proc` is {proc}")
             for attr in list(proc.as_dict().keys()):
                 for k, v in proc.as_dict(attrs=[attr]).items():
-                    test_dict[proc][k] = str(v)
+                    test_dict[str(proc)][k] = str(v)
                     log.info(f"Key {proc}, subkey {k}, value {v}")
         log.info(test_dict)
         #TEST: temp end
@@ -257,7 +257,7 @@ def use_predefined_SQL_query():
             log.info(f"`proc` is {proc}")
             for attr in list(proc.as_dict().keys()):
                 for k, v in proc.as_dict(attrs=[attr]).items():
-                    test_dict[proc][k] = str(v)
+                    test_dict[str(proc)][k] = str(v)
                     log.info(f"Key {proc}, subkey {k}, value {v}")
         log.info(test_dict)
         #TEST: temp end
