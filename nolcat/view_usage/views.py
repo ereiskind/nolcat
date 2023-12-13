@@ -236,7 +236,8 @@ def use_predefined_SQL_query():
         #TEST: temp
         for proc in process_iter():
             log.info(f"{proc}")
-            l = list(proc.as_dict().keys()).sort()
+            l = list(proc.as_dict().keys())
+            l.sort()
             for k in l:
                 log.info(f"{k} (type {type(proc.as_dict(attrs=[k]))}): {proc.as_dict(attrs=[k])}")
         #TEST: temp end
@@ -251,7 +252,8 @@ def use_predefined_SQL_query():
         #TEST: temp
         for proc in process_iter():
             log.info(f"{proc}")
-            l = list(proc.as_dict().keys()).sort()
+            l = list(proc.as_dict().keys())
+            l.sort()
             for k in l:
                 log.info(f"{k} (type {type(proc.as_dict(attrs=[k]))}): {proc.as_dict(attrs=[k])}")
         #TEST: temp end
