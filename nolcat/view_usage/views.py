@@ -372,31 +372,41 @@ def construct_PR_query_with_wizard():
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
-        # Any returned SelectField with pipes in it, split on pipes and filter OR for all the given values
-        '''
+        #Section: Create SELECT Statement
+        #Subsection: Create SELECT List
+        #ToDo: "\n".join([f"{field}," for field in form.display_fields])
+        # metric_type,
+        # usage_date,
+        # SUM(usage_count)
+
+        #Subsection: Create WHERE Filters
+        if form.platform_filter:
+            platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
+            platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+            platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
+        else:
+            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
+        
+        # For each list, check each item, further divide any items with pipes into their own list items, then combine as in `platform_filter_option_statement`
+            #data_type_filter
+            #access_method_filter
+            #metric_type_filter
+
+        #Subsection: Construct SQL Query
+        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        query = f"""
             SELECT
-            <fields selected to display>, --> PRform.display_fields
-                COUNTERData.platform
-                COUNTERData.data_type
-                COUNTERData.access_method
-            COUNTERData.metric_type
-            COUNTERData.usage_date
-            SUM(COUNTERData.usage_count)
-        FROM COUNTERData
-        WHERE
-            COUNTERData.report_type -- PAGE 1
-            COUNTERData.usage_date x2 -- PAGE 1
-            <filter statements>
-                COUNTERData.platform (less fuzzy search) --> PRform.platform_filter
-                COUNTERData.data_type --> PRform.data_type_filter
-                COUNTERData.access_method --> PRform.access_method_filter
-                COUNTERData.metric_type --> PRform.metric_type_filter
-        GROUP BY
-            <fields in select not in where or with a grouping function>;
-        '''
-        #ToDo: Construct query, using answers returned by searches
-        # usage_date>='{begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{end_date.strftime('%Y-%m-%d')}'
+                #ToDo: Result of `Create SELECT List` subsection
+            FROM COUNTERData
+            WHERE
+                report_type='PR'
+                AND usage_date>='{form.begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.strftime('%Y-%m-%d')}'
+                {platform_filter_option_statement}
+                AND #ToDo: data_type_filter
+                AND #ToDo: access_method_filter
+                AND #ToDo: metric_type_filter
+            GROUP BY usage_count;
+        """
         '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
