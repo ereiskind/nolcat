@@ -206,11 +206,11 @@ class IRQueryWizardForm(FlaskForm):
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
     parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values)  #ToDo: Should all values be leaving this blank?
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
     YOP_filter = IntegerRangeField("Select the range for the year of publication of the item the query should return:", validators=[Optional()])  #ToDo: Should all values be leaving this blank?
-    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values)  #ToDo: Should all values be leaving this blank?
-    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values)  #ToDo: Should all values be leaving this blank?
-    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values)  #ToDo: Should all values be leaving this blank?
+    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
