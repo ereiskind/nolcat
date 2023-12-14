@@ -323,22 +323,28 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             PRform.begin_date.default = begin_date
             PRform.end_date.default = end_date
             PRform.process()  # Without this, the above defaults aren't sent to the form
-            log.info(f"About to `return render_template('view_usage/PR-query-wizard.html', form=PRform)`")  #ALERT: temp
             return render_template('view_usage/PR-query-wizard.html', form=PRform)
         elif report_type == "DR":
             # report_type = DR, DB1, DB2
-            return render_template(url_for('view_usage.construct_DR_query_with_wizard'), form=DRform)
+            DRform.begin_date.default = begin_date
+            DRform.end_date.default = end_date
+            DRform.process()  # Without this, the above defaults aren't sent to the form
+            return render_template('view_usage/DR-query-wizard.html', form=DRform)
         elif report_type == "TR":
             # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
-            return render_template(url_for('view_usage.construct_TR_query_with_wizard'), form=TRform)
+            TRform.begin_date.default = begin_date
+            TRform.end_date.default = end_date
+            TRform.process()  # Without this, the above defaults aren't sent to the form
+            return render_template('view_usage/TR-query-wizard.html', form=TRform)
         elif report_type == "IR":
             # report_type = IR
-            return render_template(url_for('view_usage.construct_IR_query_with_wizard'), form=IRform)
+            IRform.begin_date.default = begin_date
+            IRform.end_date.default = end_date
+            IRform.process()  # Without this, the above defaults aren't sent to the form
+            return render_template('view_usage/IR-query-wizard.html', form=IRform)
     except Exception as error:
-        log.info(f"`error` before data type check (type {type(error)}):\n{error}")  #ALERT: temp
         if not isinstance(error, dict):  # This check is needed because the usual is statements `request.method == 'GET'` and `form.validate_on_submit()` aren't being used
             error = vars(error)
-        log.info(f"`error` after data type check (type {type(error)}):\n{error}")  #ALERT: temp
         message = Flask_error_statement(error)
         log.error(message)
         flash(message)
