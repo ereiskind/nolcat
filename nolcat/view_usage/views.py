@@ -378,14 +378,16 @@ def construct_PR_query_with_wizard():
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
-        #Subsection: Create WHERE Filters
+        #Subsection: Create WHERE Filters for Strings
         if form.platform_filter:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
         
+        #Subsection: Create WHERE Filters from Lists
         # For each list, check each item, further divide any items with pipes into their own list items, then combine as in `platform_filter_option_statement`
             #data_type_filter
             #access_method_filter
@@ -457,10 +459,11 @@ def construct_DR_query_with_wizard():
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
-        #Subsection: Create WHERE Filters
+        #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "DR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+            log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
             resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
@@ -468,6 +471,7 @@ def construct_DR_query_with_wizard():
         if form.publisher_filter:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "DR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
             publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
@@ -475,10 +479,12 @@ def construct_DR_query_with_wizard():
         if form.platform_filter:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "DR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
         
+        #Subsection: Create WHERE Filters from Lists
         # For each list, check each item, further divide any items with pipes into their own list items, then combine as in `platform_filter_option_statement`
             #data_type_filter
             #access_method_filter
@@ -558,10 +564,11 @@ def construct_TR_query_with_wizard():
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
-        #Subsection: Create WHERE Filters
+        #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "TR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+            log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
             resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
@@ -569,6 +576,7 @@ def construct_TR_query_with_wizard():
         if form.publisher_filter:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "TR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
             publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
@@ -576,10 +584,12 @@ def construct_TR_query_with_wizard():
         if form.platform_filter:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "TR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
         
+        #Subsection: Create WHERE Filters from Lists
         # For each list, check each item, further divide any items with pipes into their own list items, then combine as in `platform_filter_option_statement`
             #ISBN
             #print_ISSN OR online_ISSN
@@ -673,10 +683,11 @@ def construct_IR_query_with_wizard():
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
-        #Subsection: Create WHERE Filters
+        #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "IR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+            log.debug(f"The resource_name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
             resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
@@ -684,6 +695,7 @@ def construct_IR_query_with_wizard():
         if form.publisher_filter:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "IR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
             publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
@@ -691,6 +703,7 @@ def construct_IR_query_with_wizard():
         if form.platform_filter:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "IR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
@@ -698,10 +711,12 @@ def construct_IR_query_with_wizard():
         if form.parent_title_filter:
             parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter, "parent_title", "IR")
             parent_title_filter_option_statement = " OR ".join([f"parent_title='{name}'" for name in parent_title_filter_options])
+            log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
             parent_title_filter_option_statement = f"AND ({parent_title_filter_option_statement})"
         else:
             parent_title_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.parent_title_filter` value
         
+        #Subsection: Create WHERE Filters from Lists
         # For each list, check each item, further divide any items with pipes into their own list items, then combine as in `platform_filter_option_statement`
             #publication_date
             #ISBN
