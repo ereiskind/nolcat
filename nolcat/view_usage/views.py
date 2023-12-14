@@ -374,10 +374,9 @@ def construct_PR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        #ToDo: "\n".join([f"{field}," for field in form.display_fields])
-        # metric_type,
-        # usage_date,
-        # SUM(usage_count)
+        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = ",\n".join([f"{field}," for field in display_fields])
+        log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters
         if form.platform_filter:
@@ -454,10 +453,9 @@ def construct_DR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        #ToDo: "\n".join([f"{field}," for field in form.display_fields])
-        # metric_type,
-        # usage_date,
-        # SUM(usage_count)
+        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = ",\n".join([f"{field}," for field in display_fields])
+        log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters
         if form.resource_name_filter:
@@ -556,10 +554,9 @@ def construct_TR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        #ToDo: "\n".join([f"{field}," for field in form.display_fields])
-        # metric_type,
-        # usage_date,
-        # SUM(usage_count)
+        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = ",\n".join([f"{field}," for field in display_fields])
+        log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters
         if form.resource_name_filter:
@@ -672,10 +669,9 @@ def construct_IR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        #ToDo: "\n".join([f"{field}," for field in form.display_fields])
-        # metric_type,
-        # usage_date,
-        # SUM(usage_count)
+        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = ",\n".join([f"{field}," for field in display_fields])
+        log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters
         if form.resource_name_filter:
