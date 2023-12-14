@@ -316,7 +316,12 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
             return redirect(url_for('view_usage.start_query_wizard'))
         if begin_date < date.fromisoformat('2019-07-01'):
-            flash(f"The data that was just downloaded includes COUNTER Release 4 data for all usage from {begin_date.strftime('%Y-%m-%d')} to 2019-06-30.")
+            flash_statement = "The usage data being requested includes COUNTER Release 4 data for all usage"
+            if end_date < date.fromisoformat('2019-06-30'):
+                flash_statement = flash_statement + "."
+            else:
+                flash_statement = flash_statement + " before 2019-07-01."
+            flash(flash_statement)
         
         if report_type == "PR":
             # report_type = PR, PR1
