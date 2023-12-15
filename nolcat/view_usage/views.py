@@ -327,28 +327,24 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
         
         logging.debug(f"Rendering the query wizard form for a {report_type} query.")
         if report_type == "PR":
-            # report_type = PR, PR1
             PRform.begin_date.default = begin_date
             PRform.end_date.default = end_date
             PRform.process()  # Without this, the above defaults aren't sent to the form
             log.info("Redirecting to the PR form")  #ALERT: temp
             return render_template('view_usage/PR-query-wizard.html', form=PRform)
         elif report_type == "DR":
-            # report_type = DR, DB1, DB2
             DRform.begin_date.default = begin_date
             DRform.end_date.default = end_date
             DRform.process()  # Without this, the above defaults aren't sent to the form
             log.info("Redirecting to the DR form")  #ALERT: temp
             return render_template('view_usage/DR-query-wizard.html', form=DRform)
         elif report_type == "TR":
-            # report_type = TR, BR1, BR2, BR3, BR5, JR1, JR2, MR1
             TRform.begin_date.default = begin_date
             TRform.end_date.default = end_date
             TRform.process()  # Without this, the above defaults aren't sent to the form
             log.info("Redirecting to the TR form")  #ALERT: temp
             return render_template('view_usage/TR-query-wizard.html', form=TRform)
         elif report_type == "IR":
-            # report_type = IR
             IRform.begin_date.default = begin_date
             IRform.end_date.default = end_date
             IRform.process()  # Without this, the above defaults aren't sent to the form
@@ -404,7 +400,7 @@ def construct_PR_query_with_wizard():
             SELECT {display_fields}
             FROM COUNTERData
             WHERE
-                report_type='PR'
+                (report_type='PR' OR report_type='PR1')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {platform_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
@@ -496,7 +492,7 @@ def construct_DR_query_with_wizard():
             SELECT {display_fields}
             FROM COUNTERData
             WHERE
-                report_type='DR'
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {resource_name_filter_option_statement}
                 {publisher_filter_option_statement}
@@ -630,7 +626,7 @@ def construct_TR_query_with_wizard():
             SELECT {display_fields}
             FROM COUNTERData
             WHERE
-                report_type='TR'
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {resource_name_filter_option_statement}
                 {publisher_filter_option_statement}
