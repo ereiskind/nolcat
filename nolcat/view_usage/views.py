@@ -363,15 +363,6 @@ def construct_PR_query_with_wizard():
     form = PRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #ALERT: temp
-        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
-        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
-        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
-        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
-        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
-        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
-        #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
@@ -388,6 +379,8 @@ def construct_PR_query_with_wizard():
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
+        log.info([form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data])  #ALERT: temp
+        log.info([f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data]])  #ALERT: temp
         data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
         access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
