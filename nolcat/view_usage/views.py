@@ -366,7 +366,7 @@ def construct_PR_query_with_wizard():
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
-        display_fields = ",\s".join([f"{field}" for field in display_fields])
+        display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
@@ -443,7 +443,7 @@ def construct_DR_query_with_wizard():
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
-        display_fields = ",\s".join([f"{field}" for field in display_fields])
+        display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
@@ -553,7 +553,7 @@ def construct_TR_query_with_wizard():
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
-        display_fields = ",\s".join([f"{field}" for field in display_fields])
+        display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
@@ -695,7 +695,7 @@ def construct_IR_query_with_wizard():
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
-        display_fields = ",\s".join([f"{field}" for field in display_fields])
+        display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
