@@ -383,10 +383,8 @@ def construct_PR_query_with_wizard():
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
-        log.info([form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data])  # [['Database', 'Database_Full'], 'Multimedia']  #ALERT: temp
-        log.info([f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data]])  # ["data_type='['Database', 'Database_Full']'", "data_type='Multimedia'"]  #ALERT: temp
-        log.info([filter_value for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data]])  #ALERT: temp
-        log.info([filter_value for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value])  #ALERT: temp
+        log.info([filter_value for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else f"hi-{inner_comprehension_result}")])  #ALERT: temp
+        log.info([f"ho-{filter_value}" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])])  #ALERT: temp
         data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]  # Works for the pipe values; non-pipe values split into individual letters
         log.debug(f"The data type filter values are {data_type_filter_list}.")
         access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
