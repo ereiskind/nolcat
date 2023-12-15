@@ -440,16 +440,6 @@ def construct_DR_query_with_wizard():
     form = DRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #ALERT: temp
-        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
-        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
-        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
-        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
-        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
-        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
-        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
-        #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
