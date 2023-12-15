@@ -374,25 +374,25 @@ def construct_PR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
-        if form.platform_filter:
-            platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "PR")
+        if form.platform_filter.data:
+            platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "PR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
+            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter] for filter_value in filter_value]
+        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
-        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter] for filter_value in filter_value]
+        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter] for filter_value in filter_value]
+        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in filter_value]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Construct SQL Query
@@ -402,7 +402,7 @@ def construct_PR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='PR'
-                AND usage_date>='{form.begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {platform_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
                 AND ({" OR ".join(access_method_filter_list)})
@@ -459,41 +459,41 @@ def construct_DR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
-        if form.resource_name_filter:
-            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "DR")
+        if form.resource_name_filter.data:
+            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "DR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
+            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
         
-        if form.publisher_filter:
-            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "DR")
+        if form.publisher_filter.data:
+            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "DR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
+            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
 
-        if form.platform_filter:
-            platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "DR")
+        if form.platform_filter.data:
+            platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "DR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
+            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter] for filter_value in filter_value]
+        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
-        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter] for filter_value in filter_value]
+        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter] for filter_value in filter_value]
+        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in filter_value]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Construct SQL Query
@@ -503,7 +503,7 @@ def construct_DR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='DR'
-                AND usage_date>='{form.begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {resource_name_filter_option_statement}
                 {publisher_filter_option_statement}
                 {platform_filter_option_statement}
@@ -568,59 +568,59 @@ def construct_TR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
-        if form.resource_name_filter:
-            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "TR")
+        if form.resource_name_filter.data:
+            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "TR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
+            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
         
-        if form.publisher_filter:
-            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "TR")
+        if form.publisher_filter.data:
+            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "TR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
+            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
 
-        if form.platform_filter:
-            platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "TR")
+        if form.platform_filter.data:
+            platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "TR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
+            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
-        if form.ISBN_filter:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter}'"
+        if form.ISBN_filter.data:
+            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
         else:
-            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter` value
+            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
         
-        if form.ISSN_filter:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter}' OR online_ISSN='{form.ISSN_filter}')"
+        if form.ISSN_filter.data:
+            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
         else:
-            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter` value
+            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter] for filter_value in filter_value]
+        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
-        section_type_filter_list = [f"section_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.section_type_filter] for filter_value in filter_value]
+        section_type_filter_list = [f"section_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.section_type_filter.data] for filter_value in filter_value]
         log.debug(f"The section type filter values are {section_type_filter_list}.")
-        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
+        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter.data] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
         log.debug(f"The YOP filter values are {YOP_filter_list}.")
-        access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter] for filter_value in filter_value]
+        access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in filter_value]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
-        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter] for filter_value in filter_value]
+        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter] for filter_value in filter_value]
+        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in filter_value]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Construct SQL Query
@@ -630,7 +630,7 @@ def construct_TR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='TR'
-                AND usage_date>='{form.begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {resource_name_filter_option_statement}
                 {publisher_filter_option_statement}
                 {platform_filter_option_statement}
@@ -704,82 +704,82 @@ def construct_IR_query_with_wizard():
         #ALERT: temp end
         #Section: Create SELECT Statement
         #Subsection: Create SELECT List
-        display_fields = form.display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ",\n".join([f"{field}," for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
         #Subsection: Create WHERE Filters for Strings
-        if form.resource_name_filter:
-            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter, "resource_name", "IR")
+        if form.resource_name_filter.data:
+            resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "IR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource_name filter statement is {resource_name_filter_option_statement}.")
             resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
         else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter` value
+            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
         
-        if form.publisher_filter:
-            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter, "publisher", "IR")
+        if form.publisher_filter.data:
+            publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "IR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
             publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
         else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter` value
+            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
 
-        if form.platform_filter:
-            platform_filter_options = fuzzy_search_on_field(form.platform_filter, "platform", "IR")
+        if form.platform_filter.data:
+            platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "IR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter` value
+            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
         
-        if form.parent_title_filter:
-            parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter, "parent_title", "IR")
+        if form.parent_title_filter.data:
+            parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter.data, "parent_title", "IR")
             parent_title_filter_option_statement = " OR ".join([f"parent_title='{name}'" for name in parent_title_filter_options])
             log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
             parent_title_filter_option_statement = f"AND ({parent_title_filter_option_statement})"
         else:
-            parent_title_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.parent_title_filter` value
+            parent_title_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.parent_title_filter.data` value
         
-        if form.ISBN_filter:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter}'"
+        if form.ISBN_filter.data:
+            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
         else:
-            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter` value
+            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
         
-        if form.ISSN_filter:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter}' OR online_ISSN='{form.ISSN_filter}')"
+        if form.ISSN_filter.data:
+            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
         else:
-            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter` value
+            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
         
-        if form.parent_ISBN_filter:
-            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter}'"
+        if form.parent_ISBN_filter.data:
+            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'"
             log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
         else:
-            parent_ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter` value
+            parent_ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
         
-        if form.parent_ISSN_filter:
-            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter}' OR parent_online_ISSN='{form.parent_ISSN_filter}')"
+        if form.parent_ISSN_filter.data:
+            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')"
             log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
         else:
-            parent_ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter` value
+            parent_ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
         
         #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter] for filter_value in filter_value]
+        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
-        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
+        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter.data] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
         log.debug(f"The YOP filter values are {YOP_filter_list}.")
-        access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter] for filter_value in filter_value]
+        access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in filter_value]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
-        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter] for filter_value in filter_value]
+        access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter] for filter_value in filter_value]
+        metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in filter_value]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Create WHERE Filters from Dates
-        if form.publication_date_start_filter and form.publication_date_end_filter and form.publication_date_end_filter > form.publication_date_start_filter:
-            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.strftime('%Y-%m-%d')}'"
+        if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
+            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
         else:
             publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
 
@@ -790,7 +790,7 @@ def construct_IR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='IR'
-                AND usage_date>='{form.begin_date.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
                 {resource_name_filter_option_statement}
                 {publisher_filter_option_statement}
                 {platform_filter_option_statement}
