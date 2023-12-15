@@ -548,6 +548,7 @@ def construct_TR_query_with_wizard():
         log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
         log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
         log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
+        #TEST: Regex validator for below is commented out
         log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
