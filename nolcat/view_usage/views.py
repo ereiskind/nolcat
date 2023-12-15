@@ -312,7 +312,6 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
     try:
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
-        logging.debug(f"TEMP: The query date range is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")  #ALERT: temp
         if begin_date > end_date:
             flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
             return redirect(url_for('view_usage.start_query_wizard'))
@@ -330,28 +329,23 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             PRform.begin_date.default = begin_date
             PRform.end_date.default = end_date
             PRform.process()  # Without this, the above defaults aren't sent to the form
-            log.info("Redirecting to the PR form")  #ALERT: temp
             return render_template('view_usage/PR-query-wizard.html', form=PRform)
         elif report_type == "DR":
             DRform.begin_date.default = begin_date
             DRform.end_date.default = end_date
             DRform.process()  # Without this, the above defaults aren't sent to the form
-            log.info("Redirecting to the DR form")  #ALERT: temp
             return render_template('view_usage/DR-query-wizard.html', form=DRform)
         elif report_type == "TR":
             TRform.begin_date.default = begin_date
             TRform.end_date.default = end_date
             TRform.process()  # Without this, the above defaults aren't sent to the form
-            log.info("Redirecting to the TR form")  #ALERT: temp
             return render_template('view_usage/TR-query-wizard.html', form=TRform)
         elif report_type == "IR":
             IRform.begin_date.default = begin_date
             IRform.end_date.default = end_date
             IRform.process()  # Without this, the above defaults aren't sent to the form
-            log.info("Redirecting to the IR form")  #ALERT: temp
             return render_template('view_usage/IR-query-wizard.html', form=IRform)
     except Exception as error:
-        log.info(error)  #ALERT: temp
         if not isinstance(error, dict):  # This check is needed because the usual is statements `request.method == 'GET'` and `form.validate_on_submit()` aren't being used
             error = vars(error)
         message = Flask_error_statement(error)
