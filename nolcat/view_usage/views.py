@@ -398,8 +398,7 @@ def construct_PR_query_with_wizard():
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
         query = f"""
-            SELECT
-                #ToDo: Result of `Create SELECT List` subsection
+            SELECT {display_fields}
             FROM COUNTERData
             WHERE
                 report_type='PR'
@@ -410,6 +409,9 @@ def construct_PR_query_with_wizard():
                 AND ({" OR ".join(metric_type_filter_list)})
             GROUP BY usage_count;
         """
+        log.info(f"The query in SQL:\n{query}")
+
+        #Section: Download Query Results
         '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
@@ -497,8 +499,7 @@ def construct_DR_query_with_wizard():
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
         query = f"""
-            SELECT
-                #ToDo: Result of `Create SELECT List` subsection
+            SELECT {display_fields}
             FROM COUNTERData
             WHERE
                 report_type='DR'
@@ -511,6 +512,9 @@ def construct_DR_query_with_wizard():
                 AND ({" OR ".join(metric_type_filter_list)})
             GROUP BY usage_count;
         """
+        log.info(f"The query in SQL:\n{query}")
+
+        #Section: Download Query Results
         '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
@@ -622,8 +626,7 @@ def construct_TR_query_with_wizard():
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
         query = f"""
-            SELECT
-                #ToDo: Result of `Create SELECT List` subsection
+            SELECT {display_fields}
             FROM COUNTERData
             WHERE
                 report_type='TR'
@@ -641,6 +644,9 @@ def construct_TR_query_with_wizard():
                 AND ({" OR ".join(metric_type_filter_list)})
             GROUP BY usage_count;
         """
+        log.info(f"The query in SQL:\n{query}")
+
+        #Section: Download Query Results
         '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
@@ -780,8 +786,7 @@ def construct_IR_query_with_wizard():
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
         query = f"""
-            SELECT
-                #ToDo: Result of `Create SELECT List` subsection
+            SELECT {display_fields}
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -802,6 +807,9 @@ def construct_IR_query_with_wizard():
                 AND ({" OR ".join(metric_type_filter_list)})
             GROUP BY usage_count;
         """
+        log.info(f"The query in SQL:\n{query}")
+
+        #Section: Download Query Results
         '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
