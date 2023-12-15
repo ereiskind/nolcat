@@ -10,6 +10,12 @@
 
     <p>Fill out the form below. All selection boxes are required; to select multiple options, hold down the `ctrl` key while clicking the options.</p>
 
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    {% endwith %}
+
     <form action="{{ url_for('view_usage.construct_TR_query_with_wizard') }}" method="POST">
         {{ form.csrf_token }}
         <label>
