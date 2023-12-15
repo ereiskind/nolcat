@@ -162,7 +162,7 @@ class TRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional()])#TEST: ,Regexp(ISBN_regex)])
+    ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional() ,Regexp(ISBN_regex)])
     ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=data_type_values, validators=[DataRequired()])
