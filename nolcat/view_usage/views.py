@@ -428,6 +428,7 @@ def construct_PR_query_with_wizard():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
+        pass
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -521,6 +522,7 @@ def construct_DR_query_with_wizard():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
+        pass
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -659,6 +661,7 @@ def construct_TR_query_with_wizard():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
+        pass
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -828,6 +831,7 @@ def construct_IR_query_with_wizard():
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
         '''
+        pass
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
