@@ -606,14 +606,11 @@ def construct_TR_query_with_wizard():
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Create WHERE Filters from Dates
-        #ToDo: Modify below for YOP_start_filter and YOP_end_filter
-        '''
-        if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
-            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
-            log.debug(f"The publication date filter statement is {publication_date_option_statement}.")
+        if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
+            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND publication_date<='{form.YOP_end_filter.data}'"
+            log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
         else:
-            publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
-        '''
+            YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
 
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
@@ -630,7 +627,7 @@ def construct_TR_query_with_wizard():
                 {ISSN_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
                 AND ({"OR ".join(section_type_filter_list)})
-                #ToDo: YOP_filter_option_statement
+                {YOP_filter_option_statement}
                 AND ({"OR ".join(access_type_filter_list)})
                 AND ({" OR ".join(access_method_filter_list)})
                 AND ({" OR ".join(metric_type_filter_list)})
@@ -775,7 +772,11 @@ def construct_IR_query_with_wizard():
         else:
             publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
         
-        #ToDo: Repeat above for YOP_start_filter and YOP_end_filter
+        if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
+            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND publication_date<='{form.YOP_end_filter.data}'"
+            log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
+        else:
+            YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
 
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
@@ -795,7 +796,7 @@ def construct_IR_query_with_wizard():
                 {parent_ISBN_filter_option_statement}
                 {parent_ISSN_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
-                #ToDo: YOP_filter_option_statement
+                {YOP_filter_option_statement}
                 AND ({"OR ".join(access_type_filter_list)})
                 AND ({" OR ".join(access_method_filter_list)})
                 AND ({" OR ".join(metric_type_filter_list)})
