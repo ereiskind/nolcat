@@ -381,7 +381,7 @@ def construct_PR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         log.info([form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data])  #ALERT: temp
         log.info([f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data]])  #ALERT: temp
-        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
+        data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]  # Works for the pipe values; non-pipe values split into individual letters
         log.debug(f"The data type filter values are {data_type_filter_list}.")
         access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
@@ -540,11 +540,12 @@ def construct_TR_query_with_wizard():
         log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
         log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
         log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
         log.info(f"`section_type_filter` is {form.section_type_filter.data} (type {type(form.section_type_filter.data)})")
-        log.info(f"`YOP_filter` is {form.YOP_filter.data} (type {type(form.YOP_filter.data)})")
+        #ToDo: YOP_start_filter
+        #ToDo: YOP_end_filter
         log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
@@ -597,14 +598,22 @@ def construct_TR_query_with_wizard():
         log.debug(f"The data type filter values are {data_type_filter_list}.")
         section_type_filter_list = [f"section_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.section_type_filter.data] for filter_value in filter_value]
         log.debug(f"The section type filter values are {section_type_filter_list}.")
-        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter.data] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
-        log.debug(f"The YOP filter values are {YOP_filter_list}.")
         access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in filter_value]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
         access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
         metric_type_filter_list = [f"metric_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in filter_value]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
+
+        #Subsection: Create WHERE Filters from Dates
+        #ToDo: Modify below for YOP_start_filter and YOP_end_filter
+        '''
+        if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
+            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
+            log.debug(f"The publication date filter statement is {publication_date_option_statement}.")
+        else:
+            publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
+        '''
 
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
@@ -621,7 +630,7 @@ def construct_TR_query_with_wizard():
                 {ISSN_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
                 AND ({"OR ".join(section_type_filter_list)})
-                AND ({"OR ".join(YOP_filter_list)})
+                #ToDo: YOP_filter_option_statement
                 AND ({"OR ".join(access_type_filter_list)})
                 AND ({" OR ".join(access_method_filter_list)})
                 AND ({" OR ".join(metric_type_filter_list)})
@@ -674,13 +683,14 @@ def construct_IR_query_with_wizard():
         log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
         log.info(f"`publication_date_start_filter` is {form.publication_date_start_filter.data} (type {type(form.publication_date_start_filter.data)})")
         log.info(f"`publication_date_end_filter` is {form.publication_date_end_filter.data} (type {type(form.publication_date_end_filter.data)})")
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`parent_title_filter` is {form.parent_title_filter.data} (type {type(form.parent_title_filter.data)})")
-        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")
-        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")
+        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
+        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        log.info(f"`YOP_filter` is {form.YOP_filter.data} (type {type(form.YOP_filter.data)})")
+        #ToDo: YOP_start_filter
+        #ToDo: YOP_end_filter
         log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
@@ -751,8 +761,6 @@ def construct_IR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in filter_value]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
-        YOP_filter_list = [f"YOP='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.YOP_filter.data] for filter_value in filter_value]  #ToDo: Confirm YOP filter returns a list
-        log.debug(f"The YOP filter values are {YOP_filter_list}.")
         access_type_filter_list = [f"access_type='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in filter_value]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
         access_method_filter_list = [f"access_method='{filter_value}'" for filter_value in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in filter_value]
@@ -763,8 +771,11 @@ def construct_IR_query_with_wizard():
         #Subsection: Create WHERE Filters from Dates
         if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
             publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
+            log.debug(f"The publication date filter statement is {publication_date_option_statement}.")
         else:
             publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
+        
+        #ToDo: Repeat above for YOP_start_filter and YOP_end_filter
 
         #Subsection: Construct SQL Query
         # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
@@ -784,7 +795,7 @@ def construct_IR_query_with_wizard():
                 {parent_ISBN_filter_option_statement}
                 {parent_ISSN_filter_option_statement}
                 AND ({" OR ".join(data_type_filter_list)})
-                AND ({"OR ".join(YOP_filter_list)})
+                #ToDo: YOP_filter_option_statement
                 AND ({"OR ".join(access_type_filter_list)})
                 AND ({" OR ".join(access_method_filter_list)})
                 AND ({" OR ".join(metric_type_filter_list)})
