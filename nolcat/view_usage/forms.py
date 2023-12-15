@@ -4,7 +4,7 @@ from wtforms.fields import SelectField
 from wtforms.fields import DateField
 from wtforms.fields import SelectMultipleField
 from wtforms.fields import StringField
-from wtforms.fields.html5 import IntegerRangeField
+from wtforms.fields import IntegerField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 from wtforms.validators import Optional
@@ -166,8 +166,8 @@ class TRQueryWizardForm(FlaskForm):
     ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=data_type_values, validators=[DataRequired()])
-    #ToDo: YOP_start_filter = int field
-    #ToDo: YOP_end_filter = int field
+    YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
@@ -208,8 +208,8 @@ class IRQueryWizardForm(FlaskForm):
     parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
-    #ToDo: YOP_start_filter = int field
-    #ToDo: YOP_end_filter = int field
+    YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])

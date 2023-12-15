@@ -544,8 +544,8 @@ def construct_TR_query_with_wizard():
         log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
         log.info(f"`section_type_filter` is {form.section_type_filter.data} (type {type(form.section_type_filter.data)})")
-        #ToDo: YOP_start_filter
-        #ToDo: YOP_end_filter
+        log.info(f"`YOP_start_filter` is {form.YOP_start_filter.data} (type {type(form.YOP_start_filter.data)})")
+        log.info(f"`YOP_end_filter` is {form.YOP_end_filter.data} (type {type(form.YOP_end_filter.data)})")
         log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
@@ -689,8 +689,8 @@ def construct_IR_query_with_wizard():
         log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
         log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        #ToDo: YOP_start_filter
-        #ToDo: YOP_end_filter
+        log.info(f"`YOP_start_filter` is {form.YOP_start_filter.data} (type {type(form.YOP_start_filter.data)})")
+        log.info(f"`YOP_end_filter` is {form.YOP_end_filter.data} (type {type(form.YOP_end_filter.data)})")
         log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
