@@ -312,7 +312,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
     try:
         begin_date = date.fromisoformat(begin_date)
         end_date = date.fromisoformat(end_date)
-        logging.debug(f"TEMP: The query date range is {begin_date.data.strftime('%Y-%m-%d')} to {end_date.data.strftime('%Y-%m-%d')}")  #ALERT: temp
+        logging.debug(f"TEMP: The query date range is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")  #ALERT: temp
         if begin_date > end_date:
             flash(attempted_SUSHI_call_with_invalid_dates_statement(end_date, begin_date).replace("will cause any SUSHI API calls to return errors; as a result, no SUSHI calls were made", "would have resulted in an error when querying the database"))
             return redirect(url_for('view_usage.start_query_wizard'))
@@ -323,7 +323,7 @@ def query_wizard_sort_redirect(report_type, begin_date, end_date):
             else:
                 flash_statement = flash_statement + " before 2019-07-01."
             flash(flash_statement)
-        logging.debug(f"The query date range is {begin_date.data.strftime('%Y-%m-%d')} to {end_date.data.strftime('%Y-%m-%d')}")
+        logging.debug(f"The query date range is {begin_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
         
         logging.debug(f"Rendering the query wizard form for a {report_type} query.")
         if report_type == "PR":
