@@ -379,9 +379,11 @@ def construct_PR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
+        
         access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
+        
+        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
         #Subsection: Construct SQL Query
@@ -471,8 +473,10 @@ def construct_DR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
+        
         access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
+        
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
@@ -595,12 +599,16 @@ def construct_TR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
+        
         section_type_filter_list = [f"section_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.section_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The section type filter values are {section_type_filter_list}.")
+        
         access_type_filter_list = [f"access_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
+        
         access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
+        
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
@@ -758,10 +766,13 @@ def construct_IR_query_with_wizard():
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
+        
         access_type_filter_list = [f"access_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access type filter values are {access_type_filter_list}.")
+        
         access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The access method filter values are {access_method_filter_list}.")
+        
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
 
