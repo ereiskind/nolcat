@@ -125,9 +125,44 @@ class PRQueryWizardForm(FlaskForm):
         ('access_method', "Access Method"),
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+        data_type_values['Article'],
+        data_type_values['Audiovisual'],
+        data_type_values['Book'],
+        data_type_values['Book_Segment'],
+        data_type_values['Conference'],
+        data_type_values['Conference_Item'],
+        data_type_values['Database_Full_Item'],
+        data_type_values['Dataset'],
+        data_type_values['Image'],
+        data_type_values['Interactive_Resource'],
+        data_type_values['Journal'],
+        data_type_values['Multimedia'],
+        data_type_values['News_Item'],
+        data_type_values['Newspaper_or_Newsletter'],
+        data_type_values['Other'],
+        data_type_values['Patent'],
+        data_type_values['Platform'],
+        data_type_values['Reference_Item'],
+        data_type_values['Reference_Work'],
+        data_type_values['Report'],
+        data_type_values['Repository_Item'],
+        data_type_values['Software'],
+        data_type_values['Sound'],
+        data_type_values['Standard'],
+        data_type_values['Thesis_or_Dissertation'],
+        data_type_values['Unspecified'],
+    ], validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
-    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
+        metric_type_values['Searches_Platform'],
+        metric_type_values['Total_Item_Investigations'],
+        metric_type_values['Unique_Item_Investigations'],
+        metric_type_values['Unique_Title_Investigations'],
+        metric_type_values['Total_Item_Requests'],
+        metric_type_values['Unique_Item_Requests'],
+        metric_type_values['Unique_Title_Requests'],
+    ], validators=[DataRequired()])
 
 
 class DRQueryWizardForm(FlaskForm):
@@ -144,9 +179,43 @@ class DRQueryWizardForm(FlaskForm):
     resource_name_filter = StringField("Enter the name of the database the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+        data_type_values['Audiovisual'],
+        data_type_values['Book'],
+        data_type_values['Conference'],
+        data_type_values['Database_Aggregated'],
+        data_type_values['Database_AI'],
+        data_type_values['Database_Full'],
+        data_type_values['Database'],
+        data_type_values['Database_Full_Item'],
+        data_type_values['Image'],
+        data_type_values['Interactive_Resource'],
+        data_type_values['Journal'],
+        data_type_values['Multimedia'],
+        data_type_values['Newspaper_or_Newsletter'],
+        data_type_values['Other'],
+        data_type_values['Patent'],
+        data_type_values['Reference_Work'],
+        data_type_values['Report'],
+        data_type_values['Sound'],
+        data_type_values['Standard'],
+        data_type_values['Thesis_or_Dissertation'],
+        data_type_values['Unspecified'],
+    ], validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
-    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
+        metric_type_values['Searches_Regular'],
+        metric_type_values['Searches_Automated'],
+        metric_type_values['Searches_Federated'],
+        metric_type_values['Total_Item_Investigations'],
+        metric_type_values['Unique_Item_Investigations'],
+        metric_type_values['Unique_Title_Investigations'],
+        metric_type_values['Total_Item_Requests'],
+        metric_type_values['Unique_Item_Requests'],
+        metric_type_values['Unique_Title_Requests'],
+        metric_type_values['No_License'],
+        metric_type_values['Limit_Exceeded'],
+    ], validators=[DataRequired()])
 
 
 class TRQueryWizardForm(FlaskForm):
@@ -171,13 +240,36 @@ class TRQueryWizardForm(FlaskForm):
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the title the query should return:", validators=[Optional() ,Regexp(ISBN_regex)])
     ISSN_filter = StringField("Enter the ISSN of the title the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
-    section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=data_type_values, validators=[DataRequired()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+        data_type_values['Book'],
+        data_type_values['Conference'],
+        data_type_values['Journal'],
+        data_type_values['Newspaper_or_Newsletter'],
+        data_type_values['Other'],
+        data_type_values['Patent'],
+        data_type_values['Reference_Work'],
+        data_type_values['Report'],
+        data_type_values['Standard'],
+        data_type_values['Thesis_or_Dissertation'],
+        data_type_values['Unspecified'],
+    ], validators=[DataRequired()])
+    section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=[
+        #
+    ], validators=[DataRequired()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
     YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
-    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
+        metric_type_values['Total_Item_Investigations'],
+        metric_type_values['Unique_Item_Investigations'],
+        metric_type_values['Unique_Title_Investigations'],
+        metric_type_values['Total_Item_Requests'],
+        metric_type_values['Unique_Item_Requests'],
+        metric_type_values['Unique_Title_Requests'],
+        metric_type_values['No_License'],
+        metric_type_values['Limit_Exceeded'],
+    ], validators=[DataRequired()])
 
 
 class IRQueryWizardForm(FlaskForm):
@@ -214,12 +306,40 @@ class IRQueryWizardForm(FlaskForm):
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
     parent_ISBN_filter = StringField("Enter the ISBN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     parent_ISSN_filter = StringField("Enter the ISSN of the parent of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
-    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=data_type_values, validators=[DataRequired()])
+    data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
+        data_type_values['Article'],
+        data_type_values['Audiovisual'],
+        data_type_values['Book_Segment'],
+        data_type_values['Conference_Item'],
+        data_type_values['Database_Full_Item'],
+        data_type_values['Dataset'],
+        data_type_values['Image'],
+        data_type_values['Interactive_Resource'],
+        data_type_values['Multimedia'],
+        data_type_values['News_Item'],
+        data_type_values['Other'],
+        data_type_values['Patent'],
+        data_type_values['Reference_Item'],
+        data_type_values['Report'],
+        data_type_values['Repository_Item'],
+        data_type_values['Software'],
+        data_type_values['Sound'],
+        data_type_values['Standard'],
+        data_type_values['Thesis_or_Dissertation'],
+        data_type_values['Unspecified'],
+    ], validators=[DataRequired()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
     YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
-    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=metric_type_values, validators=[DataRequired()])
+    metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
+        metric_type_values['Total_Item_Investigations'],
+        metric_type_values['Unique_Item_Investigations'],
+        metric_type_values['Total_Item_Requests'],
+        metric_type_values['Unique_Item_Requests'],
+        metric_type_values['No_License'],
+        metric_type_values['Limit_Exceeded'],
+    ], validators=[DataRequired()])
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
