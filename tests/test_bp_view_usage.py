@@ -158,18 +158,14 @@ def test_start_query_wizard(client, engine, header_value):
         'fiscal_year': 0,
         'report_type': df.at[0,'report_type'],
     }
-    log.info(f"`form_input['begin_date']` is {form_input['begin_date']} (type {type(form_input['begin_date'])})")  #TEST: temp
-    log.info(f"`form_input['end_date']` is {form_input['end_date']} (type {type(form_input['end_date'])})")  #TEST: temp
-    log.info(f"`form_input['report_type']` is {form_input['report_type']} (type {type(form_input['report_type'])})")  #TEST: temp
     POST_response = client.post(
         '/view_usage/query-wizard',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
-    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
-    assert POST_response.status == "200 OK"
+    assert POST_response.status == "302 FOUND"  # This confirms there would've been a redirect if the `post()` method allowed it
+    assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{form_input['report_type']}/{form_input['begin_date'].strftime('%Y-%m-%d')}/{form_input['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
 def test_GET_query_wizard_sort_redirect():
