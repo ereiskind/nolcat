@@ -164,7 +164,6 @@ def test_start_query_wizard(client, engine, header_value):
     POST_response = client.post(
         '/view_usage/query-wizard',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
-        follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
