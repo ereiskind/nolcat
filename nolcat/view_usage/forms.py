@@ -13,52 +13,58 @@ from wtforms.validators import Regexp
 from nolcat.app import *
 
 
-data_type_values = [
-    ('Article', "Article"),
-    ('Audiovisual', "Audiovisual*"),
-    ('Book', "Book"),
-    ('Book_Segment', "Book Segment"),
-    ('Conference', "Conference*"),
-    ('Conference_Item', "Conference Item*"),
-    ('Database|Database_Aggregated', "Aggregated Database*"),
-    ('Database|Database_AI', "A&I Database*"),
-    ('Database|Database_Full', "Full Text Database*"),
-    ('Database', "Database"),
-    ('Database|Database_Full_Item', "Full Text Database Item*"),
-    ('Dataset', "Dataset"),
-    ('Image', "Image*"),
-    ('Interactive_Resource', "Interactive Resource*"),
-    ('Journal', "Journal"),
-    ('Multimedia', "Multimedia"),
-    ('News_Item', "News Item*"),
-    ('Newspaper_or_Newsletter', "Newspaper/Newsletter"),
-    ('Other', "Other"),
-    ('Patent', "Patent*"),
-    ('Platform', "Platform"),
-    ('Reference_Item', "Reference Item*"),
-    ('Reference_Work', "Reference Work*"),
-    ('Report', "Report"),
-    ('Repository_Item', "Repository Item"),
-    ('Software', "Software*"),
-    ('Sound', "Sound*"),
-    ('Standard', "Standard*"),
-    ('Thesis_or_Dissertation', "Thesis/Dissertation"),
-    ('Unspecified', "Unspecified"),
-]
-metric_type_values = [
-    ('Searches_Regular', "Database Searches"),
-    ('Searches_Automated', "Automated Database Searches"),
-    ('Searches_Federated', "Federated Database Searches"),
-    ('Searches_Platform', "Platform Searches"),
-    ('Total_Item_Investigations', "Total Item Investigations"),
-    ('Unique_Item_Investigations', "Unique Item Investigations"),
-    ('Unique_Title_Investigations', "Unique Title Investigations"),
-    ('Total_Item_Requests', "Total Item Requests"),
-    ('Unique_Item_Requests', "Unique Item Requests"),
-    ('Unique_Title_Requests', "Unique Title Requests"),
-    ('No_License', "Access Denied: No License"),
-    ('Limit_Exceeded', "Access Denied: User Limit Exceeded"),
-]
+#Section: Report Attribute Lists
+#Subsection: Variable Attribute Lists
+# The keys are used in each form class to get only the possible valid values; to get all tuples for the drop-down, use the `.values()` iterator
+data_type_values = {
+    'Article': ('Article', "Article"),
+    'Audiovisual': ('Audiovisual', "Audiovisual*"),
+    'Book': ('Book', "Book"),
+    'Book_Segment': ('Book_Segment', "Book Segment"),
+    'Conference': ('Conference', "Conference*"),
+    'Conference_Item': ('Conference_Item', "Conference Item*"),
+    'Database_Aggregated': ('Database|Database_Aggregated', "Aggregated Database*"),
+    'Database_AI': ('Database|Database_AI', "A&I Database*"),
+    'Database_Full': ('Database|Database_Full', "Full Text Database*"),
+    'Database': ('Database', "Database"),
+    'Database_Full_Item': ('Database|Database_Full_Item', "Full Text Database Item*"),
+    'Dataset': ('Dataset', "Dataset"),
+    'Image': ('Image', "Image*"),
+    'Interactive_Resource': ('Interactive_Resource', "Interactive Resource*"),
+    'Journal': ('Journal', "Journal"),
+    'Multimedia': ('Multimedia', "Multimedia"),
+    'News_Item': ('News_Item', "News Item*"),
+    'Newspaper_or_Newsletter': ('Newspaper_or_Newsletter', "Newspaper/Newsletter"),
+    'Other': ('Other', "Other"),
+    'Patent': ('Patent', "Patent*"),
+    'Platform': ('Platform', "Platform"),
+    'Reference_Item': ('Reference_Item', "Reference Item*"),
+    'Reference_Work': ('Reference_Work', "Reference Work*"),
+    'Report': ('Report', "Report"),
+    'Repository_Item': ('Repository_Item', "Repository Item"),
+    'Software': ('Software', "Software*"),
+    'Sound': ('Sound', "Sound*"),
+    'Standard': ('Standard', "Standard*"),
+    'Thesis_or_Dissertation': ('Thesis_or_Dissertation', "Thesis/Dissertation"),
+    'Unspecified': ('Unspecified', "Unspecified"),
+}
+
+metric_type_values = {
+    'Searches_Regular': ('Searches_Regular', "Database Searches"),
+    'Searches_Automated': ('Searches_Automated', "Automated Database Searches"),
+    'Searches_Federated': ('Searches_Federated', "Federated Database Searches"),
+    'Searches_Platform': ('Searches_Platform', "Platform Searches"),
+    'Total_Item_Investigations': ('Total_Item_Investigations', "Total Item Investigations"),
+    'Unique_Item_Investigations': ('Unique_Item_Investigations', "Unique Item Investigations"),
+    'Unique_Title_Investigations': ('Unique_Title_Investigations', "Unique Title Investigations"),
+    'Total_Item_Requests': ('Total_Item_Requests', "Total Item Requests"),
+    'Unique_Item_Requests': ('Unique_Item_Requests', "Unique Item Requests"),
+    'Unique_Title_Requests': ('Unique_Title_Requests', "Unique Title Requests"),
+    'No_License': ('No_License', "Access Denied: No License"),
+    'Limit_Exceeded': ('Limit_Exceeded', "Access Denied: User Limit Exceeded"),
+}
+
+#Subsection: Constant Attribute Lists
 access_type_values = [
     ('Controlled', "Controlled"),
     ('OA_Gold|Open', "Open Access"),
@@ -70,6 +76,7 @@ access_method_values = [
 ]
 
 
+#Section: Form Classes
 class CustomSQLQueryForm(FlaskForm):
     """Creates a form for entering a custom SQL query."""
     SQL_query = TextAreaField("Enter the SQL query:")
