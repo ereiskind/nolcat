@@ -152,16 +152,15 @@ def test_start_query_wizard(client, engine, header_value):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
-    log.info(f"`df` is\n{df}")  #TEST: temp
     form_input = {
         'begin_date': df.at[0,'usage_date'],
         'end_date': last_day_of_month(df.at[0,'usage_date']),
         'fiscal_year': 0,
         'report_type': df.at[0,'report_type'],
     }
-    log.info(f"`df.at[0,'begin_date']` is {df.at[0,'begin_date']} (type {type(df.at[0,'begin_date'])})")  #TEST: temp
-    log.info(f"`df.at[0,'end_date']` is {df.at[0,'end_date']} (type {type(df.at[0,'end_date'])})")  #TEST: temp
-    log.info(f"`df.at[0,'report_type']` is {df.at[0,'report_type']} (type {type(df.at[0,'report_type'])})")  #TEST: temp
+    log.info(f"`form_input.at[0,'begin_date']` is {form_input.at[0,'begin_date']} (type {type(form_input.at[0,'begin_date'])})")  #TEST: temp
+    log.info(f"`form_input.at[0,'end_date']` is {form_input.at[0,'end_date']} (type {type(form_input.at[0,'end_date'])})")  #TEST: temp
+    log.info(f"`form_input.at[0,'report_type']` is {form_input.at[0,'report_type']} (type {type(form_input.at[0,'report_type'])})")  #TEST: temp
     POST_response = client.post(
         '/view_usage/query-wizard',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
