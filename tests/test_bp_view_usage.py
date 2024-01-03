@@ -154,7 +154,7 @@ def start_query_wizard_form_data(engine):
         dict: form input for the form on "query-wizard-start.html"
     """
     df = query_database(
-        query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
+        query="SELECT usage_date, report_type FROM COUNTERData WHERE report_type='PR' OR report_type='DR' OR report_type='TR' OR report_type='IR' GROUP BY usage_date, report_type;",
         engine=engine,
     )
     if isinstance(df, str):
