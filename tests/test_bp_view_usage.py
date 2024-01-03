@@ -158,9 +158,9 @@ def test_start_query_wizard(client, engine, header_value):
         'fiscal_year': 0,
         'report_type': df.at[0,'report_type'],
     }
-    log.info(f"`form_input.at[0,'begin_date']` is {form_input.at[0,'begin_date']} (type {type(form_input.at[0,'begin_date'])})")  #TEST: temp
-    log.info(f"`form_input.at[0,'end_date']` is {form_input.at[0,'end_date']} (type {type(form_input.at[0,'end_date'])})")  #TEST: temp
-    log.info(f"`form_input.at[0,'report_type']` is {form_input.at[0,'report_type']} (type {type(form_input.at[0,'report_type'])})")  #TEST: temp
+    log.info(f"`form_input['begin_date']` is {form_input['begin_date']} (type {type(form_input['begin_date'])})")  #TEST: temp
+    log.info(f"`form_input['end_date']` is {form_input['end_date']} (type {type(form_input['end_date'])})")  #TEST: temp
+    log.info(f"`form_input['report_type']` is {form_input['report_type']} (type {type(form_input['report_type'])})")  #TEST: temp
     POST_response = client.post(
         '/view_usage/query-wizard',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
