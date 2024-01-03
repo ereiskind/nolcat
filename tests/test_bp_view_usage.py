@@ -180,6 +180,7 @@ def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
     assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
+from conftest import prepare_HTML_page_for_comparison  #TEST: temp
 def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard_form_data):
     """Tests that the query wizard accepts the report type and date range and redirects to the page showing the appropriate form.
     
@@ -192,10 +193,23 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
         headers=header_value,
         data=start_query_wizard_form_data,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    #TEST: Goal is to render page "query-wizard/{start_query_wizard_form_data['report_type']}" containing data points `start_query_wizard_form_data['begin_date']` and `start_query_wizard_form_data['end_date']` 
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}):\n{POST_response.data}")  #TEST: temp
-    log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
-    pass
+
+    POST_soup = BeautifulSoup(POST_response.data, 'lxml')
+    POST_response_title = POST_soup.head.title
+    log.info(f"`POST_response_title` is (type {type(POST_response_title)}):\n{POST_response_title}")  #TEST: temp
+    log.info(f"`prepare_HTML_page_for_comparison(POST_response_title)` is (type {type(prepare_HTML_page_for_comparison(POST_response_title))}):\n{prepare_HTML_page_for_comparison(POST_response_title)}")  #TEST: temp
+    POST_response_page_title = POST_soup.body.h1
+    log.info(f"`POST_response_page_title` is (type {type(POST_response_page_title)}):\n{POST_response_page_title}")  #TEST: temp
+    log.info(f"`prepare_HTML_page_for_comparison(POST_response_page_title)` is (type {type(prepare_HTML_page_for_comparison(POST_response_page_title))}):\n{prepare_HTML_page_for_comparison(POST_response_page_title)}")  #TEST: temp
+    POST_response_begin_date_field = POST_soup.find_all(id='begin_date')
+    log.info(f"`POST_response_begin_date_field` is (type {type(POST_response_begin_date_field)}):\n{POST_response_begin_date_field}")  #TEST: temp
+    log.info(f"`prepare_HTML_page_for_comparison(POST_response_begin_date_field)` is (type {type(prepare_HTML_page_for_comparison(POST_response_begin_date_field))}):\n{prepare_HTML_page_for_comparison(POST_response_begin_date_field)}")  #TEST: temp
+    POST_response_end_date_field = POST_soup.find_all(id='end_date')
+    log.info(f"`POST_response_end_date_field` is (type {type(POST_response_end_date_field)}):\n{POST_response_end_date_field}")  #TEST: temp
+    log.info(f"`prepare_HTML_page_for_comparison(POST_response_end_date_field)` is (type {type(prepare_HTML_page_for_comparison(POST_response_end_date_field))}):\n{prepare_HTML_page_for_comparison(POST_response_end_date_field)}")  #TEST: temp
+
+    assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
+    assert POST_response.status == "200 OK"
 
 
 def test_construct_PR_query_with_wizard():
