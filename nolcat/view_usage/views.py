@@ -403,16 +403,19 @@ def construct_PR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.error(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
+        log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -499,16 +502,19 @@ def construct_DR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.error(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
+        log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -643,16 +649,19 @@ def construct_TR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.error(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
+        log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -816,16 +825,19 @@ def construct_IR_query_with_wizard():
         log.info(f"The query in SQL:\n{query}")
 
         #Section: Download Query Results
-        '''  COPIED FROM `use_predefined_SQL_query()`
         df = query_database(
             query=query,
             engine=db.engine,
         )
         if isinstance(df, str):
-            flash(database_query_fail_statement(df))
+            message = database_query_fail_statement(df)
+            log.error(message)
+            flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
+        log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
+        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
