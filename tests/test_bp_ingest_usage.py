@@ -79,8 +79,8 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
-    assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
     #Test: Because only one of the test data files is being loaded, ``assert_frame_equal(COUNTERData_relation, COUNTERData_relation_data)  # `first_new_PK_value` is part of the view function, but if it was used, this statement will fail`` won't pass
 
@@ -219,8 +219,8 @@ def test_harvest_SUSHI_statistics(engine, client, most_recent_month_with_usage, 
         HTML_file_page_title = file_soup.body.h1.string.encode('utf-8')
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
     assert POST_response.status == "200 OK"
-    assert str(HTML_file_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
-    assert str(HTML_file_page_title)[2:-1] in prepare_HTML_page_for_comparison(POST_response.data)
+    assert HTML_file_title in POST_response.data
+    assert HTML_file_page_title in POST_response.data
     assert load_data_into_database_success_regex().search(prepare_HTML_page_for_comparison(POST_response.data))  # This confirms the flash message indicating success appears; if there's an error, the error message appears instead, meaning this statement will fail
 
 
