@@ -180,11 +180,21 @@ def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
     assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
-def test_GET_query_wizard_sort_redirect():
+def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard_form_data):
     """Tests that the query wizard accepts the report type and date range and redirects to the page showing the appropriate form.
     
     Because the function begin tested gets its input from the `start_query_wizard()` route function, the function being tested is accessed through a redirect from that route function. The same form input data is used as when testing that function for efficiency and to reduce the number of places the error could possibly originate if this test fails.
     """
+    POST_response = client.post(
+        '/view_usage/query-wizard',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=start_query_wizard_form_data,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    #TEST: Goal is to render page "query-wizard/{start_query_wizard_form_data['report_type']}" containing data points `start_query_wizard_form_data['begin_date']` and `start_query_wizard_form_data['end_date']` 
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}):\n{POST_response.data}")  #TEST: temp
+    log.info(f"`vars(POST_response)`:\n{vars(POST_response)}")  #TEST: temp
     pass
 
 
