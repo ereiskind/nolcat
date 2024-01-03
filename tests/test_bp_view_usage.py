@@ -195,9 +195,9 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
     POST_soup = BeautifulSoup(POST_response.data, 'lxml')
     POST_response_title = POST_soup.head.title.string.encode('utf-8')
-    POST_response_begin_date_field = POST_soup.find_all(id='begin_date')[0]
+    POST_response_begin_date_field = POST_soup.find_all(id='begin_date')[0]['value']
     log.info(f"`POST_response_begin_date_field` is (type {type(POST_response_begin_date_field)}):\n{POST_response_begin_date_field}")  #TEST: temp
-    POST_response_end_date_field = POST_soup.find_all(id='end_date')[0].string.encode('utf-8')
+    POST_response_end_date_field = POST_soup.find_all(id='end_date')[0]['value'].string.encode('utf-8')
     log.info(f"`POST_response_end_date_field` is (type {type(POST_response_end_date_field)}):\n{POST_response_end_date_field}")  #TEST: temp
 
     assert POST_response.history[0].status == "302 FOUND"  # This confirms there was a redirect
