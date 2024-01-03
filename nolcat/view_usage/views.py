@@ -262,7 +262,7 @@ def start_query_wizard():
             flash(database_query_fail_statement(fiscal_year_options))
             return redirect(url_for('view_usage.view_usage_homepage'))
         form.fiscal_year.choices = list(fiscal_year_options.itertuples(index=False, name=None))
-        return render_template('view_usage/query-wizard-1.html', form=form)
+        return render_template('view_usage/query-wizard-start.html', form=form)
     elif form.validate_on_submit():
         if form.begin_date.data and form.end_date.data:
             logging.debug("Using custom date range.")

@@ -143,8 +143,16 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_start_query_wizard(client, engine, header_value):
-    """Tests the submission of the report type and date range to the query wizard."""
+@pytest.fixture
+def start_query_wizard_form_data(engine):
+    """Creates the form data for `start_query_wizard()`.
+    
+    Args:
+        engine (sqlalchemy.engine.Engine): a SQLAlchemy engine
+
+    Yields:
+        dict: form input for the form on "query-wizard-start.html"
+    """
     df = query_database(
         query="SELECT usage_date, report_type FROM COUNTERData GROUP BY usage_date, report_type;",
         engine=engine,
@@ -152,24 +160,31 @@ def test_start_query_wizard(client, engine, header_value):
     if isinstance(df, str):
         pytest.skip(database_function_skip_statements(df))
     df = df.sample().reset_index()
-    form_input = {
+    yield {
         'begin_date': df.at[0,'usage_date'],
         'end_date': last_day_of_month(df.at[0,'usage_date']),
         'fiscal_year': 0,
         'report_type': df.at[0,'report_type'],
     }
+
+
+def test_start_query_wizard(client, header_value, start_query_wizard_form_data):
+    """Tests the submission of the report type and date range to the query wizard."""
     POST_response = client.post(
         '/view_usage/query-wizard',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         headers=header_value,
-        data=form_input,
+        data=start_query_wizard_form_data,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     assert POST_response.status == "302 FOUND"  # This confirms there would've been a redirect if the `post()` method allowed it
-    assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{form_input['report_type']}/{form_input['begin_date'].strftime('%Y-%m-%d')}/{form_input['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
+    assert POST_response.headers['Location'] == f"http://localhost/view_usage/query-wizard/{start_query_wizard_form_data['report_type']}/{start_query_wizard_form_data['begin_date'].strftime('%Y-%m-%d')}/{start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')}"  # This is the redirect destination
 
 
 def test_GET_query_wizard_sort_redirect():
-    """Tests that the query wizard accepts the report type and date range and redirects to the route function appropriate for selection in the wizard."""
+    """Tests that the query wizard accepts the report type and date range and redirects to the page showing the appropriate form.
+    
+    Because the function begin tested gets its input from the `start_query_wizard()` route function, the function being tested is accessed through a redirect from that route function. The same form input data is used as when testing that function for efficiency and to reduce the number of places the error could possibly originate if this test fails.
+    """
     pass
 
 
