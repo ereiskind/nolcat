@@ -123,7 +123,7 @@ class PRQueryWizardForm(FlaskForm):
         ('platform', "Platform"),
         ('data_type', "Data Type"),
         ('access_method', "Access Method"),
-    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
         data_type_values['Article'],
