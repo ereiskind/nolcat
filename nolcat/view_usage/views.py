@@ -378,22 +378,22 @@ def construct_PR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
-        query_end = "GROUP BY usage_count;"
-        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+        query_end = "GROUP BY usage_count"
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
-        '''
-        #Subsection: Create WHERE Filters for Strings
+        #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "PR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
-        else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
-        '''
+            query = query + f"AND ({platform_filter_option_statement})\n"
+        elif 'platform' in selected_display_fields:
+            query_end = query_end + ", platform"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
         '''
@@ -482,38 +482,40 @@ def construct_DR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
-        query_end = "GROUP BY usage_count;"
-        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+        query_end = "GROUP BY usage_count"
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
-        '''
-        #Subsection: Create WHERE Filters for Strings
+        #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "DR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
-            resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
-        else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
+            query = query + f"AND ({resource_name_filter_option_statement})\n"
+        elif 'resource_name' in selected_display_fields:
+            query_end = query_end + ", resource_name"
         
+        #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "DR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
-        else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
-
+            query = query + f"AND ({publisher_filter_option_statement})\n"
+        elif 'publisher' in  selected_display_fields:
+            query_end = query_end + ", publisher"
+            
+        #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "DR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
-        else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
-        '''
+            query = query + f"AND ({platform_filter_option_statement})\n"
+        elif 'platform' in  selected_display_fields:
+            query_end = query_end + ", platform"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
         '''
@@ -622,50 +624,57 @@ def construct_TR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
-        query_end = "GROUP BY usage_count;"
-        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+        query_end = "GROUP BY usage_count"
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
-        '''
-        #Subsection: Create WHERE Filters for Strings
+        #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "TR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
-            resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
-        else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
+            query = query + f"AND ({resource_name_filter_option_statement})\n"
+        elif 'resource_name' in selected_display_fields:
+            query_end = query_end + ", resource_name"
         
+        #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "TR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
-        else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
-
+            query = query + f"AND ({publisher_filter_option_statement})\n"
+        elif 'publisher' in selected_display_fields:
+            query_end = query_end + ", publisher"
+        
+        #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "TR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
-        else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
+            query = query + f"AND ({platform_filter_option_statement})\n"
+        elif 'platform' in selected_display_fields:
+            query_end = query_end + ", platform"
         
+        #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'"
+            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-        else:
-            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
+        elif 'ISBN' in selected_display_fields:
+            query_end = query_end + ", ISBN"
         
+        #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')"
+            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-        else:
-            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
-        '''
+        elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
+            if 'print_ISSN' in selected_display_fields:
+                query_end = query_end + ", print_ISSN"
+            if 'online_ISSN' in selected_display_fields:
+                query_end = query_end + ", online_ISSN"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
         '''
@@ -798,70 +807,83 @@ def construct_IR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='IR'
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
-        query_end = "GROUP BY usage_count;"
-        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+        query_end = "GROUP BY usage_count"
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
-        '''
-        #Subsection: Create WHERE Filters for Strings
+        #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "IR")
             resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
             log.debug(f"The resource_name filter statement is {resource_name_filter_option_statement}.")
-            resource_name_filter_option_statement = f"AND ({resource_name_filter_option_statement})"
-        else:
-            resource_name_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.resource_name_filter.data` value
+            query = query + f"AND ({resource_name_filter_option_statement})\n"
+        elif 'resource_name' in selected_display_fields:
+            query_end = query_end + ", resource_name"
         
+        #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "IR")
             publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
             log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            publisher_filter_option_statement = f"AND ({publisher_filter_option_statement})"
-        else:
-            publisher_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.publisher_filter.data` value
+            query = query + f"AND ({publisher_filter_option_statement})\n"
+        elif 'publisher' in selected_display_fields:
+            query_end = query_end + ", publisher"
 
+        #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "IR")
             platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
             log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
-        else:
-            platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
+            query = query + f"AND ({platform_filter_option_statement})\n"
+        elif 'platform' in selected_display_fields:
+            query_end = query_end + ", platform"
         
+        #Subsection: Add `parent_title` as Filter or Groupby Group
         if form.parent_title_filter.data:
             parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter.data, "parent_title", "IR")
             parent_title_filter_option_statement = " OR ".join([f"parent_title='{name}'" for name in parent_title_filter_options])
             log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
-            parent_title_filter_option_statement = f"AND ({parent_title_filter_option_statement})"
-        else:
-            parent_title_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.parent_title_filter.data` value
+            query = query + f"AND ({parent_title_filter_option_statement})\n"
+        elif 'parent_title' in selected_display_fields:
+            query_end = query_end + ", parent_title"
         
+        #Subsection: Add `ISBN` as Filter or Groupby Group
         if form.ISBN_filter.data:
-            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'"
+            ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
-        else:
-            ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
+        elif 'ISBN' in selected_display_fields:
+            query_end = query_end + ", ISBN"
         
+        #Subsection: Add `ISSN` as Filter or Groupby Groups
         if form.ISSN_filter.data:
-            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')"
+            ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
-        else:
-            ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
+        elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
+            if 'print_ISSN' in selected_display_fields:
+                query_end = query_end + ", print_ISSN"
+            if 'online_ISSN' in selected_display_fields:
+                query_end = query_end + ", online_ISSN"
         
+        #Subsection: Add `parent_ISBN` as Filter or Groupby Group
         if form.parent_ISBN_filter.data:
-            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'"
+            parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
             log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
-        else:
-            parent_ISBN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISBN_filter.data` value
+        elif 'parent_ISBN' in selected_display_fields:
+            query_end = query_end + ", parent_ISBN"
         
+        #Subsection: Add `parent_ISSN` as Filter or Groupby Groups
         if form.parent_ISSN_filter.data:
-            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')"
+            parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
             log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
-        else:
-            parent_ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
-        '''
+        elif 'parent_print_ISSN' in selected_display_fields or 'parent_online_ISSN' in selected_display_fields:
+            if 'parent_print_ISSN' in selected_display_fields:
+                query_end = query_end + ", parent_print_ISSN"
+            if 'parent_online_ISSN' in selected_display_fields:
+                query_end = query_end + ", parent_online_ISSN"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
         '''
