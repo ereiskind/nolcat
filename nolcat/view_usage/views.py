@@ -361,13 +361,30 @@ def construct_PR_query_with_wizard():
     form = PRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #Section: Create SELECT Statement
-        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
-        #Subsection: Create SELECT List
-        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        #Section: Set Display Fields
+        #Subsection: Create Display Field List
+        if form.display_fields.data:
+            selected_display_fields = form.display_fields.data
+        else:
+            selected_display_fields = ['platform', 'data_type', 'access_method']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
+        #Subsection: Start SQL Query
+        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        query = f"""
+            SELECT {display_fields}
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+        """
+        query_end = "GROUP BY usage_count;"
+        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+
+        #Section: Add String-Based Filters
+        '''
         #Subsection: Create WHERE Filters for Strings
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "PR")
@@ -376,7 +393,10 @@ def construct_PR_query_with_wizard():
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
+        '''
         
+        #Section: Add List-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
@@ -386,9 +406,10 @@ def construct_PR_query_with_wizard():
         
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
+        '''
 
-        #Subsection: Construct SQL Query
-        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        #Section: Finish Query Construction
+        '''
         query = f"""
             SELECT {display_fields}
             FROM COUNTERData
@@ -402,6 +423,7 @@ def construct_PR_query_with_wizard():
             GROUP BY usage_count;
         """
         log.info(f"The query in SQL:\n{query}")
+        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -443,12 +465,30 @@ def construct_DR_query_with_wizard():
     form = DRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #Section: Create SELECT Statement
-        #Subsection: Create SELECT List
-        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        #Section: Set Display Fields
+        #Subsection: Create Display Field List
+        if form.display_fields.data:
+            selected_display_fields = form.display_fields.data
+        else:
+            selected_display_fields = ['resource_name', 'publisher', 'platform', 'data_type', 'access_method']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
+        #Subsection: Start SQL Query
+        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        query = f"""
+            SELECT {display_fields}
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+        """
+        query_end = "GROUP BY usage_count;"
+        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+
+        #Section: Add String-Based Filters
+        '''
         #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "DR")
@@ -473,7 +513,10 @@ def construct_DR_query_with_wizard():
             platform_filter_option_statement = f"AND ({platform_filter_option_statement})"
         else:
             platform_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.platform_filter.data` value
+        '''
         
+        #Section: Add List-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
@@ -483,9 +526,10 @@ def construct_DR_query_with_wizard():
         
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
+        '''
 
-        #Subsection: Construct SQL Query
-        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        #Section: Finish Query Construction
+        '''
         query = f"""
             SELECT {display_fields}
             FROM COUNTERData
@@ -501,6 +545,7 @@ def construct_DR_query_with_wizard():
             GROUP BY usage_count;
         """
         log.info(f"The query in SQL:\n{query}")
+        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -560,12 +605,30 @@ def construct_TR_query_with_wizard():
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        #Section: Create SELECT Statement
-        #Subsection: Create SELECT List
-        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        #Section: Set Display Fields
+        #Subsection: Create Display Field List
+        if form.display_fields.data:
+            selected_display_fields = form.display_fields.data
+        else:
+            selected_display_fields = ['resource_name', 'publisher', 'platform', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'data_type', 'section_type', 'YOP', 'access_method']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
+        #Subsection: Start SQL Query
+        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        query = f"""
+            SELECT {display_fields}
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+        """
+        query_end = "GROUP BY usage_count;"
+        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+
+        #Section: Add String-Based Filters
+        '''
         #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "TR")
@@ -602,7 +665,10 @@ def construct_TR_query_with_wizard():
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
         else:
             ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
+        '''
         
+        #Section: Add List-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
@@ -618,16 +684,20 @@ def construct_TR_query_with_wizard():
         
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
+        '''
 
+        #Section: Add Date-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Dates
         if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
             YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND publication_date<='{form.YOP_end_filter.data}'"
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
         else:
             YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
+        '''
 
-        #Subsection: Construct SQL Query
-        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        #Section: Finish Query Construction
+        '''
         query = f"""
             SELECT {display_fields}
             FROM COUNTERData
@@ -648,6 +718,7 @@ def construct_TR_query_with_wizard():
             GROUP BY usage_count;
         """
         log.info(f"The query in SQL:\n{query}")
+        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -710,12 +781,30 @@ def construct_IR_query_with_wizard():
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        #Section: Create SELECT Statement
-        #Subsection: Create SELECT List
-        display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        #Section: Set Display Fields
+        #Subsection: Create Display Field List
+        if form.display_fields.data:
+            selected_display_fields = form.display_fields.data
+        else:
+            selected_display_fields = ['resource_name', 'publisher', 'platform', 'publication_date', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'parent_title', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'data_type', 'YOP', 'access_method']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
+        #Subsection: Start SQL Query
+        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        query = f"""
+            SELECT {display_fields}
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
+        """
+        query_end = "GROUP BY usage_count;"
+        log.debug(f"The start and end of the query in SQL:\n{query}\n...\n{query_end}")
+
+        #Section: Add String-Based Filters
+        '''
         #Subsection: Create WHERE Filters for Strings
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "IR")
@@ -772,7 +861,10 @@ def construct_IR_query_with_wizard():
             log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
         else:
             parent_ISSN_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there's a `form.ISSN_filter.data` value
+        '''
         
+        #Section: Add List-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Lists
         data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The data type filter values are {data_type_filter_list}.")
@@ -785,7 +877,10 @@ def construct_IR_query_with_wizard():
         
         metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
         log.debug(f"The metric type filter values are {metric_type_filter_list}.")
+        '''
 
+        #Section: Add Date-Based Filters
+        '''
         #Subsection: Create WHERE Filters from Dates
         if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
             publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
@@ -798,9 +893,10 @@ def construct_IR_query_with_wizard():
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
         else:
             YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
+        '''
 
-        #Subsection: Construct SQL Query
-        # A f-string can be used because all of the values are from fixed text fields with program-supplied vocabularies, filtered by restrictive regexes, or derived from values already in the database
+        #Section: Finish Query Construction
+        '''
         query = f"""
             SELECT {display_fields}
             FROM COUNTERData
@@ -824,6 +920,7 @@ def construct_IR_query_with_wizard():
             GROUP BY usage_count;
         """
         log.info(f"The query in SQL:\n{query}")
+        '''
 
         #Section: Download Query Results
         df = query_database(
