@@ -362,6 +362,7 @@ def construct_PR_query_with_wizard():
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
         #Section: Create SELECT Statement
+        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
         #Subsection: Create SELECT List
         display_fields = form.display_fields.data + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
         display_fields = ", ".join([f"{field}" for field in display_fields])
