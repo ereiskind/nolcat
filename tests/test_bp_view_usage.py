@@ -53,6 +53,11 @@ def test_fuzzy_search_on_field(client):
     assert "Social Science Premium Collection->Education Collection->ERIC" in ERIC_test
 
 
+def test_create_COUNTER_fixed_vocab_list():
+    """Tests creating a single-level list from individual strings and pipe-delimited lists."""
+    assert views.create_COUNTER_fixed_vocab_list(["a", "b", "c|d|e", "f"]) == ["a", "b", "c", "d", "e", "f"]
+
+
 def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/view_usage/')

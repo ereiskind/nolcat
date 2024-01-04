@@ -70,6 +70,28 @@ def fuzzy_search_on_field(value, field, report):
     return df[field].to_list()
 
 
+def create_COUNTER_fixed_vocab_list(form_selections):
+    """Separates all COUNTER vocabulary terms into independent items in a list.
+
+    The query wizard displays only the vocabulary for COUNTER R5, but this database can handle both R4 and R5. The R4 term(s) similar enough that the data is likely to be desired if a given R5 term is selected are also provided. A MultipleSelectField, however, can only pass a single string per selection, so if a selection represents multiple COUNTER vocabulary terms, a pipe-delimited list of those terms will be passed. This function takes the list returned by a MultipleSelectField and ensures that each COUNTER vocabulary term is its own item in the list.
+
+    Args:
+        form_selections (list): the MultipleSelectField return value
+
+    Returns:
+        list: the argument list with all pipe-delimited strings separated into individual list items
+    """
+    log.info("Starting `create_COUNTER_fixed_vocab_list()`.")
+    return_value = []
+    for item in form_selections:
+        if "|" in item:
+            for subitem in item.split("|"):
+                return_value.append(subitem)
+        else:
+            return_value.append(item)
+    return return_value
+
+
 @bp.route('/')
 def view_usage_homepage():
     """Returns the homepage for the `view_usage` blueprint, which links to the usage query methods."""
