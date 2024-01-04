@@ -50,18 +50,18 @@ data_type_values = {
 }
 
 metric_type_values = {
-    'Searches_Regular': ('Searches_Regular', "Database Searches"),
-    'Searches_Automated': ('Searches_Automated', "Automated Database Searches"),
-    'Searches_Federated': ('Searches_Federated', "Federated Database Searches"),
-    'Searches_Platform': ('Searches_Platform', "Platform Searches"),
+    'Searches_Regular': ('Searches_Regular|Regular Searches', "Database Searches"),
+    'Searches_Automated': ('Searches_Automated|Searches-federated and automated|Searches: federated and automated', "Automated Database Searches"),
+    'Searches_Federated': ('Searches_Federated|Searches-federated and automated|Searches: federated and automated', "Federated Database Searches"),
+    'Searches_Platform': ('Searches_Platform|Regular Searches', "Platform Searches"),
     'Total_Item_Investigations': ('Total_Item_Investigations', "Total Item Investigations"),
     'Unique_Item_Investigations': ('Unique_Item_Investigations', "Unique Item Investigations"),
     'Unique_Title_Investigations': ('Unique_Title_Investigations', "Unique Title Investigations"),
-    'Total_Item_Requests': ('Total_Item_Requests', "Total Item Requests"),
+    'Total_Item_Requests': ('Total_Item_Requests|Successful Full-text Article Requests|Successful Title Requests|Successful Section Requests|Successful Content Unit Requests', "Total Item Requests"),
     'Unique_Item_Requests': ('Unique_Item_Requests', "Unique Item Requests"),
-    'Unique_Title_Requests': ('Unique_Title_Requests', "Unique Title Requests"),
-    'No_License': ('No_License', "Access Denied: No License"),
-    'Limit_Exceeded': ('Limit_Exceeded', "Access Denied: User Limit Exceeded"),
+    'Unique_Title_Requests': ('Unique_Title_Requests|Successful Title Requests', "Unique Title Requests"),
+    'No_License': ('No_License|Access denied: content item not licensed', "Access Denied: No License"),
+    'Limit_Exceeded': ('Limit_Exceeded|Access denied: concurrent/simultaneous user license limit exceeded', "Access Denied: User Limit Exceeded"),
 }
 
 #Subsection: Constant Attribute Lists
