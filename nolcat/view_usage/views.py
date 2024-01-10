@@ -411,9 +411,13 @@ def construct_PR_query_with_wizard():
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "PR")
-            platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
-            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            query = query + f"AND ({platform_filter_option_statement})\n"
+            if platform_filter_options:
+                platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+                log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
+                query = query + f"AND ({platform_filter_option_statement})\n"
+            else:
+                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
+                query_end = query_end + ", platform"
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -517,27 +521,39 @@ def construct_DR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "DR")
-            resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
-            log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
-            query = query + f"AND ({resource_name_filter_option_statement})\n"
+            if resource_name_filter_options:
+                resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+                log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
+                query = query + f"AND ({resource_name_filter_option_statement})\n"
+            else:
+                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
+                query_end = query_end + ", resource_name"
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "DR")
-            publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
-            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            query = query + f"AND ({publisher_filter_option_statement})\n"
+            if publisher_filter_options:
+                publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+                log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
+                query = query + f"AND ({publisher_filter_option_statement})\n"
+            else:
+                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
+                query_end = query_end + ", publisher"
         elif 'publisher' in  selected_display_fields:
             query_end = query_end + ", publisher"
             
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "DR")
-            platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
-            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            query = query + f"AND ({platform_filter_option_statement})\n"
+            if platform_filter_options:
+                platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+                log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
+                query = query + f"AND ({platform_filter_option_statement})\n"
+            else:
+                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
+                query_end = query_end + ", platform"
         elif 'platform' in  selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -659,27 +675,39 @@ def construct_TR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "TR")
-            resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
-            log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
-            query = query + f"AND ({resource_name_filter_option_statement})\n"
+            if resource_name_filter_options:
+                resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+                log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
+                query = query + f"AND ({resource_name_filter_option_statement})\n"
+            else:
+                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
+                query_end = query_end + ", resource_name"
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "TR")
-            publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
-            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            query = query + f"AND ({publisher_filter_option_statement})\n"
+            if publisher_filter_options:
+                publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+                log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
+                query = query + f"AND ({publisher_filter_option_statement})\n"
+            else:
+                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
+                query_end = query_end + ", publisher"
         elif 'publisher' in selected_display_fields:
             query_end = query_end + ", publisher"
         
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "TR")
-            platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
-            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            query = query + f"AND ({platform_filter_option_statement})\n"
+            if platform_filter_options:
+                platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+                log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
+                query = query + f"AND ({platform_filter_option_statement})\n"
+            else:
+                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
+                query_end = query_end + ", platform"
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -850,36 +878,52 @@ def construct_IR_query_with_wizard():
         #Subsection: Add `resource_name` as Filter or Groupby Group
         if form.resource_name_filter.data:
             resource_name_filter_options = fuzzy_search_on_field(form.resource_name_filter.data, "resource_name", "IR")
-            resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
-            log.debug(f"The resource_name filter statement is {resource_name_filter_option_statement}.")
-            query = query + f"AND ({resource_name_filter_option_statement})\n"
+            if resource_name_filter_options:
+                resource_name_filter_option_statement = " OR ".join([f"resource_name='{name}'" for name in resource_name_filter_options])
+                log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
+                query = query + f"AND ({resource_name_filter_option_statement})\n"
+            else:
+                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
+                query_end = query_end + ", resource_name"
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
         #Subsection: Add `publisher` as Filter or Groupby Group
         if form.publisher_filter.data:
             publisher_filter_options = fuzzy_search_on_field(form.publisher_filter.data, "publisher", "IR")
-            publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
-            log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
-            query = query + f"AND ({publisher_filter_option_statement})\n"
+            if publisher_filter_options:
+                publisher_filter_option_statement = " OR ".join([f"publisher='{name}'" for name in publisher_filter_options])
+                log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
+                query = query + f"AND ({publisher_filter_option_statement})\n"
+            else:
+                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
+                query_end = query_end + ", publisher"
         elif 'publisher' in selected_display_fields:
             query_end = query_end + ", publisher"
 
         #Subsection: Add `platform` as Filter or Groupby Group
         if form.platform_filter.data:
             platform_filter_options = fuzzy_search_on_field(form.platform_filter.data, "platform", "IR")
-            platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
-            log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
-            query = query + f"AND ({platform_filter_option_statement})\n"
+            if platform_filter_options:
+                platform_filter_option_statement = " OR ".join([f"platform='{name}'" for name in platform_filter_options])
+                log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
+                query = query + f"AND ({platform_filter_option_statement})\n"
+            else:
+                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
+                query_end = query_end + ", platform"
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
         #Subsection: Add `parent_title` as Filter or Groupby Group
         if form.parent_title_filter.data:
             parent_title_filter_options = fuzzy_search_on_field(form.parent_title_filter.data, "parent_title", "IR")
-            parent_title_filter_option_statement = " OR ".join([f"parent_title='{name}'" for name in parent_title_filter_options])
-            log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
-            query = query + f"AND ({parent_title_filter_option_statement})\n"
+            if parent_title_filter_options:
+                parent_title_filter_option_statement = " OR ".join([f"parent_title='{name}'" for name in parent_title_filter_options])
+                log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
+                query = query + f"AND ({parent_title_filter_option_statement})\n"
+            else:
+                log.debug(f"No parent titles in the database were matched to the value {form.parent_title_filter.data}.")
+                query_end = query_end + ", parent_title"
         elif 'parent_title' in selected_display_fields:
             query_end = query_end + ", parent_title"
         
