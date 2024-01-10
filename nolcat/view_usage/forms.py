@@ -257,7 +257,7 @@ class TRQueryWizardForm(FlaskForm):
         #
     ], validators=[Optional()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
-    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return (if this is before the previous value, this filter won't be used):", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[Optional()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
@@ -300,7 +300,7 @@ class IRQueryWizardForm(FlaskForm):
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
-    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
+    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format (if this is before the previous value, this filter won't be used):", format='%Y-%m-%d', validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
@@ -329,7 +329,7 @@ class IRQueryWizardForm(FlaskForm):
         data_type_values['Unspecified'],
     ], validators=[Optional()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
-    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return (if this is before the previous value, this filter won't be used):", validators=[Optional()])
     access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[Optional()])
     access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
