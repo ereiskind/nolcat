@@ -117,7 +117,6 @@ def run_custom_SQL_query():
         if isinstance(df, str):
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -253,7 +252,6 @@ def use_predefined_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -405,7 +403,7 @@ def construct_PR_query_with_wizard():
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
         query_end = "GROUP BY usage_count"
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `platform` as Filter or Groupby Group
@@ -420,8 +418,6 @@ def construct_PR_query_with_wizard():
                 query_end = query_end + ", platform"
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
-        
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
@@ -451,8 +447,6 @@ def construct_PR_query_with_wizard():
         elif 'metric_type' in selected_display_fields:
             query_end = query_end + ", metric_type"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Finish SQL Query Construction
         query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
@@ -469,7 +463,6 @@ def construct_PR_query_with_wizard():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -515,7 +508,7 @@ def construct_DR_query_with_wizard():
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
         query_end = "GROUP BY usage_count"
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -557,8 +550,6 @@ def construct_DR_query_with_wizard():
         elif 'platform' in  selected_display_fields:
             query_end = query_end + ", platform"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-        
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
         if form.data_type_filter.data:
@@ -587,8 +578,6 @@ def construct_DR_query_with_wizard():
         elif 'metric_type' in selected_display_fields:
             query_end = query_end + ", metric_type"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Finish SQL Query Construction
         query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
@@ -605,7 +594,6 @@ def construct_DR_query_with_wizard():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -630,25 +618,9 @@ def construct_TR_query_with_wizard():
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():
-        #ALERT: temp
-        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
-        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
-        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
-        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
-        log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
-        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
-        #TEST: Use `978-1-56619-909-4` for testing below
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        log.info(f"`section_type_filter` is {form.section_type_filter.data} (type {type(form.section_type_filter.data)})")
-        log.info(f"`YOP_start_filter` is {form.YOP_start_filter.data} (type {type(form.YOP_start_filter.data)})")
-        log.info(f"`YOP_end_filter` is {form.YOP_end_filter.data} (type {type(form.YOP_end_filter.data)})")
-        log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
-        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
-        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
-        #ALERT: temp end
+    if form.validate_on_submit():  #TEST: When `ISBN_filter` or `ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
@@ -669,7 +641,7 @@ def construct_TR_query_with_wizard():
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
         query_end = "GROUP BY usage_count"
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -728,8 +700,6 @@ def construct_TR_query_with_wizard():
             if 'online_ISSN' in selected_display_fields:
                 query_end = query_end + ", online_ISSN"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-        
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
         if form.data_type_filter.data:
@@ -776,8 +746,6 @@ def construct_TR_query_with_wizard():
         elif 'metric_type' in selected_display_fields:
             query_end = query_end + ", metric_type"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Add Date-Based Filters
         #Subsection: Add `YOP` as Filter or Groupby Group
         if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
@@ -787,8 +755,6 @@ def construct_TR_query_with_wizard():
         elif 'YOP' in selected_display_fields:
             query_end = query_end + ", YOP"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Finish SQL Query Construction
         query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
@@ -805,7 +771,6 @@ def construct_TR_query_with_wizard():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -830,28 +795,11 @@ def construct_IR_query_with_wizard():
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():
-        #ALERT: temp
-        log.info(f"`begin_date` is {form.begin_date.data} (type {type(form.begin_date.data)})")
-        log.info(f"`end_date` is {form.end_date.data} (type {type(form.end_date.data)})")
-        log.info(f"`display_fields` is {form.display_fields.data} (type {type(form.display_fields.data)})")
-        log.info(f"`resource_name_filter` is {form.resource_name_filter.data} (type {type(form.resource_name_filter.data)})")
-        log.info(f"`publisher_filter` is {form.publisher_filter.data} (type {type(form.publisher_filter.data)})")
-        log.info(f"`platform_filter` is {form.platform_filter.data} (type {type(form.platform_filter.data)})")
-        log.info(f"`publication_date_start_filter` is {form.publication_date_start_filter.data} (type {type(form.publication_date_start_filter.data)})")
-        log.info(f"`publication_date_end_filter` is {form.publication_date_end_filter.data} (type {type(form.publication_date_end_filter.data)})")
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`parent_title_filter` is {form.parent_title_filter.data} (type {type(form.parent_title_filter.data)})")
-        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #ALERT: With data, returns `AttributeError: 'function' object has no attribute 'match'`
-        log.info(f"`data_type_filter` is {form.data_type_filter.data} (type {type(form.data_type_filter.data)})")
-        log.info(f"`YOP_start_filter` is {form.YOP_start_filter.data} (type {type(form.YOP_start_filter.data)})")
-        log.info(f"`YOP_end_filter` is {form.YOP_end_filter.data} (type {type(form.YOP_end_filter.data)})")
-        log.info(f"`access_type_filter` is {form.access_type_filter.data} (type {type(form.access_type_filter.data)})")
-        log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
-        log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
-        #ALERT: temp end
+    if form.validate_on_submit():  #TEST: When `ISBN_filter`, `ISSN_filter`, `parent_ISBN_filter`, or `parent_ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
+        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
+        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
+        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #TEST: temp
+        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #TEST: temp
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
@@ -872,7 +820,7 @@ def construct_IR_query_with_wizard():
                 AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
         """
         query_end = "GROUP BY usage_count"
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
+        log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
         #Subsection: Add `resource_name` as Filter or Groupby Group
@@ -961,8 +909,6 @@ def construct_IR_query_with_wizard():
             if 'parent_online_ISSN' in selected_display_fields:
                 query_end = query_end + ", parent_online_ISSN"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-        
         #Section: Add List-Based Filters
         #Subsection: Add `data_type` as Filter or Groupby Group
         if form.data_type_filter.data:
@@ -1000,8 +946,6 @@ def construct_IR_query_with_wizard():
         elif 'metric_type' in selected_display_fields:
             query_end = query_end + ", metric_type"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Add Date-Based Filters
         #Subsection: Add `publication_date` as Filter or Groupby Group
         if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
@@ -1019,8 +963,6 @@ def construct_IR_query_with_wizard():
         elif 'YOP' in selected_display_fields:
             query_end = query_end + ", YOP"
         
-        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
-
         #Section: Finish SQL Query Construction
         query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
@@ -1037,7 +979,6 @@ def construct_IR_query_with_wizard():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
-        #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
