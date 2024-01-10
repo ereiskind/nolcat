@@ -427,7 +427,12 @@ def construct_PR_query_with_wizard():
                 message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
                 log.warning(message)
                 flash(message)
-                return redirect(url_for('view_usage.query_wizard_sort_redirect', report_type='PR', begin_date=form.begin_date.data.strftime('%Y-%m-%d'), end_date=form.end_date.data.strftime('%Y-%m-%d')))
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='PR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -536,8 +541,15 @@ def construct_DR_query_with_wizard():
                 log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
                 query = query + f"AND ({resource_name_filter_option_statement})\n"
             else:
-                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
-                query_end = query_end + ", resource_name"
+                message = f"No resource names in the database were matched to the value {form.resource_name_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='DR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
@@ -549,8 +561,15 @@ def construct_DR_query_with_wizard():
                 log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
                 query = query + f"AND ({publisher_filter_option_statement})\n"
             else:
-                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
-                query_end = query_end + ", publisher"
+                message = f"No publishers in the database were matched to the value {form.publisher_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='DR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'publisher' in  selected_display_fields:
             query_end = query_end + ", publisher"
             
@@ -562,8 +581,15 @@ def construct_DR_query_with_wizard():
                 log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
                 query = query + f"AND ({platform_filter_option_statement})\n"
             else:
-                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
-                query_end = query_end + ", platform"
+                message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='DR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'platform' in  selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -674,8 +700,15 @@ def construct_TR_query_with_wizard():
                 log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
                 query = query + f"AND ({resource_name_filter_option_statement})\n"
             else:
-                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
-                query_end = query_end + ", resource_name"
+                message = f"No resource names in the database were matched to the value {form.resource_name_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='TR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
@@ -687,8 +720,15 @@ def construct_TR_query_with_wizard():
                 log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
                 query = query + f"AND ({publisher_filter_option_statement})\n"
             else:
-                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
-                query_end = query_end + ", publisher"
+                message = f"No publishers in the database were matched to the value {form.publisher_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='TR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'publisher' in selected_display_fields:
             query_end = query_end + ", publisher"
         
@@ -700,8 +740,15 @@ def construct_TR_query_with_wizard():
                 log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
                 query = query + f"AND ({platform_filter_option_statement})\n"
             else:
-                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
-                query_end = query_end + ", platform"
+                message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='TR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -858,8 +905,15 @@ def construct_IR_query_with_wizard():
                 log.debug(f"The resource name filter statement is {resource_name_filter_option_statement}.")
                 query = query + f"AND ({resource_name_filter_option_statement})\n"
             else:
-                log.debug(f"No resource names in the database were matched to the value {form.resource_name_filter.data}.")
-                query_end = query_end + ", resource_name"
+                message = f"No resource names in the database were matched to the value {form.resource_name_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='IR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'resource_name' in selected_display_fields:
             query_end = query_end + ", resource_name"
         
@@ -871,8 +925,15 @@ def construct_IR_query_with_wizard():
                 log.debug(f"The publisher filter statement is {publisher_filter_option_statement}.")
                 query = query + f"AND ({publisher_filter_option_statement})\n"
             else:
-                log.debug(f"No publishers in the database were matched to the value {form.publisher_filter.data}.")
-                query_end = query_end + ", publisher"
+                message = f"No publishers in the database were matched to the value {form.publisher_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='IR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'publisher' in selected_display_fields:
             query_end = query_end + ", publisher"
 
@@ -884,8 +945,15 @@ def construct_IR_query_with_wizard():
                 log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
                 query = query + f"AND ({platform_filter_option_statement})\n"
             else:
-                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
-                query_end = query_end + ", platform"
+                message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='IR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
@@ -897,8 +965,15 @@ def construct_IR_query_with_wizard():
                 log.debug(f"The parent title filter statement is {parent_title_filter_option_statement}.")
                 query = query + f"AND ({parent_title_filter_option_statement})\n"
             else:
-                log.debug(f"No parent titles in the database were matched to the value {form.parent_title_filter.data}.")
-                query_end = query_end + ", parent_title"
+                message = f"No parent titles in the database were matched to the value {form.parent_title_filter.data}."
+                log.warning(message)
+                flash(message)
+                return redirect(url_for(
+                    'view_usage.query_wizard_sort_redirect',
+                    report_type='IR',
+                    begin_date=form.begin_date.data.strftime('%Y-%m-%d'),
+                    end_date=form.end_date.data.strftime('%Y-%m-%d')
+                ))
         elif 'parent_title' in selected_display_fields:
             query_end = query_end + ", parent_title"
         
