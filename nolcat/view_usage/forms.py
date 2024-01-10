@@ -5,6 +5,7 @@ from wtforms.fields import DateField
 from wtforms.fields import SelectMultipleField
 from wtforms.fields import StringField
 from wtforms.fields import IntegerField
+from wtforms.fields import BooleanField
 from wtforms.validators import DataRequired
 from wtforms.validators import InputRequired
 from wtforms.validators import Optional
@@ -80,6 +81,7 @@ access_method_values = [
 class CustomSQLQueryForm(FlaskForm):
     """Creates a form for entering a custom SQL query."""
     SQL_query = TextAreaField("Enter the SQL query:")
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class PresetQueryForm(FlaskForm):
@@ -100,6 +102,7 @@ class PresetQueryForm(FlaskForm):
         ('IR_A1', "IR_A1"),
         ('IR_M1', "IR_M1"),
     ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class StartQueryWizardForm(FlaskForm):
@@ -163,6 +166,7 @@ class PRQueryWizardForm(FlaskForm):
         metric_type_values['Unique_Item_Requests'],
         metric_type_values['Unique_Title_Requests'],
     ], validators=[Optional()])
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class DRQueryWizardForm(FlaskForm):
@@ -216,6 +220,7 @@ class DRQueryWizardForm(FlaskForm):
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
     ], validators=[Optional()])
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class TRQueryWizardForm(FlaskForm):
@@ -274,6 +279,7 @@ class TRQueryWizardForm(FlaskForm):
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
     ], validators=[Optional()])
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class IRQueryWizardForm(FlaskForm):
@@ -344,6 +350,7 @@ class IRQueryWizardForm(FlaskForm):
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
     ], validators=[Optional()])
+    open_in_Excel = BooleanField("Check if the CSV will be opened in Excel:")
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
