@@ -62,7 +62,7 @@ metric_type_values = {
     'Unique_Item_Requests': ('Unique_Item_Requests', "Unique Item Requests"),
     'Unique_Title_Requests': ('Unique_Title_Requests|Successful Title Requests', "Unique Title Requests"),
     'No_License': ('No_License|Access denied: content item not licensed', "Access Denied: No License"),
-    'Limit_Exceeded': ('Limit_Exceeded|Access denied: concurrent/simultaneous user license limit exceeded', "Access Denied: User Limit Exceeded"),
+    'Limit_Exceeded': ('Limit_Exceeded|Access denied: concurrent/simultaneous user license limit exceeded|Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).', "Access Denied: User Limit Exceeded"),
 }
 
 #Subsection: Constant Attribute Lists
