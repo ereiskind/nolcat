@@ -426,11 +426,8 @@ def construct_PR_query_with_wizard():
             else:
                 message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
                 log.warning(message)
-                form.begin_date.default = form.begin_date.data.strftime('%Y-%m-%d')
-                form.end_date.default = form.end_date.data.strftime('%Y-%m-%d')
-                form.process()  # Without this, the above defaults aren't sent to the form
                 flash(message)
-                return render_template(url_for('view_usage.construct_PR_query_with_wizard'))
+                return redirect(url_for('view_usage.query_wizard_sort_redirect', report_type='PR', begin_date=form.begin_date.data.strftime('%Y-%m-%d'), end_date=form.end_date.data.strftime('%Y-%m-%d')))
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
