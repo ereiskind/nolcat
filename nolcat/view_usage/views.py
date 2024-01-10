@@ -781,14 +781,15 @@ def construct_TR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add Date-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Dates
+        #Subsection: Add `YOP` as Filter or Groupby Group
         if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
-            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND publication_date<='{form.YOP_end_filter.data}'"
+            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND YOP<='{form.YOP_end_filter.data}'\n"
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
-        else:
-            YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
-        '''
+            query = query + YOP_filter_option_statement
+        elif 'YOP' in selected_display_fields:
+            query_end = query_end + ", YOP"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Finish Query Construction
         '''
@@ -1010,20 +1011,23 @@ def construct_IR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add Date-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Dates
+        #Subsection: Add `publication_date` as Filter or Groupby Group
         if form.publication_date_start_filter.data and form.publication_date_end_filter.data and form.publication_date_end_filter.data > form.publication_date_start_filter.data:
-            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'"
+            publication_date_option_statement = f"AND publication_date>='{form.publication_date_start_filter.data.strftime('%Y-%m-%d')}' AND publication_date<='{form.publication_date_end_filter.data.strftime('%Y-%m-%d')}'\n"
             log.debug(f"The publication date filter statement is {publication_date_option_statement}.")
-        else:
-            publication_date_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are publication date filters
+            query = query + publication_date_option_statement
+        elif 'publication_date' in selected_display_fields:
+            query_end = query_end + ", publication_date"
         
+        #Subsection: Add `YOP` as Filter or Groupby Group
         if form.YOP_start_filter.data and form.YOP_end_filter.data and form.YOP_end_filter.data > form.YOP_start_filter.data:
-            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND publication_date<='{form.YOP_end_filter.data}'"
+            YOP_filter_option_statement = f"AND YOP>='{form.YOP_start_filter.data}' AND YOP<='{form.YOP_end_filter.data}'\n"
             log.debug(f"The YOP filter statement is {YOP_filter_option_statement}.")
-        else:
-            YOP_filter_option_statement = ""  # This allows the same f-string query constructor to be used regardless of if there are YOP filters
-        '''
+            query = query + YOP_filter_option_statement
+        elif 'YOP' in selected_display_fields:
+            query_end = query_end + ", YOP"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Finish Query Construction
         '''
