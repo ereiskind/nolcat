@@ -430,7 +430,7 @@ def construct_PR_query_with_wizard():
                 form.end_date.default = form.end_date.data.strftime('%Y-%m-%d')
                 form.process()  # Without this, the above defaults aren't sent to the form
                 flash(message)
-                return render_template(url_for('view_usage.construct_PR_query_with_wizard'), form=form)
+                return render_template(url_for('view_usage.construct_PR_query_with_wizard'))
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
