@@ -256,7 +256,7 @@ def use_predefined_SQL_query():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
-            index_label="index",
+            index=False,
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -467,7 +467,7 @@ def construct_PR_query_with_wizard():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
-            index_label="index",
+            index=False,
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -590,7 +590,7 @@ def construct_DR_query_with_wizard():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
-            index_label="index",
+            index=False,
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -778,7 +778,7 @@ def construct_TR_query_with_wizard():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
-            index_label="index",
+            index=False,
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -994,7 +994,7 @@ def construct_IR_query_with_wizard():
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
-            index_label="index",
+            index=False,
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
