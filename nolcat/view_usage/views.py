@@ -418,17 +418,34 @@ def construct_PR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The data type filter values are {data_type_filter_list}.")
+        #Subsection: Add `data_type` as Filter or Groupby Group
+        if form.data_type_filter.data:
+            data_type_filter_list = create_COUNTER_fixed_vocab_list(form.data_type_filter.data)
+            data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
+            log.debug(f"The data type filter statement is {data_type_filter_statement}.")
+            query = query + f"AND ({data_type_filter_statement})\n"
+        elif 'data_type' in selected_display_fields:
+            query_end = query_end + ", data_type"
         
-        access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access method filter values are {access_method_filter_list}.")
+        #Subsection: Add `access_method` as Filter or Groupby Group
+        if form.access_method_filter.data:
+            access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
+            access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            log.debug(f"The data type filter statement is {access_method_filter_statement}.")
+            query = query + f"AND ({access_method_filter_statement})\n"
+        elif 'access_method' in selected_display_fields:
+            query_end = query_end + ", access_method"
         
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The metric type filter values are {metric_type_filter_list}.")
-        '''
+        #Subsection: Add `metric_type` as Filter or Groupby Group
+        if form.metric_type_filter.data:
+            metric_type_filter_list = create_COUNTER_fixed_vocab_list(form.metric_type_filter.data)
+            metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
+            log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
+            query = query + f"AND ({metric_type_filter_statement})\n"
+        elif 'metric_type' in selected_display_fields:
+            query_end = query_end + ", metric_type"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Finish Query Construction
         '''
@@ -540,17 +557,34 @@ def construct_DR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The data type filter values are {data_type_filter_list}.")
+        #Subsection: Add `data_type` as Filter or Groupby Group
+        if form.data_type_filter.data:
+            data_type_filter_list = create_COUNTER_fixed_vocab_list(form.data_type_filter.data)
+            data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
+            log.debug(f"The data type filter statement is {data_type_filter_statement}.")
+            query = query + f"AND ({data_type_filter_statement})\n"
+        elif 'data_type' in selected_display_fields:
+            query_end = query_end + ", data_type"
         
-        access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access method filter values are {access_method_filter_list}.")
+        #Subsection: Add `access_method` as Filter or Groupby Group
+        if form.access_method_filter.data:
+            access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
+            access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            log.debug(f"The data type filter statement is {access_method_filter_statement}.")
+            query = query + f"AND ({access_method_filter_statement})\n"
+        elif 'access_method' in selected_display_fields:
+            query_end = query_end + ", access_method"
         
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The metric type filter values are {metric_type_filter_list}.")
-        '''
+        #Subsection: Add `metric_type` as Filter or Groupby Group
+        if form.metric_type_filter.data:
+            metric_type_filter_list = create_COUNTER_fixed_vocab_list(form.metric_type_filter.data)
+            metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
+            log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
+            query = query + f"AND ({metric_type_filter_statement})\n"
+        elif 'metric_type' in selected_display_fields:
+            query_end = query_end + ", metric_type"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Finish Query Construction
         '''
@@ -699,23 +733,52 @@ def construct_TR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The data type filter values are {data_type_filter_list}.")
+        #Subsection: Add `data_type` as Filter or Groupby Group
+        if form.data_type_filter.data:
+            data_type_filter_list = create_COUNTER_fixed_vocab_list(form.data_type_filter.data)
+            data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
+            log.debug(f"The data type filter statement is {data_type_filter_statement}.")
+            query = query + f"AND ({data_type_filter_statement})\n"
+        elif 'data_type' in selected_display_fields:
+            query_end = query_end + ", data_type"
         
-        section_type_filter_list = [f"section_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.section_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The section type filter values are {section_type_filter_list}.")
+        #Subsection: Add `section_type` as Filter or Groupby Group
+        if form.section_type_filter.data:
+            section_type_filter_list = create_COUNTER_fixed_vocab_list(form.section_type_filter.data)
+            section_type_filter_statement = ' OR '.join([f"section_type='{value}'" for value in section_type_filter_list])
+            log.debug(f"The data type filter statement is {section_type_filter_statement}.")
+            query = query + f"AND ({section_type_filter_statement})\n"
+        elif 'section_type' in selected_display_fields:
+            query_end = query_end + ", section_type"
         
-        access_type_filter_list = [f"access_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access type filter values are {access_type_filter_list}.")
+        #Subsection: Add `access_type` as Filter or Groupby Group
+        if form.access_type_filter.data:
+            access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
+            access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            log.debug(f"The data type filter statement is {access_type_filter_statement}.")
+            query = query + f"AND ({access_type_filter_statement})\n"
+        elif 'access_type' in selected_display_fields:
+            query_end = query_end + ", access_type"
         
-        access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access method filter values are {access_method_filter_list}.")
+        #Subsection: Add `access_method` as Filter or Groupby Group
+        if form.access_method_filter.data:
+            access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
+            access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            log.debug(f"The data type filter statement is {access_method_filter_statement}.")
+            query = query + f"AND ({access_method_filter_statement})\n"
+        elif 'access_method' in selected_display_fields:
+            query_end = query_end + ", access_method"
         
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The metric type filter values are {metric_type_filter_list}.")
-        '''
+        #Subsection: Add `metric_type` as Filter or Groupby Group
+        if form.metric_type_filter.data:
+            metric_type_filter_list = create_COUNTER_fixed_vocab_list(form.metric_type_filter.data)
+            metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
+            log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
+            query = query + f"AND ({metric_type_filter_statement})\n"
+        elif 'metric_type' in selected_display_fields:
+            query_end = query_end + ", metric_type"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add Date-Based Filters
         '''
@@ -908,20 +971,43 @@ def construct_IR_query_with_wizard():
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
         
         #Section: Add List-Based Filters
-        '''
-        #Subsection: Create WHERE Filters from Lists
-        data_type_filter_list = [f"data_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.data_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The data type filter values are {data_type_filter_list}.")
+        #Subsection: Add `data_type` as Filter or Groupby Group
+        if form.data_type_filter.data:
+            data_type_filter_list = create_COUNTER_fixed_vocab_list(form.data_type_filter.data)
+            data_type_filter_statement = ' OR '.join([f"data_type='{value}'" for value in data_type_filter_list])
+            log.debug(f"The data type filter statement is {data_type_filter_statement}.")
+            query = query + f"AND ({data_type_filter_statement})\n"
+        elif 'data_type' in selected_display_fields:
+            query_end = query_end + ", data_type"
         
-        access_type_filter_list = [f"access_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access type filter values are {access_type_filter_list}.")
+        #Subsection: Add `access_type` as Filter or Groupby Group
+        if form.access_type_filter.data:
+            access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
+            access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            log.debug(f"The data type filter statement is {access_type_filter_statement}.")
+            query = query + f"AND ({access_type_filter_statement})\n"
+        elif 'access_type' in selected_display_fields:
+            query_end = query_end + ", access_type"
         
-        access_method_filter_list = [f"access_method='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.access_method_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The access method filter values are {access_method_filter_list}.")
+        #Subsection: Add `access_method` as Filter or Groupby Group
+        if form.access_method_filter.data:
+            access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
+            access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            log.debug(f"The data type filter statement is {access_method_filter_statement}.")
+            query = query + f"AND ({access_method_filter_statement})\n"
+        elif 'access_method' in selected_display_fields:
+            query_end = query_end + ", access_method"
         
-        metric_type_filter_list = [f"metric_type='{filter_value}'" for inner_comprehension_result in [form_value.split("|") if "|" in form_value else form_value for form_value in form.metric_type_filter.data] for filter_value in (inner_comprehension_result if isinstance(inner_comprehension_result, list) else [inner_comprehension_result])]
-        log.debug(f"The metric type filter values are {metric_type_filter_list}.")
-        '''
+        #Subsection: Add `metric_type` as Filter or Groupby Group
+        if form.metric_type_filter.data:
+            metric_type_filter_list = create_COUNTER_fixed_vocab_list(form.metric_type_filter.data)
+            metric_type_filter_statement = ' OR '.join([f"metric_type='{value}'" for value in metric_type_filter_list])
+            log.debug(f"The data type filter statement is {metric_type_filter_statement}.")
+            query = query + f"AND ({metric_type_filter_statement})\n"
+        elif 'metric_type' in selected_display_fields:
+            query_end = query_end + ", metric_type"
+        
+        log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
         #Section: Add Date-Based Filters
         '''
