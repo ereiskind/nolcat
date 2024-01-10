@@ -92,6 +92,23 @@ def create_COUNTER_fixed_vocab_list(form_selections):
     return return_value
 
 
+def set_encoding(opening_in_Excel):
+    """Determines the encoding the pandas `to_csv()` function should use depending on if the CSV will be opened in Excel.
+
+    To open a CSV in Excel directly from the file system with a UTF-8 encoding, a byte order mark (BOM) is needed. The `utf-8-sig` encoding supplies the BOM, which can cause problems in other contexts, so its inclusion shouldn't be automatic.
+
+    Args:
+        opening_in_Excel (Boolean): if the CSV will be opened in Excel
+
+    Returns:
+        str: the encoding to use in `to_csv()`
+    """
+    if opening_in_Excel:
+        return 'utf-8-sig'
+    else:
+        return 'utf-8'
+
+
 @bp.route('/')
 def view_usage_homepage():
     """Returns the homepage for the `view_usage` blueprint, which links to the usage query methods."""
@@ -118,15 +135,11 @@ def run_custom_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index_label="index",
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -258,15 +271,11 @@ def use_predefined_SQL_query():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index=False,
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -481,15 +490,11 @@ def construct_PR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index=False,
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -638,15 +643,11 @@ def construct_DR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index=False,
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -841,15 +842,11 @@ def construct_TR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index=False,
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -1082,15 +1079,11 @@ def construct_IR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        if form.open_in_Excel.data:
-            encoding = 'utf-8-sig'  # This adds the BOM needed for CSVs to open with UTF-8 in Excel directly from the file explorer
-        else:
-            encoding = 'utf-8'
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
             index=False,
-            encoding=encoding,
+            encoding=set_encoding(form.open_in_Excel.data),
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )

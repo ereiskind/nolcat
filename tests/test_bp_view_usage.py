@@ -58,6 +58,12 @@ def test_create_COUNTER_fixed_vocab_list():
     assert views.create_COUNTER_fixed_vocab_list(["a", "b", "c|d|e", "f"]) == ["a", "b", "c", "d", "e", "f"]
 
 
+def test_set_encoding():
+    """Tests that the Boolean values return the expected strings."""
+    assert views.set_encoding(True) == 'utf-8-sig'
+    assert views.set_encoding(False) == 'utf-8' 
+
+
 def test_view_usage_homepage(client):
     """Tests that the homepage can be successfully GET requested and that the response matches the file being used."""
     page = client.get('/view_usage/')
