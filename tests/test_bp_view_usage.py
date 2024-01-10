@@ -84,12 +84,16 @@ def test_view_usage_homepage(client):
 def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
+    form_input = {
+        'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
+        'open_in_Excel': False,
+    }
     POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/custom-query',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
-        data={'SQL_query': "SELECT COUNT(*) FROM COUNTERData;"},
+        data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
     assert POST_response.status == "200 OK"
@@ -120,6 +124,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
         'begin_date': '2016-07-01',
         'end_date': '2020-06-01',
         'query_options': query_options[0],
+        'open_in_Excel': False,
     }
     POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
         '/view_usage/preset-query',
