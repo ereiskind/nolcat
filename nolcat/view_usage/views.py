@@ -424,8 +424,13 @@ def construct_PR_query_with_wizard():
                 log.debug(f"The platform filter statement is {platform_filter_option_statement}.")
                 query = query + f"AND ({platform_filter_option_statement})\n"
             else:
-                log.debug(f"No platforms in the database were matched to the value {form.platform_filter.data}.")
-                query_end = query_end + ", platform"
+                message = f"No platforms in the database were matched to the value {form.platform_filter.data}."
+                log.warning(message)
+                form.begin_date.default = form.begin_date.data.strftime('%Y-%m-%d')
+                form.end_date.default = form.end_date.data.strftime('%Y-%m-%d')
+                form.process()  # Without this, the above defaults aren't sent to the form
+                flash(message)
+                return render_template(url_for('view_usage.construct_PR_query_with_wizard'), form=form)
         elif 'platform' in selected_display_fields:
             query_end = query_end + ", platform"
         
