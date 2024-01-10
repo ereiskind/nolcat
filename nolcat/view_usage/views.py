@@ -122,6 +122,7 @@ def run_custom_SQL_query():
         df.to_csv(
             file_path,
             index_label="index",
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -257,6 +258,7 @@ def use_predefined_SQL_query():
         df.to_csv(
             file_path,
             index=False,
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -468,6 +470,7 @@ def construct_PR_query_with_wizard():
         df.to_csv(
             file_path,
             index=False,
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -591,6 +594,7 @@ def construct_DR_query_with_wizard():
         df.to_csv(
             file_path,
             index=False,
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -779,6 +783,7 @@ def construct_TR_query_with_wizard():
         df.to_csv(
             file_path,
             index=False,
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
@@ -995,6 +1000,7 @@ def construct_IR_query_with_wizard():
         df.to_csv(
             file_path,
             index=False,
+            encoding='utf-8',
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
