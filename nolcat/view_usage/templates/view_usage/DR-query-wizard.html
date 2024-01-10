@@ -8,7 +8,12 @@
 <body>
     <h1>DR Query Wizard <small>(continued)</small></h1>
 
-    <p>Fill out the form below. All selection boxes are required; to select multiple options, hold down the `ctrl` key while clicking the options.</p>
+    <p>Fill out the form below; only the date fields, which are already filled in, are required. For the boxes listing options to select:
+        <ol>
+            <li>None of the boxes are required, and not selecting any options is the same as selecting all of the options. It is highly recommended that some filters be applied, however, so a manageable number of records are returned.</li>
+            <li>To select multiple options, hold down the `ctrl` key while clicking the options.</li>
+        </ol>
+    </p>
 
     {% with message = get_flashed_messages() %}
         {% if message %}

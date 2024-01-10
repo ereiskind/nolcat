@@ -123,7 +123,7 @@ class PRQueryWizardForm(FlaskForm):
         ('platform', "Platform"),
         ('data_type', "Data Type"),
         ('access_method', "Access Method"),
-    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
         data_type_values['Article'],
@@ -152,8 +152,8 @@ class PRQueryWizardForm(FlaskForm):
         data_type_values['Standard'],
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
-    ], validators=[DataRequired()])
-    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
+    ], validators=[Optional()])
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
         metric_type_values['Searches_Platform'],
         metric_type_values['Total_Item_Investigations'],
@@ -162,7 +162,7 @@ class PRQueryWizardForm(FlaskForm):
         metric_type_values['Total_Item_Requests'],
         metric_type_values['Unique_Item_Requests'],
         metric_type_values['Unique_Title_Requests'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
 
 
 class DRQueryWizardForm(FlaskForm):
@@ -175,7 +175,7 @@ class DRQueryWizardForm(FlaskForm):
         ('platform', "Platform"),
         ('data_type', "Data Type"),
         ('access_method', "Access Method"),
-    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the database the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
@@ -201,8 +201,8 @@ class DRQueryWizardForm(FlaskForm):
         data_type_values['Standard'],
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
-    ], validators=[DataRequired()])
-    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
+    ], validators=[Optional()])
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
         metric_type_values['Searches_Regular'],
         metric_type_values['Searches_Automated'],
@@ -215,7 +215,7 @@ class DRQueryWizardForm(FlaskForm):
         metric_type_values['Unique_Title_Requests'],
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
 
 
 class TRQueryWizardForm(FlaskForm):
@@ -234,7 +234,7 @@ class TRQueryWizardForm(FlaskForm):
         ('section_type', "Section Type"),
         ('YOP', "Year of Publication"),
         ('access_method', "Access Method"),
-    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
@@ -252,18 +252,18 @@ class TRQueryWizardForm(FlaskForm):
         data_type_values['Standard'],
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=[
         ('Article', "Article"),
         ('Book', "Book"),
         ('Chapter', "Chapter"),
         ('Other', "Other"),
         ('Section', "Section"),
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
-    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
-    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
-    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return (if this is before the previous value, this filter won't be used):", validators=[Optional()])
+    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[Optional()])
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
         metric_type_values['Total_Item_Investigations'],
         metric_type_values['Unique_Item_Investigations'],
@@ -273,7 +273,7 @@ class TRQueryWizardForm(FlaskForm):
         metric_type_values['Unique_Title_Requests'],
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
 
 
 class IRQueryWizardForm(FlaskForm):
@@ -299,12 +299,12 @@ class IRQueryWizardForm(FlaskForm):
         ('data_type', "Data Type"),
         ('YOP', "Year of Publication"),
         ('access_method', "Access Method"),
-    ], validators=[DataRequired()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
+    ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the item-level resource the query should return:", validators=[Optional()])
     publisher_filter = StringField("Enter the name of the publisher the query should return:", validators=[Optional()])
     platform_filter = StringField("Enter the name of the platform the query should return:", validators=[Optional()])
     publication_date_start_filter = DateField("Enter the earliest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
-    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format:", format='%Y-%m-%d', validators=[Optional()])
+    publication_date_end_filter = DateField("Enter the latest publication date of the items the query should return in 'yyyy-mm-dd' format (if this is before the previous value, this filter won't be used):", format='%Y-%m-%d', validators=[Optional()])
     ISBN_filter = StringField("Enter the ISBN of the item the query should return:", validators=[Optional(), Regexp(ISBN_regex)])
     ISSN_filter = StringField("Enter the ISSN of the item the query should return:", validators=[Optional(), Regexp(ISSN_regex)])
     parent_title_filter = StringField("Enter the name of the parent of the item-level resources the query should return:", validators=[Optional()])
@@ -331,11 +331,11 @@ class IRQueryWizardForm(FlaskForm):
         data_type_values['Standard'],
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
-    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return:", validators=[Optional()])
-    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[DataRequired()])
-    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[DataRequired()])
+    YOP_end_filter = IntegerField("Enter the latest year of publication the query should return (if this is before the previous value, this filter won't be used):", validators=[Optional()])
+    access_type_filter = SelectMultipleField("Select all of the access types the query should return:", choices=access_type_values, validators=[Optional()])
+    access_method_filter = SelectMultipleField("Select all of the access methods the query should return:", choices=access_method_values, validators=[Optional()])
     metric_type_filter = SelectMultipleField("Select all of the metric types the query should return:", choices=[
         metric_type_values['Total_Item_Investigations'],
         metric_type_values['Unique_Item_Investigations'],
@@ -343,7 +343,7 @@ class IRQueryWizardForm(FlaskForm):
         metric_type_values['Unique_Item_Requests'],
         metric_type_values['No_License'],
         metric_type_values['Limit_Exceeded'],
-    ], validators=[DataRequired()])
+    ], validators=[Optional()])
 
 
 class ChooseNonCOUNTERDownloadForm(FlaskForm):
