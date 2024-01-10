@@ -67,7 +67,7 @@ def fuzzy_search_on_field(value, field, report):
         (df['token_set_ratio'] >= 75)
     ]
     log.info(f"Dataframe filtered for matching values:\n{df}")
-    return df[field].to_list()
+    return [value.replace("'", "\\'") for value in df[field].to_list()]
 
 
 def create_COUNTER_fixed_vocab_list(form_selections):
