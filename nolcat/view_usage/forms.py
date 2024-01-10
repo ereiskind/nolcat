@@ -254,7 +254,11 @@ class TRQueryWizardForm(FlaskForm):
         data_type_values['Unspecified'],
     ], validators=[Optional()])
     section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=[
-        #
+        ('Article', "Article"),
+        ('Book', "Book"),
+        ('Chapter', "Chapter"),
+        ('Other', "Other"),
+        ('Section', "Section"),
     ], validators=[Optional()])
     YOP_start_filter = IntegerField("Enter the earliest year of publication the query should return:", validators=[Optional()])
     YOP_end_filter = IntegerField("Enter the latest year of publication the query should return (if this is before the previous value, this filter won't be used):", validators=[Optional()])
