@@ -464,7 +464,6 @@ def construct_PR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -475,8 +474,6 @@ def construct_PR_query_with_wizard():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
-        '''
-        pass
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -590,7 +587,6 @@ def construct_DR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -601,7 +597,6 @@ def construct_DR_query_with_wizard():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
-        '''
         pass
     else:
         message = Flask_error_statement(form.errors)
@@ -780,7 +775,6 @@ def construct_TR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -791,7 +785,6 @@ def construct_TR_query_with_wizard():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
-        '''
         pass
     else:
         message = Flask_error_statement(form.errors)
@@ -998,7 +991,6 @@ def construct_IR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
         #ToDo: What type juggling is needed to ensure numeric string values, integers, and dates are properly formatted in the CSV?
-        '''  COPIED FROM `use_predefined_SQL_query()`
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
             file_path,
@@ -1009,7 +1001,6 @@ def construct_IR_query_with_wizard():
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         return redirect(url_for('download_file', file_path=str(file_path)))
-        '''
         pass
     else:
         message = Flask_error_statement(form.errors)
