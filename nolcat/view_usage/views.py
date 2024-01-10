@@ -757,6 +757,7 @@ def construct_TR_query_with_wizard():
         if form.ISBN_filter.data:
             ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+            query = query + ISBN_filter_option_statement
         elif 'ISBN' in selected_display_fields:
             query_end = query_end + ", ISBN"
         
@@ -764,6 +765,7 @@ def construct_TR_query_with_wizard():
         if form.ISSN_filter.data:
             ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+            query = query + ISSN_filter_option_statement
         elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
             if 'print_ISSN' in selected_display_fields:
                 query_end = query_end + ", print_ISSN"
@@ -978,6 +980,7 @@ def construct_IR_query_with_wizard():
         if form.ISBN_filter.data:
             ISBN_filter_option_statement = f"AND ISBN='{form.ISBN_filter.data}'\n"
             log.debug(f"The ISBN filter statement is {ISBN_filter_option_statement}.")
+            query = query + ISBN_filter_option_statement
         elif 'ISBN' in selected_display_fields:
             query_end = query_end + ", ISBN"
         
@@ -985,6 +988,7 @@ def construct_IR_query_with_wizard():
         if form.ISSN_filter.data:
             ISSN_filter_option_statement = f"AND (print_ISSN='{form.ISSN_filter.data}' OR online_ISSN='{form.ISSN_filter.data}')\n"
             log.debug(f"The ISSN filter statement is {ISSN_filter_option_statement}.")
+            query = query + ISSN_filter_option_statement
         elif 'print_ISSN' in selected_display_fields or 'online_ISSN' in selected_display_fields:
             if 'print_ISSN' in selected_display_fields:
                 query_end = query_end + ", print_ISSN"
@@ -995,6 +999,7 @@ def construct_IR_query_with_wizard():
         if form.parent_ISBN_filter.data:
             parent_ISBN_filter_option_statement = f"AND parent_ISBN='{form.parent_ISBN_filter.data}'\n"
             log.debug(f"The parent ISBN filter statement is {parent_ISBN_filter_option_statement}.")
+            query = query + parent_ISBN_filter_option_statement
         elif 'parent_ISBN' in selected_display_fields:
             query_end = query_end + ", parent_ISBN"
         
@@ -1002,6 +1007,7 @@ def construct_IR_query_with_wizard():
         if form.parent_ISSN_filter.data:
             parent_ISSN_filter_option_statement = f"AND (parent_print_ISSN='{form.parent_ISSN_filter.data}' OR parent_online_ISSN='{form.parent_ISSN_filter.data}')\n"
             log.debug(f"The parent ISSN filter statement is {parent_ISSN_filter_option_statement}.")
+            query = query + parent_ISSN_filter_option_statement
         elif 'parent_print_ISSN' in selected_display_fields or 'parent_online_ISSN' in selected_display_fields:
             if 'parent_print_ISSN' in selected_display_fields:
                 query_end = query_end + ", parent_print_ISSN"
