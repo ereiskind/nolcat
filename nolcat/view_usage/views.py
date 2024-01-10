@@ -383,7 +383,7 @@ def construct_PR_query_with_wizard():
     form = PRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #Section: Set Display Fields
+        #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
@@ -447,22 +447,9 @@ def construct_PR_query_with_wizard():
         
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
-        #Section: Finish Query Construction
-        '''
-        query = f"""
-            SELECT {display_fields}
-            FROM COUNTERData
-            WHERE
-                (report_type='PR' OR report_type='PR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
-                {platform_filter_option_statement}
-                AND ({" OR ".join(data_type_filter_list)})
-                AND ({" OR ".join(access_method_filter_list)})
-                AND ({" OR ".join(metric_type_filter_list)})
-            GROUP BY usage_count;
-        """
+        #Section: Finish SQL Query Construction
+        query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
-        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -504,7 +491,7 @@ def construct_DR_query_with_wizard():
     form = DRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
     if form.validate_on_submit():
-        #Section: Set Display Fields
+        #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
@@ -586,24 +573,9 @@ def construct_DR_query_with_wizard():
         
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
-        #Section: Finish Query Construction
-        '''
-        query = f"""
-            SELECT {display_fields}
-            FROM COUNTERData
-            WHERE
-                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
-                {resource_name_filter_option_statement}
-                {publisher_filter_option_statement}
-                {platform_filter_option_statement}
-                AND ({" OR ".join(data_type_filter_list)})
-                AND ({" OR ".join(access_method_filter_list)})
-                AND ({" OR ".join(metric_type_filter_list)})
-            GROUP BY usage_count;
-        """
+        #Section: Finish SQL Query Construction
+        query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
-        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -663,7 +635,7 @@ def construct_TR_query_with_wizard():
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        #Section: Set Display Fields
+        #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
@@ -791,29 +763,9 @@ def construct_TR_query_with_wizard():
         
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
-        #Section: Finish Query Construction
-        '''
-        query = f"""
-            SELECT {display_fields}
-            FROM COUNTERData
-            WHERE
-                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
-                {resource_name_filter_option_statement}
-                {publisher_filter_option_statement}
-                {platform_filter_option_statement}
-                {ISBN_filter_option_statement}
-                {ISSN_filter_option_statement}
-                AND ({" OR ".join(data_type_filter_list)})
-                AND ({"OR ".join(section_type_filter_list)})
-                {YOP_filter_option_statement}
-                AND ({"OR ".join(access_type_filter_list)})
-                AND ({" OR ".join(access_method_filter_list)})
-                AND ({" OR ".join(metric_type_filter_list)})
-            GROUP BY usage_count;
-        """
+        #Section: Finish SQL Query Construction
+        query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
-        '''
 
         #Section: Download Query Results
         df = query_database(
@@ -876,7 +828,7 @@ def construct_IR_query_with_wizard():
         log.info(f"`access_method_filter` is {form.access_method_filter.data} (type {type(form.access_method_filter.data)})")
         log.info(f"`metric_type_filter` is {form.metric_type_filter.data} (type {type(form.metric_type_filter.data)})")
         #ALERT: temp end
-        #Section: Set Display Fields
+        #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
@@ -1029,32 +981,9 @@ def construct_IR_query_with_wizard():
         
         log.debug(f"The query in SQL to this point is:\n{query}\n...\n{query_end}")
 
-        #Section: Finish Query Construction
-        '''
-        query = f"""
-            SELECT {display_fields}
-            FROM COUNTERData
-            WHERE
-                report_type='IR'
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
-                {resource_name_filter_option_statement}
-                {publisher_filter_option_statement}
-                {platform_filter_option_statement}
-                {parent_title_filter_option_statement}
-                {publication_date_option_statement}
-                {ISBN_filter_option_statement}
-                {ISSN_filter_option_statement}
-                {parent_ISBN_filter_option_statement}
-                {parent_ISSN_filter_option_statement}
-                AND ({" OR ".join(data_type_filter_list)})
-                {YOP_filter_option_statement}
-                AND ({"OR ".join(access_type_filter_list)})
-                AND ({" OR ".join(access_method_filter_list)})
-                AND ({" OR ".join(metric_type_filter_list)})
-            GROUP BY usage_count;
-        """
+        #Section: Finish SQL Query Construction
+        query = query + query_end + ";"
         log.info(f"The query in SQL:\n{query}")
-        '''
 
         #Section: Download Query Results
         df = query_database(
