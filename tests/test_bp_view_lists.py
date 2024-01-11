@@ -1,5 +1,5 @@
 """Tests the routes in the `view_lists` blueprint."""
-########## No tests written 2023-11-15 ##########
+########## No tests written 2024-01-11 ##########
 
 import pytest
 import logging
