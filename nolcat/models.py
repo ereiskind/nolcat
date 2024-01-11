@@ -1620,7 +1620,10 @@ class AnnualUsageCollectionTracking(db.Model):
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
-        file_path = Path(file)
+        try:
+            file_path = Path(file)
+        except:
+            file_path = Path(file.filename)
         file_extension = file_path.suffix
         if file_extension not in file_extensions_and_mimetypes().keys():
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
