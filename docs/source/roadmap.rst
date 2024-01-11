@@ -43,7 +43,6 @@ Iteration 2: Add Historical Data
 Iteration 3: Minimum Viable Product with Tests and Test Database
 ================================================================
 * Create the temporary database for testing: Per Flask's documentation on testing, tests interacting with a database should be able to use a testing database separate from but built using the same factory as the production database. The resources to consult are in ``tests.conftest``.
-* Get failing tests for working view functions in ``tests.test_bp_view_usage`` to pass
 * Get failing test ``tests.test_bp_ingest_usage.test_upload_non_COUNTER_reports()`` to pass
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_60b()``
 * Write ``tests.test_FiscalYears.test_calculate_depreciated_ACRL_63()``

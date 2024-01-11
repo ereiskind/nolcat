@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2024-01-03 ########## Since the downloads themselves work, getting these tests to pass is not a priority
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
