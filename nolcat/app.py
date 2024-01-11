@@ -378,7 +378,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
-    if file.is_file():
+    if file.is_file():  #TEST: AttributeError: 'SpooledTemporaryFile' object has no attribute 'is_file'
         try:
             client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,

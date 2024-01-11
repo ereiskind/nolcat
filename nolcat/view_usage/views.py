@@ -145,8 +145,6 @@ def run_custom_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -272,9 +270,9 @@ def use_predefined_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
-        log.info(f"`locals` (type {type(locals())}) before file creation:\n{locals()}")  #TEST: temp
 
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        log.info(f"`file_path` immediately after initialization:{vars(file_path)}")  #TEST: temp
         df.to_csv(
             file_path,
             index=False,
@@ -282,11 +280,9 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"`locals` after file creation:\n{locals()}")  #TEST: temp
+        log.info(f"`file_path` immediately after `to_csv()`:{vars(file_path)}")  #TEST: temp
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -506,8 +502,6 @@ def construct_PR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -661,8 +655,6 @@ def construct_DR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -677,9 +669,7 @@ def construct_TR_query_with_wizard():
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():  #TEST: When `ISBN_filter` or `ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
+    if form.validate_on_submit():
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
@@ -864,8 +854,6 @@ def construct_TR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -880,11 +868,7 @@ def construct_IR_query_with_wizard():
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():  #TEST: When `ISBN_filter`, `ISSN_filter`, `parent_ISBN_filter`, or `parent_ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
-        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #TEST: temp
+    if form.validate_on_submit():
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
@@ -1107,8 +1091,6 @@ def construct_IR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
-        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)

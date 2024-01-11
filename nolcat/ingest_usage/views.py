@@ -248,10 +248,8 @@ def upload_non_COUNTER_reports():
             usage_file_path=df.at[0,'usage_file_path'],
             notes=df.at[0,'notes'],
         )
-        log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")  #TEST: The file being uploaded is <FileStorage: 'sample_BR3_reports.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')> (type <class 'werkzeug.datastructures.FileStorage'>).
-        log.debug(f"`vars(form.usage_file.data)`:\n{vars(form.usage_file.data)}")  #TEST: temp
-        #TEST: {'name': 'usage_file', 'stream': <tempfile.SpooledTemporaryFile object at 0x7f5cf8d2f460>, 'filename': 'sample_BR3_reports.xlsx', 'headers': Headers([('Content-Disposition', 'form-data; name="usage_file"; filename="sample_BR3_reports.xlsx"'), ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')])}
-        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)  #TEST: `TypeError: expected str, bytes or os.PathLike object, not FileStorage` even though the method expects that arg to be FileStorage based on docstring
+        log.debug(f"The file being uploaded is {form.usage_file.data} (type {type(form.usage_file.data)}).")
+        response = AUCT_object.upload_nonstandard_usage_file(form.usage_file.data)
         if not upload_nonstandard_usage_file_success_regex().fullmatch(response):
             #ToDo: Do any other actions need to be taken?
             log.error(response)
