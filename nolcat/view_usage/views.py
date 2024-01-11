@@ -272,6 +272,7 @@ def use_predefined_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
+        log.info(f"`locals` (type {type(locals())}) before file creation:\n{locals()}")  #TEST: temp
 
         file_path = Path(__file__).parent / 'NoLCAT_download.csv'
         df.to_csv(
@@ -281,6 +282,7 @@ def use_predefined_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
+        log.info(f"`locals` after file creation:\n{locals()}")  #TEST: temp
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
         temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
