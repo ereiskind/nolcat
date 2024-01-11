@@ -378,8 +378,8 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
         log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
     
     #Subsection: Upload File with `upload_file()`
-    if file.is_file():  #TEST: AttributeError: 'SpooledTemporaryFile' object has no attribute 'is_file'
-        try:
+    try:
+        if file.is_file():  #TEST: AttributeError: 'SpooledTemporaryFile' object has no attribute 'is_file'
             client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,
                 Bucket=bucket,
@@ -388,11 +388,11 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             message = f"Successfully loaded the file {file_name} into the {bucket} S3 bucket."
             log.info(message)
             return message
-        except Exception as error:
-            message = f"Running the function `upload_file()` on {file} (type {type(file)}) raised the error {error}."
+        else:
+            message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
             log.error(message)
             return message
-    else:
+    except AttributeError as error:
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
         log.error(message)
         return message
