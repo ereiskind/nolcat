@@ -143,8 +143,10 @@ def run_custom_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
-        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -281,6 +283,8 @@ def use_predefined_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
     else:
         message = Flask_error_statement(form.errors)
@@ -500,6 +504,8 @@ def construct_PR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -653,6 +659,8 @@ def construct_DR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -854,6 +862,8 @@ def construct_TR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
@@ -1095,6 +1105,8 @@ def construct_IR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
+        temp = [f"{x}: {x.closed}" for x in Path(__file__).parent.iterdir()]  #TEST: temp
+        log.info(f"Contents of `{Path(__file__).parent}` and if closed:\n{format_list_for_stdout(temp)}")  #TEST: temp
         return redirect(url_for('download_file', file_path=str(file_path)))
     else:
         message = Flask_error_statement(form.errors)
