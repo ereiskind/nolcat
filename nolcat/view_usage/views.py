@@ -135,7 +135,8 @@ def run_custom_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index_label="index",
@@ -145,7 +146,13 @@ def run_custom_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -271,7 +278,8 @@ def use_predefined_SQL_query():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -281,22 +289,13 @@ def use_predefined_SQL_query():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        #return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
-        #ALERT: temp
-        x = str(file_path)
-        temp = Path(  # Just using the `Path()` constructor creates a relative path; relative paths in `send_file()` are considered in relation to CWD
-            *Path(__file__).parts[0:Path(__file__).parts.index('nolcat')+1],  # This creates an absolute file path from the *nix root or Windows drive to the outer `nolcat` folder
-            *Path(x).parts[Path(x).parts.index('nolcat')+1:],  # This creates a path from `file_path` with everything after the initial `nolcat` folder
-        )
-        log.info(f"`file_path` after type juggling is '{temp}' (type {type(temp)}) which is an absolute file path: {temp.is_absolute()}.")
         return send_file(
-            path_or_file=temp,
-            mimetype=file_extensions_and_mimetypes()[temp.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
             as_attachment=True,
-            download_name=temp.name,
+            download_name=file_path.name,
             last_modified=datetime.today(),
         )
-        #ALERT: end temp
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -505,7 +504,8 @@ def construct_PR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -515,7 +515,13 @@ def construct_PR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -658,7 +664,8 @@ def construct_DR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -668,7 +675,13 @@ def construct_DR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -857,7 +870,8 @@ def construct_TR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -867,7 +881,13 @@ def construct_TR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -1094,7 +1114,8 @@ def construct_IR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = Path(__file__).parent.resolve() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -1104,7 +1125,13 @@ def construct_IR_query_with_wizard():
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
         log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -1182,7 +1209,14 @@ def download_non_COUNTER_usage():
 
         file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_download_non_COUNTER_usage()`; above logging statements got to stdout indicating successful creation of file to download, but opening logging statement for `download_file()` route function isn't output at all
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)

@@ -172,7 +172,7 @@ def create_app():
     def download_file(file_path):
         """Downloads the file at the absolute file path in the variable route.
 
-        An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
+        This function allows static files to be downloaded in Jinja templates (redirecting to this route function from other route functions raises a ValueError in pytest). An absolute file path is used to ensure that issues of relative locations and changing current working directories don't cause errors.
 
         Args:
             file_path (str): an absolute file path
