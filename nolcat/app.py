@@ -330,7 +330,7 @@ def restore_boolean_values_to_boolean_field(series):
 
 
 def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
-    """The function for uploading files to a S3 bucket.  #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
+    """The function for uploading files to a S3 bucket.
 
     SUSHI pulls that cannot be loaded into the database for any reason are saved to S3 with a file name following the convention "{statistics_source_ID}_{report path with hyphen replacing slash}_{date range start in 'yyyy-mm' format}_{date range end in 'yyyy-mm' format}_{ISO timestamp}". Non-COUNTER usage files use the file naming convention "{statistics_source_ID}_{fiscal_year_ID}".
 
@@ -344,6 +344,8 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     Returns:
         str: the logging statement to indicate if uploading the data succeeded or failed
     """
+    #ALERT: On 2023-10-20, this created a file, but the only contents of that file were some ending curly and square braces
+    #ALERT: On 2024-01-11, this function doesn't work when FileStorage objects are being passed in from `nolcat.models.AnnualUsageCollectionTracking.upload_nonstandard_usage_file()` when testing `nolcat.ingest_usage.views.upload_non_COUNTER_reports()`
     log.info(f"Starting `upload_file_to_S3_bucket()` for the file named {file_name}.")
     #Section: Confirm Bucket Exists
     # The canonical way to check for a bucket's existence and the user's privilege to access it
@@ -379,7 +381,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
     
     #Subsection: Upload File with `upload_file()`
     try:
-        if file.is_file():  #TEST: AttributeError: 'SpooledTemporaryFile' object has no attribute 'is_file'
+        if file.is_file():
             client.upload_file(  # This uploads `file` like a path-like object
                 Filename=file,
                 Bucket=bucket,

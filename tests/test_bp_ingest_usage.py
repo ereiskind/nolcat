@@ -277,7 +277,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
 
     #Section: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
-    POST_response = client.post(  #TEST: AttributeError: 'SpooledTemporaryFile' object has no attribute 'is_file' (traces back to nolcat.app line 381)
+    POST_response = client.post(
         '/ingest_usage/upload-non-COUNTER',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -301,7 +301,8 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
     bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
+    log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
+    for contents_dict in list_objects_response['Contents']:  #TEST: KeyError: 'Contents'
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
 
