@@ -1,5 +1,5 @@
 """Tests the methods in FiscalYears."""
-########## Passing 2023-11-17 ##########
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
@@ -258,8 +258,7 @@ def test_create_usage_tracking_records_for_fiscal_year(engine, client, load_new_
     assert regex_match_object is not None
     assert int(regex_match_object.group(1)) == 10
     assert regex_match_object.group(2) == "annualUsageCollectionTracking"
-    log.info(retrieved_data.compare(expected_output_data, align_axis=0))  #TEST: temp
-    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes  #TEST: AssertionError: ExtensionArray are different
+    assert_frame_equal(retrieved_data, expected_output_data, check_index_type=False)  # `check_index_type` argument allows test to pass if indexes are different dtypes
 
 
 def test_collect_fiscal_year_usage_statistics(caplog):
