@@ -219,8 +219,21 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
     assert POST_response_end_date_field == start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')
 
 
-def test_construct_PR_query_with_wizard():
+@pytest.fixture(params=[
+    1,
+    2,
+])
+def params(request):
+    if request.param == 1:
+        yield ('a', 100)
+    else:
+        yield ('b', 200)
+
+
+def test_construct_PR_query_with_wizard(params):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
+    first, second = params
+    log.info(f"The first parameter value is {first} and the second parameter value is {second}")
     pass
 
 
