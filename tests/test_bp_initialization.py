@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-01-03 ##########
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
