@@ -88,16 +88,15 @@ def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV,
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
         'open_in_Excel': False,
     }
-    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+    POST_response = client.post(
         '/view_usage/custom-query',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
     assert POST_response.status == "200 OK"
-    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
