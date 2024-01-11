@@ -125,14 +125,13 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
         'query_options': query_options[0],
         'open_in_Excel': False,
     }
-    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+    POST_response = client.post(
         '/view_usage/preset-query',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
 
     CSV_df = pd.read_csv(
         TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
@@ -153,7 +152,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
