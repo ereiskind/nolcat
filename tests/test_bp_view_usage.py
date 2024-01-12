@@ -368,6 +368,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = PR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         #TEST: Filter by metric type and limit fields in results --> TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f8a9bc1fb50>, url = ('access_method', 'Access Method'), strict = True
@@ -536,6 +537,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = DR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         #TEST: Filter by metric types and limit fields in results --> TypeError: add_file() takes from 3 to 5 positional arguments but 23 were given --> value = (('Audiovisual', 'Audiovisual*'), ('Book', 'Book'), ('Conference', 'Conference*'), ('Database|Database_Aggregated', 'Aggregated Database*'), ('Database|Database_AI', 'A&I Database*'), ('Database|Database_Full', 'Full Text Database*'), ...)
@@ -846,6 +848,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = TR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         #TEST: Filter by resource name with apostrophe and non-ASCII character --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
@@ -1078,6 +1081,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = IR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         #TEST: Filter by publication date --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
