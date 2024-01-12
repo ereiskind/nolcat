@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
+from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
@@ -1142,7 +1143,42 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-#ToDo: Test text filter not returning a match
+def construct_PR_query_with_wizard_without_string_match(client, header_value, caplog):
+    """Tests using the PR query wizard with a string that won't return any matches."""
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
+
+    form_input = {
+        'begin_date': date.fromisoformat('2019-01-01'),
+        'end_date': date.fromisoformat('2019-12-31'),
+        'display_fields': (
+            ('platform', "Platform"),
+            ('data_type', "Data Type"),
+            ('access_method', "Access Method"),
+        ),
+        'platform_filter': "not going to match",
+        'data_type_filter': (forms.data_type_values['Platform']),
+        'access_method_filter': tuple(forms.access_method_values),
+        'metric_type_filter': (
+            forms.metric_type_values['Searches_Platform'],
+            forms.metric_type_values['Total_Item_Investigations'],
+            forms.metric_type_values['Unique_Item_Investigations'],
+            forms.metric_type_values['Unique_Title_Investigations'],
+            forms.metric_type_values['Total_Item_Requests'],
+            forms.metric_type_values['Unique_Item_Requests'],
+            forms.metric_type_values['Unique_Title_Requests'],
+        ),
+        'open_in_Excel': False,
+    }
+
+    POST_response = client.post(
+        '/view_usage/query-wizard/PR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    assert POST_response.status == "200 OK"
+    assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
 
 
 #ToDo: Test wizard query returning no data
