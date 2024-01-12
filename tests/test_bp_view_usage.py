@@ -1006,6 +1006,12 @@ def test_construct_IR_query_with_wizard(IR_parameters):
     pass
 
 
+#ToDo: Test text filter not returning a match
+
+
+#ToDo: Test wizard query returning no data
+
+
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
