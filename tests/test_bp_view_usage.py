@@ -383,6 +383,8 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     form_input, query = PR_parameters
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
+        #TEST: Filter by metric type and limit fields in results --> TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f8a9bc1fb50>, url = ('access_method', 'Access Method'), strict = True
+        #TEST: Filter by platform name --> TypeError: add_file() takes from 3 to 5 positional arguments but 28 were given --> value = (('Article', 'Article'), ('Audiovisual', 'Audiovisual*'), ('Book', 'Book'), ('Book_Segment', 'Book Segment'), ('Conference', 'Conference*'), ('Conference_Item', 'Conference Item*'), ...)
         '/view_usage/query-wizard/PR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -561,6 +563,9 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     form_input, query = DR_parameters
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
+        #TEST: Filter by metric types and limit fields in results --> TypeError: add_file() takes from 3 to 5 positional arguments but 23 were given --> value = (('Audiovisual', 'Audiovisual*'), ('Book', 'Book'), ('Conference', 'Conference*'), ('Database|Database_Aggregated', 'Aggregated Database*'), ('Database|Database_AI', 'A&I Database*'), ('Database|Database_Full', 'Full Text Database*'), ...)
+        #TEST: Filter by resource name --> TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> value = (('resource_name', 'Database Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('data_type', 'Data Type'), ('access_method', 'Access Method'))
+        #TEST: Filter by publisher name --> TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> value = (('resource_name', 'Database Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('data_type', 'Data Type'), ('access_method', 'Access Method'))
         '/view_usage/query-wizard/DR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -872,6 +877,9 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     form_input, query = TR_parameters
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
+        #TEST: Filter by resource name with apostrophe and non-ASCII character --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
+        #TEST: Filter by ISBN --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
+        #TEST: Filter by ISSN --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
         '/view_usage/query-wizard/TR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -1112,6 +1120,9 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     form_input, query = IR_parameters
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
+        #TEST: Filter by publication date --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
+        #TEST: Filter by parent ISBN --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
+        #TEST: Filter by parent ISSN --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
         '/view_usage/query-wizard/IR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
