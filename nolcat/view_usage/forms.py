@@ -238,6 +238,7 @@ class TRQueryWizardForm(FlaskForm):
         ('data_type', "Data Type"),
         ('section_type', "Section Type"),
         ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
         ('access_method', "Access Method"),
     ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
@@ -304,6 +305,7 @@ class IRQueryWizardForm(FlaskForm):
         ('parent_online_ISSN', "Parent Online ISSN"),
         ('data_type', "Data Type"),
         ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
         ('access_method', "Access Method"),
     ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the item-level resource the query should return:", validators=[Optional()])

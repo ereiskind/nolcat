@@ -552,6 +552,7 @@ def TR_parameters(request):
         ('data_type', "Data Type"),
         ('section_type', "Section Type"),
         ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
         ('access_method', "Access Method"),
     )
     TR_data_types = (
@@ -605,13 +606,13 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
                 AND (resource_name='Pikachu\'s Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>')
-            GROUP BY usage_count, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+            GROUP BY usage_count, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type;
         """  # Resource name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
@@ -634,13 +635,13 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2017-07-01' AND usage_date<='2019-12-31'
                 AND (ISBN='978-0-0286-6072-1')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN":
@@ -663,13 +664,13 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, data_type, section_type, YOP, access_method, metric_type;
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, data_type, section_type, YOP, access_type, access_method, metric_type;
         """
         yield (form_input, query)
     elif request.params == "Filter by ISSN and platform":
@@ -692,14 +693,14 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (platform='EBSCOhost')
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
-            GROUP BY usage_count, resource_name, publisher, DOI, ISBN, data_type, section_type, YOP, access_method, metric_type;
+            GROUP BY usage_count, resource_name, publisher, DOI, ISBN, data_type, section_type, YOP, access_type, access_method, metric_type;
         """  # Platform name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by section type":
@@ -725,13 +726,13 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (section_type='Book' OR section_type='Chapter')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, YOP, access_method, metric_type;
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, YOP, access_type, access_method, metric_type;
         """
         yield (form_input, query)
     elif request.param == "Filter by year of publication":
@@ -754,13 +755,13 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND YOP>=1995 AND YOP<=2005
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, access_method, metric_type;
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, access_type, access_method, metric_type;
         """
         yield (form_input, query)
     elif request.param == "Filter by access type":
@@ -783,7 +784,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
