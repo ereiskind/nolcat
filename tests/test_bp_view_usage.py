@@ -220,34 +220,125 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
 
 @pytest.fixture(params=[
-    1,
-    2,
+    "Filter by metric type",
+    "Filter by platform name",
+    "Filter by data type with field not in results"
+    "Filter by access method",
 ])
-def params(request):
-    if request.param == 1:
-        yield ('a', 100)
-    else:
-        yield ('b', 200)
+def PR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by metric type":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by platform name":
+        #ToDo: Create form input and SQL query
+    elif request.params == "Filter by data type with field not in results":
+        #ToDo: Create form input and SQL query
+    elif request.params == "Filter by access method":
+        #ToDo: Create form input and SQL query
 
 
-def test_construct_PR_query_with_wizard(params):
+
+def test_construct_PR_query_with_wizard(PR_parameters):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    first, second = params
-    log.info(f"The first parameter value is {first} and the second parameter value is {second}")
     pass
 
 
-def test_construct_DR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by metric types and limit fields in results",
+    "Filter by resource name",
+    "Filter by publisher name",
+])
+def DR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by metric types and limit fields in results":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by resource name":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by publisher name":
+        #ToDo: Create form input and SQL query
+
+
+def test_construct_DR_query_with_wizard(DR_parameters):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     pass
 
 
-def test_construct_TR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by resource name with apostrophe and non-ASCII character",
+    "Filter by ISBN",
+    "Filter by ISSN",
+    "Filter by section type",
+    "Filter by year of publication",
+    "Filter by access type",
+])
+def TR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by resource name with apostrophe and non-ASCII character":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by ISBN":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by ISSN":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by section type":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by year of publication":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by access type":
+        #ToDo: Create form input and SQL query
+
+
+def test_construct_TR_query_with_wizard(TR_parameters):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     pass
 
 
-def test_construct_IR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by publication date",
+    "Filter by parent title",
+    "Filter by parent ISBN",
+    "Filter by parent ISSN",
+])
+def IR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by publication date":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by parent title":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by parent ISBN":
+        #ToDo: Create form input and SQL query
+    elif request.param == "Filter by parent ISSN":
+        #ToDo: Create form input and SQL query
+
+
+def test_construct_IR_query_with_wizard(IR_parameters):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     pass
 
