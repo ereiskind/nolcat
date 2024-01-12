@@ -393,12 +393,129 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
+    DR_display_fields = (
+        ('resource_name', "Database Name"),
+        ('publisher', "Publisher"),
+        ('platform', "Platform"),
+        ('data_type', "Data Type"),
+        ('access_method', "Access Method"),
+    )
+    DR_data_types = (
+        forms.data_type_values['Audiovisual'],
+        forms.data_type_values['Book'],
+        forms.data_type_values['Conference'],
+        forms.data_type_values['Database_Aggregated'],
+        forms.data_type_values['Database_AI'],
+        forms.data_type_values['Database_Full'],
+        forms.data_type_values['Database'],
+        forms.data_type_values['Database_Full_Item'],
+        forms.data_type_values['Image'],
+        forms.data_type_values['Interactive_Resource'],
+        forms.data_type_values['Journal'],
+        forms.data_type_values['Multimedia'],
+        forms.data_type_values['Newspaper_or_Newsletter'],
+        forms.data_type_values['Other'],
+        forms.data_type_values['Patent'],
+        forms.data_type_values['Reference_Work'],
+        forms.data_type_values['Report'],
+        forms.data_type_values['Sound'],
+        forms.data_type_values['Standard'],
+        forms.data_type_values['Thesis_or_Dissertation'],
+        forms.data_type_values['Unspecified'],
+    )
+    DR_metric_types = (
+        forms.metric_type_values['Searches_Regular'],
+        forms.metric_type_values['Searches_Automated'],
+        forms.metric_type_values['Searches_Federated'],
+        forms.metric_type_values['Total_Item_Investigations'],
+        forms.metric_type_values['Unique_Item_Investigations'],
+        forms.metric_type_values['Unique_Title_Investigations'],
+        forms.metric_type_values['Total_Item_Requests'],
+        forms.metric_type_values['Unique_Item_Requests'],
+        forms.metric_type_values['Unique_Title_Requests'],
+        forms.metric_type_values['No_License'],
+        forms.metric_type_values['Limit_Exceeded'],
+    )
+
     if request.param == "Filter by metric types and limit fields in results":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': (
+                ('resource_name', "Database Name"),
+                ('publisher', "Publisher"),
+                ('platform', "Platform"),
+            ),
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'data_type_filter': DR_data_types,
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': (
+                forms.metric_type_values['Searches_Regular'],
+                forms.metric_type_values['Searches_Automated'],
+                forms.metric_type_values['Searches_Federated'],
+                forms.metric_type_values['No_License'],
+                forms.metric_type_values['Limit_Exceeded'],
+            ),
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+            GROUP BY usage_count, resource_name, publisher, platform;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by resource name":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': DR_display_fields,
+            'resource_name_filter': "eric",
+            'publisher_filter': None,
+            'platform_filter': None,
+            'data_type_filter': DR_data_types,
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': DR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (resource_name='ERIC' OR resource_name='Historical Abstracts' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection' OR resource_name='Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online Foundation Collection 3' OR resource_name='01 Periodicals Archive Online Foundation Collection 1' OR resource_name='Social Science Premium Collection->Education Collection->ERIC')
+            GROUP BY usage_count, publisher, platform, data_type, access_method, metric_type;
+        """  # Resource names based off of values returned in test data
+        yield (form_input, query)
     elif request.param == "Filter by publisher name":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': DR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': "proq",
+            'platform_filter': None,
+            'data_type_filter': DR_data_types,
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': DR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (publisher='ProQuest')
+            GROUP BY usage_count, resource_name, platform, data_type, access_method, metric_type;
+        """  # Publisher name based off of values returned in test data
+        yield (form_input, query)
 
 
 def test_construct_DR_query_with_wizard(DR_parameters):
