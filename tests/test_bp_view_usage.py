@@ -338,7 +338,7 @@ def PR_parameters(request):
             GROUP BY usage_count, platform, access_method, metric_type;
         """
         yield (form_input, query)
-    elif request.params == "Filter by access method":
+    elif request.param == "Filter by access method":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -987,8 +987,8 @@ def IR_parameters(request):
             'parent_ISBN_filter': None,
             'parent_ISSN_filter': None,
             'data_type_filter': IR_data_types,
-            'YOP_start_filter': None/int,
-            'YOP_end_filter': None/int,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': IR_metric_types,
