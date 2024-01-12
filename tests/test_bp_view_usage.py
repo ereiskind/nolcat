@@ -815,14 +815,190 @@ def IR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
+    IR_display_fields = (
+        ('resource_name', "Item Name"),
+        ('publisher', "Publisher"),
+        ('platform', "Platform"),
+        ('publication_date', "Publication Date"),
+        ('DOI', "DOI"),
+        ('ISBN', "ISBN"),
+        ('print_ISSN', "Print ISSN"),
+        ('online_ISSN', "Online ISSN"),
+        ('parent_title', "Parent Title"),
+        ('parent_publication_date', "Parent Publication Date"),
+        ('parent_data_type', "Parent Data Type"),
+        ('parent_DOI', "Parent DOI"),
+        ('parent_ISBN', "Parent ISBN"),
+        ('parent_print_ISSN', "Parent Print ISSN"),
+        ('parent_online_ISSN', "Parent Online ISSN"),
+        ('data_type', "Data Type"),
+        ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
+        ('access_method', "Access Method"),
+    )
+    IR_data_types = (
+        forms.data_type_values['Article'],
+        forms.data_type_values['Audiovisual'],
+        forms.data_type_values['Book_Segment'],
+        forms.data_type_values['Conference_Item'],
+        forms.data_type_values['Database_Full_Item'],
+        forms.data_type_values['Dataset'],
+        forms.data_type_values['Image'],
+        forms.data_type_values['Interactive_Resource'],
+        forms.data_type_values['Multimedia'],
+        forms.data_type_values['News_Item'],
+        forms.data_type_values['Other'],
+        forms.data_type_values['Patent'],
+        forms.data_type_values['Reference_Item'],
+        forms.data_type_values['Report'],
+        forms.data_type_values['Repository_Item'],
+        forms.data_type_values['Software'],
+        forms.data_type_values['Sound'],
+        forms.data_type_values['Standard'],
+        forms.data_type_values['Thesis_or_Dissertation'],
+        forms.data_type_values['Unspecified'],
+    )
+    IR_metric_types = (
+        forms.metric_type_values['Total_Item_Investigations'],
+        forms.metric_type_values['Unique_Item_Investigations'],
+        forms.metric_type_values['Total_Item_Requests'],
+        forms.metric_type_values['Unique_Item_Requests'],
+        forms.metric_type_values['No_License'],
+        forms.metric_type_values['Limit_Exceeded'],
+    )
+
     if request.param == "Filter by publication date":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': IR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'publication_date_start_filter': date.fromisoformat('2018-01-01'),
+            'publication_date_end_filter': date.fromisoformat('2018-12-31'),
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'parent_title_filter': None,
+            'parent_ISBN_filter': None,
+            'parent_ISSN_filter': None,
+            'data_type_filter': IR_data_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': IR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND publication_date>='2018-01-01' AND publication_date<='2018-12-31'
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by parent title":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': IR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'publication_date_start_filter': None,
+            'publication_date_end_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'parent_title_filter': "glq",
+            'parent_ISBN_filter': None,
+            'parent_ISSN_filter': None,
+            'data_type_filter': IR_data_types,
+            'YOP_start_filter': None/int,
+            'YOP_end_filter': None/int,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': IR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
+            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+        """  # Parent title based off of value returned in test data
+        yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': IR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'publication_date_start_filter': None,
+            'publication_date_end_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'parent_title_filter': None,
+            'parent_ISBN_filter': "978-0-8223-8491-5",
+            'parent_ISSN_filter': None,
+            'data_type_filter': IR_data_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': IR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (ISBN='978-0-8223-8491-5')
+            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': IR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'publication_date_start_filter': None,
+            'publication_date_end_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'parent_title_filter': None,
+            'parent_ISBN_filter': None,
+            'parent_ISSN_filter': "0270-5346",
+            'data_type_filter': IR_data_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': IR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (print_ISSN='0270-5346' OR online_ISSN='0270-5346')
+            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, ISBN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+        """
+        yield (form_input, query)
 
 
 def test_construct_IR_query_with_wizard(IR_parameters):
