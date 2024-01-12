@@ -527,6 +527,7 @@ def test_construct_DR_query_with_wizard(DR_parameters):
     "Filter by resource name with apostrophe and non-ASCII character",
     "Filter by ISBN",
     "Filter by ISSN",
+    "Filter by ISSN and platform",
     "Filter by section type",
     "Filter by year of publication",
     "Filter by access type",
@@ -540,18 +541,257 @@ def TR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
+    TR_display_fields = (
+        ('resource_name', "Title Name"),
+        ('publisher', "Publisher"),
+        ('platform', "Platform"),
+        ('DOI', "DOI"),
+        ('ISBN', "ISBN"),
+        ('print_ISSN', "Print ISSN"),
+        ('online_ISSN', "Online ISSN"),
+        ('data_type', "Data Type"),
+        ('section_type', "Section Type"),
+        ('YOP', "Year of Publication"),
+        ('access_method', "Access Method"),
+    )
+    TR_data_types = (
+        forms.data_type_values['Book'],
+        forms.data_type_values['Conference'],
+        forms.data_type_values['Journal'],
+        forms.data_type_values['Newspaper_or_Newsletter'],
+        forms.data_type_values['Other'],
+        forms.data_type_values['Patent'],
+        forms.data_type_values['Reference_Work'],
+        forms.data_type_values['Report'],
+        forms.data_type_values['Standard'],
+        forms.data_type_values['Thesis_or_Dissertation'],
+        forms.data_type_values['Unspecified'],
+    )
+    TR_section_types = (
+        ('Article', "Article"),
+        ('Book', "Book"),
+        ('Chapter', "Chapter"),
+        ('Other', "Other"),
+        ('Section', "Section"),
+    )
+    TR_metric_types = (
+        forms.metric_type_values['Total_Item_Investigations'],
+        forms.metric_type_values['Unique_Item_Investigations'],
+        forms.metric_type_values['Unique_Title_Investigations'],
+        forms.metric_type_values['Total_Item_Requests'],
+        forms.metric_type_values['Unique_Item_Requests'],
+        forms.metric_type_values['Unique_Title_Requests'],
+        forms.metric_type_values['No_License'],
+        forms.metric_type_values['Limit_Exceeded'],
+    )
+
     if request.param == "Filter by resource name with apostrophe and non-ASCII character":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': "Pikachu's Global Adventure: The Rise and Fall of Pokémon",
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
+                AND (resource_name='Pikachu\'s Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>')
+            GROUP BY usage_count, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+        """  # Resource name based off of value returned in test data
+        yield (form_input, query)
     elif request.param == "Filter by ISBN":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2017-07-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': "978-0-0286-6072-1",
+            'ISSN_filter': None,
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2017-07-01' AND usage_date<='2019-12-31'
+                AND (ISBN='978-0-0286-6072-1')
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by ISSN":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': "0363-0277",
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, data_type, section_type, YOP, access_method, metric_type;
+        """
+        yield (form_input, query)
+    elif request.params == "Filter by ISSN and platform":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': "EBSCO",
+            'ISBN_filter': None,
+            'ISSN_filter': "0363-0277",
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (platform='EBSCOhost')
+                AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
+            GROUP BY usage_count, resource_name, publisher, DOI, ISBN, data_type, section_type, YOP, access_method, metric_type;
+        """  # Platform name based off of value returned in test data
+        yield (form_input, query)
     elif request.param == "Filter by section type":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'data_type_filter': TR_data_types,
+            'section_type_filter': (
+                ('Book', "Book"),
+                ('Chapter', "Chapter"),
+            ),
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (section_type='Book' OR section_type='Chapter')
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, YOP, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by year of publication":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': 1995,
+            'YOP_end_filter': 2005,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND YOP>=1995 AND YOP<=2005
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by access type":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': TR_display_fields,
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'data_type_filter': TR_data_types,
+            'section_type_filter': TR_section_types,
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': (('Controlled', "Controlled")),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': TR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (access_type='Controlled')
+            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+        """
+        yield (form_input, query)
 
 
 def test_construct_TR_query_with_wizard(TR_parameters):
