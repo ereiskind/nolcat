@@ -220,7 +220,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
 
 @pytest.fixture(params=[
-    "Filter by metric type",
+    "Filter by metric type and limit fields in results",
     "Filter by platform name",
     "Filter by data type with field not in results"
     "Filter by access method",
@@ -234,14 +234,143 @@ def PR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by metric type":
-        #ToDo: Create form input and SQL query
+    PR_display_fields = (
+        ('platform', "Platform"),
+        ('data_type', "Data Type"),
+        ('access_method', "Access Method"),
+    )
+    PR_data_types = (
+        forms.data_type_values['Article'],
+        forms.data_type_values['Audiovisual'],
+        forms.data_type_values['Book'],
+        forms.data_type_values['Book_Segment'],
+        forms.data_type_values['Conference'],
+        forms.data_type_values['Conference_Item'],
+        forms.data_type_values['Database_Full_Item'],
+        forms.data_type_values['Dataset'],
+        forms.data_type_values['Image'],
+        forms.data_type_values['Interactive_Resource'],
+        forms.data_type_values['Journal'],
+        forms.data_type_values['Multimedia'],
+        forms.data_type_values['News_Item'],
+        forms.data_type_values['Newspaper_or_Newsletter'],
+        forms.data_type_values['Other'],
+        forms.data_type_values['Patent'],
+        forms.data_type_values['Platform'],
+        forms.data_type_values['Reference_Item'],
+        forms.data_type_values['Reference_Work'],
+        forms.data_type_values['Report'],
+        forms.data_type_values['Repository_Item'],
+        forms.data_type_values['Software'],
+        forms.data_type_values['Sound'],
+        forms.data_type_values['Standard'],
+        forms.data_type_values['Thesis_or_Dissertation'],
+        forms.data_type_values['Unspecified'],
+    )
+    PR_metric_types = (
+        forms.metric_type_values['Searches_Platform'],
+        forms.metric_type_values['Total_Item_Investigations'],
+        forms.metric_type_values['Unique_Item_Investigations'],
+        forms.metric_type_values['Unique_Title_Investigations'],
+        forms.metric_type_values['Total_Item_Requests'],
+        forms.metric_type_values['Unique_Item_Requests'],
+        forms.metric_type_values['Unique_Title_Requests'],
+    )
+
+    if request.param == "Filter by metric type and limit fields in results":
+        form_input = {
+            'begin_date': date.fromisoformat('2016-07-01'),
+            'end_date': date.fromisoformat('2017-06-30'),
+            'display_fields': (
+                ('platform', "Platform"),
+                ('access_method', "Access Method"),
+            ),
+            'platform_filter': None,
+            'data_type_filter': PR_data_types,
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': (
+                forms.metric_type_values['Searches_Platform'],
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
+            ),
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, platform, access_method;
+        """
+        yield (form_input, query)
     elif request.param == "Filter by platform name":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': PR_display_fields,
+            'platform_filter': "EBSCO",
+            'data_type_filter': PR_data_types,
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': PR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND platform LIKE 'EBSCOhost'
+            GROUP BY usage_count, data_type, access_method, metric_type, usage_date;
+        """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
+        yield (form_input, query)
     elif request.params == "Filter by data type with field not in results":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': (
+                ('platform', "Platform"),
+                ('access_method', "Access Method"),
+            ),
+            'platform_filter': None,
+            'data_type_filter': (forms.data_type_values['Platform']),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': PR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Platform')
+            GROUP BY usage_count, platform, access_method, metric_type;
+        """
+        yield (form_input, query)
     elif request.params == "Filter by access method":
-        #ToDo: Create form input and SQL query
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': PR_display_fields,
+            'platform_filter': None,
+            'data_type_filter': PR_data_types,
+            'access_method_filter': (('Regular', "Regular")),
+            'metric_type_filter': PR_metric_types,
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (access_method='Regular')
+            GROUP BY usage_count, platform, data_type, metric_type;
+        """
+        yield (form_input, query)
 
 
 
