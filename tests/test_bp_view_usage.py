@@ -223,7 +223,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 @pytest.fixture(params=[
     "Filter by metric type and limit fields in results",
     "Filter by platform name",
-    "Filter by data type with field not in results"
+    "Filter by data type with field not in results",
     "Filter by access method",
 ])
 def PR_parameters(request):
@@ -327,7 +327,7 @@ def PR_parameters(request):
             GROUP BY usage_count, data_type, access_method, metric_type, usage_date;
         """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
         yield (form_input, query)
-    elif request.params == "Filter by data type with field not in results":
+    elif request.param == "Filter by data type with field not in results":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -742,7 +742,7 @@ def TR_parameters(request):
             GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, data_type, section_type, YOP, access_type, access_method, metric_type;
         """
         yield (form_input, query)
-    elif request.params == "Filter by ISSN and platform":
+    elif request.param == "Filter by ISSN and platform":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
