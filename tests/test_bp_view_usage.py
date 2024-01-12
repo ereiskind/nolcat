@@ -1181,9 +1181,6 @@ def construct_PR_query_with_wizard_without_string_match(client, header_value, ca
     assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
 
 
-#ToDo: Test wizard query returning no data
-
-
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     """Tests that the page for downloading non-COUNTER compliant files can be successfully GET requested and that the response properly populates with the requested data."""
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `create_AUCT_SelectField_options()` and `query_database()`
