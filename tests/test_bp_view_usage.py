@@ -374,9 +374,43 @@ def PR_parameters(request):
 
 
 
-def test_construct_PR_query_with_wizard(PR_parameters):
+def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    form_input, query = PR_parameters
+    download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
+    POST_response = client.post(
+        '/view_usage/query-wizard/PR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    CSV_df = pd.read_csv(
+        download_location,
+        index_col='COUNTER_data_ID',
+        parse_dates=['usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    database_df = query_database(
+        query=query,
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype(COUNTERData.state_data_types())
+
+    assert POST_response.status == "200 OK"
+    assert download_location.is_file()
+    assert_frame_equal(CSV_df, database_df)
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
 @pytest.fixture(params=[
