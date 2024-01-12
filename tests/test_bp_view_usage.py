@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Passing 2024-01-11 ##########
+########## Failing 2024-01-12 ##########
 
 import pytest
 import logging
@@ -299,7 +299,7 @@ def PR_parameters(request):
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': PR_display_fields,
             'platform_filter': "EBSCO",
-            'data_type_filter': PR_data_types,
+            'data_type_filter': PR_data_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 15 were given
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': PR_metric_types,
             'open_in_Excel': False,
@@ -370,9 +370,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
-    POST_response = client.post(
-        #TEST: Filter by metric type and limit fields in results --> TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f8a9bc1fb50>, url = ('access_method', 'Access Method'), strict = True
-        #TEST: Filter by platform name --> TypeError: add_file() takes from 3 to 5 positional arguments but 28 were given --> value = (('Article', 'Article'), ('Audiovisual', 'Audiovisual*'), ('Book', 'Book'), ('Book_Segment', 'Book Segment'), ('Conference', 'Conference*'), ('Conference_Item', 'Conference Item*'), ...)
+    POST_response = client.post(  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple (Filter by metric type and limit fields in results, Filter by data type with field not in results)
         '/view_usage/query-wizard/PR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -462,7 +460,7 @@ def DR_parameters(request):
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
-            'data_type_filter': DR_data_types,
+            'data_type_filter': DR_data_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 11 were given
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Regular'],
@@ -487,7 +485,7 @@ def DR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': DR_display_fields,
+            'display_fields': DR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given
             'resource_name_filter': "eric",
             'publisher_filter': None,
             'platform_filter': None,
@@ -510,7 +508,7 @@ def DR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': DR_display_fields,
+            'display_fields': DR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given
             'resource_name_filter': None,
             'publisher_filter': "proq",
             'platform_filter': None,
@@ -540,9 +538,6 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
-        #TEST: Filter by metric types and limit fields in results --> TypeError: add_file() takes from 3 to 5 positional arguments but 23 were given --> value = (('Audiovisual', 'Audiovisual*'), ('Book', 'Book'), ('Conference', 'Conference*'), ('Database|Database_Aggregated', 'Aggregated Database*'), ('Database|Database_AI', 'A&I Database*'), ('Database|Database_Full', 'Full Text Database*'), ...)
-        #TEST: Filter by resource name --> TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> value = (('resource_name', 'Database Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('data_type', 'Data Type'), ('access_method', 'Access Method'))
-        #TEST: Filter by publisher name --> TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> value = (('resource_name', 'Database Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('data_type', 'Data Type'), ('access_method', 'Access Method'))
         '/view_usage/query-wizard/DR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -637,7 +632,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': "Pikachu's Global Adventure: The Rise and Fall of Pokémon",
             'publisher_filter': None,
             'platform_filter': None,
@@ -666,7 +661,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2017-07-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -695,7 +690,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -724,7 +719,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': "EBSCO",
@@ -754,7 +749,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -786,7 +781,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -815,7 +810,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': TR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -851,9 +846,6 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
-        #TEST: Filter by resource name with apostrophe and non-ASCII character --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
-        #TEST: Filter by ISBN --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
-        #TEST: Filter by ISSN --> TypeError: add_file() takes from 3 to 5 positional arguments but 14 were given --> value = (('resource_name', 'Title Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ('print_ISSN', 'Print ISSN'), ...)
         '/view_usage/query-wizard/TR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -945,7 +937,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': IR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -1011,7 +1003,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': IR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -1044,7 +1036,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': IR_display_fields,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -1084,9 +1076,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
     download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
-        #TEST: Filter by publication date --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
-        #TEST: Filter by parent ISBN --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
-        #TEST: Filter by parent ISSN --> TypeError: add_file() takes from 3 to 5 positional arguments but 21 were given --> value = (('resource_name', 'Item Name'), ('publisher', 'Publisher'), ('platform', 'Platform'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('ISBN', 'ISBN'), ...)
         '/view_usage/query-wizard/IR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
