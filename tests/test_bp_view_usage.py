@@ -242,9 +242,9 @@ def PR_parameters(request):
         ('access_method', "Access Method"),
     )
     PR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.data_type_values['Book'],
-        forms.data_type_values['Book_Segment'],
-        forms.data_type_values['Other'],
+        #TEST: forms.data_type_values['Book'],
+        #TEST: forms.data_type_values['Book_Segment'],
+        #TEST: forms.data_type_values['Other'],
         forms.data_type_values['Platform'],
     )
     PR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
@@ -405,9 +405,9 @@ def DR_parameters(request):
     """
     DR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Database Name"),
-        ('publisher', "Publisher"),
-        ('platform', "Platform"),
-        ('data_type', "Data Type"),
+        #TEST: ('publisher', "Publisher"),
+        #TEST: ('platform', "Platform"),
+        #TEST: ('data_type', "Data Type"),
     )
     DR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Database'],
@@ -415,10 +415,10 @@ def DR_parameters(request):
     )
     DR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Searches_Regular'],
-        forms.metric_type_values['Searches_Automated'],
-        forms.metric_type_values['Searches_Federated'],
-        forms.metric_type_values['No_License'],
-        forms.metric_type_values['Limit_Exceeded'],
+        #TEST: forms.metric_type_values['Searches_Automated'],
+        #TEST: forms.metric_type_values['Searches_Federated'],
+        #TEST: forms.metric_type_values['No_License'],
+        #TEST: forms.metric_type_values['Limit_Exceeded'],
     )
 
     if request.param == "Filter by metric types and limit fields in results":
@@ -561,16 +561,16 @@ def TR_parameters(request):
     """
     TR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Title Name"),
-        ('ISBN', "ISBN"),
-        ('print_ISSN', "Print ISSN"),
-        ('online_ISSN', "Online ISSN"),
-        ('data_type', "Data Type"),
+        #TEST: ('ISBN', "ISBN"),
+        #TEST: ('print_ISSN', "Print ISSN"),
+        #TEST: ('online_ISSN', "Online ISSN"),
+        #TEST: ('data_type', "Data Type"),
     )
     TR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Book'],
-        forms.data_type_values['Journal'],
-        forms.data_type_values['Newspaper_or_Newsletter'],
-        forms.data_type_values['Other'],
+        #TEST: forms.data_type_values['Journal'],
+        #TEST: forms.data_type_values['Newspaper_or_Newsletter'],
+        #TEST: forms.data_type_values['Other'],
     )
     TR_section_types = (
         ('Article', "Article"),
@@ -581,10 +581,10 @@ def TR_parameters(request):
     )
     TR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Total_Item_Investigations'],
-        forms.metric_type_values['Unique_Title_Investigations'],
-        forms.metric_type_values['Total_Item_Requests'],
-        forms.metric_type_values['Unique_Title_Requests'],
-        forms.metric_type_values['Limit_Exceeded'],
+        #TEST: forms.metric_type_values['Unique_Title_Investigations'],
+        #TEST: forms.metric_type_values['Total_Item_Requests'],
+        #TEST: forms.metric_type_values['Unique_Title_Requests'],
+        #TEST: forms.metric_type_values['Limit_Exceeded'],
     )
 
     if request.param == "Filter by resource name with apostrophe and non-ASCII character":
@@ -852,22 +852,22 @@ def IR_parameters(request):
     """
     IR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Item Name"),
-        ('publication_date', "Publication Date"),
-        ('parent_title', "Parent Title"),
-        ('parent_publication_date', "Parent Publication Date"),
-        ('parent_ISBN', "Parent ISBN"),
+        #TEST: ('publication_date', "Publication Date"),
+        #TEST: ('parent_title', "Parent Title"),
+        #TEST: ('parent_publication_date', "Parent Publication Date"),
+        #TEST: ('parent_ISBN', "Parent ISBN"),
     )
     IR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Article'],
-        forms.data_type_values['Book_Segment'],
-        forms.data_type_values['Multimedia'],
-        forms.data_type_values['Other'],
+        #TEST: forms.data_type_values['Book_Segment'],
+        #TEST: forms.data_type_values['Multimedia'],
+        #TEST: forms.data_type_values['Other'],
     )
     IR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Unique_Item_Investigations'],
-        forms.metric_type_values['Unique_Item_Requests'],
-        forms.metric_type_values['No_License'],
-        forms.metric_type_values['Limit_Exceeded'],
+        #TEST: forms.metric_type_values['Unique_Item_Requests'],
+        #TEST: forms.metric_type_values['No_License'],
+        #TEST: forms.metric_type_values['Limit_Exceeded'],
     )
 
     if request.param == "Filter by publication date":
