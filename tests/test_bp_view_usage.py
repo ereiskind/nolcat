@@ -21,18 +21,16 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def COUNTER_download_CSV(download_destination):
+def COUNTER_download_CSV():
     """Provides the file path for a CSV download of COUNTER usage data, then removes that CSV at the end of the test.
 
     This fixture provides a constant name for all the CSVs being created, which is then used as the file removal target; a constant name is required because fixtures only accept other fixtures as arguments.
 
-    Args:
-        download_destination (pathlib.Path): an absolute path to a folder where all downloads will go
-
     Yields:
         pathlib.Path: an absolute file path to a CSV download of COUNTER usage data
     """
-    file_path = download_destination / 'NoLCAT_download.csv'
+    file_path = views.create_downloads_folder() / 'NoLCAT_download.csv'
+    log.debug(f"The file path `{file_path}` is type {type(file_path)}.")
     yield file_path
     try:
         file_path.unlink(missing_ok=True)
