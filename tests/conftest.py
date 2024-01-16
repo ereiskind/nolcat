@@ -238,7 +238,7 @@ def download_destination():
     else:  # *Nix systems, including macOS
         yield Path(os.getenv('HOME')) / 'Downloads'
     '''
-    yield Path(__file__).parent
+    yield TOP_NOLCAT_DIRECTORY / 'tests' / 'downloads'
 
 
 @pytest.fixture(params=[
