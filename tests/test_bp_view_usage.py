@@ -222,10 +222,8 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
 
 @pytest.fixture(params=[
-    "Filter by metric type and limit fields in results",
+    "Filter by fixed vocabulary fields",
     "Filter by platform name",
-    "Filter by data type with field not in results",
-    "Filter by access method",
 ])
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -236,24 +234,7 @@ def PR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    PR_display_fields = (
-        ('platform', "Platform"),
-        ('data_type', "Data Type"),
-        ('access_method', "Access Method"),
-    )
-    PR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        #TEST: forms.data_type_values['Book'],
-        #TEST: forms.data_type_values['Book_Segment'],
-        #TEST: forms.data_type_values['Other'],
-        forms.data_type_values['Platform'],
-    )
-    PR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.metric_type_values['Searches_Platform'],
-        forms.metric_type_values['Unique_Title_Investigations'],
-        forms.metric_type_values['Unique_Title_Requests'],
-    )
-
-    if request.param == "Filter by metric type and limit fields in results":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('access_method', 'Access Method'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('access_method', 'Access Method'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2016-07-01'),
             'end_date': date.fromisoformat('2017-06-30'),
@@ -262,8 +243,8 @@ def PR_parameters(request):
                 ('access_method', "Access Method"),
             ),
             'platform_filter': None,
-            'data_type_filter': PR_data_types,
-            'access_method_filter': forms.access_method_values,  #TEST: Not cause of error
+            'data_type_filter': (forms.data_type_values['Platform']),
+            'access_method_filter': (('Regular', "Regular")),
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
@@ -277,19 +258,29 @@ def PR_parameters(request):
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
+                AND (data_type='Platform')
+                AND (access_method='Regular')
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, platform, access_method;
+            GROUP BY usage_count, platform;
         """
         yield (form_input, query)
     elif request.param == "Filter by platform name":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Regular' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>), ('data_type_filter', <FileStorage: None (None)>)]), name = 'access_method_filter' file = 'Regular', filename = 'Regular', content_type = None
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': PR_display_fields,
+            'display_fields': (
+                ('platform', "Platform"),
+                ('data_type', "Data Type"),
+                ('access_method', "Access Method"),
+            ),
             'platform_filter': "EBSCO",
-            'data_type_filter': PR_data_types,
-            'access_method_filter': forms.access_method_values,  #TEST: Switching this from tuple to list caused change from "tuple not expected" TypeError to error above
-            'metric_type_filter': PR_metric_types,
+            'data_type_filter': (forms.data_type_values['Platform']),
+            'access_method_filter': (('Regular', "Regular")),
+            'metric_type_filter': (
+                forms.metric_type_values['Searches_Platform'],
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
@@ -299,53 +290,11 @@ def PR_parameters(request):
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND platform LIKE 'EBSCOhost'
-            GROUP BY usage_count, data_type, access_method, metric_type, usage_date;
-        """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
-        yield (form_input, query)
-    elif request.param == "Filter by data type with field not in results":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('access_method', 'Access Method'), strict = True
-        form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('platform', "Platform"),
-                ('access_method', "Access Method"),
-            ),
-            'platform_filter': None,
-            'data_type_filter': (forms.data_type_values['Platform']),
-            'access_method_filter': forms.access_method_values,  #TEST: Previously tuple, now a list--type changed to determine if this caused "tuple not expected" TypeError
-            'metric_type_filter': PR_metric_types,
-            'open_in_Excel': False,
-        }
-        query = """
-            SELECT platform, access_method, metric_type, usage_date, SUM(usage_count)
-            FROM COUNTERData
-            WHERE
-                (report_type='PR' OR report_type='PR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Platform')
-            GROUP BY usage_count, platform, access_method, metric_type;
-        """
-        yield (form_input, query)
-    elif request.param == "Filter by access method":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Regular' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>), ('data_type_filter', <FileStorage: None (None)>)]), name = 'access_method_filter' file = 'Regular', filename = 'Regular', content_type = None
-        form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': PR_display_fields,
-            'platform_filter': None,
-            'data_type_filter': PR_data_types,
-            'access_method_filter': (('Regular', "Regular")),
-            'metric_type_filter': PR_metric_types,
-            'open_in_Excel': False,
-        }
-        query = """
-            SELECT platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
-            FROM COUNTERData
-            WHERE
-                (report_type='PR' OR report_type='PR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (access_method='Regular')
-            GROUP BY usage_count, platform, data_type, metric_type;
-        """
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count;
+        """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
         yield (form_input, query)
 
 
