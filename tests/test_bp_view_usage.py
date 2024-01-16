@@ -240,28 +240,15 @@ def PR_parameters(request):
         ('data_type', "Data Type"),
         ('access_method', "Access Method"),
     )
-    PR_data_types = (
-        forms.data_type_values['Article'],
+    PR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Book'],
         forms.data_type_values['Book_Segment'],
-        forms.data_type_values['Dataset'],
-        forms.data_type_values['Journal'],
-        forms.data_type_values['Multimedia'],
-        forms.data_type_values['Newspaper_or_Newsletter'],
         forms.data_type_values['Other'],
         forms.data_type_values['Platform'],
-        forms.data_type_values['Report'],
-        forms.data_type_values['Repository_Item'],
-        forms.data_type_values['Thesis_or_Dissertation'],
-        forms.data_type_values['Unspecified'],
     )
-    PR_metric_types = (
+    PR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Searches_Platform'],
-        forms.metric_type_values['Total_Item_Investigations'],
-        forms.metric_type_values['Unique_Item_Investigations'],
         forms.metric_type_values['Unique_Title_Investigations'],
-        forms.metric_type_values['Total_Item_Requests'],
-        forms.metric_type_values['Unique_Item_Requests'],
         forms.metric_type_values['Unique_Title_Requests'],
     )
 
@@ -416,34 +403,20 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    DR_display_fields = (
+    DR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Database Name"),
         ('publisher', "Publisher"),
         ('platform', "Platform"),
         ('data_type', "Data Type"),
-        ('access_method', "Access Method"),
     )
-    DR_data_types = (
-        forms.data_type_values['Book'],
+    DR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Database'],
-        forms.data_type_values['Journal'],
-        forms.data_type_values['Multimedia'],
-        forms.data_type_values['Newspaper_or_Newsletter'],
         forms.data_type_values['Other'],
-        forms.data_type_values['Report'],
-        forms.data_type_values['Thesis_or_Dissertation'],
-        forms.data_type_values['Unspecified'],
     )
-    DR_metric_types = (
+    DR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Searches_Regular'],
         forms.metric_type_values['Searches_Automated'],
         forms.metric_type_values['Searches_Federated'],
-        forms.metric_type_values['Total_Item_Investigations'],
-        forms.metric_type_values['Unique_Item_Investigations'],
-        forms.metric_type_values['Unique_Title_Investigations'],
-        forms.metric_type_values['Total_Item_Requests'],
-        forms.metric_type_values['Unique_Item_Requests'],
-        forms.metric_type_values['Unique_Title_Requests'],
         forms.metric_type_values['No_License'],
         forms.metric_type_values['Limit_Exceeded'],
     )
@@ -587,28 +560,18 @@ def TR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    TR_display_fields = (
+    TR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Title Name"),
-        ('publisher', "Publisher"),
-        ('platform', "Platform"),
-        ('DOI', "DOI"),
         ('ISBN', "ISBN"),
         ('print_ISSN', "Print ISSN"),
         ('online_ISSN', "Online ISSN"),
         ('data_type', "Data Type"),
-        ('section_type', "Section Type"),
-        ('YOP', "Year of Publication"),
-        ('access_type', "Access Type"),
-        ('access_method', "Access Method"),
     )
-    TR_data_types = (
+    TR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Book'],
         forms.data_type_values['Journal'],
         forms.data_type_values['Newspaper_or_Newsletter'],
         forms.data_type_values['Other'],
-        forms.data_type_values['Report'],
-        forms.data_type_values['Thesis_or_Dissertation'],
-        forms.data_type_values['Unspecified'],
     )
     TR_section_types = (
         ('Article', "Article"),
@@ -617,14 +580,11 @@ def TR_parameters(request):
         ('Other', "Other"),
         ('Section', "Section"),
     )
-    TR_metric_types = (
+    TR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Total_Item_Investigations'],
-        forms.metric_type_values['Unique_Item_Investigations'],
         forms.metric_type_values['Unique_Title_Investigations'],
         forms.metric_type_values['Total_Item_Requests'],
-        forms.metric_type_values['Unique_Item_Requests'],
         forms.metric_type_values['Unique_Title_Requests'],
-        forms.metric_type_values['No_License'],
         forms.metric_type_values['Limit_Exceeded'],
     )
 
@@ -892,42 +852,21 @@ def IR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    IR_display_fields = (
+    IR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         ('resource_name', "Item Name"),
-        ('publisher', "Publisher"),
-        ('platform', "Platform"),
         ('publication_date', "Publication Date"),
-        ('DOI', "DOI"),
-        ('ISBN', "ISBN"),
-        ('print_ISSN', "Print ISSN"),
-        ('online_ISSN', "Online ISSN"),
         ('parent_title', "Parent Title"),
         ('parent_publication_date', "Parent Publication Date"),
-        ('parent_data_type', "Parent Data Type"),
-        ('parent_DOI', "Parent DOI"),
         ('parent_ISBN', "Parent ISBN"),
-        ('parent_print_ISSN', "Parent Print ISSN"),
-        ('parent_online_ISSN', "Parent Online ISSN"),
-        ('data_type', "Data Type"),
-        ('YOP', "Year of Publication"),
-        ('access_type', "Access Type"),
-        ('access_method', "Access Method"),
     )
-    IR_data_types = (
+    IR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.data_type_values['Article'],
         forms.data_type_values['Book_Segment'],
-        forms.data_type_values['Dataset'],
         forms.data_type_values['Multimedia'],
         forms.data_type_values['Other'],
-        forms.data_type_values['Report'],
-        forms.data_type_values['Repository_Item'],
-        forms.data_type_values['Thesis_or_Dissertation'],
-        forms.data_type_values['Unspecified'],
     )
-    IR_metric_types = (
-        forms.metric_type_values['Total_Item_Investigations'],
+    IR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
         forms.metric_type_values['Unique_Item_Investigations'],
-        forms.metric_type_values['Total_Item_Requests'],
         forms.metric_type_values['Unique_Item_Requests'],
         forms.metric_type_values['No_License'],
         forms.metric_type_values['Limit_Exceeded'],
