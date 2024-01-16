@@ -133,7 +133,7 @@ def run_custom_SQL_query():
     log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
     if request.method == 'GET':
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
@@ -147,7 +147,7 @@ def run_custom_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -157,7 +157,7 @@ def run_custom_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -178,7 +178,7 @@ def use_predefined_SQL_query():
     log.info("Starting `use_predefined_SQL_query()`.")
     form = PresetQueryForm()
     if request.method == 'GET':
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
@@ -290,7 +290,7 @@ def use_predefined_SQL_query():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -300,7 +300,7 @@ def use_predefined_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -516,7 +516,7 @@ def construct_PR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -526,7 +526,7 @@ def construct_PR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -676,7 +676,7 @@ def construct_DR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -686,7 +686,7 @@ def construct_DR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -882,7 +882,7 @@ def construct_TR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -892,7 +892,7 @@ def construct_TR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -1126,7 +1126,7 @@ def construct_IR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = create_downloads_folder / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
@@ -1136,7 +1136,7 @@ def construct_IR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(create_downloads_folder))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
         return send_file(
             path_or_file=file_path,
             mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
@@ -1158,8 +1158,8 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r"\d*_\d{4}\.\w{3,4}")
-        log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder, False))
-        for file in create_downloads_folder.iterdir():
+        log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder(), False))
+        for file in create_downloads_folder().iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
                 log.debug(check_if_file_exists_statement(file))
@@ -1219,7 +1219,7 @@ def download_non_COUNTER_usage():
         )
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
-        file_path = AUCT_object.download_nonstandard_usage_file(create_downloads_folder)
+        file_path = AUCT_object.download_nonstandard_usage_file(create_downloads_folder())
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
         log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         return send_file(
