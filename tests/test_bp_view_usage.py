@@ -1128,7 +1128,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, download_destination, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create file in S3 and instance and remove file from S3 for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
     
@@ -1142,10 +1142,9 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    file_path = download_destination / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
+    file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
     #ToDo: Read file at file_path
     
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) starts {prepare_HTML_page_for_comparison(POST_response.data)[:250]}\nand ends\n{prepare_HTML_page_for_comparison(POST_response.data)[-250:]}")  #TEST: temp
     log.info(f"Location of downloaded file: {file_path.is_file()}")  #TEST: confirm assert
     #ToDo: Confirm contents of file at `file_path` and file at `non_COUNTER_AUCT_object_after_upload.usage_file_path` are the same
     assert POST_response.status == "200 OK"
