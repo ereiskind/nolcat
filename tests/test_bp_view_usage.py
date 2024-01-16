@@ -502,13 +502,12 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
 
 @pytest.fixture(params=[
+    "Filter by fixed vocabulary fields"
     "Filter by resource name with apostrophe and non-ASCII character",
     "Filter by ISBN",
     "Filter by ISSN",
     "Filter by ISSN and platform",
-    "Filter by section type",
     "Filter by year of publication",
-    "Filter by access type",
 ])
 def TR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -519,241 +518,296 @@ def TR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    TR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        ('resource_name', "Title Name"),
-        #TEST: ('ISBN', "ISBN"),
-        #TEST: ('print_ISSN', "Print ISSN"),
-        #TEST: ('online_ISSN', "Online ISSN"),
-        #TEST: ('data_type', "Data Type"),
-    )
-    TR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.data_type_values['Book'],
-        #TEST: forms.data_type_values['Journal'],
-        #TEST: forms.data_type_values['Newspaper_or_Newsletter'],
-        #TEST: forms.data_type_values['Other'],
-    )
-    TR_section_types = (
-        ('Article', "Article"),
-        ('Book', "Book"),
-        ('Chapter', "Chapter"),
-        ('Other', "Other"),
-        ('Section', "Section"),
-    )
-    TR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.metric_type_values['Total_Item_Investigations'],
-        #TEST: forms.metric_type_values['Unique_Title_Investigations'],
-        #TEST: forms.metric_type_values['Total_Item_Requests'],
-        #TEST: forms.metric_type_values['Unique_Title_Requests'],
-        #TEST: forms.metric_type_values['Limit_Exceeded'],
-    )
-
-    #filter by fixed vocabulary fields
-
-    if request.param == "Filter by resource name with apostrophe and non-ASCII character":
+    if request.param == "Filter by fixed vocabulary fields":
         form_input = {
             'begin_date': date.fromisoformat('2019-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': TR_display_fields,
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('data_type', "Data Type"),
+                ('section_type', "Section Type"),
+                ('access_type', "Access Type"),
+                ('access_method', "Access Method"),
+            ),
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'data_type_filter': (
+                forms.data_type_values['Book'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (
+                ('Book', "Book"),
+                ('Chapter', "Chapter"),
+                ('Other', "Other"),
+            ),
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': (('Controlled', "Controlled")),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['Unique_Title_Investigations'],
+            ),
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, data_type, section_type, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
+                AND (data_type='Book' OR data_type='Other')
+                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
+                AND (access_type='Controlled')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Title_Investigations')
+            GROUP BY usage_count, access_method;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('publisher', "Publisher"),
+                ('platform', "Platform"),
+                ('DOI', "DOI"),
+            ),
             'resource_name_filter': "Pikachu's Global Adventure: The Rise and Fall of Pokémon",
             'publisher_filter': None,
             'platform_filter': None,
             'ISBN_filter': None,
             'ISSN_filter': None,
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78823280>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'data_type_filter': (
+                forms.data_type_values['Book'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78823280>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+                ('Book', "Book"),
+                ('Chapter', "Chapter"),
+                ('Other', "Other"),
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['Unique_Title_Investigations'],
+                forms.metric_type_values['Unique_Title_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, DOI, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
                 AND (resource_name='Pikachu\'s Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>')
-            GROUP BY usage_count, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Book' OR data_type='Other')
+                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests' OR metric_type='Successful Title Requests')
+            GROUP BY usage_count, publisher, platform, DOI;
         """  # Resource name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
         form_input = {
             'begin_date': date.fromisoformat('2017-07-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('ISBN', "ISBN"),
+                ('data_type', "Data Type"),
+                ('section_type', "Section Type"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
             'ISBN_filter': "978-0-0286-6072-1",
             'ISSN_filter': None,
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b14d60>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'data_type_filter': (
+                forms.data_type_values['Book'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b14d60>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+                ('Book', "Book"),
+                ('Chapter', "Chapter"),
+                ('Other', "Other"),
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Unique_Title_Investigations'],
+                forms.metric_type_values['Unique_Title_Requests'],
+                forms.metric_type_values['No_License'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, ISBN, data_type, section_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2017-07-01' AND usage_date<='2019-12-31'
                 AND (ISBN='978-0-0286-6072-1')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Book' OR data_type='Other')
+                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
+                AND (metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests' OR metric_type='Successful Title Requests' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('print_ISSN', "Print ISSN"),
+                ('online_ISSN', "Online ISSN"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
             'ISBN_filter': None,
             'ISSN_filter': "0363-0277",
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78c7fc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'data_type_filter': (
+                forms.data_type_values['Journal'],
+                forms.data_type_values['Newspaper_or_Newsletter'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (
+                ('Article', "Article"),
+                ('Other', "Other"),
+                ('Section', "Section"),
+            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78c7fc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Requests'],
+                forms.metric_type_values['Limit_Exceeded'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, print_ISSN, online_ISSN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, data_type, section_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Journal' OR data_type='Newspaper_or_Newsletter' OR data_type='Other')
+                AND (section_type='Article' OR section_type='Other' OR section_type='Section')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN and platform":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('platform', "Platform"),
+                ('print_ISSN', "Print ISSN"),
+                ('online_ISSN', "Online ISSN"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': "EBSCO",
             'ISBN_filter': None,
             'ISSN_filter': "0363-0277",
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c7899cc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'data_type_filter': (
+                forms.data_type_values['Journal'],
+                forms.data_type_values['Newspaper_or_Newsletter'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (
+                ('Article', "Article"),
+                ('Other', "Other"),
+                ('Section', "Section"),
+            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c7899cc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, platform, print_ISSN, online_ISSN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (platform='EBSCOhost')
                 AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
-            GROUP BY usage_count, resource_name, publisher, DOI, ISBN, data_type, section_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Journal' OR data_type='Newspaper_or_Newsletter' OR data_type='Other')
+                AND (section_type='Article' OR section_type='Other' OR section_type='Section')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name;
         """  # Platform name based off of value returned in test data
-        yield (form_input, query)
-    elif request.param == "Filter by section type":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Chapter', 'Chapter'), strict = True
-        form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
-            'ISBN_filter': None,
-            'ISSN_filter': None,
-            'data_type_filter': TR_data_types,
-            'section_type_filter': (
-                ('Book', "Book"),
-                ('Chapter', "Chapter"),
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
-            'open_in_Excel': False,
-        }
-        query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
-            FROM COUNTERData
-            WHERE
-                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (section_type='Book' OR section_type='Chapter')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, YOP, access_type, access_method, metric_type;
-        """
         yield (form_input, query)
     elif request.param == "Filter by year of publication":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
+            'display_fields': (
+                ('resource_name', "Title Name"),
+                ('DOI', "DOI"),
+                ('YOP', "Year of Publication"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
             'ISBN_filter': None,
             'ISSN_filter': None,
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b31460>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'data_type_filter': (
+                forms.data_type_values['Journal'],
+                forms.data_type_values['Newspaper_or_Newsletter'],
+                forms.data_type_values['Other'],
+            ),
+            'section_type_filter': (
+                ('Article', "Article"),
+                ('Other', "Other"),
+                ('Section', "Section"),
+            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b31460>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
             'YOP_start_filter': 1995,
             'YOP_end_filter': 2005,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Requests'],
+                forms.metric_type_values['No_License'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, DOI, YOP, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Journal' OR data_type='Newspaper_or_Newsletter' OR data_type='Other')
+                AND (section_type='Article' OR section_type='Other' OR section_type='Section')
                 AND YOP>=1995 AND YOP<=2005
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, access_type, access_method, metric_type;
-        """
-        yield (form_input, query)
-    elif request.param == "Filter by access type":
-        form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': TR_display_fields,
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
-            'ISBN_filter': None,
-            'ISSN_filter': None,
-            'data_type_filter': TR_data_types,
-            'section_type_filter': TR_section_types,  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78960a00>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': (('Controlled', "Controlled")),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': TR_metric_types,
-            'open_in_Excel': False,
-        }
-        query = """
-            SELECT resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
-            FROM COUNTERData
-            WHERE
-                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (access_type='Controlled')
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, data_type, section_type, YOP, access_method, metric_type;
+                AND (metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
+            GROUP BY usage_count, resource_name, DOI;
         """
         yield (form_input, query)
 
