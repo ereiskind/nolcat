@@ -312,7 +312,7 @@ def PR_parameters(request):
             ),
             'platform_filter': None,
             'data_type_filter': (forms.data_type_values['Platform']),
-            'access_method_filter': tuple(forms.access_method_values),
+            'access_method_filter': forms.access_method_values,  #TEST: Previously tuple, now a list--type changed to determine if this caused "tuple not expected" TypeError
             'metric_type_filter': PR_metric_types,
             'open_in_Excel': False,
         }
