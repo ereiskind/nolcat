@@ -339,7 +339,7 @@ def start_query_wizard():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
-        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")  #TEST: Getting expected results for both date input types here; why is it being rejected below?
+        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")
         return redirect(url_for('view_usage.query_wizard_sort_redirect', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
