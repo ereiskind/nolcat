@@ -262,7 +262,7 @@ def PR_parameters(request):
             ),
             'platform_filter': None,
             'data_type_filter': PR_data_types,
-            'access_method_filter': tuple(forms.access_method_values),
+            'access_method_filter': forms.access_method_values,  #TEST: Previously tuple, now a list--type changed to determine if this caused "tuple not expected" TypeError below
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
