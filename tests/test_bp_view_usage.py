@@ -339,7 +339,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
 
 @pytest.fixture(params=[
-    "Filter by metric types and limit fields in results",
+    "Filter by fixed vocabulary fields",
     "Filter by resource name",
     "Filter by publisher name",
 ])
@@ -352,25 +352,7 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    DR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        ('resource_name', "Database Name"),
-        #TEST: ('publisher', "Publisher"),
-        #TEST: ('platform', "Platform"),
-        #TEST: ('data_type', "Data Type"),
-    )
-    DR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.data_type_values['Database'],
-        forms.data_type_values['Other'],
-    )
-    DR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.metric_type_values['Searches_Regular'],
-        #TEST: forms.metric_type_values['Searches_Automated'],
-        #TEST: forms.metric_type_values['Searches_Federated'],
-        #TEST: forms.metric_type_values['No_License'],
-        #TEST: forms.metric_type_values['Limit_Exceeded'],
-    )
-
-    if request.param == "Filter by metric types and limit fields in results":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -382,7 +364,10 @@ def DR_parameters(request):
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
-            'data_type_filter': DR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Database'],
+                forms.data_type_values['Other'],
+            ),
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Regular'],
@@ -399,7 +384,8 @@ def DR_parameters(request):
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+                AND (data_type='Database' OR data_type='Other')
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
             GROUP BY usage_count, resource_name, publisher, platform;
         """
         yield (form_input, query)
@@ -407,46 +393,71 @@ def DR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': DR_display_fields,
+            'display_fields': (
+                ('resource_name', "Database Name"),
+                ('publisher', "Publisher"),
+                ('platform', "Platform"),
+            ),
             'resource_name_filter': "eric",
             'publisher_filter': None,
             'platform_filter': None,
-            'data_type_filter': DR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Database'],
+                forms.data_type_values['Journal'],
+            ),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': DR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Searches_Regular'],
+                forms.metric_type_values['No_License'],
+                forms.metric_type_values['Limit_Exceeded'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (resource_name='ERIC' OR resource_name='Historical Abstracts' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection' OR resource_name='Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online Foundation Collection 3' OR resource_name='01 Periodicals Archive Online Foundation Collection 1' OR resource_name='Social Science Premium Collection->Education Collection->ERIC')
-            GROUP BY usage_count, publisher, platform, data_type, access_method, metric_type;
+                AND (data_type='Database' OR data_type='Journal')
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+            GROUP BY usage_count, publisher, platform, access_method, metric_type;
         """  # Resource names based off of values returned in test data
         yield (form_input, query)
     elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': DR_display_fields,
+            'display_fields': (
+                ('resource_name', "Database Name"),
+                ('publisher', "Publisher"),
+                ('platform', "Platform"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': "proq",
             'platform_filter': None,
-            'data_type_filter': DR_data_types,
+            'data_type_filter':(
+                forms.data_type_values['Book'],
+                forms.data_type_values['Database'],
+            ),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': DR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Searches_Regular'],
+                forms.metric_type_values['Limit_Exceeded'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publisher, platform, access_method, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (publisher='ProQuest')
-            GROUP BY usage_count, resource_name, platform, data_type, access_method, metric_type;
+                AND (data_type='Book' OR data_type='Database')
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+            GROUP BY usage_count, resource_name, platform, access_method, metric_type;
         """  # Publisher name based off of values returned in test data
         yield (form_input, query)
 
@@ -535,6 +546,8 @@ def TR_parameters(request):
         #TEST: forms.metric_type_values['Unique_Title_Requests'],
         #TEST: forms.metric_type_values['Limit_Exceeded'],
     )
+
+    #filter by fixed vocabulary fields
 
     if request.param == "Filter by resource name with apostrophe and non-ASCII character":
         form_input = {
@@ -818,6 +831,8 @@ def IR_parameters(request):
         #TEST: forms.metric_type_values['No_License'],
         #TEST: forms.metric_type_values['Limit_Exceeded'],
     )
+
+    #filter by fixed vocabulary fields
 
     if request.param == "Filter by publication date":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
