@@ -263,7 +263,7 @@ def PR_parameters(request):
             ),
             'platform_filter': None,
             'data_type_filter': PR_data_types,
-            'access_method_filter': forms.access_method_values,  #TEST: Previously tuple, now a list--type changed to determine if this caused "tuple not expected" TypeError below
+            'access_method_filter': forms.access_method_values,  #TEST: Not cause of error
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
@@ -281,14 +281,14 @@ def PR_parameters(request):
             GROUP BY usage_count, platform, access_method;
         """
         yield (form_input, query)
-    elif request.param == "Filter by platform name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    elif request.param == "Filter by platform name":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Regular' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>), ('data_type_filter', <FileStorage: None (None)>)]), name = 'access_method_filter' file = 'Regular', filename = 'Regular', content_type = None
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': PR_display_fields,
             'platform_filter': "EBSCO",
             'data_type_filter': PR_data_types,
-            'access_method_filter': forms.access_method_values,  #TEST: Previously tuple, now a list--type changed to determine if this caused "tuple not expected" TypeError
+            'access_method_filter': forms.access_method_values,  #TEST: Switching this from tuple to list caused change from "tuple not expected" TypeError to error above
             'metric_type_filter': PR_metric_types,
             'open_in_Excel': False,
         }
