@@ -1142,7 +1142,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    file_path = download_destination / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}{non_COUNTER_AUCT_object_after_upload.usage_file_path.suffix}'
+    file_path = download_destination / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
     #ToDo: Read file at file_path
     
     log.info(f"`POST_response.data` (type {type(POST_response.data)}) starts {prepare_HTML_page_for_comparison(POST_response.data)[:250]}\nand ends\n{prepare_HTML_page_for_comparison(POST_response.data)[-250:]}")  #TEST: temp
