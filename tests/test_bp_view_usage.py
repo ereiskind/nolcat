@@ -1130,9 +1130,10 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, download_destination, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+    
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
@@ -1143,9 +1144,11 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is very long")  #TEST: temp
-    log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"  #TEST: confirm assert
-    log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()  #TEST: confirm assert
+    file_path = download_destination / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}{non_COUNTER_AUCT_object_after_upload.usage_file_path.suffix}'
+    #ToDo: Read file at file_path
+    
+    log.info(f"`POST_response.data` (type {type(POST_response.data)}) starts {prepare_HTML_page_for_comparison(POST_response.data)[:250]}\nand ends\n{prepare_HTML_page_for_comparison(POST_response.data)[-250:]}")  #TEST: temp
+    log.info(f"Location of downloaded file: {file_path.is_file()}")  #TEST: confirm assert
+    #ToDo: Confirm contents of file at `file_path` and file at `non_COUNTER_AUCT_object_after_upload.usage_file_path` are the same
+    assert POST_response.status == "200 OK"
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
-    pass
