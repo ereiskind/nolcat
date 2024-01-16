@@ -21,18 +21,21 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def remove_COUNTER_download_CSV():
-    """Removes a CSV download of COUNTER usage data.
+def COUNTER_download_CSV(download_destination):
+    """Provides the file path for a CSV download of COUNTER usage data, then removes that CSV at the end of the test.
 
-    This fixture exists purely for cleanup--the file is created by the function being tested. Since fixtures only accept other fixtures as arguments, this cannot be used for files of various names.
+    This fixture provides a constant name for all the CSVs being created, which is then used as the file removal target; a constant name is required because fixtures only accept other fixtures as arguments.
+
+    Args:
+        download_destination (pathlib.Path): an absolute path to a folder where all downloads will go
 
     Yields:
-        None
+        pathlib.Path: an absolute file path to a CSV download of COUNTER usage data
     """
-    file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
-    yield None
+    file_path = download_destination / 'NoLCAT_download.csv'
+    yield file_path
     try:
-        file_path.unlink()
+        file_path.unlink(missing_ok=True)
     except Exception as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
@@ -82,7 +85,7 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
     form_input = {
@@ -97,11 +100,11 @@ def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
     assert POST_response.status == "200 OK"
-    assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert COUNTER_download_CSV.is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -135,7 +138,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     CSV_df = pd.read_csv(
-        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
@@ -153,7 +156,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', 'NoLCAT_download.csv').is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -349,14 +352,13 @@ def PR_parameters(request):
 
 
 
-def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple (Filter by metric type and limit fields in results, Filter by data type with field not in results)
         '/view_usage/query-wizard/PR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
@@ -366,7 +368,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     CSV_df = pd.read_csv(
-        download_location,
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
@@ -384,7 +386,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert download_location.is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -502,14 +504,13 @@ def DR_parameters(request):
         yield (form_input, query)
 
 
-def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_DR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = DR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         '/view_usage/query-wizard/DR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
@@ -519,7 +520,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     CSV_df = pd.read_csv(
-        download_location,
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
@@ -537,7 +538,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert download_location.is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -797,14 +798,13 @@ def TR_parameters(request):
         yield (form_input, query)
 
 
-def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_TR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = TR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         '/view_usage/query-wizard/TR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
@@ -814,7 +814,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     CSV_df = pd.read_csv(
-        download_location,
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
@@ -832,7 +832,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert download_location.is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -1006,14 +1006,13 @@ def IR_parameters(request):
         yield (form_input, query)
 
 
-def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_IR_query_with_wizard()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
 
     form_input, query = IR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    download_location = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
     POST_response = client.post(
         '/view_usage/query-wizard/IR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
@@ -1023,7 +1022,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     CSV_df = pd.read_csv(
-        download_location,
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
@@ -1041,7 +1040,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert download_location.is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
