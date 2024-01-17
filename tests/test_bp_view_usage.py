@@ -539,6 +539,7 @@ def TR_parameters(request):
             'data_type_filter': (
                 forms.data_type_values['Book'],
                 forms.data_type_values['Other'],
+                forms.data_type_values['Unspecified'],
             ),
             'section_type_filter': (
                 ('Book', "Book"),
@@ -562,7 +563,7 @@ def TR_parameters(request):
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
-                AND (data_type='Book' OR data_type='Other')
+                AND (data_type='Book' OR data_type='Other' OR data_type='Unspecified')
                 AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
                 AND (access_type='Controlled')
                 AND (access_method='Regular')
