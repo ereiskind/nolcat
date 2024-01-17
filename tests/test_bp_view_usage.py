@@ -244,7 +244,9 @@ def PR_parameters(request):
             ),
             'platform_filter': None,
             'data_type_filter': (forms.data_type_values['Platform']),
-            'access_method_filter': tuple('Regular'),  #ALERT: Changed from string
+            'access_method_filter': 'Regular',
+            #TEST:
+                # `tuple('Regular')` --> PR_parameters = ({'access_method_filter': ('R', 'e', 'g', 'u', 'l', 'a', ...), 'begin_date': datetime.date(2016, 7, 1), 'data_type_fil...n Requests' OR metric_type='Successful Content Unit Requests')\n   GROUP BY usage_count, platform;\n        ")
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
