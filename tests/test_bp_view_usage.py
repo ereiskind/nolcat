@@ -502,7 +502,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
 
 @pytest.fixture(params=[
-    "Filter by fixed vocabulary fields"
+    "Filter by fixed vocabulary fields",
     "Filter by resource name with apostrophe and non-ASCII character",
     "Filter by ISBN",
     "Filter by ISSN",
