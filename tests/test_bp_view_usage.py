@@ -369,6 +369,7 @@ def DR_parameters(request):
             'data_type_filter': (
                 forms.data_type_values['Database'],
                 forms.data_type_values['Other'],
+                forms.data_type_values['Unspecified'],
             ),
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': (
@@ -386,7 +387,7 @@ def DR_parameters(request):
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (data_type='Database' OR data_type='Other')
+                AND (data_type='Database' OR data_type='Other'' OR data_type='Unspecified')
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
             GROUP BY usage_count, resource_name, publisher, platform;
         """
