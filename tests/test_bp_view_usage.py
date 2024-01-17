@@ -364,9 +364,9 @@ def DR_parameters(request):
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
-            'data_type_filter': (  #TEST: Using index operators to get only the data values, not the display values
-                forms.data_type_values['Database'][0],
-                forms.data_type_values['Other'][0],
+            'data_type_filter': (
+                forms.data_type_values['Database'],
+                forms.data_type_values['Other'],
             ),
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': (
