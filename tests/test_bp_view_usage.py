@@ -243,12 +243,12 @@ def PR_parameters(request):
                 ('access_method', "Access Method"),
             ),
             'platform_filter': None,
-            'data_type_filter': (forms.data_type_values['Platform']),
+            'data_type_filter': (('Platform', "Platform")),  #(forms.data_type_values['Platform']),
             'access_method_filter': (('Regular', "Regular")),
             'metric_type_filter': (
-                forms.metric_type_values['Searches_Platform'],
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
+                ('Searches_Platform|Regular Searches', "Platform Searches"),  #forms.metric_type_values['Searches_Platform'],
+                ('Total_Item_Investigations', "Total Item Investigations"),  #forms.metric_type_values['Total_Item_Investigations'],
+                ('Total_Item_Requests|Successful Full-text Article Requests|Successful Title Requests|Successful Section Requests|Successful Content Unit Requests', "Total Item Requests"),  #forms.metric_type_values['Total_Item_Requests'],
             ),
             'open_in_Excel': False,
         }
