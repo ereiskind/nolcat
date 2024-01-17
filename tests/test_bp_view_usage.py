@@ -355,7 +355,7 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Other', 'Other'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f74ab271ac0>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -372,7 +372,7 @@ def DR_parameters(request):
                 forms.data_type_values['Other'],
                 forms.data_type_values['Unspecified'],
             ),
-            'access_method_filter': tuple(forms.access_method_values),
+            'access_method_filter': ('Regular', 'TDM'),  #ALERT: Changed from `tuple(forms.access_method_values),`
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Regular'],
                 forms.metric_type_values['Searches_Automated'],
