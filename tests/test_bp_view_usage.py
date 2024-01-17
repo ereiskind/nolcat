@@ -878,7 +878,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: ['\'<FileStorage: (\'parent_DOI\', \'Parent DOI\') ("(\'data_type\', \'Data Type\')")>\' is not a valid choice for this field']
+            'display_fields': (  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'parent_data_type' --> self = FileMultiDict([]), name = 'display_fields', file = 'parent_data_type', filename = 'parent_DOI', content_type = 'data_type'
                 'parent_data_type',#('parent_data_type', "Parent Data Type"),
                 'parent_DOI',#('parent_DOI', "Parent DOI"),
                 'data_type',#('data_type', "Data Type"),
