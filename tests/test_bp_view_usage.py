@@ -878,10 +878,10 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('parent_data_type', "Parent Data Type"),
-                ('parent_DOI', "Parent DOI"),
-                ('data_type', "Data Type"),
+            'display_fields': (  #TEST: ['\'<FileStorage: (\'parent_DOI\', \'Parent DOI\') ("(\'data_type\', \'Data Type\')")>\' is not a valid choice for this field']
+                'parent_data_type',#('parent_data_type', "Parent Data Type"),
+                'parent_DOI',#('parent_DOI', "Parent DOI"),
+                'data_type',#('data_type', "Data Type"),
             ),
             'resource_name_filter': "",
             'publisher_filter': "",
@@ -893,19 +893,19 @@ def IR_parameters(request):
             'parent_title_filter': "",
             'parent_ISBN_filter': "",
             'parent_ISSN_filter': "",
-            'data_type_filter': (
-                forms.data_type_values['Article'],
-                forms.data_type_values['Book_Segment'],
-                forms.data_type_values['Database_Full_Item'],
+            'data_type_filter': (  #TEST: ['\'<FileStorage: (\'Book_Segment\', \'Book Segment\') ("(\'Database|Database_Full_Item\', \'Full Text Database Item*\')")>\' is not a valid choice for this field']
+                forms.data_type_values['Article'][0],
+                forms.data_type_values['Book_Segment'][0],
+                forms.data_type_values['Database_Full_Item'][0],
             ),
             'YOP_start_filter': "",
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            'metric_type_filter': (
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Unique_Item_Investigations'],
-                forms.metric_type_values['No_License'],
+            'metric_type_filter': (  #TEST: ['\'<FileStorage: (\'Unique_Item_Investigations\', \'Unique Item Investigations\') ("(\'No_License|Access denied: content item not licensed\', \'Access Denied: No License\')")>\' is not a valid choice for this field']
+                forms.metric_type_values['Total_Item_Investigations'][0],
+                forms.metric_type_values['Unique_Item_Investigations'][0],
+                forms.metric_type_values['No_License'][0],
             ),
             'open_in_Excel': False,
         }
