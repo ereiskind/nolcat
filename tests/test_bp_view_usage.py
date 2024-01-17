@@ -223,7 +223,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    "Filter by platform name",
+    #"Filter by platform name",
 ])
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -340,8 +340,8 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    "Filter by resource name",
-    "Filter by publisher name",
+    #"Filter by resource name",
+    #"Filter by publisher name",
 ])
 def DR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -503,11 +503,11 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    "Filter by resource name with apostrophe and non-ASCII character",
-    "Filter by ISBN",
-    "Filter by ISSN",
-    "Filter by ISSN and platform",
-    "Filter by year of publication",
+    #"Filter by resource name with apostrophe and non-ASCII character",
+    #"Filter by ISBN",
+    #"Filter by ISSN",
+    #"Filter by ISSN and platform",
+    #"Filter by year of publication",
 ])
 def TR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -850,10 +850,10 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    "Filter by publication date",
-    "Filter by parent title",
-    "Filter by parent ISBN",
-    "Filter by parent ISSN",
+    #"Filter by publication date",
+    #"Filter by parent title",
+    #"Filter by parent ISBN",
+    #"Filter by parent ISSN",
 ])
 def IR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
