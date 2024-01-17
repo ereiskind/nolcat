@@ -243,12 +243,12 @@ def PR_parameters(request):
                 ('access_method', "Access Method"),
             ),
             'platform_filter': None,
-            'data_type_filter': (('Platform', "Platform")),  #(forms.data_type_values['Platform']),
-            'access_method_filter': (('Regular', "Regular")),
+            'data_type_filter': (forms.data_type_values['Platform']),
+            'access_method_filter': "Regular",  #TEST: Using a direct string
             'metric_type_filter': (
-                ('Searches_Platform|Regular Searches', "Platform Searches"),  #forms.metric_type_values['Searches_Platform'],
-                ('Total_Item_Investigations', "Total Item Investigations"),  #forms.metric_type_values['Total_Item_Investigations'],
-                ('Total_Item_Requests|Successful Full-text Article Requests|Successful Title Requests|Successful Section Requests|Successful Content Unit Requests', "Total Item Requests"),  #forms.metric_type_values['Total_Item_Requests'],
+                forms.metric_type_values['Searches_Platform'],
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
             ),
             'open_in_Excel': False,
         }
@@ -274,7 +274,7 @@ def PR_parameters(request):
                 ('access_method', "Access Method"),
             ),
             'platform_filter': "EBSCO",
-            'data_type_filter': (forms.data_type_values['Platform']),
+            'data_type_filter': (forms.data_type_values['Platform'][0]),  #TEST: Using index operator to get only the data value, not the display value
             'access_method_filter': (('Regular', "Regular")),
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
@@ -364,9 +364,9 @@ def DR_parameters(request):
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Database'],
-                forms.data_type_values['Other'],
+            'data_type_filter': (  #TEST: Using index operators to get only the data values, not the display values
+                forms.data_type_values['Database'][0],
+                forms.data_type_values['Other'][0],
             ),
             'access_method_filter': tuple(forms.access_method_values),
             'metric_type_filter': (
