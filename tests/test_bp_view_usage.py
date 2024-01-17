@@ -356,7 +356,7 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f74ab271ac0>, url = ('TDM', 'TDM'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -373,7 +373,7 @@ def DR_parameters(request):
                 forms.data_type_values['Other'],
                 forms.data_type_values['Unspecified'],
             ),
-            'access_method_filter': ('Regular', 'TDM'),  #ALERT: Changed from `tuple(forms.access_method_values),`
+            'access_method_filter': tuple(tuple('Regular')),
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Regular'],
                 forms.metric_type_values['Searches_Automated'],
@@ -390,6 +390,7 @@ def DR_parameters(request):
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Database' OR data_type='Other'' OR data_type='Unspecified')
+                AND (access_method='Regular')
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
             GROUP BY usage_count, resource_name, publisher, platform;
         """
