@@ -894,8 +894,8 @@ def IR_parameters(request):
             ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
-            'access_type_filter': tuple('Controlled'),
-            'access_method_filter': tuple('Regular'),
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
             'metric_type_filter': (
                 forms.metric_type_values['Total_Item_Investigations'],
                 forms.metric_type_values['Unique_Item_Investigations'],
