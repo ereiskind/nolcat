@@ -318,6 +318,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
@@ -483,6 +484,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
@@ -831,6 +833,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
@@ -875,7 +878,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05491a60>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_data_type', 'Parent Data Type'), ('parent_DOI', 'Parent DOI'), ('data_type', 'Data Type'))
+            'display_fields': (
                 ('parent_data_type', "Parent Data Type"),
                 ('parent_DOI', "Parent DOI"),
                 ('data_type', "Data Type"),
@@ -1118,7 +1121,8 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
-    CSV_df = pd.read_csv(
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
+    CSV_df = pd.read_csv(  #TEST: FileNotFoundError: [Errno 2] No such file or directory: '/nolcat/nolcat/view_usage/downloads/NoLCAT_download.csv'
         COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
