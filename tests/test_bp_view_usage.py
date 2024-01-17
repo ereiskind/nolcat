@@ -244,7 +244,7 @@ def PR_parameters(request):
             ),
             'platform_filter': None,
             'data_type_filter': (forms.data_type_values['Platform']),
-            'access_method_filter': "Regular",  #TEST: Using a direct string
+            'access_method_filter': tuple('Regular'),  #ALERT: Changed from string
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
@@ -545,8 +545,8 @@ def TR_parameters(request):
             ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
-            'access_type_filter': (('Controlled', "Controlled")),
-            'access_method_filter': tuple(forms.access_method_values),
+            'access_type_filter': tuple('Controlled'),  #ALERT: Previously `(('Controlled', "Controlled")),`
+            'access_method_filter': tuple('Regular'),
             'metric_type_filter': (
                 forms.metric_type_values['Total_Item_Investigations'],
                 forms.metric_type_values['Unique_Item_Investigations'],
@@ -563,6 +563,7 @@ def TR_parameters(request):
                 AND (data_type='Book' OR data_type='Other')
                 AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
                 AND (access_type='Controlled')
+                AND (access_method='Regular')
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Title_Investigations')
             GROUP BY usage_count, access_method;
         """
@@ -891,8 +892,8 @@ def IR_parameters(request):
             ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
+            'access_type_filter': tuple('Controlled'),
+            'access_method_filter': tuple('Regular'),
             'metric_type_filter': (
                 forms.metric_type_values['Total_Item_Investigations'],
                 forms.metric_type_values['Unique_Item_Investigations'],
@@ -907,6 +908,8 @@ def IR_parameters(request):
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Database' OR data_type='Database_Full_Item')
+                AND (access_type='Controlled')
+                AND (access_method='Regular')
                 AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
             GROUP BY usage_count, resource_name, parent_data_type, parent_DOI;
         """
