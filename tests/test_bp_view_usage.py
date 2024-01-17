@@ -374,7 +374,7 @@ def DR_parameters(request):
                 forms.data_type_values['Other'],
                 forms.data_type_values['Unspecified'],
             ),
-            'access_method_filter': tuple(tuple('Regular')),
+            'access_method_filter': 'Regular',
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Regular'],
                 forms.metric_type_values['Searches_Automated'],
@@ -552,7 +552,7 @@ def TR_parameters(request):
             ),
             'YOP_start_filter': "",
             'YOP_end_filter': "",
-            'access_type_filter': (('Controlled', "Controlled")),
+            'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
             #TEST: `tuple('Controlled')` --> TypeError: add_file() takes from 3 to 5 positional arguments but 12 were given --> self = <flask.testing.EnvironBuilder object at 0x7ffb32ce3280>, key = 'access_type_filter', value = ('C', 'o', 'n', 't', 'r', 'o', ...)
             'metric_type_filter': (
