@@ -234,7 +234,7 @@ def PR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('access_method', 'Access Method'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('access_method', 'Access Method'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2016-07-01'),
             'end_date': date.fromisoformat('2017-06-30'),
@@ -264,7 +264,7 @@ def PR_parameters(request):
             GROUP BY usage_count, platform;
         """
         yield (form_input, query)
-    elif request.param == "Filter by platform name":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Regular' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>), ('data_type_filter', <FileStorage: None (None)>)]), name = 'access_method_filter' file = 'Regular', filename = 'Regular', content_type = None
+    elif request.param == "Filter by platform name":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Platform' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>)]), name = 'data_type_filter', file = 'Platform', filename = 'Platform' content_type = None
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -306,7 +306,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: `TypeError: expected str, bytes or os.PathLike object, not tuple` appears here
+    POST_response = client.post(  #TEST: Errors raised here
         '/view_usage/query-wizard/PR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -352,7 +352,7 @@ def DR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Other', 'Other'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -389,7 +389,7 @@ def DR_parameters(request):
             GROUP BY usage_count, resource_name, publisher, platform;
         """
         yield (form_input, query)
-    elif request.param == "Filter by resource name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
+    elif request.param == "Filter by resource name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Journal', 'Journal'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -425,7 +425,7 @@ def DR_parameters(request):
             GROUP BY usage_count, publisher, platform, access_method, metric_type;
         """  # Resource names based off of values returned in test data
         yield (form_input, query)
-    elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('Other', 'Other'), strict = True
+    elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Database', 'Database'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -469,7 +469,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
     form_input, query = DR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: `TypeError: expected str, bytes or os.PathLike object, not tuple` appears here
+    POST_response = client.post(  #TEST: Errors raised here
         '/view_usage/query-wizard/DR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -567,7 +567,7 @@ def TR_parameters(request):
             GROUP BY usage_count, access_method;
         """
         yield (form_input, query)
-    elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
+    elif request.param == "Filter by resource name with apostrophe and non-ASCII character":  #TEST: `ValueError: TR_parameters did not yield a value` with stack trace that doesn't include any NoLCAT code
         form_input = {
             'begin_date': date.fromisoformat('2019-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
@@ -586,7 +586,7 @@ def TR_parameters(request):
                 forms.data_type_values['Book'],
                 forms.data_type_values['Other'],
             ),
-            'section_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78823280>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'section_type_filter': (
                 ('Book', "Book"),
                 ('Chapter', "Chapter"),
                 ('Other', "Other"),
@@ -620,7 +620,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2017-07-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f052c9490>, key = 'display_fields', value = (('resource_name', 'Title Name'), ('ISBN', 'ISBN'), ('data_type', 'Data Type'), ('section_type', 'Section Type'))
                 ('resource_name', "Title Name"),
                 ('ISBN', "ISBN"),
                 ('data_type', "Data Type"),
@@ -635,7 +635,7 @@ def TR_parameters(request):
                 forms.data_type_values['Book'],
                 forms.data_type_values['Other'],
             ),
-            'section_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b14d60>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            'section_type_filter': (
                 ('Book', "Book"),
                 ('Chapter', "Chapter"),
                 ('Other', "Other"),
@@ -664,7 +664,7 @@ def TR_parameters(request):
             GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
-    elif request.param == "Filter by ISSN":
+    elif request.param == "Filter by ISSN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -687,7 +687,7 @@ def TR_parameters(request):
                 ('Article', "Article"),
                 ('Other', "Other"),
                 ('Section', "Section"),
-            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78c7fc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
@@ -717,7 +717,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f0535a6d0>, key = 'display_fields' value = (('resource_name', 'Title Name'), ('platform', 'Platform'), ('print_ISSN', 'Print ISSN'), ('online_ISSN', 'Online ISSN'))
                 ('resource_name', "Title Name"),
                 ('platform', "Platform"),
                 ('print_ISSN', "Print ISSN"),
@@ -737,7 +737,7 @@ def TR_parameters(request):
                 ('Article', "Article"),
                 ('Other', "Other"),
                 ('Section', "Section"),
-            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c7899cc40>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
@@ -762,7 +762,7 @@ def TR_parameters(request):
             GROUP BY usage_count, resource_name;
         """  # Platform name based off of value returned in test data
         yield (form_input, query)
-    elif request.param == "Filter by year of publication":
+    elif request.param == "Filter by year of publication":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
@@ -785,7 +785,7 @@ def TR_parameters(request):
                 ('Article', "Article"),
                 ('Other', "Other"),
                 ('Section', "Section"),
-            ),  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f3c78b31460>, key = 'section_type_filter' value = (('Article', 'Article'), ('Book', 'Book'), ('Chapter', 'Chapter'), ('Other', 'Other'), ('Section', 'Section'))
+            ),
             'YOP_start_filter': 1995,
             'YOP_end_filter': 2005,
             'access_type_filter': tuple(forms.access_type_values),
@@ -819,7 +819,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
     form_input, query = TR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: `TypeError: expected str, bytes or os.PathLike object, not tuple` appears here
+    POST_response = client.post(  #TEST: Errors raised here
         '/view_usage/query-wizard/TR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -871,7 +871,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05491a60>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_data_type', 'Parent Data Type'), ('parent_DOI', 'Parent DOI'), ('data_type', 'Data Type'))
                 ('resource_name', "Item Name"),
                 ('DOI', "DOI"),
                 ('parent_data_type', "Parent Data Type"),
@@ -915,11 +915,11 @@ def IR_parameters(request):
             GROUP BY usage_count, resource_name, DOI, parent_data_type, parent_DOI;
         """
         yield (form_input, query)
-    elif request.param == "Filter by publication date":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    elif request.param == "Filter by publication date":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05067040>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('YOP', 'Year of Publication'))
                 ('resource_name', "Item Name"),
                 ('publication_date', "Publication Date"),
                 ('DOI', "DOI"),
@@ -962,11 +962,11 @@ def IR_parameters(request):
             GROUP BY usage_count, resource_name, DOI, YOP;
         """
         yield (form_input, query)
-    elif request.param == "Filter by parent title":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    elif request.param == "Filter by parent title":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05251490>, key = 'display_fields', value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_title', 'Parent Title'), ('parent_DOI', 'Parent DOI'))
                 ('resource_name', "Item Name"),
                 ('DOI', "DOI"),
                 ('parent_title', "Parent Title"),
@@ -1009,11 +1009,11 @@ def IR_parameters(request):
             GROUP BY usage_count, resource_name, DOI, parent_DOI;
         """  # Parent title based off of value returned in test data
         yield (form_input, query)
-    elif request.param == "Filter by parent ISBN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    elif request.param == "Filter by parent ISBN":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05763f40>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('ISBN', 'ISBN'), ('parent_title', 'Parent Title'), ('parent_ISBN', 'Parent ISBN'))
                 ('resource_name', "Item Name"),
                 ('ISBN', "ISBN"),
                 ('parent_title', "Parent Title"),
@@ -1055,11 +1055,11 @@ def IR_parameters(request):
             GROUP BY usage_count, resource_name, parent_title;
         """
         yield (form_input, query)
-    elif request.param == "Filter by parent ISSN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    elif request.param == "Filter by parent ISSN":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
+            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f051da4c0>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('parent_title', 'Parent Title'), ('parent_print_ISSN', 'Parent Print ISSN'), ('parent_online_ISSN', 'Parent Online ISSN'))
                 ('resource_name', "Item Name"),
                 ('parent_title', "Parent Title"),
                 ('parent_print_ISSN', "Parent Print ISSN"),
@@ -1110,7 +1110,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
     form_input, query = IR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: `TypeError: expected str, bytes or os.PathLike object, not tuple` appears here
+    POST_response = client.post(  #TEST: Errors raised here
         '/view_usage/query-wizard/IR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
