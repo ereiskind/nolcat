@@ -238,9 +238,10 @@ def PR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2016-07-01'),
             'end_date': date.fromisoformat('2017-06-30'),
-            'display_fields': (
+            'display_fields': (  # Unable to filter this field as only two options raises a TypeError
                 ('platform', "Platform"),
-                ('data_type', "Data Type"),  #ALERT: Replacing `('access_method', "Access Method"),`
+                ('data_type', "Data Type"),
+                ('access_method', "Access Method"),
             ),
             'platform_filter': None,
             'data_type_filter': (forms.data_type_values['Platform']),
