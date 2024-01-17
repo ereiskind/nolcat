@@ -623,8 +623,6 @@ def TR_parameters(request):
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f052c9490>, key = 'display_fields', value = (('resource_name', 'Title Name'), ('ISBN', 'ISBN'), ('data_type', 'Data Type'), ('section_type', 'Section Type'))
                 ('resource_name', "Title Name"),
                 ('ISBN', "ISBN"),
-                ('data_type', "Data Type"),
-                ('section_type', "Section Type"),
             ),
             'resource_name_filter': None,
             'publisher_filter': None,
@@ -652,7 +650,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, ISBN, data_type, section_type, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, ISBN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -718,7 +716,6 @@ def TR_parameters(request):
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f0535a6d0>, key = 'display_fields' value = (('resource_name', 'Title Name'), ('platform', 'Platform'), ('print_ISSN', 'Print ISSN'), ('online_ISSN', 'Online ISSN'))
-                ('resource_name', "Title Name"),
                 ('platform', "Platform"),
                 ('print_ISSN', "Print ISSN"),
                 ('online_ISSN', "Online ISSN"),
@@ -749,7 +746,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, platform, print_ISSN, online_ISSN, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, print_ISSN, online_ISSN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -759,7 +756,7 @@ def TR_parameters(request):
                 AND (data_type='Journal' OR data_type='Newspaper_or_Newsletter' OR data_type='Other')
                 AND (section_type='Article' OR section_type='Other' OR section_type='Section')
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY usage_count;
         """  # Platform name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by year of publication":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('TDM', 'TDM'), strict = True
@@ -873,7 +870,6 @@ def IR_parameters(request):
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05491a60>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_data_type', 'Parent Data Type'), ('parent_DOI', 'Parent DOI'), ('data_type', 'Data Type'))
                 ('resource_name', "Item Name"),
-                ('DOI', "DOI"),
                 ('parent_data_type', "Parent Data Type"),
                 ('parent_DOI', "Parent DOI"),
                 ('data_type', "Data Type"),
@@ -905,14 +901,14 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, DOI, parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Database' OR data_type='Database_Full_Item')
                 AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
-            GROUP BY usage_count, resource_name, DOI, parent_data_type, parent_DOI;
+            GROUP BY usage_count, resource_name, parent_data_type, parent_DOI;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
@@ -922,7 +918,6 @@ def IR_parameters(request):
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05067040>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('YOP', 'Year of Publication'))
                 ('resource_name', "Item Name"),
                 ('publication_date', "Publication Date"),
-                ('DOI', "DOI"),
                 ('YOP', "Year of Publication"),
             ),
             'resource_name_filter': None,
@@ -951,7 +946,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publication_date, DOI, YOP, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publication_date, YOP, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -959,7 +954,7 @@ def IR_parameters(request):
                 AND publication_date>='2018-01-01' AND publication_date<='2018-12-31'
                 AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Other')
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name, DOI, YOP;
+            GROUP BY usage_count, resource_name, YOP;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":
@@ -968,7 +963,6 @@ def IR_parameters(request):
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05251490>, key = 'display_fields', value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_title', 'Parent Title'), ('parent_DOI', 'Parent DOI'))
                 ('resource_name', "Item Name"),
-                ('DOI', "DOI"),
                 ('parent_title', "Parent Title"),
                 ('parent_DOI', "Parent DOI"),
             ),
@@ -998,7 +992,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, DOI, parent_title, parent_DOI, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, parent_title, parent_DOI, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -1006,7 +1000,7 @@ def IR_parameters(request):
                 AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
                 AND (data_type='Article' OR data_type='Database' OR data_type='Database_Full_Item')
                 AND (metric_type='Total_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
-            GROUP BY usage_count, resource_name, DOI, parent_DOI;
+            GROUP BY usage_count, resource_name, parent_DOI;
         """  # Parent title based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
@@ -1016,7 +1010,6 @@ def IR_parameters(request):
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05763f40>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('ISBN', 'ISBN'), ('parent_title', 'Parent Title'), ('parent_ISBN', 'Parent ISBN'))
                 ('resource_name', "Item Name"),
                 ('ISBN', "ISBN"),
-                ('parent_title', "Parent Title"),
                 ('parent_ISBN', "Parent ISBN"),
             ),
             'resource_name_filter': None,
@@ -1044,7 +1037,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, ISBN, parent_title, parent_ISBN, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, ISBN, parent_ISBN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -1052,7 +1045,7 @@ def IR_parameters(request):
                 AND (ISBN='978-0-8223-8491-5')
                 AND (data_type='Book_Segment' OR data_type='Other')
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name, parent_title;
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISSN":
@@ -1060,7 +1053,6 @@ def IR_parameters(request):
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f051da4c0>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('parent_title', 'Parent Title'), ('parent_print_ISSN', 'Parent Print ISSN'), ('parent_online_ISSN', 'Parent Online ISSN'))
-                ('resource_name', "Item Name"),
                 ('parent_title', "Parent Title"),
                 ('parent_print_ISSN', "Parent Print ISSN"),
                 ('parent_online_ISSN', "Parent Online ISSN"),
@@ -1090,7 +1082,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, parent_title, parent_print_ISSN, parent_online_ISSN, metric_type, usage_date, SUM(usage_count)
+            SELECT parent_title, parent_print_ISSN, parent_online_ISSN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -1098,7 +1090,7 @@ def IR_parameters(request):
                 AND (print_ISSN='0270-5346' OR online_ISSN='0270-5346')
                 AND (data_type='Article' OR data_type='Other')
                 AND (metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests')
-            GROUP BY usage_count, resource_name, parent_title;
+            GROUP BY usage_count, parent_title;
         """
         yield (form_input, query)
 
