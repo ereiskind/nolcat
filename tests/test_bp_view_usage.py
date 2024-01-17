@@ -852,6 +852,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
 
 @pytest.fixture(params=[
+    "Filter by fixed vocabulary fields",
     "Filter by publication date",
     "Filter by parent title",
     "Filter by parent ISBN",
@@ -866,33 +867,64 @@ def IR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    IR_display_fields = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        ('resource_name', "Item Name"),
-        #TEST: ('publication_date', "Publication Date"),
-        #TEST: ('parent_title', "Parent Title"),
-        #TEST: ('parent_publication_date', "Parent Publication Date"),
-        #TEST: ('parent_ISBN', "Parent ISBN"),
-    )
-    IR_data_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.data_type_values['Article'],
-        #TEST: forms.data_type_values['Book_Segment'],
-        #TEST: forms.data_type_values['Multimedia'],
-        #TEST: forms.data_type_values['Other'],
-    )
-    IR_metric_types = (  # Limited because `add_file() takes from 3 to 5 positional arguments`
-        forms.metric_type_values['Unique_Item_Investigations'],
-        #TEST: forms.metric_type_values['Unique_Item_Requests'],
-        #TEST: forms.metric_type_values['No_License'],
-        #TEST: forms.metric_type_values['Limit_Exceeded'],
-    )
-
-    #filter by fixed vocabulary fields
-
-    if request.param == "Filter by publication date":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': (
+                ('resource_name', "Item Name"),
+                ('DOI', "DOI"),
+                ('parent_data_type', "Parent Data Type"),
+                ('parent_DOI', "Parent DOI"),
+                ('data_type', "Data Type"),
+            ),
+            'resource_name_filter': None,
+            'publisher_filter': None,
+            'platform_filter': None,
+            'publication_date_start_filter': None,
+            'publication_date_end_filter': None,
+            'ISBN_filter': None,
+            'ISSN_filter': None,
+            'parent_title_filter': None,
+            'parent_ISBN_filter': None,
+            'parent_ISSN_filter': None,
+            'data_type_filter': (
+                forms.data_type_values['Article'],
+                forms.data_type_values['Book_Segment'],
+                forms.data_type_values['Database_Full_Item'],
+            ),
+            'YOP_start_filter': None,
+            'YOP_end_filter': None,
+            'access_type_filter': tuple(forms.access_type_values),
+            'access_method_filter': tuple(forms.access_method_values),
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['No_License'],
+            ),
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, DOI, parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Database' OR data_type='Database_Full_Item')
+                AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
+            GROUP BY usage_count, resource_name, DOI, parent_data_type, parent_DOI;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by publication date":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': (
+                ('resource_name', "Item Name"),
+                ('publication_date', "Publication Date"),
+                ('DOI', "DOI"),
+                ('YOP', "Year of Publication"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -903,29 +935,43 @@ def IR_parameters(request):
             'parent_title_filter': None,
             'parent_ISBN_filter': None,
             'parent_ISSN_filter': None,
-            'data_type_filter': IR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Article'], 
+                forms.data_type_values['Book_Segment'], 
+                forms.data_type_values['Other'],
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': IR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, publication_date, DOI, YOP, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND publication_date>='2018-01-01' AND publication_date<='2018-12-31'
-            GROUP BY usage_count, resource_name, publisher, platform, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Other')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name, DOI, YOP;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': (
+                ('resource_name', "Item Name"),
+                ('DOI', "DOI"),
+                ('parent_title', "Parent Title"),
+                ('parent_DOI', "Parent DOI"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -936,29 +982,43 @@ def IR_parameters(request):
             'parent_title_filter': "glq",
             'parent_ISBN_filter': None,
             'parent_ISSN_filter': None,
-            'data_type_filter': IR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Article'],
+                forms.data_type_values['Database_Full_Item'],
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': IR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['No_License'],
+                forms.metric_type_values['Limit_Exceeded'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, DOI, parent_title, parent_DOI, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
-            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Article' OR data_type='Database' OR data_type='Database_Full_Item')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+            GROUP BY usage_count, resource_name, DOI, parent_DOI;
         """  # Parent title based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': (
+                ('resource_name', "Item Name"),
+                ('ISBN', "ISBN"),
+                ('parent_title', "Parent Title"),
+                ('parent_ISBN', "Parent ISBN"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -969,29 +1029,42 @@ def IR_parameters(request):
             'parent_title_filter': None,
             'parent_ISBN_filter': "978-0-8223-8491-5",
             'parent_ISSN_filter': None,
-            'data_type_filter': IR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Book_Segment'],
+                forms.data_type_values['Other'],
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': IR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Total_Item_Investigations'],
+                forms.metric_type_values['Total_Item_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, ISBN, parent_title, parent_ISBN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (ISBN='978-0-8223-8491-5')
-            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Book_Segment' OR data_type='Other')
+                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name, parent_title;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent ISSN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f3c7b97eb20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': IR_display_fields,
+            'display_fields': (
+                ('resource_name', "Item Name"),
+                ('parent_title', "Parent Title"),
+                ('parent_print_ISSN', "Parent Print ISSN"),
+                ('parent_online_ISSN', "Parent Online ISSN"),
+            ),
             'resource_name_filter': None,
             'publisher_filter': None,
             'platform_filter': None,
@@ -1002,22 +1075,30 @@ def IR_parameters(request):
             'parent_title_filter': None,
             'parent_ISBN_filter': None,
             'parent_ISSN_filter': "0270-5346",
-            'data_type_filter': IR_data_types,
+            'data_type_filter': (
+                forms.data_type_values['Article'],
+                forms.data_type_values['Other'],
+            ),
             'YOP_start_filter': None,
             'YOP_end_filter': None,
             'access_type_filter': tuple(forms.access_type_values),
             'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': IR_metric_types,
+            'metric_type_filter': (
+                forms.metric_type_values['Unique_Item_Investigations'],
+                forms.metric_type_values['Unique_Item_Requests'],
+            ),
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, publication_date, DOI, ISBN, print_ISSN, online_ISSN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, parent_title, parent_print_ISSN, parent_online_ISSN, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (print_ISSN='0270-5346' OR online_ISSN='0270-5346')
-            GROUP BY usage_count, resource_name, publisher, platform, publication_date, DOI, ISBN, parent_title, parent_publication_date, parent_data_type, parent_DOI, parent_ISBN, parent_print_ISSN, parent_online_ISSN, data_type, YOP, access_type, access_method, metric_type;
+                AND (data_type='Article' OR data_type='Other')
+                AND (metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests')
+            GROUP BY usage_count, resource_name, parent_title;
         """
         yield (form_input, query)
 
