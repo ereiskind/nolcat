@@ -529,8 +529,6 @@ def TR_parameters(request):
                 ('resource_name', "Title Name"),
                 ('data_type', "Data Type"),
                 ('section_type', "Section Type"),
-                ('access_type', "Access Type"),
-                ('access_method', "Access Method"),
             ),
             'resource_name_filter': None,
             'publisher_filter': None,
@@ -558,7 +556,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, data_type, section_type, access_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, data_type, section_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -873,7 +871,6 @@ def IR_parameters(request):
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
             'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05491a60>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_data_type', 'Parent Data Type'), ('parent_DOI', 'Parent DOI'), ('data_type', 'Data Type'))
-                ('resource_name', "Item Name"),
                 ('parent_data_type', "Parent Data Type"),
                 ('parent_DOI', "Parent DOI"),
                 ('data_type', "Data Type"),
@@ -905,7 +902,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
+            SELECT parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -914,7 +911,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled')
                 AND (access_method='Regular')
                 AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
-            GROUP BY usage_count, resource_name, parent_data_type, parent_DOI;
+            GROUP BY usage_count, parent_data_type, parent_DOI;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
