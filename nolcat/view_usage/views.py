@@ -445,9 +445,9 @@ def construct_PR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -566,9 +566,9 @@ def construct_DR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -727,9 +727,9 @@ def construct_TR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -936,9 +936,9 @@ def construct_IR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='IR'
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
