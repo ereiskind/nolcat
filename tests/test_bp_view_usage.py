@@ -354,38 +354,24 @@ def DR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('resource_name', "Database Name"),
-                ('publisher', "Publisher"),
-                ('platform', "Platform"),
-            ),
+            'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
             'platform_filter': "",
-            'data_type_filter': (
-                forms.data_type_values['Database'],
-                forms.data_type_values['Other'],
-                forms.data_type_values['Unspecified'],
-            ),
+            'data_type_filter': forms.data_type_values['Database'][0],
             'access_method_filter': 'Regular',
-            'metric_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7fe7a9b7c880>, key = 'metric_type_filter' value = (('Searches_Regular|Regular Searches', 'Database Searches'), ('Searches_Automated|Searches-federated and automated|Sea...ncurrent/simultaneous user license exceeded. (Currently N/A to all platforms).','Access Denied: User Limit Exceeded'))
-                forms.metric_type_values['Searches_Regular'],
-                forms.metric_type_values['Searches_Automated'],
-                forms.metric_type_values['Searches_Federated'],
-                forms.metric_type_values['No_License'],
-                forms.metric_type_values['Limit_Exceeded'],
-            ),
+            'metric_type_filter': forms.metric_type_values['Searches_Automated'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (data_type='Database' OR data_type='Other' OR data_type='Unspecified')
+                AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
+                AND (metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated')
             GROUP BY usage_count, resource_name, publisher, platform;
         """
         yield (form_input, query)
