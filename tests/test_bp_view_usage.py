@@ -808,7 +808,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
     "Filter by publication date",
-    #"Filter by parent title",
+    "Filter by parent title",
     #"Filter by parent ISBN",
     #"Filter by parent ISSN",
 ])
@@ -900,46 +900,37 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05251490>, key = 'display_fields', value = (('resource_name', 'Item Name'), ('DOI', 'DOI'), ('parent_title', 'Parent Title'), ('parent_DOI', 'Parent DOI'))
-                ('resource_name', "Item Name"),
-                ('parent_title', "Parent Title"),
-                ('parent_DOI', "Parent DOI"),
-            ),
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
-            'publication_date_start_filter': None,
-            'publication_date_end_filter': None,
-            'ISBN_filter': None,
-            'ISSN_filter': None,
+            'display_fields': 'parent_title',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
             'parent_title_filter': "glq",
-            'parent_ISBN_filter': None,
-            'parent_ISSN_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Article'],
-                forms.data_type_values['Database_Full_Item'],
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['No_License'],
-                forms.metric_type_values['Limit_Exceeded'],
-            ),
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, parent_title, parent_DOI, metric_type, usage_date, SUM(usage_count)
+            SELECT parent_title, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
-                AND (data_type='Article' OR data_type='Database' OR data_type='Database_Full_Item')
-                AND (metric_type='Total_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
-            GROUP BY usage_count, resource_name, parent_DOI;
+                AND (data_type='Article')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, COUNTER_data_ID;
         """  # Parent title based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
