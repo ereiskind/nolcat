@@ -332,7 +332,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
     "Filter by resource name",
-    #"Filter by publisher name",
+    "Filter by publisher name",
 ])
 def DR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -396,39 +396,30 @@ def DR_parameters(request):
             GROUP BY usage_count, COUNTER_data_ID;
         """  # Resource names from values returned by `fuzzy_search_on_field()`
         yield (form_input, query)
-    elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Database', 'Database'), strict = True
+    elif request.param == "Filter by publisher name":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('resource_name', "Database Name"),
-                ('publisher', "Publisher"),
-                ('platform', "Platform"),
-            ),
-            'resource_name_filter': None,
+            'display_fields': 'publisher',
+            'resource_name_filter': "",
             'publisher_filter': "proq",
-            'platform_filter': None,
-            'data_type_filter':(
-                forms.data_type_values['Book'],
-                forms.data_type_values['Database'],
-            ),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Searches_Regular'],
-                forms.metric_type_values['Limit_Exceeded'],
-            ),
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Database'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Regular'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT publisher, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (publisher='ProQuest')
-                AND (data_type='Book' OR data_type='Database')
-                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
-            GROUP BY usage_count, resource_name, platform, access_method, metric_type;
+                AND (data_type='Database')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
+            GROUP BY usage_count, COUNTER_data_ID;
         """  # Publisher name based off of values returned in test data
         yield (form_input, query)
 
@@ -440,7 +431,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 
     form_input, query = DR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: Errors raised here
+    POST_response = client.post(
         '/view_usage/query-wizard/DR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
