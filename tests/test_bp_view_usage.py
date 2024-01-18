@@ -317,6 +317,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
     database_df = query_database(
         query=query,
@@ -470,6 +471,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
     database_df = query_database(
         query=query,
@@ -803,6 +805,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
     database_df = query_database(
         query=query,
@@ -1080,6 +1083,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         encoding='utf-8',
         encoding_errors='backslashreplace',
     )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
     CSV_df = CSV_df.astype(COUNTERData.state_data_types())
     database_df = query_database(
         query=query,
