@@ -850,7 +850,7 @@ def IR_parameters(request):
             'data_type_filter': forms.data_type_values['Article'][0],
             'YOP_start_filter': "",
             'YOP_end_filter': "",
-            'access_type_filter': 'Controlled',
+            'access_type_filter': 'OA_Gold|Open',
             'access_method_filter': 'Regular',
             'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
             'open_in_Excel': False,
@@ -862,7 +862,7 @@ def IR_parameters(request):
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Article')
-                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_type='OA_Gold' OR access_type='Open' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY usage_count, resource_name, COUNTER_data_ID;
