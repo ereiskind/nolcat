@@ -470,7 +470,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
     "Filter by resource name with apostrophe and non-ASCII character",
-    #"Filter by ISBN",
+    "Filter by ISBN",
     #"Filter by ISSN",
     #"Filter by ISSN and platform",
     #"Filter by year of publication",
@@ -557,46 +557,34 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2017-07-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f052c9490>, key = 'display_fields', value = (('resource_name', 'Title Name'), ('ISBN', 'ISBN'), ('data_type', 'Data Type'), ('section_type', 'Section Type'))
-                ('resource_name', "Title Name"),
-                ('ISBN', "ISBN"),
-            ),
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
             'ISBN_filter': "978-0-0286-6072-1",
-            'ISSN_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Book'],
-                forms.data_type_values['Other'],
-            ),
-            'section_type_filter': (
-                ('Book', "Book"),
-                ('Chapter', "Chapter"),
-                ('Other', "Other"),
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Unique_Title_Investigations'],
-                forms.metric_type_values['Unique_Title_Requests'],
-                forms.metric_type_values['No_License'],
-            ),
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': 'Article',
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, ISBN, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2017-07-01' AND usage_date<='2019-12-31'
                 AND (ISBN='978-0-0286-6072-1')
-                AND (data_type='Book' OR data_type='Other')
-                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
-                AND (metric_type='Unique_Title_Investigations' OR metric_type='Unique_Title_Requests' OR metric_type='Successful Title Requests' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
-            GROUP BY usage_count, resource_name;
+                AND (data_type='Book')
+                AND (section_type='Article' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by ISSN":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('TDM', 'TDM'), strict = True
