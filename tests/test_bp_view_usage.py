@@ -1102,7 +1102,7 @@ def IR_parameters(request):
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (print_ISSN='0270-5346' OR online_ISSN='0270-5346')
+                AND (parent_print_ISSN='0270-5346' OR parent_online_ISSN='0270-5346')
                 AND (data_type='Article' OR data_type='Other')
                 AND (metric_type='Unique_Item_Investigations' OR metric_type='Unique_Item_Requests')
             GROUP BY usage_count, parent_title;
