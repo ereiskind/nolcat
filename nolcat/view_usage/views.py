@@ -434,7 +434,7 @@ def construct_PR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['platform', 'data_type', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -555,7 +555,7 @@ def construct_DR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'data_type', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -716,7 +716,7 @@ def construct_TR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'data_type', 'section_type', 'YOP', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -925,7 +925,7 @@ def construct_IR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'publication_date', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'parent_title', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'data_type', 'YOP', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 

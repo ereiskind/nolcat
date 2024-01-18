@@ -248,7 +248,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
@@ -256,7 +256,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count, platform;
+            GROUP BY usage_count, platform, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by platform name":
@@ -271,7 +271,7 @@ def PR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
@@ -280,7 +280,7 @@ def PR_parameters(request):
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
-            GROUP BY usage_count;
+            GROUP BY usage_count, COUNTER_data_ID;
         """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
         yield (form_input, query)
 
@@ -356,7 +356,7 @@ def DR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
@@ -364,7 +364,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated')
-            GROUP BY usage_count, resource_name, publisher, platform;
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name":
@@ -381,7 +381,7 @@ def DR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
@@ -390,7 +390,7 @@ def DR_parameters(request):
                 AND (data_type='Database')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
-            GROUP BY usage_count;
+            GROUP BY usage_count, COUNTER_data_ID;
         """  # Resource names based off of values returned in test data
         yield (form_input, query)
     elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Database', 'Database'), strict = True
@@ -509,7 +509,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -519,7 +519,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count;
+            GROUP BY usage_count, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
@@ -542,7 +542,7 @@ def TR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
@@ -553,7 +553,7 @@ def TR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count;
+            GROUP BY usage_count, COUNTER_data_ID;
         """  # Resource name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
@@ -831,7 +831,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -840,7 +840,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
-            GROUP BY usage_count, resource_name;
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
@@ -867,7 +867,7 @@ def IR_parameters(request):
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
             FROM COUNTERData
             WHERE
                 report_type='IR'
@@ -877,7 +877,7 @@ def IR_parameters(request):
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name;
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":
