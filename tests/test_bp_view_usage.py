@@ -322,7 +322,14 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")  #TEST: temp
+    #TEST: temp
+    if not CSV_df.equals(database_df):
+        try:
+            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
+        except:
+            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
+            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
+    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -470,7 +477,14 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")  #TEST: temp
+    #TEST: temp
+    if not CSV_df.equals(database_df):
+        try:
+            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
+        except:
+            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
+            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
+    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -794,7 +808,14 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")  #TEST: temp
+    #TEST: temp
+    if not CSV_df.equals(database_df):
+        try:
+            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
+        except:
+            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
+            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
+    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -1067,7 +1088,14 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")  #TEST: temp
+    #TEST: temp
+    if not CSV_df.equals(database_df):
+        try:
+            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
+        except:
+            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
+            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
+    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
