@@ -791,8 +791,6 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
     #TEST: temp
-    log.info(f"`CSV_df`:\n{CSV_df}")
-    log.info(f"`database_df`:\n{database_df}")
     if not CSV_df.equals(database_df):
         try:
             log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
@@ -1064,6 +1062,8 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
     #TEST: temp
+    log.info(f"`CSV_df`:\n{CSV_df}")
+    log.info(f"`database_df`:\n{database_df}")
     if not CSV_df.equals(database_df):
         try:
             log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
