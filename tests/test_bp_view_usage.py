@@ -240,30 +240,22 @@ def PR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2016-07-01'),
             'end_date': date.fromisoformat('2017-06-30'),
-            'display_fields': (  # Unable to filter this field as only two options raises a TypeError
-                ('platform', "Platform"), #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Platform' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>)]), name = 'data_type_filter', file = 'Platform', filename = 'Platform' content_type = None
-                ('data_type', "Data Type"),
-                ('access_method', "Access Method"),
-            ),
+            'display_fields': 'platform',
             'platform_filter': "",
-            'data_type_filter': (forms.data_type_values['Platform']),
+            'data_type_filter': forms.data_type_values['Platform'][0],
             'access_method_filter': 'Regular',
-            'metric_type_filter': (
-                forms.metric_type_values['Searches_Platform'],
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
-            ),
+            'metric_type_filter': forms.metric_type_values['Searches_Platform'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, data_type, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY usage_count, platform;
         """
         yield (form_input, query)
