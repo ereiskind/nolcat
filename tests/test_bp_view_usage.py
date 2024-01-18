@@ -791,7 +791,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    #"Filter by publication date",
+    "Filter by publication date",
     #"Filter by parent title",
     #"Filter by parent ISBN",
     #"Filter by parent ISSN",
@@ -847,46 +847,37 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f05067040>, key = 'display_fields' value = (('resource_name', 'Item Name'), ('publication_date', 'Publication Date'), ('DOI', 'DOI'), ('YOP', 'Year of Publication'))
-                ('resource_name', "Item Name"),
-                ('publication_date', "Publication Date"),
-                ('YOP', "Year of Publication"),
-            ),
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': None,
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
             'publication_date_start_filter': date.fromisoformat('2018-01-01'),
             'publication_date_end_filter': date.fromisoformat('2018-12-31'),
-            'ISBN_filter': None,
-            'ISSN_filter': None,
-            'parent_title_filter': None,
-            'parent_ISBN_filter': None,
-            'parent_ISSN_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Article'], 
-                forms.data_type_values['Book_Segment'], 
-                forms.data_type_values['Other'],
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
-            ),
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publication_date, YOP, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND publication_date>='2018-01-01' AND publication_date<='2018-12-31'
-                AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Other')
-                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' Or metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count, resource_name, YOP;
+                AND (data_type='Article')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by parent title":
