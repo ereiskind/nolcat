@@ -485,6 +485,7 @@ def construct_PR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -645,6 +646,7 @@ def construct_DR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -824,6 +826,7 @@ def construct_TR_query_with_wizard():
         if form.section_type_filter.data:
             section_type_filter_list = create_COUNTER_fixed_vocab_list(form.section_type_filter.data)
             section_type_filter_statement = ' OR '.join([f"section_type='{value}'" for value in section_type_filter_list])
+            section_type_filter_statement = section_type_filter_statement + " OR section_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {section_type_filter_statement}.")
             query = query + f"AND ({section_type_filter_statement})\n"
         elif 'section_type' in selected_display_fields:
@@ -833,6 +836,7 @@ def construct_TR_query_with_wizard():
         if form.access_type_filter.data:
             access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
             access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
         elif 'access_type' in selected_display_fields:
@@ -842,6 +846,7 @@ def construct_TR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -1069,6 +1074,7 @@ def construct_IR_query_with_wizard():
         if form.access_type_filter.data:
             access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
             access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
         elif 'access_type' in selected_display_fields:
@@ -1078,6 +1084,7 @@ def construct_IR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
