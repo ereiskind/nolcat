@@ -328,7 +328,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    #"Filter by resource name",
+    "Filter by resource name",
     #"Filter by publisher name",
 ])
 def DR_parameters(request):
@@ -367,40 +367,30 @@ def DR_parameters(request):
             GROUP BY usage_count, resource_name, publisher, platform;
         """
         yield (form_input, query)
-    elif request.param == "Filter by resource name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Journal', 'Journal'), strict = True
+    elif request.param == "Filter by resource name":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('resource_name', "Database Name"),
-                ('publisher', "Publisher"),
-                ('platform', "Platform"),
-            ),
+            'display_fields': 'resource_name',
             'resource_name_filter': "eric",
-            'publisher_filter': None,
-            'platform_filter': None,
-            'data_type_filter': (
-                forms.data_type_values['Database'],
-                forms.data_type_values['Journal'],
-            ),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Searches_Regular'],
-                forms.metric_type_values['No_License'],
-                forms.metric_type_values['Limit_Exceeded'],
-            ),
+            'publisher_filter': "",
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Database'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Regular'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, publisher, platform, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (resource_name='ERIC' OR resource_name='Historical Abstracts' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection' OR resource_name='Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online Foundation Collection 3' OR resource_name='01 Periodicals Archive Online Foundation Collection 1' OR resource_name='Social Science Premium Collection->Education Collection->ERIC')
-                AND (data_type='Database' OR data_type='Journal')
-                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
-            GROUP BY usage_count, publisher, platform, access_method, metric_type;
+                AND (data_type='Database')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
+            GROUP BY usage_count;
         """  # Resource names based off of values returned in test data
         yield (form_input, query)
     elif request.param == "Filter by publisher name":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('Database', 'Database'), strict = True
