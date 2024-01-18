@@ -511,49 +511,33 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': (  #TEST: ['\'<FileStorage: (\'data_type\', \'Data Type\') ("(\'section_type\', \'Section Type\')")>\' is not a valid choice for this field']
-                ('resource_name', "Title Name"),
-                ('data_type', "Data Type"),
-                ('section_type', "Section Type"),
-            ),
+            'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
             'platform_filter': "",
             'ISBN_filter': "",
             'ISSN_filter': "",
-            'data_type_filter': (  #TEST: ['\'<FileStorage: (\'Other\', \'Other\') ("(\'Unspecified\', \'Unspecified\')")>\' is not a valid choice for this field']
-                forms.data_type_values['Book'],
-                forms.data_type_values['Other'],
-                forms.data_type_values['Unspecified'],
-            ),
-            'section_type_filter': (  #TEST: ['\'<FileStorage: (\'Chapter\', \'Chapter\') ("(\'Other\', \'Other\')")>\' is not a valid choice for this field']
-                ('Book', "Book"),
-                ('Chapter', "Chapter"),
-                ('Other', "Other"),
-            ),
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': 'Book',
             'YOP_start_filter': "",
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            'metric_type_filter': (  #TEST: ['\'<FileStorage: (\'Unique_Item_Investigations\', \'Unique Item Investigations\') ("(\'Unique_Title_Investigations\', \'Unique Title Investigations\')")>\' is not a valid choice for this field']
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Unique_Item_Investigations'],
-                forms.metric_type_values['Unique_Title_Investigations'],
-            ),
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT resource_name, data_type, section_type, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
-                AND (data_type='Book' OR data_type='Other' OR data_type='Unspecified')
-                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other' OR section_type IS NULL)
+                AND (data_type='Book')
+                AND (section_type='Book' OR section_type IS NULL)
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Title_Investigations')
-            GROUP BY usage_count, access_method;
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count;
         """
         yield (form_input, query)
     elif request.param == "Filter by resource name with apostrophe and non-ASCII character":  #TEST: `ValueError: TR_parameters did not yield a value` with stack trace that doesn't include any NoLCAT code
