@@ -318,7 +318,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
         encoding_errors='backslashreplace',
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
-    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     database_df = query_database(
         query=query,
         engine=engine,
@@ -472,7 +472,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
         encoding_errors='backslashreplace',
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
-    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     database_df = query_database(
         query=query,
         engine=engine,
@@ -806,7 +806,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         encoding_errors='backslashreplace',
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
-    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     database_df = query_database(
         query=query,
         engine=engine,
@@ -1084,7 +1084,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         encoding_errors='backslashreplace',
     )
     CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
-    CSV_df = CSV_df.astype(COUNTERData.state_data_types())
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
     database_df = query_database(
         query=query,
         engine=engine,
