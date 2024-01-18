@@ -844,11 +844,7 @@ def IR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'parent_data_type' --> self = FileMultiDict([]), name = 'display_fields', file = 'parent_data_type', filename = 'parent_DOI', content_type = 'data_type'
-                'parent_data_type',#('parent_data_type', "Parent Data Type"),
-                'parent_DOI',#('parent_DOI', "Parent DOI"),
-                'data_type',#('data_type', "Data Type"),
-            ),
+            'display_fields': 'resource_name',
             'resource_name_filter': "",
             'publisher_filter': "",
             'platform_filter': "",
@@ -859,33 +855,25 @@ def IR_parameters(request):
             'parent_title_filter': "",
             'parent_ISBN_filter': "",
             'parent_ISSN_filter': "",
-            'data_type_filter': (  #TEST: ['\'<FileStorage: (\'Book_Segment\', \'Book Segment\') ("(\'Database|Database_Full_Item\', \'Full Text Database Item*\')")>\' is not a valid choice for this field']
-                forms.data_type_values['Article'][0],
-                forms.data_type_values['Book_Segment'][0],
-                forms.data_type_values['Database_Full_Item'][0],
-            ),
+            'data_type_filter': forms.data_type_values['Article'][0],
             'YOP_start_filter': "",
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            'metric_type_filter': (  #TEST: ['\'<FileStorage: (\'Unique_Item_Investigations\', \'Unique Item Investigations\') ("(\'No_License|Access denied: content item not licensed\', \'Access Denied: No License\')")>\' is not a valid choice for this field']
-                forms.metric_type_values['Total_Item_Investigations'][0],
-                forms.metric_type_values['Unique_Item_Investigations'][0],
-                forms.metric_type_values['No_License'][0],
-            ),
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT parent_data_type, parent_DOI, data_type, metric_type, usage_date, SUM(usage_count)
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Database' OR data_type='Database_Full_Item')
+                AND (data_type='Article')
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
-                AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
-            GROUP BY usage_count, parent_data_type, parent_DOI;
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, resource_name;
         """
         yield (form_input, query)
     elif request.param == "Filter by publication date":
