@@ -228,6 +228,8 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
 
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+
     Args:
         request (str): description of the use case
 
@@ -347,6 +349,8 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 ])
 def DR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
 
     Args:
         request (str): description of the use case
@@ -516,6 +520,8 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
 ])
 def TR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
 
     Args:
         request (str): description of the use case
@@ -863,6 +869,8 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
 ])
 def IR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
 
     Args:
         request (str): description of the use case
