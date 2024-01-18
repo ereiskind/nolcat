@@ -304,6 +304,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -450,6 +451,7 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -771,6 +773,7 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(
         COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
@@ -1042,6 +1045,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
     CSV_df = pd.read_csv(  #TEST: FileNotFoundError: [Errno 2] No such file or directory: '/nolcat/nolcat/view_usage/downloads/NoLCAT_download.csv'
         COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
