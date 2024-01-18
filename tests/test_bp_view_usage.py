@@ -223,7 +223,7 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
 
 @pytest.fixture(params=[
     "Filter by fixed vocabulary fields",
-    #"Filter by platform name",
+    "Filter by platform name",
 ])
 def PR_parameters(request):
     """A parameterized fixture function for simulating multiple custom query constructions.
@@ -259,35 +259,27 @@ def PR_parameters(request):
             GROUP BY usage_count, platform;
         """
         yield (form_input, query)
-    elif request.param == "Filter by platform name":  #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Platform' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>)]), name = 'data_type_filter', file = 'Platform', filename = 'Platform' content_type = None
+    elif request.param == "Filter by platform name":
         form_input = {
             'begin_date': date.fromisoformat('2019-01-01'),
             'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (
-                ('platform', "Platform"),
-                ('data_type', "Data Type"),
-                ('access_method', "Access Method"),
-            ),
+            'display_fields': 'platform',
             'platform_filter': "EBSCO",
-            'data_type_filter': (forms.data_type_values['Platform'][0]),  #TEST: Using index operator to get only the data value, not the display value
-            'access_method_filter': (('Regular', "Regular")),
-            'metric_type_filter': (
-                forms.metric_type_values['Searches_Platform'],
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
-            ),
+            'data_type_filter': forms.data_type_values['Platform'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Platform'][0],
             'open_in_Excel': False,
         }
         query = """
-            SELECT platform, data_type, access_method, metric_type, usage_date, SUM(usage_count)
+            SELECT platform, metric_type, usage_date, SUM(usage_count)
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND platform LIKE 'EBSCOhost'
                 AND (data_type='Platform')
-                AND (access_method='Regular')
-                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY usage_count;
         """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
         yield (form_input, query)
@@ -301,7 +293,7 @@ def test_construct_PR_query_with_wizard(engine, client, header_value, PR_paramet
 
     form_input, query = PR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: Errors raised here
+    POST_response = client.post(
         '/view_usage/query-wizard/PR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
