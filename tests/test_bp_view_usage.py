@@ -876,8 +876,8 @@ def IR_parameters(request):
             'resource_name_filter': "",
             'publisher_filter': "",
             'platform_filter': "",
-            'publication_date_start_filter': date.fromisoformat('2018-01-01'),
-            'publication_date_end_filter': date.fromisoformat('2018-12-31'),
+            'publication_date_start_filter': date.fromisoformat('2018-04-01'),
+            'publication_date_end_filter': date.fromisoformat('2018-08-31'),
             'ISBN_filter': "",
             'ISSN_filter': "",
             'parent_title_filter': "",
@@ -897,7 +897,7 @@ def IR_parameters(request):
             WHERE
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND publication_date>='2018-01-01' AND publication_date<='2018-12-31'
+                AND publication_date>='2018-04-01' AND publication_date<='2018-08-31'
                 AND (data_type='Article')
                 AND (access_type='Controlled' OR access_type IS NULL)
                 AND (access_method='Regular' OR access_method IS NULL)
