@@ -276,12 +276,12 @@ def PR_parameters(request):
             WHERE
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND platform LIKE 'EBSCOhost'
+                AND (platform='EBSCOhost')
                 AND (data_type='Platform')
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # With the test data, the only fuzzy match to `EBSCO` will be `EBSCOhost`
+        """  # Platform name from values returned by `fuzzy_search_on_field()` on test data
         yield (form_input, query)
 
 
@@ -394,7 +394,7 @@ def DR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Resource names from values returned by `fuzzy_search_on_field()`
+        """  # Resource names from values returned by `fuzzy_search_on_field()` on test data
         yield (form_input, query)
     elif request.param == "Filter by publisher name":
         form_input = {
@@ -420,7 +420,7 @@ def DR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Publisher name based off of values returned in test data
+        """  # Publisher name from value returned by `fuzzy_search_on_field()` on test data
         yield (form_input, query)
 
 
@@ -559,7 +559,7 @@ def TR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Resource name based off of value returned in test data
+        """  # Resource name from value returned by `fuzzy_search_on_field()` on test data
         yield (form_input, query)
     elif request.param == "Filter by ISBN":
         form_input = {
@@ -931,7 +931,7 @@ def IR_parameters(request):
                 AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations')
             GROUP BY usage_count, COUNTER_data_ID;
-        """  # Parent title based off of value returned in test data
+        """  # Parent title from values returned by `fuzzy_search_on_field()` on test data
         yield (form_input, query)
     elif request.param == "Filter by parent ISBN":
         form_input = {
