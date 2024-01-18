@@ -262,7 +262,7 @@ def PR_parameters(request):
                 (report_type='PR' OR report_type='PR1')
                 AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
                 AND (data_type='Platform')
-                AND (access_method='Regular')
+                AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Platform' OR metric_type='Regular Searches' OR metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
             GROUP BY usage_count, platform;
         """
@@ -392,7 +392,7 @@ def DR_parameters(request):
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Database' OR data_type='Other'' OR data_type='Unspecified')
-                AND (access_method='Regular')
+                AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Searches_Regular' OR metric_type='Regular Searches' OR metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated' OR metric_type='Searches_Federated' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed' OR metric_type='Limit_Exceeded' OR metric_type='Access denied: concurrent/simultaneous user license limit exceeded' OR metric_type='Access denied: concurrent/simultaneous user license exceeded. (Currently N/A to all platforms).')
             GROUP BY usage_count, resource_name, publisher, platform;
         """
@@ -571,9 +571,9 @@ def TR_parameters(request):
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
                 AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
                 AND (data_type='Book' OR data_type='Other' OR data_type='Unspecified')
-                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other')
-                AND (access_type='Controlled')
-                AND (access_method='Regular')
+                AND (section_type='Book' OR section_type='Chapter' OR section_type='Other' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations' OR metric_type='Unique_Item_Investigations' OR metric_type='Unique_Title_Investigations')
             GROUP BY usage_count, access_method;
         """
@@ -920,8 +920,8 @@ def IR_parameters(request):
                 report_type='IR'
                 AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
                 AND (data_type='Article' OR data_type='Book_Segment' OR data_type='Database' OR data_type='Database_Full_Item')
-                AND (access_type='Controlled')
-                AND (access_method='Regular')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
                 AND (metric_type='Total_Item_Investigations' OR  metric_type='Unique_Item_Investigations' OR metric_type='No_License' OR metric_type='Access denied: content item not licensed')
             GROUP BY usage_count, parent_data_type, parent_DOI;
         """
