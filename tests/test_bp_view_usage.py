@@ -1079,7 +1079,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     CSV_df = pd.read_csv(  #TEST: FileNotFoundError: [Errno 2] No such file or directory: '/nolcat/nolcat/view_usage/downloads/NoLCAT_download.csv'
         COUNTER_download_CSV,
         index=False,
-        parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
+        parse_dates=['usage_date'],
         date_parser=date_parser,
         encoding='utf-8',
         encoding_errors='backslashreplace',
