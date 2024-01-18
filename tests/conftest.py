@@ -447,6 +447,8 @@ def sample_COUNTER_reports_for_MultipartEncoder():
     Yields:
         MultipartEncoder.fields: a representation of multiple files selected in a MultipleFileField
     """
+    # https://werkzeug.palletsprojects.com/en/2.0.x/test/#werkzeug.test.EnvironBuilder
+    # https://werkzeug.palletsprojects.com/en/2.0.x/test/#werkzeug.test.EnvironBuilder.files
     folder_path = Path(__file__) / 'bin' / 'COUNTER_workbooks_for_tests'
     file_names = []
     for workbook in folder_path.iterdir():

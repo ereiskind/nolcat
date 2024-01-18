@@ -45,11 +45,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
-        #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
-            # Multiple items in the value of a MultipartEncoder.fields key-value pair doesn't work
-            # Should a MultipleFileField object be instantiated?
-            # Could the classes in "test_UploadCOUNTERReports.py" be used?
-            # Can a direct list of Werkzeug FileStorage object(s) be used?
+        #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
         fields={
             'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         },
