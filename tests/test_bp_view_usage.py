@@ -234,21 +234,18 @@ def PR_parameters(request):
     Yields:
         tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
     """
-    if request.param == "Filter by fixed vocabulary fields":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('access_method', 'Access Method'), strict = True
+    if request.param == "Filter by fixed vocabulary fields":
         form_input = {
             'begin_date': date.fromisoformat('2016-07-01'),
             'end_date': date.fromisoformat('2017-06-30'),
             'display_fields': (  # Unable to filter this field as only two options raises a TypeError
-                ('platform', "Platform"),
+                ('platform', "Platform"), #TEST: FileNotFoundError: [Errno 2] No such file or directory: 'Platform' --> self = FileMultiDict([('display_fields', <FileStorage: ('data_type', 'Data Type') ("('access_method', 'Access Method')")>)]), name = 'data_type_filter', file = 'Platform', filename = 'Platform' content_type = None
                 ('data_type', "Data Type"),
                 ('access_method', "Access Method"),
             ),
             'platform_filter': "",
             'data_type_filter': (forms.data_type_values['Platform']),
             'access_method_filter': 'Regular',
-            #TEST:
-                # `tuple('Regular')` --> PR_parameters = ({'access_method_filter': ('R', 'e', 'g', 'u', 'l', 'a', ...), 'begin_date': datetime.date(2016, 7, 1), 'data_type_fil...n Requests' OR metric_type='Successful Content Unit Requests')\n   GROUP BY usage_count, platform;\n        ")
-                # `'Regular'` --> PR_parameters = ({'access_method_filter': 'Regular', 'begin_date': datetime.date(2016, 7, 1), 'data_type_filter': ('Platform', 'Platfo...n Requests' OR metric_type='Successful Content Unit Requests')\n   GROUP BY usage_count, platform;\n        ")
             'metric_type_filter': (
                 forms.metric_type_values['Searches_Platform'],
                 forms.metric_type_values['Total_Item_Investigations'],
@@ -375,7 +372,7 @@ def DR_parameters(request):
                 forms.data_type_values['Unspecified'],
             ),
             'access_method_filter': 'Regular',
-            'metric_type_filter': (
+            'metric_type_filter': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 7 were given --> self = <flask.testing.EnvironBuilder object at 0x7fe7a9b7c880>, key = 'metric_type_filter' value = (('Searches_Regular|Regular Searches', 'Database Searches'), ('Searches_Automated|Searches-federated and automated|Sea...ncurrent/simultaneous user license exceeded. (Currently N/A to all platforms).','Access Denied: User Limit Exceeded'))
                 forms.metric_type_values['Searches_Regular'],
                 forms.metric_type_values['Searches_Automated'],
                 forms.metric_type_values['Searches_Federated'],
@@ -530,7 +527,7 @@ def TR_parameters(request):
         form_input = {
             'begin_date': date.fromisoformat('2019-07-01'),
             'end_date': date.fromisoformat('2020-06-30'),
-            'display_fields': (
+            'display_fields': (  #TEST: ['\'<FileStorage: (\'data_type\', \'Data Type\') ("(\'section_type\', \'Section Type\')")>\' is not a valid choice for this field']
                 ('resource_name', "Title Name"),
                 ('data_type', "Data Type"),
                 ('section_type', "Section Type"),
@@ -540,12 +537,12 @@ def TR_parameters(request):
             'platform_filter': "",
             'ISBN_filter': "",
             'ISSN_filter': "",
-            'data_type_filter': (
+            'data_type_filter': (  #TEST: ['\'<FileStorage: (\'Other\', \'Other\') ("(\'Unspecified\', \'Unspecified\')")>\' is not a valid choice for this field']
                 forms.data_type_values['Book'],
                 forms.data_type_values['Other'],
                 forms.data_type_values['Unspecified'],
             ),
-            'section_type_filter': (
+            'section_type_filter': (  #TEST: ['\'<FileStorage: (\'Chapter\', \'Chapter\') ("(\'Other\', \'Other\')")>\' is not a valid choice for this field']
                 ('Book', "Book"),
                 ('Chapter', "Chapter"),
                 ('Other', "Other"),
@@ -554,8 +551,7 @@ def TR_parameters(request):
             'YOP_end_filter': "",
             'access_type_filter': 'Controlled',
             'access_method_filter': 'Regular',
-            #TEST: `tuple('Controlled')` --> TypeError: add_file() takes from 3 to 5 positional arguments but 12 were given --> self = <flask.testing.EnvironBuilder object at 0x7ffb32ce3280>, key = 'access_type_filter', value = ('C', 'o', 'n', 't', 'r', 'o', ...)
-            'metric_type_filter': (
+            'metric_type_filter': (  #TEST: ['\'<FileStorage: (\'Unique_Item_Investigations\', \'Unique Item Investigations\') ("(\'Unique_Title_Investigations\', \'Unique Title Investigations\')")>\' is not a valid choice for this field']
                 forms.metric_type_values['Total_Item_Investigations'],
                 forms.metric_type_values['Unique_Item_Investigations'],
                 forms.metric_type_values['Unique_Title_Investigations'],
