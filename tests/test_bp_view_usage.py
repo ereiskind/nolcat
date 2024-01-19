@@ -7,6 +7,7 @@ from pathlib import Path
 import os
 from random import choice
 import re
+from filecmp import cmp
 from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 
@@ -1048,7 +1049,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
     #ToDo: Read file at file_path
     
-    log.info(f"Location of downloaded file: {file_path.is_file()}")  #TEST: confirm assert
-    #ToDo: Confirm contents of file at `file_path` and file at `non_COUNTER_AUCT_object_after_upload.usage_file_path` are the same
+    log.info(f"`file_path` {file_path} (type {type(file_path)}) and `non_COUNTER_AUCT_object_after_upload.usage_file_path`  {non_COUNTER_AUCT_object_after_upload.usage_file_path} (type {type(non_COUNTER_AUCT_object_after_upload.usage_file_path)}) are the same: {cmp(file_path, non_COUNTER_AUCT_object_after_upload.usage_file_path)}")
     assert POST_response.status == "200 OK"
+    assert file_path.is_file()
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
