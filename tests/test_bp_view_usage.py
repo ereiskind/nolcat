@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2024-01-12 ##########
+########## Passing 2024-01-19 ##########
 
 import pytest
 import logging
@@ -1032,7 +1032,7 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create file in S3 and instance and remove file from S3 for tests
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
     
@@ -1049,7 +1049,7 @@ def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_objec
     file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
     #ToDo: Read file at file_path
     
-    log.info(f"`file_path` {file_path} (type {type(file_path)}) and `non_COUNTER_file_to_download_from_S3`  {non_COUNTER_file_to_download_from_S3} (type {type(non_COUNTER_file_to_download_from_S3)}) are the same: {cmp(file_path, non_COUNTER_file_to_download_from_S3)}")  #TEST: temp
     assert POST_response.status == "200 OK"
     assert file_path.is_file()
+    assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
