@@ -264,6 +264,7 @@ def test_upload_file_to_S3_bucket(path_to_sample_file, remove_file_from_S3):  # 
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}test_", "") for file_name in bucket_contents]
     assert path_to_sample_file.name in bucket_contents
+    #ToDo: Download file from S3 and use `from filecmp import cmp` for `cmp(path_to_sample_file, path_to_where_file_from_S3_is_downloaded)`
 
 
 def test_create_AUCT_SelectField_options():

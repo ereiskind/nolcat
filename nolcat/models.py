@@ -1608,18 +1608,17 @@ class AnnualUsageCollectionTracking(db.Model):
 
 
     @hybrid_method
-    def upload_nonstandard_usage_file(self, file, bucket=BUCKET_NAME, bucket_path=PATH_WITHIN_BUCKET):
+    def upload_nonstandard_usage_file(self, file):
         """A method uploading a file with usage statistics for a statistics source for a given fiscal year to S3 and updating the `annualUsageCollectionTracking.usage_file_path` field so the file can be downloaded in the future.
 
         Args:
             file (werkzeug.datastructures.FileStorage): a file loaded through a WTForms FileField field
-            bucket (str, optional): the name of the S3 bucket; default is constant derived from `nolcat_secrets.py`
-            bucket_path (str, optional): the path within the bucket where the files will be saved; default is constant initialized at the beginning of this module
 
         Returns:
             str: the logging statement to indicate if uploading the data and updating the database succeeded or failed
         """
         log.info(f"Starting `AnnualUsageCollectionTracking.upload_nonstandard_usage_file()`.")
+        #Section: Create S3 File Name
         try:
             file_path = Path(file)
         except:
@@ -1629,19 +1628,24 @@ class AnnualUsageCollectionTracking(db.Model):
             message = f"The file extension of {file_path} is invalid. Please convert the file to use one of the following extensions and try again:\n{list(file_extensions_and_mimetypes().keys())}"
             log.error(message)
             return message
-        
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
         log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+
+        #Section: Use Temp File to Upload File to S3
+        temp_file_path = Path(__file__).parent / f"temp{file_extension}"
+        file.save(temp_file_path)
         logging_message = upload_file_to_S3_bucket(
-            file,
+            temp_file_path,
             file_name,
         )
+        temp_file_path.unlink()
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message
         log.debug(logging_message)
         
+        #Section: Update `collection_status` in Database
         update_statement = f"""
             UPDATE annualUsageCollectionTracking
             SET

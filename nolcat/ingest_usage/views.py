@@ -231,7 +231,26 @@ def upload_non_COUNTER_reports():
     elif form.validate_on_submit():
         statistics_source_ID, fiscal_year_ID = literal_eval(form.AUCT_option.data) # Since `AUCT_option_choices` had a multiindex, the select field using it returns a tuple
         df = query_database(
-            query=f"SELECT * FROM annualUsageCollectionTracking WHERE AUCT_statistics_source={statistics_source_ID} AND AUCT_fiscal_year={fiscal_year_ID};",
+            query=f"""
+                SELECT
+                    annualUsageCollectionTracking.AUCT_statistics_source,
+                    annualUsageCollectionTracking.AUCT_fiscal_year,
+                    annualUsageCollectionTracking.usage_is_being_collected,
+                    annualUsageCollectionTracking.manual_collection_required,
+                    annualUsageCollectionTracking.collection_via_email,
+                    annualUsageCollectionTracking.is_COUNTER_compliant,
+                    annualUsageCollectionTracking.collection_status,
+                    annualUsageCollectionTracking.usage_file_path,
+                    annualUsageCollectionTracking.notes,
+                    statisticsSources.statistics_source_name,
+                    fiscalYears.fiscal_year
+                FROM annualUsageCollectionTracking
+                    JOIN statisticsSources ON statisticsSources.statistics_source_ID=annualUsageCollectionTracking.AUCT_statistics_source
+                    JOIN fiscalYears ON fiscalYears.fiscal_year_ID=annualUsageCollectionTracking.AUCT_fiscal_year
+                WHERE
+                    AUCT_statistics_source={statistics_source_ID}
+                    AND AUCT_fiscal_year={fiscal_year_ID};
+            """,
             engine=db.engine,
         )
         if isinstance(df, str):
@@ -255,7 +274,7 @@ def upload_non_COUNTER_reports():
             log.error(response)
             flash(response)
             return redirect(url_for('ingest_usage.ingest_usage_homepage'))
-        message = f"Usage file for {non_COUNTER_files_needed.loc[form.AUCT_option.data]} uploaded successfully."
+        message = f"Usage file for {df.at[0, 'statistics_source_name']}--FY {df.at[0, 'fiscal_year']} uploaded successfully."
         log.debug(message)
         flash(message)
         return redirect(url_for('ingest_usage.ingest_usage_homepage'))
