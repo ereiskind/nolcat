@@ -1640,13 +1640,13 @@ class AnnualUsageCollectionTracking(db.Model):
             file,  #ToDo: Replace with Path to temp file
             file_name,
         )
+        temp_file_path.unlink()
+        log.info(f"After removing the saved copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
             message = failed_upload_to_S3_statement(file_name, logging_message)
             log.critical(message)
             return message
         log.debug(logging_message)
-        temp_file_path.unlink()
-        log.info(f"After removing the saved copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         
         #Section: Update `collection_status` in Database
         update_statement = f"""
