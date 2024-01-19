@@ -241,7 +241,7 @@ def upload_non_COUNTER_reports():
                     annualUsageCollectionTracking.is_COUNTER_compliant,
                     annualUsageCollectionTracking.collection_status,
                     annualUsageCollectionTracking.usage_file_path,
-                    annualUsageCollectionTracking.notes
+                    annualUsageCollectionTracking.notes,
                     statisticsSources.statistics_source_name,
                     fiscalYears.fiscal_year
                 FROM annualUsageCollectionTracking
