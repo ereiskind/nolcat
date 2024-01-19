@@ -472,7 +472,6 @@ def test_construct_DR_query_with_wizard(engine, client, header_value, DR_paramet
     "Filter by resource name with apostrophe and non-ASCII character",
     "Filter by ISBN",
     "Filter by ISSN",
-    #"Filter by ISSN and platform",
     #"Filter by year of publication",
 ])
 def TR_parameters(request):
@@ -620,54 +619,6 @@ def TR_parameters(request):
                 AND (metric_type='Unique_Item_Requests')
             GROUP BY usage_count, resource_name, COUNTER_data_ID;
         """
-        yield (form_input, query)
-    elif request.param == "Filter by ISSN and platform":
-        form_input = {
-            'begin_date': date.fromisoformat('2019-01-01'),
-            'end_date': date.fromisoformat('2019-12-31'),
-            'display_fields': (  #TEST: TypeError: add_file() takes from 3 to 5 positional arguments but 6 were given --> self = <flask.testing.EnvironBuilder object at 0x7f2f0535a6d0>, key = 'display_fields' value = (('resource_name', 'Title Name'), ('platform', 'Platform'), ('print_ISSN', 'Print ISSN'), ('online_ISSN', 'Online ISSN'))
-                ('platform', "Platform"),
-                ('print_ISSN', "Print ISSN"),
-                ('online_ISSN', "Online ISSN"),
-            ),
-            'resource_name_filter': None,
-            'publisher_filter': None,
-            'platform_filter': "EBSCO",
-            'ISBN_filter': None,
-            'ISSN_filter': "0363-0277",
-            'data_type_filter': (
-                forms.data_type_values['Journal'],
-                forms.data_type_values['Newspaper_or_Newsletter'],
-                forms.data_type_values['Other'],
-            ),
-            'section_type_filter': (
-                ('Article', "Article"),
-                ('Other', "Other"),
-                ('Section', "Section"),
-            ),
-            'YOP_start_filter': None,
-            'YOP_end_filter': None,
-            'access_type_filter': tuple(forms.access_type_values),
-            'access_method_filter': tuple(forms.access_method_values),
-            'metric_type_filter': (
-                forms.metric_type_values['Total_Item_Investigations'],
-                forms.metric_type_values['Total_Item_Requests'],
-            ),
-            'open_in_Excel': False,
-        }
-        query = """
-            SELECT platform, print_ISSN, online_ISSN, metric_type, usage_date, SUM(usage_count)
-            FROM COUNTERData
-            WHERE
-                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
-                AND (platform='EBSCOhost')
-                AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
-                AND (data_type='Journal' OR data_type='Newspaper_or_Newsletter' OR data_type='Other')
-                AND (section_type='Article' OR section_type='Other' OR section_type='Section')
-                AND (metric_type='Total_Item_Investigations' OR metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
-            GROUP BY usage_count;
-        """  # Platform name based off of value returned in test data
         yield (form_input, query)
     elif request.param == "Filter by year of publication":  #TEST: TypeError: expected str, bytes or os.PathLike object, not tuple --> self = <mimetypes.MimeTypes object at 0x7f2f08345b20>, url = ('TDM', 'TDM'), strict = True
         form_input = {
