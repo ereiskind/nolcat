@@ -1,5 +1,5 @@
 """Tests the methods in AnnualUsageCollectionTracking."""
-########## Passing 2024-01-16 ##########
+########## Passing 2024-01-19 ##########
 
 import pytest
 import logging
@@ -187,12 +187,12 @@ def test_upload_nonstandard_usage_file(engine, client, path_to_sample_file, non_
     assert file_name == usage_file_path_in_database
 
 
-def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 for tests
+def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, download_destination, caplog):
     """Test downloading a file in S3 to a local computer."""
     caplog.set_level(logging.INFO, logger='botocore')
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
-    log.info(f"`file_path` {file_path} (type {type(file_path)}) and `non_COUNTER_file_to_download_from_S3`  {non_COUNTER_file_to_download_from_S3} (type {type(non_COUNTER_file_to_download_from_S3)}) are the same: {cmp(file_path, non_COUNTER_file_to_download_from_S3)}")  #TEST: temp
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()
+    assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same
