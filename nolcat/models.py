@@ -1632,8 +1632,9 @@ class AnnualUsageCollectionTracking(db.Model):
         
         file_name = f"{self.AUCT_statistics_source}_{self.AUCT_fiscal_year}{file_extension}"  # `file_extension` is a `Path.suffix` attribute, which means it begins with a period
         log.debug(file_IO_statement(file_name, f"WTForms FileField field {file_path.resolve()}", f"S3 bucket {BUCKET_NAME}"))
+        log.info(f"`file.stream` is {file.stream} (type {type(file.stream)})")  #TEST: temp
         logging_message = upload_file_to_S3_bucket(
-            file,
+            file.stream,
             file_name,
         )
         if not upload_file_to_S3_bucket_success_regex().fullmatch(logging_message):
