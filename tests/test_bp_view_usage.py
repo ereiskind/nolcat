@@ -692,14 +692,6 @@ def test_construct_TR_query_with_wizard(engine, client, header_value, TR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    #TEST: temp
-    if not CSV_df.equals(database_df):
-        try:
-            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
-        except:
-            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
-            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
-    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
@@ -918,7 +910,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
 
     form_input, query = IR_parameters
     log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
-    POST_response = client.post(  #TEST: Errors raised here
+    POST_response = client.post(
         '/view_usage/query-wizard/IR',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -927,7 +919,7 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
 
     log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
-    CSV_df = pd.read_csv(  #TEST: FileNotFoundError: [Errno 2] No such file or directory: '/nolcat/nolcat/view_usage/downloads/NoLCAT_download.csv'
+    CSV_df = pd.read_csv(
         COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['usage_date'],
@@ -947,14 +939,6 @@ def test_construct_IR_query_with_wizard(engine, client, header_value, IR_paramet
         pytest.skip(database_function_skip_statements(database_df))
     database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
     log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
-    #TEST: temp
-    if not CSV_df.equals(database_df):
-        try:
-            log.info(f"Comparing the dataframes:\n{CSV_df.compare(database_df)}")
-        except:
-            log.info(f"`CSV_df` fields\n{CSV_df.columns}\nand record index\n{CSV_df.index}\n")
-            log.info(f"`database_df` fields\n{database_df.columns}\nand record index\n{database_df.index}\n")
-    #TEST: temp end
 
     assert POST_response.status == "200 OK"
     assert COUNTER_download_CSV.is_file()
