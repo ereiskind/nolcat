@@ -1637,7 +1637,7 @@ class AnnualUsageCollectionTracking(db.Model):
         file.save(temp_file_path)
         log.info(f"After saving a copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         logging_message = upload_file_to_S3_bucket(
-            file,  #ToDo: Replace with Path to temp file
+            temp_file_path,
             file_name,
         )
         temp_file_path.unlink()
