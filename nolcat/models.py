@@ -1634,7 +1634,7 @@ class AnnualUsageCollectionTracking(db.Model):
         #Section: Use Temp File to Upload File to S3
         log.info(f"Before saving a copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         temp_file_path = Path(__file__).parent / f"temp{file_extension}"
-        #ToDo: Save a copy of the file--Will `file.save(temp_file_path)` work?
+        file.save(temp_file_path)
         log.info(f"After saving a copy of the file,{list_folder_contents_statement(Path(__file__).parent, alone=False)}")  #TEST: temp
         logging_message = upload_file_to_S3_bucket(
             file,  #ToDo: Replace with Path to temp file
