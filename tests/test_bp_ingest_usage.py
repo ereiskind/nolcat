@@ -307,11 +307,13 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         Bucket=BUCKET_NAME,
         Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
-    bucket_contents = []
+    files_in_bucket = []
     log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
-    #TEST: 0::{'ResponseMetadata': {'RequestId': '01EB8BC4R1SGN945', 'HostId': 'iaWzZ7UgPaeFAP8tjbJXQuCyp+XbI3NGkDvNJQCeJwc5z3AzqPe8BI/Ui+PVepBIv0wqxmPsuN8=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': 'iaWzZ7UgPaeFAP8tjbJXQuCyp+XbI3NGkDvNJQCeJwc5z3AzqPe8BI/Ui+PVepBIv0wqxmPsuN8=', 'x-amz-request-id': '01EB8BC4R1SGN945', 'date': 'Fri, 19 Jan 2024 17:40:09 GMT', 'x-amz-bucket-region': 'us-east-1', 'content-type': 'application/xml', 'transfer-encoding': 'chunked', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'IsTruncated': False, 'Contents': [{'Key': 'raw-vendor-reports/5_5.xlsx', 'LastModified': datetime.datetime(2024, 1, 19, 16, 47, 58, tzinfo=tzlocal()), 'ETag': '"09dbaa84f966f5f8aebb55749bf5acca"', 'Size': 19269, 'StorageClass': 'STANDARD'}], 'Name': 'ec2.sandbox.lib.fsu.edu', 'Prefix': 'raw-vendor-reports/5_5', 'MaxKeys': 1000, 'EncodingType': 'url', 'KeyCount': 1}
-    #TEST: 1::{'ResponseMetadata': {'RequestId': '01E11TGP258N4WY4', 'HostId': 'R+RiSx1nji774joxhkV7DeoSFQ3MAsCcTlO4MmhXgmk/f5a2CD/+SL9Q8YDwKWq4eBwMhUrnGb4=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': 'R+RiSx1nji774joxhkV7DeoSFQ3MAsCcTlO4MmhXgmk/f5a2CD/+SL9Q8YDwKWq4eBwMhUrnGb4=', 'x-amz-request-id': '01E11TGP258N4WY4', 'date': 'Fri, 19 Jan 2024 17:40:09 GMT', 'x-amz-bucket-region': 'us-east-1', 'content-type': 'application/xml', 'transfer-encoding': 'chunked', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'IsTruncated': False, 'Name': 'ec2.sandbox.lib.fsu.edu', 'Prefix': 'raw-vendor-reports/11_5', 'MaxKeys': 1000, 'EncodingType': 'url', 'KeyCount': 0}
-    for contents_dict in list_objects_response['Contents']:  #TEST: 1::KeyError: 'Contents'
-        bucket_contents.append(contents_dict['Key'])
-    bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
-    assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
+    bucket_contents = list_objects_response.get('Contents')
+    if bucket_contents:
+        for contents_dict in bucket_contents:
+            files_in_bucket.append(contents_dict['Key'])
+        files_in_bucket = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in files_in_bucket]
+        assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in files_in_bucket
+    else:
+        assert False  # Nothing in bucket
