@@ -3,6 +3,7 @@
 
 import pytest
 import logging
+from filecmp import cmp
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
@@ -192,5 +193,6 @@ def test_download_nonstandard_usage_file(non_COUNTER_AUCT_object_after_upload, n
     log.debug(f"Before `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
     file_path = non_COUNTER_AUCT_object_after_upload.download_nonstandard_usage_file(download_destination)
     log.debug(f"After `download_nonstandard_usage_file()`," + list_folder_contents_statement(download_destination, False))
+    log.info(f"`file_path` {file_path} (type {type(file_path)}) and `non_COUNTER_file_to_download_from_S3`  {non_COUNTER_file_to_download_from_S3} (type {type(non_COUNTER_file_to_download_from_S3)}) are the same: {cmp(file_path, non_COUNTER_file_to_download_from_S3)}")  #TEST: temp
     assert file_path.stem == f"{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}"
     assert file_path.is_file()
