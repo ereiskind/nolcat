@@ -1,5 +1,5 @@
 """Tests the routes in the `view_usage` blueprint."""
-########## Failing 2024-01-03 ########## Since the downloads themselves work, getting these tests to pass is not a priority
+########## Passing 2024-01-19 ##########
 
 import pytest
 import logging
@@ -7,10 +7,12 @@ from pathlib import Path
 import os
 from random import choice
 import re
+from filecmp import cmp
 from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 
 # `conftest.py` fixtures are imported automatically
+from conftest import prepare_HTML_page_for_comparison
 from nolcat.app import *
 from nolcat.models import *
 from nolcat.statements import *
@@ -20,18 +22,19 @@ log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def remove_COUNTER_download_CSV():
-    """Removes a CSV download of COUNTER usage data.
+def COUNTER_download_CSV():
+    """Provides the file path for a CSV download of COUNTER usage data, then removes that CSV at the end of the test.
 
-    This fixture exists purely for cleanup--the file is created by the function being tested. Since fixtures only accept other fixtures as arguments, this cannot be used for files of various names.
+    This fixture provides a constant name for all the CSVs being created, which is then used as the file removal target; a constant name is required because fixtures only accept other fixtures as arguments.
 
     Yields:
-        None
+        pathlib.Path: an absolute file path to a CSV download of COUNTER usage data
     """
-    file_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'
-    yield None
+    file_path = views.create_downloads_folder() / 'NoLCAT_download.csv'
+    log.debug(f"The file path `{file_path}` is type {type(file_path)}.")
+    yield file_path
     try:
-        file_path.unlink()
+        file_path.unlink(missing_ok=True)
     except Exception as error:
         log.error(unable_to_delete_test_file_in_S3_statement(file_path, error).replace("S3 bucket", "instance"))  # The statement function and replacement keep the language of this unique statement consistent with similar situations
 
@@ -81,27 +84,26 @@ def test_view_usage_homepage(client):
     assert HTML_file_page_title == GET_response_page_title
 
 
-def test_run_custom_SQL_query(client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_run_custom_SQL_query(client, header_value, COUNTER_download_CSV, caplog):
     """Tests running a user-written SQL query against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.run_custom_SQL_query()`
     form_input = {
         'SQL_query': "SELECT COUNT(*) FROM COUNTERData;",
         'open_in_Excel': False,
     }
-    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+    POST_response = client.post(
         '/view_usage/custom-query',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
     assert POST_response.status == "200 OK"
-    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    assert COUNTER_download_CSV.is_file()
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_download_CSV, caplog):  # `remove_COUNTER_download_CSV()` not called but used to remove file loaded during test
+def test_use_predefined_SQL_query(engine, client, header_value, COUNTER_download_CSV, caplog):
     """Tests running one of the provided SQL queries which match the definitions of the COUNTER R5 standard views against the database and returning a CSV download."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.use_predefined_SQL_query()`
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
@@ -126,17 +128,16 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
         'query_options': query_options[0],
         'open_in_Excel': False,
     }
-    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+    POST_response = client.post(
         '/view_usage/preset-query',
         #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")  #TEST: temp
 
     CSV_df = pd.read_csv(
-        TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv',
+        COUNTER_download_CSV,
         index_col='COUNTER_data_ID',
         parse_dates=['publication_date', 'parent_publication_date', 'usage_date'],
         date_parser=date_parser,
@@ -154,7 +155,7 @@ def test_use_predefined_SQL_query(engine, client, header_value, remove_COUNTER_d
     database_df = database_df.astype(COUNTERData.state_data_types())
 
     assert POST_response.status == "200 OK"
-    assert TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'NoLCAT_download.csv'.is_file()
+    assert COUNTER_download_CSV.is_file()
     assert_frame_equal(CSV_df, database_df)
     #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
@@ -221,24 +222,767 @@ def test_GET_query_wizard_sort_redirect(client, header_value, start_query_wizard
     assert POST_response_end_date_field == start_query_wizard_form_data['end_date'].strftime('%Y-%m-%d')
 
 
-def test_construct_PR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by fixed vocabulary fields",
+    "Filter by platform name",
+])
+def PR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by fixed vocabulary fields":
+        form_input = {
+            'begin_date': date.fromisoformat('2016-07-01'),
+            'end_date': date.fromisoformat('2017-06-30'),
+            'display_fields': 'platform',
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Platform'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Platform'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2016-07-01' AND usage_date<='2017-06-30'
+                AND (data_type='Platform')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
+            GROUP BY usage_count, platform, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by platform name":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'platform',
+            'platform_filter': "EBSCO",
+            'data_type_filter': forms.data_type_values['Platform'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Platform'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT platform, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='PR' OR report_type='PR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (platform='EBSCOhost')
+                AND (data_type='Platform')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Platform' OR metric_type='Regular Searches')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """  # Platform name from values returned by `fuzzy_search_on_field()` on test data
+        yield (form_input, query)
+
+
+
+def test_construct_PR_query_with_wizard(engine, client, header_value, PR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    form_input, query = PR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
+    POST_response = client.post(
+        '/view_usage/query-wizard/PR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
+    CSV_df = pd.read_csv(
+        COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
+        parse_dates=['usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    database_df = query_database(
+        query=query,
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+
+    assert POST_response.status == "200 OK"
+    assert COUNTER_download_CSV.is_file()
+    assert_frame_equal(CSV_df, database_df)
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_construct_DR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by fixed vocabulary fields",
+    "Filter by resource name",
+    "Filter by publisher name",
+])
+def DR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by fixed vocabulary fields":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Database'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Automated'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Database')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Automated' OR metric_type='Searches-federated and automated' OR metric_type='Searches: federated and automated')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by resource name":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "eric",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Database'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Regular'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (resource_name='ProQuest Social Sciences Premium Collection->ERIC' OR resource_name='Social Science Premium Collection->Education Collection->ERIC' OR resource_name='ERIC (Module)' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online->Periodicals Archive Online Foundation Collection 3' OR resource_name='01 Periodicals Archive Online Foundation Collection 1' OR resource_name='ERIC' OR resource_name='Periodicals Archive Online Foundation Collection 2' OR resource_name='Periodicals Archive Online Foundation Collection 3' OR resource_name='Historical Abstracts')
+                AND (data_type='Database')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """  # Resource names from values returned by `fuzzy_search_on_field()` on test data
+        yield (form_input, query)
+    elif request.param == "Filter by publisher name":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'publisher',
+            'resource_name_filter': "",
+            'publisher_filter': "proq",
+            'platform_filter': "",
+            'data_type_filter': forms.data_type_values['Database'][0],
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Searches_Regular'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT publisher, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='DR' OR report_type='DB1' OR report_type='DB2')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (publisher='ProQuest')
+                AND (data_type='Database')
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Searches_Regular' OR metric_type='Regular Searches')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """  # Publisher name from value returned by `fuzzy_search_on_field()` on test data
+        yield (form_input, query)
+
+
+def test_construct_DR_query_with_wizard(engine, client, header_value, DR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_DR_query_with_wizard()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    form_input, query = DR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
+    POST_response = client.post(
+        '/view_usage/query-wizard/DR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
+    CSV_df = pd.read_csv(
+        COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
+        parse_dates=['usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    database_df = query_database(
+        query=query,
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+
+    assert POST_response.status == "200 OK"
+    assert COUNTER_download_CSV.is_file()
+    assert_frame_equal(CSV_df, database_df)
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_construct_TR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by fixed vocabulary fields",
+    "Filter by resource name with apostrophe and non-ASCII character",
+    "Filter by ISBN",
+    "Filter by ISSN",
+    "Filter by year of publication",
+])
+def TR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by fixed vocabulary fields":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': 'Book',
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
+                AND (data_type='Book')
+                AND (section_type='Book' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by resource name with apostrophe and non-ASCII character":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-07-01'),
+            'end_date': date.fromisoformat('2020-06-30'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "Pikachu's Global Adventure: The Rise and Fall of Pokémon",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': 'Book',
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-07-01' AND usage_date<='2020-06-30'
+                AND (resource_name='Pikachu\\\'s Global Adventure<subtitle>The Rise and Fall of Pokémon</subtitle>')
+                AND (data_type='Book')
+                AND (section_type='Book' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """  # Resource name from value returned by `fuzzy_search_on_field()` on test data
+        yield (form_input, query)
+    elif request.param == "Filter by ISBN":
+        form_input = {
+            'begin_date': date.fromisoformat('2017-07-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "978-0-0286-6072-1",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'section_type_filter': 'Article',
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2017-07-01' AND usage_date<='2019-12-31'
+                AND (ISBN='978-0-0286-6072-1')
+                AND (data_type='Book')
+                AND (section_type='Article' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by ISSN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "0363-0277",
+            'data_type_filter': forms.data_type_values['Journal'][0],
+            'section_type_filter': 'Article',
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (print_ISSN='0363-0277' OR online_ISSN='0363-0277')
+                AND (data_type='Journal')
+                AND (section_type='Article' OR section_type IS NULL)
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Requests')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by year of publication":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Newspaper_or_Newsletter'][0],
+            'section_type_filter': 'Article',
+            'YOP_start_filter': 1995,
+            'YOP_end_filter': 2005,
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Unique_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Newspaper_or_Newsletter')
+                AND (section_type='Article' OR section_type IS NULL)
+                AND YOP>=1995 AND YOP<=2005
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Unique_Item_Requests')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+
+
+def test_construct_TR_query_with_wizard(engine, client, header_value, TR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_TR_query_with_wizard()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    form_input, query = TR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
+    POST_response = client.post(
+        '/view_usage/query-wizard/TR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
+    CSV_df = pd.read_csv(
+        COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
+        parse_dates=['usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    database_df = query_database(
+        query=query,
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+
+    assert POST_response.status == "200 OK"
+    assert COUNTER_download_CSV.is_file()
+    assert_frame_equal(CSV_df, database_df)
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
 
 
-def test_construct_IR_query_with_wizard():
+@pytest.fixture(params=[
+    "Filter by fixed vocabulary fields",
+    "Filter by publication date",
+    "Filter by parent title",
+    "Filter by parent ISBN",
+    "Filter by parent ISSN",
+])
+def IR_parameters(request):
+    """A parameterized fixture function for simulating multiple custom query constructions.
+
+    The `werkzeug.test.EnvironBuilder` class creates a WSGI environment for testing Flask applications without actually starting a server, which makes it useful for testing; the `data` attribute accepts a dict with the values of form data. If the form data values are collections, the `add_file()` method is called, meaning the values for SelectMultipleFields CANNOT contain multiple selections.
+
+    Args:
+        request (str): description of the use case
+
+    Yields:
+        tuple: the `form_input` argument of the test's `post()` method (dict); the SQL query the wizard should construct (str)
+    """
+    if request.param == "Filter by fixed vocabulary fields":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'OA_Gold|Open',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (data_type='Article')
+                AND (access_type='OA_Gold' OR access_type='Open' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by publication date":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': date.fromisoformat('2018-04-01'),
+            'publication_date_end_filter': date.fromisoformat('2018-08-31'),
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Requests'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND publication_date>='2018-04-01' AND publication_date<='2018-08-31'
+                AND (data_type='Article')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Requests' OR metric_type='Successful Full-text Article Requests' OR metric_type='Successful Title Requests' OR metric_type='Successful Section Requests' OR metric_type='Successful Content Unit Requests')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by parent title":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'parent_title',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "glq",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT parent_title, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (parent_title='GLQ: A Journal of Lesbian and Gay Studies')
+                AND (data_type='Article')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, COUNTER_data_ID;
+        """  # Parent title from values returned by `fuzzy_search_on_field()` on test data
+        yield (form_input, query)
+    elif request.param == "Filter by parent ISBN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'resource_name',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "978-0-8223-8491-5",
+            'parent_ISSN_filter': "",
+            'data_type_filter': forms.data_type_values['Book'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT resource_name, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (parent_ISBN='978-0-8223-8491-5')
+                AND (data_type='Book')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, resource_name, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+    elif request.param == "Filter by parent ISSN":
+        form_input = {
+            'begin_date': date.fromisoformat('2019-01-01'),
+            'end_date': date.fromisoformat('2019-12-31'),
+            'display_fields': 'parent_title',
+            'resource_name_filter': "",
+            'publisher_filter': "",
+            'platform_filter': "",
+            'publication_date_start_filter': "",
+            'publication_date_end_filter': "",
+            'ISBN_filter': "",
+            'ISSN_filter': "",
+            'parent_title_filter': "",
+            'parent_ISBN_filter': "",
+            'parent_ISSN_filter': "0270-5346",
+            'data_type_filter': forms.data_type_values['Article'][0],
+            'YOP_start_filter': "",
+            'YOP_end_filter': "",
+            'access_type_filter': 'Controlled',
+            'access_method_filter': 'Regular',
+            'metric_type_filter': forms.metric_type_values['Total_Item_Investigations'][0],
+            'open_in_Excel': False,
+        }
+        query = """
+            SELECT parent_title, metric_type, usage_date, SUM(usage_count), COUNTER_data_ID
+            FROM COUNTERData
+            WHERE
+                report_type='IR'
+                AND usage_date>='2019-01-01' AND usage_date<='2019-12-31'
+                AND (parent_print_ISSN='0270-5346' OR parent_online_ISSN='0270-5346')
+                AND (data_type='Article')
+                AND (access_type='Controlled' OR access_type IS NULL)
+                AND (access_method='Regular' OR access_method IS NULL)
+                AND (metric_type='Total_Item_Investigations')
+            GROUP BY usage_count, parent_title, COUNTER_data_ID;
+        """
+        yield (form_input, query)
+
+
+def test_construct_IR_query_with_wizard(engine, client, header_value, IR_parameters, COUNTER_download_CSV, caplog):
     """Tests downloading the results of a query for platform usage data constructed with a form."""
-    pass
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_IR_query_with_wizard()`
+    caplog.set_level(logging.INFO, logger='nolcat.app')  # For `query_database()`
+
+    form_input, query = IR_parameters
+    log.debug(f"The form input is type {type(form_input)} and the query is type {type(query)}.")
+    POST_response = client.post(
+        '/view_usage/query-wizard/IR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+
+    log.debug(check_if_file_exists_statement(COUNTER_download_CSV))
+    CSV_df = pd.read_csv(
+        COUNTER_download_CSV,
+        index_col='COUNTER_data_ID',
+        parse_dates=['usage_date'],
+        date_parser=date_parser,
+        encoding='utf-8',
+        encoding_errors='backslashreplace',
+    )
+    CSV_df.rename(columns={'SUM(usage_count)': 'usage_count'})
+    CSV_df = CSV_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in CSV_df.columns})
+    log.debug(f"Summary of the data from the CSV:\n{return_string_of_dataframe_info(CSV_df)}")
+    database_df = query_database(
+        query=query,
+        engine=engine,
+        index='COUNTER_data_ID',
+    )
+    if isinstance(database_df, str):
+        pytest.skip(database_function_skip_statements(database_df))
+    database_df = database_df.astype({k:v for (k, v) in COUNTERData.state_data_types().items() if k in database_df.columns})
+    log.debug(f"Summary of the data from the database:\n{return_string_of_dataframe_info(database_df)}")
+
+    assert POST_response.status == "200 OK"
+    assert COUNTER_download_CSV.is_file()
+    assert_frame_equal(CSV_df, database_df, check_like=True)  # `check_like` argument allows test to pass if fields aren't in the same order, which always occurs with first parameter
+    #ToDo: Should the presence of the above file in the host computer's file system be checked?
+
+
+def construct_PR_query_with_wizard_without_string_match(client, header_value, caplog):
+    """Tests using the PR query wizard with a string that won't return any matches."""
+    caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.construct_PR_query_with_wizard()`
+
+    form_input = {
+        'begin_date': date.fromisoformat('2019-01-01'),
+        'end_date': date.fromisoformat('2019-12-31'),
+        'display_fields': (
+            ('platform', "Platform"),
+            ('data_type', "Data Type"),
+            ('access_method', "Access Method"),
+        ),
+        'platform_filter': "not going to match",
+        'data_type_filter': (forms.data_type_values['Platform']),
+        'access_method_filter': tuple(forms.access_method_values),
+        'metric_type_filter': (
+            forms.metric_type_values['Searches_Platform'],
+            forms.metric_type_values['Total_Item_Investigations'],
+            forms.metric_type_values['Unique_Item_Investigations'],
+            forms.metric_type_values['Unique_Title_Investigations'],
+            forms.metric_type_values['Total_Item_Requests'],
+            forms.metric_type_values['Unique_Item_Requests'],
+            forms.metric_type_values['Unique_Title_Requests'],
+        ),
+        'open_in_Excel': False,
+    }
+
+    POST_response = client.post(
+        '/view_usage/query-wizard/PR',
+        #timeout=90,  # `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
+        follow_redirects=True,
+        headers=header_value,
+        data=form_input,
+    )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
+    assert POST_response.status == "200 OK"
+    assert "No platforms in the database were matched to the value not going to match." in prepare_HTML_page_for_comparison(POST_response.data)
 
 
 def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
@@ -288,22 +1032,24 @@ def test_GET_request_for_download_non_COUNTER_usage(engine, client, caplog):
     assert GET_select_field_options == db_select_field_options
 
 
-def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):  # `non_COUNTER_file_to_download_from_S3()` not called but used to create and remove file from S3 and instance for tests
+def test_download_non_COUNTER_usage(client, header_value, non_COUNTER_AUCT_object_after_upload, non_COUNTER_file_to_download_from_S3, caplog):
     """Tests downloading the file at the path selected in the `view_usage.ChooseNonCOUNTERDownloadForm` form."""
     caplog.set_level(logging.WARNING, logger='sqlalchemy.engine')  # For database I/O called in `view_usage.views.download_non_COUNTER_usage()`
+    
     form_input = {
         'AUCT_of_file_download': f"({non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}, {non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year})",  # The string of a tuple is what gets returned by the actual form submission in Flask; trial and error determined that for tests to pass, that was also the value that needed to be passed to the POST method
     }
-    POST_response = client.post(  #TEST: ValueError: I/O operation on closed file.
+    POST_response = client.post(
         '/view_usage/non-COUNTER-downloads',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
         headers=header_value,
         data=form_input,
     )  #ToDo: Is a try-except block that retries with a 299 timeout needed?
-    log.info(f"`POST_response.history` (type {type(POST_response.history)}) is\n{POST_response.history}")
-    log.info(f"`POST_response.data` (type {type(POST_response.data)}) is\n{POST_response.data}")
-    log.info(f"`POST_response.status` (type {type(POST_response.status)}) is\n{POST_response.status}")  #assert POST_response.status == "200 OK"
-    log.info(f"Location of downloaded file:\n{format_list_for_stdout(Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage').iterdir())}")  #assert Path(TOP_NOLCAT_DIRECTORY, 'nolcat', 'view_usage', f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.csv').is_file()
+    file_path = views.create_downloads_folder() / f'{non_COUNTER_AUCT_object_after_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_after_upload.AUCT_fiscal_year}.{non_COUNTER_AUCT_object_after_upload.usage_file_path.split(".")[-1]}'
+    #ToDo: Read file at file_path
+    
+    assert POST_response.status == "200 OK"
+    assert file_path.is_file()
+    assert cmp(file_path, non_COUNTER_file_to_download_from_S3)  # The file uploaded to S3 for the test and the downloaded file are the same
     # Currently unable to interact with files on host machine, so unable to confirm downloaded file is a file on the host machine
-    pass

@@ -135,6 +135,7 @@ class PRQueryWizardForm(FlaskForm):
         data_type_values['Book_Segment'],
         data_type_values['Conference'],
         data_type_values['Conference_Item'],
+        data_type_values['Database'],
         data_type_values['Database_Full_Item'],
         data_type_values['Dataset'],
         data_type_values['Image'],
@@ -238,6 +239,7 @@ class TRQueryWizardForm(FlaskForm):
         ('data_type', "Data Type"),
         ('section_type', "Section Type"),
         ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
         ('access_method', "Access Method"),
     ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the title-level resource the query should return:", validators=[Optional()])
@@ -258,7 +260,7 @@ class TRQueryWizardForm(FlaskForm):
         data_type_values['Thesis_or_Dissertation'],
         data_type_values['Unspecified'],
     ], validators=[Optional()])
-    section_type_filter = SelectMultipleField("Select all of the section types the query should return:", choices=[
+    section_type_filter = SelectMultipleField("Select all of the section types the query should return (this field is only used in COUNTER R5.0):", choices=[
         ('Article', "Article"),
         ('Book', "Book"),
         ('Chapter', "Chapter"),
@@ -304,6 +306,7 @@ class IRQueryWizardForm(FlaskForm):
         ('parent_online_ISSN', "Parent Online ISSN"),
         ('data_type', "Data Type"),
         ('YOP', "Year of Publication"),
+        ('access_type', "Access Type"),
         ('access_method', "Access Method"),
     ], validators=[Optional()], validate_choice=False)  # Without `validate_choice=False`, this field returns an error of `Not a valid choice`
     resource_name_filter = StringField("Enter the name of the item-level resource the query should return:", validators=[Optional()])
@@ -319,14 +322,17 @@ class IRQueryWizardForm(FlaskForm):
     data_type_filter = SelectMultipleField("Select all of the data types the query should return (all data types ending in asterisks have yet to be implemented):", choices=[
         data_type_values['Article'],
         data_type_values['Audiovisual'],
+        data_type_values['Book'],
         data_type_values['Book_Segment'],
         data_type_values['Conference_Item'],
         data_type_values['Database_Full_Item'],
         data_type_values['Dataset'],
         data_type_values['Image'],
         data_type_values['Interactive_Resource'],
+        data_type_values['Journal'],
         data_type_values['Multimedia'],
         data_type_values['News_Item'],
+        data_type_values['Newspaper_or_Newsletter'],
         data_type_values['Other'],
         data_type_values['Patent'],
         data_type_values['Reference_Item'],

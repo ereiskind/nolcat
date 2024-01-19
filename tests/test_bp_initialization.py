@@ -1,5 +1,5 @@
 """Tests the routes in the `initialization` blueprint."""
-########## Passing 2024-01-03 ##########
+########## Passing 2024-01-11 ##########
 
 import pytest
 import logging
@@ -563,6 +563,7 @@ def test_collect_AUCT_and_historical_COUNTER_data(engine, client, tmp_path, head
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_pk_value()` and `query_database()`
     
     #Section: Submit Forms via HTTP POST
+    #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
     form_submissions = MultipartEncoder(
         fields={
             'annualUsageCollectionTracking_CSV': ('annualUsageCollectionTracking_relation.csv', open(tmp_path / 'annualUsageCollectionTracking_relation.csv', 'rb'), 'text/csv'),

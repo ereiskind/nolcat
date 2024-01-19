@@ -1,5 +1,5 @@
 """Tests the routes in the `ingest_usage` blueprint."""
-########## Failing 2024-01-03 ##########
+########## Failing 2024-01-11 ##########
 
 import pytest
 import logging
@@ -45,11 +45,7 @@ def test_upload_COUNTER_data_via_Excel(engine, client, header_value, COUNTERData
     caplog.set_level(logging.INFO, logger='nolcat.app')  # For `first_new_PK_value()` and `query_database()`
     
     form_submissions = MultipartEncoder(  #Test: This field is a MultipleFileField, but current setup, which passes, only accepts a single file
-        #ToDo: Create a variable/fixture that simulates multiple files being added to the MultipleFileField field
-            # Multiple items in the value of a MultipartEncoder.fields key-value pair doesn't work
-            # Should a MultipleFileField object be instantiated?
-            # Could the classes in "test_UploadCOUNTERReports.py" be used?
-            # Can a direct list of Werkzeug FileStorage object(s) be used?
+        #ToDo: Use `sample_COUNTER_reports_for_MultipartEncoder`
         fields={
             'COUNTER_data': ('0_2017.xlsx', open(Path(*Path(__file__).parts[0:Path(__file__).parts.index('tests')+1]) / 'bin' / 'COUNTER_workbooks_for_tests' / '0_2017.xlsx', 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         },
@@ -277,7 +273,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
 
     #Section: Perform Test Actions
     header_value['Content-Type'] = form_submissions.content_type
-    POST_response = client.post(  #TEST: TypeError: expected str, bytes or os.PathLike object, not FileStorage
+    POST_response = client.post(
         '/ingest_usage/upload-non-COUNTER',
         #timeout=90,  #ALERT: `TypeError: __init__() got an unexpected keyword argument 'timeout'` despite the `timeout` keyword at https://requests.readthedocs.io/en/latest/api/#requests.request and its successful use in the SUSHI API call class
         follow_redirects=True,
@@ -301,7 +297,8 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         Prefix=f"{PATH_WITHIN_BUCKET}{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}",
     )
     bucket_contents = []
-    for contents_dict in list_objects_response['Contents']:
+    log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
+    for contents_dict in list_objects_response['Contents']:  #TEST: KeyError: 'Contents'
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
 

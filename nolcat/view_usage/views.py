@@ -109,6 +109,18 @@ def set_encoding(opening_in_Excel):
         return 'utf-8'
 
 
+def create_downloads_folder():
+    """Creates an absolute file path to a `/nolcat/view_usage/downloads/` folder where files to be downloaded can be created.
+
+    Returns:
+        pathlib.Path: an absolute file path to a folder for downloads
+    """
+    folder_path = TOP_NOLCAT_DIRECTORY / 'nolcat' / 'view_usage' / 'downloads'
+    if not folder_path.is_dir():
+        folder_path.mkdir()
+    return folder_path
+
+
 @bp.route('/')
 def view_usage_homepage():
     """Returns the homepage for the `view_usage` blueprint, which links to the usage query methods."""
@@ -121,7 +133,7 @@ def run_custom_SQL_query():
     log.info("Starting `run_custom_SQL_query()`.")
     form = CustomSQLQueryForm()
     if request.method == 'GET':
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
@@ -135,7 +147,8 @@ def run_custom_SQL_query():
             flash(database_query_fail_statement(df))
             return redirect(url_for('view_usage.view_usage_homepage'))
         
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index_label="index",
@@ -143,9 +156,15 @@ def run_custom_SQL_query():
             date_format='%Y-%m-%d',
             errors='backslashreplace',
         )
-        log.info(f"The `NoLCAT_download.csv` file was created successfully: {file_path.is_file()}")
-        log.debug(f"Contents of `{Path(__file__).parent}`:\n{format_list_for_stdout(Path(__file__).parent.iterdir())}")
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_run_custom_SQL_query()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
+        log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -159,7 +178,7 @@ def use_predefined_SQL_query():
     log.info("Starting `use_predefined_SQL_query()`.")
     form = PresetQueryForm()
     if request.method == 'GET':
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
         log.debug(f"Before `unlink()`," + check_if_file_exists_statement(file_path, False))
         file_path.unlink(missing_ok=True)
         log.info(check_if_file_exists_statement(file_path))
@@ -271,7 +290,8 @@ def use_predefined_SQL_query():
             return redirect(url_for('view_usage.view_usage_homepage'))
         log.debug(f"The result of the query:\n{df}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -280,8 +300,14 @@ def use_predefined_SQL_query():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_use_predefined_SQL_query_with_COUNTER_standard_views()`; above logging statements got to stdout indicating successful creation of `NoLCAT_download.csv`, but opening logging statement for `download_file()` route function isn't output at all
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -325,7 +351,7 @@ def start_query_wizard():
             log.error(message)
             flash(message)
             return redirect(url_for('view_usage.view_usage_homepage'))
-        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")  #TEST: Getting expected results for both date input types here; why is it being rejected below?
+        log.info(f"Setting up a query for {form.report_type.data} data from {begin_date} to {end_date}.")
         return redirect(url_for('view_usage.query_wizard_sort_redirect', report_type=form.report_type.data, begin_date=begin_date, end_date=end_date))
     else:
         message = Flask_error_statement(form.errors)
@@ -408,7 +434,7 @@ def construct_PR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['platform', 'data_type', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -419,9 +445,9 @@ def construct_PR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='PR' OR report_type='PR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -459,6 +485,7 @@ def construct_PR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -490,7 +517,8 @@ def construct_PR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -499,8 +527,14 @@ def construct_PR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -521,7 +555,7 @@ def construct_DR_query_with_wizard():
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'data_type', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -532,9 +566,9 @@ def construct_DR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='DR' OR report_type='DB1' OR report_type='DB2')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -612,6 +646,7 @@ def construct_DR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -643,7 +678,8 @@ def construct_DR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -652,8 +688,14 @@ def construct_DR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -667,16 +709,14 @@ def construct_TR_query_with_wizard():
     log.info("Starting `construct_TR_query_with_wizard()`.")
     form = TRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():  #TEST: When `ISBN_filter` or `ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
+    if form.validate_on_submit():
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'data_type', 'section_type', 'YOP', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -687,9 +727,9 @@ def construct_TR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 (report_type='TR' OR report_type='BR1' OR report_type='BR2' OR report_type='BR3' OR report_type='BR5' OR report_type='JR1' OR report_type='JR2' OR report_type='MR1')
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -786,6 +826,7 @@ def construct_TR_query_with_wizard():
         if form.section_type_filter.data:
             section_type_filter_list = create_COUNTER_fixed_vocab_list(form.section_type_filter.data)
             section_type_filter_statement = ' OR '.join([f"section_type='{value}'" for value in section_type_filter_list])
+            section_type_filter_statement = section_type_filter_statement + " OR section_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {section_type_filter_statement}.")
             query = query + f"AND ({section_type_filter_statement})\n"
         elif 'section_type' in selected_display_fields:
@@ -795,6 +836,7 @@ def construct_TR_query_with_wizard():
         if form.access_type_filter.data:
             access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
             access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
         elif 'access_type' in selected_display_fields:
@@ -804,6 +846,7 @@ def construct_TR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -844,7 +887,8 @@ def construct_TR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -853,8 +897,14 @@ def construct_TR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -868,18 +918,14 @@ def construct_IR_query_with_wizard():
     log.info("Starting `construct_IR_query_with_wizard()`.")
     form = IRQueryWizardForm()
     # Initial rendering of template is in `query_wizard_sort_redirect()`
-    if form.validate_on_submit():  #TEST: When `ISBN_filter`, `ISSN_filter`, `parent_ISBN_filter`, or `parent_ISSN_filter` has data, `AttributeError: 'function' object has no attribute 'match'` is returned with stack trace going through this line
-        log.info(f"`ISBN_filter` is {form.ISBN_filter.data} (type {type(form.ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`ISSN_filter` is {form.ISSN_filter.data} (type {type(form.ISSN_filter.data)})")  #TEST: temp
-        log.info(f"`parent_ISBN_filter` is {form.parent_ISBN_filter.data} (type {type(form.parent_ISBN_filter.data)})")  #TEST: temp
-        log.info(f"`parent_ISSN_filter` is {form.parent_ISSN_filter.data} (type {type(form.parent_ISSN_filter.data)})")  #TEST: temp
+    if form.validate_on_submit():
         #Section: Start SQL Query Construction
         #Subsection: Create Display Field List
         if form.display_fields.data:
             selected_display_fields = form.display_fields.data
         else:
             selected_display_fields = ['resource_name', 'publisher', 'platform', 'publication_date', 'DOI', 'ISBN', 'print_ISSN', 'online_ISSN', 'parent_title', 'parent_publication_date', 'parent_data_type', 'parent_DOI', 'parent_ISBN', 'parent_print_ISSN', 'parent_online_ISSN', 'data_type', 'YOP', 'access_method']
-        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)']
+        display_fields = selected_display_fields + ['metric_type'] + ['usage_date'] + ['SUM(usage_count)'] + ['COUNTER_data_ID']
         display_fields = ", ".join([f"{field}" for field in display_fields])
         log.debug(f"The display fields are:\n{display_fields}")
 
@@ -890,9 +936,9 @@ def construct_IR_query_with_wizard():
             FROM COUNTERData
             WHERE
                 report_type='IR'
-                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'\n
+                AND usage_date>='{form.begin_date.data.strftime('%Y-%m-%d')}' AND usage_date<='{form.end_date.data.strftime('%Y-%m-%d')}'
         """
-        query_end = "GROUP BY usage_count"
+        query_end = "GROUP BY usage_count, COUNTER_data_ID"
         log.debug(f"The beginning and end of the query are:\n{query}\n...\n{query_end}")
 
         #Section: Add String-Based Filters
@@ -1028,6 +1074,7 @@ def construct_IR_query_with_wizard():
         if form.access_type_filter.data:
             access_type_filter_list = create_COUNTER_fixed_vocab_list(form.access_type_filter.data)
             access_type_filter_statement = ' OR '.join([f"access_type='{value}'" for value in access_type_filter_list])
+            access_type_filter_statement = access_type_filter_statement + " OR access_type IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_type_filter_statement}.")
             query = query + f"AND ({access_type_filter_statement})\n"
         elif 'access_type' in selected_display_fields:
@@ -1037,6 +1084,7 @@ def construct_IR_query_with_wizard():
         if form.access_method_filter.data:
             access_method_filter_list = create_COUNTER_fixed_vocab_list(form.access_method_filter.data)
             access_method_filter_statement = ' OR '.join([f"access_method='{value}'" for value in access_method_filter_list])
+            access_method_filter_statement = access_method_filter_statement + " OR access_method IS NULL"  # This field is null in all R4 data
             log.debug(f"The data type filter statement is {access_method_filter_statement}.")
             query = query + f"AND ({access_method_filter_statement})\n"
         elif 'access_method' in selected_display_fields:
@@ -1085,7 +1133,8 @@ def construct_IR_query_with_wizard():
         log.debug(f"The result of the query:\n{df}")
         log.info(f"Dataframe info for the result of the query:\n{return_string_of_dataframe_info(df)}")
 
-        file_path = Path(__file__).parent / 'NoLCAT_download.csv'
+        file_path = create_downloads_folder() / 'NoLCAT_download.csv'
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
         df.to_csv(
             file_path,
             index=False,
@@ -1094,8 +1143,14 @@ def construct_IR_query_with_wizard():
             errors='backslashreplace',
         )
         log.info(f"After writing the dataframe to download to a CSV," + check_if_file_exists_statement(file_path, False))
-        log.debug(list_folder_contents_statement(Path(__file__).parent))
-        return redirect(url_for('download_file', file_path=str(file_path)))
+        log.debug(list_folder_contents_statement(create_downloads_folder()))
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
@@ -1110,8 +1165,8 @@ def download_non_COUNTER_usage():
     form = ChooseNonCOUNTERDownloadForm()
     if request.method == 'GET':
         file_name_format = re.compile(r"\d*_\d{4}\.\w{3,4}")
-        log.debug("Before `unlink()`," + list_folder_contents_statement(Path(__file__).parent, False))
-        for file in Path(__file__).parent.iterdir():
+        log.debug("Before `unlink()`," + list_folder_contents_statement(create_downloads_folder(), False))
+        for file in create_downloads_folder().iterdir():
             if file_name_format.fullmatch(str(file.name)):
                 file.unlink()
                 log.debug(check_if_file_exists_statement(file))
@@ -1171,9 +1226,16 @@ def download_non_COUNTER_usage():
         )
         log.info(f"`AnnualUsageCollectionTracking` object: {AUCT_object}")
 
-        file_path = AUCT_object.download_nonstandard_usage_file(Path(__file__).parent)
+        file_path = AUCT_object.download_nonstandard_usage_file(create_downloads_folder())
         log.info(f"The `{file_path.name}` file was created successfully: {file_path.is_file()}")
-        return redirect(url_for('download_file', file_path=str(file_path)))  #TEST: `ValueError: I/O operation on closed file.` raised on `client.post` in `test_download_non_COUNTER_usage()`; above logging statements got to stdout indicating successful creation of file to download, but opening logging statement for `download_file()` route function isn't output at all
+        log.debug(f"The file path '{file_path}' (type {type(file_path)}) is an absolute file path: {file_path.is_absolute()}.")
+        return send_file(
+            path_or_file=file_path,
+            mimetype=file_extensions_and_mimetypes()[file_path.suffix],  # Suffixes that aren't keys in `file_extensions_and_mimetypes()` can't be uploaded to S3 via NoLCAT
+            as_attachment=True,
+            download_name=file_path.name,
+            last_modified=datetime.today(),
+        )
     else:
         message = Flask_error_statement(form.errors)
         log.error(message)
