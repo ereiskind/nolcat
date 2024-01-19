@@ -377,7 +377,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             log.warning(f"Running the function `upload_fileobj()` on {file_object} (type {type(file_object)}) raised the error {error}. The system will now try to use `upload_file()`.")
             file_object.close()
     except Exception as error:
-        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")
+        log.warning(f"Running the function `open()` on {file} (type {type(file)}) raised the error {error}. The system will now try to use `upload_file()`.")  #TEST: 0::Running the function `open()` on <FileStorage: '2_DR.json' ('application/json')> (type <class 'werkzeug.datastructures.FileStorage'>) raised the error expected str, bytes or os.PathLike object, not FileStorage. The system will now try to use `upload_file()`. 1::Running the function `open()` on <FileStorage: 'sample_BR5_report.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')> (type <class 'werkzeug.datastructures.FileStorage'>) raised the error expected str, bytes or os.PathLike object, not FileStorage. The system will now try to use `upload_file()`.
     
     #Subsection: Upload File with `upload_file()`
     try:
@@ -396,7 +396,7 @@ def upload_file_to_S3_bucket(file, file_name, client=s3_client, bucket=BUCKET_NA
             return message
     except AttributeError as error:
         message = f"Unable to load file {file} (type {type(file)}) into an S3 bucket because it relied the ability for {file} to be a file-like or path-like object."
-        log.error(message)
+        log.error(message)  #TEST: 0::Unable to load file <FileStorage: '2_DR.json' ('application/json')> (type <class 'werkzeug.datastructures.FileStorage'>) into an S3 bucket because it relied the ability for <FileStorage: '2_DR.json' ('application/json')> to be a file-like or path-like object. 1::Unable to load file <FileStorage: 'sample_BR5_report.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')> (type <class 'werkzeug.datastructures.FileStorage'>) into an S3 bucket because it relied the ability for <FileStorage: 'sample_BR5_report.xlsx' ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')> to be a file-like or path-like object.
         return message
 
 
@@ -413,7 +413,7 @@ def create_AUCT_SelectField_options(df):
     """
     log.info(f"Starting `create_AUCT_SelectField_options()` for the\n{df}\ndataframe.")
     df = df.set_index(['AUCT_statistics_source', 'AUCT_fiscal_year'])
-    df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices`  #TEST: Tests raise `TypeError: sequence item 0: expected str instance, DataFrame found` but no problems occur in web app or IDLE
+    df['field_display'] = df[['statistics_source_name', 'fiscal_year']].apply("--FY ".join, axis='columns')  # Standard string concatenation with `astype` methods to ensure both values are strings raises `IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or Boolean arrays are valid indices
     df = df.drop(columns=['statistics_source_name', 'fiscal_year'])
     s = change_single_field_dataframe_into_series(df)
     log.info(f"AUCT multiindex values and their corresponding form choices:\n{s}")

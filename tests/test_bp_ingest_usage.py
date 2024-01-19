@@ -290,7 +290,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
         query=f"SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = {non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source} AND AUCT_fiscal_year = {non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year};",
         engine=engine,
         index=['AUCT_statistics_source', 'AUCT_fiscal_year'],
-    )
+    )  #TEST: 0::Running the query `SELECT collection_status, usage_file_path FROM annualUsageCollectionTracking WHERE AUCT_statistics_source = 5 AND AUCT_fiscal_year = 5;` raised the error "None of ['AUCT_statistics_source', 'AUCT_fiscal_year'] are in the columns".
 
     list_objects_response = s3_client.list_objects_v2(
         Bucket=BUCKET_NAME,
@@ -298,7 +298,9 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     )
     bucket_contents = []
     log.info(f"`list_objects_response` (type {type(list_objects_response)}):\n{list_objects_response}")
-    for contents_dict in list_objects_response['Contents']:  #TEST: KeyError: 'Contents'
+    #TEST: 0::{'ResponseMetadata': {'RequestId': '01EB8BC4R1SGN945', 'HostId': 'iaWzZ7UgPaeFAP8tjbJXQuCyp+XbI3NGkDvNJQCeJwc5z3AzqPe8BI/Ui+PVepBIv0wqxmPsuN8=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': 'iaWzZ7UgPaeFAP8tjbJXQuCyp+XbI3NGkDvNJQCeJwc5z3AzqPe8BI/Ui+PVepBIv0wqxmPsuN8=', 'x-amz-request-id': '01EB8BC4R1SGN945', 'date': 'Fri, 19 Jan 2024 17:40:09 GMT', 'x-amz-bucket-region': 'us-east-1', 'content-type': 'application/xml', 'transfer-encoding': 'chunked', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'IsTruncated': False, 'Contents': [{'Key': 'raw-vendor-reports/5_5.xlsx', 'LastModified': datetime.datetime(2024, 1, 19, 16, 47, 58, tzinfo=tzlocal()), 'ETag': '"09dbaa84f966f5f8aebb55749bf5acca"', 'Size': 19269, 'StorageClass': 'STANDARD'}], 'Name': 'ec2.sandbox.lib.fsu.edu', 'Prefix': 'raw-vendor-reports/5_5', 'MaxKeys': 1000, 'EncodingType': 'url', 'KeyCount': 1}
+    #TEST: 1::{'ResponseMetadata': {'RequestId': '01E11TGP258N4WY4', 'HostId': 'R+RiSx1nji774joxhkV7DeoSFQ3MAsCcTlO4MmhXgmk/f5a2CD/+SL9Q8YDwKWq4eBwMhUrnGb4=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': 'R+RiSx1nji774joxhkV7DeoSFQ3MAsCcTlO4MmhXgmk/f5a2CD/+SL9Q8YDwKWq4eBwMhUrnGb4=', 'x-amz-request-id': '01E11TGP258N4WY4', 'date': 'Fri, 19 Jan 2024 17:40:09 GMT', 'x-amz-bucket-region': 'us-east-1', 'content-type': 'application/xml', 'transfer-encoding': 'chunked', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'IsTruncated': False, 'Name': 'ec2.sandbox.lib.fsu.edu', 'Prefix': 'raw-vendor-reports/11_5', 'MaxKeys': 1000, 'EncodingType': 'url', 'KeyCount': 0}
+    for contents_dict in list_objects_response['Contents']:  #TEST: 1::KeyError: 'Contents'
         bucket_contents.append(contents_dict['Key'])
     bucket_contents = [file_name.replace(f"{PATH_WITHIN_BUCKET}", "") for file_name in bucket_contents]
 
@@ -307,7 +309,7 @@ def test_upload_non_COUNTER_reports(engine, client, header_value, non_COUNTER_AU
     assert POST_response.status == "200 OK"
     assert HTML_file_title in POST_response.data
     assert HTML_file_page_title in POST_response.data
-    assert check_database_update.at[0,'collection_status'] == 'Collection complete'
+    assert check_database_update.at[0,'collection_status'] == 'Collection complete'  #TEST: 0::AttributeError: 'str' object has no attribute 'at'
     assert check_database_update.at[0,'usage_file_path'] == f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}"
     #ToDo: ingest_usage.views.upload_non_COUNTER_reports() flash message after validate_on_submit  in post_response.data
     assert f"{non_COUNTER_AUCT_object_before_upload.AUCT_statistics_source}_{non_COUNTER_AUCT_object_before_upload.AUCT_fiscal_year}{path_to_sample_file.suffix}" in bucket_contents
